@@ -148,8 +148,8 @@ public final class GasifierGameTests {
         ticks(be, 1);
         var gas = fluid(h, OUTLET, Direction.UP).drain(500, EXECUTE);
         h.assertTrue(gas.is(CEProcessFluids.WATER_GAS.get()) && gas.getAmount() == 500
-            && gas.get(CEThermal.HEAT_GRADE.get()) == Grade.Heat.VERY_HOT.ordinal()
-            && FluidHazards.of(gas).gas(), "The outlet delivers 500 mB of very hot water gas");
+            && gas.get(CEThermal.HEAT_GRADE.get()) == Grade.Heat.HOT.ordinal()
+            && FluidHazards.of(gas).gas() && net.createplant.transport.PipeMaterial.COPPER.carries(gas), "The outlet delivers 500 mB of hot water gas that copper pipes carry");
         h.assertTrue(be.itemCount(0) == 1 && inlet.getFluidInTank(0).getAmount() == 250
             && items(h, BASE, Direction.DOWN) == null, "Each batch consumes one coal and 250 mB of steam with no slag");
         h.succeed();
@@ -194,7 +194,7 @@ public final class GasifierGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "test_fractionation", timeoutTicks = 320)
+    @GameTest(template = "test_fractionation", timeoutTicks = 640)
     public static void pumpedOutputCanBeCooledAndStored(GameTestHelper h) {
         var gasifier = build(h);
         h.assertTrue(gasifier.rebuild(), "Gasifier forms");
@@ -210,12 +210,11 @@ public final class GasifierGameTests {
         var receivingTube = ThermalControlGameTests.shell(exchanger, 0);
         h.assertTrue(receivingTube.fill(new FluidStack(Fluids.WATER, 500), EXECUTE) == 500, "The exchanger has finite coolant");
 
-        h.setBlock(elbow, CETransport.STAINLESS_PIPE.get().defaultBlockState()
+        h.setBlock(elbow, AllBlocks.FLUID_PIPE.getDefaultState()
             .setValue(FluidPipeBlock.DOWN, true).setValue(FluidPipeBlock.EAST, true));
-        h.setBlock(pump.east(), CETransport.STAINLESS_PIPE.get().defaultBlockState()
+        h.setBlock(pump.east(), AllBlocks.FLUID_PIPE.getDefaultState()
             .setValue(FluidPipeBlock.WEST, true).setValue(FluidPipeBlock.EAST, true));
-        var pumpBlock = BuiltInRegistries.BLOCK.get(CreatePlant.location("stainless_steel_pump"));
-        h.setBlock(pump, pumpBlock.defaultBlockState().setValue(PumpBlock.FACING, Direction.EAST));
+        h.setBlock(pump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(PumpBlock.FACING, Direction.EAST));
         var cog = pump.south();
         h.setBlock(cog, AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
         h.setBlock(cog.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
@@ -223,13 +222,40 @@ public final class GasifierGameTests {
 
         var receiver = pump.east(6);
         h.setBlock(receiver, CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS, Direction.Axis.X));
-        h.runAfterDelay(290, () -> {
+        h.runAfterDelay(610, () -> {
             var gas = ThermalControlGameTests.tube(exchanger, 1).drain(500, EXECUTE);
             h.assertTrue(gas.is(CEProcessFluids.WATER_GAS.get()) && gas.getAmount() == 500 && gasifier.fluid(2).isEmpty(),
-                "The native stainless pump transfers the whole batch into the working exchanger");
+                "Create's copper pipe and mechanical pump draw the whole batch from the outlet into the exchanger");
             h.assertTrue(FluidHazards.of(gas).heat() == Grade.Heat.AMBIENT
                 && fluid(h, receiver, Direction.WEST).fill(gas, EXECUTE) == 500,
                 "Cooling keeps the mixture and amount while allowing storage in the gas receiver");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_fractionation", timeoutTicks = 640)
+    public static void pipedGasSuperheatsABlazeBurner(GameTestHelper h) {
+        var gasifier = build(h);
+        h.assertTrue(gasifier.rebuild(), "Gasifier forms");
+        charge(h, 2, new FluidStack(CEFluids.STEAM.get(), 500));
+        burner(h, BlazeBurnerBlock.HeatLevel.SMOULDERING);
+        h.assertTrue(BlazeBurnerBlock.tryInsert(h.getBlockState(BASE.below()), h.getLevel(), h.absolutePos(BASE.below()),
+            Items.COAL.getDefaultInstance(), false, false, false).getResult().consumesAction(), "The furnace's own burner lights with coal");
+        var elbow = OUTLET.above();
+        var pump = elbow.east();
+        var fed = pump.east(2);
+        h.setBlock(fed, AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SMOULDERING));
+        h.setBlock(elbow, AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.DOWN, true).setValue(FluidPipeBlock.EAST, true));
+        h.setBlock(pump.east(), AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.WEST, true).setValue(FluidPipeBlock.EAST, true));
+        h.setBlock(pump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(PumpBlock.FACING, Direction.EAST));
+        var cog = pump.south();
+        h.setBlock(cog, AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
+        h.setBlock(cog.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+        ((CreativeMotorBlockEntity) h.getBlockEntity(cog.west())).generatedSpeed.setValue(64);
+        h.runAfterDelay(610, () -> {
+            h.assertTrue(gasifier.fluid(2).isEmpty() && gasifier.itemCount(0) == 0, "Both batches left the furnace");
+            h.assertTrue(h.getBlockState(fed).getValue(BlazeBurnerBlock.HEAT_LEVEL) == BlazeBurnerBlock.HeatLevel.SEETHING,
+                "1000 mB pumped through Create's copper pipe superheats the burner: " + h.getBlockState(fed).getValue(BlazeBurnerBlock.HEAT_LEVEL));
             h.succeed();
         });
     }

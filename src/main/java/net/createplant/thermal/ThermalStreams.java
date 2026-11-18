@@ -22,7 +22,7 @@ public final class ThermalStreams {
     }
     public static Conversion cooling(FluidStack stack){
         if(stack.isEmpty())return null;
-        if (stack.is(CEProcessFluids.WATER_GAS.get()) && FluidHazards.of(stack).heat() == Grade.Heat.VERY_HOT)
+        if (stack.is(CEProcessFluids.WATER_GAS.get()) && FluidHazards.of(stack).heat().compareTo(Grade.Heat.AMBIENT) > 0)
             return new Conversion(1, stack.getFluid(), 1);
         var cooled=Aliases.COOLED.get(stack.getFluid());if(cooled!=null)return new Conversion(1,cooled,1);
         if(stack.is(CEProcessFluids.HOT_REACTOR_COOLANT.get()))return new Conversion(1,CEProcessFluids.WARM_WATER.get(),1);
@@ -46,7 +46,7 @@ public final class ThermalStreams {
         fluids.sort(java.util.Comparator.comparing(f->net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(f).toString()));
         return fluids.stream().map(fluid -> {
             var stack = new FluidStack(fluid, 1);
-            if (stack.is(CEProcessFluids.WATER_GAS.get())) stack.set(CEThermal.HEAT_GRADE.get(), Grade.Heat.VERY_HOT.ordinal());
+            if (stack.is(CEProcessFluids.WATER_GAS.get())) stack.set(CEThermal.HEAT_GRADE.get(), Grade.Heat.HOT.ordinal());
             return stack;
         }).toList();
     }

@@ -4550,9 +4550,9 @@
     "zh_cn": "炉内达到800°C后，燃料与蒸汽反应，生成等比例的一氧化碳和氢气。具体配方可见JEI。"
   },
   "entrained_gasifier.output": {
-    "en_us": "Pump the very hot, low-pressure gas from the outlet flange through stainless steel pipe. The front is the side you stood on when placing the top center block.",
-    "ja_jp": "正面のガス出口フランジから、ステンレス鋼管とポンプで超高温・常圧の混合気体を搬出します。天面中央を置いたときに立っていた側が正面です。",
-    "zh_cn": "用不锈钢管和泵从正面的气体出口法兰排出超高温、常压的混合气体。放置顶面中央方块时所站的一侧即为正面。"
+    "en_us": "Pump the hot, low-pressure gas from the outlet flange with an ordinary fluid pipe. The front is the side you stood on when placing the top center block.",
+    "ja_jp": "正面のガス出口フランジから、流体パイプとポンプで高温・常圧の混合気体を搬出します。天面中央を置いたときに立っていた側が正面です。",
+    "zh_cn": "用普通流体管道和泵从正面的气体出口法兰排出高温、常压的混合气体。放置顶面中央方块时所站的一侧即为正面。"
   },
   "entrained_gasifier.stop": {
     "en_us": "When the burner runs out of fuel, the reaction pauses. Supply more fuel to resume once the furnace is hot enough.",
@@ -4570,9 +4570,9 @@
     "zh_cn": "要自动补充燃料，请使用泵，并将气体管道接到烈焰人燃烧室侧面。"
   },
   "entrained_gasifier.layers": {
-    "en_us": "The top layer is the lid with the charging hatch and, on the front, the gas outlet. Layers 2 to 5 are the brick-lined reaction bed with sight glasses.",
-    "ja_jp": "最上段は投入口ハッチ付きの天板で、正面側にガス出口があります。2～5段目は耐火レンガ張りの反応層で、点検窓が付きます。",
-    "zh_cn": "最上层是带投料舱口的顶盖，正面一侧设有气体出口。第2～5层是衬耐火砖的反应层，装有观察窗。"
+    "en_us": "The top layer is the lid with the charging hatch and a gas outlet flange. Layers 2 to 5 are the brick-lined reaction bed with sight glasses.",
+    "ja_jp": "最上段は投入口ハッチとガス出口フランジ付きの天板です。2～5段目は耐火レンガ張りの反応層で、点検窓が付きます。",
+    "zh_cn": "最上层是带投料舱口和气体出口法兰的顶盖。第2～5层是衬耐火砖的反应层，装有观察窗。"
   },
   "entrained_gasifier.steam": {
     "en_us": "Pump steam into a flange on the middle block of any side of the bottom layer.",

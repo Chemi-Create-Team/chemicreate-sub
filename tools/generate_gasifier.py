@@ -320,8 +320,10 @@ def lesson():
     pipe = NS + 'stainless_steel_pipe'
     for x, y, z, axis in ((5, 1, 4, 'z'), (3, 2, 5, 'x'), (2, 2, 5, 'x'), (5, 8, 6, 'y')):
         directions = {'x': ('east', 'west'), 'z': ('north', 'south'), 'y': ('up', 'down')}[axis]
-        scene.block(x, y, z, pipe, waterlogged='false', **{face: str(face in directions).lower() for face in ponder.DIRECTIONS})
-    scene.block(5, 9, 6, NS + 'stainless_steel_pump', facing='up')
+        # The gas is only hot, so Create's own pipe and pump carry it.
+        name = 'create:fluid_pipe' if y == 8 else pipe
+        scene.block(x, y, z, name, waterlogged='false', **{face: str(face in directions).lower() for face in ponder.DIRECTIONS})
+    scene.block(5, 9, 6, 'create:mechanical_pump', facing='up', waterlogged='false')
     scene.block(6, 9, 6, 'create:cogwheel', axis='y')
     scene.block(6, 8, 6, 'create:creative_motor', facing='up')
     ponder.OUT = A / 'ponder/plant'
