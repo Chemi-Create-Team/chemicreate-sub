@@ -2,6 +2,7 @@ package net.createplant.compat.electro;
 
 import com.george_vi.electroenergetics.CEERegistries;
 import com.george_vi.electroenergetics.devices.device.SimulatedDeviceType;
+import com.george_vi.electroenergetics.foundation.device.SimpleNonTickingElectricalDevice;
 import net.createplant.CreatePlant;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -22,6 +23,9 @@ public final class ElectroDevices {
         () -> new SimulatedDeviceType<>(CreatePlant.location("fusion_magnet_feeder"), (type, level, pos, data) -> new FusionMagnetDevice(level, pos, data, type)));
     public static final DeferredHolder<SimulatedDeviceType<?>, SimulatedDeviceType<ElectricUtilityDevice>> PUMP = DEVICES.register("electric_pump",
         () -> new SimulatedDeviceType<>(CreatePlant.location("electric_pump"), (type, level, pos, data) -> new ElectricUtilityDevice(level, pos, data, type)));
+    public static final DeferredHolder<SimulatedDeviceType<?>, SimulatedDeviceType<SimpleNonTickingElectricalDevice>> TRANSMISSION_TOWER =
+        DEVICES.register("transmission_tower", () -> new SimulatedDeviceType<>(CreatePlant.location("transmission_tower"),
+            (type, level, pos, data) -> new SimpleNonTickingElectricalDevice(level, pos, data, type)));
     private ElectroDevices() { }
     public static void register(IEventBus bus) { DEVICES.register(bus); }
 }

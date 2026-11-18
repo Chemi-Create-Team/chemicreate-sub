@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CAC",
+    " R "
+  ],
+  "key": {
+    "C": {
+      "item": "electroenergetics:heavily_insulated_wire"
+    },
+    "A": {
+      "tag": "c:ingots/aluminum"
+    },
+    "R": {
+      "item": "create_refinery_n_reactors:rubber_gasket"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:high_voltage_conductor",
+    "count": 4
+  }
+}

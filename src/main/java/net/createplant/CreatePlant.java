@@ -63,6 +63,7 @@ public class CreatePlant {
         net.createplant.registry.CEReactor.register(modEventBus);
         net.createplant.registry.CEHeating.register(modEventBus);
         net.createplant.registry.CEElectricUtilities.register(modEventBus);
+        net.createplant.registry.CETransmission.register(modEventBus);
         net.createplant.registry.CEConverter.register(modEventBus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.block.ConverterStructure::changed);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.block.ConverterStructure::chunkLoaded);

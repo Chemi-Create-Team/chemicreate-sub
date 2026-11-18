@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SIS",
+    "CRC",
+    "BSB"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "I": {
+      "item": "electroenergetics:glass_insulator_segment"
+    },
+    "C": {
+      "item": "minecraft:iron_bars"
+    },
+    "R": {
+      "item": "create:precision_mechanism"
+    },
+    "B": {
+      "item": "minecraft:smooth_stone"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:transmission_tower",
+    "count": 1
+  }
+}

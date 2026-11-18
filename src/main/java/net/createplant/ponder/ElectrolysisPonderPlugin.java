@@ -34,6 +34,8 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/portable_sprayers",PortableSprayerPonderScenes::tools);
         helper.forComponents(CreatePlant.location("vault_hatch"), com.simibubi.create.AllBlocks.ITEM_VAULT.getId())
             .addStoryBoard("plant/vault_hatch", VaultHatchPonderScenes::hatch);
+        helper.forComponents(CreatePlant.location("transmission_tower"), CreatePlant.location("high_voltage_cable"))
+            .addStoryBoard("plant/transmission_tower", TransmissionTowerPonderScenes::connection);
         helper.forComponents(CreatePlant.location("electric_pump")).addStoryBoard("plant/electric_pump", ElectricUtilityPonderScenes::pump);
         helper.forComponents(CreatePlant.location("cubic_press")).addStoryBoard("plant/cubic_press", HighStressPonderScenes::press);
         for (var tutorial : PlantTutorialCatalog.all()) if (tutorial.family() != null) {
