@@ -252,6 +252,8 @@ public final class GasifierGameTests {
         h.setBlock(cog, AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
         h.setBlock(cog.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
         ((CreativeMotorBlockEntity) h.getBlockEntity(cog.west())).generatedSpeed.setValue(64);
+        h.assertTrue(fluid(h, fed, Direction.DOWN) != null && fluid(h, fed, Direction.UP) == null,
+            "The burner takes the gas through its sides and its bottom, but not its top");
         h.runAfterDelay(610, () -> {
             h.assertTrue(gasifier.fluid(2).isEmpty() && gasifier.itemCount(0) == 0, "Both batches left the furnace");
             h.assertTrue(h.getBlockState(fed).getValue(BlazeBurnerBlock.HEAT_LEVEL) == BlazeBurnerBlock.HeatLevel.SEETHING,

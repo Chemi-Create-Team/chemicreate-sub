@@ -4565,9 +4565,9 @@
     "zh_cn": "手持一氧化碳与氢气混合气体桶右击烈焰人燃烧室，可使它进入超热状态并返还空桶。"
   },
   "entrained_gasifier.fuel_pipe": {
-    "en_us": "For automatic refueling, use a pump and connect the gas pipe to a side of the Blaze Burner.",
-    "ja_jp": "自動で燃料を補給する場合は、ポンプを使い、配管をブレイズバーナーの側面に接続します。",
-    "zh_cn": "要自动补充燃料，请使用泵，并将气体管道接到烈焰人燃烧室侧面。"
+    "en_us": "For automatic refueling, use a pump and connect the gas pipe to a side or the bottom of the Blaze Burner.",
+    "ja_jp": "自動で燃料を補給する場合は、ポンプを使い、配管をブレイズバーナーの側面か底面に接続します。",
+    "zh_cn": "要自动补充燃料，请使用泵，并将气体管道接到烈焰人燃烧室的侧面或底面。"
   },
   "entrained_gasifier.layers": {
     "en_us": "The top layer is the lid with the charging hatch and a gas outlet flange. Layers 2 to 5 are the brick-lined reaction bed with sight glasses.",

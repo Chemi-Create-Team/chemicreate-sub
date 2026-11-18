@@ -8,6 +8,7 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
 import net.createplant.registry.CEProcessFluids;
+import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -35,7 +36,7 @@ public final class WaterGasBurner {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, AllBlockEntityTypes.HEATER.get(),
-            (burner, side) -> side != null && side.getAxis().isHorizontal() && available(burner) ? new Inlet(burner) : null);
+            (burner, side) -> side != null && side != Direction.UP && available(burner) ? new Inlet(burner) : null);
     }
 
     private static boolean available(BlazeBurnerBlockEntity burner) {
