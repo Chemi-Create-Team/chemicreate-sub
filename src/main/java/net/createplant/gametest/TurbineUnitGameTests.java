@@ -167,6 +167,31 @@ public final class TurbineUnitGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "test_fractionation", timeoutTicks = 120)
+    public static void completeStagesStayFormedWhileTheWorldRuns(GameTestHelper h) {
+        var high = stage(h, TurbineUnit.Stage.HIGH, Direction.Axis.X, new BlockPos(2, 3, 4));
+        var low = stage(h, TurbineUnit.Stage.LOW, Direction.Axis.X, new BlockPos(2, 9, 16));
+        h.setBlock(low.get(3).cell(0, 0, -5), Blocks.STONE);
+        h.runAfterDelay(80, () -> {
+            for (var units : List.of(high, low)) {
+                var broken = units.stream().filter(unit -> !TurbineUnit.intact(h.getLevel(), unit)).findFirst();
+                h.assertTrue(broken.isEmpty(), "A placed section keeps its blocks: " + broken.map(unit -> TurbineUnit.states(unit).entrySet().stream()
+                    .filter(entry -> !h.getLevel().getBlockState(entry.getKey()).equals(entry.getValue()))
+                    .map(entry -> entry.getKey().subtract(unit.origin()) + " " + h.getLevel().getBlockState(entry.getKey()) + " != " + entry.getValue()).findFirst().orElse("layout")).orElse(""));
+                h.assertTrue(rotor(h, units.getFirst()).unitAssembly().size() == units.getFirst().stage().sections(), "The whole stage stays formed: " + units.getFirst().stage());
+                for (var unit : units) for (var pos : unit.volume()) {
+                    if (!(h.getLevel().getBlockEntity(pos) instanceof net.createplant.block.entity.HighPressureTurbinePartBlockEntity part)) continue;
+                    var lookup = h.getLevel().registryAccess();
+                    var client = new net.createplant.block.entity.HighPressureTurbinePartBlockEntity(pos, part.getBlockState());
+                    client.handleUpdateTag(part.getUpdateTag(lookup), lookup);
+                    h.assertTrue(unit.equals(client.unitLayout()) && part.getUpdatePacket() != null,
+                        "A client receives each casing's section, so it sees the stage formed: " + unit.stage());
+                }
+            }
+            h.succeed();
+        });
+    }
+
     @GameTest(template = "test_fractionation")
     public static void sectionLoadingPreservesAndRepairsOwnedCasingOffsets(GameTestHelper h) {
         for (var kind : TurbineUnit.Stage.values())

@@ -18,9 +18,15 @@ public class HighPressureTurbinePartBlockEntity extends BlockEntity implements I
 
     private net.createplant.block.TurbineUnit.Layout unit;
     public net.createplant.block.TurbineUnit.Layout unitLayout(){return unit;}
-    public void setUnitLayout(net.createplant.block.TurbineUnit.Layout layout){unit=layout;setChanged();}
+    public void setUnitLayout(net.createplant.block.TurbineUnit.Layout layout){
+        unit=layout;setChanged();
+        if(level!=null && !level.isClientSide())level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+    }
     @Override protected void saveAdditional(net.minecraft.nbt.CompoundTag tag,net.minecraft.core.HolderLookup.Provider registries){super.saveAdditional(tag,registries);net.createplant.block.TurbineUnit.writeLayout(tag,unit);}
     @Override protected void loadAdditional(net.minecraft.nbt.CompoundTag tag,net.minecraft.core.HolderLookup.Provider registries){super.loadAdditional(tag,registries);unit=net.createplant.block.TurbineUnit.readLayout(tag);}
+    /** Clients need the section too: the rotor counts a stage's sections from its casings to show the stage formed and turning. */
+    @Override public net.minecraft.nbt.CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries){var tag=super.getUpdateTag(registries);net.createplant.block.TurbineUnit.writeLayout(tag,unit);return tag;}
+    @Override public net.minecraft.network.protocol.Packet<net.minecraft.network.protocol.game.ClientGamePacketListener> getUpdatePacket(){return net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket.create(this);}
 
     private final net.neoforged.neoforge.fluids.capability.IFluidHandler drainPort=new net.neoforged.neoforge.fluids.capability.IFluidHandler(){
         public int getTanks(){return 1;}public int getTankCapacity(int i){return rotor()==null ? 0 : rotor().liquidPort().getTankCapacity(i);}
