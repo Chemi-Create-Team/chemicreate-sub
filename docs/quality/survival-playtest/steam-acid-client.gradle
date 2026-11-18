@@ -1,0 +1,8 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File(System.getProperty('playtestDir', '/tmp/createplant-steam-acid-client')))
+            systemProperty 'createplant.steamAcidPlaytest', 'true'
+        }
+    }
+}

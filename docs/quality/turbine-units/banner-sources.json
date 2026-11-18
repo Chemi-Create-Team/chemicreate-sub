@@ -1,0 +1,20 @@
+[
+  {
+    "banner": "equipment",
+    "source_commit": "1a1708280b7e7364710debe890df187d3bcaf720",
+    "source_file": "src/main/resources/assets/create_refinery_n_reactors/textures/gui/creative/equipment.png",
+    "sha256": "a54248f7a98900960a587bcab1a14c4d1255ca0fb3d1bdf3d764957ab9f66e74"
+  },
+  {
+    "banner": "materials",
+    "source_commit": "b6188aaa2e8d0389df501fdd6eb8bdf2ba8c076f",
+    "source_file": "src/main/resources/assets/create_refinery_n_reactors/textures/gui/creative/metals.png",
+    "sha256": "0cd657ca7022e6971e6e0be85907855ffad543dc4804d5cf656a6fb436e86183"
+  },
+  {
+    "banner": "construction",
+    "source_commit": "b6188aaa2e8d0389df501fdd6eb8bdf2ba8c076f",
+    "source_file": "src/main/resources/assets/create_refinery_n_reactors/textures/gui/creative/reprocessing.png",
+    "sha256": "74bb806987ce6305fc7eae452b6156076c444dce7404ce7bfc367eb311b8a571"
+  }
+]

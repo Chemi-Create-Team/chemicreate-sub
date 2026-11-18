@@ -1,0 +1,9 @@
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :jarJar NO-SOURCE
+> Task :jar
+> Task :assemble
+BUILD SUCCESSFUL in 37s
+Only equipment, materials and construction PNGs are packaged; all three hashes match.

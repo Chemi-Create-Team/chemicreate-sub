@@ -1,0 +1,14 @@
+{
+  "translationScope": "pulsation_tube",
+  "runtimeTranslations": "passed",
+  "ponderRender": "checked",
+  "renderTargets": [
+    "gas_receiver@pulsation_tube"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_refinery_n_reactors:pulsation_tube"
+  ]
+}

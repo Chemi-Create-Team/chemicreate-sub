@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "create_refinery_n_reactors:block/plant_systems/natural_draft_cooling_tower"
+    }
+  }
+}

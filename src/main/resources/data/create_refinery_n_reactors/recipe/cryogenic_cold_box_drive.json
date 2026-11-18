@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SCS",
+    "PMH",
+    "SGS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "M": {
+      "item": "create:shaft"
+    },
+    "H": {
+      "item": "create_refinery_n_reactors:jacketed_pipe"
+    },
+    "G": {
+      "item": "create:cogwheel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cryogenic_cold_box_drive"
+  }
+}

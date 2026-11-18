@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-24",
+  "base_commit": "777c1b61e18bcd60b8f3714c744e5488715d1a08",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10-281",
+  "build": "passed",
+  "server_tests": {
+    "with_jei": 132,
+    "without_jei": 132,
+    "new_equipment_tests": 8
+  },
+  "native_client": {
+    "runtime_ponder_translations": 51,
+    "value_settings_screens": [
+      "heater",
+      "exchanger"
+    ],
+    "temperature_step_celsius": 10,
+    "input": "native RightClickBlock event and native six-tick hold counter"
+  },
+  "resource_validators": 10,
+  "existing_artwork_changed": "9 heat-exchanger models; completed compressor/cooler/vessel/distillation artwork unchanged",
+  "jar_bytes": 2576641,
+  "sha256": "c014ad1e71d1ad279518c5609e17e472952b99239ba54f73a1c2f58040542124",
+  "zip_bytes": 2191555,
+  "not_measured": [
+    "live multiplayer",
+    "large modpack endurance",
+    "actual chunk unload/reload",
+    "TPS",
+    "MSPT",
+    "CPU",
+    "memory",
+    "GC",
+    "FPS"
+  ],
+  "compatibility": "legacy reactor_preheater block/entity IDs and saved input/output are maintained; the old preheater role now requires an external hot stream"
+}

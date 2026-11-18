@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:rubber_gasket",
+    "count": 2
+  }
+}

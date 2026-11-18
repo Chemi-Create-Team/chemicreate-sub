@@ -1,0 +1,49 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:book"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "id": "minecraft:written_book",
+    "count": 1,
+    "components": {
+      "minecraft:written_book_content": {
+        "title": "Refinery 'n' Reactors",
+        "author": "Refinery 'n' Reactors",
+        "resolved": true,
+        "pages": [
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_0\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_1\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_2\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_3\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_4\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_5\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_6\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_7\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_8\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_9\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_10\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_11\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_12\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_13\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_14\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_15\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_16\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_17\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_18\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_19\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_20\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_21\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_22\"}"
+        ]
+      },
+      "minecraft:custom_name": "{\"translate\": \"book.create_refinery_n_reactors.manual\", \"italic\": false}"
+    }
+  }
+}

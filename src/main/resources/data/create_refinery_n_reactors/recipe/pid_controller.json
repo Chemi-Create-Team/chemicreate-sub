@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ETE",
+    "RCR",
+    "SLS"
+  ],
+  "key": {
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "T": {
+      "item": "create:precision_mechanism"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "create:brass_casing"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "L": {
+      "item": "minecraft:lever"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:pid_controller",
+    "count": 1
+  }
+}

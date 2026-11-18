@@ -1,0 +1,25 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:liquid_nitrogen",
+      "amount": 50
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:ice"
+    },
+    {
+      "id": "create_refinery_n_reactors:nitrogen_gas",
+      "amount": 32300
+    }
+  ],
+  "processing_time": 100
+}

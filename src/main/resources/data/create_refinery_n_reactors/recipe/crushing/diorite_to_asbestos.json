@@ -1,0 +1,18 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "minecraft:diorite"
+    }
+  ],
+  "processing_time": 150,
+  "results": [
+    {
+      "id": "minecraft:gravel"
+    },
+    {
+      "chance": 0.1,
+      "id": "create_refinery_n_reactors:asbestos"
+    }
+  ]
+}

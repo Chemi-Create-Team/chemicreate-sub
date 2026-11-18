@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:stainless_steel_encased_pipe",
+    "create_refinery_n_reactors:charred_wood"
+  ]
+}

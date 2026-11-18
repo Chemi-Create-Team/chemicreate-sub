@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:fertilizers/ammonium_nitrate"
+    },
+    {
+      "item": "minecraft:charcoal"
+    },
+    {
+      "tag": "c:dusts/sulfur"
+    }
+  ],
+  "result": {
+    "id": "minecraft:gunpowder",
+    "count": 2
+  }
+}

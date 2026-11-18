@@ -1,0 +1,27 @@
+{
+  "baseline": "0c826d34",
+  "block_state_model_variants_matching_ordinary_horizontal_tank": 48,
+  "item_model_matches": true,
+  "cross_sections": [
+    1,
+    2,
+    3
+  ],
+  "axes": [
+    "X",
+    "Z"
+  ],
+  "minimum_length": 3,
+  "new_size_tests": 4,
+  "related_game_tests": 16,
+  "passed_related_game_tests": 16,
+  "build": "passed",
+  "ci_tests": 15,
+  "native_ponder_scenes": 131,
+  "native_boiler_images": 3,
+  "native_reference_images": 1,
+  "renderer": "NVIDIA GeForce RTX 4060",
+  "old_open_frame_models_removed": 4,
+  "unused_tube_textures_removed": 1,
+  "implementation_commit": "4c75764263414aea9f6351d11aed77c0157b0a6e"
+}

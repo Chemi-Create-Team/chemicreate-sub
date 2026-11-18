@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "A",
+    "E"
+  ],
+  "key": {
+    "A": {
+      "item": "create:analog_lever"
+    },
+    "E": {
+      "item": "create:electron_tube"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:control_rod_controller",
+    "count": 1
+  }
+}

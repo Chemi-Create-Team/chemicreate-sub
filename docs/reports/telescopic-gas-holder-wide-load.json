@@ -1,0 +1,1 @@
+{"holders":16,"width":7,"height":2,"collision_bodies_each":3,"gas_mB":6272000,"idle":{"samples":400,"mean_loop_ms":0.662949,"p95_loop_ms":0.697127,"max_loop_ms":48.532052},"moving":{"samples":800,"mean_loop_ms":0.500147,"p95_loop_ms":0.661239,"max_loop_ms":14.667741}}

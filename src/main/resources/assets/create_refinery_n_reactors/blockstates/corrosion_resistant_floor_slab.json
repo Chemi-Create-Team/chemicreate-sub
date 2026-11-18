@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "create_refinery_n_reactors:block/corrosion_resistant_floor_slab"
+    },
+    "type=top": {
+      "model": "create_refinery_n_reactors:block/corrosion_resistant_floor_slab_top"
+    },
+    "type=double": {
+      "model": "create_refinery_n_reactors:block/corrosion_resistant_floor"
+    }
+  }
+}

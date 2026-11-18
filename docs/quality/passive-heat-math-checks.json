@@ -1,0 +1,14 @@
+{
+  "scope": "standalone mathematical sanity checks; not a Minecraft/Create integration test",
+  "checks": {
+    "hot_and_cold_approach_ambient_without_overshoot": true,
+    "zero_conductance_exactly_preserves_float": true,
+    "time_batching_matches_small_steps": true,
+    "longer_pipe_cools_more": true,
+    "higher_throughput_cools_less": true,
+    "larger_heat_capacity_cools_less": true,
+    "segment_composition": true
+  },
+  "coefficient_status": "illustrative, not tuned gameplay values",
+  "runtime_tests": "not run; no implementation changes"
+}

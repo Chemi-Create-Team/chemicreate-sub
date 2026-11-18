@@ -1,0 +1,47 @@
+{
+  "textures": {
+    "top": "create_refinery_n_reactors:block/tank/reaction_tower_top",
+    "side": "create_refinery_n_reactors:block/reactor/steel",
+    "particle": "create_refinery_n_reactors:block/reactor/steel"
+  },
+  "elements": [
+    {
+      "from": [
+        -3,
+        14,
+        -3
+      ],
+      "to": [
+        19,
+        16,
+        19
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#side"
+        },
+        "north": {
+          "texture": "#side"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "create_refinery_n_reactors:industrial_delivery",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "createdieselgenerators:diesel",
+      "amount": 8000
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:emerald",
+      "count": 4
+    }
+  ],
+  "processing_time": 200
+}

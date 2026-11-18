@@ -1,0 +1,15 @@
+{
+  "type": "create_refinery_n_reactors:entrained_gasification",
+  "ingredient": {
+    "item": "create_refinery_n_reactors:carbon_powder"
+  },
+  "steam": {
+    "tag": "create_refinery_n_reactors:gasifier_steam",
+    "amount": 250
+  },
+  "duration": 40,
+  "gas_result": {
+    "fluid": "create_refinery_n_reactors:water_gas",
+    "amount": 500
+  }
+}

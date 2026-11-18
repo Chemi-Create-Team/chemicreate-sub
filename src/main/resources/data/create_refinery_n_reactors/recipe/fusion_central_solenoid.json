@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "RER",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "E": {
+      "item": "create:electron_tube"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_central_solenoid",
+    "count": 8
+  }
+}

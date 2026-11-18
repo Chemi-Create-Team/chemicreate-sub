@@ -1,0 +1,9 @@
+{
+  "register": "CEWaterTreatment.register(modEventBus);",
+  "register_before": "CEWorldFluids.register(modEventBus);",
+  "creative_materials": [
+    "CEWaterTreatment.FLOCCULANT",
+    "CEWaterTreatment.FILTER_MEDIUM",
+    "CEWaterTreatment.SLUDGE"
+  ]
+}

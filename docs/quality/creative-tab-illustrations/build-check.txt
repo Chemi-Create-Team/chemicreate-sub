@@ -1,0 +1,22 @@
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :jarJar NO-SOURCE
+> Task :jar
+> Task :assemble
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :fluidPhaseTest
+FluidPhase: 25 checks passed
+> Task :haberBoschProcessTest
+HaberBoschProcess: 1019 checks passed
+> Task :reactorControlTest
+Reactor control tests passed
+> Task :reactorPhysicsTest
+ReactorPhysicsTest: 1668 checks passed (delayed rise period 5.7 s)
+> Task :test
+> Task :check
+> Task :build
+BUILD SUCCESSFUL in 1m 43s

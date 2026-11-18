@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SBS",
+    "P P",
+    "SBS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "B": {
+      "tag": "c:plates/brass"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:reinforced_pipe"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:pressure_tank",
+    "count": 1
+  }
+}

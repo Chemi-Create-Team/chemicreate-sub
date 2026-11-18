@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "Q Q",
+    "AIA",
+    "Q Q"
+  ],
+  "key": {
+    "Q": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "A": {
+      "tag": "c:ingots/aluminum"
+    },
+    "I": {
+      "item": "create_refinery_n_reactors:iron_catalyst"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cracking_catalyst",
+    "count": 1
+  }
+}

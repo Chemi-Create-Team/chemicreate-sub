@@ -1,0 +1,21 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:titanium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:titanium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:nickel_oxide"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:nickel_titanium_yellow",
+      "count": 3
+    }
+  ]
+}

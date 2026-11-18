@@ -1,0 +1,17 @@
+{
+  "type": "create:deploying",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:industrial_concrete"
+    },
+    {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:corrosion_resistant_floor",
+      "count": 1
+    }
+  ]
+}

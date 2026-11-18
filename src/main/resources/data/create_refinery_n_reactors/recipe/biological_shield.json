@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RSR",
+    "SRS",
+    "RSR"
+  ],
+  "key": {
+    "R": {
+      "item": "create_refinery_n_reactors:serpentinite"
+    },
+    "S": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:biological_shield",
+    "count": 4
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TGT",
+    "GSG",
+    "TGT"
+  ],
+  "key": {
+    "T": {
+      "item": "create_refinery_n_reactors:titanium_sheet"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:spent_blanket_cartridge"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:irradiation_cartridge",
+    "count": 1
+  }
+}

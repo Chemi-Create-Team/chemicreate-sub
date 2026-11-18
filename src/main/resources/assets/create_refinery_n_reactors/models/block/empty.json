@@ -1,0 +1,7 @@
+{
+  "textures": {
+    "particle": "minecraft:block/iron_block",
+    "high_pressure_turbine_glass": "minecraft:block/glass"
+  },
+  "elements": []
+}

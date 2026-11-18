@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "create_refinery_n_reactors:block/industrial_concrete_slab"
+    },
+    "type=top": {
+      "model": "create_refinery_n_reactors:block/industrial_concrete_slab_top"
+    },
+    "type=double": {
+      "model": "create_refinery_n_reactors:block/industrial_concrete"
+    }
+  }
+}

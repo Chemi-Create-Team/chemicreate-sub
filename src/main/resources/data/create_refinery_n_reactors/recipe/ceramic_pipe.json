@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "blocks",
+  "ingredient": {
+    "item": "create_refinery_n_reactors:unfired_ceramic_pipe"
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:ceramic_pipe"
+  },
+  "experience": 0.1,
+  "cookingtime": 200
+}

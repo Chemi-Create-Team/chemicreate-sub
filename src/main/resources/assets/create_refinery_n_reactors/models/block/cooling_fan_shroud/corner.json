@@ -1,0 +1,278 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "wall": "create_refinery_n_reactors:block/chemical/fan_shroud_wall",
+    "inner": "create_refinery_n_reactors:block/chemical/fan_shroud_inner",
+    "deck": "create_refinery_n_reactors:block/chemical/fan_deck_corner",
+    "particle": "create_refinery_n_reactors:block/chemical/fan_shroud_wall"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        13,
+        3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            3,
+            16,
+            16
+          ],
+          "texture": "#wall",
+          "cullface": "north"
+        },
+        "west": {
+          "uv": [
+            0,
+            3,
+            3,
+            16
+          ],
+          "texture": "#wall",
+          "cullface": "west"
+        },
+        "south": {
+          "uv": [
+            0,
+            3,
+            16,
+            16
+          ],
+          "texture": "#inner"
+        },
+        "down": {
+          "uv": [
+            0,
+            13,
+            16,
+            16
+          ],
+          "texture": "#inner",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        3
+      ],
+      "to": [
+        3,
+        13,
+        16
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            3,
+            3,
+            16,
+            16
+          ],
+          "texture": "#wall",
+          "cullface": "west"
+        },
+        "east": {
+          "uv": [
+            0,
+            3,
+            13,
+            16
+          ],
+          "texture": "#inner"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3,
+            13
+          ],
+          "texture": "#inner",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        7,
+        13,
+        7
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            3,
+            3,
+            7,
+            16
+          ],
+          "texture": "#inner"
+        },
+        "east": {
+          "uv": [
+            9,
+            3,
+            13,
+            16
+          ],
+          "texture": "#inner"
+        },
+        "down": {
+          "uv": [
+            3,
+            9,
+            7,
+            13
+          ],
+          "texture": "#inner",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        13,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        4
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            4
+          ],
+          "texture": "#deck",
+          "cullface": "up"
+        },
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ],
+          "texture": "#wall",
+          "cullface": "north"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4,
+            3
+          ],
+          "texture": "#wall",
+          "cullface": "west"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ],
+          "texture": "#inner"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        13,
+        4
+      ],
+      "to": [
+        4,
+        16,
+        16
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            4,
+            4,
+            16
+          ],
+          "texture": "#deck",
+          "cullface": "up"
+        },
+        "west": {
+          "uv": [
+            4,
+            0,
+            16,
+            3
+          ],
+          "texture": "#wall",
+          "cullface": "west"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            12,
+            1
+          ],
+          "texture": "#inner"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        13,
+        4
+      ],
+      "to": [
+        16,
+        15,
+        16
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            4,
+            4,
+            16,
+            16
+          ],
+          "texture": "#deck"
+        },
+        "down": {
+          "uv": [
+            4,
+            0,
+            16,
+            12
+          ],
+          "texture": "#inner"
+        }
+      }
+    }
+  ]
+}

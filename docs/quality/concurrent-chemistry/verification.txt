@@ -1,0 +1,21 @@
+Concurrent chemistry test verification, 2026-11-12
+Java 21; JAVA_TOOL_OPTIONS=-XX:ActiveProcessorCount=2
+
+Before fix: simultaneous trial
+[22:00:08] [Server thread/INFO] [ne.cr.ga.ConcurrentChemistryGameTests/]: CONCURRENT CHEMISTRY tick=6000 products={nitric_acid=800, nitric_oxide=400, sulfuric_acid=1000, hydrochloric_acid=4000, depleted_uranium_hexafluoride=7000, hydrogen_fluoride=3000} powder=4
+[22:00:08] [Server thread/ERROR] [minecraft/LogTestReporter]: fourproductionlinesruntogether failed at 8236396, -60, -11273399! Complete four-campaign outputs: {nitric_acid=800, nitric_oxide=400, sulfuric_acid=1000, hydrochloric_acid=4000, depleted_uranium_hexafluoride=7000, hydrogen_fluoride=3000} powder=4
+[22:00:08] [Server thread/INFO] [minecraft/GameTestServer]: ========= 1 GAME TESTS COMPLETE IN 3.940 s ======================
+[22:00:08] [Server thread/INFO] [minecraft/GameTestServer]: 1 required tests failed :(
+BUILD FAILED in 31s
+
+After fix: build + simultaneous trial
+[22:01:51] [Server thread/INFO] [ne.cr.ga.ConcurrentChemistryGameTests/]: CONCURRENT CHEMISTRY tick=6000 products={nitric_acid=800, nitric_oxide=400, sulfuric_acid=2000, hydrochloric_acid=4000, depleted_uranium_hexafluoride=7000, hydrogen_fluoride=3000} powder=4
+[22:01:51] [Server thread/INFO] [minecraft/GameTestServer]: ========= 1 GAME TESTS COMPLETE IN 4.275 s ======================
+[22:01:51] [Server thread/INFO] [minecraft/GameTestServer]: All 1 required tests passed :)
+BUILD SUCCESSFUL in 34s
+
+Final source: simultaneous trial + 68 related tests
+[22:04:08] [Server thread/INFO] [ne.cr.ga.ConcurrentChemistryGameTests/]: CONCURRENT CHEMISTRY tick=6000 products={nitric_acid=800, nitric_oxide=400, sulfuric_acid=2000, hydrochloric_acid=4000, depleted_uranium_hexafluoride=7000, hydrogen_fluoride=3000} powder=4
+[22:04:10] [Server thread/INFO] [minecraft/GameTestServer]: ========= 69 GAME TESTS COMPLETE IN 12.07 s ======================
+[22:04:10] [Server thread/INFO] [minecraft/GameTestServer]: All 69 required tests passed :)
+BUILD SUCCESSFUL in 37s

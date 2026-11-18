@@ -1,0 +1,64 @@
+{
+  "serverTests": [
+    {
+      "classes": [
+        "ProcessRemovalGameTests",
+        "OreLeachingGameTests",
+        "SurvivalReachabilityGameTests",
+        "AgitatorDriveGameTests",
+        "ElectricUtilityGameTests",
+        "CircuitGameTests",
+        "CubicPressGameTests",
+        "TankGradeGameTests",
+        "PlantTutorialGameTests",
+        "SeasonalPlantGameTests"
+      ],
+      "passed": 33
+    },
+    {
+      "classes": [
+        "TubularBoilerFlowGameTests",
+        "TubularBoilerSizeGameTests",
+        "ThermalControlGameTests"
+      ],
+      "passed": 13
+    }
+  ],
+  "creativeFluidBuckets": {
+    "sourceFluids": 99,
+    "missing": [],
+    "newGasBuckets": 28,
+    "gases": 44,
+    "liquids": 55
+  },
+  "jei": {
+    "withoutRecipe": [],
+    "sourceFluidNames": 121,
+    "nonJapanese": []
+  },
+  "languageKeys": 4836,
+  "ponderHeaders": 145,
+  "nativeCreative": {
+    "catalogue": "passed",
+    "realItems": 384,
+    "nativeSearch": "passed",
+    "nativeScroll": "passed",
+    "newSteamBucketIcons": "observed",
+    "gpu": "NVIDIA RTX 4060 / 595.99.02",
+    "shutdown": "After CREATIVE TABS PASSED and saving, EGL crashed with SIGSEGV; runClient exit 134."
+  },
+  "limits": [
+    "The existing contaminated_gas source has no survival producer; its requested bucket is creative-only.",
+    "Global visual-identity validation reaches an existing material-classification mismatch for nine unrelated items. New bucket registration, silhouette and uniqueness checks pass.",
+    "Large-scale performance, external rendering mods and sound were not validated."
+  ],
+  "cleanBuild": "passed",
+  "reactorPhysicsChecks": 1668,
+  "reactorControlTest": "passed",
+  "jar": {
+    "filename": "create-refinery-n-reactors-0.1.0-process-cleanup.jar",
+    "bytes": 6668021,
+    "sha256": "b0824ca798e3551d2dc49c5875dcdee0c9f3a7b0e1de616c3790e8765646f0ce",
+    "retiredClassesAndAssets": []
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "create_refinery_n_reactors:block/reactor/rbmk/shield_outlet",
+    "particle": "create_refinery_n_reactors:block/reactor/rbmk/shield_outlet"
+  }
+}

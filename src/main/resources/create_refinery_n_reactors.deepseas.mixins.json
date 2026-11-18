@@ -1,0 +1,13 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "net.createplant.mixin.deepseas",
+  "plugin": "net.createplant.mixin.deepseas.DeepSeasMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "HullStrengthConfigMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

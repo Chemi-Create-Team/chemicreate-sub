@@ -1,0 +1,39 @@
+{
+  "staticLocales": {
+    "en_us": 4566,
+    "ja_jp": 4566,
+    "zh_cn": 4566
+  },
+  "runtimeScenes": 140,
+  "catalogScenes": 96,
+  "manufacturingChapters": 31,
+  "manufacturingFamilies": 27,
+  "gameTests": {
+    "required": 8,
+    "passed": 8
+  },
+  "native": {
+    "client-all-scenes.json": {
+      "scenes": 140,
+      "renderTargets": 140,
+      "runtimeTranslations": "passed",
+      "ponderRender": "checked"
+    },
+    "client-views.json": {
+      "scenes": 140,
+      "renderTargets": 12,
+      "runtimeTranslations": "passed",
+      "ponderRender": "checked"
+    },
+    "client-final-views.json": {
+      "scenes": 140,
+      "renderTargets": 4,
+      "runtimeTranslations": "passed",
+      "ponderRender": "checked"
+    }
+  },
+  "renderer": "NVIDIA GeForce RTX 4060 / NVIDIA 595.99.02",
+  "clientExit": "After CLIENT QUALITY PASSED, SIGSEGV inside libEGL_nvidia.so.0; Gradle exit 134",
+  "screenshots": 12,
+  "audio": "SoundSystem unavailable; no listening check"
+}

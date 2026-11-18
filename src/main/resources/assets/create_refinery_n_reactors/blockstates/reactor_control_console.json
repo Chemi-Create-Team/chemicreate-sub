@@ -1,0 +1,84 @@
+{
+  "variants": {
+    "facing=north,section=0": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_0",
+      "y": 0
+    },
+    "facing=east,section=0": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_0",
+      "y": 90
+    },
+    "facing=south,section=0": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_0",
+      "y": 180
+    },
+    "facing=west,section=0": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_0",
+      "y": 270
+    },
+    "facing=north,section=1": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_1",
+      "y": 0
+    },
+    "facing=east,section=1": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_1",
+      "y": 90
+    },
+    "facing=south,section=1": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_1",
+      "y": 180
+    },
+    "facing=west,section=1": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_1",
+      "y": 270
+    },
+    "facing=north,section=2": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_2",
+      "y": 0
+    },
+    "facing=east,section=2": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_2",
+      "y": 90
+    },
+    "facing=south,section=2": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_2",
+      "y": 180
+    },
+    "facing=west,section=2": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_2",
+      "y": 270
+    },
+    "facing=north,section=3": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_3",
+      "y": 0
+    },
+    "facing=east,section=3": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_3",
+      "y": 90
+    },
+    "facing=south,section=3": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_3",
+      "y": 180
+    },
+    "facing=west,section=3": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_3",
+      "y": 270
+    },
+    "facing=north,section=4": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_4",
+      "y": 0
+    },
+    "facing=east,section=4": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_4",
+      "y": 90
+    },
+    "facing=south,section=4": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_4",
+      "y": 180
+    },
+    "facing=west,section=4": {
+      "model": "create_refinery_n_reactors:block/reactor_console/section_4",
+      "y": 270
+    }
+  }
+}

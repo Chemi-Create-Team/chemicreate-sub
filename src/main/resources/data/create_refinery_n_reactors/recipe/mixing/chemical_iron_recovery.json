@@ -1,0 +1,28 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "c:raw_materials/iron"
+    },
+    {
+      "tag": "c:raw_materials/iron"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:nitric_acid",
+      "amount": 250
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 250
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:iron_ingot",
+      "count": 3
+    }
+  ],
+  "heatRequirement": "heated"
+}

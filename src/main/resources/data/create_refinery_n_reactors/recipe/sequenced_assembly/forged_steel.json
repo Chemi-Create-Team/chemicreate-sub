@@ -1,0 +1,60 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "create_refinery_n_reactors:pig_iron"
+  },
+  "loops": 3,
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:steel_ingot"
+    }
+  ],
+  "transitional_item": {
+    "id": "create_refinery_n_reactors:heated_unfinished_steel"
+  },
+  "sequence": [
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "create_refinery_n_reactors:heated_unfinished_steel"
+        }
+      ],
+      "results": [
+        {
+          "id": "create_refinery_n_reactors:heated_unfinished_steel"
+        }
+      ]
+    },
+    {
+      "type": "create_refinery_n_reactors:forging_blasting",
+      "ingredients": [
+        {
+          "item": "create_refinery_n_reactors:heated_unfinished_steel"
+        }
+      ],
+      "results": [
+        {
+          "id": "create_refinery_n_reactors:heated_unfinished_steel"
+        }
+      ]
+    },
+    {
+      "type": "create_refinery_n_reactors:forging_pressing",
+      "ingredients": [
+        {
+          "item": "create_refinery_n_reactors:heated_unfinished_steel"
+        }
+      ],
+      "results": [
+        {
+          "id": "create_refinery_n_reactors:heated_unfinished_steel"
+        },
+        {
+          "id": "create_refinery_n_reactors:steel_slag",
+          "chance": 0.25
+        }
+      ]
+    }
+  ]
+}

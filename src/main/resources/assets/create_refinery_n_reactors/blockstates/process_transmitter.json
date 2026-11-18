@@ -1,0 +1,372 @@
+{
+  "variants": {
+    "facing=north,indicator=0": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_0"
+    },
+    "facing=south,indicator=0": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_0",
+      "y": 180
+    },
+    "facing=west,indicator=0": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_0",
+      "y": 270
+    },
+    "facing=east,indicator=0": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_0",
+      "y": 90
+    },
+    "facing=up,indicator=0": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_0",
+      "x": 270
+    },
+    "facing=down,indicator=0": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_0",
+      "x": 90
+    },
+    "facing=north,indicator=1": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_1"
+    },
+    "facing=south,indicator=1": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_1",
+      "y": 180
+    },
+    "facing=west,indicator=1": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_1",
+      "y": 270
+    },
+    "facing=east,indicator=1": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_1",
+      "y": 90
+    },
+    "facing=up,indicator=1": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_1",
+      "x": 270
+    },
+    "facing=down,indicator=1": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_1",
+      "x": 90
+    },
+    "facing=north,indicator=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_2"
+    },
+    "facing=south,indicator=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_2",
+      "y": 180
+    },
+    "facing=west,indicator=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_2",
+      "y": 270
+    },
+    "facing=east,indicator=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_2",
+      "y": 90
+    },
+    "facing=up,indicator=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_2",
+      "x": 270
+    },
+    "facing=down,indicator=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_2",
+      "x": 90
+    },
+    "facing=north,indicator=3": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_3"
+    },
+    "facing=south,indicator=3": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_3",
+      "y": 180
+    },
+    "facing=west,indicator=3": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_3",
+      "y": 270
+    },
+    "facing=east,indicator=3": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_3",
+      "y": 90
+    },
+    "facing=up,indicator=3": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_3",
+      "x": 270
+    },
+    "facing=down,indicator=3": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_3",
+      "x": 90
+    },
+    "facing=north,indicator=4": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_4"
+    },
+    "facing=south,indicator=4": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_4",
+      "y": 180
+    },
+    "facing=west,indicator=4": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_4",
+      "y": 270
+    },
+    "facing=east,indicator=4": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_4",
+      "y": 90
+    },
+    "facing=up,indicator=4": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_4",
+      "x": 270
+    },
+    "facing=down,indicator=4": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_4",
+      "x": 90
+    },
+    "facing=north,indicator=5": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_5"
+    },
+    "facing=south,indicator=5": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_5",
+      "y": 180
+    },
+    "facing=west,indicator=5": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_5",
+      "y": 270
+    },
+    "facing=east,indicator=5": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_5",
+      "y": 90
+    },
+    "facing=up,indicator=5": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_5",
+      "x": 270
+    },
+    "facing=down,indicator=5": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_5",
+      "x": 90
+    },
+    "facing=north,indicator=6": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_6"
+    },
+    "facing=south,indicator=6": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_6",
+      "y": 180
+    },
+    "facing=west,indicator=6": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_6",
+      "y": 270
+    },
+    "facing=east,indicator=6": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_6",
+      "y": 90
+    },
+    "facing=up,indicator=6": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_6",
+      "x": 270
+    },
+    "facing=down,indicator=6": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_6",
+      "x": 90
+    },
+    "facing=north,indicator=7": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_7"
+    },
+    "facing=south,indicator=7": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_7",
+      "y": 180
+    },
+    "facing=west,indicator=7": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_7",
+      "y": 270
+    },
+    "facing=east,indicator=7": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_7",
+      "y": 90
+    },
+    "facing=up,indicator=7": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_7",
+      "x": 270
+    },
+    "facing=down,indicator=7": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_7",
+      "x": 90
+    },
+    "facing=north,indicator=8": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_8"
+    },
+    "facing=south,indicator=8": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_8",
+      "y": 180
+    },
+    "facing=west,indicator=8": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_8",
+      "y": 270
+    },
+    "facing=east,indicator=8": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_8",
+      "y": 90
+    },
+    "facing=up,indicator=8": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_8",
+      "x": 270
+    },
+    "facing=down,indicator=8": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_8",
+      "x": 90
+    },
+    "facing=north,indicator=9": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_9"
+    },
+    "facing=south,indicator=9": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_9",
+      "y": 180
+    },
+    "facing=west,indicator=9": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_9",
+      "y": 270
+    },
+    "facing=east,indicator=9": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_9",
+      "y": 90
+    },
+    "facing=up,indicator=9": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_9",
+      "x": 270
+    },
+    "facing=down,indicator=9": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_9",
+      "x": 90
+    },
+    "facing=north,indicator=10": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_10"
+    },
+    "facing=south,indicator=10": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_10",
+      "y": 180
+    },
+    "facing=west,indicator=10": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_10",
+      "y": 270
+    },
+    "facing=east,indicator=10": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_10",
+      "y": 90
+    },
+    "facing=up,indicator=10": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_10",
+      "x": 270
+    },
+    "facing=down,indicator=10": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_10",
+      "x": 90
+    },
+    "facing=north,indicator=11": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_11"
+    },
+    "facing=south,indicator=11": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_11",
+      "y": 180
+    },
+    "facing=west,indicator=11": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_11",
+      "y": 270
+    },
+    "facing=east,indicator=11": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_11",
+      "y": 90
+    },
+    "facing=up,indicator=11": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_11",
+      "x": 270
+    },
+    "facing=down,indicator=11": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_11",
+      "x": 90
+    },
+    "facing=north,indicator=12": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_12"
+    },
+    "facing=south,indicator=12": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_12",
+      "y": 180
+    },
+    "facing=west,indicator=12": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_12",
+      "y": 270
+    },
+    "facing=east,indicator=12": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_12",
+      "y": 90
+    },
+    "facing=up,indicator=12": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_12",
+      "x": 270
+    },
+    "facing=down,indicator=12": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_12",
+      "x": 90
+    },
+    "facing=north,indicator=13": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_13"
+    },
+    "facing=south,indicator=13": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_13",
+      "y": 180
+    },
+    "facing=west,indicator=13": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_13",
+      "y": 270
+    },
+    "facing=east,indicator=13": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_13",
+      "y": 90
+    },
+    "facing=up,indicator=13": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_13",
+      "x": 270
+    },
+    "facing=down,indicator=13": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_13",
+      "x": 90
+    },
+    "facing=north,indicator=14": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_14"
+    },
+    "facing=south,indicator=14": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_14",
+      "y": 180
+    },
+    "facing=west,indicator=14": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_14",
+      "y": 270
+    },
+    "facing=east,indicator=14": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_14",
+      "y": 90
+    },
+    "facing=up,indicator=14": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_14",
+      "x": 270
+    },
+    "facing=down,indicator=14": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_14",
+      "x": 90
+    },
+    "facing=north,indicator=15": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_15"
+    },
+    "facing=south,indicator=15": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_15",
+      "y": 180
+    },
+    "facing=west,indicator=15": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_15",
+      "y": 270
+    },
+    "facing=east,indicator=15": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_15",
+      "y": 90
+    },
+    "facing=up,indicator=15": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_15",
+      "x": 270
+    },
+    "facing=down,indicator=15": {
+      "model": "create_refinery_n_reactors:block/plant_systems/process_transmitter_15",
+      "x": 90
+    }
+  }
+}

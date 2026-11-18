@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/fusion/fusion_helium_in_port"
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/fusion/fusion_helium_in_port",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/fusion/fusion_helium_in_port",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/fusion/fusion_helium_in_port",
+      "y": 270
+    }
+  }
+}

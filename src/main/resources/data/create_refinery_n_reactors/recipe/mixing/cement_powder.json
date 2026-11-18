@@ -1,0 +1,39 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:ground_clinker"
+    },
+    {
+      "item": "create_refinery_n_reactors:gypsum"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:cement_powder",
+      "count": 8
+    }
+  ],
+  "processing_time": 200
+}

@@ -1,0 +1,8 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File('/tmp/createplant-circular-facility-client'))
+            systemProperty 'createplant.facilityConstructorClientCheck', 'true'
+        }
+    }
+}

@@ -1,0 +1,34 @@
+{
+  "type": "create_refinery_n_reactors:solvent_extraction",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:dissolved_spent_fuel",
+      "amount": 4000
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:tbp_extraction_solvent",
+      "amount": 1000
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:uranyl_nitrate_solution",
+      "amount": 3500
+    },
+    {
+      "id": "create_refinery_n_reactors:plutonium_nitrate_solution",
+      "amount": 100
+    },
+    {
+      "id": "create_refinery_n_reactors:high_level_raffinate",
+      "amount": 400
+    },
+    {
+      "id": "create_refinery_n_reactors:tbp_extraction_solvent",
+      "amount": 1000
+    }
+  ],
+  "processing_time": 400
+}

@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-16",
+  "minecraft": "1.21.1",
+  "create": "6.0.10",
+  "neoforge": "21.1.219",
+  "build": "passed",
+  "relatedGameTests": 28,
+  "reactorPhysicsChecks": 1668,
+  "materialBalance": {
+    "mixerInputs": {
+      "iron_ingots": 4,
+      "carbon_powder": 1
+    },
+    "heat": "superheated",
+    "mixerWorkpieces": 4,
+    "pressPassesPerWorkpiece": 5,
+    "steelIngots": 4
+  },
+  "textures": {
+    "carbon_powder": {
+      "size": "16x16",
+      "colours": 8
+    },
+    "unprocessed_steel": {
+      "size": "16x16",
+      "colours": 9
+    }
+  },
+  "translations": {
+    "locales": [
+      "en_us",
+      "ja_jp",
+      "zh_cn"
+    ],
+    "keys": 4878,
+    "ponderHeaders": 147,
+    "result": "passed"
+  },
+  "native": {
+    "gpu": "NVIDIA GeForce RTX 4060",
+    "driver": "595.99.02",
+    "language": "ja_jp",
+    "scene": "plant_manufacturing_steel",
+    "result": "passed",
+    "shutdown": "exit 134 in libEGL_nvidia.so.0 after verification and world save"
+  },
+  "jar": {
+    "bytes": 6797051,
+    "sha256": "7237b2120c9e42cc12c2404f5daa8ecb684665cd970457a7f0700f79b7247776"
+  }
+}

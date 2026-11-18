@@ -1,0 +1,14 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:mox_powder"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:green_mox_pellet",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "mode": "built-in image_gen, one new image per changed category",
+  "basePrompt": "Use case: stylized-concept. Generate ONE minimalist pixel-art category banner for Minecraft Create. It must be MUCH SIMPLER than a detailed illustration. Only 1 to 3 very large flat shapes suggesting the category; at most 8 colors total, hard square pixels, no gradients, no antialiasing, no fine details, no noise. Style: the very simple cropped brass gears of a Simulated inventory banner, NOT a miniature world scene. LEFT 60 percent of the banner must be an almost solid VERY DARK blue-charcoal #11181e background for readable runtime text; NO objects or bright details there. Only the RIGHT 40 percent contains the category shapes, oversized and cropped by the banner's top and bottom edges. No text. No icon badge. No workshop, no buildings in the distance, no sky, no landscape, no lamps, no decoration, no tiny pipes or bolts, no texture noise, no realistic rendering. GEOMETRY: logical canvas 162x54 pixels, with a single 162x18 banner only in the MIDDLE 18 rows (y18..35); top and bottom 18 rows are pure black letterbox padding. Visible banner has exactly 9:1 width:height. No frame around the outer canvas. Within the strip a simple 1px dark border is okay. Category shapes: ",
+  "subjects": {
+    "radiation": "one large simple brass meter dial and one yellow radiation trefoil, no numbers",
+    "construction": "two broad overlapping gray steel plates and a few large copper corner blocks",
+    "pipes": "one wide copper elbow crossing a dark iron pipe, with a single red valve wheel silhouette",
+    "controls": "two oversized cream gauge semicircles and three simple red and green square lights",
+    "tanks": "two simple broad silver storage tank silhouettes with copper bands",
+    "kinetics": "two oversized overlapping brass gear silhouettes, cropped teeth, like a simple Create gear banner",
+    "thermal": "one chunky orange zigzag heater shape next to three broad ice-blue cooling fins",
+    "chemistry": "two simple copper tower silhouettes joined by a single thick pipe",
+    "reprocessing": "a few upright silver rods above one flat cyan pool and one yellow barrier stripe",
+    "logistics": "one broad yellow gantry beam with a simple dark hanging hook",
+    "containers": "two oversized empty silver bucket silhouettes with copper rims",
+    "liquids": "three broad overlapping wavy turquoise and amber liquid bands",
+    "gases": "two plain dark gas cylinder silhouettes with one broad lavender vapor curl",
+    "ores": "three large angular rust-orange, olive-green and charcoal ore patches in dark gray rock",
+    "minerals": "two big angular orange and pale pink mineral crystal shapes",
+    "powders": "two broad cream and ochre powder mound silhouettes on a single dark tray",
+    "metals": "two oversized stacks of silver and copper ingot shapes",
+    "polymers": "one broad curled black rubber strip and one cream plastic slab",
+    "catalysts": "one large simple mesh basket silhouette containing a few broad purple pellets",
+    "components": "one large brass bearing ring and a simple silver toothed part",
+    "fuel": "three broad parallel silver nuclear fuel bars with olive caps",
+    "protection": "one oversized dark respirator silhouette with two round cream filters",
+    "other": "a large copper wrench silhouette crossing a dark gray toolbox shape"
+  },
+  "preserved": [
+    "spent_fuel",
+    "explosives",
+    "fission",
+    "fusion"
+  ],
+  "normalization": "Trim black padding and nearest-neighbor resize to 162x18, quantize without dithering to at most 8 colors"
+}

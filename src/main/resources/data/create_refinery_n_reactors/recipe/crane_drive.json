@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "create:gantry_carriage"
+    },
+    {
+      "item": "create:rope_pulley"
+    },
+    {
+      "item": "create:precision_mechanism"
+    },
+    {
+      "item": "create:brass_casing"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:crane_drive",
+    "count": 1
+  }
+}

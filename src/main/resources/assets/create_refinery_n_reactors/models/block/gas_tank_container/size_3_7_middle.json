@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "frame": "create_refinery_n_reactors:block/gas_tank_container/frame",
+    "casting": "create_refinery_n_reactors:block/gas_tank_container/casting",
+    "shell": "create_refinery_n_reactors:block/gas_tank_container/shell",
+    "head": "create_refinery_n_reactors:block/gas_tank_container/head",
+    "particle": "create_refinery_n_reactors:block/gas_tank_container/frame"
+  },
+  "elements": []
+}

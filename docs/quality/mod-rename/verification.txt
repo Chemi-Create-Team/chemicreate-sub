@@ -1,0 +1,59 @@
+Mod identity rename verification, 2026-11-12
+
+Full GameTest before
+[23:30:19] [main/INFO] [ne.ne.ne.ga.GameTestHooks/]: Enabled Gametest Namespaces: [create_heavy_indusstry]
+[23:30:26] [Server thread/ERROR] [minecraft/LogTestReporter]: afouledprocessstopsthenresumesafteronemanualbrush failed at 9676077, -60, 6244924! The slowed process resumes one batch and charges one new unit of fouling only after its material transaction commits
+[23:31:54] [Server thread/INFO] [minecraft/GameTestServer]: ========= 637 GAME TESTS COMPLETE IN 1.531 min ======================
+[23:31:54] [Server thread/INFO] [minecraft/GameTestServer]: 1 required tests failed :(
+BUILD FAILED in 2m 7s
+
+Full GameTest after
+> Task :build
+[23:33:58] [main/INFO] [ne.ne.ne.ga.GameTestHooks/]: Enabled Gametest Namespaces: [create_refinery_n_reactors]
+[23:34:14] [Server thread/ERROR] [minecraft/LogTestReporter]: afouledprocessstopsthenresumesafteronemanualbrush failed at -14568685, -60, 13585825! The slowed process resumes one batch and charges one new unit of fouling only after its material transaction commits
+[23:35:35] [Server thread/INFO] [minecraft/GameTestServer]: ========= 637 GAME TESTS COMPLETE IN 1.412 min ======================
+[23:35:35] [Server thread/INFO] [minecraft/GameTestServer]: 1 required tests failed :(
+BUILD FAILED in 2m 57s
+
+translations
+PASS: 2550 keys in English, Japanese and Chinese; no duplicates, blanks or printf mismatches
+
+ponder-language
+PASS: 140 runtime Ponder headers and all shared captions in Japanese and English; 140 scenes complete in Chinese
+
+tutorials
+Validated 98 additional Ponder scenes, 518 paired captions, 239 component links and all structure targets
+All shipped Ponder structures are free of obsolete namespaces and removed reaction-plant drives
+Validated staged equipment lessons and visible functional expansion
+Validated the industrial heater lessons
+Validated 27 manufacturing families and connected press/depot drives
+
+sounds
+11 machine loops checked; status passed, resources passed. Report: /workspace/outputs/powders-compact-reactor-sounds/audio-validation.json
+
+visual-before
+AssertionError: ('Unclassified or retired material items', ['heated_unfinished_steel', 'industrial_heater', 'jacketed_pipe', 'pig_iron', 'steel_slag'], [])
+
+visual-after
+AssertionError: ('Unclassified or retired material items', ['heated_unfinished_steel', 'industrial_heater', 'jacketed_pipe', 'pig_iron', 'steel_slag'], [])
+
+validators-before
+AssertionError: ('Unclassified or retired material items', ['heated_unfinished_steel', 'industrial_heater', 'jacketed_pipe', 'pig_iron', 'steel_slag'], [])
+Ran 15 tests in 1.201s
+FAILED (failures=5)
+
+validators-after
+AssertionError: ('Unclassified or retired material items', ['heated_unfinished_steel', 'industrial_heater', 'jacketed_pipe', 'pig_iron', 'steel_slag'], [])
+Ran 15 tests in 1.098s
+FAILED (failures=5)
+
+Client (RTX 4060)
+[23:36:46] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET reactor_control_console@rbmk_control_room -> create_refinery_n_reactors:rbmk_control_room
+[23:36:50] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET electrolysis_cell@electrolysis_cell -> create_refinery_n_reactors:electrolysis_cell
+[23:36:54] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET gas_holder@gas_bell -> create_refinery_n_reactors:gas_bell
+[23:36:58] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET heat_exchanger@plant_heat_exchanger -> create_refinery_n_reactors:plant_heat_exchanger
+[23:37:02] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 140 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x00007afab97106ae, pid=2122, tid=2529
+# Problematic frame:
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134

@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-14",
+  "build": "passed",
+  "gameTests": {
+    "required": 106,
+    "passed": 106,
+    "classes": [
+      "TurbineThermalGameTests",
+      "TurbineUnitGameTests",
+      "IndustrialExpansionGameTests",
+      "TubularBoilerSizeGameTests",
+      "TubularBoilerFlowGameTests",
+      "RbmkGameTests",
+      "CompactRbmkGameTests",
+      "FusionGameTests",
+      "HaberBoschGameTests",
+      "ReactorGameTests",
+      "SurvivalReachabilityGameTests",
+      "PowerPlantGameTests",
+      "CompactFuelGameTests",
+      "MalformedDataGameTests"
+    ]
+  },
+  "longRun": {
+    "hold60000TickCases": 6,
+    "holdPassed": 6,
+    "automaticDiagnosticCases": 4,
+    "automaticPassed": 3,
+    "knownFailure": "measureCircularFiveOrdinaryAutomaticStartup: 207.2955% peak against 150% condition; control law unchanged"
+  },
+  "client": {
+    "compiledScenes": 140,
+    "renderedScenes": [
+      "turbine_multiblock",
+      "ammonia_separator",
+      "fusion_tokamak"
+    ],
+    "visuallyReviewed": [
+      "turbine_multiblock",
+      "fusion_tokamak"
+    ],
+    "shutdown": "Known NVIDIA EGL SIGSEGV after CLIENT QUALITY PASSED"
+  },
+  "translations": 4647,
+  "validators": [
+    "validate_translations.py",
+    "validate_ponder_language.py",
+    "validate_plant_tutorials.py"
+  ],
+  "generationPipelineIdempotent": true
+}

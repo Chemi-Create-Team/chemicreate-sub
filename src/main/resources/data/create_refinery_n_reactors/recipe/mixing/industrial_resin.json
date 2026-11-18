@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:polyethylene"
+    },
+    {
+      "item": "create_refinery_n_reactors:polypropylene"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:lubricating_oil",
+      "amount": 100
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:industrial_resin",
+      "count": 2
+    }
+  ]
+}

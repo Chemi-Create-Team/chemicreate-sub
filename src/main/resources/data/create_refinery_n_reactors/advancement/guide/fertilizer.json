@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:ammonium_nitrate"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fertilizer"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fertilizer.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/compressor",
+  "criteria": {
+    "ammonium_nitrate": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:ammonium_nitrate"
+          }
+        ]
+      }
+    },
+    "ammonium_sulfate": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:ammonium_sulfate"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ammonium_nitrate",
+      "ammonium_sulfate"
+    ]
+  ]
+}

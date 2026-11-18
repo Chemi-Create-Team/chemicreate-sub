@@ -1,0 +1,26 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:chromite"
+    },
+    {
+      "item": "create_refinery_n_reactors:chromite"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "create_refinery_n_reactors:oxygen_gas"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:chromium_oxide"
+    },
+    {
+      "id": "minecraft:iron_nugget",
+      "count": 2
+    }
+  ]
+}

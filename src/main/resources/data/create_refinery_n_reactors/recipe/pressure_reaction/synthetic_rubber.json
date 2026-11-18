@@ -1,0 +1,25 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:ethylene",
+      "amount": 250
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:propylene",
+      "amount": 250
+    },
+    {
+      "item": "create_refinery_n_reactors:sulfur_dust"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:synthetic_rubber",
+      "count": 4
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:hydrocracking_catalyst"
+    },
+    {
+      "tag": "c:ingots/nickel"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:hydrocracking_catalyst",
+    "count": 1
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "languages": [
+    "zh_cn"
+  ],
+  "renderTargets": [
+    "reactor_control_console@rbmk_control_room",
+    "reactor_separator_core@plant_absorption_trays",
+    "reciprocating_compressor@reciprocating_compressor"
+  ],
+  "ponderRender": "captured",
+  "runtimeTranslations": "passed",
+  "translationScope": "rbmk_control_room,reciprocating_compressor,plant_absorption_trays,guide.absorption_trays",
+  "scenes": [
+    "create_heavy_indusstry:plant_absorption_trays",
+    "create_heavy_indusstry:rbmk_control_room",
+    "create_heavy_indusstry:reciprocating_compressor"
+  ]
+}

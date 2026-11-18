@@ -1,0 +1,17 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:nickel_oxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:carbon_powder"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:nickel_ingot"
+    }
+  ],
+  "heat_requirement": "superheated"
+}

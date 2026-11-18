@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WPW",
+    "W W",
+    "N N"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    },
+    "N": {
+      "item": "minecraft:blue_wool"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:protective_trousers",
+    "count": 1
+  }
+}

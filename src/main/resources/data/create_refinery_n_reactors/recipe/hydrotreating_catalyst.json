@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " M ",
+    "AIA",
+    " N "
+  ],
+  "key": {
+    "M": {
+      "tag": "c:ingots/molybdenum"
+    },
+    "A": {
+      "tag": "c:ingots/aluminum"
+    },
+    "I": {
+      "item": "create_refinery_n_reactors:iron_catalyst"
+    },
+    "N": {
+      "tag": "c:ingots/nickel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:hydrotreating_catalyst",
+    "count": 1
+  }
+}

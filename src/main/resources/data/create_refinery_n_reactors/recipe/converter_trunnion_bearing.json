@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ISI",
+    "SMS",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "S": {
+      "item": "create:shaft"
+    },
+    "M": {
+      "item": "create:mechanical_bearing"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:converter_trunnion_bearing"
+  }
+}

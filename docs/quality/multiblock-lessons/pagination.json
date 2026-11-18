@@ -1,0 +1,20 @@
+{
+  "en_us": {
+    "captions": 670,
+    "activePages": 985,
+    "registeredPageKeys": 1089,
+    "missingSourceShared": 0
+  },
+  "ja_jp": {
+    "captions": 670,
+    "activePages": 928,
+    "registeredPageKeys": 1089,
+    "missingSourceShared": 0
+  },
+  "zh_cn": {
+    "captions": 670,
+    "activePages": 930,
+    "registeredPageKeys": 1089,
+    "missingSourceShared": 343
+  }
+}

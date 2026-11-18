@@ -1,0 +1,219 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "surface": "create_refinery_n_reactors:block/electrolysis_cell/materials",
+    "porcelain": "create_refinery_n_reactors:block/electrolysis_cell/porcelain",
+    "casing": "create_refinery_n_reactors:block/electrolysis_cell/casing",
+    "top": "create_refinery_n_reactors:block/electrolysis_cell/top",
+    "plate": "create_refinery_n_reactors:block/electrolysis_cell/plate",
+    "inner": "create:block/industrial_iron_block",
+    "particle": "create_refinery_n_reactors:block/electrolysis_cell/casing"
+  },
+  "render_type": "minecraft:cutout",
+  "elements": [
+    {
+      "from": [
+        -0.125,
+        0,
+        -0.04
+      ],
+      "to": [
+        0.125,
+        4,
+        0.04
+      ],
+      "faces": {
+        "down": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.125,
+            8.04
+          ]
+        },
+        "up": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.125,
+            8.04
+          ]
+        },
+        "north": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.125,
+            10.0
+          ]
+        },
+        "south": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.125,
+            10.0
+          ]
+        },
+        "west": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.04,
+            10.0
+          ]
+        },
+        "east": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.04,
+            10.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        -0.2,
+        -0.85,
+        -0.055
+      ],
+      "to": [
+        0.2,
+        0,
+        0.055
+      ],
+      "faces": {
+        "down": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.2,
+            8.055
+          ]
+        },
+        "up": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.2,
+            8.055
+          ]
+        },
+        "north": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.2,
+            8.425
+          ]
+        },
+        "south": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.2,
+            8.425
+          ]
+        },
+        "west": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.055,
+            8.425
+          ]
+        },
+        "east": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            8,
+            0.055,
+            8.425
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        -0.3,
+        -0.3,
+        -0.09
+      ],
+      "to": [
+        0.3,
+        0.3,
+        0.09
+      ],
+      "faces": {
+        "down": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            0,
+            0.3,
+            0.09
+          ]
+        },
+        "up": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            0,
+            0.3,
+            0.09
+          ]
+        },
+        "north": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            0,
+            0.3,
+            0.3
+          ]
+        },
+        "south": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            0,
+            0.3,
+            0.3
+          ]
+        },
+        "west": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            0,
+            0.09,
+            0.3
+          ]
+        },
+        "east": {
+          "texture": "#surface",
+          "uv": [
+            0,
+            0,
+            0.09,
+            0.3
+          ]
+        }
+      }
+    }
+  ]
+}

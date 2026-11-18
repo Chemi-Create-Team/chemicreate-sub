@@ -1,0 +1,55 @@
+Electric utility verification, 2026-11-13
+
+regression
+[04:04:01] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG down: 0 -> 4000, rpm=124.0, W=4976.620593517343, J=512.0, work=18.907003489748394, pressures=0.0 / 21633.72364902781
+[04:04:01] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG up: 0 -> 4000, rpm=124.0, W=4978.529651851025, J=512.0, work=23.53592211365893, pressures=0.0 / 21569.155193067058
+[04:04:01] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG north: 0 -> 4000, rpm=124.0, W=4978.0223025993, J=512.0, work=18.90889304815022, pressures=0.0 / 21629.584888898367
+[04:04:01] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG south: 0 -> 4000, rpm=124.0, W=4977.149327122516, J=512.0, work=18.911261928447086, pressures=0.0 / 21627.630835439875
+[04:04:01] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG west: 0 -> 4000, rpm=124.0, W=4978.0236468068515, J=512.0, work=18.90959711437937, pressures=0.0 / 21635.469607536223
+[04:04:01] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG east: 0 -> 4000, rpm=124.0, W=4977.14587913048, J=512.0, work=18.910560030637633, pressures=0.0 / 21627.187080331903
+[04:04:07] [Server thread/INFO] [minecraft/GameTestServer]: ========= 152 GAME TESTS COMPLETE IN 9.650 s ======================
+[04:04:07] [Server thread/INFO] [minecraft/GameTestServer]: All 152 required tests passed :)
+BUILD SUCCESSFUL in 41s
+
+final-server2
+[04:08:10] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG down: 0 -> 4000, rpm=124.0, W=4976.620593517343, J=512.0, work=18.912159994633097, pressures=0.0 / 21632.83160751381
+[04:08:10] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG up: 0 -> 4000, rpm=124.0, W=4978.529651851027, J=512.0, work=23.535993052364116, pressures=0.0 / 21556.170338122196
+[04:08:10] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG north: 0 -> 4000, rpm=124.0, W=4978.022302599299, J=512.0, work=18.913336494641136, pressures=0.0 / 21628.739754596547
+[04:08:10] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG south: 0 -> 4000, rpm=124.0, W=4977.1493271225145, J=512.0, work=18.91056784088894, pressures=0.0 / 21633.072282785426
+[04:08:10] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG west: 0 -> 4000, rpm=124.0, W=4978.023646806854, J=512.0, work=18.912648062238905, pressures=0.0 / 21619.91678714591
+[04:08:10] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG east: 0 -> 4000, rpm=124.0, W=4977.14587913048, J=512.0, work=18.90889304815022, pressures=0.0 / 21629.584888898367
+[04:08:10] [Server thread/INFO] [minecraft/GameTestServer]: ========= 36 GAME TESTS COMPLETE IN 3.554 s ======================
+[04:08:10] [Server thread/INFO] [minecraft/GameTestServer]: All 36 required tests passed :)
+BUILD SUCCESSFUL in 39s
+
+release
+[04:15:24] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG down: 0 -> 4000, rpm=124.0, W=4976.620593517345, J=512.0, work=18.912159994633097, pressures=0.0 / 21632.83160751381
+[04:15:24] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG up: 0 -> 4000, rpm=124.0, W=4978.529651851024, J=512.0, work=23.535993052364116, pressures=0.0 / 21556.170338122196
+[04:15:24] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG north: 0 -> 4000, rpm=124.0, W=4978.022302599297, J=512.0, work=18.913336494641136, pressures=0.0 / 21628.739754596547
+[04:15:24] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG south: 0 -> 4000, rpm=124.0, W=4977.149327122516, J=512.0, work=18.91056784088894, pressures=0.0 / 21633.072282785426
+[04:15:24] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG west: 0 -> 4000, rpm=124.0, W=4978.023646806854, J=512.0, work=18.912648062238905, pressures=0.0 / 21619.91678714591
+[04:15:24] [Server thread/INFO] [ne.cr.ga.ElectricUtilityGameTests/]: PUMP DIAG east: 0 -> 4000, rpm=124.0, W=4977.14587913048, J=512.0, work=18.90889304815022, pressures=0.0 / 21629.584888898367
+[04:15:24] [Server thread/INFO] [minecraft/GameTestServer]: ========= 4 GAME TESTS COMPLETE IN 1.900 s ======================
+[04:15:24] [Server thread/INFO] [minecraft/GameTestServer]: All 4 required tests passed :)
+BUILD SUCCESSFUL in 39s
+
+translations
+PASS: 2574 keys in English, Japanese and Chinese; no duplicates, blanks or printf mismatches
+
+ponder-language
+PASS: 142 runtime Ponder headers and all shared captions in Japanese and English; 142 scenes complete in Chinese
+
+tutorials
+Validated 98 additional Ponder scenes, 519 paired captions, 238 component links and all structure targets
+All shipped Ponder structures are free of obsolete namespaces and removed reaction-plant drives
+Validated staged equipment lessons and visible functional expansion
+Validated the industrial heater lessons
+Validated 27 manufacturing families and connected press/depot drives
+
+Client render
+[04:12:19] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET electric_heater@electric_heater -> create_refinery_n_reactors:electric_heater
+[04:12:49] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET electric_pump@electric_pump -> create_refinery_n_reactors:electric_pump
+[04:13:19] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 2 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x0000720ff5d746ae, pid=4415, tid=4735
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134

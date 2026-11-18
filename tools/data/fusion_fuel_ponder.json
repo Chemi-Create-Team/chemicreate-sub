@@ -1,0 +1,93 @@
+[
+  {
+    "id": "lithium_target_irradiation",
+    "size": 9,
+    "height": 15,
+    "components": [
+      "lithium_target_rod",
+      "irradiated_lithium_target_rod",
+      "fusion_tritium_port",
+      "tritium_gas_bucket"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          12,
+          4
+        ],
+        "item": "create_refinery_n_reactors:lithium_target_rod",
+        "key": "step_1"
+      },
+      {
+        "target": [
+          4,
+          6,
+          4
+        ],
+        "item": "create_refinery_n_reactors:lithium_target_rod",
+        "key": "step_2"
+      },
+      {
+        "target": [
+          4,
+          12,
+          4
+        ],
+        "item": "create_refinery_n_reactors:irradiated_lithium_target_rod",
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          12,
+          4
+        ],
+        "item": "create_refinery_n_reactors:tritium_gas_bucket",
+        "key": "step_4"
+      }
+    ],
+    "scale": 0.7
+  },
+  {
+    "id": "helium_recovery",
+    "size": 13,
+    "height": 7,
+    "components": [
+      "helium_recovery_feed_bucket",
+      "helium_gas_bucket",
+      "fusion_ash_port",
+      "fusion_helium_outlet"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:uraninite",
+        "key": "step_1",
+        "speed": 32
+      },
+      {
+        "target": [
+          9,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:helium_recovery_feed_bucket",
+        "key": "step_2"
+      },
+      {
+        "target": [
+          9,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:helium_gas_bucket",
+        "key": "step_3"
+      }
+    ]
+  }
+]

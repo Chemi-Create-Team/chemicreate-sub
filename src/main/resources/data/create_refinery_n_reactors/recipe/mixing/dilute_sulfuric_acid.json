@@ -1,0 +1,21 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:sulfuric_acid",
+      "amount": 250
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 750
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:dilute_sulfuric_acid",
+      "amount": 1000
+    }
+  ]
+}

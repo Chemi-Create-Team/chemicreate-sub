@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "create_refinery_n_reactors:block/cubic_press/frame"
+    },
+    "axis=z": {
+      "model": "create_refinery_n_reactors:block/cubic_press/frame"
+    }
+  }
+}

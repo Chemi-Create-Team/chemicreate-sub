@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=x": {"model": "create_refinery_n_reactors:block/light_gray_large_flywheel/block", "x": 90, "y": 90},
+    "axis=y": {"model": "create_refinery_n_reactors:block/light_gray_large_flywheel/block"},
+    "axis=z": {"model": "create_refinery_n_reactors:block/light_gray_large_flywheel/block", "x": 90, "y": 180}
+  }
+}

@@ -1,0 +1,30 @@
+Minecraft 1.21.1 / NeoForge 21.1.219 / Create 6.0.10 / Java 21
+2026-11-10; scoped changes only; not a full GameTest suite run.
+
+acceptance.log
+[18:33:48] [Server thread/INFO] [minecraft/GameTestServer]: ========= 61 GAME TESTS COMPLETE IN 6.972 s ======================
+[18:33:48] [Server thread/INFO] [minecraft/GameTestServer]: All 61 required tests passed :)
+BUILD SUCCESSFUL in 39s
+
+final-display-tests.log
+[18:41:16] [Server thread/INFO] [minecraft/GameTestServer]: ========= 35 GAME TESTS COMPLETE IN 5.659 s ======================
+[18:41:16] [Server thread/INFO] [minecraft/GameTestServer]: All 35 required tests passed :)
+BUILD SUCCESSFUL in 35s
+
+Hardware rendering: direct rendering Yes; NVIDIA GeForce RTX 4060/PCIe/SSE2; OpenGL 4.6.0 NVIDIA 595.99.02.
+Native Minecraft fixtures: client-only console preview; compressor shaft driven by actual Create Creative Motor at 32 RPM.
+Native stop: creative motor removed from (-1,-56,6); /data get block 0 -56 6 Speed returned 0.0f.
+Computer Use Linux MCP captured all four PNG deliverables.
+
+Validated 83 additional Ponder scenes, 418 paired captions, 136 component links and all structure targets
+All shipped Ponder structures are free of obsolete namespaces and removed reaction-plant drives
+Validated staged equipment lessons and visible functional expansion
+Validated the connected steelmaking belt, press and mixer drives
+
+Native Ponder: ja_jp / en_us / zh_cn: all 3 requested scenes compiled, translated and rendered successfully.
+Native east-facing console: 121 fuel indicators and 29 flow gauges; models and live parts aligned.
+
+Final formation refresh deduplication regression:
+[18:53:08] [Server thread/INFO] [minecraft/GameTestServer]: ========= 20 GAME TESTS COMPLETE IN 1.402 s ======================
+[18:53:08] [Server thread/INFO] [minecraft/GameTestServer]: All 20 required tests passed :)
+BUILD SUCCESSFUL in 28s

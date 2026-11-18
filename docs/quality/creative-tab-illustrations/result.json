@@ -1,0 +1,21 @@
+[
+  {
+    "catalogue": "passed",
+    "display_slots": 306,
+    "sections": 12,
+    "real_items": 134,
+    "tab": "Refinery \u0027n\u0027 Reactors：設備・建材"
+  },
+  {
+    "catalogue": "passed",
+    "display_slots": 378,
+    "sections": 14,
+    "real_items": 197,
+    "tab": "Refinery \u0027n\u0027 Reactors：素材・流体"
+  },
+  {
+    "native_scroll": "passed",
+    "vanilla_tab": "passed",
+    "search": "passed"
+  }
+]

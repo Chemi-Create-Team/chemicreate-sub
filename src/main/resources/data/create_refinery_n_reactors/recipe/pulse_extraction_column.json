@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SPS",
+    "ACA",
+    "SRS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "P": {
+      "item": "create:mechanical_pump"
+    },
+    "A": {
+      "item": "create:shaft"
+    },
+    "C": {
+      "tag": "create_refinery_n_reactors:machine_casings"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:pulse_extraction_column",
+    "count": 1
+  }
+}

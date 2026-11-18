@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "create_refinery_n_reactors:block/fusion/motor_generator_end",
+    "side": "create_refinery_n_reactors:block/fusion/motor_generator_off"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-17",
+  "baseCommit": "bca7844f",
+  "coreImplementationCommit": "dfe48f5d3748db4edba9aa36220a3599c9edc673",
+  "buildCommit": "a3b7b2e48e81f6de78a3309604251be6d5d266c5",
+  "mergedUpstream": "8328779d",
+  "environment": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.219",
+    "create": "6.0.10",
+    "java": 21,
+    "gpu": "NVIDIA GeForce RTX 4060",
+    "driver": "595.99.02"
+  },
+  "build": {
+    "cleanBuild": "passed",
+    "finalBuild": "passed",
+    "mixtureUnitChecks": 6004,
+    "reactorPhysicsChecks": 1668,
+    "reactorControl": "passed"
+  },
+  "gameTests": {
+    "fluidAndTransport": {
+      "total": 55,
+      "passed": 55
+    },
+    "gasAndTeachingContent": {
+      "total": 37,
+      "passed": 37
+    },
+    "totalPassed": 92
+  },
+  "assets": {
+    "sourceLanguageKeysPerLocale": 4943,
+    "ponderHeaders": 149,
+    "validators": "passed",
+    "endModels": 4,
+    "axisVariants": 12,
+    "removedBlockAssetsAbsentFromJar": true,
+    "zAxisEndRotation": "corrected and visually verified"
+  },
+  "nativeClient": {
+    "scene": "pulsation_tube",
+    "result": "passed before shutdown",
+    "axes": [
+      "x",
+      "y",
+      "z"
+    ],
+    "lengthPerAxis": 3,
+    "stockGasMb": 24000,
+    "pressureDial": 0.33333334,
+    "emptyAxesDial": 0,
+    "shutdownExitCode": 134,
+    "shutdownError": "SIGSEGV in libEGL_nvidia.so.0 after successful check and world save"
+  },
+  "jar": {
+    "file": "create-refinery-n-reactors-0.1.0-pulsation-tube.jar",
+    "bytes": 6904405,
+    "sha256": "11ae3ae6e19e4e91ad8f493cbe74e0b0c124c7f6d04cc4338e1bab498a8b0c0c"
+  },
+  "notTested": [
+    "large installation performance",
+    "audio",
+    "other rendering mods",
+    "old world conversion"
+  ],
+  "implementationCommit": "a3b7b2e48e81f6de78a3309604251be6d5d266c5"
+}

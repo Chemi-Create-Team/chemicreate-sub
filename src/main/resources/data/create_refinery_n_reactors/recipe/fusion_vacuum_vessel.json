@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SCS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_vacuum_vessel",
+    "count": 8
+  }
+}

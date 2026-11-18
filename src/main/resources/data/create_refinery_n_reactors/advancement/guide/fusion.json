@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:fusion_reactor_controller"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fusion"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fusion.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/nuclear",
+  "criteria": {
+    "fusion_reactor_controller": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:fusion_reactor_controller"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "fusion_reactor_controller"
+    ]
+  ]
+}

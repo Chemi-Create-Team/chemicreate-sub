@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:ingots/stainless_steel"
+    },
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    }
+  },
+  "pattern": [
+    "SCS"
+  ],
+  "result": {
+    "count": 4,
+    "id": "create_refinery_n_reactors:stainless_steel_pipe"
+  }
+}

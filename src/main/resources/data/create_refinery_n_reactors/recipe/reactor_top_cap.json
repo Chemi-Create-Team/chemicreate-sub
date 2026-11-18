@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "SRS"
+  ],
+  "key": {
+    "S": {
+      "item": "create:iron_sheet"
+    },
+    "R": {
+      "item": "create_refinery_n_reactors:serpentinite"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:reactor_top_cap",
+    "count": 4
+  }
+}

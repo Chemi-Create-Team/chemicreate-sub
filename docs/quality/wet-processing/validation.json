@@ -1,0 +1,72 @@
+{
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10 / UjX6dr61",
+  "java": "21",
+  "dedicatedGameTests": {
+    "count": 96,
+    "passed": 96,
+    "classes": [
+      "WetProcessingGameTests",
+      "OreLeachingGameTests",
+      "TankGradeGameTests",
+      "MaterialEquipmentGameTests",
+      "GasPipeGameTests",
+      "FlowControlGameTests",
+      "AbsorptionTowerGameTests",
+      "AssemblyGameTests",
+      "TransportQualityGameTests",
+      "MaterialPumpGameTests",
+      "PulsationTubeGameTests",
+      "SurvivalReachabilityGameTests",
+      "CraftingRecipeGameTests",
+      "PlantTutorialGameTests",
+      "TubularBoilerFlowGameTests",
+      "MixtureGameTests",
+      "SprayToolGameTests"
+    ]
+  },
+  "client": {
+    "renderer": "NVIDIA GeForce RTX 4060",
+    "opengl": "4.6.0 NVIDIA 595.99.02",
+    "ponder": {
+      "passed": true,
+      "structureMatchesRealBlueprint": true,
+      "modelsPresent": true,
+      "partGogglesResolveController": true,
+      "locale": "ja_jp"
+    },
+    "facilityMenu": {
+      "passed": true,
+      "steps": 18,
+      "facilities": 5,
+      "selectionRemembered": true
+    },
+    "shutdown": "After validation and world save: existing libEGL_nvidia.so.0 SIGSEGV / exit 134; runClient does not exit successfully",
+    "soundListening": "Unavailable: no audio device"
+  },
+  "languages": {
+    "locales": [
+      "en_us",
+      "ja_jp",
+      "zh_cn"
+    ],
+    "keys": 5018,
+    "ponderHeaders": 149,
+    "catalogScenes": 94,
+    "manufacturingFamilies": 27
+  },
+  "screenshots": [
+    {
+      "file": "wet-processing-preview.png",
+      "bytes": 641026,
+      "sha256": "b40d2fdd263a8d6ae386bae73862809dff34477fa7a26c6b1ea43540388b522a"
+    },
+    {
+      "file": "wet-facility-menu.png",
+      "bytes": 257365,
+      "sha256": "8d815e4707c1c4af6797c9bb2db3749919f5d7146ad3448bae8c93482327e23f"
+    }
+  ],
+  "visualAudit": "Blocked by 8 pre-existing unclassified material items; new items are classified"
+}

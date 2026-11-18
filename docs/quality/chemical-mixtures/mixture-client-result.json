@@ -1,0 +1,24 @@
+{
+  "components": {
+    "create_refinery_n_reactors:antifreeze": 2500,
+    "createdieselgenerators:ethanol": 2500,
+    "createdieselgenerators:plant_oil": 2500,
+    "minecraft:water": 2500
+  },
+  "nativeTransport": "passed",
+  "tint": "ffa7d1db",
+  "goggles": [
+    "混合液：10000 mB",
+    "不凍液：2500 mB（25.0%）",
+    "エタノール：2500 mB（25.0%）",
+    "ほか2成分：Display Linkで確認"
+  ],
+  "fullComposition": [
+    "混合液：10000 mB",
+    "不凍液：2500 mB（25.0%）",
+    "エタノール：2500 mB（25.0%）",
+    "植物油：2500 mB（25.0%）",
+    "水：2500 mB（25.0%）"
+  ],
+  "clientSync": "passed"
+}

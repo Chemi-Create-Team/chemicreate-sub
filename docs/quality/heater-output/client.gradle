@@ -1,0 +1,27 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def lines = options.exists() ? options.readLines('UTF-8') : []
+                lines.removeAll { it.startsWith('lang:') }
+                lines.add('lang:ja_jp')
+                options.parentFile.mkdirs()
+                options.setText(lines.join('\n') + '\n', 'UTF-8')
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'
+            programArgument '1280'
+            programArgument '--height'
+            programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualityScenes', 'electric_heater'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+            systemProperty 'createplant.clientQualityTargets', 'electric_heater@electric_heater'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '240'
+            systemProperty 'createplant.clientQualityCaptureDelay', System.getProperty('captureTicks', '900')
+        }
+    }
+}

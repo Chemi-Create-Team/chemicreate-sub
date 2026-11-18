@@ -1,0 +1,10 @@
+{
+  "meanLevelTickMs": 2.0334686083333335,
+  "players": 8,
+  "mode": "survival fake players, immune to injury",
+  "samples": 120,
+  "spentRods": 196,
+  "p95LevelTickMs": 7.690081,
+  "racks": 49,
+  "waterMb": 1127000
+}

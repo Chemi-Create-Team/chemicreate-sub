@@ -1,0 +1,576 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "gauge": "create:block/gauge",
+    "valve": "create:block/fluid_valve",
+    "particle": "create:block/gauge",
+    "face": "create_refinery_n_reactors:block/pipe_gauge/faces"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        -165,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        23,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "scale": [
+        0.625,
+        0.625,
+        0.625
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        89,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  },
+  "elements": [
+    {
+      "name": "GaugeBody",
+      "from": [
+        1.95,
+        2,
+        1.95
+      ],
+      "to": [
+        14.05,
+        14,
+        14.05
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "east": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "south": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "west": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "up": {
+          "uv": [
+            0,
+            10,
+            6,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "down": {
+          "uv": [
+            0,
+            10,
+            6,
+            16
+          ],
+          "texture": "#gauge"
+        }
+      }
+    },
+    {
+      "name": "PipeFlange",
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        2,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            1.5,
+            9.5,
+            6.5,
+            14.5
+          ],
+          "texture": "#valve"
+        }
+      }
+    },
+    {
+      "name": "PipeFlange",
+      "from": [
+        3,
+        14,
+        3
+      ],
+      "to": [
+        13,
+        16,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            1.5,
+            9.5,
+            6.5,
+            14.5
+          ],
+          "texture": "#valve"
+        }
+      }
+    },
+    {
+      "name": "Gauge",
+      "from": [
+        16.075,
+        4,
+        4
+      ],
+      "to": [
+        16.075,
+        12,
+        12
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          9,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            8,
+            8,
+            16
+          ],
+          "texture": "#face"
+        }
+      }
+    },
+    {
+      "name": "GaugeButton",
+      "from": [
+        15.5,
+        5.2,
+        5.2
+      ],
+      "to": [
+        16.5,
+        6.3,
+        6.3
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          10,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "east": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "south": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "west": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "up": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "down": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#gauge"
+        }
+      }
+    },
+    {
+      "name": "GuageMetalBack",
+      "from": [
+        14,
+        3,
+        3
+      ],
+      "to": [
+        16,
+        13,
+        13
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          9,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "east": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "south": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "west": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "up": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#gauge"
+        },
+        "down": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#gauge"
+        }
+      }
+    },
+    {
+      "name": "GaugeDial",
+      "from": [
+        15.75,
+        5.25,
+        5.75
+      ],
+      "to": [
+        16.45,
+        6.25,
+        10.75
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "x",
+        "origin": [
+          16,
+          5.75,
+          5.75
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13.5,
+            4,
+            14,
+            4.5
+          ],
+          "rotation": 180,
+          "texture": "#gauge"
+        },
+        "east": {
+          "uv": [
+            13.5,
+            4,
+            16,
+            4.5
+          ],
+          "rotation": 180,
+          "texture": "#gauge"
+        },
+        "south": {
+          "uv": [
+            15.5,
+            4,
+            16,
+            4.5
+          ],
+          "rotation": 180,
+          "texture": "#gauge"
+        },
+        "west": {
+          "uv": [
+            13.5,
+            4,
+            16,
+            4.5
+          ],
+          "texture": "#gauge"
+        },
+        "up": {
+          "uv": [
+            13.5,
+            4,
+            16,
+            4.5
+          ],
+          "rotation": 90,
+          "texture": "#gauge"
+        },
+        "down": {
+          "uv": [
+            13.5,
+            4,
+            16,
+            4.5
+          ],
+          "rotation": 270,
+          "texture": "#gauge"
+        }
+      }
+    }
+  ]
+}

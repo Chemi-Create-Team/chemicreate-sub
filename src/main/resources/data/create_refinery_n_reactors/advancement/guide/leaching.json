@@ -1,0 +1,67 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:copper_sulfate_solution_bucket"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.leaching"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.leaching.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/sulfuric_acid",
+  "criteria": {
+    "iron_sulfate_solution_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:iron_sulfate_solution_bucket"
+          }
+        ]
+      }
+    },
+    "copper_sulfate_solution_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:copper_sulfate_solution_bucket"
+          }
+        ]
+      }
+    },
+    "zinc_sulfate_solution_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:zinc_sulfate_solution_bucket"
+          }
+        ]
+      }
+    },
+    "tin_sulfate_solution_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:tin_sulfate_solution_bucket"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "iron_sulfate_solution_bucket",
+      "copper_sulfate_solution_bucket",
+      "zinc_sulfate_solution_bucket",
+      "tin_sulfate_solution_bucket"
+    ]
+  ]
+}

@@ -1,0 +1,15 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File('/tmp/createplant-metal-recovery-client'))
+            systemProperty 'createplant.metalRecoveryClientCheck', 'true'
+            systemProperty 'createplant.recipeScreenCheck', 'true'
+            systemProperty 'createplant.clientQualityTargets', System.getProperty('metalRecoveryTargets', 'cassiterite,settling_tank_controller,crystallizer_controller,electrolysis_cell,settling_tank_controller@jei_settling,crystallizer_controller@jei_crystallizing,electrolysis_cell@jei_cell_electrolysis')
+            systemProperty 'createplant.clientQualityScenes', 'ore_recovery,settling_tank,crystallizer,electrowinning'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+            systemProperty 'createplant.clientQualityCaptureDelay', '300'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '230'
+        }
+    }
+}

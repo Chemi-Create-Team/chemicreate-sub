@@ -1,0 +1,24 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "tag": "c:dusts/sulfur"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:air_gas",
+      "amount": 2400
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:sulfur_dioxide",
+      "amount": 500
+    },
+    {
+      "id": "create_refinery_n_reactors:nitrogen_gas",
+      "amount": 1900
+    }
+  ]
+}

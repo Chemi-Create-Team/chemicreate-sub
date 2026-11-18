@@ -1,0 +1,29 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def lines = options.exists() ? options.readLines('UTF-8') : []
+                lines.removeAll { it.startsWith('lang:') || it.startsWith('guiScale:') }
+                lines.add('lang:ja_jp'); lines.add('guiScale:2')
+                options.setText(lines.join('\n') + '\n', 'UTF-8')
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'; programArgument '1280'
+            programArgument '--height'; programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualityAllScenes', 'false'
+            systemProperty 'createplant.clientQualityCaptureDelay', '160'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '200'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+
+            systemProperty 'createplant.clientQualityTargets', 'condenser_waterbox@condenser_loop,electrolysis_cell@electrolysis_cell,cooled_olefins_bucket@plant_manufacturing_petrochemical_feedstocks,ammonia_gas_bucket@plant_manufacturing_ammonia,gas_holder@gas_bell,reactor_control_console@rbmk_control_room,reactor_fuel_channel@rbmk_compact_core,fusion_reinforced_casing@fusion_tokamak,lidded_vessel@vessel_basin,high_pressure_turbine_unit@turbine_multiblock,tank_casing@plant_open_tank_size_32,minecraft:gunpowder@plant_manufacturing_mining_explosives'
+            systemProperty 'createplant.clientQualitySeek.0', '500'
+            systemProperty 'createplant.clientQualitySeek.1', '950'
+            systemProperty 'createplant.clientQualitySeek.11', '120'
+
+        }
+    }
+}

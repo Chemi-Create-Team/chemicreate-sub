@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:glass_blocks/colorless"
+    },
+    {
+      "tag": "c:glass_blocks/colorless"
+    },
+    {
+      "tag": "c:glass_blocks/colorless"
+    },
+    {
+      "tag": "c:glass_blocks/colorless"
+    },
+    {
+      "item": "create_refinery_n_reactors:industrial_resin"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:industrial_glass",
+    "count": 4
+  }
+}

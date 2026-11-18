@@ -1,0 +1,22 @@
+{
+  "type": "create_refinery_n_reactors:cubic_pressing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:reactor_graphite"
+    },
+    {
+      "tag": "c:ingots/nickel"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:diamond"
+    },
+    {
+      "id": "create_refinery_n_reactors:nickel_ingot",
+      "chance": 0.75
+    }
+  ],
+  "processing_time": 400,
+  "heat_requirement": "superheated"
+}

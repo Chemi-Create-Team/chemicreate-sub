@@ -1,0 +1,23 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:molybdenum_trioxide"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 750,
+      "fluid": "create_refinery_n_reactors:hydrogen_gas"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:molybdenum_ingot"
+    },
+    {
+      "amount": 750,
+      "id": "minecraft:water"
+    }
+  ]
+}

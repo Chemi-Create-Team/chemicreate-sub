@@ -1,0 +1,16 @@
+{
+  "runtimeTranslations": "passed",
+  "ponderRender": "checked",
+  "renderTargets": [
+    "ammonia_separator@ammonia_separator",
+    "ammonia_separator@ammonia_separator",
+    "liquid_ammonia_bucket@plant_manufacturing_ammonia"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_refinery_n_reactors:ammonia_separator"
+  ],
+  "translationScope": "ammonia_separator,guide.manufacturing_ammonia"
+}

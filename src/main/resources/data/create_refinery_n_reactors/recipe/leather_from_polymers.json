@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    },
+    {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    {
+      "tag": "c:strings"
+    }
+  ],
+  "result": {
+    "id": "minecraft:leather",
+    "count": 2
+  }
+}

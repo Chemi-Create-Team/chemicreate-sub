@@ -1,0 +1,31 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "create_refinery_n_reactors:borax"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:calcite"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:borosilicate_glass_frit",
+      "count": 6
+    }
+  ],
+  "processing_time": 200,
+  "heat_requirement": "superheated"
+}

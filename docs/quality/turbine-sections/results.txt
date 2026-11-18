@@ -1,0 +1,18 @@
+turbine-sections-final
+[23:14:15] [Server thread/INFO] [minecraft/GameTestServer]: All 3 required tests passed :)
+BUILD SUCCESSFUL in 32s
+
+turbine-sections-package
+BUILD SUCCESSFUL in 8s
+
+turbine-sections-client
+[23:08:01] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET high_pressure_turbine_unit@turbine_multiblock -> create_refinery_n_reactors:turbine_multiblock
+[23:08:16] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET intermediate_pressure_turbine_unit@turbine_multiblock -> create_refinery_n_reactors:turbine_multiblock
+[23:08:31] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET low_pressure_turbine_unit@turbine_multiblock -> create_refinery_n_reactors:turbine_multiblock
+[23:08:46] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 1 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x000074c7741ed6ae, pid=3375, tid=4056
+# C  [libEGL_nvidia.so.0+0xb56ae]
+
+Translation validator: PASS 2552 keys (en_us, ja_jp, zh_cn).
+Ponder validator: PASS 140 scenes, all three languages.
+GPU: NVIDIA RTX 4060; driver 595.99.02; direct rendering enabled.

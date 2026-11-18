@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "create_refinery_n_reactors:block/fusion/vacuum_pump",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "create_refinery_n_reactors:block/fusion/vacuum_pump"
+    },
+    "axis=z": {
+      "model": "create_refinery_n_reactors:block/fusion/vacuum_pump",
+      "x": 90
+    }
+  }
+}

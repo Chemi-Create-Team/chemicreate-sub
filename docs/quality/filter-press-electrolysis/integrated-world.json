@@ -1,0 +1,10 @@
+{
+  "volts": 46.69974898874897,
+  "watts": 1744.6932444897284,
+  "cyclesPerTick": 2,
+  "water": 25661,
+  "hydrogen": 226,
+  "oxygen": 113,
+  "hatchInterlock": true,
+  "formedCells": 32
+}

@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "createdieselgenerators:plant_oil"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "create_refinery_n_reactors:caustic_soda_solution"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:soap",
+      "count": 2
+    }
+  ],
+  "heat_requirement": "heated"
+}

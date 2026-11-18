@@ -1,0 +1,9 @@
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :processResources
+> Task :classes
+> Task :jarJar NO-SOURCE
+> Task :jar
+> Task :assemble
+BUILD SUCCESSFUL in 38s
+Three packaged PNGs match the checked hashes.

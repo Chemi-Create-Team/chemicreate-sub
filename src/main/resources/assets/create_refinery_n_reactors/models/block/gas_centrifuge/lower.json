@@ -1,0 +1,372 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "shell": "create_refinery_n_reactors:block/gas_centrifuge/shell",
+    "plinth": "create_refinery_n_reactors:block/gas_centrifuge/plinth",
+    "bearing": "create_refinery_n_reactors:block/gas_centrifuge/bearing",
+    "band": "create_refinery_n_reactors:block/gas_centrifuge/band",
+    "cap": "create_refinery_n_reactors:block/gas_centrifuge/cap",
+    "header": "create_refinery_n_reactors:block/gas_centrifuge/header",
+    "particle": "create_refinery_n_reactors:block/gas_centrifuge/shell"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        3,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#plinth",
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#plinth",
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#plinth",
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ]
+        },
+        "west": {
+          "texture": "#plinth",
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ]
+        },
+        "up": {
+          "texture": "#plinth",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#bearing",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        3,
+        3
+      ],
+      "to": [
+        10,
+        16,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#shell",
+          "uv": [
+            0,
+            0,
+            4,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#shell",
+          "uv": [
+            0,
+            0,
+            4,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#shell",
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ]
+        },
+        "down": {
+          "texture": "#shell",
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        6
+      ],
+      "to": [
+        13,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#shell",
+          "uv": [
+            0,
+            0,
+            4,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#shell",
+          "uv": [
+            0,
+            0,
+            4,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            6,
+            13,
+            10
+          ]
+        },
+        "down": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            6,
+            13,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        3,
+        3
+      ],
+      "to": [
+        10,
+        16,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#shell",
+          "uv": [
+            4,
+            0,
+            8,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#shell",
+          "uv": [
+            4,
+            0,
+            8,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#shell",
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ]
+        },
+        "down": {
+          "texture": "#shell",
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ]
+        }
+      },
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        6
+      ],
+      "to": [
+        13,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            0,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#shell",
+          "uv": [
+            4,
+            0,
+            8,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#shell",
+          "uv": [
+            4,
+            0,
+            8,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            6,
+            13,
+            10
+          ]
+        },
+        "down": {
+          "texture": "#shell",
+          "uv": [
+            3,
+            6,
+            13,
+            10
+          ]
+        }
+      },
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      }
+    }
+  ]
+}

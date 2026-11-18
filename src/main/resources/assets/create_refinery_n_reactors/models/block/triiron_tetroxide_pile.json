@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "create_refinery_n_reactors:block/triiron_tetroxide_pile_front",
+    "up": "create_refinery_n_reactors:block/triiron_tetroxide_pile_top",
+    "down": "create_refinery_n_reactors:block/triiron_tetroxide_pile_top",
+    "north": "create_refinery_n_reactors:block/triiron_tetroxide_pile_front",
+    "south": "create_refinery_n_reactors:block/triiron_tetroxide_pile_front",
+    "east": "create_refinery_n_reactors:block/triiron_tetroxide_pile_side",
+    "west": "create_refinery_n_reactors:block/triiron_tetroxide_pile_side"
+  }
+}

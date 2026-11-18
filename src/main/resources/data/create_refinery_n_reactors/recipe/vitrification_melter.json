@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CEC",
+    "SPS",
+    "SRS"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:vitrification_electrode"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:vitrification_melter",
+    "count": 1
+  }
+}

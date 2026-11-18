@@ -1,0 +1,1796 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_0_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1_window"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1_window_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1_window_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_1_window_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2_window"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2_window_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2_window_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_2_window_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_3_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4_window"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4_window_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4_window_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_4_window_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_6_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8_window"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8_window_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8_window_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_8_window_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_9_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12_bottom"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_12_bottom_top"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "false",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "false",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true",
+        "bottom": "true",
+        "top": "true",
+        "window": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/reaction_tower/cell_15"
+      }
+    }
+  ]
+}

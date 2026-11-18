@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "SBS",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "B": {
+      "item": "minecraft:bricks"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:vitrification_electrode",
+    "count": 4
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:acute_radiation_syndrome",
+    "create_refinery_n_reactors:corrosive_contact"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SFS",
+    "GMG",
+    "SFS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "M": {
+      "tag": "c:ingots/molybdenum"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:reaction_tower",
+    "count": 1
+  }
+}

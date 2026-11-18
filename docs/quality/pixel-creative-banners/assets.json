@@ -1,0 +1,164 @@
+[
+  {
+    "category": "pipes",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "355f31e0b8e865c4f1c2a079a3635de3b705f3b277a8b93b5626b465cd8dc8a3"
+  },
+  {
+    "category": "controls",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "519ae8573e86eb4569b9208157188b2728b5fa7e507e4eb019c267cfd81ada4d"
+  },
+  {
+    "category": "tanks",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "87e6d171416698d5a2817f0a736a3ae9447bee2429c0a18443bb262e654a09a3"
+  },
+  {
+    "category": "kinetics",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "f401a24a5ff901039a24f3aad545dbf79c6ce67bd039c3232c56e8096124b419"
+  },
+  {
+    "category": "thermal",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "4cdccfb31d01552be32805f6a18a62bb61f88f57ff7d67befa58bd439ba12725"
+  },
+  {
+    "category": "chemistry",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "c4e7766b32fe54b4641d04fc6ab5b26639319c3933e7df879e23ef747d9f46a9"
+  },
+  {
+    "category": "fission",
+    "preserved": true,
+    "colors": 32,
+    "sha256": "76df5c941ae95f081cfce2823b73b6422174fb1e129f29b944c3f3163d0122c0"
+  },
+  {
+    "category": "reprocessing",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "74bb806987ce6305fc7eae452b6156076c444dce7404ce7bfc367eb311b8a571"
+  },
+  {
+    "category": "fusion",
+    "preserved": true,
+    "colors": 32,
+    "sha256": "0a492b504d5ff7c8bef621dce752fa8438e7137bec9e52bdfc69050a44904446"
+  },
+  {
+    "category": "logistics",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "4a0f17e3ea8c7b06bdbc3545240d9132345bc446868dc026ec366d410fd1726c"
+  },
+  {
+    "category": "containers",
+    "preserved": false,
+    "colors": 16,
+    "sha256": "d8ae60966903b8756db9abb7dc852282886494041aaa9d447b8a906d68aa75d2"
+  },
+  {
+    "category": "liquids",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "07850de6d1e68cb222431519e8223d4ba09c510d69af295702be12c8831b594e"
+  },
+  {
+    "category": "gases",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "eac83acb12aaeadd958332221fbf3504ff44d088b7e39b6f10910eda677b6c5f"
+  },
+  {
+    "category": "ores",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "c5c2e09d73bd814c918ad191a21f685db162dd8a613550337f375b3d7001460b"
+  },
+  {
+    "category": "minerals",
+    "preserved": false,
+    "colors": 16,
+    "sha256": "f417bb8a03cceb555600751c9a6efba22ef10a2aff913d44a2c2b1877d5ff081"
+  },
+  {
+    "category": "powders",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "cbe921a22014847b142898f20c21aac48b10b844c925ed89efff0d09b8ae8a7b"
+  },
+  {
+    "category": "metals",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "0cd657ca7022e6971e6e0be85907855ffad543dc4804d5cf656a6fb436e86183"
+  },
+  {
+    "category": "polymers",
+    "preserved": false,
+    "colors": 16,
+    "sha256": "b75d1c608dbe8091978d69607b2766ae0813b162bda71457fbb8597bb91b23c9"
+  },
+  {
+    "category": "catalysts",
+    "preserved": false,
+    "colors": 18,
+    "sha256": "bd6d20f613dc3f6a5dbdc07bba422284e581bff5d9eec23dd025c9eaa33ea0cf"
+  },
+  {
+    "category": "components",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "a2b26a10da01d8f2aab1ea224e6cbb10826568150500ffc303b80686ddddd3e8"
+  },
+  {
+    "category": "fuel",
+    "preserved": false,
+    "colors": 16,
+    "sha256": "bf48f73f162c7fbfa1cd01b8092b8c961b1035ba241c560403223ad15728712c"
+  },
+  {
+    "category": "spent_fuel",
+    "preserved": true,
+    "colors": 32,
+    "sha256": "a49c72ba9089893493ea09295161682e8340559c1edb34b84f996ce9e0088aa0"
+  },
+  {
+    "category": "explosives",
+    "preserved": true,
+    "colors": 32,
+    "sha256": "fe0eb542439bbf414dc7eb7128c50bec0cf83fcc1fd734eb943fe56d9e1c9a8e"
+  },
+  {
+    "category": "protection",
+    "preserved": false,
+    "colors": 15,
+    "sha256": "b69c2ac465776c0a50956768616a39b6304d636ee6b8985546222c0aa69c33c0"
+  },
+  {
+    "category": "construction",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "37c4b1a0ba3022c1af3c74a7eeadd12ad68b83c2e25e61d24d2e262972c9a3b7"
+  },
+  {
+    "category": "radiation",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "7c15fbbb1290b747c261df40aa73e36356965abac5b8549bd299eb0491b73ea0"
+  },
+  {
+    "category": "other",
+    "preserved": false,
+    "colors": 17,
+    "sha256": "5a42e2b230d0e1d199a3f9dab673f019ba0bd7110b10bedfa591690abd80e2d0"
+  }
+]

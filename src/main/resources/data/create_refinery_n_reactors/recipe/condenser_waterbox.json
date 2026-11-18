@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SPS",
+    "CTC",
+    "SPS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "P": {
+      "item": "create:mechanical_pump"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:condenser_shell"
+    },
+    "T": {
+      "item": "create_refinery_n_reactors:condenser_tube_bundle"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:condenser_waterbox",
+    "count": 1
+  }
+}

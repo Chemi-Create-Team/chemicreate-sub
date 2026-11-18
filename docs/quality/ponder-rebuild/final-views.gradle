@@ -1,0 +1,28 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def lines = options.exists() ? options.readLines('UTF-8') : []
+                lines.removeAll { it.startsWith('lang:') || it.startsWith('guiScale:') }
+                lines.add('lang:ja_jp'); lines.add('guiScale:2')
+                options.setText(lines.join('\n') + '\n', 'UTF-8')
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'; programArgument '1280'
+            programArgument '--height'; programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualityAllScenes', 'false'
+            systemProperty 'createplant.clientQualityCaptureDelay', '160'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '200'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+
+            systemProperty 'createplant.clientQualityTargets', 'condenser_waterbox@condenser_loop,cooled_olefins_bucket@plant_manufacturing_petrochemical_feedstocks,ammonia_gas_bucket@plant_manufacturing_ammonia,minecraft:gunpowder@plant_manufacturing_mining_explosives'
+            systemProperty 'createplant.clientQualitySeek.0', '600'
+            systemProperty 'createplant.clientQualitySeek.3', '120'
+
+        }
+    }
+}

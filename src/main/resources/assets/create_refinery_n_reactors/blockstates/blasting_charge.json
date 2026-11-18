@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "create_refinery_n_reactors:block/blasting_charge"
+    },
+    "lit=true": {
+      "model": "create_refinery_n_reactors:block/blasting_charge_lit"
+    }
+  }
+}

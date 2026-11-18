@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "PWP",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "create:shaft"
+    },
+    "P": {
+      "item": "create:iron_sheet"
+    },
+    "W": {
+      "item": "create:whisk"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:reactor_impeller",
+    "count": 1
+  }
+}

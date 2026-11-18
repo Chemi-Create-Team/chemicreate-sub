@@ -1,0 +1,14 @@
+turbine-unit-final-tests
+[17:42:11] [Server thread/INFO] [minecraft/GameTestServer]: All 3 required tests passed :)
+BUILD SUCCESSFUL in 29s
+
+turbine-unit-client
+[17:40:54] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET high_pressure_turbine_unit@turbine_multiblock -> create_refinery_n_reactors:turbine_multiblock
+[17:41:13] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET low_pressure_turbine_unit@turbine_multiblock -> create_refinery_n_reactors:turbine_multiblock
+[17:41:33] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 1 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x0000722f9eb746ae, pid=7824, tid=8283
+# C  [libEGL_nvidia.so.0+0xb56ae]
+
+Translations: PASS 2550 keys (en_us, ja_jp, zh_cn).
+Ponder language: PASS 140 scenes (en_us, ja_jp, zh_cn).
+Banner restoration: all three images match their source commits byte for byte.

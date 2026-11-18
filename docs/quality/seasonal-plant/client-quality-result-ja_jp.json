@@ -1,0 +1,18 @@
+{
+  "renderTargets": [
+    "natural_draft_cooling_tower@seasonal_thermal",
+    "steel_slag@jei_forging_byproducts",
+    "spent_fuel_rod@jei_irradiation_products",
+    "irradiated_cartridge@jei_fusion_service",
+    "steel_ingot@jei_stirred_reactor"
+  ],
+  "ponderRender": "checked",
+  "runtimeTranslations": "passed",
+  "translationScope": "seasonal_thermal",
+  "scenes": [
+    "create_refinery_n_reactors:seasonal_thermal"
+  ],
+  "languages": [
+    "ja_jp"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#c:ores/uranium",
+    "#c:ores/bauxite",
+    "#c:ores/pentlandite",
+    "#c:ores/ilmenite",
+    "#c:ores/zircon",
+    "#c:ores/chromite",
+    "#c:ores/molybdenite",
+    "#c:ores/salt",
+    "#c:ores/cassiterite"
+  ]
+}

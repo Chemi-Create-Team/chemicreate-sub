@@ -1,0 +1,57 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "create_refinery_n_reactors:block/resin_pipe/core"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/resin_pipe/connection_north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/resin_pipe/connection_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/resin_pipe/connection_west"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/resin_pipe/connection_east"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/resin_pipe/connection_down"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/resin_pipe/connection_up"
+      }
+    }
+  ]
+}

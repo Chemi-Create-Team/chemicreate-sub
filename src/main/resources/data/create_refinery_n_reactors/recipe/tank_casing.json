@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "III",
+    "I I",
+    "III"
+  ],
+  "key": {
+    "I": { "tag": "c:ingots/iron" }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:tank_casing",
+    "count": 8
+  }
+}

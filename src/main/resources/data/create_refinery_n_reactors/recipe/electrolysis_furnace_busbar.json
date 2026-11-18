@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "T T",
+    "CPC",
+    "CPC"
+  ],
+  "key": {
+    "T": {
+      "item": "minecraft:terracotta"
+    },
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "P": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:electrolysis_furnace_busbar",
+    "count": 1
+  }
+}

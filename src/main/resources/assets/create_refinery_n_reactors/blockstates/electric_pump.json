@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,waterlogged=true": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,waterlogged=false": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 0
+    },
+    "facing=east,waterlogged=true": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,waterlogged=false": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 90
+    },
+    "facing=south,waterlogged=true": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,waterlogged=false": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 180
+    },
+    "facing=west,waterlogged=true": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,waterlogged=false": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 0,
+      "y": 270
+    },
+    "facing=up,waterlogged=true": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 270,
+      "y": 0
+    },
+    "facing=up,waterlogged=false": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 270,
+      "y": 0
+    },
+    "facing=down,waterlogged=true": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 90,
+      "y": 0
+    },
+    "facing=down,waterlogged=false": {
+      "model": "create_refinery_n_reactors:block/electric_utilities/pump",
+      "x": 90,
+      "y": 0
+    }
+  }
+}

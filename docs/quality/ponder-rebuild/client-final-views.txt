@@ -1,0 +1,8 @@
+[04:51:50] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET condenser_waterbox@condenser_loop -> create_refinery_n_reactors:condenser_loop
+[04:51:58] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET cooled_olefins_bucket@plant_manufacturing_petrochemical_feedstocks -> create_refinery_n_reactors:plant_manufacturing_petrochemical_feedstocks
+[04:52:06] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET ammonia_gas_bucket@plant_manufacturing_ammonia -> create_refinery_n_reactors:plant_manufacturing_ammonia
+[04:52:14] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET minecraft:gunpowder@plant_manufacturing_mining_explosives -> create_refinery_n_reactors:plant_manufacturing_mining_explosives
+[04:52:24] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 140 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x00007f21b5d746ae, pid=4625, tid=5204
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134

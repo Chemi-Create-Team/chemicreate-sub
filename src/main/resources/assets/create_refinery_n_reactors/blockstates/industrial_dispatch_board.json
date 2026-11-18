@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=north,triggered=false": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_idle",
+      "y": 0
+    },
+    "facing=north,triggered=true": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_stamped",
+      "y": 0
+    },
+    "facing=east,triggered=false": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_idle",
+      "y": 90
+    },
+    "facing=east,triggered=true": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_stamped",
+      "y": 90
+    },
+    "facing=south,triggered=false": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_idle",
+      "y": 180
+    },
+    "facing=south,triggered=true": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_stamped",
+      "y": 180
+    },
+    "facing=west,triggered=false": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_idle",
+      "y": 270
+    },
+    "facing=west,triggered=true": {
+      "model": "create_refinery_n_reactors:block/industrial_dispatch_stamped",
+      "y": 270
+    }
+  }
+}

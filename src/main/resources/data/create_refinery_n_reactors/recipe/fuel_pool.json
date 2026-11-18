@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "SSS",
+    "III"
+  ],
+  "key": {
+    "S": {
+      "item": "create:iron_sheet"
+    },
+    "I": {
+      "item": "create_refinery_n_reactors:steel_ingot"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fuel_pool",
+    "count": 2
+  }
+}

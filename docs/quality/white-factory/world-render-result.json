@@ -1,0 +1,15 @@
+{
+  "dioriteCasing": "single and 2x2 connected wall",
+  "idleMultiblocks": "solid/windowed 2x2x2 lidded vessels, pressure/cryogenic tanks, 2x2x14 column, complete compact tokamak",
+  "views": [
+    "quality-white-theme-overview.png",
+    "quality-white-theme-casing-comparison.png",
+    "quality-white-theme-casing-connected.png",
+    "quality-white-theme-vessels.png",
+    "quality-white-theme-tank-connected.png",
+    "quality-white-theme-fractionation.png",
+    "quality-white-theme-fusion.png"
+  ],
+  "comparison": "Create andesite, brass, copper casing and vanilla diorite",
+  "render": "captured_real_world"
+}

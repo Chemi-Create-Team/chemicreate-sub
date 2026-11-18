@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-10",
+  "baseline": "235246a6",
+  "runtime": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.219",
+    "create": "6.0.10",
+    "java": 21,
+    "opengl_renderer": "NVIDIA GeForce RTX 4060/PCIe/SSE2"
+  },
+  "tests": {
+    "related_regression": {
+      "required": 144,
+      "passed": 144
+    },
+    "final_boiling_basket_column": {
+      "required": 20,
+      "passed": 20,
+      "includes_new_native_crude_pump_test": true
+    },
+    "distinct_related_tests": 154,
+    "full_unfiltered_suite_run": false,
+    "merged_main_regression": {
+      "required": 153,
+      "passed": 153
+    },
+    "final_purity_identity": {
+      "required": 17,
+      "passed": 17
+    },
+    "final_pipe_switch_regression": {
+      "required": 76,
+      "passed": 76
+    }
+  },
+  "ponder": {
+    "native_scenes": [
+      "catalyst_basket",
+      "fractionating_column",
+      "vessel_maintenance"
+    ],
+    "language": "ja_jp",
+    "runtime_translation_check": "passed",
+    "catalogue_validation": {
+      "scenes": 89,
+      "paired_captions": 443,
+      "component_links": 143
+    },
+    "screenshot": "fractionation-tower.png",
+    "capture": "computer-use-linux MCP, actual Minecraft client"
+  },
+  "water_model": {
+    "cp_J_per_kg_K": 4180,
+    "latent_J_per_kg": 2257000,
+    "boiling_at_1atm_C": 100,
+    "vaporization_to_1K_heating_ratio": 539.9521531100479,
+    "half_kg_vaporization_J": 1128500,
+    "saturation_at_15bar_C": 200.34675184607204,
+    "full_IAPWS_95": false,
+    "purified_water_uses_same_properties": true,
+    "purified_liquid_identity_preserved": true
+  },
+  "implementation_commit": "ed7a41e957cfa5579a6a803f8059ef04fedc291a",
+  "integrated_main": "fa38ab0d",
+  "artifact": {
+    "name": "create-heavy-indusstry-0.1.0.jar",
+    "bytes": 5981813,
+    "sha256": "862e8e6b8129cecb0a5bd5c8dc0f3b8d5210c061424bb43ad377cee8f8032558"
+  }
+}

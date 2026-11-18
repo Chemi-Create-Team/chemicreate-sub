@@ -1,0 +1,805 @@
+{
+  "baseline": "c26c219873700d8aa1d99ae5c85f864d7bd39e0e",
+  "changed_original_textures": 74,
+  "new_materials": [
+    "diorite_casing",
+    "diorite_casing_connected",
+    "white_enamel"
+  ],
+  "material_alias_models": 194,
+  "original_dimensions": "unchanged",
+  "original_alpha_masks": "unchanged",
+  "original_model_geometry_UV_behavior": "unchanged",
+  "raw_item_textures": "unchanged",
+  "protected_mechanisms": "byte-identical",
+  "textures": [
+    {
+      "texture": "block/absorption_tower/shell.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 33
+    },
+    {
+      "texture": "block/chemical/radiator_drive.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 16
+    },
+    {
+      "texture": "block/chemical/radiator_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 13
+    },
+    {
+      "texture": "block/crane/drive_end.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 180
+    },
+    {
+      "texture": "block/crane/drive_side.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/crane/drive_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 148
+    },
+    {
+      "texture": "block/crane/girder.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 188
+    },
+    {
+      "texture": "block/crane/leg.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 156
+    },
+    {
+      "texture": "block/crane/reactor_carriage.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 55
+    },
+    {
+      "texture": "block/crane/truck.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 128
+    },
+    {
+      "texture": "block/fin_fan/radiator_fin_panel.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 116
+    },
+    {
+      "texture": "block/fin_fan/radiator_fin_panel_connected.png",
+      "size": [
+        48,
+        48
+      ],
+      "changed_pixels": 454
+    },
+    {
+      "texture": "block/fin_fan/radiator_side_panel.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 126
+    },
+    {
+      "texture": "block/fin_fan/radiator_side_panel_connected.png",
+      "size": [
+        48,
+        48
+      ],
+      "changed_pixels": 438
+    },
+    {
+      "texture": "block/fractionating_column/port.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 204
+    },
+    {
+      "texture": "block/furnace/base.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 86
+    },
+    {
+      "texture": "block/furnace/window_off.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 68
+    },
+    {
+      "texture": "block/furnace/window_on.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 56
+    },
+    {
+      "texture": "block/fusion/console_cabinet.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 172
+    },
+    {
+      "texture": "block/fusion/controller_off.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/controller_on.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/motor_generator_end.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 128
+    },
+    {
+      "texture": "block/fusion/motor_generator_off.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 100
+    },
+    {
+      "texture": "block/fusion/motor_generator_on.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 100
+    },
+    {
+      "texture": "block/fusion/port_ash.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/port_coolant_in.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/port_coolant_out.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/port_deuterium.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/port_helium_in.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/port_helium_out.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/port_tritium.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 140
+    },
+    {
+      "texture": "block/fusion/reinforced_casing.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 144
+    },
+    {
+      "texture": "block/fusion/vacuum_pump.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 80
+    },
+    {
+      "texture": "block/gas_compressor/base.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 151
+    },
+    {
+      "texture": "block/lidded_vessel/shell_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 3208
+    },
+    {
+      "texture": "block/lidded_vessel/top_2.png",
+      "size": [
+        32,
+        32
+      ],
+      "changed_pixels": 791
+    },
+    {
+      "texture": "block/lidded_vessel/top_3.png",
+      "size": [
+        48,
+        48
+      ],
+      "changed_pixels": 2007
+    },
+    {
+      "texture": "block/plant_systems/concrete.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 256
+    },
+    {
+      "texture": "block/plant_systems/panel.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 170
+    },
+    {
+      "texture": "block/reactor/rbmk/console_cabinet.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 70
+    },
+    {
+      "texture": "block/reactor/rbmk/console_case.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 256
+    },
+    {
+      "texture": "block/reactor/rbmk/console_metal.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 196
+    },
+    {
+      "texture": "block/reactor/silver/shell.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 160
+    },
+    {
+      "texture": "block/reciprocating_cylinder.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 252
+    },
+    {
+      "texture": "block/reciprocating_engine.png",
+      "size": [
+        32,
+        32
+      ],
+      "changed_pixels": 502
+    },
+    {
+      "texture": "block/tank/ammonia_separator.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 160
+    },
+    {
+      "texture": "block/tank/ammonia_separator_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 2939
+    },
+    {
+      "texture": "block/tank/ammonia_separator_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 141
+    },
+    {
+      "texture": "block/tank/ammonia_separator_top_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 1733
+    },
+    {
+      "texture": "block/tank/gas_receiver.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 132
+    },
+    {
+      "texture": "block/tank/gas_receiver_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 2800
+    },
+    {
+      "texture": "block/tank/gas_receiver_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 104
+    },
+    {
+      "texture": "block/tank/gas_receiver_top_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 2270
+    },
+    {
+      "texture": "block/tank/liquid_tank.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 132
+    },
+    {
+      "texture": "block/tank/liquid_tank_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 2800
+    },
+    {
+      "texture": "block/tank/liquid_tank_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 104
+    },
+    {
+      "texture": "block/tank/liquid_tank_top_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 2270
+    },
+    {
+      "texture": "block/tank/pressure_tank.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 132
+    },
+    {
+      "texture": "block/tank/pressure_tank_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 2800
+    },
+    {
+      "texture": "block/tank/pressure_tank_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 104
+    },
+    {
+      "texture": "block/tank/pressure_tank_top_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 2270
+    },
+    {
+      "texture": "block/tank/reaction_tower.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 14
+    },
+    {
+      "texture": "block/tank/reaction_tower_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 516
+    },
+    {
+      "texture": "block/tank/reaction_tower_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 54
+    },
+    {
+      "texture": "block/tank/reaction_tower_top_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 596
+    },
+    {
+      "texture": "block/tank/water_tank.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 98
+    },
+    {
+      "texture": "block/tank/water_tank_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 1272
+    },
+    {
+      "texture": "block/tank/water_tank_top.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 98
+    },
+    {
+      "texture": "block/tank/water_tank_top_connected.png",
+      "size": [
+        64,
+        64
+      ],
+      "changed_pixels": 1272
+    },
+    {
+      "texture": "block/tank_casing.png",
+      "size": [
+        32,
+        32
+      ],
+      "changed_pixels": 900
+    },
+    {
+      "texture": "block/transport/pvc_pipe.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 204
+    },
+    {
+      "texture": "block/transport/reinforced_pipe.png",
+      "size": [
+        16,
+        16
+      ],
+      "changed_pixels": 256
+    },
+    {
+      "texture": "block/turbine/high_pressure_casing.png",
+      "size": [
+        16,
+        32
+      ],
+      "changed_pixels": 401
+    },
+    {
+      "texture": "block/turbine/low_pressure_casing.png",
+      "size": [
+        16,
+        32
+      ],
+      "changed_pixels": 504
+    }
+  ],
+  "models": [
+    "block/fractionating_column/1_0_base.json",
+    "block/fractionating_column/1_0_body.json",
+    "block/fractionating_column/1_0_service.json",
+    "block/fractionating_column/1_0_single.json",
+    "block/fractionating_column/1_0_top.json",
+    "block/fractionating_column/2_0_base.json",
+    "block/fractionating_column/2_0_body.json",
+    "block/fractionating_column/2_0_service.json",
+    "block/fractionating_column/2_0_single.json",
+    "block/fractionating_column/2_0_top.json",
+    "block/fractionating_column/2_1_base.json",
+    "block/fractionating_column/2_1_body.json",
+    "block/fractionating_column/2_1_service.json",
+    "block/fractionating_column/2_1_single.json",
+    "block/fractionating_column/2_1_top.json",
+    "block/fractionating_column/2_3_base.json",
+    "block/fractionating_column/2_3_body.json",
+    "block/fractionating_column/2_3_service.json",
+    "block/fractionating_column/2_3_single.json",
+    "block/fractionating_column/2_3_top.json",
+    "block/fractionating_column/2_4_base.json",
+    "block/fractionating_column/2_4_body.json",
+    "block/fractionating_column/2_4_service.json",
+    "block/fractionating_column/2_4_single.json",
+    "block/fractionating_column/2_4_top.json",
+    "block/fractionating_column/3_0_base.json",
+    "block/fractionating_column/3_0_body.json",
+    "block/fractionating_column/3_0_service.json",
+    "block/fractionating_column/3_0_single.json",
+    "block/fractionating_column/3_0_top.json",
+    "block/fractionating_column/3_1_base.json",
+    "block/fractionating_column/3_1_body.json",
+    "block/fractionating_column/3_1_service.json",
+    "block/fractionating_column/3_1_single.json",
+    "block/fractionating_column/3_1_top.json",
+    "block/fractionating_column/3_2_base.json",
+    "block/fractionating_column/3_2_body.json",
+    "block/fractionating_column/3_2_service.json",
+    "block/fractionating_column/3_2_single.json",
+    "block/fractionating_column/3_2_top.json",
+    "block/fractionating_column/3_3_base.json",
+    "block/fractionating_column/3_3_body.json",
+    "block/fractionating_column/3_3_service.json",
+    "block/fractionating_column/3_3_single.json",
+    "block/fractionating_column/3_3_top.json",
+    "block/fractionating_column/3_4_base.json",
+    "block/fractionating_column/3_4_body.json",
+    "block/fractionating_column/3_4_service.json",
+    "block/fractionating_column/3_4_single.json",
+    "block/fractionating_column/3_4_top.json",
+    "block/fractionating_column/3_5_base.json",
+    "block/fractionating_column/3_5_body.json",
+    "block/fractionating_column/3_5_service.json",
+    "block/fractionating_column/3_5_single.json",
+    "block/fractionating_column/3_5_top.json",
+    "block/fractionating_column/3_6_base.json",
+    "block/fractionating_column/3_6_body.json",
+    "block/fractionating_column/3_6_service.json",
+    "block/fractionating_column/3_6_single.json",
+    "block/fractionating_column/3_6_top.json",
+    "block/fractionating_column/3_7_base.json",
+    "block/fractionating_column/3_7_body.json",
+    "block/fractionating_column/3_7_service.json",
+    "block/fractionating_column/3_7_single.json",
+    "block/fractionating_column/3_7_top.json",
+    "block/fractionating_column/3_8_base.json",
+    "block/fractionating_column/3_8_body.json",
+    "block/fractionating_column/3_8_service.json",
+    "block/fractionating_column/3_8_single.json",
+    "block/fractionating_column/3_8_top.json",
+    "block/fuel_cell.json",
+    "block/furnace/bath.json",
+    "block/furnace/bath_lit.json",
+    "block/furnace/interior.json",
+    "block/furnace/loose.json",
+    "block/furnace/rim_centre.json",
+    "block/furnace/rim_centre_lit.json",
+    "block/furnace/rim_corner.json",
+    "block/furnace/rim_corner_lit.json",
+    "block/furnace/rim_side.json",
+    "block/furnace/rim_side_lit.json",
+    "block/furnace/stand_corner.json",
+    "block/furnace/stand_side.json",
+    "block/furnace/wall_corner.json",
+    "block/furnace/wall_window.json",
+    "block/furnace/wall_window_lit.json",
+    "block/gas_compression/cell_0.json",
+    "block/gas_compression/cell_1.json",
+    "block/gas_compression/cell_10.json",
+    "block/gas_compression/cell_11.json",
+    "block/gas_compression/cell_12.json",
+    "block/gas_compression/cell_13.json",
+    "block/gas_compression/cell_14.json",
+    "block/gas_compression/cell_15.json",
+    "block/gas_compression/cell_16.json",
+    "block/gas_compression/cell_17.json",
+    "block/gas_compression/cell_2.json",
+    "block/gas_compression/cell_3.json",
+    "block/gas_compression/cell_4.json",
+    "block/gas_compression/cell_5.json",
+    "block/gas_compression/cell_6.json",
+    "block/gas_compression/cell_7.json",
+    "block/gas_compression/cell_8.json",
+    "block/gas_compression/cell_9.json",
+    "block/gas_compression/small.json",
+    "block/gas_pipe/core.json",
+    "block/gas_pipe/down.json",
+    "block/gas_pipe/east.json",
+    "block/gas_pipe/inventory.json",
+    "block/gas_pipe/north.json",
+    "block/gas_pipe/south.json",
+    "block/gas_pipe/up.json",
+    "block/gas_pipe/west.json",
+    "block/heating/chamber/0.json",
+    "block/heating/chamber/1.json",
+    "block/heating/chamber/2.json",
+    "block/heating/chamber/3.json",
+    "block/heating/chamber/4.json",
+    "block/heating/chamber/5.json",
+    "block/heating/chamber/6.json",
+    "block/heating/chamber/7.json",
+    "block/heating/chamber/8.json",
+    "block/heating/coil/0.json",
+    "block/heating/coil/1.json",
+    "block/heating/coil/2.json",
+    "block/heating/coil/3.json",
+    "block/heating/coil/4.json",
+    "block/heating/coil/5.json",
+    "block/heating/coil/6.json",
+    "block/heating/coil/7.json",
+    "block/heating/coil/8.json",
+    "block/heating/controller.json",
+    "block/heating/controller_running.json",
+    "block/heating/flue/0.json",
+    "block/heating/flue/1.json",
+    "block/heating/flue/2.json",
+    "block/heating/flue/3.json",
+    "block/heating/flue/4.json",
+    "block/heating/flue/5.json",
+    "block/heating/flue/6.json",
+    "block/heating/flue/7.json",
+    "block/heating/flue/8.json",
+    "block/pressure/back_pressure_valve.json",
+    "block/pressure/pressure_reducing_valve.json",
+    "block/pressure/ultra_high_pressure_pipe/core.json",
+    "block/pressure/ultra_high_pressure_pipe/down.json",
+    "block/pressure/ultra_high_pressure_pipe/east.json",
+    "block/pressure/ultra_high_pressure_pipe/inventory.json",
+    "block/pressure/ultra_high_pressure_pipe/north.json",
+    "block/pressure/ultra_high_pressure_pipe/south.json",
+    "block/pressure/ultra_high_pressure_pipe/up.json",
+    "block/pressure/ultra_high_pressure_pipe/west.json",
+    "block/reactor/preheater.json",
+    "block/reactor/preheater/core/4.json",
+    "block/reactor/preheater/jacket/0.json",
+    "block/reactor/preheater/jacket/1.json",
+    "block/reactor/preheater/jacket/2.json",
+    "block/reactor/preheater/jacket/3.json",
+    "block/reactor/preheater/jacket/5.json",
+    "block/reactor/preheater/jacket/6.json",
+    "block/reactor/preheater/jacket/7.json",
+    "block/reactor/preheater/jacket/8.json",
+    "block/reactor/preheater_running.json",
+    "block/relief_valve/closed.json",
+    "block/relief_valve/open.json",
+    "block/thermal_control/assembled_cover/0.json",
+    "block/thermal_control/assembled_cover/1.json",
+    "block/thermal_control/assembled_cover/2.json",
+    "block/thermal_control/assembled_cover/6.json",
+    "block/thermal_control/assembled_cover/7.json",
+    "block/thermal_control/assembled_cover/8.json",
+    "block/thermal_control/assembled_roof/0.json",
+    "block/thermal_control/assembled_roof/1.json",
+    "block/thermal_control/assembled_roof/2.json",
+    "block/thermal_control/assembled_roof/3.json",
+    "block/thermal_control/assembled_roof/4.json",
+    "block/thermal_control/assembled_roof/5.json",
+    "block/thermal_control/assembled_roof/6.json",
+    "block/thermal_control/assembled_roof/7.json",
+    "block/thermal_control/assembled_roof/8.json",
+    "block/thermal_control/coil/0_0.json",
+    "block/thermal_control/connections/chamber_arm.json",
+    "block/thermal_control/connections/chamber_post.json",
+    "block/thermal_control/connections/exchanger_wall_arm.json",
+    "block/thermal_control/connections/exchanger_wall_post.json",
+    "block/thermal_control/exchanger_core/0_0.json",
+    "block/thermal_control/exchanger_roof/0_0.json",
+    "block/thermal_control/exchanger_roof/3_0.json",
+    "block/thermal_control/exchanger_roof/6_0.json",
+    "block/thermal_control/exchanger_support/0_0.json",
+    "block/thermal_control/flue/0_0.json",
+    "block/thermal_control/roof/0_0.json",
+    "item/compressor_mechanism.json",
+    "item/large_compressor.json"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "create_refinery_n_reactors:block/pipe_gauge/body"
+    },
+    "axis=z": {
+      "model": "create_refinery_n_reactors:block/pipe_gauge/body",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "create_refinery_n_reactors:block/pipe_gauge/body",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

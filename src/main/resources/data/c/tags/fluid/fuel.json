@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:low_sulfur_diesel",
+    "create_refinery_n_reactors:flowing_low_sulfur_diesel"
+  ]
+}

@@ -1,0 +1,17 @@
+allprojects {
+    afterEvaluate {
+        def runs = extensions.getByName('neoForge').runs
+        runs.named('client') {
+            programArgument '--width'
+            programArgument '1260'
+            programArgument '--height'
+            programArgument '740'
+        }
+        runs.named('gameTestServer') {
+            if (System.getProperty('createplant.whiteTestDir') != null)
+                gameDirectory.set(new File(System.getProperty('createplant.whiteTestDir')))
+            if (System.getProperty('createplant.gameTestClasses') != null)
+                systemProperty 'createplant.gameTestClasses', System.getProperty('createplant.gameTestClasses')
+        }
+    }
+}

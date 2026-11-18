@@ -1,0 +1,14 @@
+{
+  "type": "create:milling",
+  "ingredients": [
+    {
+      "item": "minecraft:coal"
+    }
+  ],
+  "processing_time": 100,
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:carbon_powder"
+    }
+  ]
+}

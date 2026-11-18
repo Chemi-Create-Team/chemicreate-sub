@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CNC",
+    "THT",
+    "CNC"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "N": {
+      "item": "create_refinery_n_reactors:nickel_sheet"
+    },
+    "T": {
+      "item": "create_refinery_n_reactors:cryogenic_tank"
+    },
+    "H": {
+      "item": "create_refinery_n_reactors:jacketed_pipe"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cryogenic_regenerator"
+  }
+}

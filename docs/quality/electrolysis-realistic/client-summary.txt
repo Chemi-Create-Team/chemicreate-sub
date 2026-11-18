@@ -1,0 +1,9 @@
+ja_jp
+[11:09:02] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 4 scenes, ja_jp
+BUILD SUCCESSFUL in 2m 14s
+en_us
+[11:14:19] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 4 scenes, en_us
+BUILD SUCCESSFUL in 2m 13s
+zh_cn
+[11:17:20] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 4 scenes, zh_cn
+BUILD SUCCESSFUL in 2m 9s

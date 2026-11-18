@@ -1,0 +1,26 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    "SSS",
+    "TMT",
+    "SHS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "T": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "M": {
+      "item": "create:mechanical_press"
+    },
+    "H": {
+      "item": "create:shaft"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cubic_press"
+  },
+  "accept_mirrored": true
+}

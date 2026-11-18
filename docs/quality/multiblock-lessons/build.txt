@@ -1,0 +1,44 @@
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=2
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :jarJar NO-SOURCE
+> Task :jar
+> Task :assemble
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :fluidPhaseTest
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=2
+FluidPhase: 25 checks passed
+
+> Task :haberBoschProcessTest
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=2
+HaberBoschProcess: 1019 checks passed
+
+> Task :reactorControlTest
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=2
+Reactor control tests passed
+
+> Task :reactorPhysicsTest
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=2
+ReactorPhysicsTest: 1670 checks passed (delayed rise period 5.7 s)
+
+> Task :test
+> Task :check
+> Task :build
+
+[Incubating] Problems report is available at: file:///workspace/Create-Plant/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 7s
+10 actionable tasks: 6 executed, 4 up-to-date

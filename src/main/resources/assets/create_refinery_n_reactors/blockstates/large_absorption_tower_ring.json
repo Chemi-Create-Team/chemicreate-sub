@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/absorption_tower/large_absorption_tower_ring"
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/absorption_tower/large_absorption_tower_ring"
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/absorption_tower/large_absorption_tower_ring"
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/absorption_tower/large_absorption_tower_ring"
+    }
+  }
+}

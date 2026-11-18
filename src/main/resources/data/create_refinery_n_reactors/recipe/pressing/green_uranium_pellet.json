@@ -1,0 +1,14 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:enriched_uranium_dioxide"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:green_uranium_pellet",
+      "count": 2
+    }
+  ]
+}

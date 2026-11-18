@@ -1,0 +1,32 @@
+{
+  "textures": {
+    "face": "create_refinery_n_reactors:block/transport/large_gas_pipe_end",
+    "particle": "create_refinery_n_reactors:block/transport/large_gas_pipe_side"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#face",
+          "cullface": "north"
+        }
+      }
+    }
+  ]
+}

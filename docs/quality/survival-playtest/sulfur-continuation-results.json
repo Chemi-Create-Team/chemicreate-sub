@@ -1,0 +1,205 @@
+{
+  "world": "survival-progression-1794995669810",
+  "mill_rpm": 8.0,
+  "mixer_rpm": 32.0,
+  "press_rpm": 32.0,
+  "cake_press_rpm": 32.0,
+  "spout_pump_rpm": 8.0,
+  "deployer_rpm": 8.0,
+  "crushing_wheel_rpm": 8.0,
+  "cake_netherrack": 4,
+  "cake_charges": 7,
+  "raw_feed_at": 150,
+  "sulfur_dust_at": 240,
+  "cinder_flour_at": 241,
+  "cake_finished_at": 450,
+  "cake_deployer_at": 622,
+  "deployer_fired_cake_at": 724,
+  "steel_press_1_at": 1184,
+  "steel_press_2_at": 1247,
+  "steel_press_3_at": 1310,
+  "steel_press_4_at": 1373,
+  "steel_1_at": 1445,
+  "steel_2_at": 1760,
+  "steel_3_at": 2075,
+  "steel_4_at": 2390,
+  "steel_5_at": 2705,
+  "steel_6_at": 3020,
+  "steel_7_at": 3335,
+  "steel_8_at": 3650,
+  "steel_9_at": 3965,
+  "steel_10_at": 4280,
+  "steel_11_at": 4595,
+  "steel_12_at": 4910,
+  "steel_mixer_batches": 3,
+  "steel_qualified": true,
+  "ferrochrome_first_output_at": 1452,
+  "alloy_burner_3_at": 2012,
+  "nickel_oxide_first_output_at": 104,
+  "alloy_burner_1_at": 563,
+  "alloy_burner_2_at": 1368,
+  "sixteen_plates_at": 3154,
+  "alloy_batches": 4,
+  "nickel_ingot_first_output_at": 647,
+  "stainless_steel_ingot_first_output_at": 2096,
+  "alloy_refired_3_at": 6037,
+  "alloy_refired_2_at": 5232,
+  "alloy_refired_1_at": 4427,
+  "stainless_plates": 40,
+  "alloy_press_rpm": 32,
+  "alloy_elapsed_ticks": 7685,
+  "alloy_mixer_rpm": 32,
+  "sulfur_probe_started_at": 12595,
+  "sulfur_netherrack_progressed": true,
+  "create_netherrack_recipe_loaded": true,
+  "sulfur_netherrack_total": 6,
+  "separate_sulfur_recipe_loaded": false,
+  "netherrack_batch_1": {
+    "input": 8,
+    "ticks": 1112,
+    "cinder_flour": 13,
+    "sulfur_dust": 1
+  },
+  "netherrack_batch_2": {
+    "input": 8,
+    "ticks": 1104,
+    "cinder_flour": 10,
+    "sulfur_dust": 3
+  },
+  "netherrack_batch_3": {
+    "input": 8,
+    "ticks": 1120,
+    "cinder_flour": 13,
+    "sulfur_dust": 2
+  },
+  "sulfur_stall_rpm": 32.0,
+  "first_air_charge_mb": 2400,
+  "sulfur_burn_1_ticks": 109,
+  "sulfur_burn_2_ticks": 591,
+  "sulfur_stall_buffers": [
+    {
+      "id": "air_gas",
+      "mb": 7600,
+      "slot": 0,
+      "heat": "AMBIENT"
+    },
+    {
+      "id": "sulfur_dioxide",
+      "mb": 500,
+      "slot": 2,
+      "heat": "VERY_HOT"
+    },
+    {
+      "id": "nitrogen_gas",
+      "mb": 1900,
+      "slot": 3,
+      "heat": "VERY_HOT"
+    },
+    {
+      "id": "sulfur_dioxide",
+      "mb": 500,
+      "slot": 4,
+      "heat": "VERY_HOT"
+    },
+    {
+      "id": "nitrogen_gas",
+      "mb": 1900,
+      "slot": 5,
+      "heat": "VERY_HOT"
+    }
+  ],
+  "sulfur_dioxide_mb": 1000,
+  "vessel_impeller_rpm": 32,
+  "sulfur_stall_ticks": 1800,
+  "open_air_pump_rpm": 8,
+  "gas_after_burn_1": [
+    {
+      "id": "air_gas",
+      "mb": 436,
+      "slot": 0,
+      "heat": "AMBIENT"
+    },
+    {
+      "id": "sulfur_dioxide",
+      "mb": 500,
+      "slot": 2,
+      "heat": "AMBIENT"
+    },
+    {
+      "id": "nitrogen_gas",
+      "mb": 1900,
+      "slot": 3,
+      "heat": "AMBIENT"
+    }
+  ],
+  "air_2400_mb_ticks": 722,
+  "gas_after_burn_2": [
+    {
+      "id": "air_gas",
+      "mb": 400,
+      "slot": 0,
+      "heat": "AMBIENT"
+    },
+    {
+      "id": "sulfur_dioxide",
+      "mb": 500,
+      "slot": 2,
+      "heat": "VERY_HOT"
+    },
+    {
+      "id": "nitrogen_gas",
+      "mb": 1900,
+      "slot": 3,
+      "heat": "VERY_HOT"
+    },
+    {
+      "id": "sulfur_dioxide",
+      "mb": 500,
+      "slot": 4,
+      "heat": "AMBIENT"
+    },
+    {
+      "id": "nitrogen_gas",
+      "mb": 1900,
+      "slot": 5,
+      "heat": "AMBIENT"
+    }
+  ],
+  "crafted_vessel_shell_blocks": 9,
+  "starting_iron_ore_for_vessel": 54,
+  "nitrogen_mb": 3800,
+  "sulfur_stall_burner": "KINDLED",
+  "sulfur_burn_batches": 2,
+  "sulfur_stall_status": "materials",
+  "sulfur_fuel_coal_blocks": 1,
+  "stainless_sheets_used": 36,
+  "equipment": {
+    "create:andesite_funnel": 3,
+    "create:basin": 6,
+    "create:blaze_burner": 6,
+    "create:cogwheel": 22,
+    "create:crushing_wheel": 2,
+    "create:deployer": 4,
+    "create:depot": 11,
+    "create:fluid_pipe": 3,
+    "create:gearbox": 9,
+    "create:large_cogwheel": 20,
+    "create:mechanical_mixer": 5,
+    "create:mechanical_press": 4,
+    "create:mechanical_pump": 1,
+    "create:millstone": 3,
+    "create:shaft": 12,
+    "create:spout": 1,
+    "create:water_wheel": 23,
+    "create_refinery_n_reactors:gas_pipe": 4,
+    "create_refinery_n_reactors:gas_pump": 1,
+    "create_refinery_n_reactors:lidded_vessel": 9,
+    "minecraft:chest": 8,
+    "minecraft:crafting_table": 1,
+    "minecraft:furnace": 5,
+    "minecraft:hopper": 292,
+    "minecraft:lever": 8,
+    "minecraft:stone_bricks": 246
+  },
+  "stalled": "Sulfur combustion paused: materials, air\u003d7600, SO2\u003d1000, hopper\u003d[], vessel item\u003d1 create_refinery_n_reactors:sulfur_dust"
+}

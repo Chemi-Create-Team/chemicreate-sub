@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "CPC",
+    " C "
+  ],
+  "key": {
+    "C": {
+      "item": "create_refinery_n_reactors:clarifier_basin_wall"
+    },
+    "P": {
+      "item": "create:andesite_funnel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:underflow_drain",
+    "count": 1
+  }
+}

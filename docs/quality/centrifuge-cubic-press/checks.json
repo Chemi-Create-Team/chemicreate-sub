@@ -1,0 +1,33 @@
+{
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10",
+  "java": 21,
+  "gameTests": {
+    "required": 76,
+    "passed": 76,
+    "classes": [
+      "GasCentrifugeGameTests",
+      "CubicPressGameTests",
+      "ReactorGameTests",
+      "DriveLessVesselGameTests",
+      "StructureGuideGameTests",
+      "CraftingRecipeGameTests",
+      "UraniumFuelGameTests",
+      "VesselBasinGameTests",
+      "SurvivalReachabilityGameTests",
+      "PlantTutorialGameTests",
+      "ConcurrentChemistryGameTests"
+    ]
+  },
+  "reactorPhysicsChecks": 1668,
+  "ponderLanguages": [
+    "en_us",
+    "ja_jp",
+    "zh_cn"
+  ],
+  "ponderHeaders": 144,
+  "additionalPonderScenes": 96,
+  "gpu": "NVIDIA GeForce RTX 4060",
+  "artifactSha256": "f829c522a570dfa12767916ac5ddc74faef31128a45c13a5cb27fb8e9a8e370f"
+}

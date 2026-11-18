@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CAC",
+    "ASA",
+    "CAC"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_breeding_blanket",
+    "count": 8
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "mode": "built-in image_gen edit, one call per changed category",
+  "basePrompt": "Use case: precise-object-edit. Asset: Minecraft Create creative-inventory banner. Input 1 is the CURRENT banner to improve. Inputs 2 and 3 are STYLE references only (Simulated gears and Cosmonautics stars): reproduce their balance of bold simple forms with small pixel details, not their words or subject. Keep the current category and wide banner composition, but replace the flat vector-like fills with crafted pixel art. Use one or two dominant close-up forms, 3-4 stepped shades per material, dark seams, 1-pixel bevel highlights, a few visible mechanical details, and sparse stippled/dithered material grain. About 20-24 colors total. NOT a busy factory scene; NOT flat silhouettes or plain clip art. LEFT 45-55% stays dark charcoal with low-contrast speckled/brushed-metal pixels for readable runtime text; it must look textured, not an empty black void. Main shapes occupy the right half, cropped by top/bottom edges, with pixel highlights and recesses. No text, no letters, no numbers, no logo, no scenery, no perspective room, no sky. Sharp native pixel clusters without antialiasing or soft gradients. GEOMETRY: logical canvas 162x54; only the CENTER 162x18 strip is the visible 9:1 banner, and the top/bottom 18 rows are pure black padding. No outer-canvas frame. Medium detail density comparable to the reference banners. Category-specific details: ",
+  "subjects": {
+    "radiation": "aged brass circular survey-meter dial, readable tick-mark pattern and dark needle, one restrained yellow trefoil, fine etched rim",
+    "construction": "two overlapping blue-gray steel casing plates, raised beveled edges, copper corner bracket and a few rivet heads",
+    "pipes": "copper elbow and dark iron cross-pipe, cylindrical stepped highlights, bolted flange rings and a red valve handwheel with a recessed hub",
+    "controls": "two cream needle dials in dark brass-edged housings, a few red/green pilot lights, tiny tick marks, panel seams and one rotary knob",
+    "tanks": "two silver pressure vessels with curved stepped metal shading, copper bands, a few rivets and a small hatch seam",
+    "kinetics": "two overlapping cropped brass gears with recognizable central bores, beveled tooth highlights, darker inner rings and lightly stippled brass grain",
+    "thermal": "orange-red heating coil with a dark support and stepped glow pixels, alongside steel-blue radiator fins with shaded gaps",
+    "chemistry": "two cropped copper process columns, modest bands and inspection ports, one interconnecting pipe with a flanged joint",
+    "reprocessing": "a small set of vertical metal fuel rods and extraction pipework above blue pool water, textured steel surfaces and one yellow-black barrier band",
+    "logistics": "cropped yellow gantry beam, steel rails and a hanging hook with beveled metal pixels and a few bolts",
+    "containers": "two empty silver bucket rims with visible dark interiors, curved highlights, a handle bracket and subtle copper wear",
+    "liquids": "layered turquoise and amber liquids inside two cropped metallic sight glasses, glass edge highlights and a few bubble pixels",
+    "gases": "two dark steel gas cylinders with brass valves, silver rim highlights and one restrained lavender gas curl with stepped pixel shading",
+    "ores": "rust-orange and olive-green ore clusters embedded in coarse blue-gray rock, faceted veins with a few brighter mineral pixels",
+    "minerals": "two chunky orange and pale-pink mineral crystals, angular light and shadow faces, a few fracture pixels and glints",
+    "powders": "cream and ochre powder piles on a dark steel tray, granular pixel clusters, small shaded ridges and a copper scoop tip",
+    "metals": "stacked silver and copper ingots, beveled corners, clear dark seams, stepped metallic highlights and a few surface marks",
+    "polymers": "a curled dark rubber strip with edge highlights and ribbed recesses, plus cream polymer slabs with a few shaded pellet shapes",
+    "catalysts": "a brass mesh catalyst basket with purple pellets, visible lattice gaps, small beveled wires and varied pellet highlights",
+    "components": "a cropped brass bearing with an inner race, a steel toothed component with a dark hub, a few precise bolts and surface highlights",
+    "fuel": "three silver fuel rods with olive end caps, parallel cladding seams, shaded cylindrical highlights and small connector collars",
+    "protection": "a dark respirator with two cream round filters, concentric filter grooves, rim highlights and a small strap clasp",
+    "other": "copper wrench over a steel toolbox, beveled tool edges, a few bolt heads, brushed-metal pixel grain and a dark latch"
+  },
+  "preserved": [
+    "spent_fuel",
+    "explosives",
+    "fission",
+    "fusion"
+  ],
+  "references": [
+    "Simulated gear banner (user attachment)",
+    "Cosmonautics star banner (user attachment)"
+  ],
+  "normalization": "Trim black letterboxing; nearest-neighbor resize to 162x18; quantize without dithering to at most 24 colors"
+}

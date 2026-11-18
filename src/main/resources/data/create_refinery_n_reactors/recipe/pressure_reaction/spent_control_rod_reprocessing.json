@@ -1,0 +1,19 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:spent_control_rod"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "create_refinery_n_reactors:nitric_acid"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:reactor_graphite"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+allprojects {
+ afterEvaluate {
+  extensions.getByName('neoForge').runs.named('client') {
+   gameDirectory.set(new File('/tmp/createplant-mixture-client'))
+   systemProperty 'createplant.mixtureClientCheck', 'true'
+   systemProperty 'createplant.clientQualityTargets', 'lidded_vessel@chemical_mixtures'
+   systemProperty 'createplant.clientQualityScenes', 'chemical_mixtures'
+   systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+   systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+   systemProperty 'createplant.clientQualityCaptureDelay', '600'
+   systemProperty 'createplant.clientQualitySeekFromEnd', '300'
+  }
+ }
+}

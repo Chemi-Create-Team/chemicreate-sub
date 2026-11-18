@@ -1,0 +1,25 @@
+tests.log (selected log lines)
+[17:11:57] [Server thread/INFO] [minecraft/GameTestServer]: 136 tests are now running at position 28087, -59, 14946258!
+[17:15:51] [Server thread/INFO] [ne.cr.ga.GasBellLoadGameTests/]: GAS BELL LOAD {"holders":16,"width":7,"height":2,"collision_bodies_each":3,"gas_mB":6272000,"idle":{"samples":400,"mean_loop_ms":51.230319,"p95_loop_ms":473.670906,"max_loop_ms":1820.567476},"moving":{"samples":800,"mean_loop_ms":53.024429,"p95_loop_ms":389.181437,"max_loop_ms":2598.439203}}
+[17:16:14] [Server thread/INFO] [minecraft/GameTestServer]: ========= 136 GAME TESTS COMPLETE IN 4.291 min ======================
+[17:16:14] [Server thread/INFO] [minecraft/GameTestServer]: All 136 required tests passed :)
+BUILD SUCCESSFUL in 5m 38s
+
+Static checks passed: 2545 translated keys, 140 Ponder headers and captions, plant tutorial references.
+Preserved: 32 mineral files unchanged from 322e81c0; native Electro Energetics magnet recipe override stays absent; legacy spherical holder code stays absent.
+Hardware: NVIDIA GeForce RTX 4060, driver 595.99.02; direct rendering enabled.
+
+client.log (selected log lines)
+[17:17:28] [Render thread/INFO] [ne.cr.cl.GasBellClientCheck/]: TELESCOPIC HOLDER STAGE: empty width=7 lift=0.0
+[17:17:38] [Render thread/INFO] [ne.cr.cl.GasBellClientCheck/]: TELESCOPIC HOLDER STAGE: inner width=7 lift=2.4999999999973332
+[17:17:48] [Render thread/INFO] [ne.cr.cl.GasBellClientCheck/]: TELESCOPIC HOLDER STAGE: middle width=7 lift=4.999999999997334
+[17:17:58] [Render thread/INFO] [ne.cr.cl.GasBellClientCheck/]: TELESCOPIC HOLDER STAGE: full width=7 lift=7.5
+[17:18:08] [Render thread/INFO] [ne.cr.cl.GasBellClientCheck/]: TELESCOPIC HOLDER STAGE: retracted width=7 lift=0.0
+[17:18:13] [Render thread/INFO] [ne.cr.cl.GasBellClientCheck/]: TELESCOPIC HOLDER CLIENT PASS: 7x7x3 native casing; 1176000 mB; inner/middle/outer sequence; 0/2.5/5/7.5/0 m; all three collision bodies synchronized
+[17:18:13] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET gas_holder@gas_bell -> create_heavy_indusstry:gas_bell
+[17:18:23] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 140 scenes, ja_jp
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134
+BUILD FAILED in 2m
+
+Final JAR: BUILD SUCCESSFUL in 8s; 37 original telescopic holder assets restored; legacy sphere code and Ponder structure absent; no magnet recipe override.

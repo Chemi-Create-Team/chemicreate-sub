@@ -1,0 +1,14 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "tag": "c:ingots/stainless_steel"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:stainless_steel_sheet",
+      "count": 1
+    }
+  ]
+}

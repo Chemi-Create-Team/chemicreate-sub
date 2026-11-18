@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " C ",
+    "PSP",
+    " B "
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:red_dye"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:condenser_shell"
+    },
+    "B": {
+      "item": "create:brass_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:condenser_cooling_outlet",
+    "count": 2
+  }
+}

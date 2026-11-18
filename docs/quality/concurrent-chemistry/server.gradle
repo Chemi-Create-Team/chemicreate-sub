@@ -1,0 +1,9 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File('/tmp/createplant-concurrent-chemistry'))
+            systemProperty 'createplant.gameTestClasses', System.getProperty('testClasses', 'ConcurrentChemistryGameTests')
+            systemProperty 'createplant.concurrentChemistryReport', new File(project.projectDir, 'build/concurrent-chemistry.json').absolutePath
+        }
+    }
+}

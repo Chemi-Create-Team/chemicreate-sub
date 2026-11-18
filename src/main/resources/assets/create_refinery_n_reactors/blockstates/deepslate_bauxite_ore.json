@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "create_refinery_n_reactors:block/deepslate_bauxite_ore"
+    }
+  }
+}

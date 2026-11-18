@@ -1,0 +1,1 @@
+{"holders":16,"roof_blocks_each":9,"gas_mB":4608000,"idle":{"samples":400,"mean_loop_ms":0.316857,"p95_loop_ms":0.414477,"max_loop_ms":2.314180},"moving":{"samples":800,"mean_loop_ms":0.289948,"p95_loop_ms":0.431709,"max_loop_ms":2.651762}}

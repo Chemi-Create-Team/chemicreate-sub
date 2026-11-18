@@ -1,0 +1,16 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File('/tmp/createplant-separator-client'))
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.separatorDrumClientCheck', 'true'
+            systemProperty 'createplant.clientQualityTargets', 'ammonia_separator@ammonia_separator,ammonia_separator@ammonia_separator,liquid_ammonia_bucket@plant_manufacturing_ammonia'
+            systemProperty 'createplant.clientQualityScenes', 'ammonia_separator,guide.manufacturing_ammonia'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+            systemProperty 'createplant.clientQualityCaptureDelay', '700'
+            systemProperty 'createplant.clientQualitySeek.0', '750'
+            systemProperty 'createplant.clientQualitySeek.1', '1130'
+        }
+    }
+}

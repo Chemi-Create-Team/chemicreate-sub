@@ -1,0 +1,6 @@
+{
+  "parent": "create_refinery_n_reactors:block/magenta_large_flywheel/flywheel",
+  "loader": "neoforge:obj",
+  "flip_v": true,
+  "model": "create_refinery_n_reactors:models/block/large_flywheel/large_flywheel_shaftless.obj"
+}

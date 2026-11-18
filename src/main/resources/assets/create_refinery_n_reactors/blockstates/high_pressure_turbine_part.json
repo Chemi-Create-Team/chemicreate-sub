@@ -1,0 +1,700 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "0",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_0_0"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "2",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "0",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_0_1"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "2",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_0_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "0",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_0_2"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "2",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_0_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "1",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_1_0"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "1",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "1",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_1_2"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "1",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_1_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "2",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_2_0"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "0",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_2_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "2",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_2_1"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "0",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_2_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "2",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_2_2"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "0",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_side_2_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "3",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_3"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "4",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "3",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_0"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "4",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "3",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_1"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "4",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "3",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_2"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "4",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "3",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_4"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "4",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_3_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "0",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_0_3"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "2",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_0_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "0",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_0_4"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "2",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_0_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "1",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_1_3"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "1",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_1_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "1",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_1_4"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "1",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_1_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "2",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_2_3"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "0",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_2_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "2",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_2_4"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "0",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_2_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "4",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_3"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "3",
+        "ring_y": "3",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "4",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_0"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "3",
+        "ring_y": "0",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "4",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_1"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "3",
+        "ring_y": "1",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "4",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_2"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "3",
+        "ring_y": "2",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "x",
+        "ring_x": "4",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_4"
+      }
+    },
+    {
+      "when": {
+        "attached": "true",
+        "casing": "true",
+        "window": "false",
+        "axis": "z",
+        "ring_x": "3",
+        "ring_y": "4",
+        "section": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/low_side_4_4",
+        "y": 90
+      }
+    }
+  ]
+}

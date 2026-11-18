@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout_mipped",
+  "textures": {
+    "side": "create_refinery_n_reactors:block/tank/reaction_tower",
+    "top": "create_refinery_n_reactors:block/tank/reaction_tower_top",
+    "inner": "create_refinery_n_reactors:block/reactor/steel",
+    "floor": "create_refinery_n_reactors:block/reactor/steel",
+    "glass": "minecraft:block/glass",
+    "particle": "create_refinery_n_reactors:block/tank/reaction_tower"
+  },
+  "elements": [
+    {
+      "from": [
+        10,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top",
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#top",
+          "cullface": "down"
+        },
+        "west": {
+          "texture": "#inner"
+        },
+        "east": {
+          "texture": "#side",
+          "cullface": "east"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SCS",
+    "MIM",
+    "SCS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "C": {
+      "tag": "c:ingots/chromium"
+    },
+    "M": {
+      "tag": "c:ingots/molybdenum"
+    },
+    "I": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:high_pressure_turbine_casing",
+    "count": 4
+  }
+}

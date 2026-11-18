@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "C C",
+    " S ",
+    "C C"
+  ],
+  "key": {
+    "C": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:low_pressure_turbine_end",
+    "count": 2
+  }
+}

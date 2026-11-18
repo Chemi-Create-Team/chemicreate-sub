@@ -1,0 +1,9 @@
+[14:07:27] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: NVIDIA GeForce RTX 4060/PCIe/SSE2 GL version 4.6.0 NVIDIA 595.99.02, NVIDIA Corporation
+[14:09:06] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET personal_dosimeter@radiation_measurement -> create_heavy_indusstry:radiation_measurement
+[14:09:16] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET survey_meter@radiation_decontamination -> create_heavy_indusstry:radiation_decontamination
+[14:09:26] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fuel_pool@fuel_pool -> create_heavy_indusstry:fuel_pool
+[14:09:36] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 139 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x00007b273a9746ae, pid=8695, tid=9019
+# C  [libEGL_nvidia.so.0+0xb56ae]
+
+The three requested Ponders, owner-only meter readings and client tooltip passed. runClient later exited 134 during native EGL shutdown.

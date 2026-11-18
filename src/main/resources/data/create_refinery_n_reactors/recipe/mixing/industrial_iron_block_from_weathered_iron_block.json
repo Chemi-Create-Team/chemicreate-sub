@@ -1,0 +1,18 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create:weathered_iron_block"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 100,
+      "fluid": "create_refinery_n_reactors:hydrochloric_acid"
+    }
+  ],
+  "results": [
+    {
+      "id": "create:industrial_iron_block"
+    }
+  ]
+}

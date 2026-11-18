@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:yellowcake",
+    "create_refinery_n_reactors:uranium_trioxide"
+  ]
+}

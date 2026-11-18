@@ -1,0 +1,12 @@
+allprojects {
+    afterEvaluate {
+        def verificationProject = project
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File(verificationProject.projectDir, 'run-gas-bell-verification'))
+            systemProperty 'createplant.gameTestClasses', System.getProperty('gasBellTestClasses',
+                'GasBellGameTests,GasPipeGameTests,FlareGameTests,ToxicGasGameTests,GasHolderGameTests,PressureGameTests,DisplayIntegrationGameTests')
+            systemProperty 'createplant.safetyLoadReport', System.getProperty('gasBellLoadReport',
+                new File(verificationProject.projectDir, 'build/gas-bell-load.json').absolutePath)
+        }
+    }
+}

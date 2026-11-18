@@ -1,0 +1,26 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "module": "stirred",
+  "processing_time": 160,
+  "ingredients": [
+    {
+      "item": "minecraft:clay_ball"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:wastewater",
+      "amount": 1000
+    },
+    {
+      "type": "neoforge:tag",
+      "tag": "create_refinery_n_reactors:leaching_oxidants",
+      "amount": 125
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:wastewater_slurry",
+      "amount": 1000
+    }
+  ]
+}

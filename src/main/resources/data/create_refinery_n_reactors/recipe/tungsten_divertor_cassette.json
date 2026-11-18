@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TTT",
+    "CBC",
+    "SSS"
+  ],
+  "key": {
+    "T": {
+      "item": "create_refinery_n_reactors:fusion_divertor"
+    },
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "B": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:tungsten_divertor_cassette",
+    "count": 1
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "base_commit": "d510251d25fea2ca6e4d760b00b1df0e2c75e863",
+  "branch": "work",
+  "jar": "create-heavy-indusstry-0.1.0.jar",
+  "jar_bytes": 2315403,
+  "sha256": "cbae9775504e2606f2d620851426350df7fc8acc5697211f8a682b1d8f523c7e",
+  "zip_only_jar": true,
+  "build": "passed",
+  "gametests_with_jei": 108,
+  "gametests_without_jei": 108,
+  "runtime_japanese_ponder_scenes": 47,
+  "resource_validators_passed": 10,
+  "existing_models_and_textures_preserved": 724,
+  "large_modpack_performance": "not measured",
+  "screenshot": "actual Minecraft Ponder renderer"
+}

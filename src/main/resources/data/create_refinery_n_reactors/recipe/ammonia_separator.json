@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SPS",
+    "PTP",
+    "SPS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "T": {
+      "item": "create:fluid_tank"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:ammonia_separator",
+    "count": 1
+  }
+}

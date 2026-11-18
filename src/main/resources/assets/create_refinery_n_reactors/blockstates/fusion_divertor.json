@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "create_refinery_n_reactors:block/fusion/fusion_divertor"
+      },
+      {
+        "model": "create_refinery_n_reactors:block/fusion/fusion_divertor_1"
+      },
+      {
+        "model": "create_refinery_n_reactors:block/fusion/fusion_divertor_2"
+      }
+    ]
+  }
+}

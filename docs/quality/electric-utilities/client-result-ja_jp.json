@@ -1,0 +1,16 @@
+{
+  "ponderRender": "checked",
+  "runtimeTranslations": "passed",
+  "translationScope": "electric_heater,electric_pump",
+  "scenes": [
+    "create_refinery_n_reactors:electric_heater",
+    "create_refinery_n_reactors:electric_pump"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "renderTargets": [
+    "electric_heater@electric_heater",
+    "electric_pump@electric_pump"
+  ]
+}

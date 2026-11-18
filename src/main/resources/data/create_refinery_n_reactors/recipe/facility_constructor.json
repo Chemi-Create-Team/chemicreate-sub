@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "SCS",
+    " A "
+  ],
+  "key": {
+    "B": {
+      "item": "create:brass_sheet"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:steel_ingot"
+    },
+    "C": {
+      "item": "create:schematicannon"
+    },
+    "A": {
+      "item": "create:precision_mechanism"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:facility_constructor",
+    "count": 1
+  }
+}

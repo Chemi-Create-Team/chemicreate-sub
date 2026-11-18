@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "SCS",
+    " R "
+  ],
+  "key": {
+    "G": {
+      "item": "create_refinery_n_reactors:industrial_glass"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:process_transmitter",
+    "count": 1
+  }
+}

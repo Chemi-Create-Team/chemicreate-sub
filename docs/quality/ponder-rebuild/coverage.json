@@ -1,0 +1,1262 @@
+[
+  {
+    "scene": "turbine_multiblock",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 7,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "ammonia_separator",
+    "captions": 9,
+    "pages": {
+      "en_us": 12,
+      "ja_jp": 9,
+      "zh_cn": 9
+    }
+  },
+  {
+    "scene": "reciprocating_compressor",
+    "captions": 6,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "world_liquids",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "gas_bell",
+    "captions": 10,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 10,
+      "zh_cn": 10
+    }
+  },
+  {
+    "scene": "water_quality",
+    "captions": 3,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "catalyst_basket",
+    "captions": 11,
+    "pages": {
+      "en_us": 20,
+      "ja_jp": 11,
+      "zh_cn": 11
+    }
+  },
+  {
+    "scene": "fractionating_column",
+    "captions": 11,
+    "pages": {
+      "en_us": 21,
+      "ja_jp": 13,
+      "zh_cn": 12
+    }
+  },
+  {
+    "scene": "electric_heater",
+    "captions": 6,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 7,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "electric_pump",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "steel_forging",
+    "captions": 6,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "fluorite_sources",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "radiation_measurement",
+    "captions": 3,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "radiation_decontamination",
+    "captions": 3,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "rbmk_core",
+    "captions": 12,
+    "pages": {
+      "en_us": 16,
+      "ja_jp": 12,
+      "zh_cn": 12
+    }
+  },
+  {
+    "scene": "rbmk_control_rods",
+    "captions": 6,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "gantry_crane",
+    "captions": 5,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 6,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "fuel_pool",
+    "captions": 5,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "crane_refuelling",
+    "captions": 5,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "rbmk_control_room",
+    "captions": 7,
+    "pages": {
+      "en_us": 14,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "pipe_gauges",
+    "captions": 9,
+    "pages": {
+      "en_us": 12,
+      "ja_jp": 9,
+      "zh_cn": 9
+    }
+  },
+  {
+    "scene": "quarry_frame",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "horizontal_tank",
+    "captions": 4,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "fusion_tokamak",
+    "captions": 7,
+    "pages": {
+      "en_us": 15,
+      "ja_jp": 8,
+      "zh_cn": 9
+    }
+  },
+  {
+    "scene": "fusion_console",
+    "captions": 4,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 4,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "fusion_motor_generator",
+    "captions": 4,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "natural_draft_tower",
+    "captions": 5,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 5,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "condenser_loop",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 5,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "process_pid",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 5,
+      "zh_cn": 8
+    }
+  },
+  {
+    "scene": "fuel_cycle",
+    "captions": 7,
+    "pages": {
+      "en_us": 12,
+      "ja_jp": 7,
+      "zh_cn": 12
+    }
+  },
+  {
+    "scene": "fusion_maintenance",
+    "captions": 6,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 6,
+      "zh_cn": 10
+    }
+  },
+  {
+    "scene": "lidded_vessel",
+    "captions": 7,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "lidded_vessel_2x2",
+    "captions": 7,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "vessel_internals",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 6,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "vessel_basin",
+    "captions": 7,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "vessel_maintenance",
+    "captions": 8,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 8,
+      "zh_cn": 8
+    }
+  },
+  {
+    "scene": "diorite_casing",
+    "captions": 4,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "rbmk_compact_core",
+    "captions": 9,
+    "pages": {
+      "en_us": 17,
+      "ja_jp": 9,
+      "zh_cn": 9
+    }
+  },
+  {
+    "scene": "flare_stack",
+    "captions": 8,
+    "pages": {
+      "en_us": 15,
+      "ja_jp": 8,
+      "zh_cn": 8
+    }
+  },
+  {
+    "scene": "compact_centrifuge",
+    "captions": 10,
+    "pages": {
+      "en_us": 14,
+      "ja_jp": 11,
+      "zh_cn": 11
+    }
+  },
+  {
+    "scene": "electrolysis_cell",
+    "captions": 10,
+    "pages": {
+      "en_us": 21,
+      "ja_jp": 12,
+      "zh_cn": 11
+    }
+  },
+  {
+    "scene": "fractionating_column_binary",
+    "captions": 3,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 5,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "fractionating_column_air",
+    "captions": 3,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "helium_cold_box",
+    "captions": 7,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_flywheel_storage",
+    "captions": 4,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_module_cooling",
+    "captions": 3,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_module_cooling_expansion",
+    "captions": 3,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_module_cooling_integration",
+    "captions": 3,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_heat_exchanger",
+    "captions": 4,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_large_heat_exchanger",
+    "captions": 4,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_jacketed_pipe",
+    "captions": 4,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_open_tank",
+    "captions": 5,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_4",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_5",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_6",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_7",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_8",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_9",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_10",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_11",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_12",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_13",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_14",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_15",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_16",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_17",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_18",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_19",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_20",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_21",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_22",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_23",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_24",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_25",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_26",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_27",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_28",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_29",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_30",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_31",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_open_tank_size_32",
+    "captions": 3,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_turbine_operation",
+    "captions": 6,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_turbine_cycle",
+    "captions": 5,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_turbine_safety",
+    "captions": 6,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_flow_regulation",
+    "captions": 3,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_reactor_plant_stirred",
+    "captions": 5,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_steam_condenser",
+    "captions": 4,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_pressure_valves",
+    "captions": 5,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_electrolysis_furnace",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_fuel_cell",
+    "captions": 5,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 6,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_toxic_gas",
+    "captions": 6,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 7,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_submarine_hull",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_pipe_materials",
+    "captions": 8,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 8,
+      "zh_cn": 8
+    }
+  },
+  {
+    "scene": "plant_tank_materials",
+    "captions": 7,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_gas_tank_container",
+    "captions": 3,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_spent_fuel_reprocessing",
+    "captions": 4,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 5,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_converter",
+    "captions": 7,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_pipe_pressure",
+    "captions": 6,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_pressure_basics",
+    "captions": 8,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 8,
+      "zh_cn": 8
+    }
+  },
+  {
+    "scene": "plant_lithium_target_irradiation",
+    "captions": 4,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 5,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_helium_recovery",
+    "captions": 3,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 3,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_industrial_dispatch",
+    "captions": 4,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 5,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_tubular_boiler",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_tubular_boiler_2x2",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_tubular_boiler_3x3",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_gas_pipes",
+    "captions": 4,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_absorption_trays",
+    "captions": 7,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 9,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_uranium_preparation",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 6,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_uranium_fuel_finishing",
+    "captions": 5,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_manufacturing_air",
+    "captions": 6,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_manufacturing_hydrogen",
+    "captions": 3,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_manufacturing_ammonia",
+    "captions": 5,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_manufacturing_nitric_fertilizer",
+    "captions": 7,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_manufacturing_sulfuric_acid",
+    "captions": 7,
+    "pages": {
+      "en_us": 14,
+      "ja_jp": 8,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_manufacturing_chlor_alkali",
+    "captions": 8,
+    "pages": {
+      "en_us": 13,
+      "ja_jp": 8,
+      "zh_cn": 8
+    }
+  },
+  {
+    "scene": "plant_manufacturing_petrochemical_feedstocks",
+    "captions": 6,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_manufacturing_polymers",
+    "captions": 8,
+    "pages": {
+      "en_us": 12,
+      "ja_jp": 8,
+      "zh_cn": 8
+    }
+  },
+  {
+    "scene": "plant_manufacturing_rubber",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_manufacturing_pvc",
+    "captions": 4,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_manufacturing_fuel_refining",
+    "captions": 7,
+    "pages": {
+      "en_us": 11,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_manufacturing_antifreeze",
+    "captions": 3,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 4,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_manufacturing_refrigeration",
+    "captions": 5,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_manufacturing_aluminum",
+    "captions": 7,
+    "pages": {
+      "en_us": 10,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_manufacturing_titanium",
+    "captions": 6,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_manufacturing_zirconium",
+    "captions": 5,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 5,
+      "zh_cn": 5
+    }
+  },
+  {
+    "scene": "plant_manufacturing_nickel",
+    "captions": 4,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_manufacturing_chromium",
+    "captions": 3,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_manufacturing_molybdenum",
+    "captions": 3,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_manufacturing_steel",
+    "captions": 9,
+    "pages": {
+      "en_us": 15,
+      "ja_jp": 9,
+      "zh_cn": 9
+    }
+  },
+  {
+    "scene": "plant_manufacturing_fluorine",
+    "captions": 4,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_manufacturing_pigments",
+    "captions": 6,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_manufacturing_concrete",
+    "captions": 6,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_manufacturing_glass",
+    "captions": 2,
+    "pages": {
+      "en_us": 3,
+      "ja_jp": 2,
+      "zh_cn": 2
+    }
+  },
+  {
+    "scene": "plant_manufacturing_purified_water",
+    "captions": 4,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 4,
+      "zh_cn": 4
+    }
+  },
+  {
+    "scene": "plant_manufacturing_washwater",
+    "captions": 6,
+    "pages": {
+      "en_us": 8,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_manufacturing_catalysts",
+    "captions": 7,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 7,
+      "zh_cn": 7
+    }
+  },
+  {
+    "scene": "plant_manufacturing_mining_explosives",
+    "captions": 6,
+    "pages": {
+      "en_us": 9,
+      "ja_jp": 6,
+      "zh_cn": 6
+    }
+  },
+  {
+    "scene": "plant_manufacturing_deuterium",
+    "captions": 3,
+    "pages": {
+      "en_us": 5,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_manufacturing_liquid_helium",
+    "captions": 3,
+    "pages": {
+      "en_us": 6,
+      "ja_jp": 3,
+      "zh_cn": 3
+    }
+  },
+  {
+    "scene": "plant_manufacturing_carbon_oxides",
+    "captions": 2,
+    "pages": {
+      "en_us": 4,
+      "ja_jp": 2,
+      "zh_cn": 2
+    }
+  }
+]

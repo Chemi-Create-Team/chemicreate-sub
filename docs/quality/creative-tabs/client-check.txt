@@ -1,0 +1,8 @@
+[13:06:45] [Render thread/INFO] [ne.cr.cl.CreativeTabsClientCheck/]: CREATIVE TAB READY equipment
+[13:07:04] [Render thread/INFO] [ne.cr.cl.CreativeTabsClientCheck/]: CREATIVE TAB READY equipment_scrolled
+[13:07:24] [Render thread/INFO] [ne.cr.cl.CreativeTabsClientCheck/]: CREATIVE TAB READY materials
+[13:07:44] [Render thread/INFO] [ne.cr.cl.CreativeTabsClientCheck/]: CREATIVE TAB READY search
+[13:08:04] [Render thread/INFO] [ne.cr.cl.CreativeTabsClientCheck/]: CREATIVE TABS PASSED
+#  SIGSEGV (0xb) at pc=0x0000777f481746ae, pid=2951, tid=3375
+# C  [libEGL_nvidia.so.0+0xb56ae]
+BUILD FAILED in 2m 12s

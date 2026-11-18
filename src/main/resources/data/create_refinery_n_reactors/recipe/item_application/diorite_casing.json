@@ -1,0 +1,10 @@
+{
+  "type": "create:item_application",
+  "ingredients": [
+    { "item": "minecraft:diorite" },
+    { "item": "create:andesite_alloy" }
+  ],
+  "results": [
+    { "id": "create_refinery_n_reactors:diorite_casing" }
+  ]
+}

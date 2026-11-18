@@ -1,0 +1,19 @@
+{
+  "translationScope": "catalyst_basket,fractionating_column,vessel_maintenance",
+  "scenes": [
+    "create_heavy_indusstry:catalyst_basket",
+    "create_heavy_indusstry:fractionating_column",
+    "create_heavy_indusstry:vessel_maintenance"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "renderTargets": [
+    "reactor_catalyst_basket@catalyst_basket",
+    "fractionating_column@fractionating_column",
+    "fractionating_column@fractionating_column",
+    "lidded_vessel@vessel_maintenance"
+  ],
+  "ponderRender": "captured",
+  "runtimeTranslations": "passed"
+}

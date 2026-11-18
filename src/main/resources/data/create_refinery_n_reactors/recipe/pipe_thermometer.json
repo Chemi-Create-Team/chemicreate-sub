@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:compass"
+    },
+    {
+      "item": "create:fluid_pipe"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    },
+    {
+      "item": "create_refinery_n_reactors:industrial_glass"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:pipe_thermometer",
+    "count": 1
+  }
+}

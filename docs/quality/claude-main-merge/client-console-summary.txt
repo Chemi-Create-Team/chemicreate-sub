@@ -1,0 +1,4 @@
+[07:20:15] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 137 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x00007f6dd81746ae, pid=3035, tid=3355
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134

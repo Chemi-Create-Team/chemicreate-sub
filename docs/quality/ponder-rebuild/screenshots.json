@@ -1,0 +1,50 @@
+[
+  {
+    "target": "condenser_waterbox@condenser_loop",
+    "file": "01-condenser_loop.jpg"
+  },
+  {
+    "target": "electrolysis_cell@electrolysis_cell",
+    "file": "02-electrolysis_cell.jpg"
+  },
+  {
+    "target": "cooled_olefins_bucket@plant_manufacturing_petrochemical_feedstocks",
+    "file": "03-plant_manufacturing_petrochemical_feedstocks.jpg"
+  },
+  {
+    "target": "ammonia_gas_bucket@plant_manufacturing_ammonia",
+    "file": "04-plant_manufacturing_ammonia.jpg"
+  },
+  {
+    "target": "gas_holder@gas_bell",
+    "file": "05-gas_bell.jpg"
+  },
+  {
+    "target": "reactor_control_console@rbmk_control_room",
+    "file": "06-rbmk_control_room.jpg"
+  },
+  {
+    "target": "reactor_fuel_channel@rbmk_compact_core",
+    "file": "07-rbmk_compact_core.jpg"
+  },
+  {
+    "target": "fusion_reinforced_casing@fusion_tokamak",
+    "file": "08-fusion_tokamak.jpg"
+  },
+  {
+    "target": "lidded_vessel@vessel_basin",
+    "file": "09-vessel_basin.jpg"
+  },
+  {
+    "target": "high_pressure_turbine_unit@turbine_multiblock",
+    "file": "10-turbine_multiblock.jpg"
+  },
+  {
+    "target": "tank_casing@plant_open_tank_size_32",
+    "file": "11-plant_open_tank_size_32.jpg"
+  },
+  {
+    "target": "minecraft:gunpowder@plant_manufacturing_mining_explosives",
+    "file": "12-plant_manufacturing_mining_explosives.jpg"
+  }
+]

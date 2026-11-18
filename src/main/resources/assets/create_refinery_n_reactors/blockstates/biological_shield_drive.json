@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "create_refinery_n_reactors:block/rbmk/biological_shield_drive"
+    },
+    "axis=x": {
+      "model": "create_refinery_n_reactors:block/rbmk/biological_shield_drive",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "create_refinery_n_reactors:block/rbmk/biological_shield_drive",
+      "x": 90
+    }
+  }
+}

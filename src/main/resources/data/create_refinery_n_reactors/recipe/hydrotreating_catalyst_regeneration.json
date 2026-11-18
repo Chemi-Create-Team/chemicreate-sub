@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:hydrotreating_catalyst"
+    },
+    {
+      "tag": "c:ingots/molybdenum"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:hydrotreating_catalyst",
+    "count": 1
+  }
+}

@@ -1,0 +1,29 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def selectedLanguage = 'ja_jp'
+                if (options.exists()) {
+                    def lines = options.readLines('UTF-8')
+                    lines.removeAll { it.startsWith('lang:') }
+                    lines.add('lang:' + selectedLanguage)
+                    options.setText(lines.join('\n') + '\n', 'UTF-8')
+                }
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'
+            programArgument '1280'
+            programArgument '--height'
+            programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.reactorConsoleClientCheck', 'true'
+            systemProperty 'createplant.consoleClientFacing', 'east'
+            systemProperty 'createplant.consoleClientHold', '800'
+            systemProperty 'createplant.clientQualityScenes', 'rbmk_control_room'
+            systemProperty 'createplant.clientQualityTargets', 'reactor_control_console@rbmk_control_room'
+        }
+    }
+}

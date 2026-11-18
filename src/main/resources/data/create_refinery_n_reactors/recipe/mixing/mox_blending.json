@@ -1,0 +1,36 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:plutonium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:depleted_uranium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:depleted_uranium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:depleted_uranium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:depleted_uranium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:depleted_uranium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:depleted_uranium_dioxide"
+    },
+    {
+      "item": "create_refinery_n_reactors:depleted_uranium_dioxide"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:mox_powder",
+      "count": 8
+    }
+  ],
+  "processing_time": 200
+}

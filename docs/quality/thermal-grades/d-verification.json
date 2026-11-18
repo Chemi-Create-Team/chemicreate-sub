@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-14",
+  "build": "passed",
+  "defaultSuite": {
+    "required": 520,
+    "passed": 519,
+    "failed": 1,
+    "knownUnchangedFailure": "VesselFoulingGameTests.aFouledProcessStopsThenResumesAfterOneManualBrush"
+  },
+  "relatedSuite": {
+    "required": 68,
+    "passed": 68,
+    "classes": [
+      "PurifiedWaterGameTests",
+      "CounterflowGameTests",
+      "ThermalControlGameTests",
+      "RefrigerationGameTests",
+      "RadiatorTemperatureGameTests",
+      "TankGradeGameTests",
+      "GasStorageGameTests",
+      "DisplayIntegrationGameTests",
+      "CompactCentrifugeGameTests",
+      "UraniumFuelGameTests",
+      "VesselBasinGameTests",
+      "ManufacturingPonderGameTests"
+    ]
+  },
+  "additionalTurbineAndStorageRegression": {
+    "required": 49,
+    "passed": 49
+  },
+  "translations": 4559,
+  "activeDisplayMetrics": 138,
+  "removedClasses": [
+    "PhaseTank",
+    "FlowingWaterTank",
+    "WaterPhase",
+    "FluidPhase",
+    "ThermalMath",
+    "GasCompression",
+    "EquipmentSafety",
+    "PressureVesselBehaviour"
+  ],
+  "notes": [
+    "Nominal chemistry density and fraction ordering retained in FluidMaterials; no pressure/phase solver",
+    "GradeFluidTank retains gas merge/split, stock and purified-water filtered view",
+    "No legacy world migration"
+  ]
+}

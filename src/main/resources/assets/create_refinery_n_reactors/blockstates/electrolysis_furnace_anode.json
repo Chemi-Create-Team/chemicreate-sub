@@ -1,0 +1,460 @@
+{
+  "variants": {
+    "cell=0,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=0,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=1,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=1,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=2,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=2,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=3,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=3,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=4,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=4,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=5,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=5,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=6,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=6,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=7,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=7,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=8,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=8,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=9,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=9,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=10,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=10,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=11,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=11,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=12,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=12,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=13,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=13,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=14,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=14,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=15,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=15,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=16,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=16,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=17,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=17,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=18,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=18,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=19,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=19,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=20,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=20,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=21,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=21,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=22,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=22,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=23,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=23,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=24,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=24,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=25,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=25,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=26,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=26,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=27,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=27,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=28,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=28,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=29,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=29,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=30,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=30,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=31,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=31,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=32,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=32,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=33,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=33,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=34,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=34,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=35,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=35,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=36,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=36,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=37,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=37,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=38,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=38,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=39,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=39,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=40,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=40,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=41,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=41,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=42,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=42,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=43,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=43,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=44,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=44,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=45,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=45,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=46,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=46,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=47,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=47,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=48,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=48,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=49,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=49,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=50,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=50,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=51,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=51,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=52,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=52,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=53,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=53,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=54,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=54,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=55,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=55,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=56,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=56,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=57,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=57,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=58,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=58,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=59,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=59,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=60,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=60,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=61,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=61,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=62,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=62,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=63,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=63,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=64,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=64,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=65,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=65,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=66,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=66,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=67,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=67,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=68,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=68,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=69,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=69,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=70,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=70,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=71,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=71,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=72,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=72,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=73,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=73,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=74,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=74,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    },
+    "cell=75,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/anode"
+    },
+    "cell=75,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/anode_lit"
+    }
+  }
+}

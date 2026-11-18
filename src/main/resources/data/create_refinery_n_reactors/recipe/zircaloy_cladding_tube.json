@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " Z ",
+    "ZNZ",
+    " Z "
+  ],
+  "key": {
+    "Z": {
+      "tag": "c:ingots/zirconium"
+    },
+    "N": {
+      "tag": "c:ingots/nickel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:zircaloy_cladding_tube",
+    "count": 4
+  }
+}

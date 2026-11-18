@@ -1,0 +1,132 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "shell": "create_refinery_n_reactors:block/gas_centrifuge/shell",
+    "plinth": "create_refinery_n_reactors:block/gas_centrifuge/plinth",
+    "bearing": "create_refinery_n_reactors:block/gas_centrifuge/bearing",
+    "band": "create_refinery_n_reactors:block/gas_centrifuge/band",
+    "cap": "create_refinery_n_reactors:block/gas_centrifuge/cap",
+    "header": "create_refinery_n_reactors:block/gas_centrifuge/header",
+    "particle": "create_refinery_n_reactors:block/gas_centrifuge/shell"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        12,
+        1
+      ],
+      "to": [
+        10,
+        16,
+        5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#header",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#header",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#header",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#header",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        11,
+        0
+      ],
+      "to": [
+        11,
+        16,
+        1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#header",
+          "uv": [
+            8,
+            5,
+            14,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#header",
+          "uv": [
+            8,
+            5,
+            14,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#header",
+          "uv": [
+            8,
+            5,
+            9,
+            10
+          ]
+        },
+        "west": {
+          "texture": "#header",
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ]
+        },
+        "up": {
+          "texture": "#header",
+          "uv": [
+            8,
+            5,
+            14,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#header",
+          "uv": [
+            8,
+            10,
+            14,
+            11
+          ]
+        }
+      }
+    }
+  ]
+}

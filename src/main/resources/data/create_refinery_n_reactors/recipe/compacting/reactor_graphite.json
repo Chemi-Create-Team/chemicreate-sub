@@ -1,0 +1,14 @@
+{
+  "type": "create:compacting",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "minecraft:coal_block"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:reactor_graphite"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "length": 3,
+    "gasMb": 24000,
+    "dial": 0.33333334,
+    "axis": "x"
+  },
+  {
+    "length": 3,
+    "gasMb": 0,
+    "dial": 0.0,
+    "axis": "y"
+  },
+  {
+    "length": 3,
+    "gasMb": 0,
+    "dial": 0.0,
+    "axis": "z"
+  }
+]

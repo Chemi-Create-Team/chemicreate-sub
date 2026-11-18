@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "create_refinery_n_reactors:block/charred_wood/log_top_2",
+    "side": "create_refinery_n_reactors:block/charred_wood/log_side_2"
+  }
+}

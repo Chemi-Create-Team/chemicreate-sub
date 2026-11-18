@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OOO",
+    "SSS",
+    "CCC"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_divertor",
+    "count": 8
+  }
+}

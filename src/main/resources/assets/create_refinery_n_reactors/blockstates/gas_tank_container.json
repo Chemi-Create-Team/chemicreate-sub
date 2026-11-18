@@ -1,0 +1,1012 @@
+{
+  "variants": {
+    "axis=z,bottom=false,cell=0,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=0,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=0,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=0,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=1,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=1,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=1,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=1,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=2,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=2,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=2,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=2,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=3,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=3,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=3,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=3,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=4,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=4,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=4,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=4,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=5,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=5,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=5,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=5,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=6,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=6,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=6,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=6,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=7,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=7,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=7,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=7,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=8,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=8,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=8,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=true,cell=8,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose"
+    },
+    "axis=z,bottom=false,cell=0,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=0,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=0,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=0,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=1,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=1,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=1,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=1,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=2,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=2,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=2,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=2,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=3,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=3,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=3,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=3,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=4,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=4,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=4,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=4,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=5,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=5,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=5,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=5,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=6,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=6,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=6,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=6,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=7,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=7,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=7,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=7,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=8,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle"
+    },
+    "axis=z,bottom=false,cell=8,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last"
+    },
+    "axis=z,bottom=true,cell=8,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first"
+    },
+    "axis=z,bottom=true,cell=8,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single"
+    },
+    "axis=z,bottom=false,cell=0,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle"
+    },
+    "axis=z,bottom=false,cell=0,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last"
+    },
+    "axis=z,bottom=true,cell=0,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first"
+    },
+    "axis=z,bottom=true,cell=0,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single"
+    },
+    "axis=z,bottom=false,cell=1,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_middle"
+    },
+    "axis=z,bottom=false,cell=1,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_last"
+    },
+    "axis=z,bottom=true,cell=1,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_first"
+    },
+    "axis=z,bottom=true,cell=1,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_single"
+    },
+    "axis=z,bottom=false,cell=2,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_middle"
+    },
+    "axis=z,bottom=false,cell=2,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_last"
+    },
+    "axis=z,bottom=true,cell=2,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_first"
+    },
+    "axis=z,bottom=true,cell=2,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_single"
+    },
+    "axis=z,bottom=false,cell=3,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_middle"
+    },
+    "axis=z,bottom=false,cell=3,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_last"
+    },
+    "axis=z,bottom=true,cell=3,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_first"
+    },
+    "axis=z,bottom=true,cell=3,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_single"
+    },
+    "axis=z,bottom=false,cell=4,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle"
+    },
+    "axis=z,bottom=false,cell=4,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last"
+    },
+    "axis=z,bottom=true,cell=4,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first"
+    },
+    "axis=z,bottom=true,cell=4,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single"
+    },
+    "axis=z,bottom=false,cell=5,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle"
+    },
+    "axis=z,bottom=false,cell=5,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last"
+    },
+    "axis=z,bottom=true,cell=5,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first"
+    },
+    "axis=z,bottom=true,cell=5,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single"
+    },
+    "axis=z,bottom=false,cell=6,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle"
+    },
+    "axis=z,bottom=false,cell=6,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last"
+    },
+    "axis=z,bottom=true,cell=6,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first"
+    },
+    "axis=z,bottom=true,cell=6,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single"
+    },
+    "axis=z,bottom=false,cell=7,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle"
+    },
+    "axis=z,bottom=false,cell=7,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last"
+    },
+    "axis=z,bottom=true,cell=7,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first"
+    },
+    "axis=z,bottom=true,cell=7,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single"
+    },
+    "axis=z,bottom=false,cell=8,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle"
+    },
+    "axis=z,bottom=false,cell=8,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last"
+    },
+    "axis=z,bottom=true,cell=8,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first"
+    },
+    "axis=z,bottom=true,cell=8,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single"
+    },
+    "axis=z,bottom=false,cell=0,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_middle"
+    },
+    "axis=z,bottom=false,cell=0,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_last"
+    },
+    "axis=z,bottom=true,cell=0,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_first"
+    },
+    "axis=z,bottom=true,cell=0,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_single"
+    },
+    "axis=z,bottom=false,cell=1,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_middle"
+    },
+    "axis=z,bottom=false,cell=1,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_last"
+    },
+    "axis=z,bottom=true,cell=1,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_first"
+    },
+    "axis=z,bottom=true,cell=1,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_single"
+    },
+    "axis=z,bottom=false,cell=2,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_middle"
+    },
+    "axis=z,bottom=false,cell=2,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_last"
+    },
+    "axis=z,bottom=true,cell=2,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_first"
+    },
+    "axis=z,bottom=true,cell=2,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_single"
+    },
+    "axis=z,bottom=false,cell=3,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_middle"
+    },
+    "axis=z,bottom=false,cell=3,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_last"
+    },
+    "axis=z,bottom=true,cell=3,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_first"
+    },
+    "axis=z,bottom=true,cell=3,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_single"
+    },
+    "axis=z,bottom=false,cell=4,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_middle"
+    },
+    "axis=z,bottom=false,cell=4,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_last"
+    },
+    "axis=z,bottom=true,cell=4,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_first"
+    },
+    "axis=z,bottom=true,cell=4,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_single"
+    },
+    "axis=z,bottom=false,cell=5,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_middle"
+    },
+    "axis=z,bottom=false,cell=5,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_last"
+    },
+    "axis=z,bottom=true,cell=5,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_first"
+    },
+    "axis=z,bottom=true,cell=5,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_single"
+    },
+    "axis=z,bottom=false,cell=6,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_middle"
+    },
+    "axis=z,bottom=false,cell=6,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_last"
+    },
+    "axis=z,bottom=true,cell=6,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_first"
+    },
+    "axis=z,bottom=true,cell=6,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_single"
+    },
+    "axis=z,bottom=false,cell=7,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_middle"
+    },
+    "axis=z,bottom=false,cell=7,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_last"
+    },
+    "axis=z,bottom=true,cell=7,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_first"
+    },
+    "axis=z,bottom=true,cell=7,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_single"
+    },
+    "axis=z,bottom=false,cell=8,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_middle"
+    },
+    "axis=z,bottom=false,cell=8,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_last"
+    },
+    "axis=z,bottom=true,cell=8,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_first"
+    },
+    "axis=z,bottom=true,cell=8,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_single"
+    },
+    "axis=x,bottom=false,cell=0,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=0,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=0,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=0,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/loose",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=0,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=0,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=1,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=1,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_1_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=0,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=0,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_1_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_2_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_3_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=2,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=2,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_2_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=0,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=0,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=0,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_0_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=1,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=1,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_1_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=2,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=2,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_2_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=3,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=3,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_3_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=4,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=4,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_4_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=5,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=5,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_5_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=6,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=6,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_6_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=7,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=7,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_7_single",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_middle",
+      "y": 270
+    },
+    "axis=x,bottom=false,cell=8,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_last",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=3,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_first",
+      "y": 270
+    },
+    "axis=x,bottom=true,cell=8,size=3,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_tank_container/size_3_8_single",
+      "y": 270
+    }
+  }
+}

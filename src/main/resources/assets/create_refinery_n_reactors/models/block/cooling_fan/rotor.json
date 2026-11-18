@@ -1,0 +1,223 @@
+{
+  "textures": {
+    "cast_iron": "create_refinery_n_reactors:block/chemical/fan_hub",
+    "axis": "create:block/axis",
+    "axis_top": "create:block/axis_top",
+    "particle": "create_refinery_n_reactors:block/chemical/fan_hub"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        6,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            10,
+            10,
+            16
+          ],
+          "texture": "#axis"
+        },
+        "south": {
+          "uv": [
+            6,
+            10,
+            10,
+            16
+          ],
+          "texture": "#axis"
+        },
+        "east": {
+          "uv": [
+            6,
+            10,
+            10,
+            16
+          ],
+          "texture": "#axis"
+        },
+        "west": {
+          "uv": [
+            6,
+            10,
+            10,
+            16
+          ],
+          "texture": "#axis"
+        },
+        "up": {
+          "uv": [
+            6,
+            6,
+            10,
+            10
+          ],
+          "texture": "#axis"
+        },
+        "down": {
+          "uv": [
+            6,
+            6,
+            10,
+            10
+          ],
+          "texture": "#axis_top"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        6,
+        4
+      ],
+      "to": [
+        12,
+        9,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            7,
+            12,
+            10
+          ],
+          "texture": "#cast_iron"
+        },
+        "south": {
+          "uv": [
+            4,
+            7,
+            12,
+            10
+          ],
+          "texture": "#cast_iron"
+        },
+        "east": {
+          "uv": [
+            4,
+            7,
+            12,
+            10
+          ],
+          "texture": "#cast_iron"
+        },
+        "west": {
+          "uv": [
+            4,
+            7,
+            12,
+            10
+          ],
+          "texture": "#cast_iron"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#cast_iron"
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#cast_iron"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        9,
+        4
+      ],
+      "to": [
+        12,
+        11,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#cast_iron"
+        },
+        "south": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#cast_iron"
+        },
+        "east": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#cast_iron"
+        },
+        "west": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#cast_iron"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#cast_iron"
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#cast_iron"
+        }
+      },
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          10,
+          8
+        ]
+      }
+    }
+  ]
+}

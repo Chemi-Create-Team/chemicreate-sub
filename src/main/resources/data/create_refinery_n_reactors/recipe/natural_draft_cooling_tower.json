@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ETE",
+    "RCR",
+    "SWS"
+  ],
+  "key": {
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "T": {
+      "item": "create:fluid_tank"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "create:brass_casing"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "W": {
+      "item": "create_refinery_n_reactors:cooling_tower_basin"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:natural_draft_cooling_tower",
+    "count": 1
+  }
+}

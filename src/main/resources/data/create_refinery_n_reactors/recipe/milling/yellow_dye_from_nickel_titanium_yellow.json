@@ -1,0 +1,15 @@
+{
+  "type": "create:milling",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:nickel_titanium_yellow"
+    }
+  ],
+  "processing_time": 100,
+  "results": [
+    {
+      "id": "minecraft:yellow_dye",
+      "count": 4
+    }
+  ]
+}

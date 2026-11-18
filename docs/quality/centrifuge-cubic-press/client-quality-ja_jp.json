@@ -1,0 +1,16 @@
+{
+  "runtimeTranslations": "passed",
+  "ponderRender": "checked",
+  "renderTargets": [
+    "gas_centrifuge",
+    "cubic_press"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_refinery_n_reactors:cubic_press",
+    "create_refinery_n_reactors:gas_centrifuge"
+  ],
+  "translationScope": "gas_centrifuge,cubic_press"
+}

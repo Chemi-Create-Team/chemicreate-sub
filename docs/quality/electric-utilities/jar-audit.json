@@ -1,0 +1,35 @@
+{
+  "jar": "create-refinery-n-reactors-0.1.0.jar",
+  "sha256": "ac3dc1039f216ab4ca07b6e7b2a02f50c4d5ceefca05554d1a6dec5cc2317f7c",
+  "bytes": 6430570,
+  "required_assets": [
+    "assets/create_refinery_n_reactors/blockstates/electric_heater.json",
+    "assets/create_refinery_n_reactors/models/item/electric_heater.json",
+    "assets/create_refinery_n_reactors/ponder/plant/electric_heater.nbt",
+    "data/create_refinery_n_reactors/recipe/electric_heater.json",
+    "data/create_refinery_n_reactors/loot_table/blocks/electric_heater.json",
+    "assets/create_refinery_n_reactors/blockstates/electric_pump.json",
+    "assets/create_refinery_n_reactors/models/item/electric_pump.json",
+    "assets/create_refinery_n_reactors/ponder/plant/electric_pump.nbt",
+    "data/create_refinery_n_reactors/recipe/electric_pump.json",
+    "data/create_refinery_n_reactors/loot_table/blocks/electric_pump.json"
+  ],
+  "textures": [
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/coil_hot.png",
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/ceramic.png",
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/coil_warm.png",
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/copper.png",
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/steel.png",
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/coil_cold.png",
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/direction.png",
+    "assets/create_refinery_n_reactors/textures/block/electric_utilities/dark.png"
+  ],
+  "models": [
+    "assets/create_refinery_n_reactors/models/block/electric_utilities/pump_item.json",
+    "assets/create_refinery_n_reactors/models/block/electric_utilities/heater_cold.json",
+    "assets/create_refinery_n_reactors/models/block/electric_utilities/heater_hot.json",
+    "assets/create_refinery_n_reactors/models/block/electric_utilities/pump_fan.json",
+    "assets/create_refinery_n_reactors/models/block/electric_utilities/heater_warm.json",
+    "assets/create_refinery_n_reactors/models/block/electric_utilities/pump.json"
+  ]
+}

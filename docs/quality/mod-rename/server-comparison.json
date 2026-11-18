@@ -1,0 +1,17 @@
+{
+  "before": {
+    "total": 637,
+    "passed": 636,
+    "failed": [
+      "afouledprocessstopsthenresumesafteronemanualbrush"
+    ]
+  },
+  "after": {
+    "total": 637,
+    "passed": 636,
+    "failed": [
+      "afouledprocessstopsthenresumesafteronemanualbrush"
+    ]
+  },
+  "new_failures": []
+}

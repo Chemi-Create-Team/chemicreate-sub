@@ -1,0 +1,17 @@
+{
+  "translationScope": "plant_manufacturing_steel,plant_converter,guide.manufacturing_steel,guide.converter",
+  "scenes": [
+    "create_heavy_indusstry:plant_converter",
+    "create_heavy_indusstry:plant_manufacturing_steel"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "renderTargets": [
+    "steel_ingot@plant_manufacturing_steel",
+    "steel_block@plant_converter",
+    "steel_block@plant_manufacturing_steel"
+  ],
+  "ponderRender": "checked",
+  "runtimeTranslations": "passed"
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NCN",
+    "NIN",
+    "NCN"
+  ],
+  "key": {
+    "N": {
+      "tag": "c:plates/nickel"
+    },
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "I": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:nickel_electrode_plate",
+    "count": 4
+  }
+}

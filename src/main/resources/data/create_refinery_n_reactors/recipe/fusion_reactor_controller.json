@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ELE",
+    "RCR",
+    "SAS"
+  ],
+  "key": {
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "L": {
+      "item": "create:redstone_link"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "A": {
+      "item": "create:precision_mechanism"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_reactor_controller",
+    "count": 1
+  }
+}

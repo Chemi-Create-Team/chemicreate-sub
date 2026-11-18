@@ -1,0 +1,106 @@
+{
+  "case": "square-5-h3-uranium-automatic-startup",
+  "height": 3,
+  "size": 5,
+  "fuelRods": 89,
+  "controlRods": 11,
+  "nominalMW": 73.49946023749551,
+  "circulationMbPerTick": 15938,
+  "feedKelvin": 543.15,
+  "fuelWorth": 0.12,
+  "samples": [
+    {
+      "tick": 1000,
+      "powerMW": 44.488906371281004,
+      "reactivity": -0.0978423885978428,
+      "xenon": 0.04800341035332239,
+      "insertion": 1.0,
+      "hottestFuelK": 2254.222001226895
+    },
+    {
+      "tick": 2000,
+      "powerMW": 1.0371720668698619,
+      "reactivity": -0.09865274741371792,
+      "xenon": 0.14301932929488667,
+      "insertion": 1.0,
+      "hottestFuelK": 1882.2765622577065
+    },
+    {
+      "tick": 3000,
+      "powerMW": 0.024159386050852,
+      "reactivity": -0.09938010265665123,
+      "xenon": 0.22724117232759963,
+      "insertion": 1.0,
+      "hottestFuelK": 1554.7959376668591
+    },
+    {
+      "tick": 4000,
+      "powerMW": 5.62091589748856E-4,
+      "reactivity": -0.10013977248726824,
+      "xenon": 0.2987886095118838,
+      "insertion": 1.0,
+      "hottestFuelK": 1307.4142165130133
+    },
+    {
+      "tick": 5000,
+      "powerMW": 1.3511561294330544E-5,
+      "reactivity": -0.10086718314159188,
+      "xenon": 0.35883610562203627,
+      "insertion": 1.0,
+      "hottestFuelK": 1121.3552689932887
+    },
+    {
+      "tick": 6000,
+      "powerMW": 7.349946023749549E-6,
+      "reactivity": -0.10149956335945265,
+      "xenon": 0.40867371511291867,
+      "insertion": 1.0,
+      "hottestFuelK": 981.4368790749658
+    },
+    {
+      "tick": 7000,
+      "powerMW": 7.349946023749549E-6,
+      "reactivity": -0.10205397511502824,
+      "xenon": 0.44947188580134206,
+      "insertion": 1.0,
+      "hottestFuelK": 876.2171366535703
+    },
+    {
+      "tick": 8000,
+      "powerMW": 7.349946023749549E-6,
+      "reactivity": -0.10250188684581564,
+      "xenon": 0.48228408020630525,
+      "insertion": 1.0,
+      "hottestFuelK": 797.0910546178669
+    },
+    {
+      "tick": 9000,
+      "powerMW": 7.34994602374955E-6,
+      "reactivity": -0.09568935166937136,
+      "xenon": 0.5080574698502625,
+      "insertion": 0.83984375,
+      "hottestFuelK": 737.3881172134512
+    },
+    {
+      "tick": 10000,
+      "powerMW": 1.0217416497199706E-4,
+      "reactivity": 0.002976017754033604,
+      "xenon": 0.5276428978633171,
+      "insertion": 0.0,
+      "hottestFuelK": 691.7629547164553
+    }
+  ],
+  "worldSeed": 0,
+  "startWorldTick": 22,
+  "controller": "9761270, -50, 12952121",
+  "ticks": 10000,
+  "maximumMW": 28087.81004744143,
+  "maximumFuelK": 2281.007182899122,
+  "equilibriumMaximumMW": 0.0,
+  "equilibriumMinimumInsertion": 1.0,
+  "preScramMW": 0.0,
+  "scram120Reactivity": 0.0,
+  "finalMW": 1.0217416497199706E-4,
+  "finalReactivity": 0.002976017754033604,
+  "finalInsertion": 0.0
+}

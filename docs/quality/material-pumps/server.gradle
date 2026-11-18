@@ -1,0 +1,7 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            systemProperty 'createplant.gameTestClasses', 'MaterialPumpGameTests,GasPipeGameTests,WorldLiquidTransferGameTests,BuildingMaterialsGameTests,NitricPlantIntegrationGameTests,SurvivalReachabilityGameTests'
+        }
+    }
+}

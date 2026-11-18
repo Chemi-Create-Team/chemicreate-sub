@@ -1,0 +1,28 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "pattern": [
+    " SIS ",
+    "SPMPS",
+    " SIS "
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "M": {
+      "item": "create:mechanical_piston"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:extraction_pulse_plate",
+    "count": 1
+  }
+}

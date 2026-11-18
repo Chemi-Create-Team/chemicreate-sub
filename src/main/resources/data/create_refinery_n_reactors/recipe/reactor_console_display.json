@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TGT",
+    "BCB"
+  ],
+  "key": {
+    "T": {
+      "item": "create:electron_tube"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "B": {
+      "item": "create:brass_sheet"
+    },
+    "C": {
+      "item": "create:brass_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:reactor_console_display",
+    "count": 4
+  }
+}

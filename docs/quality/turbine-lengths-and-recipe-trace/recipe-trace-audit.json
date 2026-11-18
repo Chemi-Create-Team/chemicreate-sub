@@ -1,0 +1,21 @@
+{
+  "stirred_reactor": 58,
+  "tray_reactor": 4,
+  "reaction_vessel": 10,
+  "fractionating_column": 9,
+  "gas_centrifuge": 4,
+  "cell_electrolysis": 5,
+  "solar_salt": 1,
+  "fuel_cell": 1,
+  "electrolysis_furnace": 3,
+  "haber_bosch": 2,
+  "nitric_absorption": 2,
+  "converter": 2,
+  "solvent_extraction": 1,
+  "vitrification": 1,
+  "industrial_delivery": 6,
+  "helium_refrigeration": 1,
+  "ammonia_separator": 2,
+  "process_heating": 5,
+  "process_cooling": 5
+}

@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:fuel_rod",
+    "create_refinery_n_reactors:mox_fuel_rod"
+  ]
+}

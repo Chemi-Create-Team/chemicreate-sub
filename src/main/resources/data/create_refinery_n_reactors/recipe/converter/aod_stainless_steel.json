@@ -1,0 +1,26 @@
+{
+  "type": "create_refinery_n_reactors:converter",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 112
+    },
+    {
+      "item": "create_refinery_n_reactors:chromium_ingot",
+      "count": 32
+    },
+    {
+      "item": "create_refinery_n_reactors:nickel_ingot",
+      "count": 16
+    }
+  ],
+  "gas": {
+    "fluid": "create_refinery_n_reactors:argon_gas",
+    "amount": 1600
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:stainless_steel_ingot",
+    "count": 192
+  },
+  "processingTime": 800
+}

@@ -1,0 +1,39 @@
+{
+  "dimensions": [
+    7,
+    7,
+    3
+  ],
+  "gas_mB": 1176000,
+  "collisionBodies": 3,
+  "stages": [
+    {
+      "stage": "empty",
+      "width": 7,
+      "lift_m": 0.0
+    },
+    {
+      "stage": "inner",
+      "width": 7,
+      "lift_m": 2.4999999999973332
+    },
+    {
+      "stage": "middle",
+      "width": 7,
+      "lift_m": 4.999999999997334
+    },
+    {
+      "stage": "full",
+      "width": 7,
+      "lift_m": 7.5
+    },
+    {
+      "stage": "retracted",
+      "width": 7,
+      "lift_m": 0.0
+    }
+  ],
+  "finiteChargeRecovered": true,
+  "hardware": "NVIDIA GeForce RTX 4060",
+  "exit": "Verification passed; known EGL crash during shutdown, process exit 134"
+}

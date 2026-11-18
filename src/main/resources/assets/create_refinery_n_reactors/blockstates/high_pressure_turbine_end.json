@@ -1,0 +1,418 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "0",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "0",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "0",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "1",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "1",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "2",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "2",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "2",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "0",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "0",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "0",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "1",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "1",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "2",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "2",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "2",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "false",
+        "ring_x": "1",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "false",
+        "ring_x": "1",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_0_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "0",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "0",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "0",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "1",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "1",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "2",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "2",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "2",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "0",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "0",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "0",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "1",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "1",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "2",
+        "ring_y": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "2",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "2",
+        "ring_y": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "positive": "true",
+        "ring_x": "1",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_1"
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "positive": "true",
+        "ring_x": "1",
+        "ring_y": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine/unit/high_end_1_1",
+        "y": 90
+      }
+    }
+  ]
+}

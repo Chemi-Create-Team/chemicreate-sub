@@ -1,0 +1,26 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def lines = options.exists() ? options.readLines('UTF-8') : []
+                lines.removeAll { it.startsWith('lang:') }
+                lines.add('lang:' + System.getProperty('qualityLanguage', 'ja_jp'))
+                options.setText(lines.join('\n') + '\n', 'UTF-8')
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'
+            programArgument '1280'
+            programArgument '--height'
+            programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', System.getProperty('qualityLanguage', 'ja_jp')
+            systemProperty 'createplant.clientQualityScenes', 'electrolysis_cell,plant_manufacturing_hydrogen,plant_manufacturing_chlor_alkali,plant_manufacturing_deuterium,guide.manufacturing_hydrogen,guide.manufacturing_chlor_alkali,guide.manufacturing_deuterium'
+            systemProperty 'createplant.clientQualityTargets', 'electrolysis_cell@electrolysis_cell,hydrogen_gas_bucket@plant_manufacturing_hydrogen,brine_bucket@plant_manufacturing_chlor_alkali,deuterium_gas_bucket@plant_manufacturing_deuterium'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '300'
+            systemProperty 'createplant.clientQualityCaptureDelay', '80'
+            systemProperty 'createplant.electrolysisClientCheck', System.getProperty('worldCheck', 'true')
+        }
+    }
+}

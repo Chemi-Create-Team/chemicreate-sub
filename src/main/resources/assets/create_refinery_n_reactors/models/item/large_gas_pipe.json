@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "create_refinery_n_reactors:block/transport/large_gas_pipe_end",
+    "side": "create_refinery_n_reactors:block/transport/large_gas_pipe_side"
+  }
+}

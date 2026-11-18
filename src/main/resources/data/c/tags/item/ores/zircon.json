@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:zircon_ore",
+    "create_refinery_n_reactors:deepslate_zircon_ore"
+  ]
+}

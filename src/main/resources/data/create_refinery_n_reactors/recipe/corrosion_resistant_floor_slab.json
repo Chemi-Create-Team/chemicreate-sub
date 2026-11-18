@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "create_refinery_n_reactors:corrosion_resistant_floor"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:corrosion_resistant_floor_slab",
+    "count": 6
+  }
+}

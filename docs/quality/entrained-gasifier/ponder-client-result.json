@@ -1,0 +1,14 @@
+{
+  "runtimeTranslations": "passed",
+  "ponderRender": "checked",
+  "renderTargets": [
+    "gasifier_casing@entrained_gasifier"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_refinery_n_reactors:entrained_gasifier"
+  ],
+  "translationScope": "entrained_gasifier"
+}

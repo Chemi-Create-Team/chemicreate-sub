@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:naphtha",
+    "createdieselgenerators:diesel",
+    "createdieselgenerators:gasoline",
+    {
+      "id": "createdieselgenerators:ethanol",
+      "required": false
+    }
+  ]
+}

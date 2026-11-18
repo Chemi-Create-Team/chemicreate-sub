@@ -1,0 +1,26 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:molybdenite"
+    },
+    {
+      "item": "create_refinery_n_reactors:molybdenite"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1500,
+      "fluid": "create_refinery_n_reactors:oxygen_gas"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:molybdenum_trioxide"
+    },
+    {
+      "amount": 1000,
+      "id": "create_refinery_n_reactors:sulfur_dioxide"
+    }
+  ]
+}

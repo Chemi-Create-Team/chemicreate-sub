@@ -1,0 +1,30 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:compact_enriched_uranium_hexafluoride",
+      "amount": 250
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 250
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:hydrogen_gas",
+      "amount": 250
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:compact_uranium_dioxide",
+      "count": 1
+    },
+    {
+      "id": "create_refinery_n_reactors:hydrogen_fluoride",
+      "amount": 750
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CAC",
+    "PBP",
+    "CAC"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "B": {
+      "item": "minecraft:heavy_weighted_pressure_plate"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:lithium_lead_blanket_cartridge",
+    "count": 1
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "create_refinery_n_reactors:block/plant_systems/steel",
+    "steel": "create_refinery_n_reactors:block/plant_systems/steel",
+    "concrete": "create_refinery_n_reactors:block/plant_systems/concrete",
+    "panel": "create_refinery_n_reactors:block/plant_systems/panel",
+    "dark": "create_refinery_n_reactors:block/plant_systems/dark",
+    "refractory": "create_refinery_n_reactors:block/plant_systems/refractory",
+    "brass": "create_refinery_n_reactors:block/plant_systems/brass",
+    "tungsten": "create_refinery_n_reactors:block/plant_systems/tungsten",
+    "glass": "create_refinery_n_reactors:block/plant_systems/glass",
+    "red": "create_refinery_n_reactors:block/plant_systems/red",
+    "water": "create_refinery_n_reactors:block/plant_systems/water"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        4
+      ],
+      "to": [
+        13,
+        16,
+        13
+      ],
+      "faces": {
+        "up": {
+          "texture": "#steel"
+        },
+        "down": {
+          "texture": "#steel"
+        },
+        "north": {
+          "texture": "#steel"
+        },
+        "south": {
+          "texture": "#steel"
+        },
+        "east": {
+          "texture": "#steel"
+        },
+        "west": {
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        3
+      ],
+      "to": [
+        13,
+        15,
+        4
+      ],
+      "faces": {
+        "up": {
+          "texture": "#panel"
+        },
+        "down": {
+          "texture": "#panel"
+        },
+        "north": {
+          "texture": "#panel"
+        },
+        "south": {
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#panel"
+        },
+        "west": {
+          "texture": "#panel"
+        }
+      }
+    },
+    {
+      "from": [
+        8.34199742138684,
+        9.80168240227615,
+        2.7
+      ],
+      "to": [
+        8.94199742138684,
+        10.401682402276151,
+        3
+      ],
+      "faces": {
+        "up": {
+          "texture": "#red"
+        },
+        "down": {
+          "texture": "#red"
+        },
+        "north": {
+          "texture": "#red"
+        },
+        "south": {
+          "texture": "#red"
+        },
+        "east": {
+          "texture": "#red"
+        },
+        "west": {
+          "texture": "#red"
+        }
+      }
+    },
+    {
+      "from": [
+        8.98399484277368,
+        9.9033648045523,
+        2.7
+      ],
+      "to": [
+        9.58399484277368,
+        10.503364804552302,
+        3
+      ],
+      "faces": {
+        "up": {
+          "texture": "#red"
+        },
+        "down": {
+          "texture": "#red"
+        },
+        "north": {
+          "texture": "#red"
+        },
+        "south": {
+          "texture": "#red"
+        },
+        "east": {
+          "texture": "#red"
+        },
+        "west": {
+          "texture": "#red"
+        }
+      }
+    },
+    {
+      "from": [
+        9.625992264160518,
+        10.005047206828449,
+        2.7
+      ],
+      "to": [
+        10.225992264160519,
+        10.60504720682845,
+        3
+      ],
+      "faces": {
+        "up": {
+          "texture": "#red"
+        },
+        "down": {
+          "texture": "#red"
+        },
+        "north": {
+          "texture": "#red"
+        },
+        "south": {
+          "texture": "#red"
+        },
+        "east": {
+          "texture": "#red"
+        },
+        "west": {
+          "texture": "#red"
+        }
+      }
+    },
+    {
+      "from": [
+        10.267989685547358,
+        10.1067296091046,
+        2.7
+      ],
+      "to": [
+        10.867989685547359,
+        10.7067296091046,
+        3
+      ],
+      "faces": {
+        "up": {
+          "texture": "#red"
+        },
+        "down": {
+          "texture": "#red"
+        },
+        "north": {
+          "texture": "#red"
+        },
+        "south": {
+          "texture": "#red"
+        },
+        "east": {
+          "texture": "#red"
+        },
+        "west": {
+          "texture": "#red"
+        }
+      }
+    }
+  ]
+}

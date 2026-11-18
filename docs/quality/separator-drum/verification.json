@@ -1,0 +1,88 @@
+{
+  "date": "2026-11-17",
+  "baseCommit": "c00ecc9faf0bc7a04040ffe8ad2d946718917440",
+  "environment": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.219",
+    "create": "6.0.10",
+    "java": 21,
+    "gpu": "NVIDIA GeForce RTX 4060",
+    "driver": "595.99.02"
+  },
+  "build": {
+    "cleanBuild": "passed",
+    "finalBuild": "passed",
+    "mixtureUnitChecks": 6004,
+    "reactorPhysicsChecks": 1668,
+    "reactorControl": "passed"
+  },
+  "gameTests": {
+    "focused": {
+      "total": 8,
+      "passed": 8
+    },
+    "related": {
+      "total": 23,
+      "passed": 22,
+      "failed": 1,
+      "existingFailure": {
+        "method": "cooledInputsAndAllManufacturingRecipesRemainValid",
+        "message": "All five named cooling streams are included",
+        "specAlreadyListsFailure": true
+      }
+    }
+  },
+  "assets": {
+    "sourceLanguageKeysPerLocale": 4915,
+    "locales": [
+      "en_us",
+      "ja_jp",
+      "zh_cn"
+    ],
+    "ponderHeaders": 148,
+    "languageAndTutorialValidators": "passed",
+    "drumEndModels": 4,
+    "originalMaterialInputs": "byte-identical",
+    "liddedVesselCap": "byte-identical under independent path",
+    "jarMatchesProcessedResources": true,
+    "visualIdentityAudit": {
+      "result": "blocked by existing classification failure",
+      "items": [
+        "high_pressure_turbine_unit",
+        "iron_pipe",
+        "irradiated_cartridge",
+        "irradiation_cartridge",
+        "jacketed_pipe",
+        "low_pressure_turbine_unit",
+        "pig_iron",
+        "steel_slag"
+      ]
+    }
+  },
+  "nativeClient": {
+    "targets": 3,
+    "sceneIds": [
+      "ammonia_separator",
+      "plant_manufacturing_ammonia"
+    ],
+    "result": "passed before shutdown",
+    "highLiquidFraction": 0.5833333,
+    "lowLiquidFraction": 0.16666667,
+    "manufacturingLiquid": "1 mB liquid ammonia in 48000 mB inventory",
+    "worldSave": "complete",
+    "shutdownExitCode": 134,
+    "shutdownFailure": "SIGSEGV in libEGL_nvidia.so.0"
+  },
+  "jar": {
+    "file": "create-refinery-n-reactors-0.1.0-separator-drum.jar",
+    "bytes": 6924741,
+    "sha256": "5caa404bb224b2f30eb0f64c94f852cbcc84f283c5973d39375f0f74ed0fe467"
+  },
+  "notTested": [
+    "Audio",
+    "Other rendering mods",
+    "Large installation performance",
+    "Full FusionGameTests class after fixture size correction"
+  ],
+  "implementationCommit": "6cb550649a14dcaad3a477b90e61e86cc3fb08b5"
+}

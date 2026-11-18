@@ -1,0 +1,9 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File(System.getProperty('testDir', '/tmp/createplant-radiation-tests')))
+            systemProperty 'createplant.gameTestClasses', System.getProperty('testClasses', 'RadiationGameTests,RbmkGameTests,FuelPoolGameTests,NuclearSavedValueGameTests')
+            systemProperty 'createplant.radiationBenchmarkOutput', System.getProperty('benchmarkOutput', '/workspace/outputs/radiation/benchmark.json')
+        }
+    }
+}

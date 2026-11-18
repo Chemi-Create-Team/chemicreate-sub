@@ -1,0 +1,14 @@
+{
+  "runtimeTranslations": "passed",
+  "ponderRender": "checked",
+  "renderTargets": [
+    "agitator_drive_head@wet_processing"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_refinery_n_reactors:wet_processing"
+  ],
+  "translationScope": "wet_processing"
+}

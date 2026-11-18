@@ -1,0 +1,37 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    },
+    {
+      "tag": "minecraft:sand"
+    },
+    {
+      "tag": "c:nuggets/iron"
+    },
+    {
+      "item": "create_refinery_n_reactors:treatment_sludge"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:cement_clinker",
+      "count": 5
+    }
+  ],
+  "processing_time": 400,
+  "heat_requirement": "superheated"
+}

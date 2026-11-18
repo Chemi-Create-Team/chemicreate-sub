@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "D D",
+    "P P"
+  ],
+  "key": {
+    "P": {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    },
+    "D": {
+      "item": "minecraft:light_blue_dye"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:protective_shoe_covers",
+    "count": 1
+  }
+}

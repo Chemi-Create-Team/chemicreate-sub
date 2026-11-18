@@ -1,0 +1,89 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "fins": "create_refinery_n_reactors:block/fin_fan/radiator_fin_panel",
+    "side": "create_refinery_n_reactors:block/fin_fan/radiator_side_panel",
+    "end": "create_refinery_n_reactors:block/fin_fan/radiator_end_panel",
+    "top": "create_refinery_n_reactors:block/chemical/radiator_top",
+    "base": "create_refinery_n_reactors:block/chemical/radiator_drive",
+    "frame": "create_refinery_n_reactors:block/chemical/radiator_frame",
+    "grille": "create_refinery_n_reactors:block/chemical/radiator_grille",
+    "particle": "create_refinery_n_reactors:block/fin_fan/radiator_side_panel"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#end",
+          "cullface": "north"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#end",
+          "cullface": "south"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#fins",
+          "cullface": "east"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#top",
+          "cullface": "up"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#base",
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}

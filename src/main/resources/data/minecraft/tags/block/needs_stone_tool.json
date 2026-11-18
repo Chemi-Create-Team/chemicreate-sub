@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:halite_ore",
+    "create_refinery_n_reactors:deepslate_halite_ore",
+    "create_refinery_n_reactors:corrosion_resistant_floor",
+    "create_refinery_n_reactors:corrosion_resistant_floor_slab",
+    "create_refinery_n_reactors:cryogenic_cold_box_drive",
+    "create_refinery_n_reactors:cryogenic_regenerator",
+    "create_refinery_n_reactors:industrial_concrete",
+    "create_refinery_n_reactors:industrial_concrete_slab",
+    "create_refinery_n_reactors:industrial_concrete_stairs",
+    "create_refinery_n_reactors:industrial_dispatch_board"
+  ]
+}

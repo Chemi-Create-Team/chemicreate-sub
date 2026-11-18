@@ -1,0 +1,26 @@
+{
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10-281",
+  "required_game_tests": 95,
+  "jei_present": "passed",
+  "jei_absent": "passed",
+  "resource_validators": 10,
+  "client_locales": {
+    "ja_jp": {
+      "compiled_scenes": 41,
+      "captured_targets": 7
+    },
+    "en_us": {
+      "compiled_scenes": 41,
+      "captured_targets": 7
+    }
+  },
+  "accelerated_exposure_test": "Actual pumped nitric acid; contact time advanced through the same wear accumulator; real throughput measured over 15 ticks.",
+  "known_issue": "Ponder font failure immediately after resource/language reload; startup locales tested in separate JVMs.",
+  "unverified": [
+    "large-modpack compatibility",
+    "long-duration large-factory TPS",
+    "remote multiplayer clients"
+  ]
+}

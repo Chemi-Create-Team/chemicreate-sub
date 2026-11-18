@@ -1,0 +1,15 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File('/tmp/createplant-pulsation-client'))
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.pulsationTubeClientCheck', 'true'
+            systemProperty 'createplant.clientQualityTargets', 'gas_receiver@pulsation_tube'
+            systemProperty 'createplant.clientQualityScenes', 'pulsation_tube'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+            systemProperty 'createplant.clientQualityCaptureDelay', '700'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '100'
+        }
+    }
+}

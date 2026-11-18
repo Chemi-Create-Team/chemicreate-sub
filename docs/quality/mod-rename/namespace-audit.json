@@ -1,0 +1,19 @@
+{
+  "baseline": "60bae8ceab7d8982d197af38a8fc8628bf22b66b",
+  "old_mod_id": "create_heavy_indusstry",
+  "new_mod_id": "create_refinery_n_reactors",
+  "text_files_updated": 2382,
+  "nbt_files_scanned": 153,
+  "nbt_files_updated": 138,
+  "resource_files_renamed": 2969,
+  "unchanged_binary_assets": 642,
+  "nbt_round_trip_exact": true,
+  "source_and_tools_equivalence": {
+    "files": 3819,
+    "binary_identical": 641,
+    "nbt_equivalent": 153,
+    "text_equivalent": 3025
+  },
+  "active_source_old_references": 0,
+  "historical_reports_and_results_preserved": true
+}

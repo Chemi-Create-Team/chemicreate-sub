@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:block",
+  "pools": [{
+    "rolls": 1,
+    "entries": [{"type": "minecraft:item", "name": "create_refinery_n_reactors:black_large_flywheel"}],
+    "conditions": [{"condition": "minecraft:survives_explosion"}]
+  }]
+}

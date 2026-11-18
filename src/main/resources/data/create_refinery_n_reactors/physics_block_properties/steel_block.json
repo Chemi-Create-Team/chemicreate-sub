@@ -1,0 +1,7 @@
+{
+  "selector": "create_refinery_n_reactors:steel_block",
+  "priority": 1001,
+  "properties": {
+    "sable:mass": 4.0
+  }
+}

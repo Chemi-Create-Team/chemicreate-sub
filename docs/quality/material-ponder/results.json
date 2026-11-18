@@ -1,0 +1,57 @@
+{
+  "baseline": "202d0257f5bfaef4717f4c3d89f079549ee84e82",
+  "manufacturing": {
+    "families": 25,
+    "chapters": 29,
+    "steps": 147,
+    "recipe_backed_steps": 119,
+    "item_entrypoints": 150,
+    "caption_keys_per_language": 176
+  },
+  "build": {
+    "result": "passed",
+    "command": "bash gradlew --no-daemon -I docs/quality/material-ponder/server.gradle -DtestDir=/tmp/createplant-material-ponder-release build runGameTestServer",
+    "duration_seconds": 27
+  },
+  "gametests": {
+    "class": "ManufacturingPonderGameTests",
+    "passed": 5,
+    "failed": 0,
+    "elapsed_ms": 355.3
+  },
+  "native_client": {
+    "gpu": "NVIDIA GeForce RTX 4060",
+    "opengl_driver": "NVIDIA 595.99.02",
+    "compiled_chapters_per_locale": 29,
+    "locales": [
+      "ja_jp",
+      "en_us",
+      "zh_cn"
+    ],
+    "japanese_full_capture_pass": 29,
+    "final_layout_capture_targets_per_locale": 3,
+    "screenshot": "ponder-cn.jpg",
+    "screenshot_source": "computer-use-linux MCP"
+  },
+  "static_validation": {
+    "manufacturing_structures": "passed",
+    "three_language_runtime_keys": "passed",
+    "deterministic_resources": 33,
+    "preserved_catalog_entries": 69,
+    "protected_language_keys": {
+      "ja_jp": 110,
+      "en_us": 110,
+      "zh_cn": 110
+    }
+  },
+  "limitations": [
+    "Manufacturing Ponder snapshots use live recipes. Full production plants were not operated in survival or on a multiplayer server.",
+    "Unregistered gas buckets have no item entrypoint. Those gases are explained inside their manufacturing family.",
+    "Some existing Chinese material names fall back to English, including cold_synthesis_mixture."
+  ],
+  "existing_out_of_scope_failures": [
+    "PlantTutorialGameTests.everyTutorialUsesRegisteredComponentsAndValidBlockStates fails on uranium_preparation illustrative item create_heavy_indusstry:uranium_hexafluoride_bucket.",
+    "Full validate_plant_tutorials.py fails on that same missing uranium item model.",
+    "Full validate_ponder_language.py finds incomplete Chinese ammonia_separator captions."
+  ]
+}

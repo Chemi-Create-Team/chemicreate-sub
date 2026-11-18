@@ -1,0 +1,16 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:green_compact_uranium_pellet"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:compact_uranium_pellet",
+      "count": 1
+    }
+  ],
+  "heat_requirement": "heated",
+  "module": "absorber"
+}

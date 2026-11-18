@@ -1,0 +1,213 @@
+plugins {
+    id "java-library"
+    id "idea"
+    id "net.neoforged.moddev" version "2.0.141"
+}
+
+group = mod_group_id
+version = mod_version
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+neoForge {
+    version = neo_version
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
+    }
+
+    runs {
+        configureEach {
+            systemProperty "forge.logging.markers", "REGISTRIES"
+            systemProperty "neoforge.enabledGameTestNamespaces", mod_id
+        }
+
+        client {
+            client()
+        }
+
+        server {
+            server()
+            programArgument "--nogui"
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty "neoforge.enabledGameTestNamespaces", mod_id
+        }
+
+        turbineUnitGameTestServer {
+            type = "gameTestServer"
+            systemProperty "neoforge.enabledGameTestNamespaces", mod_id
+            systemProperty "createplant.gameTestClasses", "TurbineUnitGameTests"
+        }
+
+        quickReactorGameTestServer {
+            type = "gameTestServer"
+            systemProperty "neoforge.enabledGameTestNamespaces", mod_id
+            systemProperty "createplant.gameTestClasses", "RbmkGameTests"
+        }
+
+        compactFuelGameTestServer {
+            type = "gameTestServer"
+            systemProperty "neoforge.enabledGameTestNamespaces", mod_id
+            systemProperty "createplant.gameTestClasses", "CompactFuelLongGameTests"
+            systemProperty "createplant.compactFuelSprint", "true"
+        }
+        powerPlantGameTestServer {
+            type = "gameTestServer"
+            systemProperty "neoforge.enabledGameTestNamespaces", mod_id
+            systemProperty "createplant.gameTestClasses", "PowerPlantGameTests"
+        }
+        powerPlantRegressionGameTestServer {
+            type = "gameTestServer"
+            systemProperty "neoforge.enabledGameTestNamespaces", mod_id
+            systemProperty "createplant.gameTestClasses", "PowerPlantGameTests,CraftingRecipeGameTests,SurvivalReachabilityGameTests,WaterResistanceGameTests,FusionGameTests"
+        }
+    }
+}
+
+repositories {
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://api.modrinth.com/maven" }
+}
+
+configurations {
+    createDistribution {
+        canBeConsumed = false
+    }
+    implementation.extendsFrom(createDistribution)
+}
+
+dependencies {
+    compileOnly("maven.modrinth:serene-seasons:B6nTjh4b") { transitive = false }
+    compileOnly("maven.modrinth:glitchcore:S2TfWrZR") { transitive = false }
+    if (providers.gradleProperty("withSereneSeasons").getOrElse("false").toBoolean()) {
+        runtimeOnly("maven.modrinth:serene-seasons:B6nTjh4b") { transitive = false }
+        runtimeOnly("maven.modrinth:glitchcore:S2TfWrZR") { transitive = false }
+    }
+    implementation("maven.modrinth:create-diesel-generators:${cdg_version_id}") { transitive = false }
+    createDistribution("maven.modrinth:create:${create_version_id}") { transitive = false }
+    // Compile against the same Ponder, Flywheel and Registrate bundled at runtime.
+    compileOnly(files(provider {
+        zipTree(configurations.createDistribution.singleFile).matching {
+            include "META-INF/jarjar/*.jar"
+        }.files
+    }))
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.27.0.343"
+    // The electrolysis furnace joins the Electro Energetics circuit as a device; older machines still take FE from its converters.
+    implementation("maven.modrinth:create-electro-energetics:${electroenergetics_version}") { transitive = false }
+    // JEI is optional in modpacks. Keep its integration compile-time only when
+    // exercising a server without it: -PwithJei=false.
+    if (providers.gradleProperty("withJei").getOrElse("true").toBoolean()) {
+        runtimeOnly "mezz.jei:jei-1.21.1-neoforge:19.27.0.343"
+    }
+    // Create: Deep Seas is optional: its hull table is read at compile time only. -PwithDeepSeas=true runs it with Sable and Create
+    // Aeronautics, which need a newer NeoForge than the default (-Pneo_version=21.1.228).
+    compileOnly("maven.modrinth:create-deep-seas:${deepseas_version_id}") { transitive = false }
+    if (providers.gradleProperty("withDeepSeas").getOrElse("false").toBoolean()) {
+        runtimeOnly("maven.modrinth:sable:${sable_version_id}") { transitive = false }
+        runtimeOnly("maven.modrinth:create-aeronautics:${aeronautics_version_id}") { transitive = false }
+        runtimeOnly("maven.modrinth:create-deep-seas:${deepseas_version_id}") { transitive = false }
+    }
+}
+
+tasks.named("processResources", ProcessResources).configure {
+    def replaceProperties = [
+        mod_id: mod_id,
+        mod_name: mod_name,
+        mod_version: mod_version,
+        mod_authors: mod_authors,
+        mod_license: mod_license,
+        mod_description: mod_description,
+        minecraft_version: minecraft_version,
+        neo_version: neo_version,
+        cdg_version: cdg_version
+    ]
+    inputs.properties replaceProperties
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand replaceProperties
+    }
+    doLast {
+        def prefix = mod_id + '.ponder.shared.'
+        def languages = ['en_us', 'ja_jp', 'zh_cn']
+        def strings = languages.collectEntries { lang ->
+            [(lang): new groovy.json.JsonSlurper().parse(file("src/main/resources/assets/${mod_id}/lang/${lang}.json"), 'UTF-8')]
+        }
+        def pages = [:]
+        languages.each { lang ->
+            pages[lang] = [:]
+            strings[lang].findAll { key, value -> key.startsWith(prefix) && !key.endsWith('.title') }.each { key, value ->
+                def text = value.replace('%%', '％').replaceAll(/%(?!%|(?:\d+\$)?(?:\d+(?:\.\d+)?)?[sdf])/, '％')
+                strings[lang][key] = text
+                int argument = 0
+                text = text.replaceAll(/%([sdf])/) { whole, type -> '%' + (++argument) + '$' + type }
+                int limit = lang == 'en_us' ? 150 : 68
+                def chunks = []
+                def current = ''
+                text.split(/(?<=[。！？；;])\s*|(?<=[.!?])\s+/).each { sentence ->
+                    def remaining = sentence.trim()
+                    while (remaining.length() > limit) {
+                        int cut = Math.max(remaining.lastIndexOf(' ', limit), remaining.lastIndexOf('、', limit))
+                        if (cut < limit / 2) cut = limit
+                        def fragment = remaining.substring(0, cut).trim()
+                        if (current) { chunks.add(current); current = '' }
+                        chunks.add(fragment)
+                        remaining = remaining.substring(cut).trim()
+                    }
+                    if (current && current.length() + remaining.length() + 1 > limit) { chunks.add(current); current = '' }
+                    current += (current && lang == 'en_us' ? ' ' : '') + remaining
+                }
+                if (current) chunks.add(current)
+                pages[lang][key] = chunks ?: ['']
+            }
+        }
+        pages.en_us.each { key, english ->
+            int maximum = languages.collect { pages[it][key]?.size() ?: english.size() }.max()
+            languages.each { lang ->
+                def chunks = pages[lang][key] ?: english
+                strings[lang][key + '.lesson_pages.count'] = chunks.size().toString()
+                for (int i = 0; i < maximum; i++) {
+                    strings[lang][key + '.lesson_pages.' + i] = chunks[Math.min(i, chunks.size() - 1)]
+                }
+            }
+        }
+        languages.each { lang ->
+            def target = new File(destinationDir, "assets/${mod_id}/lang/${lang}.json")
+            target.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(strings[lang])) + '\n', 'UTF-8')
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+
+def reactorPhysicsTest = tasks.register("reactorPhysicsTest", JavaExec) {
+    dependsOn tasks.named("testClasses")
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "net.createplant.nuclear.ReactorPhysicsTest"
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+}
+def reactorControlTest = tasks.register("reactorControlTest", JavaExec) {
+    dependsOn tasks.named("testClasses")
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "net.createplant.nuclear.ReactorControlTest"
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+}
+tasks.named("check") {
+    dependsOn reactorPhysicsTest, reactorControlTest
+}
+
+def mixtureContentsTest = tasks.register("mixtureContentsTest", JavaExec) {
+    dependsOn tasks.named("testClasses")
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = "net.createplant.mixture.MixtureContentsTest"
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
+}
+tasks.named("check") { dependsOn mixtureContentsTest }
+
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+sourceSets.test.runtimeClasspath += sourceSets.main.compileClasspath

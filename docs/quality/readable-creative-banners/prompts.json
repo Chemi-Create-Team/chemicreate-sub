@@ -1,0 +1,15 @@
+{
+  "mode": "built-in image_gen edits, one per current category",
+  "basePrompt": "Use case: precise-object-edit. Image 1 is the CURRENT abstract Minecraft creative-tab banner. Images 2 and 3 are the user's Simulated and Cosmonautics style references. Make only a SMALL STEP toward recognisable subject matter: preserve most of the current decorative pixel pattern and its composition; add just the category cues described below. Do not return to detailed object illustrations. Keep broad simple shapes, subtle 2-3-tone shading, sparse pixel grain, dark left HALF reserved for readable text, and clearer motifs on the RIGHT half. Limit to about 14-16 colors, sharp square pixel clusters, no antialiasing, no gloss, no 3D bevels, no smooth gradients. No letters, numbers, labels, text or logos. Geometry: logical canvas 162x54; visible artwork only in the CENTER 162x18 stripe, with pure black padding in the top and bottom 18 rows, no outer-canvas frame. The visible header is 9:1. Changes for this category: ",
+  "motifs": {
+    "equipment": "Keep the current large cropped gold gear shapes. Make ONE gear easier to recognize with a simple round central cutout and readable teeth, and add ONE broad copper elbow line that reads as a pipe. Only these simple cues; no valves, bolts, instruments or miniature machinery.",
+    "materials": "Keep the current turquoise wave bands and amber/ivory color patches. Turn ONE amber patch on the right into a small recognizable angular ore fragment with two facets and a few grain pixels; make the turquoise band read as a liquid wave with a couple of tiny bubble dots. No vessels, piles of objects, bottles or equipment.",
+    "construction": "Keep the current gray/copper block-like pattern and palette. Add a few dark horizontal mortar lines and staggered vertical joints so the RIGHT side reads clearly as stacked rectangular construction blocks. Two rows are enough. A few grain pixels; no rivets, perspective, tools or building scenery."
+  },
+  "inputRoles": [
+    "current abstract banner to adjust slightly",
+    "Simulated style reference",
+    "Cosmonautics style reference"
+  ],
+  "normalization": "Trim black padding; nearest-neighbor normalize to 162x18; quantize without dithering to at most 16 colors"
+}

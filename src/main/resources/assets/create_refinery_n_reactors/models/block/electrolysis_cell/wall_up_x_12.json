@@ -1,0 +1,97 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "surface": "create_refinery_n_reactors:block/electrolysis_cell/materials",
+    "porcelain": "create_refinery_n_reactors:block/electrolysis_cell/porcelain",
+    "casing": "create_refinery_n_reactors:block/electrolysis_cell/casing",
+    "top": "create_refinery_n_reactors:block/electrolysis_cell/top",
+    "plate": "create_refinery_n_reactors:block/electrolysis_cell/plate",
+    "inner": "create:block/industrial_iron_block",
+    "particle": "create_refinery_n_reactors:block/electrolysis_cell/casing"
+  },
+  "render_type": "minecraft:cutout",
+  "elements": [
+    {
+      "from": [
+        0,
+        14,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        3
+      ],
+      "faces": {
+        "down": {
+          "texture": "#inner",
+          "uv": [
+            0.0,
+            13.0,
+            16.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0.0,
+            12.0,
+            4.0,
+            12.75
+          ]
+        },
+        "south": {
+          "texture": "#surface",
+          "uv": [
+            8,
+            8,
+            16,
+            9.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        14,
+        13
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#inner",
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0.0,
+            15.25,
+            4.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#surface",
+          "uv": [
+            8,
+            8,
+            16,
+            9.0
+          ]
+        }
+      }
+    }
+  ]
+}

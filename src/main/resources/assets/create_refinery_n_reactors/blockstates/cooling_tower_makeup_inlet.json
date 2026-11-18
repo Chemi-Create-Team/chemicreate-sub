@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": {
+      "model": "create_refinery_n_reactors:block/plant_systems/cooling_tower_makeup_inlet",
+      "y": 90
+    }
+  }
+}

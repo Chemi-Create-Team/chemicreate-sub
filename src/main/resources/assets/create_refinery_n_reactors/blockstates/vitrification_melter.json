@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/plant_systems/vitrification_melter",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/plant_systems/vitrification_melter",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/plant_systems/vitrification_melter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/plant_systems/vitrification_melter",
+      "y": 270
+    }
+  }
+}

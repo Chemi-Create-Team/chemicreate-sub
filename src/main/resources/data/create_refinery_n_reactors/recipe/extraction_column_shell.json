@@ -1,0 +1,25 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "pattern": [
+    " SSS ",
+    "SGTGS",
+    " SSS "
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:industrial_glass"
+    },
+    "T": {
+      "item": "create:fluid_tank"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:extraction_column_shell",
+    "count": 1
+  }
+}

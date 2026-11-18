@@ -1,0 +1,179 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "surface": "create_refinery_n_reactors:block/electrolysis_cell/materials",
+    "porcelain": "create_refinery_n_reactors:block/electrolysis_cell/porcelain",
+    "casing": "create_refinery_n_reactors:block/electrolysis_cell/casing",
+    "top": "create_refinery_n_reactors:block/electrolysis_cell/top",
+    "plate": "create_refinery_n_reactors:block/electrolysis_cell/plate",
+    "inner": "create:block/industrial_iron_block",
+    "particle": "create_refinery_n_reactors:block/electrolysis_cell/casing"
+  },
+  "render_type": "minecraft:cutout",
+  "elements": [
+    {
+      "from": [
+        0,
+        14,
+        0
+      ],
+      "to": [
+        3,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#inner",
+          "uv": [
+            0.0,
+            0.0,
+            3.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0.0,
+            4.0,
+            0.75,
+            8.0
+          ]
+        },
+        "east": {
+          "texture": "#surface",
+          "uv": [
+            8,
+            8,
+            16,
+            9.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        14,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#inner",
+          "uv": [
+            13.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            3.25,
+            4.0,
+            4.0,
+            8.0
+          ]
+        },
+        "west": {
+          "texture": "#surface",
+          "uv": [
+            8,
+            8,
+            16,
+            9.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        14,
+        0
+      ],
+      "to": [
+        13,
+        16,
+        3
+      ],
+      "faces": {
+        "down": {
+          "texture": "#inner",
+          "uv": [
+            3.0,
+            13.0,
+            13.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0.75,
+            4.0,
+            3.25,
+            4.75
+          ]
+        },
+        "south": {
+          "texture": "#surface",
+          "uv": [
+            8,
+            8,
+            13.0,
+            9.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        14,
+        13
+      ],
+      "to": [
+        13,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#inner",
+          "uv": [
+            3.0,
+            0.0,
+            13.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0.75,
+            7.25,
+            3.25,
+            8.0
+          ]
+        },
+        "north": {
+          "texture": "#surface",
+          "uv": [
+            8,
+            8,
+            13.0,
+            9.0
+          ]
+        }
+      }
+    }
+  ]
+}

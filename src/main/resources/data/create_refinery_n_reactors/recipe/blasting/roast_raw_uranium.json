@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:blasting",
+  "ingredient": {
+    "item": "create_refinery_n_reactors:uraninite"
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:yellowcake"
+  },
+  "experience": 0.1,
+  "cookingtime": 100
+}

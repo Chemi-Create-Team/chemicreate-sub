@@ -1,0 +1,21 @@
+{
+    "replace":  false,
+    "values":  [
+                   "create_refinery_n_reactors:large_flywheel",
+                   "create_refinery_n_reactors:white_large_flywheel",
+                   "create_refinery_n_reactors:orange_large_flywheel",
+                   "create_refinery_n_reactors:magenta_large_flywheel",
+                   "create_refinery_n_reactors:light_blue_large_flywheel",
+                   "create_refinery_n_reactors:lime_large_flywheel",
+                   "create_refinery_n_reactors:pink_large_flywheel",
+                   "create_refinery_n_reactors:gray_large_flywheel",
+                   "create_refinery_n_reactors:light_gray_large_flywheel",
+                   "create_refinery_n_reactors:cyan_large_flywheel",
+                   "create_refinery_n_reactors:purple_large_flywheel",
+                   "create_refinery_n_reactors:blue_large_flywheel",
+                   "create_refinery_n_reactors:brown_large_flywheel",
+                   "create_refinery_n_reactors:green_large_flywheel",
+                   "create_refinery_n_reactors:red_large_flywheel",
+                   "create_refinery_n_reactors:black_large_flywheel"
+               ]
+}

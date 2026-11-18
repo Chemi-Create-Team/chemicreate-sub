@@ -1,0 +1,67 @@
+modLoader = "javafml"
+loaderVersion = "[0,)"
+license = "${mod_license}"
+
+[[mods]]
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_authors}"
+logoFile = "create_refinery_n_reactors_icon.png"
+description = '''${mod_description}'''
+
+[[dependencies."${mod_id}"]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neo_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${minecraft_version}]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "create"
+type = "required"
+versionRange = "[6.0.10,6.0.11)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "electroenergetics"
+type = "required"
+versionRange = "[1.21.1-1.1.4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[mixins]]
+config = "create_refinery_n_reactors.mixins.json"
+
+# Applied only when Create: Deep Seas is installed (DeepSeasMixinPlugin).
+[[mixins]]
+config = "create_refinery_n_reactors.deepseas.mixins.json"
+
+[[dependencies."${mod_id}"]]
+modId = "createdieselgenerators"
+type = "required"
+versionRange = "[${cdg_version}]"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "create_submarine"
+type = "optional"
+versionRange = "[3.4.7,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "sereneseasons"
+type = "optional"
+versionRange = "[10.1,11)"
+ordering = "AFTER"
+side = "BOTH"

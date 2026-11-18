@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:lidded_vessel"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.root"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.root.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "background": "create_refinery_n_reactors:textures/block/steel_block.png"
+  },
+  "criteria": {
+    "joined": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "loot": [
+      "create_refinery_n_reactors:gameplay/manual"
+    ]
+  }
+}

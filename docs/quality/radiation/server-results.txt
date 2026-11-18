@@ -1,0 +1,25 @@
+tests-release.log
+FluidPhase: 25 checks passed
+HaberBoschProcess: 1019 checks passed
+Reactor control tests passed
+ReactorPhysicsTest: 1668 checks passed (delayed rise period 5.7 s)
+> Task :build
+[14:10:52] [Server thread/INFO] [minecraft/GameTestServer]: ========= 44 GAME TESTS COMPLETE IN 3.103 s ======================
+[14:10:52] [Server thread/INFO] [minecraft/GameTestServer]: All 44 required tests passed :)
+BUILD SUCCESSFUL in 35s
+
+tests-steel-merged.log
+FluidPhase: 25 checks passed
+HaberBoschProcess: 1019 checks passed
+Reactor control tests passed
+ReactorPhysicsTest: 1668 checks passed (delayed rise period 5.7 s)
+> Task :build
+[14:18:27] [Server thread/ERROR] [minecraft/LogTestReporter]: afouledprocessstopsthenresumesafteronemanualbrush failed at 14022806, -60, -9310686! The slowed process resumes one batch and charges one new unit of fouling only after its material transaction commits
+[14:19:59] [Server thread/INFO] [minecraft/GameTestServer]: ========= 635 GAME TESTS COMPLETE IN 1.591 min ======================
+[14:19:59] [Server thread/INFO] [minecraft/GameTestServer]: 1 required tests failed :(
+BUILD FAILED in 2m 8s
+
+benchmark-latest-main.log
+[14:20:34] [Server thread/INFO] [minecraft/GameTestServer]: ========= 1 GAME TESTS COMPLETE IN 952.1 ms ======================
+[14:20:34] [Server thread/INFO] [minecraft/GameTestServer]: All 1 required tests passed :)
+BUILD SUCCESSFUL in 28s

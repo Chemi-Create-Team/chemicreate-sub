@@ -1,0 +1,39 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "item": "create_refinery_n_reactors:ferrochrome"
+    },
+    {
+      "item": "create_refinery_n_reactors:ferrochrome"
+    },
+    {
+      "tag": "c:ingots/nickel"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:stainless_steel_ingot",
+      "count": 10
+    }
+  ],
+  "heat_requirement": "superheated"
+}

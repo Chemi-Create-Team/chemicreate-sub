@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-24",
+  "base_commit": "1d1cbf8bb14b78268a35410aa1c9de011409a4db",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10-281",
+  "build": "passed",
+  "required_server_game_tests_passed": 115,
+  "resource_validators_passed": 10,
+  "models": 78,
+  "textures_16px": 16,
+  "collision_entries": 73,
+  "other_models_and_textures_preserved": 892,
+  "other_assets_changed": 0,
+  "geometry_checks": [
+    "model/collision correspondence",
+    "all boxes within their cell",
+    "one roof manway per completed cross-section",
+    "no frame columns inside the centre cell"
+  ],
+  "native_client": {
+    "language": "ja_jp",
+    "runtime_translations_passed": 50,
+    "sizes": [
+      "1x1x3",
+      "2x2x4",
+      "3x3x9"
+    ],
+    "renderer": "software; performance not measured",
+    "view_angles_degrees": [
+      145,
+      325
+    ],
+    "image_pixels": [
+      1440,
+      900
+    ]
+  },
+  "jar": {
+    "filename": "create-heavy-indusstry-0.1.0.jar",
+    "bytes": 2470849,
+    "sha256": "4f9b79d73a9a6c155d6e9822c3dfc1d1cc567fe31ece5f36ea9ee33b7bf10c1d"
+  },
+  "zip": {
+    "filename": "create-plant-column-redesign.zip",
+    "bytes": 2101301,
+    "members": [
+      "create-heavy-indusstry-0.1.0.jar"
+    ]
+  },
+  "not_tested": [
+    "large-modpack endurance",
+    "performance profiling",
+    "actual chunk unload/reload round trip"
+  ]
+}

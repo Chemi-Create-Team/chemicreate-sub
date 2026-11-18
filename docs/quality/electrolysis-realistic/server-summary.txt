@@ -1,0 +1,3 @@
+[11:09:43] [Server thread/INFO] [minecraft/GameTestServer]: ========= 47 GAME TESTS COMPLETE IN 2.606 s ======================
+[11:09:43] [Server thread/INFO] [minecraft/GameTestServer]: All 47 required tests passed :)
+BUILD SUCCESSFUL in 29s

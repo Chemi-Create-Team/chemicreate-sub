@@ -1,0 +1,329 @@
+{
+  "credit": "Derived from Create 6.0.10 schematicannon assets, copyright The Create Team / The Creators of Create; Create-Plant facility selector",
+  "parent": "block/block",
+  "textures": {
+    "0": "create:block/andesite_casing_short",
+    "2": "block/stonecutter_bottom",
+    "4": "create:block/schematicannon",
+    "8": "block/stone",
+    "particle": "block/spruce_log",
+    "selector": "create_refinery_n_reactors:block/facility_constructor"
+  },
+  "elements": [
+    {
+      "name": "Cube",
+      "from": [
+        -2,
+        -0.2,
+        5
+      ],
+      "to": [
+        18,
+        3,
+        11
+      ],
+      "neoforge_data": {
+        "calculate_normals": true
+      },
+      "rotation": {
+        "angle": -45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            5,
+            0,
+            11,
+            3
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            5,
+            0,
+            11,
+            3
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            0,
+            4,
+            16,
+            10
+          ],
+          "texture": "#8"
+        },
+        "down": {
+          "uv": [
+            0,
+            4,
+            16,
+            10
+          ],
+          "texture": "#8"
+        }
+      }
+    },
+    {
+      "name": "Cube",
+      "from": [
+        -2,
+        -0.1,
+        5
+      ],
+      "to": [
+        18,
+        3,
+        11
+      ],
+      "neoforge_data": {
+        "calculate_normals": true
+      },
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            5,
+            0,
+            11,
+            3
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            5,
+            0,
+            11,
+            3
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            0,
+            4,
+            16,
+            10
+          ],
+          "texture": "#8"
+        },
+        "down": {
+          "uv": [
+            0,
+            4,
+            16,
+            10
+          ],
+          "texture": "#8"
+        }
+      }
+    },
+    {
+      "name": "Cube",
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        7,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            12,
+            7
+          ],
+          "texture": "#4"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            12,
+            7
+          ],
+          "texture": "#4"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            12,
+            7
+          ],
+          "texture": "#4"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            12,
+            7
+          ],
+          "texture": "#4"
+        },
+        "up": {
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ],
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            0,
+            4,
+            12,
+            16
+          ],
+          "texture": "#8"
+        }
+      }
+    },
+    {
+      "name": "Facility selector",
+      "from": [
+        3,
+        3,
+        0
+      ],
+      "to": [
+        13,
+        8,
+        2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            10,
+            5
+          ],
+          "texture": "#selector"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            10,
+            5
+          ],
+          "texture": "#selector"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            10,
+            5
+          ],
+          "texture": "#selector"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            10,
+            5
+          ],
+          "texture": "#selector"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            10,
+            5
+          ],
+          "texture": "#selector"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            10,
+            5
+          ],
+          "texture": "#selector"
+        }
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "Base",
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "children": [
+        0,
+        1,
+        2
+      ]
+    }
+  ]
+}

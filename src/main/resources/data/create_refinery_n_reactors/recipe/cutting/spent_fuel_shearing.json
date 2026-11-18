@@ -1,0 +1,19 @@
+{
+  "type": "create:cutting",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:spent_fuel_rod"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:chopped_spent_fuel",
+      "count": 1
+    },
+    {
+      "id": "create_refinery_n_reactors:spent_cladding_hulls",
+      "count": 1
+    }
+  ],
+  "processing_time": 200
+}

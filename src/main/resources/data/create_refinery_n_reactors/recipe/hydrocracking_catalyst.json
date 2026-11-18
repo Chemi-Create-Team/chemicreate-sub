@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " M ",
+    "NHN",
+    " Q "
+  ],
+  "key": {
+    "M": {
+      "tag": "c:ingots/molybdenum"
+    },
+    "N": {
+      "tag": "c:ingots/nickel"
+    },
+    "H": {
+      "item": "create_refinery_n_reactors:hydrotreating_catalyst"
+    },
+    "Q": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:hydrocracking_catalyst",
+    "count": 1
+  }
+}

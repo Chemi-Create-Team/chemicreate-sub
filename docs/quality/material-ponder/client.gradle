@@ -1,0 +1,31 @@
+import groovy.json.JsonSlurper
+
+allprojects {
+    afterEvaluate {
+        def tutorials = new JsonSlurper().parse(new File(project.projectDir,
+            'src/main/resources/assets/create_refinery_n_reactors/ponder/tutorials.json')).findAll { it.family != null }
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def lines = options.exists() ? options.readLines('UTF-8') : []
+                lines.removeAll { it.startsWith('lang:') }
+                lines.add('lang:' + System.getProperty('qualityLanguage', 'ja_jp'))
+                options.setText(lines.join('\n') + '\n', 'UTF-8')
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'
+            programArgument '1280'
+            programArgument '--height'
+            programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', System.getProperty('qualityLanguage', 'ja_jp')
+            systemProperty 'createplant.clientQualityScenes', tutorials.collectMany { ['plant_' + it.id, 'guide.' + it.id] }.join(',')
+            systemProperty 'createplant.clientQualityTargets', System.getProperty('qualityTargets', tutorials.collect {
+                it.components.find { !it.contains(':') } + '@plant_' + it.id
+            }.join(','))
+            systemProperty 'createplant.clientQualitySeekFromEnd', '135'
+            systemProperty 'createplant.clientQualityCaptureDelay', System.getProperty('captureDelay', '40')
+        }
+    }
+}

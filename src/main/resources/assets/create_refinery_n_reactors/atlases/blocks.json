@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "block/turbine",
+      "prefix": "block/turbine/"
+    },
+    {
+      "type": "directory",
+      "source": "block/compressor",
+      "prefix": "block/compressor/"
+    },
+    {
+      "type": "directory",
+      "source": "item",
+      "prefix": "item/"
+    }
+  ]
+}

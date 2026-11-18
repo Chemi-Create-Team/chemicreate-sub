@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " G ",
+    "GVG",
+    " G "
+  ],
+  "key": {
+    "G": {
+      "item": "create_refinery_n_reactors:industrial_glass"
+    },
+    "V": {
+      "item": "create_refinery_n_reactors:fusion_vacuum_vessel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_viewport",
+    "count": 1
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "pattern": [
+    " SSS ",
+    "SIIIS",
+    "SIFIS",
+    "SIIIS",
+    " SSS "
+  ],
+  "key": {
+    "S": {
+      "item": "create:iron_sheet"
+    },
+    "I": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "F": {
+      "item": "create:flywheel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:large_flywheel",
+    "count": 1
+  },
+  "show_notification": true
+}

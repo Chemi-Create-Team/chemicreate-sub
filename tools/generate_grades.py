@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""Names of the temperature and pressure grades (thermal/Grade.java), and the transport lines that show them, in the three languages.
+Run from the repository root."""
+import json
+from pathlib import Path
+
+LANG = Path(__file__).resolve().parents[1] / 'src/main/resources/assets/create_refinery_n_reactors/lang'
+P = 'grade.create_refinery_n_reactors.'
+NAMES = {
+    'heat.cryogenic': ('Cryogenic', '極低温', '极低温'), 'heat.cold': ('Cold', '低温', '低温'), 'heat.ambient': ('Ambient', '常温', '常温'),
+    'heat.hot': ('Hot', '高温', '高温'), 'heat.very_hot': ('Very hot', '超高温', '超高温'),
+    'pressure.atmospheric': ('Atmospheric', '常圧', '常压'), 'pressure.pressurised': ('Pressurised', '加圧', '加压'), 'pressure.high': ('High pressure', '高圧', '高压'),
+    'fluid': ('%s, %s', '%s・%s', '%s・%s'),
+}
+NAMES.update({
+    'exchange.row': ('%s | %s mB/t', '%s｜%s mB/t', '%s｜%s mB/t'),
+    'turbine.wear': ('Wear %s%%','摩耗 %s%%','磨损 %s%%'),
+    'radiator': ('%s fans | %s mB/t', 'ファン %s台｜%s mB/t', '%s台风扇｜%s mB/t'),
+    'tower': ('Warm water → water | %s mB/t', '温排水 → 水｜%s mB/t', '温排水 → 水｜%s mB/t'),
+    'separator': ('Feed %s mB | liquid %s mB | recycle %s mB', '原料 %s mB｜液体 %s mB｜循環ガス %s mB', '原料 %s mB｜液体 %s mB｜循环气 %s mB'),
+    'reducer': ('Lowers one pressure grade', '圧力等級を一段下げます', '降低一个压力等级'),
+    'tank.range': ('Accepts %s to %s, up to %s','受入等級：%s～%s・%sまで','接收等级：%s～%s，最高%s'),
+    'tank.kind.all': ('Liquids and gases | %s','液体・気体｜%s','液体与气体｜%s'),
+    'tank.kind.liquid': ('Liquids only | %s','液体専用｜%s','仅液体｜%s'),
+    'tank.kind.gas': ('Gases only | %s','気体専用｜%s','仅气体｜%s'),
+    'tank.kind.water': ('Water and warm water only | %s','水・温排水専用｜%s','仅水与温排水｜%s'),
+    'tank.acid': ('Acid resistant','耐酸','耐酸'), 'tank.no_acid': ('No corrosive fluids','腐食性流体不可','不接收腐蚀性流体'),
+    'tank.reject.fluid': ('Rejected: wrong fluid type','搬入不可：流体の種類が不適合','拒收：流体种类不符'),
+    'tank.reject.corrosion': ('Rejected: corrosive fluid','搬入不可：腐食性に非対応','拒收：不耐该腐蚀性流体'),
+    'tank.reject.cold': ('Rejected: temperature grade too low','搬入不可：温度等級が低すぎます','拒收：温度等级过低'),
+    'tank.reject.hot': ('Rejected: temperature grade too high','搬入不可：温度等級が高すぎます','拒收：温度等级过高'),
+    'tank.reject.pressure': ('Rejected: pressure grade too high','搬入不可：圧力等級が高すぎます','拒收：压力等级过高'),
+})
+TRANSPORT = {
+    'grade': ('Grade: %s', '等級：%s', '等级：%s'),
+    'carries': ('Carries %s to %s, up to %s', '運べる流体：%s～%s・%sまで', '可输送：%s～%s，最高%s'),
+}
+
+for index, code in enumerate(('en_us', 'ja_jp', 'zh_cn')):
+    path = LANG / f'{code}.json'
+    strings = json.loads(path.read_text())
+    for key in list(strings):
+        if any(key.endswith('.'+name) or '.'+name+'.' in key for name in ('relief_valve','redstone_relief_valve','back_pressure_valve')): del strings[key]
+    retired_metrics = ['boiler_outlet', 'boiling_point', 'cold_box_kelvin', 'compression_efficiency', 'compression_inlet', 'compression_outlet', 'cooling_ambient', 'cooling_evaporated', 'cooling_wetbulb', 'equipment_damage', 'exchange_joules', 'exchange_ua', 'fluid_', 'inlet_lower', 'inlet_upper', 'item_', 'outlet_lower', 'outlet_upper', 'pipe_heat_loss', 'pipe_minimum', 'pipe_pressure_limit', 'pipe_temperature', 'pipe_temperature_limit', 'pipe_thermal_damage', 'pipe_wear', 'pressure', 'pressure_setpoint', 'pump_power', 'radiator_ambient', 'reaction_temperature', 'recovered_heat', 'rotor_efficiency', 'rotor_exhaust_pressure', 'rotor_exhaust_temperature', 'rotor_inlet_temperature', 'section_pressure', 'steam_damage', 'steam_liquid', 'steam_source_in', 'steam_source_out', 'steam_vapour', 'temperature_', 'temperature_8', 'temperature_9', 'thermal_power', 'vessel_overpressure', 'vessel_strain']
+    for key in list(strings):
+        if key.startswith(('pressure.create_refinery_n_reactors.', 'thermal.create_refinery_n_reactors.')) or key.startswith('display.create_refinery_n_reactors.') and (key.rsplit('.',1)[-1] in retired_metrics or key.rsplit('.',1)[-1].startswith('temperature_')) or key.startswith('death.attack.create_refinery_n_reactors.') and any(name in key for name in ('hot_surface','cold_surface')): del strings[key]
+    for key, names in NAMES.items(): strings[P + key] = names[index]
+    for fluid, names in {'high_pressure_steam': ('High-pressure Steam','高圧蒸気','高压蒸汽'), 'superheated_steam': ('Superheated Steam','過熱蒸気','过热蒸汽'), 'hot_reactor_coolant': ('Hot Reactor Coolant','高温炉冷却材','高温反应堆冷却剂'), 'pressurised_water': ('Pressurised Feedwater','加圧給水','加压给水'), 'preheated_crude_oil': ('Preheated Crude Oil', '予熱した原油', '预热原油'), 'compressed_air': ('Compressed Air', '加圧空気', '加压空气'), 'pressurised_hydrogen': ('Pressurised Hydrogen', '加圧水素', '加压氢气'), 'compressed_hydrogen': ('High-pressure Hydrogen', '高圧水素', '高压氢气')}.items():
+        strings['fluid.create_refinery_n_reactors.'+fluid] = names[index]
+        if fluid in ('hot_reactor_coolant','pressurised_water'):
+            strings['block.create_refinery_n_reactors.'+fluid]=names[index]
+            strings['item.create_refinery_n_reactors.'+fluid+'_bucket']=(names[index]+' Bucket' if index==0 else names[index]+'入りバケツ' if index==1 else names[index]+'桶')
+    for key, names in {
+        'steam_generation': ('Steam Generation','蒸気の生成','蒸汽生成'),
+        'steam_turbine': ('Steam Turbine','蒸気タービン','蒸汽轮机'),
+        'note.steam_generation_ordinary': ('Create boiler: heated burner','Createボイラー：加熱','机械动力锅炉：加热'),
+        'note.steam_generation_high_pressure': ('Horizontal tank: heated burner','横型タンク：加熱','卧式储罐：加热'),
+        'note.steam_generation_superheated': ('Horizontal tank: superheated burner','横型タンク：超加熱','卧式储罐：超级加热'),
+        'note.steam_turbine_high': ('HP stage: %s J/mB; pump exhaust to LP','高圧段：%s J/mB・排気を低圧段へポンプ搬送','高压段：%s J/mB；泵送排气至低压段'),
+        'note.steam_turbine_low': ('LP stage: %s J/mB; requires condenser cooling','低圧段：%s J/mB・復水器の冷却が必要','低压段：%s J/mB；需要冷凝器冷却'),
+        'heat_exchange': ('Fluid Heat Exchange', '流体の熱交換', '流体换热'),
+        'note.heat_exchange': ('Both streams convert together; counterflow runs 1.5 times faster', '2系統を同時に変換・対向流は処理量1.5倍', '同时转换两股流体；逆流处理量为1.5倍'),
+        'helium_refrigeration': ('Cryogenic Liquefaction', '極低温液化', '低温液化'),
+        'note.helium_refrigeration': ('Requires shaft work and circulating water; drain both outputs', '回転動力と循環水が必要・液体と温排水を両方搬出', '需要轴功与循环水；及时排出液体和温排水'),
+    }.items(): strings['jei.create_refinery_n_reactors.'+key] = names[index]
+    for key,names in {
+        'turbine.create_refinery_n_reactors.wear': ('Stopped: service required','停止：整備が必要','停止：需要维护'),
+        'turbine.create_refinery_n_reactors.pass': ('Passing ordinary steam','通常蒸気を通過中','普通蒸汽通过中'),
+        'tubular_boiler.working': ('Accumulating heat','熱を蓄積中','积累热量中'),
+        'tubular_boiler.structure': ('The tank has not formed or is not loaded','タンクが形成されていないか、読み込まれていません','储罐未成形或未加载'),
+        'tubular_boiler.water': ('Fill it with water to boil','沸かす水を入れてください','注入要煮沸的水'),
+        'tubular_boiler.engines': ('Steam engines attached: it works as Create\'s boiler','蒸気エンジンが付いているので、Createのボイラーとして働きます','已连接蒸汽引擎：作为机械动力锅炉运行'),
+    }.items(): strings[key]=names[index]
+    strings['block.create_refinery_n_reactors.pressure_tank'] = ('Pressure Tank', '耐圧タンク', '耐压储罐')[index]
+    for key in (
+        'separator.create_refinery_n_reactors.conditions',
+        'haber_bosch.create_refinery_n_reactors.conditions',
+        'thermal_control.create_refinery_n_reactors.target',
+        'turbine.create_refinery_n_reactors.pressures',
+        'reciprocating.create_refinery_n_reactors.cylinder',
+        'gas_pipe.create_refinery_n_reactors.pressure',
+        'fuel_pool.create_refinery_n_reactors.status.hot',
+        'pipe_gauge.create_refinery_n_reactors.temperature',
+        'pipe_gauge.create_refinery_n_reactors.pressure',
+        'jei.create_refinery_n_reactors.note.reactor_pressure',
+        'separator.create_refinery_n_reactors.water_conditions',
+        'plant_systems.tower.power',
+        'plant_systems.status.coolant_warm',
+        'pipe_gauge.create_refinery_n_reactors.vessel_tap',
+        'lidded_vessel.create_refinery_n_reactors.thermal',
+        'tubular_boiler.create_refinery_n_reactors.outlet',
+        'pipe_gauge.create_refinery_n_reactors.analog',
+        'flare.create_refinery_n_reactors.pressure',
+        'flare.create_refinery_n_reactors.pipe_rating',
+        'gas_bell.create_refinery_n_reactors.travel',
+        'electric_utility.create_refinery_n_reactors.vessel_temperature',
+        'jei.create_refinery_n_reactors.note.minimum_temperature',
+        'jei.create_refinery_n_reactors.note.heating_temperature',
+        'jei.create_refinery_n_reactors.note.fluid_temperature',
+        'pipe_gauge.create_refinery_n_reactors.vessel_overpressure',
+        'reactor.create_refinery_n_reactors.status.overpressure',
+        'reactor.create_refinery_n_reactors.status.temperature',
+        'turbine.create_refinery_n_reactors.pressure',
+        'turbine.create_refinery_n_reactors.unsafe',
+        'reactor.create_refinery_n_reactors.status.unsafe',
+        'reciprocating.create_refinery_n_reactors.unsafe',
+        'reciprocating.create_refinery_n_reactors.pressure',
+        'radiator.create_refinery_n_reactors.target',
+        'haber_bosch.create_refinery_n_reactors.status.heating',
+        'transport.create_refinery_n_reactors.stage.1',
+        'transport.create_refinery_n_reactors.stage.2',
+        'transport.create_refinery_n_reactors.stage.3',
+        'transport.create_refinery_n_reactors.reason.corrosion',
+        'transport.create_refinery_n_reactors.reason.pressure',
+        'transport.create_refinery_n_reactors.reason.overheat',
+        'transport.create_refinery_n_reactors.reason.softening',
+        'transport.create_refinery_n_reactors.reason.embrittlement',
+    ): strings.pop(key, None)
+    for key, names in {
+        'electrolysis_furnace.create_refinery_n_reactors.bath': ('Bath: %s', '浴：%s', '电解浴：%s'),
+        'plant_systems.fuel_cycle.process': ('Progress: %s ticks | %s | %s kW', '進捗：%s tick｜%s｜%s kW', '进度：%s tick｜%s｜%s kW'),
+        'fuel_pool.create_refinery_n_reactors.water': ('Water %s / %s mB | %s', '水：%s / %s mB｜%s', '水：%s / %s mB｜%s'),
+        'jei.create_refinery_n_reactors.note.fuel_cell': ('%s kJ at open-circuit 400 V; delivered work follows terminal voltage. Up to 2 kW into 20 Ω. Produces ordinary water.', '開放電圧400 Vで%s kJ。実仕事は端子電圧に比例。20 Ωへ最大2 kW。普通の水を生成。', '开路400 V时%s kJ，实际电功随端电压变化。向20 Ω负载最多输出2 kW，生成普通水。'),
+        'block.create_refinery_n_reactors.process_transmitter': ('Tank Level / Flow Transmitter', '液位・流量発信器', '液位／流量变送器'),
+        'cold_box.create_refinery_n_reactors.status.running': ('Liquefying gas', '気体を液化中', '气体液化中'),
+        'reactor.create_refinery_n_reactors.status.bypass': ('No matching conversion; check both input types', '変換なし：両系統の流体種類を確認', '无匹配转换：检查两路流体种类'),
+        'reactor.create_refinery_n_reactors.status.pressure': ('Supply high-pressure hydrogen', '高圧水素を供給してください', '请供应高压氢气'),
+        'tubular_boiler.running': ('Producing steam', '蒸気を生成中', '生成蒸汽中'),
+    }.items(): strings[key] = names[index]
+    strings.pop("tubular_boiler.outlet", None)
+    for key in ("block.create_refinery_n_reactors.tubular_boiler", "tubular_boiler.evaporator", "tubular_boiler.evaporation_heat", "tubular_boiler.upper", "tubular_boiler.warming"): strings.pop(key, None)
+    strings.pop("electrolysis_furnace.create_refinery_n_reactors.status.melting", None)
+    for key, names in TRANSPORT.items(): strings['transport.create_refinery_n_reactors.' + key] = names[index]
+    path.write_text(json.dumps(strings, ensure_ascii=False, indent=2) + '\n')
+print(f'Wrote {len(NAMES)} grade names and {len(TRANSPORT)} transport lines')

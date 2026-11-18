@@ -1,0 +1,275 @@
+{
+  "baseline": "598ab333",
+  "protected_images_checked": 222,
+  "protected_changes": [],
+  "all_existing_png_alpha_changes": [],
+  "atlas_count": 12,
+  "atlas_context_checks": 564,
+  "atlases": [
+    {
+      "name": "materials/steel",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 7,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "materials/cast_iron",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 6,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "materials/brass",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 7,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "materials/copper",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 7,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "stainless_steel_block",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 9,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "titanium_block",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 11,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "fusion/reinforced_casing",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 9,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "fusion/toroidal_field_coil",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 10,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "fusion/central_solenoid",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 14,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "fusion/vacuum_vessel",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 10,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "fusion/breeding_blanket",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 7,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    },
+    {
+      "name": "fusion/divertor",
+      "size": [
+        128,
+        128
+      ],
+      "colours": 7,
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true
+    }
+  ],
+  "field_statistics": [
+    {
+      "material": "steel",
+      "interior_colours": 5,
+      "luma_mean": 88.724,
+      "luma_90_minus_10": 19.276,
+      "largest_flat_component_pixels": 12,
+      "linear_plane_explained_variance": 0.0314,
+      "all_2x2_cells_coherent": true
+    },
+    {
+      "material": "cast_iron",
+      "interior_colours": 5,
+      "luma_mean": 70.509,
+      "luma_90_minus_10": 16.499,
+      "largest_flat_component_pixels": 12,
+      "linear_plane_explained_variance": 0.0067,
+      "all_2x2_cells_coherent": true
+    },
+    {
+      "material": "brass",
+      "interior_colours": 5,
+      "luma_mean": 85.33,
+      "luma_90_minus_10": 28.341,
+      "largest_flat_component_pixels": 12,
+      "linear_plane_explained_variance": 0.008,
+      "all_2x2_cells_coherent": true
+    },
+    {
+      "material": "copper",
+      "interior_colours": 5,
+      "luma_mean": 82.448,
+      "luma_90_minus_10": 28.613,
+      "largest_flat_component_pixels": 12,
+      "linear_plane_explained_variance": 0.0018,
+      "all_2x2_cells_coherent": true
+    }
+  ],
+  "crane_and_other_state_regions_checked": [
+    [
+      "crane/marker_side",
+      [
+        2,
+        2,
+        14,
+        13
+      ]
+    ],
+    [
+      "crane/drive_side",
+      [
+        5,
+        4,
+        11,
+        8
+      ]
+    ],
+    [
+      "crane/drive_side",
+      [
+        6,
+        11,
+        10,
+        13
+      ]
+    ],
+    [
+      "crane/truck",
+      [
+        2,
+        9,
+        14,
+        11
+      ]
+    ],
+    [
+      "crane/grapple",
+      [
+        2,
+        2,
+        14,
+        3
+      ]
+    ],
+    [
+      "crane/quarry_grapple",
+      [
+        2,
+        2,
+        14,
+        3
+      ]
+    ],
+    [
+      "crane/marker_top",
+      [
+        7,
+        6,
+        9,
+        13
+      ]
+    ],
+    [
+      "chemical/lamp_on",
+      [
+        6,
+        6,
+        10,
+        10
+      ]
+    ],
+    [
+      "chemical/lamp_off",
+      [
+        6,
+        6,
+        10,
+        10
+      ]
+    ],
+    [
+      "furnace/window_on",
+      [
+        6,
+        7,
+        10,
+        11
+      ]
+    ]
+  ],
+  "functional_color_changes": [],
+  "models_uv_data_states_translations_ponder": "unchanged",
+  "finding": "PASS: steel grain is finite and spatially varied; no 1px salt noise or whole-face gradient detected"
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "CMC",
+    " T "
+  ],
+  "key": {
+    "S": {
+      "item": "create:shaft"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:stainless_steel_ingot"
+    },
+    "M": {
+      "item": "create:precision_mechanism"
+    },
+    "T": {
+      "item": "create_refinery_n_reactors:clarifier_basin_wall"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:clarifier_center_drive",
+    "count": 1
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "active=false,axis=x": {
+      "model": "create_refinery_n_reactors:block/fusion/motor_generator_off",
+      "x": 90,
+      "y": 90
+    },
+    "active=false,axis=y": {
+      "model": "create_refinery_n_reactors:block/fusion/motor_generator_off"
+    },
+    "active=false,axis=z": {
+      "model": "create_refinery_n_reactors:block/fusion/motor_generator_off",
+      "x": 90
+    },
+    "active=true,axis=x": {
+      "model": "create_refinery_n_reactors:block/fusion/motor_generator_on",
+      "x": 90,
+      "y": 90
+    },
+    "active=true,axis=y": {
+      "model": "create_refinery_n_reactors:block/fusion/motor_generator_on"
+    },
+    "active=true,axis=z": {
+      "model": "create_refinery_n_reactors:block/fusion/motor_generator_on",
+      "x": 90
+    }
+  }
+}

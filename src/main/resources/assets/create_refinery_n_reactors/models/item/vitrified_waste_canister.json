@@ -1,0 +1,22 @@
+{
+  "parent": "create_refinery_n_reactors:block/plant_systems/vitrified_waste_canister_item",
+  "display": {
+    "gui": {
+      "rotation": [
+        20,
+        -35,
+        0
+      ],
+      "translation": [
+        0,
+        -2,
+        0
+      ],
+      "scale": [
+        0.32,
+        0.48,
+        0.32
+      ]
+    }
+  }
+}

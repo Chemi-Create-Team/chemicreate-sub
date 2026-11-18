@@ -1,0 +1,25 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:molten_polyethylene",
+      "amount": 250
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 100
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:polyethylene",
+      "count": 2
+    },
+    {
+      "id": "create_refinery_n_reactors:warm_water",
+      "amount": 100
+    }
+  ]
+}

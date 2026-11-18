@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CSC",
+    "NPN",
+    "CSC"
+  ],
+  "key": {
+    "N": {
+      "item": "create_refinery_n_reactors:nickel_ingot"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "P": {
+      "item": "create:mechanical_pump"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:steel_ingot"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:electric_pump",
+    "count": 1
+  }
+}

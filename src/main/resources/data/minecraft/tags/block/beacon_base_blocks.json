@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:stainless_steel_block",
+    "create_refinery_n_reactors:titanium_block",
+    "create_refinery_n_reactors:steel_block"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "implementation_commit": "af1e039d794d452271e5319eb4ebaaac87126dab",
+  "regression_tests": 83,
+  "final_flare_tests": 14,
+  "distinct_related_tests": 84,
+  "final_toxic_transport_tests": 25,
+  "load_test": 1,
+  "load_before": {
+    "pipes": 128,
+    "clouds": 64,
+    "warmup_ticks": 200,
+    "samples": 2000,
+    "mean_loop_ms": 0.324734,
+    "p95_loop_ms": 0.52829,
+    "max_loop_ms": 2.736888
+  },
+  "load_after": {
+    "pipes": 128,
+    "clouds": 64,
+    "warmup_ticks": 200,
+    "samples": 1999,
+    "mean_loop_ms": 0.50786,
+    "p95_loop_ms": 0.726431,
+    "max_loop_ms": 59.559345
+  },
+  "client_source_mB": 6000000,
+  "client_burnt_at_valve_closure_mB": 1035898,
+  "jar_bytes": 5916146,
+  "jar_sha256": "98533c2ff00f4bacb86616a0b827a43d8906edb9e12cb188a3cf2983fbc92d80"
+}

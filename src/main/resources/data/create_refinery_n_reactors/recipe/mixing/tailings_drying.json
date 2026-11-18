@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:tailings_mud"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:clay_ball"
+    },
+    {
+      "id": "minecraft:sand",
+      "chance": 0.5
+    },
+    {
+      "id": "minecraft:quartz",
+      "chance": 0.125
+    }
+  ]
+}

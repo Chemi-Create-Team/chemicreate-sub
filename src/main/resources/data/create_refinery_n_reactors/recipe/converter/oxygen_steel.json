@@ -1,0 +1,26 @@
+{
+  "type": "create_refinery_n_reactors:converter",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 48
+    },
+    {
+      "item": "minecraft:raw_iron",
+      "count": 24
+    }
+  ],
+  "gas": {
+    "fluid": "create_refinery_n_reactors:oxygen_gas",
+    "amount": 64000
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:steel_ingot",
+    "count": 64
+  },
+  "byproduct": {
+    "id": "create_refinery_n_reactors:converter_gas",
+    "amount": 128000
+  },
+  "processingTime": 800
+}

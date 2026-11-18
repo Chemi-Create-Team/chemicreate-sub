@@ -1,0 +1,7 @@
+{
+  "parent": "create:block/fluid_pipe/item",
+  "textures": {
+    "1": "create_refinery_n_reactors:block/transport/stainless_steel_pipes",
+    "particle": "create_refinery_n_reactors:block/transport/stainless_steel_pipes"
+  }
+}

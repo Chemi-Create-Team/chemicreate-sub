@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "create:gantry_carriage"
+    },
+    {
+      "item": "create:mechanical_drill"
+    },
+    {
+      "item": "create:precision_mechanism"
+    },
+    {
+      "item": "create:andesite_casing"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:quarry_drive",
+    "count": 1
+  }
+}

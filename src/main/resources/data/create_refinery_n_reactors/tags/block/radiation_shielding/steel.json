@@ -1,0 +1,29 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "minecraft:iron_block",
+      "required": false
+    },
+    {
+      "id": "minecraft:anvil",
+      "required": false
+    },
+    {
+      "id": "create:industrial_iron_block",
+      "required": false
+    },
+    {
+      "id": "create:weathered_iron_block",
+      "required": false
+    },
+    {
+      "id": "create_refinery_n_reactors:steel_block",
+      "required": false
+    },
+    {
+      "id": "create_refinery_n_reactors:stainless_steel_block",
+      "required": false
+    }
+  ]
+}

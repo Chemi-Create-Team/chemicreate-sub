@@ -1,0 +1,30 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def selectedLanguage = System.getProperty('qualityLanguage', 'ja_jp')
+                if (options.exists()) {
+                    def lines = options.readLines('UTF-8')
+                    lines.removeAll { it.startsWith('lang:') }
+                    lines.add('lang:' + selectedLanguage)
+                    options.setText(lines.join('\n') + '\n', 'UTF-8')
+                }
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'
+            programArgument '1280'
+            programArgument '--height'
+            programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', System.getProperty('qualityLanguage','ja_jp')
+            systemProperty 'createplant.clientQualityScenes', 'rbmk_control_room,reciprocating_compressor,plant_absorption_trays,guide.absorption_trays'
+            systemProperty 'createplant.clientQualityTargets', 'reactor_control_console@rbmk_control_room,reactor_separator_core@plant_absorption_trays,reciprocating_compressor@reciprocating_compressor'
+            systemProperty 'createplant.clientQualitySeek.0', '460'
+            systemProperty 'createplant.clientQualitySeek.1', '600'
+            systemProperty 'createplant.clientQualitySeek.2', '620'
+            systemProperty 'createplant.clientQualityCaptureDelay', '80'
+        }
+    }
+}

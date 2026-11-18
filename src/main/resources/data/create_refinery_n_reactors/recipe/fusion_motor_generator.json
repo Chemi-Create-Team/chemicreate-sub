@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CBC",
+    "PAP",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "A": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_motor_generator",
+    "count": 1
+  }
+}

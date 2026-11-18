@@ -1,0 +1,27 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "item": "create_refinery_n_reactors:carbon_powder"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:unprocessed_steel",
+      "count": 4
+    }
+  ],
+  "heat_requirement": "superheated"
+}

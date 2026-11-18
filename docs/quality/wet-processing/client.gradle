@@ -1,0 +1,16 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File('/tmp/createplant-wet-client'))
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.wetProcessingClientCheck', 'true'
+            systemProperty 'createplant.clientQualityTargets', 'clarifier_center_drive@wet_processing'
+            systemProperty 'createplant.clientQualityScenes', 'wet_processing'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+            systemProperty 'createplant.clientQualityCaptureDelay', '60'
+            systemProperty 'createplant.clientQualityKeepOpen', 'true'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '100'
+        }
+    }
+}

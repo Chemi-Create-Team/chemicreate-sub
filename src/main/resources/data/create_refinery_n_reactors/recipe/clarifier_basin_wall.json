@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "CCC"
+  ],
+  "key": {
+    "S": {
+      "item": "create:iron_sheet"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:industrial_concrete"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:clarifier_basin_wall",
+    "count": 6
+  }
+}

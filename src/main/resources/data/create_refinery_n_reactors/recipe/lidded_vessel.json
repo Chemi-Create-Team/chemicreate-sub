@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ITI",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "T": {
+      "item": "minecraft:iron_trapdoor"
+    },
+    "B": {
+      "item": "create:basin"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:lidded_vessel",
+    "count": 1
+  }
+}

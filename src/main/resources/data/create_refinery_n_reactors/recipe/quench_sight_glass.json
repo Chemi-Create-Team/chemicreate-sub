@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "GCG",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:gasifier_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:quench_sight_glass",
+    "count": 2
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "half": "lower"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/lower"
+      }
+    },
+    {
+      "when": {
+        "half": "upper"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/upper"
+      }
+    },
+    {
+      "when": {
+        "half": "upper",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/lamp"
+      }
+    },
+    {
+      "when": {
+        "half": "upper",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/lamp_lit"
+      }
+    },
+    {
+      "when": {
+        "half": "upper",
+        "north": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/header",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "half": "upper",
+        "east": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/header",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "half": "upper",
+        "south": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/header",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "half": "upper",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/gas_centrifuge/header",
+        "y": 270
+      }
+    }
+  ]
+}

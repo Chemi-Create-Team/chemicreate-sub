@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {"tag": "create_refinery_n_reactors:large_flywheels"},
+    {"item": "minecraft:pink_dye"}
+  ],
+  "result": {"id": "create_refinery_n_reactors:pink_large_flywheel", "count": 1}
+}

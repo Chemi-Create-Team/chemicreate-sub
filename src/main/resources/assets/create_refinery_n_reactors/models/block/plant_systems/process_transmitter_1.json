@@ -1,0 +1,146 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "create_refinery_n_reactors:block/plant_systems/steel",
+    "steel": "create_refinery_n_reactors:block/plant_systems/steel",
+    "concrete": "create_refinery_n_reactors:block/plant_systems/concrete",
+    "panel": "create_refinery_n_reactors:block/plant_systems/panel",
+    "dark": "create_refinery_n_reactors:block/plant_systems/dark",
+    "refractory": "create_refinery_n_reactors:block/plant_systems/refractory",
+    "brass": "create_refinery_n_reactors:block/plant_systems/brass",
+    "tungsten": "create_refinery_n_reactors:block/plant_systems/tungsten",
+    "glass": "create_refinery_n_reactors:block/plant_systems/glass",
+    "red": "create_refinery_n_reactors:block/plant_systems/red",
+    "water": "create_refinery_n_reactors:block/plant_systems/water"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        1,
+        9
+      ],
+      "to": [
+        13,
+        15,
+        14
+      ],
+      "faces": {
+        "up": {
+          "texture": "#steel"
+        },
+        "down": {
+          "texture": "#steel"
+        },
+        "north": {
+          "texture": "#steel"
+        },
+        "south": {
+          "texture": "#steel"
+        },
+        "east": {
+          "texture": "#steel"
+        },
+        "west": {
+          "texture": "#steel"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        8
+      ],
+      "to": [
+        12,
+        13,
+        9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#panel"
+        },
+        "down": {
+          "texture": "#panel"
+        },
+        "north": {
+          "texture": "#panel"
+        },
+        "south": {
+          "texture": "#panel"
+        },
+        "east": {
+          "texture": "#panel"
+        },
+        "west": {
+          "texture": "#panel"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        3,
+        7.7
+      ],
+      "to": [
+        9,
+        4.15,
+        8
+      ],
+      "faces": {
+        "up": {
+          "texture": "#water"
+        },
+        "down": {
+          "texture": "#water"
+        },
+        "north": {
+          "texture": "#water"
+        },
+        "south": {
+          "texture": "#water"
+        },
+        "east": {
+          "texture": "#water"
+        },
+        "west": {
+          "texture": "#water"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        6,
+        14
+      ],
+      "to": [
+        9,
+        10,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brass"
+        },
+        "down": {
+          "texture": "#brass"
+        },
+        "north": {
+          "texture": "#brass"
+        },
+        "south": {
+          "texture": "#brass"
+        },
+        "east": {
+          "texture": "#brass"
+        },
+        "west": {
+          "texture": "#brass"
+        }
+      }
+    }
+  ]
+}

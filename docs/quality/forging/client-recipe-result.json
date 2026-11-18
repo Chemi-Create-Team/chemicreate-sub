@@ -1,0 +1,10 @@
+{
+  "loops": 3,
+  "operations": 9,
+  "guaranteedSteel": true,
+  "slagChance": 0.25,
+  "nativeTooltip": "溶岩ファンで再加熱",
+  "itemModelsLoaded": 3,
+  "hotTint": "#FF7A32",
+  "jeiSubcategoriesLoaded": 3
+}

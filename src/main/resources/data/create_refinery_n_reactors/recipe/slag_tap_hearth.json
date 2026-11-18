@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B B",
+    "BCB",
+    " S "
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:nether_bricks"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:gasifier_casing"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:slag_tap_hearth",
+    "count": 1
+  }
+}

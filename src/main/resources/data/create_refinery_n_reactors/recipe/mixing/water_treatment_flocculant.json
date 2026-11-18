@@ -1,0 +1,21 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:iron_oxide_red"
+    },
+    {
+      "item": "create_refinery_n_reactors:alumina"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:water_treatment_flocculant",
+      "count": 4
+    }
+  ],
+  "processing_time": 80
+}

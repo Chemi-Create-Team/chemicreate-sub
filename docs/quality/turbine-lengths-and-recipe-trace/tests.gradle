@@ -1,0 +1,7 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('turbineUnitGameTestServer') {
+            systemProperty 'createplant.gameTestClasses', 'TurbineUnitGameTests,RecipeVisibilityGameTests,ManufacturingPonderGameTests'
+        }
+    }
+}

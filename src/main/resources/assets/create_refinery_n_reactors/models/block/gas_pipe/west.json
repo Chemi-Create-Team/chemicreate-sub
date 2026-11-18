@@ -1,0 +1,146 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "body": "create_refinery_n_reactors:block/steam/steel",
+    "collar": "create_refinery_n_reactors:block/steam/frame",
+    "particle": "create_refinery_n_reactors:block/steam/steel"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        4,
+        4
+      ],
+      "to": [
+        2,
+        12,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            14,
+            4,
+            16,
+            12
+          ],
+          "texture": "#body"
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            2,
+            12
+          ],
+          "texture": "#body"
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#body"
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#body"
+        },
+        "up": {
+          "uv": [
+            0,
+            4,
+            2,
+            12
+          ],
+          "texture": "#body"
+        },
+        "down": {
+          "uv": [
+            0,
+            4,
+            2,
+            12
+          ],
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        3,
+        3
+      ],
+      "to": [
+        4,
+        13,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            3,
+            14,
+            13
+          ],
+          "texture": "#collar"
+        },
+        "south": {
+          "uv": [
+            2,
+            3,
+            4,
+            13
+          ],
+          "texture": "#collar"
+        },
+        "east": {
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ],
+          "texture": "#collar"
+        },
+        "west": {
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ],
+          "texture": "#collar"
+        },
+        "up": {
+          "uv": [
+            2,
+            3,
+            4,
+            13
+          ],
+          "texture": "#collar"
+        },
+        "down": {
+          "uv": [
+            2,
+            3,
+            4,
+            13
+          ],
+          "texture": "#collar"
+        }
+      }
+    }
+  ]
+}

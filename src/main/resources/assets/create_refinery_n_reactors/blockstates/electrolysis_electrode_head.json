@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "create_refinery_n_reactors:block/electrolysis_cell/head",
+      "y": 90
+    },
+    "axis=z": {
+      "model": "create_refinery_n_reactors:block/electrolysis_cell/head"
+    }
+  }
+}

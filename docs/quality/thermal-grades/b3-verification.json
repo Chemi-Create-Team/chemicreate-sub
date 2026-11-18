@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-14",
+  "build": "passed",
+  "gameTests": {
+    "required": 58,
+    "passed": 58,
+    "classes": [
+      "CounterflowGameTests",
+      "ThermalControlGameTests",
+      "RadiatorTemperatureGameTests",
+      "RefrigerationGameTests",
+      "FusionFuelGameTests",
+      "PowerPlantGameTests",
+      "ReactorGameTests",
+      "NitricPlantIntegrationGameTests",
+      "SurvivalReachabilityGameTests"
+    ],
+    "worldDirectory": "/dev/shm/createplant-thermal-b3-test04",
+    "serverProperties": {
+      "sync-chunk-writes": false,
+      "view-distance": 2
+    }
+  },
+  "validators": [
+    "validate_translations.py",
+    "validate_ponder_language.py",
+    "validate_plant_tutorials.py"
+  ],
+  "nativeClient": {
+    "compiledScenes": 140,
+    "renderedTargets": [
+      "tube_piped_tank@plant_heat_exchanger",
+      "cooler_radiator@plant_module_cooling",
+      "cryogenic_cold_box_drive@helium_cold_box"
+    ],
+    "renderer": "NVIDIA GeForce RTX 4060",
+    "qualityPassed": true,
+    "shutdown": "SIGSEGV in NVIDIA EGL; exit 134"
+  },
+  "generatorIdempotence": "grade and Ponder language outputs unchanged on regeneration"
+}

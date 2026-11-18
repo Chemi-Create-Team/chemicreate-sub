@@ -1,0 +1,7 @@
+allprojects { afterEvaluate { extensions.getByName('neoForge').runs.named('client') {
+    systemProperty 'createplant.clientQualityCheck', 'true'
+    systemProperty 'createplant.clientQualityScenes', 'material_pump'
+    systemProperty 'createplant.clientQualityTargets', 'reinforced_pump,nickel_alloy_pump,ultra_high_pressure_pump,zirconium_pump,stainless_steel_pump,cryogenic_pump,pvc_pump,resin_pump,gas_pump,large_gas_pump'
+    systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+    systemProperty 'createplant.clientQualityCaptureDelay', '10'
+}}}

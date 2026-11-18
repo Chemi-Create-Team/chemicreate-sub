@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "create_refinery_n_reactors:industrial_concrete"
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:industrial_concrete_slab",
+    "count": 2
+  }
+}

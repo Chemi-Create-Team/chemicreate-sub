@@ -1,0 +1,404 @@
+{
+  "baseline": "e63d4bd185b9460ad5503385ea9f27ec93d38116",
+  "all_pass": true,
+  "protected_images_checked": 222,
+  "protected_png_byte_changes": [],
+  "protected_rgba_changes": [],
+  "all_existing_png_alpha_changes": [],
+  "removed_pngs": [],
+  "changed_png_count": 88,
+  "tile_palette_violations": [],
+  "atlas_count": 12,
+  "atlas_context_checks": 564,
+  "ct_mapping_unchanged": true,
+  "atlases": [
+    {
+      "name": "materials/steel",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 7,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "materials/cast_iron",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 6,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "materials/brass",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 9,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "materials/copper",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 9,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "stainless_steel_block",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 9,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "titanium_block",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 11,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "fusion/reinforced_casing",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 12,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "fusion/toroidal_field_coil",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 10,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "fusion/central_solenoid",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 14,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "fusion/vacuum_vessel",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 15,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "fusion/breeding_blanket",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 15,
+      "topology_pixel_mismatches": 0
+    },
+    {
+      "name": "fusion/divertor",
+      "size": [
+        128,
+        128
+      ],
+      "contexts_checked": 47,
+      "opaque": true,
+      "base_tile_exact": true,
+      "max_tile_colors": 9,
+      "topology_pixel_mismatches": 0
+    }
+  ],
+  "functional_region_checks": [
+    {
+      "path": "block/crane/marker_side.png",
+      "box": [
+        2,
+        2,
+        14,
+        13
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/crane/drive_side.png",
+      "box": [
+        5,
+        4,
+        11,
+        8
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/crane/drive_side.png",
+      "box": [
+        6,
+        11,
+        10,
+        13
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/crane/truck.png",
+      "box": [
+        2,
+        9,
+        14,
+        11
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/crane/grapple.png",
+      "box": [
+        2,
+        2,
+        14,
+        3
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/crane/quarry_grapple.png",
+      "box": [
+        2,
+        2,
+        14,
+        3
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/crane/drive_top.png",
+      "box": [
+        2,
+        2,
+        14,
+        4
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/crane/drive_top.png",
+      "box": [
+        2,
+        12,
+        14,
+        14
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/chemical/lamp_on.png",
+      "box": [
+        6,
+        6,
+        10,
+        10
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/chemical/lamp_off.png",
+      "box": [
+        6,
+        6,
+        10,
+        10
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/furnace/window_on.png",
+      "box": [
+        6,
+        7,
+        10,
+        11
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/motor_generator_on.png",
+      "box": [
+        7,
+        5,
+        9,
+        11
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/motor_generator_off.png",
+      "box": [
+        7,
+        5,
+        9,
+        11
+      ],
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_vacuum_on.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_vacuum_off.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_cryo_on.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_cryo_off.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_plasma_on.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_plasma_off.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_output_on.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/console_output_off.png",
+      "checked": "console interior except authored output handle",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/port_deuterium.png",
+      "checked": "port glyph radius <=3.5",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/port_tritium.png",
+      "checked": "port glyph radius <=3.5",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/port_ash.png",
+      "checked": "port glyph radius <=3.5",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/port_helium_in.png",
+      "checked": "port glyph radius <=3.5",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/port_helium_out.png",
+      "checked": "port glyph radius <=3.5",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/port_coolant_in.png",
+      "checked": "port glyph radius <=3.5",
+      "preserved": true
+    },
+    {
+      "path": "block/fusion/port_coolant_out.png",
+      "checked": "port glyph radius <=3.5",
+      "preserved": true
+    }
+  ],
+  "canonical_fields": {
+    "steel": {
+      "colors": 5,
+      "mean_luma": 88.724,
+      "luma_90_minus_10": 19.276,
+      "largest_flat_component_px": 12,
+      "all_aligned_2x2_coherent": true,
+      "whole_face_gradient_plane_R2": 0.03135
+    },
+    "cast_iron": {
+      "colors": 5,
+      "mean_luma": 70.509,
+      "luma_90_minus_10": 16.499,
+      "largest_flat_component_px": 12,
+      "all_aligned_2x2_coherent": true,
+      "whole_face_gradient_plane_R2": 0.00672
+    },
+    "brass": {
+      "colors": 5,
+      "mean_luma": 106.111,
+      "luma_90_minus_10": 37.707,
+      "largest_flat_component_px": 12,
+      "all_aligned_2x2_coherent": true,
+      "whole_face_gradient_plane_R2": 0.01115
+    },
+    "copper": {
+      "colors": 5,
+      "mean_luma": 98.961,
+      "luma_90_minus_10": 38.758,
+      "largest_flat_component_px": 12,
+      "all_aligned_2x2_coherent": true,
+      "whole_face_gradient_plane_R2": 0.00288
+    }
+  },
+  "models_verified_unchanged": 1272,
+  "nontexture_resource_changes": [],
+  "errors": []
+}

@@ -1,0 +1,488 @@
+{
+  "baseline": "e63d4bd185b9460ad5503385ea9f27ec93d38116",
+  "existing_png_count": 564,
+  "changed_png_count": 88,
+  "changed_pngs": [
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/absorption_tower/flange.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/absorption_tower/pipe.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/blasting_charge/detonator.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/blasting_charge/detonator_lit.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/chemical/gauge.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/chemical/paint_blue.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/chemical/paint_green.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/drive_end.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/drive_side.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/drive_top.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/frame.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/girder.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/girder_top.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/leg.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/mast.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_carriage.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_drill_stem.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_drive_end.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_drive_side.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_drive_top.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_girder.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_girder_top.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_trolley.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/quarry_truck.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/reactor_carriage.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/trolley.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/crane/truck.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/furnace/panel.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/breeding_blanket.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/breeding_blanket_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/central_solenoid.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/central_solenoid_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_cabinet.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_cryo_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_cryo_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_emergency_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_emergency_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_magnets_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_magnets_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_output_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_output_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_plasma_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_plasma_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_vacuum_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_vacuum_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/controller_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/controller_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/divertor.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/divertor_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/motor_generator_end.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/motor_generator_off.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/motor_generator_on.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/port_ash.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/port_coolant_in.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/port_coolant_out.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/port_deuterium.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/port_helium_in.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/port_helium_out.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/port_tritium.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/reinforced_casing.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/reinforced_casing_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/toroidal_field_coil.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/toroidal_field_coil_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/vacuum_pump.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/vacuum_vessel.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/vacuum_vessel_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/gas_compressor/cast.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/gas_compressor/panel.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/materials/brass.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/materials/brass_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/materials/copper.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/materials/copper_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/ostwald/catalyst_mesh.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/petrochemical/teal_enamel.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/plant/copper_flange.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/plant_systems/coolant_inlet.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/plant_systems/coolant_outlet.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/plant_systems/panel.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/plant_systems/tower_cold.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/plant_systems/tower_hot.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/plant_systems/tower_makeup.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/reactor/dial.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/reactor/exchanger_pipe.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/reciprocating_cylinder.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/tank/ammonia_separator.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/tank/ammonia_separator_connected.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/tank/reaction_tower.png",
+    "src/main/resources/assets/create_heavy_indusstry/textures/block/tank/reaction_tower_connected.png"
+  ],
+  "alpha_mismatches": [],
+  "size_mismatches": [],
+  "changed_palette_failures": [],
+  "protected_mismatches": [],
+  "exact_reference_copies": [],
+  "protected_png_count": 222,
+  "functional_state_pairs": [
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/chemical/lamp_on.png",
+      "differing_pixels": 52,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/furnace/window_on.png",
+      "differing_pixels": 144,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_cryo_on.png",
+      "differing_pixels": 76,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_emergency_on.png",
+      "differing_pixels": 64,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_magnets_on.png",
+      "differing_pixels": 48,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_output_on.png",
+      "differing_pixels": 16,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_plasma_on.png",
+      "differing_pixels": 44,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/console_vacuum_on.png",
+      "differing_pixels": 27,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/controller_on.png",
+      "differing_pixels": 32,
+      "mask_same": true,
+      "glyph_colors_same": true
+    },
+    {
+      "on": "src/main/resources/assets/create_heavy_indusstry/textures/block/fusion/motor_generator_on.png",
+      "differing_pixels": 12,
+      "mask_same": true,
+      "glyph_colors_same": true
+    }
+  ],
+  "functional_state_failures": [],
+  "fusion_port_glyph_checks": [
+    {
+      "role": "deuterium",
+      "glyph_pixels": 18,
+      "mask_and_color_same": true
+    },
+    {
+      "role": "tritium",
+      "glyph_pixels": 22,
+      "mask_and_color_same": true
+    },
+    {
+      "role": "ash",
+      "glyph_pixels": 23,
+      "mask_and_color_same": true
+    },
+    {
+      "role": "helium_in",
+      "glyph_pixels": 32,
+      "mask_and_color_same": true
+    },
+    {
+      "role": "helium_out",
+      "glyph_pixels": 32,
+      "mask_and_color_same": true
+    },
+    {
+      "role": "coolant_in",
+      "glyph_pixels": 20,
+      "mask_and_color_same": true
+    },
+    {
+      "role": "coolant_out",
+      "glyph_pixels": 20,
+      "mask_and_color_same": true
+    }
+  ],
+  "fusion_port_glyph_failures": [],
+  "flywheel_variants_checked": 17,
+  "flywheel_rgba_mismatches": [],
+  "forbidden_resource_changes": [],
+  "material_area_method": "Chromatic means max RGB minus min RGB >=24; 4-connected regions. Descriptive only, not semantic material masks or pass thresholds.",
+  "representative_material_areas": [
+    {
+      "texture": "block/gas_compressor/cast.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 0.0,
+        "largest_connected_chromatic_region": 0,
+        "visible_colors": 6
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 54.69,
+        "largest_connected_chromatic_region": 140,
+        "visible_colors": 9
+      }
+    },
+    {
+      "texture": "block/gas_compressor/panel.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 0.0,
+        "largest_connected_chromatic_region": 0,
+        "visible_colors": 7
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 43.75,
+        "largest_connected_chromatic_region": 112,
+        "visible_colors": 10
+      }
+    },
+    {
+      "texture": "block/furnace/panel.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 0.0,
+        "largest_connected_chromatic_region": 0,
+        "visible_colors": 7
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 46.88,
+        "largest_connected_chromatic_region": 96,
+        "visible_colors": 12
+      }
+    },
+    {
+      "texture": "block/furnace/base.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 0.0,
+        "largest_connected_chromatic_region": 0,
+        "visible_colors": 6
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 0.0,
+        "largest_connected_chromatic_region": 0,
+        "visible_colors": 6
+      }
+    },
+    {
+      "texture": "block/tank/ammonia_separator.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 7.81,
+        "largest_connected_chromatic_region": 12,
+        "visible_colors": 10
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 26.56,
+        "largest_connected_chromatic_region": 36,
+        "visible_colors": 14
+      }
+    },
+    {
+      "texture": "block/tank/reaction_tower.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 12.5,
+        "largest_connected_chromatic_region": 14,
+        "visible_colors": 7
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 28.12,
+        "largest_connected_chromatic_region": 34,
+        "visible_colors": 12
+      }
+    },
+    {
+      "texture": "block/crane/girder.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 54.69,
+        "largest_connected_chromatic_region": 140,
+        "visible_colors": 10
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 54.69,
+        "largest_connected_chromatic_region": 140,
+        "visible_colors": 10
+      }
+    },
+    {
+      "texture": "block/crane/drive_end.png",
+      "before": {
+        "visible_pixels": 240,
+        "chromatic_percent": 53.33,
+        "largest_connected_chromatic_region": 128,
+        "visible_colors": 9
+      },
+      "after": {
+        "visible_pixels": 240,
+        "chromatic_percent": 53.33,
+        "largest_connected_chromatic_region": 128,
+        "visible_colors": 12
+      }
+    },
+    {
+      "texture": "block/crane/quarry_girder.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 14.06,
+        "largest_connected_chromatic_region": 34,
+        "visible_colors": 9
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 56.25,
+        "largest_connected_chromatic_region": 144,
+        "visible_colors": 10
+      }
+    },
+    {
+      "texture": "block/fusion/reinforced_casing.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 3.12,
+        "largest_connected_chromatic_region": 1,
+        "visible_colors": 9
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 20.31,
+        "largest_connected_chromatic_region": 44,
+        "visible_colors": 12
+      }
+    },
+    {
+      "texture": "block/fusion/toroidal_field_coil.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 28.12,
+        "largest_connected_chromatic_region": 24,
+        "visible_colors": 10
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 28.12,
+        "largest_connected_chromatic_region": 24,
+        "visible_colors": 10
+      }
+    },
+    {
+      "texture": "block/fusion/central_solenoid.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 28.12,
+        "largest_connected_chromatic_region": 24,
+        "visible_colors": 14
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 28.12,
+        "largest_connected_chromatic_region": 24,
+        "visible_colors": 14
+      }
+    },
+    {
+      "texture": "block/fusion/breeding_blanket.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 0.0,
+        "largest_connected_chromatic_region": 0,
+        "visible_colors": 7
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 19.14,
+        "largest_connected_chromatic_region": 9,
+        "visible_colors": 15
+      }
+    },
+    {
+      "texture": "block/fusion/port_coolant_in.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 9.38,
+        "largest_connected_chromatic_region": 20,
+        "visible_colors": 10
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 26.56,
+        "largest_connected_chromatic_region": 44,
+        "visible_colors": 14
+      }
+    },
+    {
+      "texture": "block/fusion/console_vacuum_on.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 27.73,
+        "largest_connected_chromatic_region": 44,
+        "visible_colors": 7
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 71.48,
+        "largest_connected_chromatic_region": 156,
+        "visible_colors": 8
+      }
+    },
+    {
+      "texture": "block/plant_systems/coolant_inlet.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 6.25,
+        "largest_connected_chromatic_region": 10,
+        "visible_colors": 9
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 20.31,
+        "largest_connected_chromatic_region": 10,
+        "visible_colors": 11
+      }
+    },
+    {
+      "texture": "block/reciprocating_cylinder.png",
+      "before": {
+        "visible_pixels": 256,
+        "chromatic_percent": 1.56,
+        "largest_connected_chromatic_region": 1,
+        "visible_colors": 9
+      },
+      "after": {
+        "visible_pixels": 256,
+        "chromatic_percent": 46.88,
+        "largest_connected_chromatic_region": 48,
+        "visible_colors": 12
+      }
+    }
+  ],
+  "native_visual_review": {
+    "result": "PASS: no blocking material hierarchy or readability issues in four independently viewed actual client captures.",
+    "captures": [
+      {
+        "path": "/workspace/outputs/material-accents-native/quality-ja_jp-fusion_reactor_controller.png",
+        "sha256": "7f141ba7761e0a27703319fe87182d2f801f897f96f550f8f378126502b64f45",
+        "observation": "At full assembled1260x740 view, warm brass side braces/port collars, orange copper coil runs, green/cream blanket panels and gray structure remain visibly different materials. Repeated blanket panel grid is noticeable but not a blocker."
+      },
+      {
+        "path": "/workspace/outputs/material-accents-native/quality-ja_jp-small_compressor.png",
+        "sha256": "31165b6662cdfc826b7e78332c88395513e2cdcf95007b20b9fd0e8627a970a6",
+        "observation": "Muted blue complete machine cover and warm brass top fittings read independently from gray shaft/bearing frame; color survives normal scene scale."
+      },
+      {
+        "path": "/workspace/outputs/material-accents-native/quality-ja_jp-crane_drive.png",
+        "sha256": "a69a8fcb7f788bb37a796bbcb0348f547f57e3c9cd754874d49d972750f6cc78",
+        "observation": "Ochre maintenance-crane lattice and gray working rails read as distinct material areas in wide assembled scene; functional openings and reactor blanket retain contrast."
+      },
+      {
+        "path": "/workspace/outputs/material-accents-native/quality-ja_jp-fusion_control_console.png",
+        "sha256": "b9cb515178f1738ad6d6da08ecd9140a5ee6c372192d7b129e8e2515654aebd5",
+        "observation": "Broad brass instrument frames separate dark cabinet and colored controls; ivory gauge and emergency/plasma/cryo visual distinctions remain legible."
+      }
+    ]
+  }
+}

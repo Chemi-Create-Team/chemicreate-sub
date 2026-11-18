@@ -1,0 +1,268 @@
+[
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/steel_casing.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/steel_casing.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "5ab5af5fa2a22a4eb5cfca4ff121beb59b18c35244d39ceb35f3aa9bd51625b2"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/heavy_machinery_casing.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/heavy_machinery_casing.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "fffaaa2ef45f6afbc32f1f6635c819cd9ea9bad8846ebbe29d1371c72585da96"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/heavy_casing_side.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/heavy_casing_side.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "57ff4573cf9340efbaea93b47b81d091d1fd539347437ab3e98007ad791cd065"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/heavy_casing_top.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/heavy_casing_top.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "358f4f5d07a9889f091ae9b3adb549922427ad73c3ebad2e8eb896c3a2ee11e7"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/steel_block.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/steel_block.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "26f0a832abc9db4f03bdd860de037737ede17fe4d6c098b994c13cd3d1989568"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/steel_fluid_tank.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/steel_fluid_tank.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "9cae168810c29974c4f3b2e7a5131ebbe7de06cacc7da29c489743669b33f848"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/steel_fluid_tank_window.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/steel_fluid_tank_window.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "1c061e258a3c36785944afe71aa69aab0c57f8eab1d170422aee7b92a5816e11"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/steel_pump.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/steel_pump.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "249b9eb363026dfc23248adaa2b9073e15954046faee18a426120f28c7a83937"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/steel_gearbox.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/steel_gearbox.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "7c783df7c3c0c29284060cdd901e7b6903a684ea2904c7ec97011f9cd4a523b3"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/steel_gauge.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/steel_gauge.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "b21bfe9bc7f337386d67404d36fc7b4ae6e10d60e6ee79b2f5655ebe6845cbe5"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/engine_controller.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/engine_controller.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "acd32605183d61298f8513a33e9f4b78c0fa7fffcffe8c72425bd3310e8b9a6c"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/diesel_engine_side.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/diesel_engine_side.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "e30fdd34312509c991dc55b2db9dae70e935f2ae4c5ccba4dd53f841d38b035d"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/industrial_aluminum_casing.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/industrial_aluminum_casing.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "96046b3e484c42672ebf63e21fe60288802b368d62e7fe436761e996ac569901"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/aluminum_casing.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/aluminum_casing.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "4b8fc0a1c320c29c2bbf9150b33a81a677f0e21b26b8bacee971e239938011cc"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/brass_pump.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/brass_pump.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "d85b5c80e03d7cb1c0fac8809c42e5d329a2af0fe5a7965aea30622ab1eebced"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/engines/engine_controller_parts.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/engines/engine_controller_parts.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "1e0105a9fa3be0d688ecc4cb17ba8c20028f3d5a7b0175ab41c0a88f762ee226"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/engines/engine_side.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/engines/engine_side.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "ed450e177f0b9d9e14d98bd9d3c97ddd8aa2f52f1736366ac8e5173e4e57ebc2"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/engines/engine_front.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/engines/engine_front.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "019e2fe245d29966496b8222978cade7a91049d0cb9b9456804cd645b1838da6"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/engines/engine_gearbox.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/engines/engine_gearbox.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "f17ec38a2342f961531cc40fae7bc7ffad8ecfeb7337744cd02f77b15ee1a3b0"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/engines/engine_gearbox_front.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/engines/engine_gearbox_front.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "a53160af088aededd53fdec7e164870b5dcf7bcc8f023232814af61c743b3dbf"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/copper_spool.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/copper_spool.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "1a70d10817c5ad188d1f613956bcff877025c2fd2f6d35767e3d394af041a02d"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/plate_metal/industrial_iron_plate_metal.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/plate_metal/industrial_iron_plate_metal.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "359a908cbf9ea90fb3b37343c29509db25e78cfbb32aab4704951fa21ddab297"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/hull/industrial_iron_hull_side.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/hull/industrial_iron_hull_side.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "9a07aead9230847068982e15eb44ebfbf0ecaca49f5e18ee2c0acc00541abb86"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/hull/industrial_iron_hull_front.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/hull/industrial_iron_hull_front.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "b8595f13c2d3aba90aea6606fcfd89b72725331ba5b84353258ef180dcf8b347"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/sheet_metal/industrial_iron_sheet_metal.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/sheet_metal/industrial_iron_sheet_metal.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "93b9901c21cbeb499e0582fbfef6869fcf7a4d6d4dfa9eff7f801a912d1ab3c7"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/support/industrial_iron_support.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/support/industrial_iron_support.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "cde474844948debbbaaff8435ef4305c7215344c30222e75cc9c31e2d48e1f0d"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/plate_metal/brass_plate_metal.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/plate_metal/brass_plate_metal.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "14faa18c581594fd88feaf3fdf48cfb1f02908472a067dde6bcc2cddb6025989"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/hull/brass_hull_side.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/hull/brass_hull_side.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "f6a3781c6d5dfb0270b96aaf0295ebef8a55c620c3dc8980720dd6eb70722e32"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/hull/copper_hull_side.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/hull/copper_hull_side.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "0b6e00b08189f44e847ec5420126256fc86b68c2fd7a83d703f577bb5eb43d96"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/windows/industrial_iron_window.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/windows/industrial_iron_window.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "fa1278f470acaea236820e896bf785654541d524498ea4bd8e6bc4cbb9905946"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/doors/industrial_iron_door_bottom.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/doors/industrial_iron_door_bottom.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "5043e03fe14eb5889b338b0a75684cfa28d19c707ee2aa682e59defb180d8cbc"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/cage_lamp/brass_lamp.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/cage_lamp/brass_lamp.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "46a951e57620253779ef4bd55cf0fdcbd78faa8f546e59cf469e15e388c574e3"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/cage_lamp/industrial_iron_lamp.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/cage_lamp/industrial_iron_lamp.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "1a05f338bc847d03d15561aee4039a7e9ebe82fe65f29f54896374e1f1017a96"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/plate_metal/copper_plate_metal.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/plate_metal/copper_plate_metal.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "0206ad61aef05e692d26efbf9aabc0ecf027395be012ac1f21257312f2aca5c5"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/sheet_metal/brass_sheet_metal.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/sheet_metal/brass_sheet_metal.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "5906d3f36606f7238de8ace740d3f7252a7d0ddd8713fb37b19a9440276d896a"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/support/brass_support.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/support/brass_support.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "abc34c0b086da7cc725f58e1d4e74d13fd226d7ed3b96cfd0e7559e2f03120b7"
+  },
+  {
+    "mod": "tfmg",
+    "path": "src/main/resources/assets/tfmg/textures/block/heavy_gearbox.png",
+    "url": "https://raw.githubusercontent.com/DrMango14/Create-The_Factory_Must_Grow/e77ec11a406ce1bc9e5dbf87b7135bf638df6997/src/main/resources/assets/tfmg/textures/block/heavy_gearbox.png",
+    "commit": "e77ec11a406ce1bc9e5dbf87b7135bf638df6997",
+    "sha256": "f758add734f25aaecf1d80a5e0b1d8a9a41d02553c8efafc195d149e4d1e9b42"
+  },
+  {
+    "mod": "createdeco",
+    "path": "src/main/resources/assets/createdeco/textures/block/palettes/sheet_metal/copper_sheet_metal.png",
+    "url": "https://raw.githubusercontent.com/talrey/CreateDeco/996780bed4549d7b1d0dec65f06d5129e69330ba/src/main/resources/assets/createdeco/textures/block/palettes/sheet_metal/copper_sheet_metal.png",
+    "commit": "996780bed4549d7b1d0dec65f06d5129e69330ba",
+    "sha256": "45a6637b41ee6cc6dac1c111ef1cb3b3410fcbd260c024ad1184eef87d644725"
+  }
+]

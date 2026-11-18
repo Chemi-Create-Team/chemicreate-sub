@@ -1,0 +1,23 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:nickel_oxide"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "create_refinery_n_reactors:hydrogen_gas"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:nickel_ingot"
+    },
+    {
+      "amount": 250,
+      "id": "minecraft:water"
+    }
+  ]
+}

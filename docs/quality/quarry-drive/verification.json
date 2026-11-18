@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-15",
+  "baseCommit": "d3cadb4a",
+  "build": "passed",
+  "gameTests": {
+    "classes": [
+      "QuarryGameTests",
+      "QuarrySpeedGameTests",
+      "CraneGameTests",
+      "PlantTutorialGameTests"
+    ],
+    "passed": 15,
+    "required": 15,
+    "log": "/workspace/outputs/quarry-final-test.log"
+  },
+  "speedComparison": {
+    "fixture": {
+      "rpm": 64,
+      "length": 5,
+      "width": 3,
+      "layers": 3,
+      "minedDirtBlocks": 45
+    },
+    "referenceWorkSteps": 1,
+    "referenceMiningTicks": 658,
+    "updatedWorkSteps": 4,
+    "updatedMiningTicks": 165,
+    "ratio": 3.987878787878788,
+    "frameAndBeltReadyTicks": 13,
+    "frameParts": 22,
+    "note": "Same fixture and algorithm, compared with WORK_STEPS=1 and WORK_STEPS=4; mining timing excludes construction and external belt travel",
+    "logs": [
+      "/workspace/outputs/quarry-baseline-test.log",
+      "/workspace/outputs/quarry-final-test.log"
+    ]
+  },
+  "materials": {
+    "types": [
+      "gantry shaft",
+      "metal girder",
+      "mechanical drill",
+      "belt connector"
+    ],
+    "powerRequiredForReadout": false,
+    "subtractsPlacedPartsAndStock": true,
+    "maximumGoggleLines": 4,
+    "partialFiveByThree": [
+      6,
+      9,
+      1,
+      1
+    ],
+    "resizedSevenByThree": [
+      10,
+      9,
+      1,
+      1
+    ],
+    "fullySupplied": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "clientPacketAndReload": "passed",
+    "readOnlyObservation": "passed",
+    "nativeSupply": "Chest above a Create chute, feeding all four materials while unpowered"
+  },
+  "staticChecks": {
+    "translationKeysPerLanguage": 4602,
+    "languages": [
+      "en_us",
+      "ja_jp",
+      "zh_cn"
+    ],
+    "ponderScenes": 141,
+    "tutorialValidation": "passed",
+    "generatorIdempotence": "no tracked file changes"
+  },
+  "client": {
+    "renderer": "NVIDIA GeForce RTX 4060",
+    "language": "ja_jp",
+    "compiledScenes": 141,
+    "runtimeTranslations": "passed",
+    "quarryRenderSeekTicks": [
+      300,
+      1000,
+      1650
+    ],
+    "qualityResult": "CLIENT QUALITY PASSED: 141 scenes, ja_jp",
+    "shutdown": "Existing NVIDIA libEGL_nvidia SIGSEGV after quality pass; process exit 134",
+    "audio": "No OpenAL device",
+    "log": "/workspace/outputs/quarry-client01.log"
+  },
+  "scopeLimits": [
+    "Native Create belt speed still follows its RPM",
+    "No full default GameTest rerun",
+    "No large or deep multi-quarry MSPT measurements",
+    "Running quarry reload with in-flight parcels not newly tested"
+  ],
+  "implementationCommit": "29ca2792d6b7103c710b2cb0ae193d97127ceef4"
+}

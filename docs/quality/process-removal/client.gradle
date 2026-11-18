@@ -1,0 +1,15 @@
+allprojects {
+ afterEvaluate {
+  extensions.getByName('neoForge').runs.named('client') {
+   gameDirectory.set(new File('/tmp/createplant-process-removal-client'))
+   systemProperty 'createplant.clientQualityCheck', 'true'
+   systemProperty 'createplant.creativeTabsClientCheck', 'true'
+   systemProperty 'createplant.creativeTabsSearchQuery', '蒸気'
+   systemProperty 'createplant.creativeTabsCaptureTicks', '300'
+   systemProperty 'createplant.recipeAvailabilityCheck', 'true'
+   systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+   systemProperty 'createplant.clientQualityScenes', 'ore_recovery,electrowinning,seasonal_thermal'
+   systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+  }
+ }
+}

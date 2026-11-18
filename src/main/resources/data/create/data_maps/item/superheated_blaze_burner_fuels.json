@@ -1,0 +1,7 @@
+{
+  "values": {
+    "create_refinery_n_reactors:water_gas_bucket": {
+      "burn_time": 800
+    }
+  }
+}

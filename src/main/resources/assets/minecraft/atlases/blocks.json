@@ -1,0 +1,32 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "create_refinery_n_reactors:block/turbine/high_pressure_casing"
+    },
+    {
+      "type": "single",
+      "resource": "create_refinery_n_reactors:block/turbine/low_pressure_casing"
+    },
+    {
+      "type": "single",
+      "resource": "create_refinery_n_reactors:block/turbine/high_pressure_blade"
+    },
+    {
+      "type": "single",
+      "resource": "create_refinery_n_reactors:block/turbine/low_pressure_blade"
+    },
+    {
+      "type": "single",
+      "resource": "create_refinery_n_reactors:block/turbine/rotor_disc"
+    },
+    {
+      "type": "single",
+      "resource": "create_refinery_n_reactors:block/lidded_vessel/window_frost"
+    },
+    {
+      "type": "single",
+      "resource": "create_refinery_n_reactors:block/lidded_vessel/sludge"
+    }
+  ]
+}

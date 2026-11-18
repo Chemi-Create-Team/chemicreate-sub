@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/fuel_cell"
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/fuel_cell",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/fuel_cell",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/fuel_cell",
+      "y": 270
+    }
+  }
+}

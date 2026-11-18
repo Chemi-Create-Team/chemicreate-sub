@@ -1,0 +1,10 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File('/tmp/create-refinery-heater-output'))
+            systemProperty 'createplant.gameTestClasses', System.getProperty('testClasses', 'HeaterOutputGameTests,ElectricUtilityGameTests,ReactorGameTests,VesselBoilingGameTests,TwoPhaseGameTests,DisplayIntegrationGameTests,PlantTutorialGameTests')
+            systemProperty 'createplant.heaterOutputReport', new File(project.projectDir, 'build/heater-output.json').absolutePath
+            systemProperty 'createplant.electricUtilityReport', new File(project.projectDir, 'build/heater-output-utilities.json').absolutePath
+        }
+    }
+}

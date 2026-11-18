@@ -1,0 +1,9 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File(System.getProperty('testDir', '/tmp/createplant-maintenance-tests')))
+            systemProperty 'createplant.compactFuelSprint', 'true'
+            systemProperty 'createplant.gameTestClasses', System.getProperty('testClasses', 'ReactorAutoStartupGameTests,ReciprocatingCompressorGameTests,CarbonOxideGameTests,CreativeCatalogGameTests,ColumnConsolidationGameTests,ManufacturingPonderGameTests,PlantTutorialGameTests,CraftingRecipeGameTests,RbmkGameTests,ReactorConsoleGameTests')
+        }
+    }
+}

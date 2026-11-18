@@ -1,0 +1,31 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "pattern": [
+    " AAA ",
+    "AHPHA",
+    "APFPA",
+    "AHPHA",
+    " AAA "
+  ],
+  "key": {
+    "A": {
+      "tag": "c:ingots/aluminum"
+    },
+    "H": {
+      "item": "create:shaft"
+    },
+    "P": {
+      "item": "create:propeller"
+    },
+    "F": {
+      "item": "create:encased_fan"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cooling_fan",
+    "count": 1
+  },
+  "show_notification": true
+}

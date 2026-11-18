@@ -1,0 +1,15 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:cement_clinker"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:ground_clinker",
+      "count": 1
+    }
+  ],
+  "processing_time": 200
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IGI",
+    "CBC",
+    "IGI"
+  ],
+  "key": {
+    "I": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "B": {
+      "item": "create:basin"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:electrolysis_cell",
+    "count": 4
+  }
+}

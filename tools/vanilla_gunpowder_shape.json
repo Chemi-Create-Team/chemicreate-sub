@@ -1,0 +1,23 @@
+{
+  "source": "Minecraft 1.21.1 assets/minecraft/textures/item/gunpowder.png",
+  "source_sha256": "e23356d9ff24102af4d9ffb48e319d73f235f8bdca8da92fa3a26cef791d33e1",
+  "description": "Only the opaque silhouette and seven ordered shade classes are recorded. Material colours are supplied separately.",
+  "rows": [
+    "................",
+    "................",
+    "................",
+    ".......33.......",
+    "......3453......",
+    ".....356520.....",
+    "....35654620....",
+    "...3555652320...",
+    "..346542642510..",
+    "..354565422320..",
+    "..025654252210..",
+    "...0254232210...",
+    "....00122100....",
+    "......0000......",
+    "................",
+    "................"
+  ]
+}

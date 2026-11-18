@@ -1,0 +1,44 @@
+{
+  "runtimeTranslations": "passed",
+  "ponderRender": "captured",
+  "renderTargets": [
+    "ammonia_gas_bucket@plant_manufacturing_ammonia",
+    "purified_water_bucket@plant_manufacturing_purified_water",
+    "polyethylene@plant_manufacturing_polymers"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_heavy_indusstry:plant_manufacturing_air",
+    "create_heavy_indusstry:plant_manufacturing_aluminum",
+    "create_heavy_indusstry:plant_manufacturing_ammonia",
+    "create_heavy_indusstry:plant_manufacturing_antifreeze",
+    "create_heavy_indusstry:plant_manufacturing_catalysts",
+    "create_heavy_indusstry:plant_manufacturing_chlor_alkali",
+    "create_heavy_indusstry:plant_manufacturing_chromium",
+    "create_heavy_indusstry:plant_manufacturing_concrete",
+    "create_heavy_indusstry:plant_manufacturing_deuterium",
+    "create_heavy_indusstry:plant_manufacturing_fuel_refining",
+    "create_heavy_indusstry:plant_manufacturing_glass",
+    "create_heavy_indusstry:plant_manufacturing_hydrogen",
+    "create_heavy_indusstry:plant_manufacturing_liquid_helium",
+    "create_heavy_indusstry:plant_manufacturing_mining_explosives",
+    "create_heavy_indusstry:plant_manufacturing_molybdenum",
+    "create_heavy_indusstry:plant_manufacturing_nickel",
+    "create_heavy_indusstry:plant_manufacturing_nitric_fertilizer",
+    "create_heavy_indusstry:plant_manufacturing_petrochemical_feedstocks",
+    "create_heavy_indusstry:plant_manufacturing_pigments",
+    "create_heavy_indusstry:plant_manufacturing_polymers",
+    "create_heavy_indusstry:plant_manufacturing_purified_water",
+    "create_heavy_indusstry:plant_manufacturing_pvc",
+    "create_heavy_indusstry:plant_manufacturing_refrigeration",
+    "create_heavy_indusstry:plant_manufacturing_rubber",
+    "create_heavy_indusstry:plant_manufacturing_steel",
+    "create_heavy_indusstry:plant_manufacturing_sulfuric_acid",
+    "create_heavy_indusstry:plant_manufacturing_titanium",
+    "create_heavy_indusstry:plant_manufacturing_washwater",
+    "create_heavy_indusstry:plant_manufacturing_zirconium"
+  ],
+  "translationScope": "plant_manufacturing_air,guide.manufacturing_air,plant_manufacturing_hydrogen,guide.manufacturing_hydrogen,plant_manufacturing_ammonia,guide.manufacturing_ammonia,plant_manufacturing_nitric_fertilizer,guide.manufacturing_nitric_fertilizer,plant_manufacturing_sulfuric_acid,guide.manufacturing_sulfuric_acid,plant_manufacturing_chlor_alkali,guide.manufacturing_chlor_alkali,plant_manufacturing_petrochemical_feedstocks,guide.manufacturing_petrochemical_feedstocks,plant_manufacturing_polymers,guide.manufacturing_polymers,plant_manufacturing_rubber,guide.manufacturing_rubber,plant_manufacturing_pvc,guide.manufacturing_pvc,plant_manufacturing_fuel_refining,guide.manufacturing_fuel_refining,plant_manufacturing_antifreeze,guide.manufacturing_antifreeze,plant_manufacturing_refrigeration,guide.manufacturing_refrigeration,plant_manufacturing_aluminum,guide.manufacturing_aluminum,plant_manufacturing_titanium,guide.manufacturing_titanium,plant_manufacturing_zirconium,guide.manufacturing_zirconium,plant_manufacturing_nickel,guide.manufacturing_nickel,plant_manufacturing_chromium,guide.manufacturing_chromium,plant_manufacturing_molybdenum,guide.manufacturing_molybdenum,plant_manufacturing_steel,guide.manufacturing_steel,plant_manufacturing_pigments,guide.manufacturing_pigments,plant_manufacturing_concrete,guide.manufacturing_concrete,plant_manufacturing_glass,guide.manufacturing_glass,plant_manufacturing_purified_water,guide.manufacturing_purified_water,plant_manufacturing_washwater,guide.manufacturing_washwater,plant_manufacturing_catalysts,guide.manufacturing_catalysts,plant_manufacturing_mining_explosives,guide.manufacturing_mining_explosives,plant_manufacturing_deuterium,guide.manufacturing_deuterium,plant_manufacturing_liquid_helium,guide.manufacturing_liquid_helium"
+}

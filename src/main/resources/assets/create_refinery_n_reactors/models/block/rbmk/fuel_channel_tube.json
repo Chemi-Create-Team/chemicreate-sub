@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "side": "create_refinery_n_reactors:block/reactor/rbmk/fuel_channel_tube",
+    "end": "create_refinery_n_reactors:block/reactor/rbmk/fuel_channel_top"
+  }
+}

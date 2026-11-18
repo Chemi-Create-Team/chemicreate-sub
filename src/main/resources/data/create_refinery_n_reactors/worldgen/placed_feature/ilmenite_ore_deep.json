@@ -1,0 +1,21 @@
+{
+  "feature": "create_refinery_n_reactors:ilmenite_ore",
+  "placement": [
+    {
+      "type": "create_refinery_n_reactors:deep_layer",
+      "min_inclusive": {
+        "above_bottom": 8
+      },
+      "max_inclusive": {
+        "absolute": -64
+      },
+      "per_16_blocks": 0.59
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

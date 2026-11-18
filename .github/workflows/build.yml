@@ -1,0 +1,128 @@
+name: Build and Release
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref_type != 'tag' }}
+
+jobs:
+  build:
+    name: Build mod (Java 21)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    outputs:
+      release_version: ${{ steps.release_metadata.outputs.version }}
+      prerelease: ${{ steps.release_metadata.outputs.prerelease }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate release tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        id: release_metadata
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python3 tools/prepare_release.py --tag "$RELEASE_TAG" --metadata-only >> "$GITHUB_OUTPUT"
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Build
+        run: bash gradlew --no-daemon --max-workers=2 build
+
+      - name: Validate tutorials and visual identity
+        run: |
+          python3 tools/validate_plant_tutorials.py
+          python3 tools/validate_ponder_language.py
+          python3 tools/validate_visual_identity.py
+          python3 tools/test_ci_validators.py
+
+      - name: Run server integration tests
+        run: bash gradlew --no-daemon --max-workers=2 runGameTestServer
+
+      - name: Verify server without optional JEI
+        run: bash gradlew --no-daemon --max-workers=2 -PwithJei=false runGameTestServer
+
+      - name: Upload mod JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: create-heavy-industry-${{ github.sha }}
+          path: build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Package release assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: python3 tools/prepare_release.py --tag "$RELEASE_TAG"
+
+      - name: Upload verified release assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: create-plant-release-${{ github.sha }}
+          path: |
+            build/release/*.jar
+            build/release/create-plant-release.zip
+            build/release/SHA256SUMS
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download verified release assets
+        uses: actions/download-artifact@v4
+        with:
+          name: create-plant-release-${{ github.sha }}
+          path: release
+
+      - name: Verify downloaded checksums
+        working-directory: release
+        run: sha256sum --check SHA256SUMS
+
+      - name: Create release with downloadable mod files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_VERSION: ${{ needs.build.outputs.release_version }}
+          PRERELEASE: ${{ needs.build.outputs.prerelease }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if draft=$(gh release view "$RELEASE_TAG" --json isDraft --jq '.isDraft' 2>/dev/null); then
+            if [[ "$draft" == "true" ]]; then
+              echo "::error::A draft release already exists for $RELEASE_TAG; review it before retrying."
+              exit 1
+            fi
+            echo "::notice::Release $RELEASE_TAG already exists; leaving it unchanged."
+            exit 0
+          fi
+          options=(--verify-tag --generate-notes --title "Create-Plant $RELEASE_VERSION (NeoForge 1.21.1)")
+          if [[ "$PRERELEASE" == "true" ]]; then
+            options+=(--prerelease)
+          fi
+          gh release create "$RELEASE_TAG" release/*.jar release/create-plant-release.zip release/SHA256SUMS "${options[@]}"

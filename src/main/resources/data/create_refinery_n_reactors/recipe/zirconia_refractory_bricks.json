@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:zirconia"
+    },
+    {
+      "item": "create_refinery_n_reactors:zirconia"
+    },
+    {
+      "item": "create_refinery_n_reactors:zirconia"
+    },
+    {
+      "item": "create_refinery_n_reactors:zirconia"
+    },
+    {
+      "item": "minecraft:brick"
+    },
+    {
+      "item": "minecraft:brick"
+    },
+    {
+      "item": "minecraft:brick"
+    },
+    {
+      "item": "minecraft:brick"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:zirconia_refractory_bricks",
+    "count": 4
+  }
+}

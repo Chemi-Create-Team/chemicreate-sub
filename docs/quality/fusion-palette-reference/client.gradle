@@ -1,0 +1,9 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'; programArgument '1280'
+            programArgument '--height'; programArgument '800'
+            systemProperty 'createplant.powerPlantClientCheck', 'true'
+        }
+    }
+}

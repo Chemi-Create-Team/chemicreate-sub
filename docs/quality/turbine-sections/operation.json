@@ -1,0 +1,9 @@
+{
+  "low_pressure_joules": 7070869.69793728,
+  "intermediate_pressure_joules": 3101937.647142648,
+  "condensate_mb": 12288,
+  "high_pressure_joules": 1.138895341801884E7,
+  "condensate_kelvin": 303.15,
+  "remaining_mb": 3712,
+  "shaft_rpm": 256.0
+}

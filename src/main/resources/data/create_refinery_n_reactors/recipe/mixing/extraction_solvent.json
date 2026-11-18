@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:tributyl_phosphate",
+      "amount": 300
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:naphtha",
+      "amount": 700
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:tbp_extraction_solvent",
+      "amount": 1000
+    }
+  ],
+  "processing_time": 200
+}

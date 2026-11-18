@@ -1,0 +1,20 @@
+{
+  "main": {
+    "total": 615,
+    "failed": [
+      "afouledprocessstopsthenresumesafteronemanualbrush",
+      "everyregisteredentryhasassetstranslationsandloot"
+    ],
+    "passed": 613,
+    "fluidBlockAliasFailures": 86
+  },
+  "integrated": {
+    "total": 616,
+    "failed": [
+      "afouledprocessstopsthenresumesafteronemanualbrush",
+      "everyregisteredentryhasassetstranslationsandloot"
+    ],
+    "passed": 614,
+    "fluidBlockAliasFailures": 86
+  }
+}

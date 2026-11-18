@@ -1,0 +1,488 @@
+{
+  "variants": {
+    "drive=false,facing=south,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=south,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=south,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=false,facing=south,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=south,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=false,facing=south,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=south,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=false,facing=south,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=south,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=south,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=south,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=false,facing=south,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=south,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=false,facing=south,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=south,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=false,facing=south,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=south,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive"
+    },
+    "drive=true,facing=south,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=true,facing=south,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=true,facing=south,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=south,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive"
+    },
+    "drive=true,facing=south,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=true,facing=south,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=true,facing=south,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed"
+    },
+    "drive=true,facing=south,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 0
+    },
+    "drive=false,facing=west,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=west,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=west,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=false,facing=west,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=west,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=west,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 90
+    },
+    "drive=true,facing=west,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 90
+    },
+    "drive=false,facing=north,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=north,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=north,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=false,facing=north,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=north,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=north,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 180
+    },
+    "drive=true,facing=north,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 180
+    },
+    "drive=false,facing=east,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=east,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=false,facing=east,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=false,facing=east,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=false,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=east,outlet=false,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=false,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=false,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=false,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=false,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=false,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=false,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=true,section=none,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator"
+    },
+    "drive=true,facing=east,outlet=true,section=none,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=true,section=bottom,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed_drive",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=true,section=bottom,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=true,section=middle,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=true,section=middle,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=true,section=top,port=false": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/formed",
+      "y": 270
+    },
+    "drive=true,facing=east,outlet=true,section=top,port=true": {
+      "model": "create_refinery_n_reactors:block/cooler_radiator/central_port",
+      "y": 270
+    }
+  }
+}

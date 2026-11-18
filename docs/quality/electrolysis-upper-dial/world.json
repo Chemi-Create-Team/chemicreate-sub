@@ -1,0 +1,17 @@
+{
+  "volts": 46.64060229598178,
+  "watts": 1740.2766260255526,
+  "cyclesPerTick": 1,
+  "water": 25637,
+  "hydrogen": 242,
+  "oxygen": 121,
+  "hatchInterlock": true,
+  "formedCells": 32,
+  "selectedLoad": 37,
+  "selectedWatts": 667.5093881099536,
+  "dampedLiquidObserved": true,
+  "dampedNeedleObserved": true,
+  "fixturePurged_mB": 16000,
+  "fixtureReturned_mB": 16000,
+  "unpoweredAtEnd": true
+}

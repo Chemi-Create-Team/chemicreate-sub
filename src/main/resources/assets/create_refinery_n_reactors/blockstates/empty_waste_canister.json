@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "section=0": {
+      "model": "create_refinery_n_reactors:block/plant_systems/empty_waste_canister_0"
+    },
+    "section=1": {
+      "model": "create_refinery_n_reactors:block/plant_systems/empty_waste_canister_1"
+    },
+    "section=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/empty_waste_canister_2"
+    }
+  }
+}

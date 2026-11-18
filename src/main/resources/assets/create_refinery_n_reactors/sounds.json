@@ -1,0 +1,46 @@
+{
+  "machine.reactor_circulation": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.reactor_circulation",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/reactor_circulation", "attenuation_distance": 32 }]
+  },
+  "machine.fusion_drive": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.fusion_drive",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/fusion_drive", "attenuation_distance": 32 }]
+  },
+  "machine.turbine_high": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.turbine_high",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/turbine_high", "attenuation_distance": 32 }]
+  },
+  "machine.turbine_low": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.turbine_low",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/turbine_low", "attenuation_distance": 32 }]
+  },
+  "machine.compressor": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.compressor",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/compressor", "attenuation_distance": 32 }]
+  },
+  "machine.agitator": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.agitator",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/agitator", "attenuation_distance": 32 }]
+  },
+  "machine.hot_process": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.hot_process",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/hot_process", "attenuation_distance": 32 }]
+  },
+  "machine.fluid_process": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.fluid_process",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/fluid_process", "attenuation_distance": 32 }]
+  },
+  "machine.blower": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.blower",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/blower", "attenuation_distance": 32 }]
+  },
+  "machine.crane_drive": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.crane_drive",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/crane_drive", "attenuation_distance": 32 }]
+  },
+  "machine.flare_roar": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.flare_roar",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/flare_roar", "attenuation_distance": 96 }]
+  }
+}

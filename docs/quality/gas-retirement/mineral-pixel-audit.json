@@ -1,0 +1,122 @@
+[
+  {
+    "id": "bauxite_ore",
+    "opaque": 113,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_bauxite_ore",
+    "opaque": 91,
+    "colors": 8
+  },
+  {
+    "id": "pentlandite_ore",
+    "opaque": 109,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_pentlandite_ore",
+    "opaque": 88,
+    "colors": 8
+  },
+  {
+    "id": "ilmenite_ore",
+    "opaque": 113,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_ilmenite_ore",
+    "opaque": 92,
+    "colors": 8
+  },
+  {
+    "id": "zircon_ore",
+    "opaque": 113,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_zircon_ore",
+    "opaque": 91,
+    "colors": 8
+  },
+  {
+    "id": "chromite_ore",
+    "opaque": 115,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_chromite_ore",
+    "opaque": 91,
+    "colors": 8
+  },
+  {
+    "id": "molybdenite_ore",
+    "opaque": 109,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_molybdenite_ore",
+    "opaque": 93,
+    "colors": 8
+  },
+  {
+    "id": "uranium_ore",
+    "opaque": 116,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_uranium_ore",
+    "opaque": 91,
+    "colors": 8
+  },
+  {
+    "id": "halite_ore",
+    "opaque": 134,
+    "colors": 8
+  },
+  {
+    "id": "deepslate_halite_ore",
+    "opaque": 106,
+    "colors": 8
+  },
+  {
+    "id": "uraninite",
+    "opaque": 138,
+    "colors": 10
+  },
+  {
+    "id": "bauxite",
+    "opaque": 137,
+    "colors": 8
+  },
+  {
+    "id": "pentlandite",
+    "opaque": 135,
+    "colors": 8
+  },
+  {
+    "id": "ilmenite",
+    "opaque": 136,
+    "colors": 8
+  },
+  {
+    "id": "zircon",
+    "opaque": 131,
+    "colors": 9
+  },
+  {
+    "id": "chromite",
+    "opaque": 137,
+    "colors": 10
+  },
+  {
+    "id": "molybdenite",
+    "opaque": 139,
+    "colors": 10
+  },
+  {
+    "id": "fluorite",
+    "opaque": 159,
+    "colors": 10
+  }
+]

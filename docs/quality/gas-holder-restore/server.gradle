@@ -1,0 +1,11 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File(System.getProperty('testDir', '/tmp/createplant-gas-holder-restore-tests')))
+            systemProperty 'createplant.gameTestClasses', System.getProperty('testClasses',
+                'GasBellGameTests,GasBellLoadGameTests,GasPipeGameTests,GasStorageGameTests,FlareGameTests,ToxicGasGameTests,PressureGameTests,PressureStageTwoGameTests,PressureAndFreezingGameTests,DisplayIntegrationGameTests,TankGameTests,TankTemperatureGameTests,HorizontalTankGameTests,TransportQualityGameTests,CraftingRecipeGameTests,CreativeCatalogGameTests,StructureGuideGameTests,PlantTutorialGameTests')
+            systemProperty 'createplant.gasBellLoadWidth', '7'
+            systemProperty 'createplant.safetyLoadReport', new File(project.projectDir, 'build/gas-holder-restore-load.json').absolutePath
+        }
+    }
+}

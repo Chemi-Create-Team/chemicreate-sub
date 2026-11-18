@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "S S",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:empty_waste_canister",
+    "count": 1
+  }
+}

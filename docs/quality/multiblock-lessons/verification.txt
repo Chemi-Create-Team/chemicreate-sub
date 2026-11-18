@@ -1,0 +1,12 @@
+final-validation.log
+[15:04:21] [Server thread/INFO] [minecraft/GameTestServer]: ========= 23 GAME TESTS COMPLETE IN 2.047 s ======================
+[15:04:21] [Server thread/INFO] [minecraft/GameTestServer]: All 23 required tests passed :)
+[15:06:05] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 136 scenes, ja_jp
+
+native-ja.log
+[14:44:38] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 136 scenes, ja_jp
+X Error of failed request:  0
+
+native-en.log
+[14:52:00] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 136 scenes, en_us
+X Error of failed request:  0

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IBI",
+    "I I",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "B": {
+      "tag": "c:plates/brass"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:gas_receiver",
+    "count": 1
+  }
+}

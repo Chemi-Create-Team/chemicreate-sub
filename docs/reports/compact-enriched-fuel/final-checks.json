@@ -1,0 +1,22 @@
+[
+  {
+    "check": "fuel-short-final",
+    "exitCode": 0,
+    "seconds": 32.87
+  },
+  {
+    "check": "vessel-process-final",
+    "exitCode": 0,
+    "seconds": 28.6
+  },
+  {
+    "check": "long-final",
+    "exitCode": 0,
+    "seconds": 260.85
+  },
+  {
+    "check": "build-final",
+    "exitCode": 0,
+    "seconds": 14.9
+  }
+]

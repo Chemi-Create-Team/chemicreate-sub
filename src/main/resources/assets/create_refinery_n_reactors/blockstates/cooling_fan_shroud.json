@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "facing=south,part=none": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/deck"
+    },
+    "facing=south,part=side": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/side"
+    },
+    "facing=south,part=corner": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/corner"
+    },
+    "facing=west,part=none": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/deck"
+    },
+    "facing=west,part=side": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/side",
+      "y": 90
+    },
+    "facing=west,part=corner": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/corner",
+      "y": 90
+    },
+    "facing=north,part=none": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/deck"
+    },
+    "facing=north,part=side": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/side",
+      "y": 180
+    },
+    "facing=north,part=corner": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/corner",
+      "y": 180
+    },
+    "facing=east,part=none": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/deck"
+    },
+    "facing=east,part=side": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/side",
+      "y": 270
+    },
+    "facing=east,part=corner": {
+      "model": "create_refinery_n_reactors:block/cooling_fan_shroud/corner",
+      "y": 270
+    }
+  }
+}

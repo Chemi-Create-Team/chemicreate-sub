@@ -1,0 +1,57 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "create_refinery_n_reactors:block/pvc_pipe/core"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/pvc_pipe/north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/pvc_pipe/south"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/pvc_pipe/west"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/pvc_pipe/east"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/pvc_pipe/down"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/pvc_pipe/up"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PP",
+    "PP"
+  ],
+  "key": {
+    "P": {
+      "item": "create_refinery_n_reactors:gas_pipe"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:large_gas_pipe",
+    "count": 1
+  }
+}

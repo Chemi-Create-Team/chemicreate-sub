@@ -1,0 +1,94 @@
+{
+  "baseCommit": "c4c05c156479452636649b06c616cf8a1f50a387",
+  "dateUTC": "2026-11-11",
+  "server": {
+    "classes": [
+      "ElectrolysisCellGameTests",
+      "CircuitGameTests",
+      "ChlorAlkaliGameTests",
+      "BasinCompatibilityGameTests",
+      "ProductUseGameTests",
+      "ModularPortsGameTests",
+      "FusionFuelGameTests",
+      "MalformedDataGameTests",
+      "ManufacturingPonderGameTests",
+      "SurvivalReachabilityGameTests"
+    ],
+    "required": 46,
+    "passed": 46,
+    "failed": 0
+  },
+  "nitricPlant": {
+    "required": 1,
+    "passed": 1,
+    "mode": "bounded explicit server-side simulation steps; not a real-time endurance playthrough"
+  },
+  "build": "passed",
+  "logicLedgers": [
+    {
+      "name": "water/full-load",
+      "ticks": 100,
+      "voltage": 400,
+      "plates": 1,
+      "feedConsumed_mB": 300,
+      "cathode_mB": 200,
+      "anode_mB": 100,
+      "electricalWork_J": 5000
+    },
+    {
+      "name": "water/half-voltage",
+      "ticks": 100,
+      "voltage": 200,
+      "plates": 1,
+      "feedConsumed_mB": 75,
+      "cathode_mB": 50,
+      "anode_mB": 25,
+      "electricalWork_J": 1250
+    },
+    {
+      "name": "water/quarter-load",
+      "ticks": 100,
+      "voltage": 400,
+      "loadPercent": 25,
+      "plates": 1,
+      "feedConsumed_mB": 75,
+      "cathode_mB": 50,
+      "anode_mB": 25,
+      "electricalWork_J": 1250
+    },
+    {
+      "name": "brine/diaphragm",
+      "feed_mB": 10000,
+      "hydrogen_mB": 5000,
+      "chlorine_mB": 5000,
+      "soda_mB": 12500,
+      "asbestosConsumed": 1
+    }
+  ],
+  "integratedWorld": {
+    "volts": 46.69974898874897,
+    "watts": 1744.6932444897284,
+    "cyclesPerTick": 2,
+    "water": 25661,
+    "hydrogen": 226,
+    "oxygen": 113,
+    "hatchInterlock": true,
+    "formedCells": 32
+  },
+  "translatedFeatureKeys": 47,
+  "legacyLidReferencesInAssetJSON": 0,
+  "legacyLidReferencesInPonderPalettes": 0,
+  "unrelatedFailureObserved": {
+    "class": "CraftingRecipeGameTests",
+    "method": "dioriteCasingUsesCreateHandApplicationAndBothCasingsFitTheMachines",
+    "error": "No value present at the unchanged item_application/diorite_casing recipe lookup",
+    "disposition": "outside electrolysis scope; not fixed"
+  },
+  "notTested": [
+    "all-mod complete GameTest suite",
+    "large-factory comparative performance",
+    "multiplayer or multi-hour endurance",
+    "automatic migration of retired basin-electrolyzer inventories"
+  ],
+  "implementationCommit": "3c7c80ea9003c0961fcae88d626db0c803dddcbb"
+}

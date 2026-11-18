@@ -1,0 +1,88 @@
+{
+  "variants": {
+    "axis=x,logs=true,stage=0": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_0",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,logs=false,stage=0": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_0"
+    },
+    "axis=y,logs=true,stage=0": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_0"
+    },
+    "axis=y,logs=false,stage=0": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_0"
+    },
+    "axis=z,logs=true,stage=0": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_0",
+      "x": 90
+    },
+    "axis=z,logs=false,stage=0": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_0"
+    },
+    "axis=x,logs=true,stage=1": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_1",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,logs=false,stage=1": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_1"
+    },
+    "axis=y,logs=true,stage=1": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_1"
+    },
+    "axis=y,logs=false,stage=1": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_1"
+    },
+    "axis=z,logs=true,stage=1": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_1",
+      "x": 90
+    },
+    "axis=z,logs=false,stage=1": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_1"
+    },
+    "axis=x,logs=true,stage=2": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_2",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,logs=false,stage=2": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_2"
+    },
+    "axis=y,logs=true,stage=2": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_2"
+    },
+    "axis=y,logs=false,stage=2": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_2"
+    },
+    "axis=z,logs=true,stage=2": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_2",
+      "x": 90
+    },
+    "axis=z,logs=false,stage=2": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_2"
+    },
+    "axis=x,logs=true,stage=3": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_3",
+      "x": 90,
+      "y": 90
+    },
+    "axis=x,logs=false,stage=3": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_3"
+    },
+    "axis=y,logs=true,stage=3": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_3"
+    },
+    "axis=y,logs=false,stage=3": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_3"
+    },
+    "axis=z,logs=true,stage=3": {
+      "model": "create_refinery_n_reactors:block/charred_wood/log_3",
+      "x": 90
+    },
+    "axis=z,logs=false,stage=3": {
+      "model": "create_refinery_n_reactors:block/charred_wood/planks_3"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "translationScope": "rbmk_compact_core",
+  "scenes": [
+    "create_heavy_indusstry:rbmk_compact_core"
+  ],
+  "languages": [
+    "zh_cn"
+  ],
+  "renderTargets": [
+    "compact_enriched_fuel_rod@rbmk_compact_core"
+  ],
+  "ponderRender": "captured",
+  "runtimeTranslations": "passed"
+}

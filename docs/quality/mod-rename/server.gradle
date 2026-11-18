@@ -1,0 +1,7 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File('/tmp/create-refinery-n-reactors-rename-tests'))
+        }
+    }
+}

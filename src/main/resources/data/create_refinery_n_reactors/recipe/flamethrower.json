@@ -1,0 +1,41 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " T T ",
+    " SBS ",
+    "PMIMP",
+    "  G  ",
+    "  R  "
+  ],
+  "key": {
+    "T": {
+      "item": "create:fluid_tank"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "M": {
+      "item": "create:precision_mechanism"
+    },
+    "I": {
+      "item": "minecraft:flint_and_steel"
+    },
+    "G": {
+      "item": "create:cogwheel"
+    },
+    "R": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:flamethrower",
+    "count": 1
+  },
+  "accept_mirrored": true
+}

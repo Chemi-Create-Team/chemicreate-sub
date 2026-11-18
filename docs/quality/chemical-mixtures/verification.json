@@ -1,0 +1,59 @@
+{
+  "implementationCommit": "b5c18360dafa7b5e0706412673cfed7ee882ee73",
+  "buildCommit": "719fad1ddba57284b5b519be2a6a9eea5f6c5204",
+  "date": "2026-11-17",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10",
+  "java": "21",
+  "cleanBuild": "passed",
+  "mixtureUnitChecks": 6004,
+  "reactorPhysicsChecks": 1668,
+  "reactorControl": "passed",
+  "gameTests": {
+    "regression": 83,
+    "regressionPassed": 83,
+    "mixtureAfterNetworkMetadataAssertion": 8,
+    "mixturePassed": 8,
+    "afterSulfurRouteMerge": 51,
+    "afterSulfurRouteMergePassed": 51
+  },
+  "languageValidation": {
+    "keysPerLocale": 4967,
+    "locales": [
+      "en_us",
+      "ja_jp",
+      "zh_cn"
+    ],
+    "ponderHeaders": 149,
+    "result": "passed"
+  },
+  "nativeClient": {
+    "renderer": "NVIDIA GeForce RTX 4060",
+    "driver": "595.99.02",
+    "volumeMb": 10000,
+    "components": 4,
+    "nativePump": "passed",
+    "clientSync": "passed",
+    "blendedTint": "0xFFA7D1DB",
+    "gogglesLines": 4,
+    "fullCompositionLines": 5,
+    "japanesePonder": "passed",
+    "shutdownExitCode": 134,
+    "shutdownFailure": "SIGSEGV in libEGL_nvidia.so.0 after result files and world save"
+  },
+  "jar": {
+    "file": "create-refinery-n-reactors-0.1.0-chemical-mixtures.jar",
+    "bytes": 6949915,
+    "sha256": "c396faeb6fb6b4247a9d65d910fce6346e88de7e63d64e608f7491c5f95794d2"
+  },
+  "limits": [
+    "No new reaction or mixture distillation recipes requested or added",
+    "No mixture bucket or world fluid block",
+    "Incompatible same-ID foreign data patches are rejected",
+    "No large-installation performance measurement",
+    "Audio and other rendering mods not tested"
+  ],
+  "mergedUpstream": "481a006b",
+  "buildAfterFinalMerge": "passed"
+}

@@ -1,0 +1,14 @@
+{
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_refinery_n_reactors:wet_processing"
+  ],
+  "translationScope": "wet_processing",
+  "runtimeTranslations": "passed",
+  "ponderRender": "checked",
+  "renderTargets": [
+    "clarifier_center_drive@wet_processing"
+  ]
+}

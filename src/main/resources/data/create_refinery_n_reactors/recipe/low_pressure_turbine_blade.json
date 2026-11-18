@@ -1,0 +1,28 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "pattern": [
+    "T   T",
+    " TST ",
+    "  A  ",
+    " TST ",
+    "T   T"
+  ],
+  "key": {
+    "T": {
+      "tag": "c:plates/titanium"
+    },
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "A": {
+      "item": "create:andesite_alloy"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:low_pressure_turbine_blade",
+    "count": 6
+  },
+  "show_notification": true
+}

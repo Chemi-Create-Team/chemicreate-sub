@@ -1,0 +1,24 @@
+{
+  "en_us": {
+    "item.create_refinery_n_reactors.water_treatment_flocculant": "Water-treatment Flocculant",
+    "item.create_refinery_n_reactors.water_filter_medium": "Water Filter Medium",
+    "item.create_refinery_n_reactors.treatment_sludge": "Treatment Sludge",
+    "fluid.create_refinery_n_reactors.neutralized_wastewater": "Neutralized Wash Water",
+    "block.create_refinery_n_reactors.neutralized_wastewater": "Neutralized Wash Water",
+    "item.create_refinery_n_reactors.neutralized_wastewater_bucket": "Neutralized Wash Water Bucket",
+    "fluid.create_refinery_n_reactors.clarified_water": "Clarified Water",
+    "block.create_refinery_n_reactors.clarified_water": "Clarified Water",
+    "item.create_refinery_n_reactors.clarified_water_bucket": "Clarified Water Bucket"
+  },
+  "ja_jp": {
+    "item.create_refinery_n_reactors.water_treatment_flocculant": "水処理用凝集剤",
+    "item.create_refinery_n_reactors.water_filter_medium": "水処理ろ材",
+    "item.create_refinery_n_reactors.treatment_sludge": "水処理汚泥",
+    "fluid.create_refinery_n_reactors.neutralized_wastewater": "中和処理水",
+    "block.create_refinery_n_reactors.neutralized_wastewater": "中和処理水",
+    "item.create_refinery_n_reactors.neutralized_wastewater_bucket": "中和処理水入りバケツ",
+    "fluid.create_refinery_n_reactors.clarified_water": "澄明水",
+    "block.create_refinery_n_reactors.clarified_water": "澄明水",
+    "item.create_refinery_n_reactors.clarified_water_bucket": "澄明水入りバケツ"
+  }
+}

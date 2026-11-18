@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "SPS",
+    "PPP"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:zircaloy_cladding_tube"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:uranium_pellet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fuel_rod",
+    "count": 1
+  }
+}

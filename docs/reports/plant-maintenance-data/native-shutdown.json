@@ -1,0 +1,18 @@
+{
+  "zh-target": {
+    "javaExit": 134,
+    "gradleExit": 1,
+    "jvmReport": "hs_err_pid6821.log",
+    "shutdownTrace": "Current thread is native thread\n\nStack: [0x000079e2c5c00000,0x000079e2c6400000],  sp=0x000079e2c63fed80,  free space=8187k\nNative frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)\nC  [libEGL_nvidia.so.0+0xb56ae]\n\nsiginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000000040\n",
+    "qualityPassed": true,
+    "faultSignal": "SIGSEGV"
+  },
+  "ja": {
+    "javaExit": 134,
+    "gradleExit": 1,
+    "jvmReport": "hs_err_pid7206.log",
+    "shutdownTrace": "Current thread is native thread\n\nStack: [0x00007b63d5c00000,0x00007b63d6400000],  sp=0x00007b63d63fed80,  free space=8187k\nNative frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)\nC  [libEGL_nvidia.so.0+0xb56ae]\n\nsiginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000000040\n",
+    "qualityPassed": true,
+    "faultSignal": "SIGSEGV"
+  }
+}

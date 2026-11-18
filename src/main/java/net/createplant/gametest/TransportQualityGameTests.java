@@ -1,0 +1,185 @@
+package net.createplant.gametest;
+
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.fluids.pipes.valve.FluidValveBlock;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import net.createplant.CreatePlant;
+import net.createplant.chemistry.ProcessModule;
+import net.createplant.registry.*;
+import net.createplant.transport.*;
+import net.minecraft.core.*;
+import net.minecraft.gametest.framework.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.*;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.gametest.*;
+
+@GameTestHolder(CreatePlant.MOD_ID)
+@PrefixGameTestTemplate(false)
+public final class TransportQualityGameTests {
+    private static final BlockPos SOURCE=new BlockPos(1,2,3),PUMP=new BlockPos(2,2,3),PIPE=new BlockPos(3,2,3),TARGET=new BlockPos(4,2,3);
+
+    @GameTest(template="test_petrochemical")
+    public static void chemicalRatingsDoNotInventForeignFluidHazards(GameTestHelper h) {
+        for (var m:PipeMaterial.values()) for (var f:new Fluid[]{Fluids.WATER,Fluids.LAVA,CEPetroFluids.CRUDE_OIL.get(),CEPetroFluids.GASOLINE.get(),CEFluids.STEAM.get()})
+            h.assertTrue(m.incompatibility(FluidHazards.of(new FluidStack(f,1000))).equals(f!=CEFluids.STEAM.get() ? "safe"
+                    : m==PipeMaterial.PVC || m==PipeMaterial.RESIN ? "softening" : m==PipeMaterial.CRYOGENIC ? "overheat" : "safe"),
+                "Unclassified fluids have no invented hazard; hot steam softens resin and PVC and is too hot for the cryogenic line: "+m+" / "+f);
+        var acid=FluidHazards.of(new FluidStack(CEFluids.NITRIC_ACID.get(),1000));
+        h.assertTrue(PipeMaterial.COPPER.incompatibility(acid).equals("corrosion") && PipeMaterial.RESIN.incompatibility(acid).equals("safe"),"Cool nitric acid requires a corrosion-resistant material");
+        h.assertTrue(PipeMaterial.COPPER.incompatibility(FluidHazards.named("compressed_synthesis_feed")).equals("pressure"),"Compressed synthesis feed requires pressure resistance");
+        h.assertTrue(PipeMaterial.REINFORCED.incompatibility(FluidHazards.named("synthesis_gas")).equals("safe"),"Reinforced pipe safely handles hot high-pressure synthesis");
+        h.assertTrue(PipeMaterial.RESIN.incompatibility(FluidHazards.named("hot_nitric_oxide_mixture")).equals("softening"),"Hot oxidation must soften resin");
+        h.succeed();
+    }
+    @GameTest(template="test_petrochemical")
+    public static void plantTanksAcceptOnlyTheirOwnFluids(GameTestHelper h) {
+        h.setBlock(SOURCE,AllBlocks.FLUID_TANK.get());h.setBlock(TARGET,AllBlocks.FLUID_TANK.get());
+        var water=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(SOURCE),Direction.UP);
+        var liquid=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(TARGET),Direction.UP);
+        h.assertTrue(water.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1000),IFluidHandler.FluidAction.EXECUTE)==0
+            && water.fill(new FluidStack(Fluids.WATER,1000),IFluidHandler.FluidAction.EXECUTE)==1000,"The standard Create liquid tank accepts water and refuses gas");
+        h.assertTrue(liquid.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1000),IFluidHandler.FluidAction.EXECUTE)==0
+            && liquid.fill(new FluidStack(CEPetroFluids.CRUDE_OIL.get(),1000),IFluidHandler.FluidAction.EXECUTE)==1000,"The liquid tank leaves process gases to gas tanks");
+        h.succeed();
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=300)
+    public static void aPipeRefusesAFluidItsMaterialCannotCarry(GameTestHelper h) {
+        h.setBlock(SOURCE,CETransport.STAINLESS_STEEL_TANK.get());h.setBlock(TARGET,CETransport.STAINLESS_STEEL_TANK.get());
+        h.setBlock(PIPE,straight(AllBlocks.FLUID_PIPE.getDefaultState()));
+        h.setBlock(PUMP,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
+        h.setBlock(new BlockPos(2,2,4),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
+        drive(h,new BlockPos(1,2,4),Direction.EAST);
+        IFluidHandler source=fluids(h,SOURCE),dest=fluids(h,TARGET);
+        h.assertTrue(source.fill(new FluidStack(CEFluids.NITRIC_ACID.get(),1000),IFluidHandler.FluidAction.EXECUTE)==1000,"The acid-proof source takes nitric acid");
+        h.runAfterDelay(80,()->{
+            h.assertTrue(dest.getFluidInTank(0).isEmpty() && source.getFluidInTank(0).getAmount()==1000,"Create's copper pipe does not take in the acid, and nothing is lost");
+            h.setBlock(PIPE,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()));
+            h.succeedWhen(()->h.assertTrue(dest.getFluidInTank(0).getAmount()==1000 && source.getFluidInTank(0).isEmpty(),"A stainless pipe carries all of it: "+dest.getFluidInTank(0)));
+        });
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void nativeCopperAndPumpFillAnAddonMachineWithoutLoss(GameTestHelper h) {
+        transfer(h,straight(AllBlocks.FLUID_PIPE.getDefaultState()),CEPetroFluids.CRUDE_OIL.get(),true,false);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void ceramicPipeCarriesAcidButNotPressureOrFluoride(GameTestHelper h) {
+        var ceramic=PipeMaterial.CERAMIC;
+        h.assertTrue(ceramic.incompatibility(FluidHazards.named("zirconium_sulfate_solution")).equals("safe"),"Fired clay takes hot sulfate liquors");
+        h.assertTrue(ceramic.incompatibility(FluidHazards.named("hydrogen_fluoride")).equals("corrosion"),"Hydrogen fluoride eats ceramic");
+        h.assertTrue(ceramic.incompatibility(FluidHazards.named("compressed_synthesis_feed")).equals("pressure"),"Ceramic is too brittle for pressure");
+        transfer(h,straight(CETransport.CERAMIC_PIPE.get().defaultBlockState()),CEUranium.SULFURIC_ACID.get(),false,false);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void stainlessPipeCarriesLikeCreatesPipe(GameTestHelper h) {
+        transfer(h,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()),CEPetroFluids.CRUDE_OIL.get(),false,false);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void stainlessGlassPipeCarriesLikeCreatesGlassPipe(GameTestHelper h) {
+        transfer(h,CETransport.STAINLESS_GLASS_PIPE.get().defaultBlockState().setValue(BlockStateProperties.AXIS,Direction.Axis.X),CEPetroFluids.CRUDE_OIL.get(),false,false);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void stainlessEncasedPipeCarriesLikeCreatesEncasedPipe(GameTestHelper h) {
+        transfer(h,straight(CETransport.STAINLESS_ENCASED_PIPE.get().defaultBlockState()),CEPetroFluids.CRUDE_OIL.get(),false,false);
+    }
+    @GameTest(template="test_petrochemical")
+    public static void stainlessPipeWrenchAndCasingRoundTripsStayStainless(GameTestHelper h) {
+        var player=h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        BlockPos at=h.absolutePos(PIPE);
+        var hit=new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(at).add(0,.5,0),Direction.UP,at,false);
+        java.util.function.Supplier<BlockState> state=()->h.getBlockState(PIPE);
+        // A placed pipe's behaviours initialise on its first tick, which Create's wrench relies on.
+        Runnable wrench=()->{
+            if(h.getBlockEntity(PIPE) instanceof SmartBlockEntity pipe) pipe.tick();
+            player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,com.simibubi.create.AllItems.WRENCH.asStack());
+            ((com.simibubi.create.content.equipment.wrench.IWrenchable)state.get().getBlock())
+                .onWrenched(state.get(),new net.minecraft.world.item.context.UseOnContext(player,net.minecraft.world.InteractionHand.MAIN_HAND,hit));
+        };
+        Runnable encase=()->{
+            var casing=AllBlocks.COPPER_CASING.asStack();player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,casing);
+            state.get().useItemOn(casing,h.getLevel(),player,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
+        };
+        h.setBlock(PIPE,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()));
+        wrench.run();
+        h.assertTrue(state.get().is(CETransport.STAINLESS_GLASS_PIPE.get()) && state.get().getValue(BlockStateProperties.AXIS)==Direction.Axis.X,"A wrenched straight stainless pipe becomes the stainless glass pipe: "+state.get());
+        wrench.run();
+        h.assertTrue(state.get().is(CETransport.STAINLESS_PIPE.get()) && state.get().getValue(PipeBlock.EAST) && state.get().getValue(PipeBlock.WEST),"A wrenched stainless glass pipe returns to the stainless pipe: "+state.get());
+        encase.run();
+        h.assertTrue(state.get().is(CETransport.STAINLESS_ENCASED_PIPE.get()) && state.get().getValue(PipeBlock.EAST) && state.get().getValue(PipeBlock.WEST),"Copper casing encases the stainless pipe as the stainless encased pipe: "+state.get());
+        wrench.run();
+        h.assertTrue(state.get().is(CETransport.STAINLESS_PIPE.get()),"Wrenching off the casing returns the stainless pipe: "+state.get());
+        wrench.run();encase.run();
+        h.assertTrue(state.get().is(CETransport.STAINLESS_ENCASED_PIPE.get()),"Copper casing on the stainless glass pipe gives the stainless encased pipe: "+state.get());
+        for(var block:new Block[]{CETransport.STAINLESS_PIPE.get(),CETransport.STAINLESS_GLASS_PIPE.get(),CETransport.STAINLESS_ENCASED_PIPE.get()})
+            h.assertTrue(block.defaultBlockState().getCloneItemStack(hit,h.getLevel(),at,player).is(CETransport.STAINLESS_PIPE.get().asItem()),"Pick block gives the stainless pipe for "+block);
+        h.succeed();
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void nativeSmartFluidFilterAcceptsTheAddonBucket(GameTestHelper h) {
+        transfer(h,AllBlocks.SMART_FLUID_PIPE.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING,Direction.EAST),CEPetroFluids.CRUDE_OIL.get(),true,true);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void aReallyDrivenCreateValveOpensTheAddonLine(GameTestHelper h) {
+        transfer(h,AllBlocks.FLUID_VALVE.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP)
+            .setValue(com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE,false),CEPetroFluids.CRUDE_OIL.get(),true,false);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void reinforcedPipeCarriesCompressedGasIntoCreateStorage(GameTestHelper h) {
+        transfer(h,straight(CETransport.REINFORCED_PIPE.get().defaultBlockState()),CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),false,false);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void stainlessMainCarriesHighPressureGasWithoutWear(GameTestHelper h) {
+        transfer(h,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()),CEProcessFluids.COMPRESSED_HYDROGEN.get(),false,false);
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void resinPipeCarriesNitricAcidWithNoUnnecessaryDamage(GameTestHelper h) {
+        transfer(h,straight(CEBlocks.RESIN_PIPE.get().defaultBlockState()),CEFluids.NITRIC_ACID.get(),false,false);
+    }
+    private static BlockState straight(BlockState state) {
+        for(var p:PipeBlock.PROPERTY_BY_DIRECTION.values())state=state.setValue(p,false);
+        return state.setValue(PipeBlock.WEST,true).setValue(PipeBlock.EAST,true);
+    }
+    private static IFluidHandler fluids(GameTestHelper h,BlockPos p) {
+        return h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(p),Direction.WEST);
+    }
+    private static void drive(GameTestHelper h,BlockPos p,Direction facing) {
+        h.setBlock(p,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,facing));
+        h.runAfterDelay(5,()->((CreativeMotorBlockEntity)h.getBlockEntity(p)).generatedSpeed.setValue(256));
+    }
+    private static void transfer(GameTestHelper h,BlockState pipe,Fluid fluid,boolean addon,boolean filter) {
+        boolean gas=FluidHazards.of(new FluidStack(fluid,1000)).gas();
+        var storage=gas ? CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.X) : CETransport.STAINLESS_STEEL_TANK.get().defaultBlockState();
+        h.setBlock(SOURCE,storage);h.setBlock(TARGET,storage);
+        h.setBlock(PIPE,pipe);h.setBlock(PUMP,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
+        h.setBlock(new BlockPos(2,2,4),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
+        drive(h,new BlockPos(1,2,4),Direction.EAST);
+        if(pipe.getBlock() instanceof FluidValveBlock) h.runAfterDelay(40,()-> {
+            h.assertTrue(fluids(h,TARGET).getFluidInTank(0).isEmpty(),"The undriven closed valve must stop addon fluid");
+            drive(h,PIPE.north(),Direction.SOUTH);
+        });
+        if(filter) {
+            var selection=BlockEntityBehaviour.get(h.getBlockEntity(PIPE),FilteringBehaviour.TYPE);
+            selection.setFilter(new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
+            h.runAfterDelay(40,()->{
+                h.assertTrue(fluids(h,TARGET).getFluidInTank(0).isEmpty(),"A mismatched native filter must reject the addon fluid");
+                selection.setFilter(new ItemStack(com.jesz.createdieselgenerators.CDGFluids.CRUDE_OIL.getBucket().get()));
+            });
+        }
+        IFluidHandler source=fluids(h,SOURCE),dest=fluids(h,TARGET);
+        h.assertTrue(source!=null && dest!=null && source.fill(new FluidStack(fluid,1000),IFluidHandler.FluidAction.EXECUTE)==1000,"A finite source and actual exposed destination must exist");
+        h.succeedWhen(()->{
+            var at=h.getBlockEntity(PIPE);
+            String detail=at instanceof com.simibubi.create.content.kinetics.base.KineticBlockEntity kinetic?" speed="+kinetic.getSpeed():"";
+            h.assertTrue(dest.getFluidInTank(0).getAmount()==1000 && dest.getFluidInTank(0).is(fluid) && source.getFluidInTank(0).isEmpty(),"Real transport must conserve 1000 mB: source="+source.getFluidInTank(0)+" target="+dest.getFluidInTank(0)+" pipe="+h.getBlockState(PIPE)+detail);
+        });
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:brine",
+      "amount": 8000
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:borax",
+      "count": 1
+    },
+    {
+      "id": "create_refinery_n_reactors:salt",
+      "count": 4
+    }
+  ],
+  "processing_time": 400,
+  "heat_requirement": "heated"
+}

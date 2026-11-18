@@ -1,0 +1,32 @@
+{
+  "type": "create_refinery_n_reactors:vitrification",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:high_level_raffinate",
+      "amount": 1600
+    },
+    {
+      "item": "create_refinery_n_reactors:borosilicate_glass_frit"
+    },
+    {
+      "item": "create_refinery_n_reactors:borosilicate_glass_frit"
+    },
+    {
+      "item": "create_refinery_n_reactors:borosilicate_glass_frit"
+    },
+    {
+      "item": "create_refinery_n_reactors:borosilicate_glass_frit"
+    },
+    {
+      "item": "create_refinery_n_reactors:empty_waste_canister"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:vitrified_waste_canister",
+      "count": 1
+    }
+  ],
+  "processing_time": 1200
+}

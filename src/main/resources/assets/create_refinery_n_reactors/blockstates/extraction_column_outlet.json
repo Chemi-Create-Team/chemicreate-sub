@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "tank=2": {
+      "model": "create_refinery_n_reactors:block/plant_systems/extraction_column_outlet"
+    },
+    "tank=3": {
+      "model": "create_refinery_n_reactors:block/plant_systems/extraction_column_outlet"
+    },
+    "tank=4": {
+      "model": "create_refinery_n_reactors:block/plant_systems/extraction_column_outlet"
+    },
+    "tank=5": {
+      "model": "create_refinery_n_reactors:block/plant_systems/extraction_column_outlet"
+    }
+  }
+}

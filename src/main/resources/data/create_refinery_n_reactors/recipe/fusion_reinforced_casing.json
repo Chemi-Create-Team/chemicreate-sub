@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ASA",
+    "SCS",
+    "ASA"
+  ],
+  "key": {
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "C": {
+      "item": "create:sturdy_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_reinforced_casing",
+    "count": 8
+  }
+}

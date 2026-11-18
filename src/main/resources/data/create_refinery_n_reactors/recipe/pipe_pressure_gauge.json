@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:compass"
+    },
+    {
+      "item": "create:fluid_pipe"
+    },
+    {
+      "item": "create:iron_sheet"
+    },
+    {
+      "item": "create_refinery_n_reactors:industrial_glass"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:pipe_pressure_gauge",
+    "count": 1
+  }
+}

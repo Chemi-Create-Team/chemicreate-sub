@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "facing=north,part=loose": {
+      "model": "create_refinery_n_reactors:block/converter/loose",
+      "y": 0
+    },
+    "facing=north,part=lance": {
+      "model": "create_refinery_n_reactors:block/converter/lance",
+      "y": 0
+    },
+    "facing=north,part=raw_port": {
+      "model": "create_refinery_n_reactors:block/converter/raw_port",
+      "y": 0
+    },
+    "facing=north,part=gas_port": {
+      "model": "create_refinery_n_reactors:block/converter/gas_port",
+      "y": 0
+    },
+    "facing=north,part=tap": {
+      "model": "create_refinery_n_reactors:block/converter/tap",
+      "y": 0
+    },
+    "facing=north,part=bearing": {
+      "model": "create_refinery_n_reactors:block/converter/bearing",
+      "y": 0
+    },
+    "facing=east,part=loose": {
+      "model": "create_refinery_n_reactors:block/converter/loose",
+      "y": 90
+    },
+    "facing=east,part=lance": {
+      "model": "create_refinery_n_reactors:block/converter/lance",
+      "y": 90
+    },
+    "facing=east,part=raw_port": {
+      "model": "create_refinery_n_reactors:block/converter/raw_port",
+      "y": 90
+    },
+    "facing=east,part=gas_port": {
+      "model": "create_refinery_n_reactors:block/converter/gas_port",
+      "y": 90
+    },
+    "facing=east,part=tap": {
+      "model": "create_refinery_n_reactors:block/converter/tap",
+      "y": 90
+    },
+    "facing=east,part=bearing": {
+      "model": "create_refinery_n_reactors:block/converter/bearing",
+      "y": 90
+    },
+    "facing=south,part=loose": {
+      "model": "create_refinery_n_reactors:block/converter/loose",
+      "y": 180
+    },
+    "facing=south,part=lance": {
+      "model": "create_refinery_n_reactors:block/converter/lance",
+      "y": 180
+    },
+    "facing=south,part=raw_port": {
+      "model": "create_refinery_n_reactors:block/converter/raw_port",
+      "y": 180
+    },
+    "facing=south,part=gas_port": {
+      "model": "create_refinery_n_reactors:block/converter/gas_port",
+      "y": 180
+    },
+    "facing=south,part=tap": {
+      "model": "create_refinery_n_reactors:block/converter/tap",
+      "y": 180
+    },
+    "facing=south,part=bearing": {
+      "model": "create_refinery_n_reactors:block/converter/bearing",
+      "y": 180
+    },
+    "facing=west,part=loose": {
+      "model": "create_refinery_n_reactors:block/converter/loose",
+      "y": 270
+    },
+    "facing=west,part=lance": {
+      "model": "create_refinery_n_reactors:block/converter/lance",
+      "y": 270
+    },
+    "facing=west,part=raw_port": {
+      "model": "create_refinery_n_reactors:block/converter/raw_port",
+      "y": 270
+    },
+    "facing=west,part=gas_port": {
+      "model": "create_refinery_n_reactors:block/converter/gas_port",
+      "y": 270
+    },
+    "facing=west,part=tap": {
+      "model": "create_refinery_n_reactors:block/converter/tap",
+      "y": 270
+    },
+    "facing=west,part=bearing": {
+      "model": "create_refinery_n_reactors:block/converter/bearing",
+      "y": 270
+    }
+  }
+}

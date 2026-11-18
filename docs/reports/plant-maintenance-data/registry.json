@@ -1,0 +1,2053 @@
+{
+  "items": [
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:air_filter",
+      "translation": "block.create_heavy_indusstry.air_filter"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:air_gas_bucket",
+      "translation": "item.create_heavy_indusstry.air_gas_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:alumina",
+      "translation": "item.create_heavy_indusstry.alumina"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:aluminium_sulfate_solution_bucket",
+      "translation": "item.create_heavy_indusstry.aluminium_sulfate_solution_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:aluminum_ingot",
+      "translation": "item.create_heavy_indusstry.aluminum_ingot"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:aluminum_sheet",
+      "translation": "item.create_heavy_indusstry.aluminum_sheet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ammonia_gas_bucket",
+      "translation": "item.create_heavy_indusstry.ammonia_gas_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:ammonia_separator",
+      "translation": "block.create_heavy_indusstry.ammonia_separator"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ammonium_nitrate",
+      "translation": "item.create_heavy_indusstry.ammonium_nitrate"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ammonium_sulfate",
+      "translation": "item.create_heavy_indusstry.ammonium_sulfate"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:anfo",
+      "translation": "item.create_heavy_indusstry.anfo"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:antifreeze_bucket",
+      "translation": "item.create_heavy_indusstry.antifreeze_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:argon_gas_bucket",
+      "translation": "item.create_heavy_indusstry.argon_gas_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:asbestos",
+      "translation": "item.create_heavy_indusstry.asbestos"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:asbestos_wrapped_electrode",
+      "translation": "item.create_heavy_indusstry.asbestos_wrapped_electrode"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:back_pressure_valve",
+      "translation": "block.create_heavy_indusstry.back_pressure_valve"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:bauxite",
+      "translation": "item.create_heavy_indusstry.bauxite"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:bauxite_ore",
+      "translation": "block.create_heavy_indusstry.bauxite_ore"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:biological_shield",
+      "translation": "block.create_heavy_indusstry.biological_shield"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:biological_shield_coolant_outlet",
+      "translation": "block.create_heavy_indusstry.biological_shield_coolant_outlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:biological_shield_drive",
+      "translation": "block.create_heavy_indusstry.biological_shield_drive"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:black_large_flywheel",
+      "translation": "block.create_heavy_indusstry.black_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:blasting_charge",
+      "translation": "block.create_heavy_indusstry.blasting_charge"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:blue_large_flywheel",
+      "translation": "block.create_heavy_indusstry.blue_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:borax",
+      "translation": "item.create_heavy_indusstry.borax"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:borosilicate_glass_frit",
+      "translation": "item.create_heavy_indusstry.borosilicate_glass_frit"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:brine_bucket",
+      "translation": "item.create_heavy_indusstry.brine_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:brown_large_flywheel",
+      "translation": "block.create_heavy_indusstry.brown_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:butanol_bucket",
+      "translation": "item.create_heavy_indusstry.butanol_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:butyraldehyde_bucket",
+      "translation": "item.create_heavy_indusstry.butyraldehyde_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:caustic_soda_solution_bucket",
+      "translation": "item.create_heavy_indusstry.caustic_soda_solution_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:cement_clinker",
+      "translation": "item.create_heavy_indusstry.cement_clinker"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:cement_powder",
+      "translation": "item.create_heavy_indusstry.cement_powder"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:charred_wood",
+      "translation": "block.create_heavy_indusstry.charred_wood"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:chopped_spent_fuel",
+      "translation": "item.create_heavy_indusstry.chopped_spent_fuel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:chromite",
+      "translation": "item.create_heavy_indusstry.chromite"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:chromite_ore",
+      "translation": "block.create_heavy_indusstry.chromite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:chromium_ingot",
+      "translation": "item.create_heavy_indusstry.chromium_ingot"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:chromium_oxide",
+      "translation": "item.create_heavy_indusstry.chromium_oxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:clarified_water_bucket",
+      "translation": "item.create_heavy_indusstry.clarified_water_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:compact_enriched_fuel_rod",
+      "translation": "item.create_heavy_indusstry.compact_enriched_fuel_rod"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:compact_uranium_dioxide",
+      "translation": "item.create_heavy_indusstry.compact_uranium_dioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:compact_uranium_pellet",
+      "translation": "item.create_heavy_indusstry.compact_uranium_pellet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:condenser_cooling_inlet",
+      "translation": "block.create_heavy_indusstry.condenser_cooling_inlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:condenser_cooling_outlet",
+      "translation": "block.create_heavy_indusstry.condenser_cooling_outlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:condenser_shell",
+      "translation": "block.create_heavy_indusstry.condenser_shell"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:condenser_tube_bundle",
+      "translation": "block.create_heavy_indusstry.condenser_tube_bundle"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:condenser_waterbox",
+      "translation": "block.create_heavy_indusstry.condenser_waterbox"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:control_rod",
+      "translation": "item.create_heavy_indusstry.control_rod"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:control_rod_controller",
+      "translation": "block.create_heavy_indusstry.control_rod_controller"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:control_rod_link",
+      "translation": "block.create_heavy_indusstry.control_rod_link"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:control_valve_actuator",
+      "translation": "block.create_heavy_indusstry.control_valve_actuator"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:converter_gas_bucket",
+      "translation": "item.create_heavy_indusstry.converter_gas_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:converter_shell",
+      "translation": "block.create_heavy_indusstry.converter_shell"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:converter_trunnion_bearing",
+      "translation": "block.create_heavy_indusstry.converter_trunnion_bearing"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:cooled_hydrocracker_effluent_bucket",
+      "translation": "item.create_heavy_indusstry.cooled_hydrocracker_effluent_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:cooled_hydrotreater_effluent_bucket",
+      "translation": "item.create_heavy_indusstry.cooled_hydrotreater_effluent_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:cooled_olefins_bucket",
+      "translation": "item.create_heavy_indusstry.cooled_olefins_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooler_radiator",
+      "translation": "block.create_heavy_indusstry.cooler_radiator"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_fan",
+      "translation": "block.create_heavy_indusstry.cooling_fan"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_fan_shroud",
+      "translation": "block.create_heavy_indusstry.cooling_fan_shroud"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_tower_basin",
+      "translation": "block.create_heavy_indusstry.cooling_tower_basin"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_tower_cold_outlet",
+      "translation": "block.create_heavy_indusstry.cooling_tower_cold_outlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_tower_distributor",
+      "translation": "block.create_heavy_indusstry.cooling_tower_distributor"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_tower_fill",
+      "translation": "block.create_heavy_indusstry.cooling_tower_fill"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_tower_hot_inlet",
+      "translation": "block.create_heavy_indusstry.cooling_tower_hot_inlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_tower_makeup_inlet",
+      "translation": "block.create_heavy_indusstry.cooling_tower_makeup_inlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cooling_tower_shell",
+      "translation": "block.create_heavy_indusstry.cooling_tower_shell"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:corrosion_resistant_bucket",
+      "translation": "item.create_heavy_indusstry.corrosion_resistant_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:corrosion_resistant_floor",
+      "translation": "block.create_heavy_indusstry.corrosion_resistant_floor"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:corrosion_resistant_floor_slab",
+      "translation": "block.create_heavy_indusstry.corrosion_resistant_floor_slab"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:cracking_catalyst",
+      "translation": "item.create_heavy_indusstry.cracking_catalyst"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:crane_drive",
+      "translation": "block.create_heavy_indusstry.crane_drive"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cryogenic_cold_box_drive",
+      "translation": "block.create_heavy_indusstry.cryogenic_cold_box_drive"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cryogenic_pipe",
+      "translation": "block.create_heavy_indusstry.cryogenic_pipe"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cryogenic_regenerator",
+      "translation": "block.create_heavy_indusstry.cryogenic_regenerator"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cryogenic_tank",
+      "translation": "block.create_heavy_indusstry.cryogenic_tank"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:cyan_large_flywheel",
+      "translation": "block.create_heavy_indusstry.cyan_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_bauxite_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_bauxite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_chromite_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_chromite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_halite_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_halite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_ilmenite_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_ilmenite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_molybdenite_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_molybdenite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_pentlandite_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_pentlandite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_uranium_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_uranium_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deepslate_zircon_ore",
+      "translation": "block.create_heavy_indusstry.deepslate_zircon_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:depleted_uranium_dioxide",
+      "translation": "item.create_heavy_indusstry.depleted_uranium_dioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deuterium_depleted_water_bucket",
+      "translation": "item.create_heavy_indusstry.deuterium_depleted_water_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:deuterium_gas_bucket",
+      "translation": "item.create_heavy_indusstry.deuterium_gas_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:diorite_casing",
+      "translation": "block.create_heavy_indusstry.diorite_casing"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:dissolved_spent_fuel_bucket",
+      "translation": "item.create_heavy_indusstry.dissolved_spent_fuel_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:electrolysis_cell",
+      "translation": "block.create_heavy_indusstry.electrolysis_cell"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:electrolysis_cell_controller",
+      "translation": "block.create_heavy_indusstry.electrolysis_cell_controller"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:electrolysis_furnace_anode",
+      "translation": "block.create_heavy_indusstry.electrolysis_furnace_anode"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:electrolysis_furnace_busbar",
+      "translation": "block.create_heavy_indusstry.electrolysis_furnace_busbar"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:electrolysis_furnace_shell",
+      "translation": "block.create_heavy_indusstry.electrolysis_furnace_shell"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:empty_waste_canister",
+      "translation": "block.create_heavy_indusstry.empty_waste_canister"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:enriched_uranium_dioxide",
+      "translation": "item.create_heavy_indusstry.enriched_uranium_dioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ethylene_bucket",
+      "translation": "item.create_heavy_indusstry.ethylene_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ethylene_dichloride_bucket",
+      "translation": "item.create_heavy_indusstry.ethylene_dichloride_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ethylene_glycol_bucket",
+      "translation": "item.create_heavy_indusstry.ethylene_glycol_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:extraction_column_outlet",
+      "translation": "block.create_heavy_indusstry.extraction_column_outlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:extraction_column_shell",
+      "translation": "block.create_heavy_indusstry.extraction_column_shell"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:extraction_pulse_plate",
+      "translation": "block.create_heavy_indusstry.extraction_pulse_plate"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:flare_tip",
+      "translation": "block.create_heavy_indusstry.flare_tip"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:flow_regulator",
+      "translation": "block.create_heavy_indusstry.flow_regulator"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:fluorite",
+      "translation": "item.create_heavy_indusstry.fluorite"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fractionating_column",
+      "translation": "block.create_heavy_indusstry.fractionating_column"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fuel_cell",
+      "translation": "block.create_heavy_indusstry.fuel_cell"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fuel_pool",
+      "translation": "block.create_heavy_indusstry.fuel_pool"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:fuel_rod",
+      "translation": "item.create_heavy_indusstry.fuel_rod"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_ash_port",
+      "translation": "block.create_heavy_indusstry.fusion_ash_port"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_breeding_blanket",
+      "translation": "block.create_heavy_indusstry.fusion_breeding_blanket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_central_solenoid",
+      "translation": "block.create_heavy_indusstry.fusion_central_solenoid"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_console_panel",
+      "translation": "block.create_heavy_indusstry.fusion_console_panel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_control_console",
+      "translation": "block.create_heavy_indusstry.fusion_control_console"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_coolant_inlet",
+      "translation": "block.create_heavy_indusstry.fusion_coolant_inlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_coolant_outlet",
+      "translation": "block.create_heavy_indusstry.fusion_coolant_outlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_deuterium_port",
+      "translation": "block.create_heavy_indusstry.fusion_deuterium_port"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_divertor",
+      "translation": "block.create_heavy_indusstry.fusion_divertor"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_helium_inlet",
+      "translation": "block.create_heavy_indusstry.fusion_helium_inlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_helium_outlet",
+      "translation": "block.create_heavy_indusstry.fusion_helium_outlet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_maintenance_hatch",
+      "translation": "block.create_heavy_indusstry.fusion_maintenance_hatch"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_motor_generator",
+      "translation": "block.create_heavy_indusstry.fusion_motor_generator"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_reactor_controller",
+      "translation": "block.create_heavy_indusstry.fusion_reactor_controller"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_reinforced_casing",
+      "translation": "block.create_heavy_indusstry.fusion_reinforced_casing"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_toroidal_field_coil",
+      "translation": "block.create_heavy_indusstry.fusion_toroidal_field_coil"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_tritium_port",
+      "translation": "block.create_heavy_indusstry.fusion_tritium_port"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_vacuum_pump",
+      "translation": "block.create_heavy_indusstry.fusion_vacuum_pump"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:fusion_vacuum_vessel",
+      "translation": "block.create_heavy_indusstry.fusion_vacuum_vessel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:gas_holder",
+      "translation": "block.create_heavy_indusstry.gas_holder"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:gas_mask",
+      "translation": "item.create_heavy_indusstry.gas_mask"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:gas_pipe",
+      "translation": "block.create_heavy_indusstry.gas_pipe"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:gas_receiver",
+      "translation": "block.create_heavy_indusstry.gas_receiver"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:gray_large_flywheel",
+      "translation": "block.create_heavy_indusstry.gray_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:green_compact_uranium_pellet",
+      "translation": "item.create_heavy_indusstry.green_compact_uranium_pellet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:green_large_flywheel",
+      "translation": "block.create_heavy_indusstry.green_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:green_mox_pellet",
+      "translation": "item.create_heavy_indusstry.green_mox_pellet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:green_uranium_pellet",
+      "translation": "item.create_heavy_indusstry.green_uranium_pellet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ground_clinker",
+      "translation": "item.create_heavy_indusstry.ground_clinker"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:gypsum",
+      "translation": "item.create_heavy_indusstry.gypsum"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:halite_ore",
+      "translation": "block.create_heavy_indusstry.halite_ore"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:heat_exchanger_casing",
+      "translation": "block.create_heavy_indusstry.heat_exchanger_casing"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:heat_exchanger_cover",
+      "translation": "block.create_heavy_indusstry.heat_exchanger_cover"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:heat_exchanger_support",
+      "translation": "block.create_heavy_indusstry.heat_exchanger_support"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:heat_exchanger_tubes",
+      "translation": "block.create_heavy_indusstry.heat_exchanger_tubes"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:heated_diesel_bucket",
+      "translation": "item.create_heavy_indusstry.heated_diesel_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:heated_heavy_oil_bucket",
+      "translation": "item.create_heavy_indusstry.heated_heavy_oil_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:heated_naphtha_bucket",
+      "translation": "item.create_heavy_indusstry.heated_naphtha_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:heavy_oil_bucket",
+      "translation": "item.create_heavy_indusstry.heavy_oil_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:heavy_water_bucket",
+      "translation": "item.create_heavy_indusstry.heavy_water_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:helium_gas_bucket",
+      "translation": "item.create_heavy_indusstry.helium_gas_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:helium_recovery_feed_bucket",
+      "translation": "item.create_heavy_indusstry.helium_recovery_feed_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:high_level_raffinate_bucket",
+      "translation": "item.create_heavy_indusstry.high_level_raffinate_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:high_pressure_turbine_blade",
+      "translation": "item.create_heavy_indusstry.high_pressure_turbine_blade"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:high_pressure_turbine_casing",
+      "translation": "block.create_heavy_indusstry.high_pressure_turbine_part"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:horizontal_fluid_tank",
+      "translation": "block.create_heavy_indusstry.horizontal_fluid_tank"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:hot_hydrocracker_effluent_bucket",
+      "translation": "item.create_heavy_indusstry.hot_hydrocracker_effluent_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:hot_hydrotreater_effluent_bucket",
+      "translation": "item.create_heavy_indusstry.hot_hydrotreater_effluent_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:hydrochloric_acid_bucket",
+      "translation": "item.create_heavy_indusstry.hydrochloric_acid_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:hydrocracking_catalyst",
+      "translation": "item.create_heavy_indusstry.hydrocracking_catalyst"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:hydrogen_gas_bucket",
+      "translation": "item.create_heavy_indusstry.hydrogen_gas_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:hydrotreating_catalyst",
+      "translation": "item.create_heavy_indusstry.hydrotreating_catalyst"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ilmenite",
+      "translation": "item.create_heavy_indusstry.ilmenite"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:ilmenite_ore",
+      "translation": "block.create_heavy_indusstry.ilmenite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:incomplete_puddled_iron",
+      "translation": "item.create_heavy_indusstry.incomplete_puddled_iron"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_concrete",
+      "translation": "block.create_heavy_indusstry.industrial_concrete"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_concrete_slab",
+      "translation": "block.create_heavy_indusstry.industrial_concrete_slab"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_concrete_stairs",
+      "translation": "block.create_heavy_indusstry.industrial_concrete_stairs"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_dispatch_board",
+      "translation": "block.create_heavy_indusstry.industrial_dispatch_board"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_glass",
+      "translation": "block.create_heavy_indusstry.industrial_glass"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_heater",
+      "translation": "block.create_heavy_indusstry.industrial_heater"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_heater_chamber",
+      "translation": "block.create_heavy_indusstry.industrial_heater_chamber"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_heater_coil",
+      "translation": "block.create_heavy_indusstry.industrial_heater_coil"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_heater_flue",
+      "translation": "block.create_heavy_indusstry.industrial_heater_flue"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:industrial_heater_roof",
+      "translation": "block.create_heavy_indusstry.industrial_heater_roof"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:industrial_resin",
+      "translation": "item.create_heavy_indusstry.industrial_resin"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:iron_catalyst",
+      "translation": "item.create_heavy_indusstry.iron_catalyst"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:iron_oxide_red",
+      "translation": "item.create_heavy_indusstry.iron_oxide_red"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:irradiated_lithium_target_rod",
+      "translation": "item.create_heavy_indusstry.irradiated_lithium_target_rod"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:large_flywheel",
+      "translation": "block.create_heavy_indusstry.large_flywheel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:large_gas_pipe",
+      "translation": "block.create_heavy_indusstry.large_gas_pipe"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:lidded_vessel",
+      "translation": "block.create_heavy_indusstry.lidded_vessel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:light_blue_large_flywheel",
+      "translation": "block.create_heavy_indusstry.light_blue_large_flywheel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:light_gray_large_flywheel",
+      "translation": "block.create_heavy_indusstry.light_gray_large_flywheel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:lime_large_flywheel",
+      "translation": "block.create_heavy_indusstry.lime_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_ammonia_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_ammonia_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_chlorine_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_chlorine_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_helium_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_helium_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_nitrogen_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_nitrogen_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_oxygen_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_oxygen_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_propylene_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_propylene_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_sulfur_dioxide_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_sulfur_dioxide_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:liquid_tank",
+      "translation": "block.create_heavy_indusstry.liquid_tank"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:liquid_vinyl_chloride_bucket",
+      "translation": "item.create_heavy_indusstry.liquid_vinyl_chloride_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:lithium_lead_blanket_cartridge",
+      "translation": "item.create_heavy_indusstry.lithium_lead_blanket_cartridge"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:lithium_target_rod",
+      "translation": "item.create_heavy_indusstry.lithium_target_rod"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:low_pressure_turbine_blade",
+      "translation": "item.create_heavy_indusstry.low_pressure_turbine_blade"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:low_pressure_turbine_casing",
+      "translation": "block.create_heavy_indusstry.high_pressure_turbine_part"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:low_pressure_turbine_end",
+      "translation": "item.create_heavy_indusstry.low_pressure_turbine_end"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:low_sulfur_diesel_bucket",
+      "translation": "item.create_heavy_indusstry.low_sulfur_diesel_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:lubricating_oil_bucket",
+      "translation": "item.create_heavy_indusstry.lubricating_oil_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:magenta_large_flywheel",
+      "translation": "block.create_heavy_indusstry.magenta_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:molten_polyethylene_bucket",
+      "translation": "item.create_heavy_indusstry.molten_polyethylene_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:molten_polypropylene_bucket",
+      "translation": "item.create_heavy_indusstry.molten_polypropylene_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:molybdenite",
+      "translation": "item.create_heavy_indusstry.molybdenite"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:molybdenite_ore",
+      "translation": "block.create_heavy_indusstry.molybdenite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:molybdenum_blue",
+      "translation": "item.create_heavy_indusstry.molybdenum_blue"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:molybdenum_ingot",
+      "translation": "item.create_heavy_indusstry.molybdenum_ingot"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:molybdenum_trioxide",
+      "translation": "item.create_heavy_indusstry.molybdenum_trioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:mox_fuel_rod",
+      "translation": "item.create_heavy_indusstry.mox_fuel_rod"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:mox_pellet",
+      "translation": "item.create_heavy_indusstry.mox_pellet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:mox_powder",
+      "translation": "item.create_heavy_indusstry.mox_powder"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:naphtha_bucket",
+      "translation": "item.create_heavy_indusstry.naphtha_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:natural_draft_cooling_tower",
+      "translation": "block.create_heavy_indusstry.natural_draft_cooling_tower"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:neutralized_wastewater_bucket",
+      "translation": "item.create_heavy_indusstry.neutralized_wastewater_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:nickel_alloy_pipe",
+      "translation": "block.create_heavy_indusstry.nickel_alloy_pipe"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nickel_electrode_plate",
+      "translation": "item.create_heavy_indusstry.nickel_electrode_plate"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nickel_ingot",
+      "translation": "item.create_heavy_indusstry.nickel_ingot"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nickel_oxide",
+      "translation": "item.create_heavy_indusstry.nickel_oxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nickel_sheet",
+      "translation": "item.create_heavy_indusstry.nickel_sheet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nickel_titanium_yellow",
+      "translation": "item.create_heavy_indusstry.nickel_titanium_yellow"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nitric_acid_bucket",
+      "translation": "item.create_heavy_indusstry.nitric_acid_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nitric_oxide_bucket",
+      "translation": "item.create_heavy_indusstry.nitric_oxide_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nitrogen_dioxide_bucket",
+      "translation": "item.create_heavy_indusstry.nitrogen_dioxide_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:nitrogen_gas_bucket",
+      "translation": "item.create_heavy_indusstry.nitrogen_gas_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:off_spec_solution_bucket",
+      "translation": "item.create_heavy_indusstry.off_spec_solution_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:orange_large_flywheel",
+      "translation": "block.create_heavy_indusstry.orange_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:oxidation_catalyst",
+      "translation": "item.create_heavy_indusstry.oxidation_catalyst"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:oxygen_gas_bucket",
+      "translation": "item.create_heavy_indusstry.oxygen_gas_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:pentlandite",
+      "translation": "item.create_heavy_indusstry.pentlandite"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:pentlandite_ore",
+      "translation": "block.create_heavy_indusstry.pentlandite_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:phosphoric_acid_bucket",
+      "translation": "item.create_heavy_indusstry.phosphoric_acid_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pid_controller",
+      "translation": "block.create_heavy_indusstry.pid_controller"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pid_instrument_rack",
+      "translation": "block.create_heavy_indusstry.pid_instrument_rack"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pink_large_flywheel",
+      "translation": "block.create_heavy_indusstry.pink_large_flywheel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pipe_flow_meter",
+      "translation": "block.create_heavy_indusstry.pipe_flow_meter"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pipe_pressure_gauge",
+      "translation": "block.create_heavy_indusstry.pipe_pressure_gauge"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pipe_support",
+      "translation": "block.create_heavy_indusstry.pipe_support"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pipe_thermometer",
+      "translation": "block.create_heavy_indusstry.pipe_thermometer"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:plastic_sheet",
+      "translation": "item.create_heavy_indusstry.plastic_sheet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:plutonium_dioxide",
+      "translation": "item.create_heavy_indusstry.plutonium_dioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:plutonium_nitrate_solution_bucket",
+      "translation": "item.create_heavy_indusstry.plutonium_nitrate_solution_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:polyethylene",
+      "translation": "item.create_heavy_indusstry.polyethylene"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:polymerization_catalyst",
+      "translation": "item.create_heavy_indusstry.polymerization_catalyst"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:polypropylene",
+      "translation": "item.create_heavy_indusstry.polypropylene"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pressure_reducing_valve",
+      "translation": "block.create_heavy_indusstry.pressure_reducing_valve"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pressure_tank",
+      "translation": "block.create_heavy_indusstry.pressure_tank"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:process_transmitter",
+      "translation": "block.create_heavy_indusstry.process_transmitter"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:propylene_bucket",
+      "translation": "item.create_heavy_indusstry.propylene_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:protective_cap",
+      "translation": "item.create_heavy_indusstry.protective_cap"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:protective_coat",
+      "translation": "item.create_heavy_indusstry.protective_coat"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:protective_shoe_covers",
+      "translation": "item.create_heavy_indusstry.protective_shoe_covers"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:protective_trousers",
+      "translation": "item.create_heavy_indusstry.protective_trousers"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:puddled_iron",
+      "translation": "item.create_heavy_indusstry.puddled_iron"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pulse_extraction_column",
+      "translation": "block.create_heavy_indusstry.pulse_extraction_column"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:purified_water_bucket",
+      "translation": "item.create_heavy_indusstry.purified_water_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:purple_large_flywheel",
+      "translation": "block.create_heavy_indusstry.purple_large_flywheel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:pvc_pipe",
+      "translation": "block.create_heavy_indusstry.pvc_pipe"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:pvc_resin",
+      "translation": "item.create_heavy_indusstry.pvc_resin"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:quarry_marker",
+      "translation": "block.create_heavy_indusstry.quarry_marker"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_catalyst_basket",
+      "translation": "item.create_heavy_indusstry.reactor_catalyst_basket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_control_console",
+      "translation": "block.create_heavy_indusstry.reactor_control_console"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_feed_bundle",
+      "translation": "block.create_heavy_indusstry.reactor_feed_bundle"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_fuel_channel",
+      "translation": "block.create_heavy_indusstry.reactor_fuel_channel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_fuel_channel_tube",
+      "translation": "block.create_heavy_indusstry.reactor_fuel_channel_tube"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_graphite",
+      "translation": "block.create_heavy_indusstry.reactor_graphite"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_impeller",
+      "translation": "item.create_heavy_indusstry.reactor_impeller"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_rotor_column",
+      "translation": "item.create_heavy_indusstry.reactor_rotor_column"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_separator_core",
+      "translation": "item.create_heavy_indusstry.reactor_separator_core"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reactor_top_cap",
+      "translation": "block.create_heavy_indusstry.reactor_top_cap"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reciprocating_compressor",
+      "translation": "block.create_heavy_indusstry.reciprocating_compressor"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reciprocating_cylinder",
+      "translation": "block.create_heavy_indusstry.reciprocating_cylinder"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:red_large_flywheel",
+      "translation": "block.create_heavy_indusstry.red_large_flywheel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:redstone_relief_valve",
+      "translation": "block.create_heavy_indusstry.redstone_relief_valve"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:reinforced_pipe",
+      "translation": "block.create_heavy_indusstry.reinforced_pipe"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:relief_scrubber",
+      "translation": "block.create_heavy_indusstry.relief_scrubber"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:relief_valve",
+      "translation": "block.create_heavy_indusstry.relief_valve"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:resin_pipe",
+      "translation": "block.create_heavy_indusstry.resin_pipe"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:rubber_gasket",
+      "translation": "item.create_heavy_indusstry.rubber_gasket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:salt",
+      "translation": "item.create_heavy_indusstry.salt"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:serpentinite",
+      "translation": "block.create_heavy_indusstry.serpentinite"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:soap",
+      "translation": "item.create_heavy_indusstry.soap"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:sodium_aluminate_solution_bucket",
+      "translation": "item.create_heavy_indusstry.sodium_aluminate_solution_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:sodium_hypochlorite_solution_bucket",
+      "translation": "item.create_heavy_indusstry.sodium_hypochlorite_solution_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:spent_blanket_cartridge",
+      "translation": "item.create_heavy_indusstry.spent_blanket_cartridge"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:spent_cladding_hulls",
+      "translation": "item.create_heavy_indusstry.spent_cladding_hulls"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:spent_control_rod",
+      "translation": "item.create_heavy_indusstry.spent_control_rod"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:spent_divertor_cassette",
+      "translation": "item.create_heavy_indusstry.spent_divertor_cassette"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:spent_fuel_rod",
+      "translation": "item.create_heavy_indusstry.spent_fuel_rod"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:stainless_steel_block",
+      "translation": "block.create_heavy_indusstry.stainless_steel_block"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:stainless_steel_ingot",
+      "translation": "item.create_heavy_indusstry.stainless_steel_ingot"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:stainless_steel_pipe",
+      "translation": "block.create_heavy_indusstry.stainless_steel_pipe"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:stainless_steel_sheet",
+      "translation": "item.create_heavy_indusstry.stainless_steel_sheet"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:stainless_steel_tank",
+      "translation": "block.create_heavy_indusstry.stainless_steel_tank"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:steam_bucket",
+      "translation": "item.create_heavy_indusstry.steam_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:sulfur_dust",
+      "translation": "item.create_heavy_indusstry.sulfur_dust"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:sulfuric_acid_bucket",
+      "translation": "item.create_heavy_indusstry.sulfuric_acid_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:synthetic_rubber",
+      "translation": "item.create_heavy_indusstry.synthetic_rubber"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:tank_casing",
+      "translation": "block.create_heavy_indusstry.tank_casing"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:tarbin_end",
+      "translation": "item.create_heavy_indusstry.tarbin_end"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:tbp_extraction_solvent_bucket",
+      "translation": "item.create_heavy_indusstry.tbp_extraction_solvent_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:titanium_block",
+      "translation": "block.create_heavy_indusstry.titanium_block"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:titanium_dioxide",
+      "translation": "item.create_heavy_indusstry.titanium_dioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:titanium_ingot",
+      "translation": "item.create_heavy_indusstry.titanium_ingot"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:titanium_sheet",
+      "translation": "item.create_heavy_indusstry.titanium_sheet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:titanyl_sulfate_solution_bucket",
+      "translation": "item.create_heavy_indusstry.titanyl_sulfate_solution_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:treatment_sludge",
+      "translation": "item.create_heavy_indusstry.treatment_sludge"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:tributyl_phosphate_bucket",
+      "translation": "item.create_heavy_indusstry.tributyl_phosphate_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:triiron_tetroxide_pile",
+      "translation": "block.create_heavy_indusstry.triiron_tetroxide_pile"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:tritium_gas_bucket",
+      "translation": "item.create_heavy_indusstry.tritium_gas_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:tubular_boiler",
+      "translation": "block.create_heavy_indusstry.tubular_boiler"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:tungsten_divertor_cassette",
+      "translation": "item.create_heavy_indusstry.tungsten_divertor_cassette"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:turbine_shaft",
+      "translation": "block.create_heavy_indusstry.turbine_shaft"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:ultra_high_pressure_pipe",
+      "translation": "block.create_heavy_indusstry.ultra_high_pressure_pipe"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:uraninite",
+      "translation": "item.create_heavy_indusstry.uraninite"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:uranium_dioxide",
+      "translation": "item.create_heavy_indusstry.uranium_dioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:uranium_ore",
+      "translation": "block.create_heavy_indusstry.uranium_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:uranium_pellet",
+      "translation": "item.create_heavy_indusstry.uranium_pellet"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:uranium_tetrafluoride",
+      "translation": "item.create_heavy_indusstry.uranium_tetrafluoride"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:uranium_trioxide",
+      "translation": "item.create_heavy_indusstry.uranium_trioxide"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:uranyl_nitrate_solution_bucket",
+      "translation": "item.create_heavy_indusstry.uranyl_nitrate_solution_bucket"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:vitrification_electrode",
+      "translation": "block.create_heavy_indusstry.vitrification_electrode"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:vitrification_melter",
+      "translation": "block.create_heavy_indusstry.vitrification_melter"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:vitrification_refractory_shell",
+      "translation": "block.create_heavy_indusstry.vitrification_refractory_shell"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:vitrified_waste_canister",
+      "translation": "block.create_heavy_indusstry.vitrified_waste_canister"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:warm_water_bucket",
+      "translation": "item.create_heavy_indusstry.warm_water_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:wastewater_bucket",
+      "translation": "item.create_heavy_indusstry.wastewater_bucket"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:water_filter_medium",
+      "translation": "item.create_heavy_indusstry.water_filter_medium"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:water_tank",
+      "translation": "block.create_heavy_indusstry.water_tank"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:water_treatment_flocculant",
+      "translation": "item.create_heavy_indusstry.water_treatment_flocculant"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:white_large_flywheel",
+      "translation": "block.create_heavy_indusstry.white_large_flywheel"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:yellow_large_flywheel",
+      "translation": "block.create_heavy_indusstry.yellow_large_flywheel"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:yellowcake",
+      "translation": "item.create_heavy_indusstry.yellowcake"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:zircaloy_cladding_tube",
+      "translation": "item.create_heavy_indusstry.zircaloy_cladding_tube"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:zircon",
+      "translation": "item.create_heavy_indusstry.zircon"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:zircon_ore",
+      "translation": "block.create_heavy_indusstry.zircon_ore"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:zirconia",
+      "translation": "item.create_heavy_indusstry.zirconia"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:zirconia_refractory_bricks",
+      "translation": "block.create_heavy_indusstry.zirconia_refractory_bricks"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:zirconium_ingot",
+      "translation": "item.create_heavy_indusstry.zirconium_ingot"
+    },
+    {
+      "tab": "equipment",
+      "id": "create_heavy_indusstry:zirconium_pipe",
+      "translation": "block.create_heavy_indusstry.zirconium_pipe"
+    },
+    {
+      "tab": "materials",
+      "id": "create_heavy_indusstry:zirconium_sulfate_solution_bucket",
+      "translation": "item.create_heavy_indusstry.zirconium_sulfate_solution_bucket"
+    }
+  ],
+  "fluids": [
+    "create_heavy_indusstry:air_gas",
+    "create_heavy_indusstry:aluminium_sulfate_solution",
+    "create_heavy_indusstry:ammonia_gas",
+    "create_heavy_indusstry:antifreeze",
+    "create_heavy_indusstry:argon_gas",
+    "create_heavy_indusstry:brine",
+    "create_heavy_indusstry:butanol",
+    "create_heavy_indusstry:butyraldehyde",
+    "create_heavy_indusstry:carbon_dioxide",
+    "create_heavy_indusstry:carbon_monoxide",
+    "create_heavy_indusstry:caustic_soda_solution",
+    "create_heavy_indusstry:chlorine",
+    "create_heavy_indusstry:clarified_water",
+    "create_heavy_indusstry:cold_nitric_oxide_mixture",
+    "create_heavy_indusstry:cold_synthesis_mixture",
+    "create_heavy_indusstry:compact_enriched_uranium_hexafluoride",
+    "create_heavy_indusstry:compressed_synthesis_feed",
+    "create_heavy_indusstry:contaminated_gas",
+    "create_heavy_indusstry:converter_gas",
+    "create_heavy_indusstry:cooled_hydrocracker_effluent",
+    "create_heavy_indusstry:cooled_hydrotreater_effluent",
+    "create_heavy_indusstry:cooled_olefins",
+    "create_heavy_indusstry:depleted_uranium_hexafluoride",
+    "create_heavy_indusstry:deuterium_depleted_water",
+    "create_heavy_indusstry:deuterium_gas",
+    "create_heavy_indusstry:dissolved_spent_fuel",
+    "create_heavy_indusstry:enriched_uranium_hexafluoride",
+    "create_heavy_indusstry:ethylene",
+    "create_heavy_indusstry:ethylene_dichloride",
+    "create_heavy_indusstry:ethylene_glycol",
+    "create_heavy_indusstry:ethylene_oxide",
+    "create_heavy_indusstry:fluorine",
+    "create_heavy_indusstry:heated_diesel",
+    "create_heavy_indusstry:heated_ethylene",
+    "create_heavy_indusstry:heated_heavy_oil",
+    "create_heavy_indusstry:heated_naphtha",
+    "create_heavy_indusstry:heated_propylene",
+    "create_heavy_indusstry:heated_synthesis_feed",
+    "create_heavy_indusstry:heavy_oil",
+    "create_heavy_indusstry:heavy_water",
+    "create_heavy_indusstry:helium_gas",
+    "create_heavy_indusstry:helium_recovery_feed",
+    "create_heavy_indusstry:high_level_raffinate",
+    "create_heavy_indusstry:hot_hydrocracker_effluent",
+    "create_heavy_indusstry:hot_hydrotreater_effluent",
+    "create_heavy_indusstry:hot_nitric_oxide_mixture",
+    "create_heavy_indusstry:hot_olefins",
+    "create_heavy_indusstry:hot_synthesis_mixture",
+    "create_heavy_indusstry:hydrochloric_acid",
+    "create_heavy_indusstry:hydrogen_chloride",
+    "create_heavy_indusstry:hydrogen_fluoride",
+    "create_heavy_indusstry:hydrogen_gas",
+    "create_heavy_indusstry:hydrogen_sulfide",
+    "create_heavy_indusstry:liquid_ammonia",
+    "create_heavy_indusstry:liquid_chlorine",
+    "create_heavy_indusstry:liquid_helium",
+    "create_heavy_indusstry:liquid_nitrogen",
+    "create_heavy_indusstry:liquid_oxygen",
+    "create_heavy_indusstry:liquid_propylene",
+    "create_heavy_indusstry:liquid_sulfur_dioxide",
+    "create_heavy_indusstry:liquid_vinyl_chloride",
+    "create_heavy_indusstry:low_sulfur_diesel",
+    "create_heavy_indusstry:lubricating_oil",
+    "create_heavy_indusstry:molten_polyethylene",
+    "create_heavy_indusstry:molten_polypropylene",
+    "create_heavy_indusstry:naphtha",
+    "create_heavy_indusstry:neutralized_wastewater",
+    "create_heavy_indusstry:nitric_acid",
+    "create_heavy_indusstry:nitric_oxide",
+    "create_heavy_indusstry:nitrogen_dioxide",
+    "create_heavy_indusstry:nitrogen_gas",
+    "create_heavy_indusstry:off_spec_solution",
+    "create_heavy_indusstry:oxygen_gas",
+    "create_heavy_indusstry:phosphoric_acid",
+    "create_heavy_indusstry:plutonium_nitrate_solution",
+    "create_heavy_indusstry:propylene",
+    "create_heavy_indusstry:purified_water",
+    "create_heavy_indusstry:sodium_aluminate_solution",
+    "create_heavy_indusstry:sodium_hypochlorite_solution",
+    "create_heavy_indusstry:steam",
+    "create_heavy_indusstry:sulfur_dioxide",
+    "create_heavy_indusstry:sulfur_trioxide",
+    "create_heavy_indusstry:sulfuric_acid",
+    "create_heavy_indusstry:synthesis_gas",
+    "create_heavy_indusstry:tbp_extraction_solvent",
+    "create_heavy_indusstry:titanyl_sulfate_solution",
+    "create_heavy_indusstry:tributyl_phosphate",
+    "create_heavy_indusstry:tritium_gas",
+    "create_heavy_indusstry:uranium_hexafluoride",
+    "create_heavy_indusstry:uranyl_nitrate_solution",
+    "create_heavy_indusstry:vinyl_chloride",
+    "create_heavy_indusstry:warm_water",
+    "create_heavy_indusstry:wastewater",
+    "create_heavy_indusstry:zirconium_sulfate_solution"
+  ],
+  "blocks": [
+    "create_heavy_indusstry:air_filter",
+    "create_heavy_indusstry:air_gas",
+    "create_heavy_indusstry:aluminium_sulfate_solution",
+    "create_heavy_indusstry:ammonia_gas",
+    "create_heavy_indusstry:ammonia_separator",
+    "create_heavy_indusstry:antifreeze",
+    "create_heavy_indusstry:argon_gas",
+    "create_heavy_indusstry:back_pressure_valve",
+    "create_heavy_indusstry:bauxite_ore",
+    "create_heavy_indusstry:biological_shield",
+    "create_heavy_indusstry:biological_shield_coolant_outlet",
+    "create_heavy_indusstry:biological_shield_drive",
+    "create_heavy_indusstry:black_large_flywheel",
+    "create_heavy_indusstry:blasting_charge",
+    "create_heavy_indusstry:blue_large_flywheel",
+    "create_heavy_indusstry:boosted_high_pressure_steam_turbine",
+    "create_heavy_indusstry:boosted_steam_turbine",
+    "create_heavy_indusstry:brine",
+    "create_heavy_indusstry:brown_large_flywheel",
+    "create_heavy_indusstry:butanol",
+    "create_heavy_indusstry:butyraldehyde",
+    "create_heavy_indusstry:caustic_soda_solution",
+    "create_heavy_indusstry:charred_wood",
+    "create_heavy_indusstry:chromite_ore",
+    "create_heavy_indusstry:clarified_water",
+    "create_heavy_indusstry:condenser_cooling_inlet",
+    "create_heavy_indusstry:condenser_cooling_outlet",
+    "create_heavy_indusstry:condenser_shell",
+    "create_heavy_indusstry:condenser_tube_bundle",
+    "create_heavy_indusstry:condenser_waterbox",
+    "create_heavy_indusstry:control_rod_controller",
+    "create_heavy_indusstry:control_rod_link",
+    "create_heavy_indusstry:control_valve_actuator",
+    "create_heavy_indusstry:converter_gas",
+    "create_heavy_indusstry:converter_shell",
+    "create_heavy_indusstry:converter_trunnion_bearing",
+    "create_heavy_indusstry:cooled_hydrocracker_effluent",
+    "create_heavy_indusstry:cooled_hydrotreater_effluent",
+    "create_heavy_indusstry:cooled_olefins",
+    "create_heavy_indusstry:cooler_radiator",
+    "create_heavy_indusstry:cooling_fan",
+    "create_heavy_indusstry:cooling_fan_shroud",
+    "create_heavy_indusstry:cooling_tower_basin",
+    "create_heavy_indusstry:cooling_tower_cold_outlet",
+    "create_heavy_indusstry:cooling_tower_distributor",
+    "create_heavy_indusstry:cooling_tower_fill",
+    "create_heavy_indusstry:cooling_tower_hot_inlet",
+    "create_heavy_indusstry:cooling_tower_makeup_inlet",
+    "create_heavy_indusstry:cooling_tower_shell",
+    "create_heavy_indusstry:corrosion_resistant_floor",
+    "create_heavy_indusstry:corrosion_resistant_floor_slab",
+    "create_heavy_indusstry:crane_drive",
+    "create_heavy_indusstry:cryogenic_cold_box_drive",
+    "create_heavy_indusstry:cryogenic_pipe",
+    "create_heavy_indusstry:cryogenic_regenerator",
+    "create_heavy_indusstry:cryogenic_tank",
+    "create_heavy_indusstry:cyan_large_flywheel",
+    "create_heavy_indusstry:deepslate_bauxite_ore",
+    "create_heavy_indusstry:deepslate_chromite_ore",
+    "create_heavy_indusstry:deepslate_halite_ore",
+    "create_heavy_indusstry:deepslate_ilmenite_ore",
+    "create_heavy_indusstry:deepslate_molybdenite_ore",
+    "create_heavy_indusstry:deepslate_pentlandite_ore",
+    "create_heavy_indusstry:deepslate_uranium_ore",
+    "create_heavy_indusstry:deepslate_zircon_ore",
+    "create_heavy_indusstry:deuterium_depleted_water",
+    "create_heavy_indusstry:deuterium_gas",
+    "create_heavy_indusstry:diorite_casing",
+    "create_heavy_indusstry:dissolved_spent_fuel",
+    "create_heavy_indusstry:electrolysis_cell",
+    "create_heavy_indusstry:electrolysis_cell_controller",
+    "create_heavy_indusstry:electrolysis_furnace_anode",
+    "create_heavy_indusstry:electrolysis_furnace_busbar",
+    "create_heavy_indusstry:electrolysis_furnace_shell",
+    "create_heavy_indusstry:empty_waste_canister",
+    "create_heavy_indusstry:ethylene_dichloride",
+    "create_heavy_indusstry:ethylene_glycol",
+    "create_heavy_indusstry:extraction_column_outlet",
+    "create_heavy_indusstry:extraction_column_shell",
+    "create_heavy_indusstry:extraction_pulse_plate",
+    "create_heavy_indusstry:flare_tip",
+    "create_heavy_indusstry:flow_regulator",
+    "create_heavy_indusstry:fractionating_column",
+    "create_heavy_indusstry:fuel_cell",
+    "create_heavy_indusstry:fuel_pool",
+    "create_heavy_indusstry:fusion_ash_port",
+    "create_heavy_indusstry:fusion_breeding_blanket",
+    "create_heavy_indusstry:fusion_central_solenoid",
+    "create_heavy_indusstry:fusion_console_panel",
+    "create_heavy_indusstry:fusion_control_console",
+    "create_heavy_indusstry:fusion_coolant_inlet",
+    "create_heavy_indusstry:fusion_coolant_outlet",
+    "create_heavy_indusstry:fusion_deuterium_port",
+    "create_heavy_indusstry:fusion_divertor",
+    "create_heavy_indusstry:fusion_helium_inlet",
+    "create_heavy_indusstry:fusion_helium_outlet",
+    "create_heavy_indusstry:fusion_maintenance_hatch",
+    "create_heavy_indusstry:fusion_motor_generator",
+    "create_heavy_indusstry:fusion_reactor_controller",
+    "create_heavy_indusstry:fusion_reinforced_casing",
+    "create_heavy_indusstry:fusion_toroidal_field_coil",
+    "create_heavy_indusstry:fusion_tritium_port",
+    "create_heavy_indusstry:fusion_vacuum_pump",
+    "create_heavy_indusstry:fusion_vacuum_vessel",
+    "create_heavy_indusstry:gas_holder",
+    "create_heavy_indusstry:gas_holder_shell",
+    "create_heavy_indusstry:gas_pipe",
+    "create_heavy_indusstry:gas_receiver",
+    "create_heavy_indusstry:gray_large_flywheel",
+    "create_heavy_indusstry:green_large_flywheel",
+    "create_heavy_indusstry:halite_ore",
+    "create_heavy_indusstry:heat_exchanger_casing",
+    "create_heavy_indusstry:heat_exchanger_cover",
+    "create_heavy_indusstry:heat_exchanger_support",
+    "create_heavy_indusstry:heat_exchanger_tubes",
+    "create_heavy_indusstry:heated_diesel",
+    "create_heavy_indusstry:heated_heavy_oil",
+    "create_heavy_indusstry:heated_naphtha",
+    "create_heavy_indusstry:heavy_oil",
+    "create_heavy_indusstry:heavy_water",
+    "create_heavy_indusstry:helium_gas",
+    "create_heavy_indusstry:high_level_raffinate",
+    "create_heavy_indusstry:high_pressure_steam_turbine",
+    "create_heavy_indusstry:high_pressure_turbine_end",
+    "create_heavy_indusstry:high_pressure_turbine_part",
+    "create_heavy_indusstry:horizontal_fluid_tank",
+    "create_heavy_indusstry:hot_hydrocracker_effluent",
+    "create_heavy_indusstry:hot_hydrotreater_effluent",
+    "create_heavy_indusstry:hydrochloric_acid",
+    "create_heavy_indusstry:hydrogen_gas",
+    "create_heavy_indusstry:ilmenite_ore",
+    "create_heavy_indusstry:industrial_concrete",
+    "create_heavy_indusstry:industrial_concrete_slab",
+    "create_heavy_indusstry:industrial_concrete_stairs",
+    "create_heavy_indusstry:industrial_dispatch_board",
+    "create_heavy_indusstry:industrial_glass",
+    "create_heavy_indusstry:industrial_heater",
+    "create_heavy_indusstry:industrial_heater_chamber",
+    "create_heavy_indusstry:industrial_heater_coil",
+    "create_heavy_indusstry:industrial_heater_flue",
+    "create_heavy_indusstry:industrial_heater_roof",
+    "create_heavy_indusstry:large_flywheel",
+    "create_heavy_indusstry:large_gas_pipe",
+    "create_heavy_indusstry:lidded_vessel",
+    "create_heavy_indusstry:light_blue_large_flywheel",
+    "create_heavy_indusstry:light_gray_large_flywheel",
+    "create_heavy_indusstry:lime_large_flywheel",
+    "create_heavy_indusstry:liquid_ammonia",
+    "create_heavy_indusstry:liquid_chlorine",
+    "create_heavy_indusstry:liquid_helium",
+    "create_heavy_indusstry:liquid_nitrogen",
+    "create_heavy_indusstry:liquid_oxygen",
+    "create_heavy_indusstry:liquid_propylene",
+    "create_heavy_indusstry:liquid_sulfur_dioxide",
+    "create_heavy_indusstry:liquid_tank",
+    "create_heavy_indusstry:liquid_vinyl_chloride",
+    "create_heavy_indusstry:low_pressure_turbine_end",
+    "create_heavy_indusstry:low_sulfur_diesel",
+    "create_heavy_indusstry:lubricating_oil",
+    "create_heavy_indusstry:magenta_large_flywheel",
+    "create_heavy_indusstry:molten_polyethylene",
+    "create_heavy_indusstry:molten_polypropylene",
+    "create_heavy_indusstry:molybdenite_ore",
+    "create_heavy_indusstry:naphtha",
+    "create_heavy_indusstry:natural_draft_cooling_tower",
+    "create_heavy_indusstry:neutralized_wastewater",
+    "create_heavy_indusstry:nickel_alloy_pipe",
+    "create_heavy_indusstry:nitric_acid",
+    "create_heavy_indusstry:nitrogen_gas",
+    "create_heavy_indusstry:off_spec_solution",
+    "create_heavy_indusstry:orange_large_flywheel",
+    "create_heavy_indusstry:oxygen_gas",
+    "create_heavy_indusstry:pentlandite_ore",
+    "create_heavy_indusstry:phosphoric_acid",
+    "create_heavy_indusstry:pid_controller",
+    "create_heavy_indusstry:pid_instrument_rack",
+    "create_heavy_indusstry:pink_large_flywheel",
+    "create_heavy_indusstry:pipe_flow_meter",
+    "create_heavy_indusstry:pipe_pressure_gauge",
+    "create_heavy_indusstry:pipe_support",
+    "create_heavy_indusstry:pipe_thermometer",
+    "create_heavy_indusstry:plutonium_nitrate_solution",
+    "create_heavy_indusstry:pressure_reducing_valve",
+    "create_heavy_indusstry:pressure_tank",
+    "create_heavy_indusstry:process_transmitter",
+    "create_heavy_indusstry:pulse_extraction_column",
+    "create_heavy_indusstry:purified_water",
+    "create_heavy_indusstry:purple_large_flywheel",
+    "create_heavy_indusstry:pvc_pipe",
+    "create_heavy_indusstry:quarry_marker",
+    "create_heavy_indusstry:reactor_control_console",
+    "create_heavy_indusstry:reactor_feed_bundle",
+    "create_heavy_indusstry:reactor_fuel_channel",
+    "create_heavy_indusstry:reactor_fuel_channel_tube",
+    "create_heavy_indusstry:reactor_graphite",
+    "create_heavy_indusstry:reactor_top_cap",
+    "create_heavy_indusstry:reciprocating_compressor",
+    "create_heavy_indusstry:reciprocating_cylinder",
+    "create_heavy_indusstry:reciprocating_drive_shaft",
+    "create_heavy_indusstry:red_large_flywheel",
+    "create_heavy_indusstry:redstone_relief_valve",
+    "create_heavy_indusstry:reinforced_pipe",
+    "create_heavy_indusstry:relief_scrubber",
+    "create_heavy_indusstry:relief_valve",
+    "create_heavy_indusstry:resin_pipe",
+    "create_heavy_indusstry:serpentinite",
+    "create_heavy_indusstry:sodium_aluminate_solution",
+    "create_heavy_indusstry:sodium_hypochlorite_solution",
+    "create_heavy_indusstry:stainless_steel_block",
+    "create_heavy_indusstry:stainless_steel_encased_pipe",
+    "create_heavy_indusstry:stainless_steel_glass_pipe",
+    "create_heavy_indusstry:stainless_steel_pipe",
+    "create_heavy_indusstry:stainless_steel_tank",
+    "create_heavy_indusstry:steam",
+    "create_heavy_indusstry:steam_turbine",
+    "create_heavy_indusstry:sulfuric_acid",
+    "create_heavy_indusstry:tank_casing",
+    "create_heavy_indusstry:tbp_extraction_solvent",
+    "create_heavy_indusstry:titanium_block",
+    "create_heavy_indusstry:titanyl_sulfate_solution",
+    "create_heavy_indusstry:tributyl_phosphate",
+    "create_heavy_indusstry:triiron_tetroxide_pile",
+    "create_heavy_indusstry:tritium_gas",
+    "create_heavy_indusstry:tubular_boiler",
+    "create_heavy_indusstry:turbine_shaft",
+    "create_heavy_indusstry:ultra_high_pressure_pipe",
+    "create_heavy_indusstry:uranium_ore",
+    "create_heavy_indusstry:uranyl_nitrate_solution",
+    "create_heavy_indusstry:vitrification_electrode",
+    "create_heavy_indusstry:vitrification_melter",
+    "create_heavy_indusstry:vitrification_refractory_shell",
+    "create_heavy_indusstry:vitrified_waste_canister",
+    "create_heavy_indusstry:warm_water",
+    "create_heavy_indusstry:wastewater",
+    "create_heavy_indusstry:water_tank",
+    "create_heavy_indusstry:white_large_flywheel",
+    "create_heavy_indusstry:yellow_large_flywheel",
+    "create_heavy_indusstry:zircon_ore",
+    "create_heavy_indusstry:zirconia_refractory_bricks",
+    "create_heavy_indusstry:zirconium_pipe",
+    "create_heavy_indusstry:zirconium_sulfate_solution"
+  ]
+}

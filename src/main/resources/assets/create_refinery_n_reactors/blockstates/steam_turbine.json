@@ -1,0 +1,11 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "create_refinery_n_reactors:block/turbine_shaft",
+        "x": 90,
+        "y": 90
+      }
+    }
+  ]
+}

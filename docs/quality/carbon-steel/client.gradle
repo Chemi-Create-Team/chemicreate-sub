@@ -1,0 +1,15 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File('/tmp/createplant-carbon-steel-client'))
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualityTargets', 'carbon_powder@plant_manufacturing_steel,unprocessed_steel@plant_manufacturing_steel'
+            systemProperty 'createplant.clientQualityScenes', 'plant_manufacturing_steel'
+            systemProperty 'createplant.clientQualitySeek.0', '650'
+            systemProperty 'createplant.clientQualitySeek.1', '1220'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+            systemProperty 'createplant.clientQualityCaptureDelay', '500'
+        }
+    }
+}

@@ -1,0 +1,1386 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "width": 1,
+        "cell": 0,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 0,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 0,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 0,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 0,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 1,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 1,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 1,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 1,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 1,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 2,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 2,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 2,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 2,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 2,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 3,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 3,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 3,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 3,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 3,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 4,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 4,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 4,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 4,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 4,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 5,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 5,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 5,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 5,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 5,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 6,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 6,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 6,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 6,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 6,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 7,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 7,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 7,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 7,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 7,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 8,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 8,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 8,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 8,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 1,
+        "cell": 8,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/1_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 0,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 0,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 0,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 0,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 0,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 1,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 1,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 1,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 1,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 1,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 2,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 2,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 2,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 2,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 2,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_1_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 3,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 3,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 3,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 3,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 3,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 4,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 4,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 4,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 4,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 4,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 5,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 5,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 5,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 5,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 5,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 6,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 6,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 6,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 6,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 6,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_3_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 7,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 7,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 7,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 7,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 7,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_top"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 8,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_single"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 8,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_base"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 8,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_service"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 8,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_body"
+      }
+    },
+    {
+      "when": {
+        "width": 2,
+        "cell": 8,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/2_4_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 0,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_0_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 0,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_0_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 0,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_0_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 0,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_0_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 0,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_0_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 1,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_1_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 1,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_1_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 1,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_1_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 1,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_1_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 1,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_1_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 2,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_2_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 2,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_2_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 2,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_2_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 2,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_2_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 2,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_2_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 3,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_3_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 3,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_3_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 3,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_3_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 3,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_3_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 3,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_3_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 4,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_4_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 4,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_4_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 4,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_4_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 4,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_4_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 4,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_4_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 5,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_5_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 5,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_5_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 5,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_5_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 5,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_5_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 5,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_5_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 6,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_6_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 6,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_6_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 6,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_6_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 6,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_6_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 6,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_6_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 7,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_7_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 7,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_7_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 7,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_7_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 7,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_7_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 7,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_7_top"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 8,
+        "section": "single"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_8_single"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 8,
+        "section": "base"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_8_base"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 8,
+        "section": "service"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_8_service"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 8,
+        "section": "body"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_8_body"
+      }
+    },
+    {
+      "when": {
+        "width": 3,
+        "cell": 8,
+        "section": "top"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/3_8_top"
+      }
+    },
+    {
+      "when": {
+        "cut": 1
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/outlet_1"
+      }
+    },
+    {
+      "when": {
+        "cut": 2
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/outlet_2"
+      }
+    },
+    {
+      "when": {
+        "cut": 3
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/outlet_3"
+      }
+    },
+    {
+      "when": {
+        "inlet": 1
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/fractionating_column/inlet_1"
+      }
+    }
+  ]
+}

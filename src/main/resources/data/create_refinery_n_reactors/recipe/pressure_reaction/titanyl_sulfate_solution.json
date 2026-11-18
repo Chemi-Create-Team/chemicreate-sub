@@ -1,0 +1,27 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:ilmenite"
+    },
+    {
+      "item": "create_refinery_n_reactors:ilmenite"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "create_refinery_n_reactors:sulfuric_acid"
+    }
+  ],
+  "results": [
+    {
+      "amount": 500,
+      "id": "create_refinery_n_reactors:titanyl_sulfate_solution"
+    },
+    {
+      "id": "minecraft:iron_nugget",
+      "count": 3
+    }
+  ]
+}

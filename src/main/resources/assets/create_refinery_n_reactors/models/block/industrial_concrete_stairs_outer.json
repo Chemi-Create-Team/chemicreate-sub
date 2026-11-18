@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "create_refinery_n_reactors:block/industrial_concrete",
+    "top": "create_refinery_n_reactors:block/industrial_concrete",
+    "side": "create_refinery_n_reactors:block/industrial_concrete"
+  }
+}

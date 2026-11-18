@@ -1,0 +1,171 @@
+[
+  {
+    "id": "industrial_dispatch",
+    "size": 9,
+    "height": 5,
+    "components": [
+      "industrial_dispatch_board"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          1,
+          3
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          3,
+          1,
+          4
+        ],
+        "key": "step_2",
+        "item": "create_refinery_n_reactors:polyethylene"
+      },
+      {
+        "target": [
+          4,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_4"
+      }
+    ]
+  },
+  {
+    "id": "tubular_boiler",
+    "size": 9,
+    "height": 6,
+    "components": [
+      "horizontal_fluid_tank"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          1,
+          2,
+          3
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          5,
+          2,
+          3
+        ],
+        "key": "step_4"
+      }
+    ]
+  },
+  {
+    "id": "tubular_boiler_2x2",
+    "size": 9,
+    "height": 6,
+    "components": [
+      "horizontal_fluid_tank"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          1,
+          2,
+          3
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          5,
+          2,
+          3
+        ],
+        "key": "step_4"
+      }
+    ]
+  },
+  {
+    "id": "tubular_boiler_3x3",
+    "size": 9,
+    "height": 6,
+    "components": [
+      "horizontal_fluid_tank"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          1,
+          2,
+          3
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          5,
+          2,
+          3
+        ],
+        "key": "step_4"
+      }
+    ]
+  }
+]

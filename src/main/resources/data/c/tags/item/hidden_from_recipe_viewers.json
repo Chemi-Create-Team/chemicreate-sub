@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "createdieselgenerators:distillation_controller",
+    {
+      "id": "createdieselgenerators:distillation_tank",
+      "required": false
+    }
+  ]
+}

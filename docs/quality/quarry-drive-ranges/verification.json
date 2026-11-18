@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-15",
+  "base_commit": "164a07bc",
+  "branch": "main",
+  "requested_no_gameplay_testing": true,
+  "client_run": false,
+  "gametest_run": false,
+  "build": {
+    "task": "assemble",
+    "java": 21,
+    "result": "passed",
+    "log": "assemble.log"
+  },
+  "static_checks": {
+    "translation_keys_per_language": 4607,
+    "languages": [
+      "en_us",
+      "ja_jp",
+      "zh_cn"
+    ],
+    "ponder_scene_headers": 141,
+    "additional_tutorial_scenes": 97,
+    "paired_captions": 517,
+    "component_links": 239,
+    "manufacturing_families": 28,
+    "generator_idempotent": true,
+    "diff_check": "passed"
+  },
+  "ranges": {
+    "minimum_length": 5,
+    "minimum_width": 3,
+    "maximum_length": 64,
+    "maximum_width": 64,
+    "default": [
+      16,
+      16
+    ],
+    "marker_removed": true,
+    "settings": "native Create Value Settings on two outward faces"
+  },
+  "material_examples": {
+    "native_maximum_belt_length": 20,
+    "length_32": {
+      "segments": [
+        20,
+        13
+      ],
+      "connectors": 2,
+      "shafts": 4,
+      "chain_drives": 33
+    },
+    "length_64": {
+      "segments": [
+        20,
+        20,
+        20,
+        5
+      ],
+      "connectors": 4,
+      "shafts": 8,
+      "chain_drives": 65
+    }
+  },
+  "unverified": [
+    "Native long belt construction, power direction and inter-segment transfer",
+    "Native value controls in the actual client",
+    "All four placement orientations",
+    "Partial-build and loaded-parcel save/reload",
+    "Chunk boundaries and blocked output",
+    "Performance on large quarries"
+  ],
+  "prior_client_evidence_used": false
+}

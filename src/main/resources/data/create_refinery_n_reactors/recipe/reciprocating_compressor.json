@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "THT",
+    "GCG",
+    "TPT"
+  ],
+  "key": {
+    "T": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "H": {
+      "item": "create:shaft"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:rubber_gasket"
+    },
+    "C": {
+      "item": "create:brass_casing"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:reciprocating_compressor",
+    "count": 1
+  }
+}

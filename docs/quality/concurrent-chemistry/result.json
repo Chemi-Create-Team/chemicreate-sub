@@ -1,0 +1,16 @@
+{
+  "worldTicks": 6000,
+  "overlappingRunningTicks": 400,
+  "products_mB": {
+    "nitric_acid": 800,
+    "nitric_oxide": 400,
+    "sulfuric_acid": 2000,
+    "hydrochloric_acid": 4000,
+    "depleted_uranium_hexafluoride": 7000,
+    "hydrogen_fluoride": 3000
+  },
+  "campaigns": 4,
+  "peakTemperature_C": 1226.85,
+  "enrichedDioxideItems": 4,
+  "peakPressure_bar": 1.5350503155381203
+}

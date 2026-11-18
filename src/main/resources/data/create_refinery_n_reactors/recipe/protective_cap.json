@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WWW",
+    "WPW"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:protective_cap",
+    "count": 1
+  }
+}

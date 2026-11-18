@@ -1,0 +1,16 @@
+{
+  "jar": "create-refinery-n-reactors-0.1.0.jar",
+  "bytes": 6459018,
+  "sha256": "233de7d0bc7538f53711d57a337b441ea5c7ddbd114e672d29be8d4f2fffd0fe",
+  "modId": "create_refinery_n_reactors",
+  "displayName": "Create: Refinery 'n' Reactors",
+  "archive_entries": 4194,
+  "old_identity_references": [],
+  "mixins": [
+    "create_refinery_n_reactors.mixins.json",
+    "create_refinery_n_reactors.deepseas.mixins.json"
+  ],
+  "logo": "create_refinery_n_reactors_icon.png",
+  "asset_files": 2383,
+  "data_files": 583
+}

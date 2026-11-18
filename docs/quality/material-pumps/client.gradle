@@ -1,0 +1,4 @@
+allprojects { afterEvaluate { extensions.getByName('neoForge').runs.named('client') {
+    systemProperty 'createplant.materialPumpClientCheck', 'true'
+    systemProperty 'createplant.materialPumpWorldTicks', '900'
+}}}

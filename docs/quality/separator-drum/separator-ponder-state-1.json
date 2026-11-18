@@ -1,0 +1,8 @@
+{
+  "front": "north",
+  "scene": "create_refinery_n_reactors:ammonia_separator",
+  "liquidFraction": 0.16666667,
+  "layers": 3,
+  "width": 1,
+  "fluid": "水"
+}

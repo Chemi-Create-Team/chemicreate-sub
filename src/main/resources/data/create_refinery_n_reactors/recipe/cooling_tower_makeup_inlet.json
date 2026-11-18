@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " D ",
+    "PBP",
+    " S "
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:light_blue_dye"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "B": {
+      "item": "create_refinery_n_reactors:cooling_tower_basin"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cooling_tower_makeup_inlet",
+    "count": 4
+  }
+}

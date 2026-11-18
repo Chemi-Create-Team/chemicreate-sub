@@ -1,0 +1,839 @@
+{
+  "variants": {
+    "formed=false": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/single"
+    },
+    "cell=0,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=0,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=0,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=0,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=1,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=1,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=1,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=1,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=2,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=2,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=2,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=2,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=3,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=3,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=3,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=3,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=4,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=4,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=4,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=4,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=5,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=5,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=5,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=5,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=6,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=6,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=6,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=6,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=7,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=7,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=7,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=7,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=8,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=8,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=8,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=8,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=9,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=9,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=9,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=9,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=10,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=10,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=10,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=10,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=11,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=11,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=11,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=11,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=12,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 0
+    },
+    "cell=12,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 90
+    },
+    "cell=12,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 180
+    },
+    "cell=12,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_0",
+      "y": 270
+    },
+    "cell=13,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=13,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=13,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=13,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=14,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=14,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=14,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=14,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=15,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=15,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=15,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=15,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=16,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=16,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=16,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=16,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=17,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=17,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=17,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=17,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=18,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=18,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=18,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=18,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=19,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=19,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=19,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=19,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=20,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=20,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=20,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=20,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=21,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=21,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=21,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=21,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=22,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=22,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=22,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=22,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=23,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=23,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=23,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=23,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=24,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=24,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=24,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=24,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=25,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 0
+    },
+    "cell=25,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 90
+    },
+    "cell=25,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 180
+    },
+    "cell=25,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_13",
+      "y": 270
+    },
+    "cell=26,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=26,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=26,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=26,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=27,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=27,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=27,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=27,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=28,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=28,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=28,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=28,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=29,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=29,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=29,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=29,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=30,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=30,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=30,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=30,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=31,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=31,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=31,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=31,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=32,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=32,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=32,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=32,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=33,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=33,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=33,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=33,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=34,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=34,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=34,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=34,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=35,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=35,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=35,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=35,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=36,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=36,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=36,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=36,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=37,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=37,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=37,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=37,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=38,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 0
+    },
+    "cell=38,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 90
+    },
+    "cell=38,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 180
+    },
+    "cell=38,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_26",
+      "y": 270
+    },
+    "cell=39,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=39,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=39,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=39,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=40,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=40,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=40,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=40,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=41,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=41,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=41,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=41,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=42,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=42,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=42,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=42,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=43,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=43,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=43,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=43,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=44,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=44,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=44,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=44,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=45,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=45,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=45,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=45,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=46,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=46,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=46,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=46,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=47,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=47,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=47,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=47,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=48,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=48,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=48,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=48,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=49,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=49,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=49,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=49,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=50,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=50,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=50,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=50,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    },
+    "cell=51,facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 0
+    },
+    "cell=51,facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 90
+    },
+    "cell=51,facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 180
+    },
+    "cell=51,facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/jacketed_pipe/cell_39",
+      "y": 270
+    }
+  }
+}

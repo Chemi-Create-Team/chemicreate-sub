@@ -1,0 +1,24 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:uraninite"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:helium_recovery_feed",
+      "amount": 16000
+    },
+    {
+      "id": "create_refinery_n_reactors:uranium_trioxide"
+    }
+  ],
+  "processing_time": 200
+}

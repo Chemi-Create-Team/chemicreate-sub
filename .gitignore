@@ -1,0 +1,47 @@
+# Build output
+build/
+bin/
+out/
+.gradle/
+.gradletasknamecache
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+hs_err_pid*
+replay_pid*
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+
+# Minecraft run data
+run/
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Misc
+.DS_Store
+*.log
+*.log.gz
+*.tmp
+*.bak
+*.swp
+local.properties
+
+# Local environment
+.claude/
+.env
+*.hprof
+crash-reports/
+.vs/
+.nvim/
+.fleet/

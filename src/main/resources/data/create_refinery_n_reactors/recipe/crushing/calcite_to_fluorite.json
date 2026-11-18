@@ -1,0 +1,19 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "minecraft:calcite"
+    }
+  ],
+  "processing_time": 250,
+  "results": [
+    {
+      "id": "minecraft:bone_meal",
+      "chance": 0.75
+    },
+    {
+      "id": "create_refinery_n_reactors:fluorite",
+      "chance": 0.5
+    }
+  ]
+}

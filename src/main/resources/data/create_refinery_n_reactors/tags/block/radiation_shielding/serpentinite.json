@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "create_refinery_n_reactors:biological_shield",
+      "required": false
+    },
+    {
+      "id": "create_refinery_n_reactors:reactor_top_cap",
+      "required": false
+    },
+    {
+      "id": "create_refinery_n_reactors:biological_shield_drive",
+      "required": false
+    },
+    {
+      "id": "create_refinery_n_reactors:biological_shield_coolant_outlet",
+      "required": false
+    },
+    {
+      "id": "create_refinery_n_reactors:reactor_fuel_channel_tube",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "languages": [
+    "ja_jp"
+  ],
+  "scenes": [
+    "create_refinery_n_reactors:chemical_mixtures"
+  ],
+  "translationScope": "chemical_mixtures",
+  "runtimeTranslations": "passed",
+  "ponderRender": "checked",
+  "renderTargets": [
+    "lidded_vessel@chemical_mixtures"
+  ]
+}

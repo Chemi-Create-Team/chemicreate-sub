@@ -1,0 +1,34 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": true,
+  "category": "misc",
+  "pattern": [
+    "CCCCECCCC",
+    "CBBBCBBBC",
+    "CBSBSBSBC",
+    "CBBBCBBBC",
+    "ECCCSCCCE",
+    "CBBBCBBBC",
+    "CBSBSBSBC",
+    "CBBBCBBBC",
+    "CCCCECCCC"
+  ],
+  "key": {
+    "C": {
+      "item": "create_refinery_n_reactors:low_pressure_turbine_casing"
+    },
+    "B": {
+      "item": "create_refinery_n_reactors:low_pressure_turbine_blade"
+    },
+    "E": {
+      "item": "create_refinery_n_reactors:low_pressure_turbine_end"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:low_pressure_turbine_unit",
+    "count": 1
+  }
+}

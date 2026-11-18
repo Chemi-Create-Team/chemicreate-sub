@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:deepslate_uranium_ore",
+    "create_refinery_n_reactors:deepslate_bauxite_ore",
+    "create_refinery_n_reactors:deepslate_pentlandite_ore",
+    "create_refinery_n_reactors:deepslate_ilmenite_ore",
+    "create_refinery_n_reactors:deepslate_zircon_ore",
+    "create_refinery_n_reactors:deepslate_chromite_ore",
+    "create_refinery_n_reactors:deepslate_molybdenite_ore",
+    "create_refinery_n_reactors:deepslate_halite_ore",
+    "create_refinery_n_reactors:deepslate_cassiterite_ore"
+  ]
+}

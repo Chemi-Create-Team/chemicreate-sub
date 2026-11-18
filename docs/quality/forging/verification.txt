@@ -1,0 +1,35 @@
+
+tests-final.log (selected log lines)
+[15:51:05] [Server thread/INFO] [ne.cr.ga.ForgingGameTests/]: FORGING OUTPUT CHECK steel=256 slag=69 batches=256
+[15:51:06] [Server thread/INFO] [minecraft/GameTestServer]: All 6 required tests passed :)
+BUILD SUCCESSFUL in 45s
+
+tests-regression-fixed.log (selected log lines)
+[15:58:13] [Server thread/INFO] [minecraft/GameTestServer]: 642 tests are now running at position 104963, -59, 8891539!
+[15:58:18] [Server thread/ERROR] [minecraft/LogTestReporter]: afouledprocessstopsthenresumesafteronemanualbrush failed at 105111, -60, 8891615! The slowed process resumes one batch and charges one new unit of fouling only after its material transaction commits
+[15:59:45] [Server thread/INFO] [ne.cr.ga.ForgingGameTests/]: FORGING OUTPUT CHECK steel=256 slag=69 batches=256
+[15:59:57] [Server thread/INFO] [minecraft/GameTestServer]: ========= 642 GAME TESTS COMPLETE IN 1.740 min ======================
+[15:59:57] [Server thread/INFO] [minecraft/GameTestServer]: 1 required tests failed :(
+BUILD FAILED in 2m 15s
+
+client.log (selected log lines)
+[16:02:59] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET pig_iron@steel_forging -> create_heavy_indusstry:steel_forging
+[16:03:09] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fluorite@fluorite_sources -> create_heavy_indusstry:fluorite_sources
+[16:03:19] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 141 scenes, ja_jp
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134
+
+client-preview.log (selected log lines)
+[16:06:55] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET pig_iron@steel_forging -> create_heavy_indusstry:steel_forging
+[16:07:25] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fluorite@fluorite_sources -> create_heavy_indusstry:fluorite_sources
+[16:07:55] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 141 scenes, ja_jp
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134
+
+client-fluorite.log (final framing, selected log lines)
+[16:09:20] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fluorite@fluorite_sources -> create_heavy_indusstry:fluorite_sources
+[16:09:49] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 141 scenes, ja_jp
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134
+
+Static checks: translations 2558 keys in en_us/ja_jp/zh_cn, Ponder 141 scenes, plant tutorial reference checks all passed. Generator byte stability: all 13 generated files unchanged.

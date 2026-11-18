@@ -1,0 +1,48 @@
+{
+  "baseline": "f7d2d607",
+  "game_tests": {
+    "total": 505,
+    "passed": 504,
+    "failed": 1,
+    "new_feature_tests": 25,
+    "new_feature_passed": 25
+  },
+  "known_failure": {
+    "test": "AuditGameTests.everyRegisteredEntryHasAssetsTranslationsAndLoot",
+    "missing_translation_keys": 88,
+    "liquid_block_names": 44,
+    "present_in_baseline": true,
+    "new_missing_keys": []
+  },
+  "native_client": {
+    "renderer": "NVIDIA GeForce RTX 4060",
+    "runtime_ponder_scenes": 129,
+    "rendered_new_features": 5,
+    "language": "ja_jp"
+  },
+  "boiler": {
+    "sections_minimum": 3,
+    "pressure_bar": 20,
+    "heated_celsius": 350,
+    "superheated_celsius": 650,
+    "finite_feed_test_mb": 1000,
+    "mass_conservation": "exact each tick during actual Create pipe stop and restart"
+  },
+  "cold_box": {
+    "liquid_helium_kelvin": 4.2,
+    "gas_mb_per_liquid_mb": 753,
+    "priming_helium_mb": 1000,
+    "maximum_shaft_watts": 1024000
+  },
+  "build": "passed",
+  "physics_tests": {
+    "fluid_phase_checks": 25,
+    "haber_bosch_checks": 1019,
+    "reactor_physics_checks": 1670,
+    "reactor_control": "passed"
+  },
+  "ci_validator_tests": 15,
+  "ci_validators": "passed",
+  "existing_texture_or_sound_changes": 0,
+  "implementation_commit": "89ac56166617e5db8ed510489f7da25df4ab3723"
+}

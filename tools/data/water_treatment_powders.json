@@ -1,0 +1,23 @@
+{
+  "powders": {
+    "water_treatment_flocculant": {
+      "colour": [
+        206,
+        201,
+        175
+      ],
+      "reason": "Loose iron/alumina/clay treatment reagent powder."
+    },
+    "treatment_sludge": {
+      "colour": [
+        92,
+        80,
+        57
+      ],
+      "reason": "Recovered ordinary wash-water residue powder."
+    }
+  },
+  "preserved_items": {
+    "water_filter_medium": "Manufactured filter pad; not loose powder."
+  }
+}

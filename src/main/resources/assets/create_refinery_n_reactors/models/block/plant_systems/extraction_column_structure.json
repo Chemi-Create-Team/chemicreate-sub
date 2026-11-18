@@ -1,0 +1,5 @@
+{
+  "textures": {
+    "particle": "create_refinery_n_reactors:block/plant_systems/steel"
+  }
+}

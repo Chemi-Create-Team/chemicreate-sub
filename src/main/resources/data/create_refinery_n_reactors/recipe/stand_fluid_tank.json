@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:horizontal_fluid_tank"
+    }
+  ],
+  "result": {
+    "id": "create:fluid_tank",
+    "count": 1
+  }
+}

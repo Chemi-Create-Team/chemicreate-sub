@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "create_refinery_n_reactors:empty_waste_canister"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        },
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "create_refinery_n_reactors:empty_waste_canister",
+          "properties": {
+            "section": "0"
+          }
+        }
+      ]
+    }
+  ]
+}

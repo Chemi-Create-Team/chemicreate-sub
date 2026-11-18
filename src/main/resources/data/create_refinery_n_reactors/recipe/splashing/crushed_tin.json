@@ -1,0 +1,14 @@
+{
+  "type": "create:splashing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:crushed_raw_tin"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:tin_ingot",
+      "count": 1
+    }
+  ]
+}

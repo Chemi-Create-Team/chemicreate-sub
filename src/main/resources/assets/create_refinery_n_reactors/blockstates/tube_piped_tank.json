@@ -1,0 +1,40 @@
+{
+  "variants": {
+    "facing=north,formed=false": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank",
+      "x": 270
+    },
+    "facing=north,formed=true": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank_formed",
+      "x": 270
+    },
+    "facing=south,formed=false": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank",
+      "x": 270
+    },
+    "facing=south,formed=true": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank_formed",
+      "x": 270
+    },
+    "facing=east,formed=false": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank",
+      "x": 270,
+      "y": 270
+    },
+    "facing=east,formed=true": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank_formed",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,formed=false": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank",
+      "x": 270,
+      "y": 270
+    },
+    "facing=west,formed=true": {
+      "model": "create_refinery_n_reactors:block/tube_piped_tank_formed",
+      "x": 270,
+      "y": 270
+    }
+  }
+}

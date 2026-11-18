@@ -1,0 +1,27 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:irradiated_cartridge"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "create_refinery_n_reactors:hydrochloric_acid"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:netherite_scrap",
+      "count": 8
+    },
+    {
+      "id": "create_refinery_n_reactors:spent_blanket_cartridge"
+    },
+    {
+      "amount": 250,
+      "id": "create_refinery_n_reactors:high_level_raffinate"
+    }
+  ]
+}

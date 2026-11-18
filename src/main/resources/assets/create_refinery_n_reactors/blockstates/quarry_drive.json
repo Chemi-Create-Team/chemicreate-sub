@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/crane/quarry_drive"
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/crane/quarry_drive",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/crane/quarry_drive",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/crane/quarry_drive",
+      "y": 270
+    }
+  }
+}

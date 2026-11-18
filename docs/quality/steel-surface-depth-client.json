@@ -1,0 +1,14 @@
+{
+  "translationScope": "plant_converter,guide.converter",
+  "scenes": [
+    "create_heavy_indusstry:plant_converter"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "renderTargets": [
+    "steel_block@plant_converter"
+  ],
+  "ponderRender": "checked",
+  "runtimeTranslations": "passed"
+}

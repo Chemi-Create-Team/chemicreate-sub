@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/plant_systems/condenser_cooling_inlet",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/plant_systems/condenser_cooling_inlet",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/plant_systems/condenser_cooling_inlet",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/plant_systems/condenser_cooling_inlet",
+      "y": 270
+    }
+  }
+}

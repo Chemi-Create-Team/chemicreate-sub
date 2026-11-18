@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-09",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10",
+  "game_tests": {
+    "passed": 452,
+    "required": 452,
+    "test_seconds": 64.08,
+    "gradle_seconds": 88,
+    "selection_filter": false,
+    "fresh_game_directory": true
+  },
+  "build": {
+    "passed": true,
+    "fluid_phase_checks": 25,
+    "haber_bosch_checks": 1019,
+    "reactor_physics_checks": 1670,
+    "reactor_control": "passed"
+  },
+  "validators": {
+    "plant_tutorials": "passed",
+    "ponder_language": "passed",
+    "git_diff_check": "passed"
+  },
+  "client": {
+    "gpu": "NVIDIA GeForce RTX 4060",
+    "driver": "595.99.02",
+    "language": "ja_jp",
+    "ponder_scenes": 117,
+    "capture_pixels": [
+      1260,
+      740
+    ],
+    "model_window_holes": "passed",
+    "actual_inventory_and_frost": "passed",
+    "ponder_render_errors": 0,
+    "shutdown_exit_code": 134,
+    "shutdown_frame": "libEGL_nvidia.so.0+0xb56ae",
+    "world_comparison": {
+      "passed": true,
+      "structures": 3,
+      "size": [
+        2,
+        2,
+        2
+      ],
+      "fluid_each_mb": 32000,
+      "items_each": {
+        "iron_ingot": 8,
+        "gold_ingot": 4
+      },
+      "warm_kelvin": 293.1374322059927,
+      "cold_kelvin": 77.36,
+      "warm_frost": 0,
+      "cold_frost": 1
+    },
+    "ponder_section_redraw": "explicit queueRedraw after window NBT changes"
+  },
+  "operating_values": {
+    "ordinary_stirred_rating_bar": 16,
+    "catalyst_rating_bar": 64,
+    "fouling_stop": 400,
+    "fouling_slow_start": 200,
+    "brush_removal": 40,
+    "wash_water_mb": 1000,
+    "wash_wastewater_mb": 1000,
+    "wash_removal": 100,
+    "nitrogen_gas_per_liquid_mb": 646,
+    "liquid_nitrogen_kelvin": 77.36,
+    "freezing_joules_per_kg": 334000
+  },
+  "jar": {
+    "filename": "create-heavy-indusstry-0.1.0-vessel-basin.jar",
+    "sha256": "e374e419d0a7c1a72653df1bf1be6cce8a1400abeb2d0965e223804a3dae667d"
+  }
+}

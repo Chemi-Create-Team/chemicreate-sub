@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create:andesite_casing",
+    "create_refinery_n_reactors:diorite_casing"
+  ]
+}

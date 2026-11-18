@@ -1,0 +1,22 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File(System.getProperty('playtestDir', '/tmp/createplant-survival-progression')))
+            jvmArgument '-Xmx2500m'
+            def targets = System.getProperty('survivalQuality', '')
+            if (targets.isEmpty()) {
+                systemProperty 'createplant.survivalProgressionWorld', 'true'
+                systemProperty 'createplant.survivalProgressionSprint', System.getProperty('survivalSprint', '0')
+                systemProperty 'createplant.survivalNormalChemistry', System.getProperty('survivalNormalChemistry', 'false')
+            } else {
+                systemProperty 'createplant.clientQualityCheck', 'true'
+                systemProperty 'createplant.clientQualityTargets', targets
+                systemProperty 'createplant.clientQualityKeepOpen', 'true'
+                systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+                systemProperty 'createplant.recipeScreenCheck', 'true'
+                def seek = System.getProperty('survivalQualitySeek')
+                if (seek != null) systemProperty 'createplant.clientQualitySeek', seek
+            }
+        }
+    }
+}

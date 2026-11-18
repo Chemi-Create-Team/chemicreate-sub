@@ -1,0 +1,66 @@
+{
+  "environment": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.219",
+    "create": "6.0.10",
+    "java": 21,
+    "renderer": "NVIDIA GeForce RTX 4060"
+  },
+  "build": "passed",
+  "unit_checks": {
+    "FluidPhase": 25,
+    "HaberBoschProcess": 1019,
+    "ReactorPhysics": 1670,
+    "ReactorControl": "passed"
+  },
+  "gametests": {
+    "required": 80,
+    "passed": 80,
+    "failed": 0,
+    "elapsed_seconds": 9.684,
+    "classes": [
+      "UraniumFuelGameTests",
+      "ReactorGameTests",
+      "VesselBasinGameTests",
+      "VesselClimateGameTests",
+      "VesselBoilingGameTests",
+      "NitricAcidGameTests",
+      "CompactCentrifugeGameTests",
+      "SurvivalReachabilityGameTests",
+      "GasPipeGameTests",
+      "GasStorageGameTests",
+      "GasSafetyLoadGameTests"
+    ]
+  },
+  "new_tests": 7,
+  "reconversion": {
+    "grades": 2,
+    "arrival_orders_per_grade": 6,
+    "input_mb_per_batch": {
+      "enriched_gas": 250,
+      "liquid_water": 250,
+      "hydrogen": 250
+    },
+    "output": {
+      "dioxide_powder_items": 1,
+      "hydrogen_fluoride_mb": 750
+    },
+    "reload_in_progress": "passed",
+    "missing_feed_and_blocked_output_atomicity": "passed",
+    "third_feed_pressure_and_relief": "passed"
+  },
+  "serial_stage_test": {
+    "raw_uranium": 8,
+    "roasted_feed": 8,
+    "uranium_dioxide": 8,
+    "green_salt": 8,
+    "uf6_mb": 2000,
+    "enriched_uf6_mb": 250,
+    "enriched_dioxide_powder": 1,
+    "green_pellets": 2,
+    "fired_pellets": 2,
+    "method": "Real vessel/centrifuge handlers and tickProcess; Create fan-processing API and the native press recipe. Not a continuously piped full factory."
+  },
+  "full_default_gametest_suite": "not_run",
+  "world_long_duration_full_factory": "not_run"
+}

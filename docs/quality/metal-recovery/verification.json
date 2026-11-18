@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-16",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10",
+  "gameTests": {
+    "relatedSuite": 68,
+    "metalRecoveryRegressionAfterFinalChange": 9,
+    "result": "passed"
+  },
+  "build": "passed",
+  "reactorPhysicsChecks": 1668,
+  "translations": {
+    "keys": 4879,
+    "locales": [
+      "en_us",
+      "ja_jp",
+      "zh_cn"
+    ],
+    "result": "passed"
+  },
+  "ponderHeaders": 147,
+  "newTextures": {
+    "count": 14,
+    "size": "16x16",
+    "maxColours": 24
+  },
+  "native": {
+    "gpu": "NVIDIA GeForce RTX 4060",
+    "driver": "595.99.02",
+    "scenes": 4,
+    "jeiCategories": 3,
+    "result": "checked",
+    "shutdown": "exit 134 in libEGL_nvidia.so.0 after verification and world save; process success not claimed",
+    "audio": "OpenAL device unavailable"
+  },
+  "jar": {
+    "name": "create-refinery-n-reactors-0.1.0.jar",
+    "bytes": 6791565,
+    "sha256": "74d55e8c8771e8683943db97e2182e6839d0e3749864887da4b0aacab924a429"
+  },
+  "knownOutOfScopeChecks": [
+    "RecipeVisibilityGameTests: old five-cooling-stream alternative assertion",
+    "global JEI recipeTraceCheck: synthesis gas / Haber-Bosch catalyst trace",
+    "validate_visual_identity: nine pre-existing unclassified material items"
+  ],
+  "mergedUpstream": "4b7d61134bd03cc254f1f77ca443e9b5d951c36f",
+  "buildAfterUpstreamMerge": "passed"
+}

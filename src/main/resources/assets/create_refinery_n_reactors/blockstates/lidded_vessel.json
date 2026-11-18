@@ -1,0 +1,428 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_inside"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_n"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_e"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_ne"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_s"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_ns"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_es"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nes"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_w"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nw"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_ew"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_new"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_sw"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nsw"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_esw"
+      }
+    },
+    {
+      "when": {
+        "bottom": "true",
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nesw"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_inside_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_n_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_e_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_ne_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_s_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_ns_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_es_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nes_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "false",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_w_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "false",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nw_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "true",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_ew_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "true",
+        "south": "false",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_new_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "false",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_sw_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "false",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nsw_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "false",
+        "east": "true",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_esw_upper"
+      }
+    },
+    {
+      "when": {
+        "bottom": "false",
+        "north": "true",
+        "east": "true",
+        "south": "true",
+        "west": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/cell_nesw_upper"
+      }
+    },
+    {
+      "when": {
+        "ladder": "true",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",
+        "y": 0
+      }
+    },
+    {
+      "when": {
+        "ladder": "true",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "ladder": "true",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "ladder": "true",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",
+        "y": 270
+      }
+    }
+  ]
+}

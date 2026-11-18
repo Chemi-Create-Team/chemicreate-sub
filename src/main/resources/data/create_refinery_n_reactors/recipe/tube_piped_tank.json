@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "create_refinery_n_reactors:tanks"
+    },
+    {
+      "item": "create_refinery_n_reactors:iron_pipe"
+    },
+    {
+      "item": "create_refinery_n_reactors:iron_pipe"
+    },
+    {
+      "item": "create_refinery_n_reactors:iron_pipe"
+    },
+    {
+      "item": "create_refinery_n_reactors:iron_pipe"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:tube_piped_tank",
+    "count": 1
+  }
+}

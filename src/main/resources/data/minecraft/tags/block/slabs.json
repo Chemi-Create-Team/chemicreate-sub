@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:corrosion_resistant_floor_slab",
+    "create_refinery_n_reactors:industrial_concrete_slab"
+  ]
+}

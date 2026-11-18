@@ -1,0 +1,18 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "none",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "create_refinery_n_reactors:deuterium_depleted_water"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:water",
+      "amount": 1000
+    }
+  ],
+  "processing_time": 200
+}

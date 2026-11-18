@@ -1,0 +1,16 @@
+{
+  "jar": "create-heavy-indusstry-0.1.0.jar",
+  "requiredEntries": [
+    "net/createplant/registry/CEGasBell.class",
+    "net/createplant/block/entity/GasHolderBlockEntity.class",
+    "net/createplant/contraptions/GasHolderSleeveEntity.class",
+    "net/createplant/chemistry/WasteGas.class",
+    "assets/create_heavy_indusstry/blockstates/gas_holder.json",
+    "assets/create_heavy_indusstry/ponder/plant/gas_bell.nbt",
+    "data/create_heavy_indusstry/recipe/gas_holder.json"
+  ],
+  "obsoleteOrOverriddenEntries": [],
+  "holderAssetsIdenticalToOriginal": 37,
+  "originalCommit": "28a33dd7",
+  "mineralAssetsUnchanged": 32
+}

@@ -1,0 +1,219 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "surface": "create_refinery_n_reactors:block/electrolysis_cell/materials",
+    "porcelain": "create_refinery_n_reactors:block/electrolysis_cell/porcelain",
+    "casing": "create_refinery_n_reactors:block/electrolysis_cell/casing",
+    "top": "create_refinery_n_reactors:block/electrolysis_cell/top",
+    "plate": "create_refinery_n_reactors:block/electrolysis_cell/plate",
+    "inner": "create:block/industrial_iron_block",
+    "particle": "create_refinery_n_reactors:block/electrolysis_cell/casing"
+  },
+  "render_type": "minecraft:cutout",
+  "elements": [
+    {
+      "from": [
+        -0.48,
+        -0.8,
+        -0.45
+      ],
+      "to": [
+        0.48,
+        0.8,
+        0
+      ],
+      "faces": {
+        "down": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.96,
+            0.45
+          ]
+        },
+        "up": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.96,
+            0.45
+          ]
+        },
+        "north": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.96,
+            1.6
+          ]
+        },
+        "south": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.96,
+            1.6
+          ]
+        },
+        "west": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.45,
+            1.6
+          ]
+        },
+        "east": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.45,
+            1.6
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        -0.8,
+        -0.48,
+        -0.45
+      ],
+      "to": [
+        -0.48,
+        0.48,
+        0
+      ],
+      "faces": {
+        "down": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.45
+          ]
+        },
+        "up": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.45
+          ]
+        },
+        "north": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.96
+          ]
+        },
+        "south": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.96
+          ]
+        },
+        "west": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.45,
+            0.96
+          ]
+        },
+        "east": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.45,
+            0.96
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.48,
+        -0.48,
+        -0.45
+      ],
+      "to": [
+        0.8,
+        0.48,
+        0
+      ],
+      "faces": {
+        "down": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.45
+          ]
+        },
+        "up": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.45
+          ]
+        },
+        "north": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.96
+          ]
+        },
+        "south": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.32000000000000006,
+            0.96
+          ]
+        },
+        "west": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.45,
+            0.96
+          ]
+        },
+        "east": {
+          "texture": "#porcelain",
+          "uv": [
+            0,
+            0,
+            0.45,
+            0.96
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B",
+    "L"
+  ],
+  "key": {
+    "B": {
+      "item": "create:brass_sheet"
+    },
+    "L": {
+      "item": "create:redstone_link"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:control_rod_link",
+    "count": 1
+  }
+}

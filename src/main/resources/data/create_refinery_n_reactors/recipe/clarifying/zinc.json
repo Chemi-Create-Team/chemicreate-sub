@@ -1,0 +1,21 @@
+{
+  "type": "create_refinery_n_reactors:clarifying",
+  "processing_time": 200,
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:zinc_leach_slurry",
+      "amount": 1000
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:zinc_sulfate_solution",
+      "amount": 750
+    },
+    {
+      "id": "create_refinery_n_reactors:tailings_mud",
+      "count": 2
+    }
+  ]
+}

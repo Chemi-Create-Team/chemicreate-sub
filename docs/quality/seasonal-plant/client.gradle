@@ -1,0 +1,16 @@
+allprojects {
+ afterEvaluate {
+  extensions.getByName('neoForge').runs.named('client') {
+   gameDirectory.set(new File('/tmp/createplant-seasonal-client'))
+   systemProperty 'createplant.seasonalPlantClientCheck', 'true'
+   systemProperty 'createplant.recipeAvailabilityCheck', 'true'
+   systemProperty 'createplant.recipeScreenCheck', 'true'
+   systemProperty 'createplant.clientQualityTargets', 'natural_draft_cooling_tower@seasonal_thermal,steel_slag@jei_forging_byproducts,spent_fuel_rod@jei_irradiation_products,irradiated_cartridge@jei_fusion_service,steel_ingot@jei_stirred_reactor'
+   systemProperty 'createplant.clientQualityScenes', 'seasonal_thermal'
+   systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+   systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+   systemProperty 'createplant.clientQualityCaptureDelay', '300'
+   systemProperty 'createplant.clientQualitySeekFromEnd', '150'
+  }
+ }
+}

@@ -1,0 +1,52 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.createplant.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BasinBlockEntityMixin",
+    "FluidTankBlockEntityAccessor",
+    "FluidTankBlockEntityMixin",
+    "GradePipeMixin",
+    "GradeTankMixin",
+    "GradeConnectivityMixin",
+    "NativeFluidNetworkMixin",
+    "FluidBucketWrapperMixin",
+    "WorldLiquidManipulationMixin",
+    "WorldLiquidDrainingMixin",
+    "WorldLiquidHoseMixin",
+    "WorldLiquidOpenEndAccess",
+    "WorldLiquidOpenEndHandlerMixin",
+    "FluidTopologyMixin",
+    "PlantTankItemMixin",
+    "DieselDistillationMixin",
+    "DieselDistillationControllerMixin",
+    "DieselRecipeMixin",
+    "GameTestRegistryMixin",
+    "GameTestShutdownMixin",
+    "LivingEntityMixin",
+    "RadiationBlockChangesMixin",
+    "RadiationInventoryChangesMixin",
+    "RadiationFluidMixMixin",
+    "RadiationFluidIdentityMixin",
+    "RadiationBucketMixin",
+    "RadiationItemStorageMixin",
+    "ForgingBlastingMixin",
+    "DieselMountedCapacityMixin",
+    "FluidTankAccess",
+    "MixtureStackMixin",
+    "MixtureTankMixin",
+    "MixturePipeConnectionMixin",
+    "MixtureFlowSourceMixin",
+    "CreativeLiquidTankMixin"
+  ],
+  "client": [
+    "CreativeInventorySectionsMixin",
+    "GoggleOverlayMixin",
+    "FluidTankModelInvoker",
+    "PonderTextWrapMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

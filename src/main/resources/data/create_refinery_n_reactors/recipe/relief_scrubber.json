@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SPS",
+    "GTG",
+    "SVS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:industrial_glass"
+    },
+    "T": {
+      "item": "create:fluid_tank"
+    },
+    "V": {
+      "item": "create:fluid_valve"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:relief_scrubber",
+    "count": 1
+  }
+}

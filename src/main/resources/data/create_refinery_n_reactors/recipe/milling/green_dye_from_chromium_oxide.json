@@ -1,0 +1,15 @@
+{
+  "type": "create:milling",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:chromium_oxide"
+    }
+  ],
+  "processing_time": 100,
+  "results": [
+    {
+      "id": "minecraft:green_dye",
+      "count": 4
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "finished_items": 345,
+  "identical_finished_item_groups": [],
+  "powder_items": {
+    "powders": 31,
+    "preserved_material_items": 78,
+    "opaque_pixels_per_powder": 88
+  },
+  "intentional_shared_item_groups": [
+    [
+      "condenser_cooling_inlet",
+      "condenser_cooling_outlet"
+    ],
+    [
+      "cooling_tower_basin",
+      "cooling_tower_shell"
+    ],
+    [
+      "cooling_tower_cold_outlet",
+      "cooling_tower_hot_inlet",
+      "cooling_tower_makeup_inlet"
+    ],
+    [
+      "empty_waste_canister",
+      "vitrified_waste_canister"
+    ],
+    [
+      "horizontal_fluid_tank",
+      "tubular_boiler"
+    ]
+  ],
+  "unfinished_assembly_items": [
+    "incomplete_puddled_iron"
+  ],
+  "vanilla_body_buckets": 32,
+  "alloy_body_buckets": 21,
+  "gas_containers": 16,
+  "grain_materials": [
+    "stainless",
+    "cast_iron",
+    "brass",
+    "copper"
+  ],
+  "zirconia_refractory": "pale ceramic grain with offset dark mortar courses",
+  "intentional_shared_materials": "Base alloys, turbine submesh surfaces, glass, standardized bucket bodies and Create shafts."
+}

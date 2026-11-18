@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PPP",
+    "BZB",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "create:iron_sheet"
+    },
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "Z": {
+      "item": "create_refinery_n_reactors:zirconia"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:electrolysis_furnace_shell",
+    "count": 8
+  }
+}

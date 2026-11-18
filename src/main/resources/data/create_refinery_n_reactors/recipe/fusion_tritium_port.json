@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "PCP",
+    " M "
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    },
+    "M": {
+      "item": "minecraft:lime_dye"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_tritium_port",
+    "count": 1
+  }
+}

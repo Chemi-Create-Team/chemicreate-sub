@@ -1,0 +1,8 @@
+{
+  "render": "captured",
+  "instruments": "5x5",
+  "map": "5x5",
+  "fuelDots": 121,
+  "flowGauges": 29,
+  "facing": "east"
+}

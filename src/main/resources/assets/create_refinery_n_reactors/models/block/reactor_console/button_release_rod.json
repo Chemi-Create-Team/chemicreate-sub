@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "panel": "create_refinery_n_reactors:block/reactor/rbmk/console_panel",
+    "top": "create_refinery_n_reactors:block/reactor/rbmk/console_desk_top",
+    "plate": "create_refinery_n_reactors:block/reactor/rbmk/console_plate",
+    "parts": "create_refinery_n_reactors:block/reactor/rbmk/console_controls",
+    "meter": "create_refinery_n_reactors:block/reactor/rbmk/console_meter",
+    "chart": "create_refinery_n_reactors:block/reactor/rbmk/recorder_chart",
+    "glass": "create_refinery_n_reactors:block/reactor/rbmk/console_glass",
+    "recess": "create_refinery_n_reactors:block/reactor/rbmk/console_recess",
+    "trim": "create:block/industrial_iron_block",
+    "particle": "create_refinery_n_reactors:block/reactor/rbmk/console_panel"
+  },
+  "elements": [
+    {
+      "from": [
+        1.5,
+        11.4,
+        4.5
+      ],
+      "to": [
+        4.5,
+        12.05,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#parts",
+          "uv": [
+            3,
+            13,
+            4,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#parts",
+          "uv": [
+            3,
+            13,
+            4,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#parts",
+          "uv": [
+            3,
+            13,
+            4,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#parts",
+          "uv": [
+            9,
+            0,
+            12.0,
+            3.0
+          ],
+          "rotation": 180
+        },
+        "south": {
+          "texture": "#parts",
+          "uv": [
+            3,
+            13,
+            4,
+            14
+          ]
+        }
+      }
+    }
+  ]
+}

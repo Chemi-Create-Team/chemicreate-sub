@@ -1,0 +1,219 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "girder": "create:block/girder",
+    "steel": "create:block/industrial_iron_block",
+    "steel_top": "create:block/industrial_iron_block_top",
+    "brass": "create:block/brass_casing",
+    "blackstone": "minecraft:block/polished_blackstone_bricks",
+    "rough": "minecraft:block/blackstone",
+    "particle": "minecraft:block/polished_blackstone_bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        2,
+        2
+      ],
+      "to": [
+        14,
+        14,
+        14
+      ],
+      "faces": {
+        "up": {
+          "texture": "#blackstone",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#blackstone",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "north": {
+          "texture": "#blackstone",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#blackstone",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#blackstone",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#blackstone",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        5,
+        8
+      ],
+      "to": [
+        11,
+        11,
+        24
+      ],
+      "faces": {
+        "up": {
+          "texture": "#steel",
+          "uv": [
+            5,
+            8,
+            11,
+            24
+          ]
+        },
+        "down": {
+          "texture": "#steel",
+          "uv": [
+            5,
+            8,
+            11,
+            24
+          ]
+        },
+        "north": {
+          "texture": "#steel",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#steel",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#steel",
+          "uv": [
+            8,
+            5,
+            24,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#steel",
+          "uv": [
+            8,
+            5,
+            24,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        11
+      ],
+      "to": [
+        13,
+        13,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            11,
+            13,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            11,
+            13,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#brass",
+          "uv": [
+            11,
+            3,
+            16,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#brass",
+          "uv": [
+            11,
+            3,
+            16,
+            13
+          ]
+        }
+      }
+    }
+  ]
+}

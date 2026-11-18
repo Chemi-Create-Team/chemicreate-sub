@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " Z ",
+    "SPS",
+    " Z "
+  ],
+  "key": {
+    "Z": {
+      "tag": "c:ingots/zirconium"
+    },
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:zirconium_pipe",
+    "count": 4
+  }
+}

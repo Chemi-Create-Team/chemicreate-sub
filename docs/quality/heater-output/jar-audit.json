@@ -1,0 +1,15 @@
+{
+  "jar": "create-refinery-n-reactors-0.1.0.jar",
+  "sha256": "0dd0427d17334d893422e056fa321935c87caee12cc280201bc0055420104352",
+  "required_entries": [
+    "net/createplant/client/ElectricHeaterRenderer.class",
+    "net/createplant/block/entity/ElectricHeaterBlockEntity.class",
+    "assets/create_refinery_n_reactors/models/block/electric_utilities/heater_dial.json"
+  ],
+  "languages": [
+    "en_us",
+    "ja_jp",
+    "zh_cn"
+  ],
+  "result": "passed"
+}

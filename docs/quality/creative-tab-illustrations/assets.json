@@ -1,0 +1,191 @@
+[
+  {
+    "category": "radiation",
+    "width": 162,
+    "height": 18,
+    "sha256": "0bd9c09ee88a245370ea22b02e747288d4c92613d61921fe8bf80b7027a884ee",
+    "bytes": 1725
+  },
+  {
+    "category": "construction",
+    "width": 162,
+    "height": 18,
+    "sha256": "46cb6be9b0c8e65f0f6fca0a75b5d48d59cd7a707f7fadf48e19f987bf409281",
+    "bytes": 1833
+  },
+  {
+    "category": "pipes",
+    "width": 162,
+    "height": 18,
+    "sha256": "1269608ff49028ea2e0d80625183ad22dafe237a858d3b7916cbe79d8f8c6704",
+    "bytes": 1707
+  },
+  {
+    "category": "controls",
+    "width": 162,
+    "height": 18,
+    "sha256": "63f00ca5dde79d92205825bff2a40295534ec481456bc9ac3eb51729975074b1",
+    "bytes": 1736
+  },
+  {
+    "category": "tanks",
+    "width": 162,
+    "height": 18,
+    "sha256": "62fa4851b74a66806f7dad66ddf12a1ce623f470428bf952d2f8f01ce9154646",
+    "bytes": 1610
+  },
+  {
+    "category": "kinetics",
+    "width": 162,
+    "height": 18,
+    "sha256": "70314660f40c05d7101323f9283b147bd1b67e933564c61b06b67fde3e27448f",
+    "bytes": 1852
+  },
+  {
+    "category": "thermal",
+    "width": 162,
+    "height": 18,
+    "sha256": "181969386049e0bc41f2bfe7b293e2a379b3508dd638b897e45378a6801f6db4",
+    "bytes": 1777
+  },
+  {
+    "category": "chemistry",
+    "width": 162,
+    "height": 18,
+    "sha256": "b434f481b51952ffd904c882035dee96cbed1cf035fa4ac2168d9b1b05b4aca8",
+    "bytes": 1609
+  },
+  {
+    "category": "fission",
+    "width": 162,
+    "height": 18,
+    "sha256": "76df5c941ae95f081cfce2823b73b6422174fb1e129f29b944c3f3163d0122c0",
+    "bytes": 1736
+  },
+  {
+    "category": "reprocessing",
+    "width": 162,
+    "height": 18,
+    "sha256": "5b97d6a39d172189f3724adc24e4d95d46bdb604f466a21e3ceaa00cefb683ed",
+    "bytes": 1736
+  },
+  {
+    "category": "fusion",
+    "width": 162,
+    "height": 18,
+    "sha256": "0a492b504d5ff7c8bef621dce752fa8438e7137bec9e52bdfc69050a44904446",
+    "bytes": 1729
+  },
+  {
+    "category": "logistics",
+    "width": 162,
+    "height": 18,
+    "sha256": "1402ac080d7e2dcf3cbe846b87fd27e392d0a70c47d53032afb532e3966aa4bc",
+    "bytes": 1628
+  },
+  {
+    "category": "containers",
+    "width": 162,
+    "height": 18,
+    "sha256": "b89accb72eb7df14c849934999965f17a9d83b65cbeaa0e7bbb964655f6dc6e3",
+    "bytes": 1847
+  },
+  {
+    "category": "liquids",
+    "width": 162,
+    "height": 18,
+    "sha256": "1462b72c1daa761e494fcb398e5eabedbf6dc02ef9f35b1d567413706793336a",
+    "bytes": 1740
+  },
+  {
+    "category": "gases",
+    "width": 162,
+    "height": 18,
+    "sha256": "3dd34e3903774c8a994306bd85d3404b77dccab4119971710d7b39d84f2645dc",
+    "bytes": 1741
+  },
+  {
+    "category": "ores",
+    "width": 162,
+    "height": 18,
+    "sha256": "87cd21482e942501d396d848bc1f20397eeb3310986b30e98aa1d6b7e3cf72aa",
+    "bytes": 1959
+  },
+  {
+    "category": "minerals",
+    "width": 162,
+    "height": 18,
+    "sha256": "059e663c9ee289ee399a5244efd20d23e296d035c2181c18bfdf5fb6814504c1",
+    "bytes": 1871
+  },
+  {
+    "category": "powders",
+    "width": 162,
+    "height": 18,
+    "sha256": "0d5928b3bf64706ce23f45f5f7e62abbc4a21e6446f3339eaad67b09a5b64556",
+    "bytes": 1877
+  },
+  {
+    "category": "metals",
+    "width": 162,
+    "height": 18,
+    "sha256": "ec0e189ebe5509901c1fda5ed02ca75ab3fb123956b0449efb878548add3ba7b",
+    "bytes": 1766
+  },
+  {
+    "category": "polymers",
+    "width": 162,
+    "height": 18,
+    "sha256": "abbae64e0d7f848b88675cdc3186cc7c0f59c7d63fa509230dde411c2d40d593",
+    "bytes": 1628
+  },
+  {
+    "category": "catalysts",
+    "width": 162,
+    "height": 18,
+    "sha256": "816744c57305ba18610b4c3c42f7cbb9bef5f4e5b361c479c873253af43ebfcf",
+    "bytes": 1730
+  },
+  {
+    "category": "components",
+    "width": 162,
+    "height": 18,
+    "sha256": "d6e5402fda210831141ea4ad003721fcf7236389bd4c073d79d2842e21ace211",
+    "bytes": 1753
+  },
+  {
+    "category": "fuel",
+    "width": 162,
+    "height": 18,
+    "sha256": "40c8f379f1a2b929d09708e1796b7aa907bba934a5112f2f373187610559c59a",
+    "bytes": 1845
+  },
+  {
+    "category": "spent_fuel",
+    "width": 162,
+    "height": 18,
+    "sha256": "a49c72ba9089893493ea09295161682e8340559c1edb34b84f996ce9e0088aa0",
+    "bytes": 1659
+  },
+  {
+    "category": "explosives",
+    "width": 162,
+    "height": 18,
+    "sha256": "fe0eb542439bbf414dc7eb7128c50bec0cf83fcc1fd734eb943fe56d9e1c9a8e",
+    "bytes": 1633
+  },
+  {
+    "category": "protection",
+    "width": 162,
+    "height": 18,
+    "sha256": "9d8ef1458018c5dfa762ecc8e2dd1a3b901a3ca9c62fe8874dcea8a50914d469",
+    "bytes": 1718
+  },
+  {
+    "category": "other",
+    "width": 162,
+    "height": 18,
+    "sha256": "6e7979491052354dd366d1118ec9f99528a5db042c35a0fc39c5a5cc25a1b597",
+    "bytes": 1756
+  }
+]

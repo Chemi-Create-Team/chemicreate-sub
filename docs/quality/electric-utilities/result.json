@@ -1,0 +1,59 @@
+{
+  "heater_400V": {
+    "water_C": 25.95931760190001,
+    "electrical_J": 25746.474804890153,
+    "water_gain_J": 25408.02498677699,
+    "watts": 3991.701520138003
+  },
+  "pump_six_directions": [
+    {
+      "rpm": 124.0,
+      "direction": "down",
+      "watts": 4976.620593517345,
+      "work_J": 18.912159994633097,
+      "output_mB": 4000,
+      "input_mB": 0
+    },
+    {
+      "rpm": 124.0,
+      "direction": "up",
+      "watts": 4978.529651851024,
+      "work_J": 23.535993052364116,
+      "output_mB": 4000,
+      "input_mB": 0
+    },
+    {
+      "rpm": 124.0,
+      "direction": "north",
+      "watts": 4978.022302599297,
+      "work_J": 18.913336494641136,
+      "output_mB": 4000,
+      "input_mB": 0
+    },
+    {
+      "rpm": 124.0,
+      "direction": "south",
+      "watts": 4977.149327122516,
+      "work_J": 18.91056784088894,
+      "output_mB": 4000,
+      "input_mB": 0
+    },
+    {
+      "rpm": 124.0,
+      "direction": "west",
+      "watts": 4978.023646806854,
+      "work_J": 18.912648062238905,
+      "output_mB": 4000,
+      "input_mB": 0
+    },
+    {
+      "rpm": 124.0,
+      "direction": "east",
+      "watts": 4977.14587913048,
+      "work_J": 18.90889304815022,
+      "output_mB": 4000,
+      "input_mB": 0
+    }
+  ],
+  "heater_800V_watts": 15966.806080552013
+}

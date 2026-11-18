@@ -1,0 +1,10 @@
+{
+  "baseline": "6c10f6fc",
+  "models_checked": 103,
+  "model_mismatches": [],
+  "rbmk_images_checked": 111,
+  "jar_mismatches": [],
+  "jar_sha256": "70f2df4f3effc14af087f6c88cf1a96bc26ae83138bfebbcb5f62a6e1c62b995",
+  "restoration_implementation": "a314e150",
+  "additional_texture_changes_required": false
+}

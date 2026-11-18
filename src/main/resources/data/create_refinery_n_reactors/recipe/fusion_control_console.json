@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ERE",
+    "BCB",
+    "SAS"
+  ],
+  "key": {
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "B": {
+      "item": "create:brass_sheet"
+    },
+    "C": {
+      "item": "create:brass_casing"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "A": {
+      "item": "minecraft:lever"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_control_console",
+    "count": 1
+  }
+}

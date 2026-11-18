@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    }
+  ],
+  "result": {
+    "id": "create:belt_connector",
+    "count": 2
+  }
+}

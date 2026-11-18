@@ -1,0 +1,57 @@
+{
+  "baseline_commit": "2c4a9533d865d6b981b59a0a2586f7e536b6b4e6",
+  "implementation_commit": "5c7504a843c9ab09912c2688d28a071340b3cf53",
+  "regeneration": {
+    "source_commit": "2c4a9533d865d6b981b59a0a2586f7e536b6b4e6",
+    "files_checked": 1836,
+    "identical": true,
+    "changes": [],
+    "elapsed_seconds": 3.105
+  },
+  "independent_audit": {
+    "baseline": "2c4a9533d865d6b981b59a0a2586f7e536b6b4e6",
+    "pngs_checked": 564,
+    "png_added_or_removed": [],
+    "png_byte_changes": [],
+    "png_rgba_changes": [],
+    "alpha_changes": [],
+    "size_changes": [],
+    "protected_images_checked": 222,
+    "protected_failures": [],
+    "updated_palette_checks": 88,
+    "updated_palette_failures": [],
+    "nontexture_source_changes": [],
+    "jar": {
+      "file": "/workspace/Create-Plant/build/libs/create-heavy-indusstry-0.1.0.jar",
+      "size_bytes": 4694708,
+      "sha256": "e2f5afc348973724b1bdd448edb962738bd504f25fa6dfcb6d693070f5b89cf0",
+      "source_assets_checked": 1836,
+      "source_asset_mismatches": []
+    },
+    "models_checked": 1272,
+    "passed": true
+  },
+  "build": "passed",
+  "native_capture_count": 8,
+  "native_dimensions": [
+    1260,
+    740
+  ],
+  "native_render_targets": [
+    "fusion_reactor_controller",
+    "fusion_control_console",
+    "small_compressor",
+    "reactor_vessel",
+    "crane_drive",
+    "pulse_extraction_column",
+    "electrolysis_furnace_shell",
+    "reciprocating_compressor"
+  ],
+  "scene_headers_checked": 112,
+  "runtime_translations": "passed",
+  "gradle_run_client_exit_code": 1,
+  "minecraft_exit_code": 134,
+  "shutdown_problem": "NVIDIA libEGL_nvidia.so.0 SIGSEGV after CLIENT QUALITY PASSED",
+  "jar_artifact": "create-heavy-indusstry-material-accents-rerun-5c7504a8.jar",
+  "jar_sha256": "e2f5afc348973724b1bdd448edb962738bd504f25fa6dfcb6d693070f5b89cf0"
+}

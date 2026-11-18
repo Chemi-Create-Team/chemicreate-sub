@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/wet_processing/overflow_weir"
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/wet_processing/overflow_weir",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/wet_processing/overflow_weir",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/wet_processing/overflow_weir",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "create_refinery_n_reactors:block/wet_processing/overflow_weir",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "create_refinery_n_reactors:block/wet_processing/overflow_weir",
+      "x": 270
+    }
+  }
+}

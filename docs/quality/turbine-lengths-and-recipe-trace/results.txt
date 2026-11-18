@@ -1,0 +1,18 @@
+turbine-jei-tests
+[23:46:14] [Server thread/INFO] [minecraft/GameTestServer]: All 10 required tests passed :)
+BUILD SUCCESSFUL in 34s
+
+turbine-jei-client
+[23:48:21] [Render thread/INFO] [ne.cr.co.je.CreatePlantJeiPlugin/]: RECIPE TRACE PASSED: H2 + N2 -> synthesis gas -> Haber-Bosch; recipe counts {stirred_reactor=58, tray_reactor=4, reaction_vessel=10, fractionating_column=9, gas_centrifuge=4, cell_electrolysis=5, solar_salt=1, fuel_cell=1, electrolysis_furnace=3, haber_bosch=2, nitric_absorption=2, converter=2, solvent_extraction=1, vitrification=1, industrial_delivery=6, helium_refrigeration=1, ammonia_separator=2, process_heating=5, process_cooling=5}
+[23:48:24] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET high_pressure_turbine_unit@turbine_multiblock -> create_refinery_n_reactors:turbine_multiblock
+[23:48:37] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET low_pressure_turbine_unit@turbine_multiblock -> create_refinery_n_reactors:turbine_multiblock
+[23:48:49] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET minecraft:gunpowder@plant_manufacturing_mining_explosives -> create_refinery_n_reactors:plant_manufacturing_mining_explosives
+[23:49:01] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET minecraft:gunpowder@plant_manufacturing_mining_explosives -> create_refinery_n_reactors:plant_manufacturing_mining_explosives
+[23:49:13] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET synthesis_gas_bucket@jei_stirred_reactor -> JEI
+[23:49:25] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET synthesis_gas_bucket@jei_haber_bosch -> JEI
+[23:49:37] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 2 scenes, ja_jp
+#  SIGSEGV (0xb) at pc=0x000076b6385746ae, pid=2740, tid=3458
+# C  [libEGL_nvidia.so.0+0xb56ae]
+
+Translations: PASS 2557 keys in en_us/ja_jp/zh_cn.
+Ponder language: PASS 140 scenes in all three languages.

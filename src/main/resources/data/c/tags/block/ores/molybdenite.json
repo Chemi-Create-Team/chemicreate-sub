@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:molybdenite_ore",
+    "create_refinery_n_reactors:deepslate_molybdenite_ore"
+  ]
+}

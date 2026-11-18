@@ -1,0 +1,17 @@
+{
+  "runtimeTranslations": "passed",
+  "translationScope": "plant_manufacturing_steel,plant_manufacturing_fluorine,guide.manufacturing_steel,guide.manufacturing_fluorine",
+  "scenes": [
+    "create_heavy_indusstry:plant_manufacturing_fluorine",
+    "create_heavy_indusstry:plant_manufacturing_steel"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "renderTargets": [
+    "fluorite@plant_manufacturing_steel",
+    "fluorite@plant_manufacturing_fluorine",
+    "fluorite@1"
+  ],
+  "ponderRender": "checked"
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    " B ",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "B": {
+      "item": "create_refinery_n_reactors:lithium_lead_blanket_cartridge"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:lithium_target_rod"
+  }
+}

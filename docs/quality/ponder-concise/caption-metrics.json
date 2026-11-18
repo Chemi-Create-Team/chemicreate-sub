@@ -1,0 +1,25 @@
+{
+  "baseCommit": "8d229baec996d09b8c6c033262852a565a2daec8",
+  "captionCount": 672,
+  "changedCaptions": 355,
+  "locales": {
+    "en_us": {
+      "beforeCharacters": 102559,
+      "afterCharacters": 69164,
+      "beforePages": 991,
+      "afterPages": 760
+    },
+    "ja_jp": {
+      "beforeCharacters": 41575,
+      "afterCharacters": 28980,
+      "beforePages": 934,
+      "afterPages": 725
+    },
+    "zh_cn": {
+      "beforeCharacters": 36175,
+      "afterCharacters": 24287,
+      "beforePages": 858,
+      "afterPages": 740
+    }
+  }
+}

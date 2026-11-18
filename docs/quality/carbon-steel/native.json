@@ -1,0 +1,15 @@
+{
+  "runtimeTranslations": "passed",
+  "translationScope": "plant_manufacturing_steel",
+  "scenes": [
+    "create_refinery_n_reactors:plant_manufacturing_steel"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "renderTargets": [
+    "carbon_powder@plant_manufacturing_steel",
+    "unprocessed_steel@plant_manufacturing_steel"
+  ],
+  "ponderRender": "checked"
+}

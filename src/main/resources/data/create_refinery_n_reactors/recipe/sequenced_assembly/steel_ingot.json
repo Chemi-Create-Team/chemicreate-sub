@@ -1,0 +1,30 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "create_refinery_n_reactors:unprocessed_steel"
+  },
+  "loops": 5,
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:steel_ingot"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "create_refinery_n_reactors:heated_unfinished_steel"
+        }
+      ],
+      "results": [
+        {
+          "id": "create_refinery_n_reactors:heated_unfinished_steel"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "create_refinery_n_reactors:heated_unfinished_steel"
+  }
+}

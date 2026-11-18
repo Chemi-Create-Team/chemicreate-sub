@@ -1,0 +1,29 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def selectedLanguage = System.getProperty('qualityLanguage', 'ja_jp')
+                if (options.exists()) {
+                    def lines = options.readLines('UTF-8')
+                    lines.removeAll { it.startsWith('lang:') }
+                    lines.add('lang:' + selectedLanguage)
+                    options.setText(lines.join('\n') + '\n', 'UTF-8')
+                }
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'
+            programArgument '1280'
+            programArgument '--height'
+            programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', System.getProperty('qualityLanguage','ja_jp')
+            systemProperty 'createplant.clientQualityScenes', 'plant_uranium_preparation,guide.uranium_preparation,plant_uranium_fuel_finishing,guide.uranium_fuel_finishing,rbmk_compact_core'
+            systemProperty 'createplant.clientQualityTargets', 'uraninite@plant_uranium_preparation,enriched_uranium_dioxide@plant_uranium_fuel_finishing'
+            systemProperty 'createplant.clientQualitySeek.0', '465'
+            systemProperty 'createplant.clientQualitySeek.1', '330'
+            systemProperty 'createplant.clientQualityCaptureDelay', System.getProperty('captureDelay','80')
+        }
+    }
+}

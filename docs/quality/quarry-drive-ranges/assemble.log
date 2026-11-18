@@ -1,0 +1,19 @@
+Picked up JAVA_TOOL_OPTIONS: -XX:ActiveProcessorCount=2
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :createMinecraftArtifacts UP-TO-DATE
+
+> Task :compileJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processResources UP-TO-DATE
+> Task :classes
+> Task :jarJar NO-SOURCE
+> Task :jar
+> Task :assemble
+
+[Incubating] Problems report is available at: file:///workspace/Create-Plant/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 7s
+4 actionable tasks: 2 executed, 2 up-to-date

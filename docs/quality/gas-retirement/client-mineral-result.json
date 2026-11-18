@@ -1,0 +1,24 @@
+{
+  "purpose": "Native visual gallery; ore and deepslate rows plus framed mineral sprites",
+  "minerals": [
+    "uraninite",
+    "bauxite",
+    "pentlandite",
+    "ilmenite",
+    "zircon",
+    "chromite",
+    "molybdenite",
+    "fluorite"
+  ],
+  "itemModelsLoaded": 24,
+  "ores": [
+    "bauxite",
+    "pentlandite",
+    "ilmenite",
+    "zircon",
+    "chromite",
+    "molybdenite",
+    "uranium",
+    "halite"
+  ]
+}

@@ -1,0 +1,29 @@
+
+tests.log (selected log lines)
+[16:44:18] [Server thread/ERROR] [minecraft/LogTestReporter]: afouledprocessstopsthenresumesafteronemanualbrush failed at -6772958, -60, 8859862! The slowed process resumes one batch and charges one new unit of fouling only after its material transaction commits
+[16:44:31] [Server thread/ERROR] [minecraft/LogTestReporter]: asteelspherestaysordinarybuildingblocks failed at -6773069, -60, 8860698! Missing block entity at -6773048,-57,8860704 (relative: 21,3,6) (t=10)
+[16:45:48] [Server thread/INFO] [minecraft/GameTestServer]: ========= 613 GAME TESTS COMPLETE IN 1.563 min ======================
+[16:45:48] [Server thread/INFO] [minecraft/GameTestServer]: 2 required tests failed :(
+BUILD FAILED in 2m 31s
+
+tests-final.log (selected log lines)
+[16:46:33] [Server thread/INFO] [minecraft/GameTestServer]: 613 tests are now running at position -11567008, -59, -1285343!
+[16:46:37] [Server thread/ERROR] [minecraft/LogTestReporter]: afouledprocessstopsthenresumesafteronemanualbrush failed at -11566897, -60, -1285191! The slowed process resumes one batch and charges one new unit of fouling only after its material transaction commits
+[16:47:55] [Server thread/INFO] [minecraft/GameTestServer]: ========= 613 GAME TESTS COMPLETE IN 1.362 min ======================
+[16:47:55] [Server thread/INFO] [minecraft/GameTestServer]: 1 required tests failed :(
+BUILD FAILED in 1m 57s
+
+Static checks: 2515 translated keys, 139 Ponder headers and runtime captions passed. Plant tutorial reference checks passed.
+Image audit: 24 PNG sprites match the supplied pixels; binary alpha and 16x16 dimensions; deterministic import.
+Hardware: mc-debug glxinfo -B reported direct rendering Yes, NVIDIA GeForce RTX 4060, driver 595.99.02.
+
+client.log (selected log lines)
+[16:49:14] [Render thread/INFO] [ne.cr.cl.MineralClientCheck/]: MINERAL CLIENT PASSED: 24 models; 16 ore blocks and 8 framed mineral items
+[16:49:59] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fluorite@fluorite_sources -> create_heavy_indusstry:fluorite_sources
+[16:50:04] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 139 scenes, ja_jp
+# C  [libEGL_nvidia.so.0+0xb56ae]
+> Process 'command '/workspace/.createplant-jdk21/bin/java'' finished with non-zero exit value 134
+BUILD FAILED in 2m 2s
+
+Final packaging: BUILD SUCCESSFUL in 5s
+Packaged JAR has no retired code/assets or magnet recipe override, and eight separate deepslate ore overlays.

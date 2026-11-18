@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:polyethylene"
+    },
+    {
+      "item": "minecraft:slime_ball"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 250
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:flocculant",
+      "count": 8
+    }
+  ]
+}

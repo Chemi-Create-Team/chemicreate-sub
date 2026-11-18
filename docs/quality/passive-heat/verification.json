@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-24",
+  "base_commit": "b6d45d48a761ea5e65fdf216470e7d90bb495b66",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10-281",
+  "game_tests": {
+    "with_jei": 162,
+    "without_jei": 162,
+    "new_tests": 30
+  },
+  "client": {
+    "language": "ja_jp",
+    "runtime_ponder_scenes": 52,
+    "connected_tank_render": "passed"
+  },
+  "resources": {
+    "validators": 10,
+    "new_tank_variants": 24,
+    "base_texture_size": [
+      16,
+      16
+    ],
+    "ct_sheet_size": [
+      64,
+      64
+    ]
+  },
+  "unloaded_time": "included in ordinary tanks using saved world ticks; insulated tanks unchanged; real chunk unload/reload tested",
+  "performance": {
+    "controllers": 100,
+    "ticks": 200,
+    "settlements": 1100,
+    "final_sweep_ns_with_jei": 129941,
+    "final_sweep_ns_without_jei": 127929,
+    "scope": "one final settlement and assertion sweep; not whole-server MSPT or a before/after benchmark"
+  },
+  "artifact": {
+    "filename": "create-heavy-indusstry-0.1.0.jar",
+    "bytes": 2630104,
+    "sha256": "b0bfccf8b28c144749e65715caeed2190ca0a61d518d9e242b9f66b6129477c0",
+    "zip_bytes": 2226764
+  },
+  "limits": [
+    "per-output representative route flow approximation",
+    "world-wide cache invalidation epoch",
+    "legacy scalar boiler/turbine steam not converted to temperature-aware FluidStack",
+    "large modpack endurance, human multiplayer and whole-server performance not measured"
+  ]
+}

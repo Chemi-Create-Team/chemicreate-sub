@@ -1,0 +1,78 @@
+package net.createplant.mixin;
+
+import java.util.List;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
+import com.simibubi.create.foundation.fluid.SmartFluidTank;
+import net.createplant.thermal.FluidThermal;
+import net.createplant.thermal.ThermalFluidTank;
+import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.fluids.FluidStack;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(value=FluidTankBlockEntity.class,remap=false)
+public abstract class GradeTankMixin {
+    @Unique private final net.createplant.thermal.TankHeating createPlant$heating=new net.createplant.thermal.TankHeating();
+    @Inject(method="tick",at=@At("RETURN"))
+    private void createPlant$heatContents(CallbackInfo ci) {
+        var owner=(FluidTankBlockEntity)(Object)this;var level=owner.getLevel();
+        if(level==null || level.isClientSide() || !owner.isController() || Math.floorMod(level.getGameTime()+owner.getBlockPos().asLong(),20)!=0)return;
+        var base=new java.util.ArrayList<net.minecraft.core.BlockPos>();
+        if(!owner.getTankInventory().isEmpty())net.createplant.block.TankCells.forEachBase(owner,base::add);
+        int previous=createPlant$heating.progress();
+        if(createPlant$heating.tick(List.of(owner.getTankInventory().getFluid()),net.createplant.thermal.TankHeating.burnerBelow(level,base),net.createplant.thermal.SeasonalThermal.heating(level)))
+            owner.getTankInventory().setFluid(owner.getTankInventory().getFluid().copy());
+        else if(previous!=createPlant$heating.progress())owner.setChanged();
+    }
+    @Inject(method="write",at=@At("TAIL"))
+    private void createPlant$saveHeating(net.minecraft.nbt.CompoundTag tag,net.minecraft.core.HolderLookup.Provider lookup,boolean packet,CallbackInfo ci) {
+        if(!packet)createPlant$heating.write(tag,lookup);
+    }
+    @Inject(method="read",at=@At("TAIL"))
+    private void createPlant$loadHeating(net.minecraft.nbt.CompoundTag tag,net.minecraft.core.HolderLookup.Provider lookup,boolean packet,CallbackInfo ci) {
+        if(!packet)createPlant$heating.read(tag,lookup);
+    }
+    @com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation(method="applyFluidTankSize",at=@At(value="INVOKE",target="Lnet/neoforged/neoforge/fluids/capability/templates/FluidTank;drain(ILnet/neoforged/neoforge/fluids/capability/IFluidHandler$FluidAction;)Lnet/neoforged/neoforge/fluids/FluidStack;"))
+    private FluidStack createPlant$keepMixturePrefix(net.neoforged.neoforge.fluids.capability.templates.FluidTank tank,int overflow,net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction action,com.llamalad7.mixinextras.injector.wrapoperation.Operation<FluidStack> original) {
+        if(!net.createplant.mixture.MixtureHelper.isMixture(tank.getFluid()))return original.call(tank,overflow,action);
+        var kept=tank.getFluid().copyWithAmount(tank.getCapacity());var removed=net.createplant.mixture.MixtureHelper.remainder(tank.getFluid(),tank.getCapacity());
+        if(action.execute())tank.setFluid(kept);return removed;
+    }
+    @Unique private static Component createPlant$tankName(FluidTankBlockEntity owner) {
+        return owner.getBlockState().getBlock().getName();
+    }
+    @Inject(method="lambda$registerCapabilities$0",at=@At("RETURN"),cancellable=true)
+    private static void createPlant$phasePorts(FluidTankBlockEntity be,net.minecraft.core.Direction side,CallbackInfoReturnable<net.neoforged.neoforge.fluids.capability.IFluidHandler> cir) {
+        cir.setReturnValue(net.createplant.thermal.GradeFluidTank.port(be,side,cir.getReturnValue()));
+    }
+    @Inject(method="getFillState",at=@At("RETURN"),cancellable=true)
+    private void createPlant$liquidLevel(CallbackInfoReturnable<Float> cir) {
+        var owner=(FluidTankBlockEntity)(Object)this;
+        if(owner.getTankInventory() instanceof net.createplant.thermal.GradeFluidTank gas && gas.gasStored() && gas.volumeCapacity()>0) cir.setReturnValue((float)gas.gasVolume()/gas.volumeCapacity());
+
+    }
+    private static int gasVolume(FluidTankBlockEntity owner) { return owner.getTankInventory() instanceof net.createplant.thermal.GradeFluidTank gas && gas.gasStored() ? gas.gasVolume() : owner.getTankInventory().getFluidAmount(); }
+    private static int volumeCapacity(FluidTankBlockEntity owner) { return owner.getTankInventory() instanceof net.createplant.thermal.GradeFluidTank gas && gas.gasStored() ? gas.volumeCapacity() : owner.getTankInventory().getCapacity(); }
+    @Shadow protected abstract void onFluidStackChanged(FluidStack stack);
+    @Inject(method="createInventory",at=@At("RETURN"),cancellable=true)
+    private void createPlant$thermalInventory(CallbackInfoReturnable<SmartFluidTank> cir) {
+        if (((Object)this).getClass()==FluidTankBlockEntity.class && cir.getReturnValue().getClass()==SmartFluidTank.class)
+            cir.setReturnValue(new net.createplant.thermal.GradeFluidTank(cir.getReturnValue().getCapacity(),this::onFluidStackChanged,(FluidTankBlockEntity)(Object)this));
+    }
+    @Inject(method="addToGoggleTooltip",at=@At("RETURN"))
+    private void createPlant$temperature(List<Component> lines,boolean sneaking,CallbackInfoReturnable<Boolean> cir) {
+        var owner=((FluidTankBlockEntity)(Object)this).getControllerBE();if(owner==null)return;
+        if (net.createplant.mixture.MixtureHelper.isMixture(owner.getTankInventory().getFluid())) {
+            lines.clear();net.createplant.mixture.MixtureGoggleHelper.appendSummary(lines, owner.getTankInventory().getFluid());return;
+        }
+        var grade=net.createplant.thermal.TankGrade.of(owner);lines.clear();lines.add(createPlant$tankName(owner));
+        lines.add(Component.literal(gasVolume(owner)+" / "+volumeCapacity(owner)+" mB").append(" | ").append(owner.getTankInventory().isEmpty() ? Component.empty() : FluidThermal.readout(owner.getTankInventory().getFluid())));
+        if(grade!=null){grade.describe(lines);if(owner.getTankInventory() instanceof net.createplant.thermal.GradeFluidTank tank && !tank.refusal().isEmpty())lines.set(3,Component.translatable("grade.create_refinery_n_reactors.tank.reject."+tank.refusal()));}
+        net.createplant.compat.display.MachineReadings.compact(lines);
+    }
+}

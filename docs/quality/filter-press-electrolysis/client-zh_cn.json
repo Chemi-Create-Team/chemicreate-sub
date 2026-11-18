@@ -1,0 +1,20 @@
+{
+  "renderTargets": [
+    "electrolysis_cell@electrolysis_cell",
+    "hydrogen_gas_bucket@plant_manufacturing_hydrogen",
+    "brine_bucket@plant_manufacturing_chlor_alkali",
+    "deuterium_gas_bucket@plant_manufacturing_deuterium"
+  ],
+  "ponderRender": "captured",
+  "runtimeTranslations": "passed",
+  "translationScope": "electrolysis_cell,plant_manufacturing_hydrogen,plant_manufacturing_chlor_alkali,plant_manufacturing_deuterium,guide.manufacturing_hydrogen,guide.manufacturing_chlor_alkali,guide.manufacturing_deuterium",
+  "scenes": [
+    "create_heavy_indusstry:electrolysis_cell",
+    "create_heavy_indusstry:plant_manufacturing_chlor_alkali",
+    "create_heavy_indusstry:plant_manufacturing_deuterium",
+    "create_heavy_indusstry:plant_manufacturing_hydrogen"
+  ],
+  "languages": [
+    "zh_cn"
+  ]
+}

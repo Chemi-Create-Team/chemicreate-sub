@@ -1,0 +1,23 @@
+{
+  "powders": {
+    "ground_clinker": {
+      "colour": [
+        124,
+        124,
+        112
+      ],
+      "reason": "Finely ground cement clinker before gypsum addition."
+    },
+    "cement_powder": {
+      "colour": [
+        159,
+        157,
+        139
+      ],
+      "reason": "Loose Portland cement binder powder."
+    }
+  },
+  "preserved_items": {
+    "cement_clinker": "Fired clinker nodules before crushing."
+  }
+}

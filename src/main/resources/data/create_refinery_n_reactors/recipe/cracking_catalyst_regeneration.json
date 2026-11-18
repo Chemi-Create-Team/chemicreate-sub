@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:cracking_catalyst"
+    },
+    {
+      "tag": "c:ingots/aluminum"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:cracking_catalyst",
+    "count": 1
+  }
+}

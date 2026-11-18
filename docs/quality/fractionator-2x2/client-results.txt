@@ -1,0 +1,9 @@
+[16:02:39] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fractionating_column@fractionating_column -> create_heavy_indusstry:fractionating_column
+[16:02:41] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fractionating_column@fractionating_column_binary -> create_heavy_indusstry:fractionating_column_binary
+[16:02:43] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET fractionating_column@fractionating_column_air -> create_heavy_indusstry:fractionating_column_air
+[16:02:44] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET air_filter@plant_manufacturing_air -> create_heavy_indusstry:plant_manufacturing_air
+[16:02:46] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET ammonia_gas_bucket@plant_manufacturing_ammonia -> create_heavy_indusstry:plant_manufacturing_ammonia
+[16:02:48] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET ammonium_nitrate@plant_manufacturing_nitric_fertilizer -> create_heavy_indusstry:plant_manufacturing_nitric_fertilizer
+[16:02:50] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET cooled_olefins_bucket@plant_manufacturing_petrochemical_feedstocks -> create_heavy_indusstry:plant_manufacturing_petrochemical_feedstocks
+[16:02:52] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY TARGET cooled_hydrocracker_effluent_bucket@plant_manufacturing_fuel_refining -> create_heavy_indusstry:plant_manufacturing_fuel_refining
+[16:02:53] [Render thread/INFO] [ne.cr.cl.ClientQualityCheck/]: CLIENT QUALITY PASSED: 136 scenes, ja_jp

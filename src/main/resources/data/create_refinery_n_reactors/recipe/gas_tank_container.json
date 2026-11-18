@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SIS",
+    "IGI",
+    "SIS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:steel_ingot"
+    },
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:gas_receiver"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:gas_tank_container",
+    "count": 4
+  }
+}

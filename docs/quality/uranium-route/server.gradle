@@ -1,0 +1,8 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File(System.getProperty('testDir', '/tmp/createplant-uranium-route-tests')))
+            systemProperty 'createplant.gameTestClasses', System.getProperty('testClasses', 'UraniumFuelGameTests,ReactorGameTests,VesselBasinGameTests,NitricAcidGameTests,CompactCentrifugeGameTests,SurvivalReachabilityGameTests,GasPipeGameTests,GasStorageGameTests,GasSafetyLoadGameTests')
+        }
+    }
+}

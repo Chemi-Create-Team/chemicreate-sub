@@ -1,0 +1,9 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            systemProperty 'createplant.gameTestClasses', System.getProperty('createplant.testClasses',
+                'CompactFuelGameTests,CompactRbmkGameTests,RbmkGameTests,CraneGameTests,FuelPoolGameTests')
+            if (System.getProperty('createplant.testDir')) gameDirectory.set(new File(System.getProperty('createplant.testDir')))
+        }
+    }
+}

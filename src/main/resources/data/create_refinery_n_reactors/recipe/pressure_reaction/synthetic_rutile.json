@@ -1,0 +1,29 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:ilmenite"
+    },
+    {
+      "item": "create_refinery_n_reactors:ilmenite"
+    },
+    {
+      "item": "create_refinery_n_reactors:ilmenite"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "create_refinery_n_reactors:hydrochloric_acid"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:titanium_dioxide"
+    },
+    {
+      "id": "minecraft:iron_nugget",
+      "count": 5
+    }
+  ]
+}

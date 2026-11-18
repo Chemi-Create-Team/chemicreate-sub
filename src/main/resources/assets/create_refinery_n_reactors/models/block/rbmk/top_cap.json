@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "create_refinery_n_reactors:block/reactor/rbmk/top_cap",
+    "bottom": "create_refinery_n_reactors:block/reactor/rbmk/top_cap_side",
+    "side": "create_refinery_n_reactors:block/reactor/rbmk/top_cap_side"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "environment": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.219",
+    "create": "6.0.10",
+    "java": 21,
+    "gpu": "NVIDIA GeForce RTX 4060 / 595.99.02"
+  },
+  "optionalModsTested": {
+    "sereneseasons": "10.1.0.8",
+    "glitchcore": "2.1.0.2"
+  },
+  "serverTests": [
+    {
+      "optionalSeasons": false,
+      "classes": [
+        "SeasonalPlantGameTests",
+        "PowerPlantGameTests",
+        "RadiatorTemperatureGameTests",
+        "OreLeachingGameTests",
+        "AuditGameTests",
+        "SurvivalReachabilityGameTests"
+      ],
+      "passed": 29
+    },
+    {
+      "optionalSeasons": false,
+      "classes": [
+        "TankGradeGameTests",
+        "FluidGradeGameTests",
+        "GradeControlsGameTests"
+      ],
+      "passed": 14
+    },
+    {
+      "optionalSeasons": true,
+      "classes": [
+        "SeasonalPlantGameTests"
+      ],
+      "passed": 4
+    }
+  ],
+  "build": "passed",
+  "reactorPhysicsChecks": 1668,
+  "reactorControlTests": "passed",
+  "jei": {
+    "missingAcquisition": [],
+    "sourceFluidNamesChecked": 125,
+    "nonJapaneseNames": []
+  },
+  "languages": {
+    "keysPerLanguage": 4935,
+    "ponderHeaders": 148,
+    "validation": "passed"
+  },
+  "nativeVisuals": {
+    "whitePlume": "observed",
+    "stopAndDissipation": "observed",
+    "ingotIcons": "observed",
+    "newJeiCategories": "observed",
+    "seasonalPonder": "rendered"
+  },
+  "limits": [
+    "Client quality check passed and world saved, then JVM shutdown crashed in libEGL_nvidia.so.0; runClient exit was 134.",
+    "Large installations and other particle quality settings were not profiled.",
+    "Audio was unavailable; no sound verification claimed."
+  ]
+}

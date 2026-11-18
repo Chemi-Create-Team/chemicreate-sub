@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EGE",
+    "BCB",
+    "SRS"
+  ],
+  "key": {
+    "E": {
+      "item": "create:electron_tube"
+    },
+    "G": {
+      "item": "minecraft:tinted_glass"
+    },
+    "B": {
+      "item": "create:brass_sheet"
+    },
+    "C": {
+      "tag": "create_refinery_n_reactors:machine_casings"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_console_panel",
+    "count": 2
+  }
+}

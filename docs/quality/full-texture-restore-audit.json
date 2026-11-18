@@ -1,0 +1,72 @@
+{
+  "baseline": "cce6b43c",
+  "preserved_implementation": "263350ee",
+  "textures": {
+    "files_checked": 558,
+    "file_set_or_byte_changes": []
+  },
+  "models": {
+    "files_checked": 1272,
+    "file_set_or_byte_changes": []
+  },
+  "geometry_and_uv": {
+    "models_checked": 1272,
+    "changes": []
+  },
+  "generators": {
+    "originals_checked": 34,
+    "paint_sources_byte_exact_checked": 33,
+    "original_mismatches": [],
+    "validator_exception": {
+      "baseline_file_exact": false,
+      "only_shared_parts_assignment_changed": true,
+      "added_original_look_duplicate_groups": [
+        [
+          "condenser_cooling_inlet",
+          "condenser_cooling_outlet"
+        ],
+        [
+          "cooling_tower_basin",
+          "cooling_tower_shell"
+        ],
+        [
+          "cooling_tower_cold_outlet",
+          "cooling_tower_hot_inlet",
+          "cooling_tower_makeup_inlet"
+        ],
+        [
+          "empty_waste_canister",
+          "vitrified_waste_canister"
+        ]
+      ],
+      "reason": "Known identical original artwork is restored exactly; duplicate groups are declared without changing images or other checks."
+    },
+    "removed_helpers_checked": 7,
+    "remaining_helpers": [],
+    "playtest_helper_retained": true
+  },
+  "non_artwork": {
+    "source_changes": [],
+    "ct_classes_removed": true,
+    "only_four_ct_registration_lines_removed": true
+  },
+  "jar": {
+    "file": "build/libs/create-heavy-indusstry-0.1.0.jar",
+    "bytes": 4724723,
+    "sha256": "d64d953ff318f079546d4a63a9323f1e183b01bc043afbd137b16bc21be0c27a",
+    "source_resources_checked": 2766,
+    "expanded_templates_excluded": [
+      "src/main/resources/META-INF/neoforge.mods.toml",
+      "src/main/resources/pack.mcmeta"
+    ],
+    "missing_or_changed_resources": [],
+    "removed_texture_entries_checked": 28,
+    "obsolete_texture_entries": [],
+    "obsolete_ct_classes": [],
+    "baseline_artwork_entries_checked": 1830,
+    "unexpected_artwork_entries": [],
+    "missing_original_artwork_entries": []
+  },
+  "errors": [],
+  "passed": true
+}

@@ -1,0 +1,326 @@
+{
+  "minecraft_version": "1.21.1",
+  "colour_source": "Original material base colours from the equipment generators; uranium colours from actual runtime tint registration.",
+  "powders": {
+    "alumina": {
+      "colour": [
+        232,
+        232,
+        226
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "ammonium_nitrate": {
+      "colour": [
+        221,
+        220,
+        201
+      ],
+      "reason": "Loose chemical fertiliser/synthesis feed, not registered as shaped crystals or pellets."
+    },
+    "ammonium_sulfate": {
+      "colour": [
+        206,
+        194,
+        160
+      ],
+      "reason": "Loose chemical fertiliser precipitate."
+    },
+    "anfo": {
+      "colour": [
+        230,
+        222,
+        206
+      ],
+      "reason": "Loose mixed explosive feed; the separate blasting cartridge is the packaged form."
+    },
+    "borax": {
+      "colour": [
+        214,
+        210,
+        195
+      ],
+      "reason": "Precipitated borate process powder."
+    },
+    "chromium_oxide": {
+      "colour": [
+        58,
+        100,
+        50
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "depleted_uranium_dioxide": {
+      "colour": [
+        99,
+        103,
+        84
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "enriched_uranium_dioxide": {
+      "runtime_tint": 8028822,
+      "reason": "Existing native gunpowder sprite and runtime material tint remain unchanged."
+    },
+    "gypsum": {
+      "colour": [
+        184,
+        178,
+        160
+      ],
+      "reason": "Acidulation precipitate powder."
+    },
+    "iron_oxide_red": {
+      "colour": [
+        140,
+        52,
+        34
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "molybdenum_blue": {
+      "colour": [
+        42,
+        72,
+        160
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "molybdenum_trioxide": {
+      "colour": [
+        222,
+        216,
+        168
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "mox_powder": {
+      "colour": [
+        99,
+        92,
+        70
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "nickel_oxide": {
+      "colour": [
+        104,
+        134,
+        86
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "nickel_titanium_yellow": {
+      "colour": [
+        230,
+        212,
+        74
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "plutonium_dioxide": {
+      "colour": [
+        123,
+        117,
+        72
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "pvc_resin": {
+      "colour": [
+        226,
+        228,
+        232
+      ],
+      "reason": "Loose precipitated PVC resin powder, distinct from manufactured polymer pellets."
+    },
+    "salt": {
+      "colour": [
+        238,
+        238,
+        234
+      ],
+      "reason": "Evaporated salt dust; registered in c:dusts/salt."
+    },
+    "sulfur_dust": {
+      "colour": [
+        205,
+        181,
+        75
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "titanium_dioxide": {
+      "colour": [
+        246,
+        246,
+        240
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "uranium_dioxide": {
+      "runtime_tint": 9073764,
+      "reason": "Existing native gunpowder sprite and runtime material tint remain unchanged."
+    },
+    "uranium_tetrafluoride": {
+      "runtime_tint": 9881730,
+      "reason": "Existing native gunpowder sprite and runtime material tint remain unchanged."
+    },
+    "uranium_trioxide": {
+      "runtime_tint": 16758864,
+      "reason": "Existing native gunpowder sprite and runtime material tint remain unchanged."
+    },
+    "yellowcake": {
+      "colour": [
+        192,
+        154,
+        60
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "zirconia": {
+      "colour": [
+        226,
+        220,
+        206
+      ],
+      "reason": "Loose oxide, pigment or chemical process powder."
+    },
+    "ground_clinker": {
+      "colour": [
+        124,
+        124,
+        112
+      ],
+      "reason": "Finely ground cement clinker before gypsum addition."
+    },
+    "cement_powder": {
+      "colour": [
+        159,
+        157,
+        139
+      ],
+      "reason": "Loose Portland cement binder powder."
+    },
+    "water_treatment_flocculant": {
+      "colour": [
+        206,
+        201,
+        175
+      ],
+      "reason": "Loose iron/alumina/clay treatment reagent powder."
+    },
+    "treatment_sludge": {
+      "colour": [
+        92,
+        80,
+        57
+      ],
+      "reason": "Recovered ordinary wash-water residue powder."
+    },
+    "compact_uranium_dioxide": {
+      "colour": [
+        93,
+        91,
+        76
+      ],
+      "reason": "Five-percent fuel-line oxide powder; shared gunpowder silhouette."
+    },
+    "carbon_powder": {
+      "colour": [
+        52,
+        55,
+        57
+      ],
+      "reason": "Loose carbon powder from milling or crushing coal and charcoal."
+    }
+  },
+  "preserved_items": {
+    "aluminum_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "aluminum_sheet": "Manufactured component, machine, membrane, equipment or container.",
+    "ammonia_separator": "Manufactured component, machine, membrane, equipment or container.",
+    "asbestos": "Fibrous mineral; retain fibre icon.",
+    "asbestos_wrapped_electrode": "Manufactured component, machine, membrane, equipment or container.",
+    "bauxite": "Mined mineral lump/crystal, not a powder process product.",
+    "borosilicate_glass_frit": "Granular glass frit, not fine chemical powder.",
+    "cement_clinker": "Fired clinker nodules before crushing.",
+    "chopped_spent_fuel": "Cut fuel/cladding pieces.",
+    "chromite": "Mined mineral lump/crystal, not a powder process product.",
+    "chromium_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "compact_enriched_fuel_rod": "Manufactured three-metre fuel assembly with two identification bands.",
+    "compact_uranium_pellet": "Sintered or pressed cylindrical fuel pellet, not a loose powder.",
+    "control_rod": "Manufactured component, machine, membrane, equipment or container.",
+    "cracking_catalyst": "Manufactured catalyst granules, basket or shaped support; retain its functional form.",
+    "fluorite": "Mined mineral lump/crystal, not a powder process product.",
+    "fuel_rod": "Manufactured component, machine, membrane, equipment or container.",
+    "gas_holder": "Manufactured telescopic gas-holder block item, not loose powder.",
+    "glassy_slag": "Granular quenched slag with a glassy surface.",
+    "gas_mask": "Manufactured component, machine, membrane, equipment or container.",
+    "green_compact_uranium_pellet": "Sintered or pressed cylindrical fuel pellet, not a loose powder.",
+    "green_mox_pellet": "Pressed/sintered fuel pellet or quenched polymer pellet/rod.",
+    "green_uranium_pellet": "Pressed/sintered fuel pellet or quenched polymer pellet/rod.",
+    "high_pressure_turbine_blade": "Manufactured component, machine, membrane, equipment or container.",
+    "high_pressure_turbine_casing": "Manufactured component, machine, membrane, equipment or container.",
+    "hydrocracking_catalyst": "Manufactured catalyst granules, basket or shaped support; retain its functional form.",
+    "hydrotreating_catalyst": "Manufactured catalyst granules, basket or shaped support; retain its functional form.",
+    "ilmenite": "Mined mineral lump/crystal, not a powder process product.",
+    "industrial_resin": "Mixed resin stock; retain resin piece icon.",
+    "iron_catalyst": "Manufactured catalyst granules, basket or shaped support; retain its functional form.",
+    "irradiated_lithium_target_rod": "Assembled irradiation target, not loose powder.",
+    "large_absorption_tower": "Manufactured component, machine, membrane, equipment or container.",
+    "lidded_vessel": "Manufactured component, machine, membrane, equipment or container.",
+    "lithium_lead_blanket_cartridge": "Manufactured component, machine, membrane, equipment or container.",
+    "lithium_target_rod": "Assembled irradiation target, not loose powder.",
+    "low_pressure_turbine_blade": "Manufactured component, machine, membrane, equipment or container.",
+    "low_pressure_turbine_casing": "Manufactured component, machine, membrane, equipment or container.",
+    "low_pressure_turbine_end": "Manufactured component, machine, membrane, equipment or container.",
+    "molybdenite": "Mined mineral lump/crystal, not a powder process product.",
+    "molybdenum_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "mox_fuel_rod": "Manufactured component, machine, membrane, equipment or container.",
+    "mox_pellet": "Pressed/sintered fuel pellet or quenched polymer pellet/rod.",
+    "nickel_electrode_plate": "Manufactured component, machine, membrane, equipment or container.",
+    "nickel_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "nickel_sheet": "Manufactured component, machine, membrane, equipment or container.",
+    "oxidation_catalyst": "Manufactured catalyst granules, basket or shaped support; retain its functional form.",
+    "pentlandite": "Mined mineral lump/crystal, not a powder process product.",
+    "personal_dosimeter": "Measuring instrument; retain its assembled model.",
+    "plastic_sheet": "Manufactured component, machine, membrane, equipment or container.",
+    "polyethylene": "Pressed/sintered fuel pellet or quenched polymer pellet/rod.",
+    "polymerization_catalyst": "Manufactured catalyst granules, basket or shaped support; retain its functional form.",
+    "polypropylene": "Pressed/sintered fuel pellet or quenched polymer pellet/rod.",
+    "reactor_catalyst_basket": "Manufactured catalyst granules, basket or shaped support; retain its functional form.",
+    "reactor_impeller": "Manufactured component, machine, membrane, equipment or container.",
+    "reactor_separator_core": "Manufactured absorption trays; retain their functional shelf geometry.",
+    "rubber_gasket": "Manufactured component, machine, membrane, equipment or container.",
+    "soap": "Manufactured component, machine, membrane, equipment or container.",
+    "spent_blanket_cartridge": "Manufactured component, machine, membrane, equipment or container.",
+    "spent_cladding_hulls": "Cut fuel/cladding pieces.",
+    "spent_control_rod": "Manufactured component, machine, membrane, equipment or container.",
+    "spent_divertor_cassette": "Manufactured component, machine, membrane, equipment or container.",
+    "spent_fuel_rod": "Manufactured component, machine, membrane, equipment or container.",
+    "stainless_steel_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "steel_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "survey_meter": "Measuring instrument; retain its assembled model.",
+    "stainless_steel_sheet": "Manufactured component, machine, membrane, equipment or container.",
+    "synthetic_rubber": "Manufactured component, machine, membrane, equipment or container.",
+    "tarbin_end": "Manufactured component, machine, membrane, equipment or container.",
+    "titanium_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "titanium_sheet": "Manufactured component, machine, membrane, equipment or container.",
+    "tungsten_divertor_cassette": "Manufactured component, machine, membrane, equipment or container.",
+    "uraninite": "Mined mineral lump/crystal, not a powder process product.",
+    "uranium_pellet": "Pressed/sintered fuel pellet or quenched polymer pellet/rod.",
+    "water_filter_medium": "Manufactured filter pad; not loose powder.",
+    "zircaloy_cladding_tube": "Manufactured component, machine, membrane, equipment or container.",
+    "zircon": "Mined mineral lump/crystal, not a powder process product.",
+    "zirconium_ingot": "Metal ingot, bloom or unfinished metal workpiece.",
+    "triiron_tetroxide_pile": "Placeable material block: inventory uses the actual block model.",
+    "cassiterite": "Mined raw tin mineral; retain the cassiterite lump sprite.",
+    "crushed_raw_tin": "Create-style crushed raw ore; retain its crushed mineral sprite.",
+    "tin_ingot": "Metal ingot; retain its ingot sprite.",
+    "unprocessed_steel": "Unprocessed iron-carbon steel mixture; retain its ingot-shaped sprite.",
+    "heated_unfinished_steel": "Shared Create assembly workpiece; retain the heated metal sprite.",
+    "reaction_tower": "Manufactured component, machine, membrane, equipment or container.",
+    "tailings_mud": "Wet ore-tailings sludge; retain its brown sludge sprite.",
+    "flocculant": "Polymer granules with their own pale granule sprite"
+  }
+}

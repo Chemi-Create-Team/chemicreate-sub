@@ -1,0 +1,8 @@
+{
+  "baseline": "c26c219873700d8aa1d99ae5c85f864d7bd39e0e",
+  "restored_textures": 74,
+  "restored_models": 194,
+  "all_original_assets_byte_identical": 1754,
+  "diorite_casing_assets": "unchanged",
+  "removed": "textures/block/white_enamel.png"
+}

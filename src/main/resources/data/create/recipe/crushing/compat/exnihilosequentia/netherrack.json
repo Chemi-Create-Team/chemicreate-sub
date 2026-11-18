@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "exnihilosequentia"
+    }
+  ],
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "type": "neoforge:compound",
+      "ingredients": [
+        {
+          "item": "minecraft:netherrack"
+        }
+      ]
+    }
+  ],
+  "processing_time": 350,
+  "results": [
+    {
+      "chance": 0.3,
+      "id": "create_refinery_n_reactors:sulfur_dust"
+    },
+    {
+      "id": "exnihilosequentia:crushed_netherrack"
+    }
+  ]
+}

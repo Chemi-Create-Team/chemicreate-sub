@@ -1,0 +1,9408 @@
+[
+  {
+    "id": "flywheel_storage",
+    "components": [
+      "large_flywheel",
+      "white_large_flywheel",
+      "orange_large_flywheel",
+      "magenta_large_flywheel",
+      "light_blue_large_flywheel",
+      "lime_large_flywheel",
+      "pink_large_flywheel",
+      "gray_large_flywheel",
+      "light_gray_large_flywheel",
+      "cyan_large_flywheel",
+      "purple_large_flywheel",
+      "blue_large_flywheel",
+      "brown_large_flywheel",
+      "green_large_flywheel",
+      "red_large_flywheel",
+      "black_large_flywheel"
+    ],
+    "steps": [
+      {
+        "target": [
+          1,
+          1,
+          3
+        ],
+        "key": "step_1",
+        "speed": 64
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          5,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_4",
+        "item": "minecraft:blue_dye"
+      }
+    ]
+  },
+  {
+    "id": "module_cooling",
+    "size": 15,
+    "height": 7,
+    "scale": 0.55,
+    "components": [
+      "cooler_radiator",
+      "cooling_fan",
+      "cooling_fan_shroud",
+      "create:fluid_tank",
+      "reinforced_pipe"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ]
+      },
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          5,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ]
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ],
+        "speed": 64,
+        "wrench": true
+      }
+    ],
+    "formed": "step_1"
+  },
+  {
+    "id": "module_cooling_expansion",
+    "size": 15,
+    "height": 7,
+    "scale": 0.55,
+    "components": [
+      "cooler_radiator",
+      "cooling_fan",
+      "cooling_fan_shroud",
+      "create:fluid_tank",
+      "reinforced_pipe"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ]
+      },
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          5,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ]
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ],
+        "speed": 64
+      }
+    ],
+    "formed": "step_1"
+  },
+  {
+    "id": "module_cooling_integration",
+    "size": 15,
+    "height": 7,
+    "scale": 0.55,
+    "components": [
+      "cooler_radiator",
+      "cooling_fan",
+      "cooling_fan_shroud",
+      "create:fluid_tank",
+      "reinforced_pipe"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          4,
+          3,
+          3
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ]
+      },
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          3,
+          5
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ]
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          3,
+          5
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          14,
+          6,
+          14
+        ],
+        "speed": 64
+      }
+    ]
+  },
+  {
+    "id": "heat_exchanger",
+    "size": 11,
+    "height": 5,
+    "scale": 0.6,
+    "formed": "step_1",
+    "components": [
+      "tube_piped_tank"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          3,
+          1,
+          4
+        ],
+        "reveal": [
+          3,
+          1,
+          4,
+          3,
+          2,
+          5
+        ],
+        "item": "create_refinery_n_reactors:tube_piped_tank"
+      },
+      {
+        "key": "step_1",
+        "target": [
+          6,
+          1,
+          4
+        ],
+        "reveal": [
+          4,
+          1,
+          4,
+          6,
+          2,
+          5
+        ]
+      },
+      {
+        "key": "step_2",
+        "target": [
+          2,
+          1,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          10,
+          4,
+          10
+        ]
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "speed": 64
+      }
+    ]
+  },
+  {
+    "id": "large_heat_exchanger",
+    "size": 11,
+    "height": 6,
+    "scale": 0.55,
+    "formed": "step_1",
+    "components": [
+      "tube_piped_tank"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "reveal": [
+          3,
+          1,
+          3,
+          3,
+          3,
+          5
+        ],
+        "item": "create_refinery_n_reactors:tube_piped_tank"
+      },
+      {
+        "key": "step_1",
+        "target": [
+          6,
+          1,
+          3
+        ],
+        "reveal": [
+          4,
+          1,
+          3,
+          6,
+          3,
+          5
+        ]
+      },
+      {
+        "key": "step_2",
+        "target": [
+          2,
+          1,
+          3
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          10,
+          5,
+          10
+        ]
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "speed": 64
+      }
+    ]
+  },
+  {
+    "id": "jacketed_pipe",
+    "size": 11,
+    "height": 5,
+    "scale": 0.6,
+    "formed": "step_1",
+    "components": [
+      "jacketed_pipe"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          3,
+          2,
+          4
+        ],
+        "reveal": [
+          3,
+          2,
+          4,
+          6,
+          2,
+          4
+        ],
+        "item": "create:fluid_pipe"
+      },
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "use": "create_refinery_n_reactors:jacketed_pipe"
+      },
+      {
+        "key": "step_2",
+        "target": [
+          2,
+          2,
+          4
+        ],
+        "reveal": [
+          0,
+          1,
+          0,
+          10,
+          4,
+          10
+        ]
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "speed": 64
+      }
+    ]
+  },
+  {
+    "id": "open_tank",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          5,
+          1,
+          6
+        ],
+        "key": "step_1",
+        "reveal": [
+          3,
+          1,
+          4,
+          7,
+          1,
+          8
+        ]
+      },
+      {
+        "target": [
+          6,
+          2,
+          5
+        ],
+        "key": "step_2",
+        "reveal": [
+          3,
+          2,
+          4,
+          6,
+          3,
+          7
+        ]
+      },
+      {
+        "target": [
+          3,
+          3,
+          5
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          2,
+          3,
+          5
+        ],
+        "key": "step_4",
+        "reveal": [
+          0,
+          3,
+          5,
+          2,
+          3,
+          5
+        ]
+      },
+      {
+        "target": [
+          3,
+          3,
+          5
+        ],
+        "key": "step_5"
+      }
+    ],
+    "size": 13,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_4",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          3,
+          1,
+          4
+        ]
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_2",
+        "reveal": [
+          4,
+          1,
+          1,
+          4,
+          1,
+          4
+        ]
+      },
+      {
+        "target": [
+          4,
+          3,
+          2
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          4,
+          3,
+          4
+        ]
+      }
+    ],
+    "size": 6,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_5",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          3,
+          1,
+          5
+        ]
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_2",
+        "reveal": [
+          4,
+          1,
+          1,
+          5,
+          1,
+          5
+        ]
+      },
+      {
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          5,
+          3,
+          5
+        ]
+      }
+    ],
+    "size": 7,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_6",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          4,
+          1,
+          6
+        ]
+      },
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_2",
+        "reveal": [
+          5,
+          1,
+          1,
+          6,
+          1,
+          6
+        ]
+      },
+      {
+        "target": [
+          6,
+          3,
+          3
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          6,
+          3,
+          6
+        ]
+      }
+    ],
+    "size": 8,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_7",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          4,
+          1,
+          7
+        ]
+      },
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_2",
+        "reveal": [
+          5,
+          1,
+          1,
+          7,
+          1,
+          7
+        ]
+      },
+      {
+        "target": [
+          7,
+          3,
+          4
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          7,
+          3,
+          7
+        ]
+      }
+    ],
+    "size": 9,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_8",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          5,
+          1,
+          8
+        ]
+      },
+      {
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "key": "step_2",
+        "reveal": [
+          6,
+          1,
+          1,
+          8,
+          1,
+          8
+        ]
+      },
+      {
+        "target": [
+          8,
+          3,
+          4
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          8,
+          3,
+          8
+        ]
+      }
+    ],
+    "size": 10,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_9",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          5,
+          1,
+          9
+        ]
+      },
+      {
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "key": "step_2",
+        "reveal": [
+          6,
+          1,
+          1,
+          9,
+          1,
+          9
+        ]
+      },
+      {
+        "target": [
+          9,
+          3,
+          5
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          9,
+          3,
+          9
+        ]
+      }
+    ],
+    "size": 11,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_10",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          6,
+          1,
+          6
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          6,
+          1,
+          10
+        ]
+      },
+      {
+        "target": [
+          6,
+          1,
+          6
+        ],
+        "key": "step_2",
+        "reveal": [
+          7,
+          1,
+          1,
+          10,
+          1,
+          10
+        ]
+      },
+      {
+        "target": [
+          10,
+          3,
+          5
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          10,
+          3,
+          10
+        ]
+      }
+    ],
+    "size": 12,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_11",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          6,
+          1,
+          6
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          6,
+          1,
+          11
+        ]
+      },
+      {
+        "target": [
+          6,
+          1,
+          6
+        ],
+        "key": "step_2",
+        "reveal": [
+          7,
+          1,
+          1,
+          11,
+          1,
+          11
+        ]
+      },
+      {
+        "target": [
+          11,
+          3,
+          6
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          11,
+          3,
+          11
+        ]
+      }
+    ],
+    "size": 13,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_12",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          7,
+          1,
+          7
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          7,
+          1,
+          12
+        ]
+      },
+      {
+        "target": [
+          7,
+          1,
+          7
+        ],
+        "key": "step_2",
+        "reveal": [
+          8,
+          1,
+          1,
+          12,
+          1,
+          12
+        ]
+      },
+      {
+        "target": [
+          12,
+          3,
+          6
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          12,
+          3,
+          12
+        ]
+      }
+    ],
+    "size": 14,
+    "scale": 0.5,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_13",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          7,
+          1,
+          7
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          7,
+          1,
+          13
+        ]
+      },
+      {
+        "target": [
+          7,
+          1,
+          7
+        ],
+        "key": "step_2",
+        "reveal": [
+          8,
+          1,
+          1,
+          13,
+          1,
+          13
+        ]
+      },
+      {
+        "target": [
+          13,
+          3,
+          7
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          13,
+          3,
+          13
+        ]
+      }
+    ],
+    "size": 15,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_14",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          8,
+          1,
+          8
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          8,
+          1,
+          14
+        ]
+      },
+      {
+        "target": [
+          8,
+          1,
+          8
+        ],
+        "key": "step_2",
+        "reveal": [
+          9,
+          1,
+          1,
+          14,
+          1,
+          14
+        ]
+      },
+      {
+        "target": [
+          14,
+          3,
+          7
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          14,
+          3,
+          14
+        ]
+      }
+    ],
+    "size": 16,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_15",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          8,
+          1,
+          8
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          8,
+          1,
+          15
+        ]
+      },
+      {
+        "target": [
+          8,
+          1,
+          8
+        ],
+        "key": "step_2",
+        "reveal": [
+          9,
+          1,
+          1,
+          15,
+          1,
+          15
+        ]
+      },
+      {
+        "target": [
+          15,
+          3,
+          8
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          15,
+          3,
+          15
+        ]
+      }
+    ],
+    "size": 17,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_16",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          9,
+          1,
+          9
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          9,
+          1,
+          16
+        ]
+      },
+      {
+        "target": [
+          9,
+          1,
+          9
+        ],
+        "key": "step_2",
+        "reveal": [
+          10,
+          1,
+          1,
+          16,
+          1,
+          16
+        ]
+      },
+      {
+        "target": [
+          16,
+          3,
+          8
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          16,
+          3,
+          16
+        ]
+      }
+    ],
+    "size": 18,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_17",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          9,
+          1,
+          9
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          9,
+          1,
+          17
+        ]
+      },
+      {
+        "target": [
+          9,
+          1,
+          9
+        ],
+        "key": "step_2",
+        "reveal": [
+          10,
+          1,
+          1,
+          17,
+          1,
+          17
+        ]
+      },
+      {
+        "target": [
+          17,
+          3,
+          9
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          17,
+          3,
+          17
+        ]
+      }
+    ],
+    "size": 19,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_18",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          10,
+          1,
+          10
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          10,
+          1,
+          18
+        ]
+      },
+      {
+        "target": [
+          10,
+          1,
+          10
+        ],
+        "key": "step_2",
+        "reveal": [
+          11,
+          1,
+          1,
+          18,
+          1,
+          18
+        ]
+      },
+      {
+        "target": [
+          18,
+          3,
+          9
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          18,
+          3,
+          18
+        ]
+      }
+    ],
+    "size": 20,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_19",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          10,
+          1,
+          10
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          10,
+          1,
+          19
+        ]
+      },
+      {
+        "target": [
+          10,
+          1,
+          10
+        ],
+        "key": "step_2",
+        "reveal": [
+          11,
+          1,
+          1,
+          19,
+          1,
+          19
+        ]
+      },
+      {
+        "target": [
+          19,
+          3,
+          10
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          19,
+          3,
+          19
+        ]
+      }
+    ],
+    "size": 21,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_20",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          11,
+          1,
+          11
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          11,
+          1,
+          20
+        ]
+      },
+      {
+        "target": [
+          11,
+          1,
+          11
+        ],
+        "key": "step_2",
+        "reveal": [
+          12,
+          1,
+          1,
+          20,
+          1,
+          20
+        ]
+      },
+      {
+        "target": [
+          20,
+          3,
+          10
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          20,
+          3,
+          20
+        ]
+      }
+    ],
+    "size": 22,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_21",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          11,
+          1,
+          11
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          11,
+          1,
+          21
+        ]
+      },
+      {
+        "target": [
+          11,
+          1,
+          11
+        ],
+        "key": "step_2",
+        "reveal": [
+          12,
+          1,
+          1,
+          21,
+          1,
+          21
+        ]
+      },
+      {
+        "target": [
+          21,
+          3,
+          11
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          21,
+          3,
+          21
+        ]
+      }
+    ],
+    "size": 23,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_22",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          12,
+          1,
+          12
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          12,
+          1,
+          22
+        ]
+      },
+      {
+        "target": [
+          12,
+          1,
+          12
+        ],
+        "key": "step_2",
+        "reveal": [
+          13,
+          1,
+          1,
+          22,
+          1,
+          22
+        ]
+      },
+      {
+        "target": [
+          22,
+          3,
+          11
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          22,
+          3,
+          22
+        ]
+      }
+    ],
+    "size": 24,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_23",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          12,
+          1,
+          12
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          12,
+          1,
+          23
+        ]
+      },
+      {
+        "target": [
+          12,
+          1,
+          12
+        ],
+        "key": "step_2",
+        "reveal": [
+          13,
+          1,
+          1,
+          23,
+          1,
+          23
+        ]
+      },
+      {
+        "target": [
+          23,
+          3,
+          12
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          23,
+          3,
+          23
+        ]
+      }
+    ],
+    "size": 25,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_24",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          13,
+          1,
+          13
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          13,
+          1,
+          24
+        ]
+      },
+      {
+        "target": [
+          13,
+          1,
+          13
+        ],
+        "key": "step_2",
+        "reveal": [
+          14,
+          1,
+          1,
+          24,
+          1,
+          24
+        ]
+      },
+      {
+        "target": [
+          24,
+          3,
+          12
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          24,
+          3,
+          24
+        ]
+      }
+    ],
+    "size": 26,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_25",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          13,
+          1,
+          13
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          13,
+          1,
+          25
+        ]
+      },
+      {
+        "target": [
+          13,
+          1,
+          13
+        ],
+        "key": "step_2",
+        "reveal": [
+          14,
+          1,
+          1,
+          25,
+          1,
+          25
+        ]
+      },
+      {
+        "target": [
+          25,
+          3,
+          13
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          25,
+          3,
+          25
+        ]
+      }
+    ],
+    "size": 27,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_26",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          14,
+          1,
+          14
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          14,
+          1,
+          26
+        ]
+      },
+      {
+        "target": [
+          14,
+          1,
+          14
+        ],
+        "key": "step_2",
+        "reveal": [
+          15,
+          1,
+          1,
+          26,
+          1,
+          26
+        ]
+      },
+      {
+        "target": [
+          26,
+          3,
+          13
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          26,
+          3,
+          26
+        ]
+      }
+    ],
+    "size": 28,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_27",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          14,
+          1,
+          14
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          14,
+          1,
+          27
+        ]
+      },
+      {
+        "target": [
+          14,
+          1,
+          14
+        ],
+        "key": "step_2",
+        "reveal": [
+          15,
+          1,
+          1,
+          27,
+          1,
+          27
+        ]
+      },
+      {
+        "target": [
+          27,
+          3,
+          14
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          27,
+          3,
+          27
+        ]
+      }
+    ],
+    "size": 29,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_28",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          15,
+          1,
+          15
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          15,
+          1,
+          28
+        ]
+      },
+      {
+        "target": [
+          15,
+          1,
+          15
+        ],
+        "key": "step_2",
+        "reveal": [
+          16,
+          1,
+          1,
+          28,
+          1,
+          28
+        ]
+      },
+      {
+        "target": [
+          28,
+          3,
+          14
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          28,
+          3,
+          28
+        ]
+      }
+    ],
+    "size": 30,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_29",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          15,
+          1,
+          15
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          15,
+          1,
+          29
+        ]
+      },
+      {
+        "target": [
+          15,
+          1,
+          15
+        ],
+        "key": "step_2",
+        "reveal": [
+          16,
+          1,
+          1,
+          29,
+          1,
+          29
+        ]
+      },
+      {
+        "target": [
+          29,
+          3,
+          15
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          29,
+          3,
+          29
+        ]
+      }
+    ],
+    "size": 31,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_30",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          16,
+          1,
+          16
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          16,
+          1,
+          30
+        ]
+      },
+      {
+        "target": [
+          16,
+          1,
+          16
+        ],
+        "key": "step_2",
+        "reveal": [
+          17,
+          1,
+          1,
+          30,
+          1,
+          30
+        ]
+      },
+      {
+        "target": [
+          30,
+          3,
+          15
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          30,
+          3,
+          30
+        ]
+      }
+    ],
+    "size": 32,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_31",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          16,
+          1,
+          16
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          16,
+          1,
+          31
+        ]
+      },
+      {
+        "target": [
+          16,
+          1,
+          16
+        ],
+        "key": "step_2",
+        "reveal": [
+          17,
+          1,
+          1,
+          31,
+          1,
+          31
+        ]
+      },
+      {
+        "target": [
+          31,
+          3,
+          16
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          31,
+          3,
+          31
+        ]
+      }
+    ],
+    "size": 33,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "open_tank_size_32",
+    "components": [
+      "tank_casing"
+    ],
+    "steps": [
+      {
+        "target": [
+          17,
+          1,
+          17
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          1,
+          17,
+          1,
+          32
+        ]
+      },
+      {
+        "target": [
+          17,
+          1,
+          17
+        ],
+        "key": "step_2",
+        "reveal": [
+          18,
+          1,
+          1,
+          32,
+          1,
+          32
+        ]
+      },
+      {
+        "target": [
+          32,
+          3,
+          16
+        ],
+        "key": "step_3",
+        "reveal": [
+          1,
+          2,
+          1,
+          32,
+          3,
+          32
+        ]
+      }
+    ],
+    "size": 34,
+    "scale": 0.25,
+    "height": 5
+  },
+  {
+    "id": "turbine_operation",
+    "size": 25,
+    "height": 11,
+    "scale": 0.31,
+    "components": [
+      "high_pressure_turbine_unit",
+      "low_pressure_turbine_unit",
+      "low_pressure_turbine_blade",
+      "high_pressure_turbine_blade",
+      "low_pressure_turbine_casing",
+      "high_pressure_turbine_casing",
+      "tarbin_end",
+      "low_pressure_turbine_end"
+    ],
+    "steps": [
+      {
+        "target": [
+          17,
+          5,
+          10
+        ],
+        "key": "step_1",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          17,
+          5,
+          12
+        ],
+        "key": "step_2",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          17,
+          5,
+          10
+        ],
+        "key": "step_3",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          8,
+          1,
+          10
+        ],
+        "key": "step_4",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          13,
+          5,
+          10
+        ],
+        "key": "step_5",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          8,
+          5,
+          10
+        ],
+        "key": "step_6",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      }
+    ]
+  },
+  {
+    "id": "turbine_cycle",
+    "size": 25,
+    "height": 11,
+    "scale": 0.31,
+    "components": [
+      "high_pressure_turbine_unit",
+      "low_pressure_turbine_unit",
+      "low_pressure_turbine_blade",
+      "high_pressure_turbine_blade",
+      "low_pressure_turbine_casing",
+      "high_pressure_turbine_casing",
+      "tarbin_end",
+      "low_pressure_turbine_end"
+    ],
+    "steps": [
+      {
+        "target": [
+          17,
+          5,
+          12
+        ],
+        "key": "step_1",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          8,
+          1,
+          10
+        ],
+        "key": "step_2",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          8,
+          1,
+          10
+        ],
+        "key": "step_3",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          8,
+          1,
+          10
+        ],
+        "key": "step_4",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          17,
+          5,
+          10
+        ],
+        "key": "step_5",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      }
+    ]
+  },
+  {
+    "id": "turbine_safety",
+    "size": 25,
+    "height": 11,
+    "scale": 0.31,
+    "components": [
+      "high_pressure_turbine_unit",
+      "low_pressure_turbine_unit",
+      "low_pressure_turbine_blade",
+      "high_pressure_turbine_blade",
+      "low_pressure_turbine_casing",
+      "high_pressure_turbine_casing",
+      "tarbin_end",
+      "low_pressure_turbine_end"
+    ],
+    "steps": [
+      {
+        "target": [
+          17,
+          5,
+          10
+        ],
+        "key": "step_1",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          8,
+          1,
+          10
+        ],
+        "key": "step_2",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          8,
+          5,
+          14
+        ],
+        "key": "step_3",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          13,
+          5,
+          10
+        ],
+        "key": "step_4",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          17,
+          5,
+          12
+        ],
+        "key": "step_5",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      },
+      {
+        "target": [
+          17,
+          5,
+          10
+        ],
+        "key": "step_6",
+        "reveal": [
+          0,
+          1,
+          0,
+          24,
+          10,
+          24
+        ]
+      }
+    ]
+  },
+  {
+    "id": "flow_regulation",
+    "size": 11,
+    "height": 7,
+    "scale": 0.58,
+    "components": [
+      "flow_regulator"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          4
+        ],
+        "key": "step_0"
+      },
+      {
+        "target": [
+          3,
+          2,
+          4
+        ],
+        "key": "step_1",
+        "wrench": true
+      },
+      {
+        "target": [
+          8,
+          2,
+          3
+        ],
+        "key": "step_2"
+      }
+    ]
+  },
+  {
+    "id": "reactor_plant_stirred",
+    "components": [
+      "reactor_impeller",
+      "lidded_vessel"
+    ],
+    "size": 9,
+    "steps": [
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_0",
+        "reveal": [
+          3,
+          1,
+          3,
+          5,
+          2,
+          5
+        ]
+      },
+      {
+        "target": [
+          4,
+          3,
+          4
+        ],
+        "key": "step_1",
+        "reveal": [
+          3,
+          3,
+          3,
+          5,
+          4,
+          5
+        ]
+      },
+      {
+        "target": [
+          4,
+          3,
+          4
+        ],
+        "key": "step_2",
+        "reveal": [
+          3,
+          3,
+          3,
+          5,
+          3,
+          5
+        ]
+      },
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_3",
+        "reveal": [
+          0,
+          1,
+          0,
+          8,
+          6,
+          8
+        ],
+        "speed": 64
+      },
+      {
+        "target": [
+          2,
+          2,
+          4
+        ],
+        "key": "step_4"
+      }
+    ],
+    "height": 7
+  },
+  {
+    "id": "steam_condenser",
+    "size": 14,
+    "height": 7,
+    "scale": 0.6,
+    "components": [
+      "low_pressure_turbine_end",
+      "stainless_steel_tank",
+      "ammonia_separator",
+      "stainless_steel_pipe",
+      "reactor_feed_bundle"
+    ],
+    "steps": [
+      {
+        "target": [
+          0,
+          3,
+          3
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          3,
+          3,
+          3
+        ],
+        "key": "step_2",
+        "speed": 64
+      },
+      {
+        "target": [
+          7,
+          4,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          12,
+          3,
+          3
+        ],
+        "key": "step_4",
+        "speed": 64
+      }
+    ]
+  },
+  {
+    "id": "electrolysis_furnace",
+    "size": 11,
+    "height": 7,
+    "scale": 0.6,
+    "components": [
+      "electrolysis_furnace_shell",
+      "electrolysis_furnace_anode",
+      "electrolysis_furnace_busbar"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          3,
+          1,
+          3,
+          7,
+          3,
+          7
+        ]
+      },
+      {
+        "target": [
+          5,
+          3,
+          2
+        ],
+        "key": "step_2",
+        "reveal": [
+          5,
+          1,
+          1,
+          8,
+          3,
+          2
+        ]
+      },
+      {
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          3,
+          3,
+          3
+        ],
+        "key": "step_4"
+      },
+      {
+        "target": [
+          6,
+          1,
+          3
+        ],
+        "key": "step_5"
+      }
+    ]
+  },
+  {
+    "id": "fuel_cell",
+    "size": 7,
+    "height": 4,
+    "components": [
+      "fuel_cell"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_1",
+        "item": "create_refinery_n_reactors:fuel_cell"
+      },
+      {
+        "target": [
+          1,
+          1,
+          3
+        ],
+        "key": "step_2",
+        "item": "create_refinery_n_reactors:hydrogen_gas_bucket"
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          3,
+          1,
+          5
+        ],
+        "key": "step_4"
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_5"
+      }
+    ]
+  },
+  {
+    "id": "toxic_gas",
+    "size": 7,
+    "height": 4,
+    "components": [
+      "gas_mask",
+      "relief_scrubber"
+    ],
+    "steps": [
+      {
+        "target": [
+          2,
+          2,
+          3
+        ],
+        "key": "step_1",
+        "item": "create_refinery_n_reactors:stainless_steel_tank"
+      },
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          4,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          2,
+          2,
+          3
+        ],
+        "key": "step_4",
+        "item": "create_refinery_n_reactors:gas_mask"
+      },
+      {
+        "target": [
+          3,
+          3,
+          3
+        ],
+        "key": "step_5",
+        "item": "create_refinery_n_reactors:relief_scrubber"
+      },
+      {
+        "target": [
+          3,
+          3,
+          3
+        ],
+        "key": "step_6"
+      }
+    ]
+  },
+  {
+    "id": "submarine_hull",
+    "size": 7,
+    "height": 5,
+    "components": [
+      "stainless_steel_block",
+      "titanium_block"
+    ],
+    "steps": [
+      {
+        "target": [
+          1,
+          2,
+          4
+        ],
+        "key": "step_1",
+        "item": "create_refinery_n_reactors:stainless_steel_ingot"
+      },
+      {
+        "target": [
+          1,
+          2,
+          4
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          3,
+          3
+        ],
+        "key": "step_4"
+      }
+    ]
+  },
+  {
+    "id": "pipe_materials",
+    "size": 11,
+    "height": 3,
+    "components": [
+      "stainless_steel_pipe",
+      "ceramic_pipe",
+      "resin_pipe",
+      "pvc_pipe",
+      "nickel_alloy_pipe",
+      "zirconium_pipe",
+      "reinforced_pipe",
+      "cryogenic_pipe",
+      "gas_pipe"
+    ],
+    "steps": [
+      {
+        "target": [
+          5,
+          1,
+          2
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          5,
+          1,
+          8
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          5,
+          1,
+          4
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "key": "step_4"
+      },
+      {
+        "target": [
+          5,
+          1,
+          6
+        ],
+        "key": "step_5"
+      },
+      {
+        "target": [
+          5,
+          1,
+          7
+        ],
+        "key": "step_6"
+      },
+      {
+        "target": [
+          5,
+          1,
+          9
+        ],
+        "key": "step_7"
+      },
+      {
+        "target": [
+          5,
+          1,
+          10
+        ],
+        "key": "step_8"
+      }
+    ]
+  },
+  {
+    "id": "tank_materials",
+    "size": 11,
+    "height": 4,
+    "components": [
+      "stainless_steel_tank",
+      "cryogenic_tank",
+      "pressure_tank",
+      "gas_receiver"
+    ],
+    "steps": [
+      {
+        "target": [
+          1,
+          2,
+          4
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          3,
+          2,
+          4
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          5,
+          2,
+          4
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          7,
+          2,
+          4
+        ],
+        "key": "step_4"
+      },
+      {
+        "target": [
+          9,
+          2,
+          4
+        ],
+        "key": "step_5"
+      },
+      {
+        "target": [
+          1,
+          1,
+          4
+        ],
+        "key": "step_6"
+      },
+      {
+        "target": [
+          3,
+          1,
+          4
+        ],
+        "key": "step_7"
+      }
+    ]
+  },
+  {
+    "id": "gas_tank_container",
+    "size": 11,
+    "height": 5,
+    "scale": 0.55,
+    "formed": "step_1",
+    "components": [
+      "gas_tank_container"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          2,
+          1,
+          3
+        ],
+        "reveal": [
+          2,
+          1,
+          1,
+          8,
+          3,
+          8
+        ],
+        "item": "create_refinery_n_reactors:gas_tank_container"
+      },
+      {
+        "key": "step_1",
+        "target": [
+          8,
+          2,
+          7
+        ]
+      },
+      {
+        "key": "step_2",
+        "target": [
+          3,
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "id": "spent_fuel_reprocessing",
+    "size": 9,
+    "height": 7,
+    "components": [
+      "spent_fuel_rod",
+      "spent_control_rod"
+    ],
+    "steps": [
+      {
+        "target": [
+          1,
+          2,
+          4
+        ],
+        "key": "step_1",
+        "item": "create_refinery_n_reactors:spent_fuel_rod"
+      },
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_2",
+        "speed": 32,
+        "item": "create_refinery_n_reactors:nitric_acid_bucket"
+      },
+      {
+        "target": [
+          5,
+          2,
+          4
+        ],
+        "key": "step_3",
+        "item": "create_refinery_n_reactors:uranium_trioxide"
+      },
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_4",
+        "item": "create_refinery_n_reactors:spent_control_rod"
+      }
+    ]
+  },
+  {
+    "id": "converter",
+    "size": 16,
+    "height": 13,
+    "scale": 0.34,
+    "formed": "step_1",
+    "components": [
+      "converter_trunnion_bearing",
+      "zirconia_refractory_bricks",
+      "converter_shell",
+      "steel_block"
+    ],
+    "steps": [
+      {
+        "target": [
+          1,
+          6,
+          6
+        ],
+        "key": "step_1",
+        "reveal": [
+          1,
+          1,
+          2,
+          9,
+          11,
+          10
+        ]
+      },
+      {
+        "target": [
+          6,
+          5,
+          6
+        ],
+        "key": "step_2",
+        "item": "create_refinery_n_reactors:zirconia_refractory_bricks"
+      },
+      {
+        "target": [
+          7,
+          5,
+          6
+        ],
+        "key": "step_3",
+        "item": "create:super_glue"
+      },
+      {
+        "target": [
+          7,
+          8,
+          5
+        ],
+        "key": "step_4",
+        "item": "create_refinery_n_reactors:oxygen_gas_bucket"
+      },
+      {
+        "target": [
+          1,
+          6,
+          6
+        ],
+        "key": "step_5",
+        "speed": 32,
+        "item": "create_refinery_n_reactors:steel_ingot"
+      },
+      {
+        "target": [
+          5,
+          10,
+          10
+        ],
+        "key": "step_6",
+        "reveal": [
+          5,
+          1,
+          10,
+          13,
+          10,
+          11
+        ],
+        "item": "create_refinery_n_reactors:converter_gas_bucket"
+      },
+      {
+        "target": [
+          5,
+          11,
+          6
+        ],
+        "key": "step_7",
+        "item": "create_refinery_n_reactors:argon_gas_bucket"
+      }
+    ]
+  },
+  {
+    "id": "pipe_pressure",
+    "size": 9,
+    "height": 5,
+    "scale": 0.5,
+    "components": [
+      "reinforced_pipe",
+      "pipe_pressure_gauge"
+    ],
+    "steps": [
+      {
+        "target": [
+          1,
+          1,
+          4
+        ],
+        "key": "step_1",
+        "item": "create:blaze_burner"
+      },
+      {
+        "target": [
+          2,
+          2,
+          4
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          5,
+          1,
+          4
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          2,
+          7
+        ],
+        "key": "step_4"
+      },
+      {
+        "target": [
+          4,
+          1,
+          7
+        ],
+        "key": "step_5"
+      }
+    ]
+  },
+  {
+    "id": "pressure_basics",
+    "size": 10,
+    "height": 4,
+    "components": [
+      "reinforced_pipe",
+      "stainless_steel_pipe",
+      "pipe_pressure_gauge",
+      "stainless_steel_tank",
+      "cryogenic_tank",
+      "gas_receiver"
+    ],
+    "steps": [
+      {
+        "target": [
+          1,
+          2,
+          4
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          2,
+          1,
+          4
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          6,
+          2,
+          4
+        ],
+        "key": "step_4"
+      },
+      {
+        "target": [
+          6,
+          1,
+          4
+        ],
+        "key": "step_5",
+        "item": "create:blaze_burner"
+      },
+      {
+        "target": [
+          8,
+          2,
+          4
+        ],
+        "key": "step_6"
+      },
+      {
+        "target": [
+          3,
+          1,
+          4
+        ],
+        "key": "step_7"
+      },
+      {
+        "target": [
+          5,
+          1,
+          4
+        ],
+        "key": "step_8"
+      }
+    ]
+  },
+  {
+    "id": "lithium_target_irradiation",
+    "size": 9,
+    "height": 15,
+    "components": [
+      "lithium_target_rod",
+      "irradiated_lithium_target_rod",
+      "fusion_tritium_port",
+      "tritium_gas_bucket"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          12,
+          4
+        ],
+        "item": "create_refinery_n_reactors:lithium_target_rod",
+        "key": "step_1"
+      },
+      {
+        "target": [
+          4,
+          6,
+          4
+        ],
+        "item": "create_refinery_n_reactors:lithium_target_rod",
+        "key": "step_2"
+      },
+      {
+        "target": [
+          4,
+          12,
+          4
+        ],
+        "item": "create_refinery_n_reactors:irradiated_lithium_target_rod",
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          12,
+          4
+        ],
+        "item": "create_refinery_n_reactors:tritium_gas_bucket",
+        "key": "step_4"
+      }
+    ],
+    "scale": 0.7
+  },
+  {
+    "id": "helium_recovery",
+    "size": 13,
+    "height": 7,
+    "components": [
+      "helium_recovery_feed_bucket",
+      "helium_gas_bucket",
+      "fusion_ash_port",
+      "fusion_helium_outlet"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:uraninite",
+        "key": "step_1",
+        "speed": 32
+      },
+      {
+        "target": [
+          9,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:helium_recovery_feed_bucket",
+        "key": "step_2"
+      },
+      {
+        "target": [
+          9,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:helium_gas_bucket",
+        "key": "step_3"
+      }
+    ]
+  },
+  {
+    "id": "industrial_dispatch",
+    "size": 9,
+    "height": 5,
+    "components": [
+      "industrial_dispatch_board"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          1,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          4,
+          1,
+          3,
+          4,
+          1,
+          4
+        ]
+      },
+      {
+        "target": [
+          3,
+          1,
+          4
+        ],
+        "key": "step_2",
+        "item": "create_refinery_n_reactors:polyethylene",
+        "reveal": [
+          3,
+          1,
+          4,
+          3,
+          1,
+          4
+        ]
+      },
+      {
+        "target": [
+          4,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_4",
+        "reveal": [
+          4,
+          2,
+          4,
+          4,
+          2,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tubular_boiler",
+    "size": 9,
+    "height": 6,
+    "components": [
+      "horizontal_fluid_tank"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          2,
+          2,
+          3,
+          4,
+          2,
+          3
+        ]
+      },
+      {
+        "target": [
+          1,
+          2,
+          3
+        ],
+        "key": "step_2",
+        "reveal": [
+          1,
+          2,
+          3,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_3",
+        "reveal": [
+          2,
+          1,
+          3,
+          4,
+          1,
+          3
+        ]
+      },
+      {
+        "target": [
+          5,
+          2,
+          3
+        ],
+        "key": "step_4",
+        "reveal": [
+          5,
+          2,
+          3,
+          5,
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tubular_boiler_2x2",
+    "size": 9,
+    "height": 6,
+    "components": [
+      "horizontal_fluid_tank"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          2,
+          2,
+          3,
+          4,
+          3,
+          4
+        ]
+      },
+      {
+        "target": [
+          1,
+          2,
+          3
+        ],
+        "key": "step_2",
+        "reveal": [
+          1,
+          2,
+          3,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_3",
+        "reveal": [
+          2,
+          1,
+          3,
+          4,
+          1,
+          4
+        ]
+      },
+      {
+        "target": [
+          5,
+          2,
+          3
+        ],
+        "key": "step_4",
+        "reveal": [
+          5,
+          2,
+          3,
+          5,
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tubular_boiler_3x3",
+    "size": 9,
+    "height": 6,
+    "components": [
+      "horizontal_fluid_tank"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          2,
+          2,
+          3,
+          4,
+          4,
+          5
+        ]
+      },
+      {
+        "target": [
+          1,
+          2,
+          3
+        ],
+        "key": "step_2",
+        "reveal": [
+          1,
+          2,
+          3,
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "target": [
+          3,
+          1,
+          3
+        ],
+        "key": "step_3",
+        "reveal": [
+          2,
+          1,
+          3,
+          4,
+          1,
+          5
+        ]
+      },
+      {
+        "target": [
+          5,
+          2,
+          3
+        ],
+        "key": "step_4",
+        "reveal": [
+          5,
+          2,
+          3,
+          5,
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gas_pipes",
+    "size": 7,
+    "height": 4,
+    "components": [
+      "gas_pipe",
+      "large_gas_pipe"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          1,
+          1
+        ],
+        "key": "step_1"
+      },
+      {
+        "target": [
+          2,
+          1,
+          1
+        ],
+        "key": "step_2",
+        "speed": 64
+      },
+      {
+        "target": [
+          3,
+          1,
+          4
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          5,
+          2,
+          4
+        ],
+        "key": "step_4"
+      }
+    ]
+  },
+  {
+    "id": "uranium_preparation",
+    "size": 15,
+    "height": 7,
+    "scale": 0.5,
+    "components": [
+      "uranium_ore",
+      "deepslate_uranium_ore",
+      "uraninite",
+      "yellowcake",
+      "uranium_dioxide",
+      "uranium_tetrafluoride",
+      "reactor_separator_core"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          11
+        ],
+        "key": "step_1",
+        "speed": 32,
+        "item": "create_refinery_n_reactors:uraninite"
+      },
+      {
+        "target": [
+          4,
+          3,
+          3
+        ],
+        "key": "step_2",
+        "item": "create_refinery_n_reactors:reactor_separator_core"
+      },
+      {
+        "target": [
+          10,
+          2,
+          3
+        ],
+        "key": "step_3",
+        "item": "create_refinery_n_reactors:uranium_tetrafluoride"
+      },
+      {
+        "target": [
+          10,
+          3,
+          10
+        ],
+        "key": "step_4",
+        "item": "create_refinery_n_reactors:gas_receiver"
+      },
+      {
+        "target": [
+          10,
+          3,
+          12
+        ],
+        "key": "step_5"
+      }
+    ]
+  },
+  {
+    "id": "uranium_fuel_finishing",
+    "size": 15,
+    "height": 8,
+    "scale": 0.5,
+    "components": [
+      "gas_centrifuge",
+      "enriched_uranium_dioxide",
+      "compact_uranium_dioxide",
+      "green_uranium_pellet",
+      "uranium_pellet",
+      "green_compact_uranium_pellet",
+      "compact_uranium_pellet",
+      "fuel_rod",
+      "compact_enriched_fuel_rod"
+    ],
+    "steps": [
+      {
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "key": "step_1",
+        "speed": 32,
+        "item": "create_refinery_n_reactors:gas_centrifuge"
+      },
+      {
+        "target": [
+          10,
+          2,
+          3
+        ],
+        "key": "step_2",
+        "item": "create_refinery_n_reactors:enriched_uranium_dioxide"
+      },
+      {
+        "target": [
+          4,
+          2,
+          10
+        ],
+        "key": "step_3",
+        "item": "create_refinery_n_reactors:green_uranium_pellet"
+      },
+      {
+        "target": [
+          11,
+          2,
+          11
+        ],
+        "key": "step_4",
+        "item": "create_refinery_n_reactors:uranium_pellet"
+      },
+      {
+        "target": [
+          3,
+          6,
+          3
+        ],
+        "key": "step_5",
+        "item": "create_refinery_n_reactors:compact_enriched_fuel_rod"
+      }
+    ]
+  },
+  {
+    "id": "pressure_valves",
+    "size": 9,
+    "height": 4,
+    "components": [
+      "pressure_reducing_valve"
+    ],
+    "steps": [
+      {
+        "target": [
+          2,
+          1,
+          1
+        ],
+        "key": "step_1",
+        "speed": 64
+      },
+      {
+        "target": [
+          4,
+          1,
+          1
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          7,
+          1,
+          1
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_4",
+        "wrench": true
+      },
+      {
+        "target": [
+          7,
+          1,
+          4
+        ],
+        "key": "step_5"
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_air",
+    "family": "air",
+    "size": 11,
+    "height": 16,
+    "components": [
+      "air_gas_bucket",
+      "argon_gas_bucket",
+      "gas_pump",
+      "liquid_nitrogen_bucket",
+      "liquid_oxygen_bucket",
+      "nitrogen_gas_bucket",
+      "oxygen_gas_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:gas_pump",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:air_gas_bucket",
+        "process": {
+          "kind": "compressor",
+          "recipe": null,
+          "offset": 32,
+          "width": 7,
+          "height": 6,
+          "machine": [
+            3,
+            2,
+            3
+          ],
+          "input": [
+            2,
+            3,
+            3
+          ],
+          "output": [
+            2,
+            1,
+            3
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          3,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:air_gas_bucket",
+        "process": {
+          "kind": "compressor",
+          "recipe": null,
+          "offset": 32,
+          "width": 7,
+          "height": 6,
+          "machine": [
+            3,
+            2,
+            3
+          ],
+          "input": [
+            2,
+            3,
+            3
+          ],
+          "output": [
+            2,
+            1,
+            3
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "operation:air_separation",
+          "offset": 64,
+          "width": 11,
+          "height": 16,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            3,
+            5
+          ],
+          "output": [
+            5,
+            14,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          1,
+          5
+        ],
+        "item": "create_refinery_n_reactors:oxygen_gas_bucket",
+        "process": {
+          "kind": "heat_exchanger",
+          "recipe": "operation:exchange_olefins_oxygen",
+          "offset": 96,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            4,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:liquid_nitrogen_bucket",
+        "process": {
+          "kind": "cold_box",
+          "recipe": "operation:liquefy_nitrogen",
+          "offset": 128,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            3,
+            3
+          ],
+          "output": [
+            4,
+            1,
+            3
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_hydrogen",
+    "family": "hydrogen",
+    "size": 11,
+    "height": 6,
+    "components": [
+      "hydrogen_gas_bucket",
+      "warm_water_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:asbestos_wrapped_electrode",
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": null,
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": "operation:water_electrolysis",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:hydrogen_gas_bucket",
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": null,
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_ammonia",
+    "family": "ammonia",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "ammonia_gas_bucket",
+      "iron_catalyst",
+      "liquid_ammonia_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/synthesis_gas",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "heating",
+          "recipe": null,
+          "offset": 32,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            3,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "item": "create_refinery_n_reactors:iron_catalyst",
+        "process": {
+          "kind": "catalytic",
+          "recipe": "operation:haber_bosch",
+          "offset": 64,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "process": {
+          "kind": "cooling",
+          "recipe": null,
+          "offset": 96,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            3
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          2,
+          2,
+          2
+        ],
+        "process": {
+          "kind": "separator",
+          "recipe": "process:separate_ammonia",
+          "offset": 128,
+          "width": 7,
+          "height": 7,
+          "machine": [
+            2,
+            2,
+            2
+          ],
+          "input": [
+            5,
+            4,
+            2
+          ],
+          "output": [
+            2,
+            1,
+            2
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_nitric_fertilizer",
+    "family": "nitric_fertilizer",
+    "size": 9,
+    "height": 9,
+    "components": [
+      "ammonium_nitrate",
+      "ammonium_sulfate",
+      "nitric_acid_bucket",
+      "nitric_oxide_bucket",
+      "nitrogen_dioxide_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:oxidize_ammonia",
+          "offset": 0,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "process": {
+          "kind": "cooling",
+          "recipe": null,
+          "offset": 32,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            3
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "process:separate_nitric_oxide",
+          "offset": 64,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:oxidize_nitric_oxide",
+          "offset": 0,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "process": {
+          "kind": "absorber",
+          "recipe": "process:absorb_nitric_acid",
+          "offset": 96,
+          "width": 9,
+          "height": 9,
+          "machine": [
+            4,
+            1,
+            4
+          ],
+          "input": [
+            5,
+            1,
+            4
+          ],
+          "output": [
+            3,
+            1,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/ammonium_nitrate",
+          "offset": 128,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/ammonium_sulfate",
+          "offset": 128,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_sulfuric_acid",
+    "family": "sulfuric_acid",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "charred_wood",
+      "sulfur_dust",
+      "sulfuric_acid_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create:crushing/netherrack",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sulfur_dioxide_from_air",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:oxidize_sulfur_dioxide",
+          "offset": 64,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "process": {
+          "kind": "absorber",
+          "recipe": "process:absorb_sulfuric_acid",
+          "offset": 96,
+          "width": 9,
+          "height": 9,
+          "machine": [
+            4,
+            1,
+            4
+          ],
+          "input": [
+            5,
+            1,
+            4
+          ],
+          "output": [
+            3,
+            1,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sulfur_dioxide_from_hydrogen_sulfide",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sulfur_from_hydrogen_sulfide",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          2,
+          1,
+          2
+        ],
+        "item": "create_refinery_n_reactors:charred_wood",
+        "process": {
+          "kind": "carbonization",
+          "feed": "create_refinery_n_reactors:sulfuric_acid_bucket",
+          "recipe": null,
+          "offset": 128,
+          "width": 7,
+          "height": 4,
+          "machine": [
+            2,
+            1,
+            2
+          ],
+          "input": [
+            1,
+            1,
+            2
+          ],
+          "output": [
+            4,
+            1,
+            2
+          ]
+        }
+      },
+      {
+        "key": "step_8",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/dilute_sulfuric_acid_iron_catalysed_air",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_9",
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "process": {
+          "kind": "absorber",
+          "recipe": "process:absorb_sulfurous_acid",
+          "offset": 96,
+          "width": 9,
+          "height": 9,
+          "machine": [
+            4,
+            1,
+            4
+          ],
+          "input": [
+            5,
+            1,
+            4
+          ],
+          "output": [
+            3,
+            1,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_10",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": "operation:sulfurous_electrolysis",
+          "offset": 160,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_chlor_alkali",
+    "family": "chlor_alkali",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "asbestos",
+      "brine_bucket",
+      "caustic_soda_solution_bucket",
+      "deepslate_halite_ore",
+      "halite_ore",
+      "hydrochloric_acid_bucket",
+      "salt",
+      "soap",
+      "sodium_hypochlorite_solution_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/halite_ore",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/brine",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": "operation:brine_electrolysis",
+          "offset": 64,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/diorite_to_asbestos",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/hydrogen_chloride",
+          "offset": 96,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "process": {
+          "kind": "absorber",
+          "recipe": "process:absorb_hydrochloric_acid",
+          "offset": 128,
+          "width": 9,
+          "height": 9,
+          "machine": [
+            4,
+            1,
+            4
+          ],
+          "input": [
+            5,
+            1,
+            4
+          ],
+          "output": [
+            3,
+            1,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sodium_hypochlorite_solution",
+          "offset": 96,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_8",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/soap",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_petrochemical_feedstocks",
+    "family": "polymers",
+    "size": 11,
+    "height": 7,
+    "components": [
+      "cooled_olefins_bucket",
+      "createdieselgenerators:crude_oil_bucket",
+      "createdieselgenerators:gasoline_bucket",
+      "ethylene_bucket",
+      "industrial_glass",
+      "industrial_resin",
+      "lubricating_oil_bucket",
+      "molten_polyethylene_bucket",
+      "molten_polypropylene_bucket",
+      "naphtha_bucket",
+      "plastic_sheet",
+      "polyethylene",
+      "polypropylene",
+      "propylene_bucket",
+      "resin_pipe"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "item": "createdieselgenerators:crude_oil_bucket",
+        "process": {
+          "kind": "heating",
+          "recipe": null,
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            3,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "process:distill_crude",
+          "offset": 32,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            3,
+            5
+          ],
+          "output": [
+            5,
+            5,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "item": "create_refinery_n_reactors:naphtha_bucket",
+        "process": {
+          "kind": "heating",
+          "recipe": null,
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            3,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:crack_naphtha",
+          "offset": 64,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "item": "create_refinery_n_reactors:cooled_olefins_bucket",
+        "process": {
+          "kind": "cooling",
+          "recipe": null,
+          "offset": 96,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            3
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "process:separate_olefins",
+          "offset": 128,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_polymers",
+    "family": "polymers",
+    "size": 11,
+    "height": 8,
+    "components": [
+      "cooled_olefins_bucket",
+      "createdieselgenerators:crude_oil_bucket",
+      "createdieselgenerators:gasoline_bucket",
+      "ethylene_bucket",
+      "industrial_glass",
+      "industrial_resin",
+      "lubricating_oil_bucket",
+      "molten_polyethylene_bucket",
+      "molten_polypropylene_bucket",
+      "naphtha_bucket",
+      "plastic_sheet",
+      "polyethylene",
+      "polypropylene",
+      "propylene_bucket",
+      "resin_pipe"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "heating",
+          "recipe": null,
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            3,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:polymerize_ethylene",
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:polymerize_propylene",
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/polyethylene_from_melt",
+          "offset": 64,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/polypropylene_from_melt",
+          "offset": 64,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "pressing",
+          "recipe": "create_refinery_n_reactors:pressing/plastic_sheet_from_polyethylene",
+          "offset": 96,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/industrial_resin",
+          "offset": 64,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_8",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:industrial_glass",
+          "offset": 128,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_rubber",
+    "family": "rubber",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "rubber_gasket",
+      "synthetic_rubber"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/synthetic_rubber",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:rubber_gasket",
+          "offset": 32,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:belt_connector_from_synthetic_rubber",
+          "offset": 32,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:leather_from_polymers",
+          "offset": 32,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_pvc",
+    "family": "pvc",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "ethylene_dichloride_bucket",
+      "pvc_pipe",
+      "pvc_resin"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/ethylene_dichloride",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/vinyl_chloride",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/pvc_resin",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:pvc_pipe",
+          "offset": 32,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_fuel_refining",
+    "family": "fuel_refining",
+    "size": 11,
+    "height": 7,
+    "components": [
+      "cooled_hydrocracker_effluent_bucket",
+      "cooled_hydrotreater_effluent_bucket",
+      "createdieselgenerators:diesel_bucket",
+      "heavy_oil_bucket",
+      "hot_hydrocracker_effluent_bucket",
+      "hot_hydrotreater_effluent_bucket",
+      "low_sulfur_diesel_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "item": "createdieselgenerators:diesel_bucket",
+        "process": {
+          "kind": "heating",
+          "recipe": null,
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            3,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:hydrotreat_diesel",
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "item": "create_refinery_n_reactors:cooled_hydrotreater_effluent_bucket",
+        "process": {
+          "kind": "cooling",
+          "recipe": null,
+          "offset": 64,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            3
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "process:separate_hydrotreater_effluent",
+          "offset": 96,
+          "width": 11,
+          "height": 5,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            3,
+            5
+          ],
+          "output": [
+            5,
+            3,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:hydrocrack_heavy_oil",
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "item": "create_refinery_n_reactors:cooled_hydrocracker_effluent_bucket",
+        "process": {
+          "kind": "cooling",
+          "recipe": null,
+          "offset": 64,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            3
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "process:separate_hydrocracker_effluent",
+          "offset": 128,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            3,
+            5
+          ],
+          "output": [
+            5,
+            4,
+            4
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_antifreeze",
+    "family": "coolants",
+    "size": 9,
+    "height": 9,
+    "components": [
+      "antifreeze_bucket",
+      "ethylene_glycol_bucket",
+      "liquid_chlorine_bucket",
+      "liquid_propylene_bucket",
+      "liquid_sulfur_dioxide_bucket",
+      "liquid_vinyl_chloride_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:oxidize_ethylene",
+          "offset": 0,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/ethylene_glycol",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/antifreeze",
+          "offset": 64,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_refrigeration",
+    "family": "coolants",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "antifreeze_bucket",
+      "ethylene_glycol_bucket",
+      "liquid_chlorine_bucket",
+      "liquid_propylene_bucket",
+      "liquid_sulfur_dioxide_bucket",
+      "liquid_vinyl_chloride_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "item": "create_refinery_n_reactors:liquid_ammonia_bucket",
+        "process": {
+          "kind": "cooling",
+          "recipe": "operation:cool_ammonia",
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            3
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          1,
+          5
+        ],
+        "item": "create_refinery_n_reactors:cooled_olefins_bucket",
+        "process": {
+          "kind": "heat_exchanger",
+          "recipe": "operation:exchange_olefins_ammonia",
+          "offset": 32,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            4,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          3,
+          3
+        ],
+        "item": "create_refinery_n_reactors:liquid_ammonia_bucket",
+        "process": {
+          "kind": "cooling",
+          "recipe": "operation:cool_ammonia",
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            3
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          1,
+          5
+        ],
+        "item": "create_refinery_n_reactors:liquid_chlorine_bucket",
+        "process": {
+          "kind": "heat_exchanger",
+          "recipe": "operation:exchange_chlorine_ammonia",
+          "offset": 32,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            4,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/freeze_water",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_aluminum",
+    "family": "aluminum",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "alumina",
+      "aluminium_sulfate_solution_bucket",
+      "aluminum_ingot",
+      "aluminum_sheet",
+      "bauxite",
+      "bauxite_ore",
+      "deepslate_bauxite_ore",
+      "sodium_aluminate_solution_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/bauxite_ore",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/aluminium_sulfate_solution",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/alumina",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sodium_aluminate_solution",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/alumina_from_sodium_aluminate_solution",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          3,
+          2
+        ],
+        "process": {
+          "kind": "furnace",
+          "recipe": "operation:reduce_alumina",
+          "offset": 64,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            2
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            2
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "pressing",
+          "recipe": "create_refinery_n_reactors:pressing/aluminum_sheet",
+          "offset": 96,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_titanium",
+    "family": "titanium",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "deepslate_ilmenite_ore",
+      "ilmenite",
+      "ilmenite_ore",
+      "titanium_block",
+      "titanium_dioxide",
+      "titanium_ingot",
+      "titanium_sheet",
+      "titanyl_sulfate_solution_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/ilmenite_ore",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/titanyl_sulfate_solution",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/titanium_dioxide",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/synthetic_rutile",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          3,
+          2
+        ],
+        "process": {
+          "kind": "furnace",
+          "recipe": "operation:reduce_titanium_dioxide",
+          "offset": 64,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            2
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            2
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "pressing",
+          "recipe": "create_refinery_n_reactors:pressing/titanium_sheet",
+          "offset": 96,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_zirconium",
+    "family": "zirconium",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "deepslate_zircon_ore",
+      "zircon",
+      "zircon_ore",
+      "zirconia",
+      "zirconia_refractory_bricks",
+      "zirconium_ingot",
+      "zirconium_pipe",
+      "zirconium_sulfate_solution_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/zircon_ore",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/zirconium_sulfate_solution",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/zirconia",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          3,
+          2
+        ],
+        "process": {
+          "kind": "furnace",
+          "recipe": "operation:reduce_zirconia",
+          "offset": 64,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            5,
+            3,
+            2
+          ],
+          "input": [
+            5,
+            3,
+            2
+          ],
+          "output": [
+            5,
+            3,
+            2
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:zirconia_refractory_bricks",
+          "offset": 96,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_nickel",
+    "family": "nickel",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "deepslate_pentlandite_ore",
+      "nickel_alloy_pipe",
+      "nickel_ingot",
+      "nickel_oxide",
+      "nickel_sheet",
+      "pentlandite",
+      "pentlandite_ore"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/pentlandite_ore",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/nickel_oxide_roasted_in_air",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/nickel_ingot_reduced_with_carbon",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/nickel_oxide",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/nickel_ingot",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "pressing",
+          "recipe": "create_refinery_n_reactors:pressing/nickel_sheet",
+          "offset": 96,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_chromium",
+    "family": "chromium",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "chromite",
+      "chromite_ore",
+      "chromium_ingot",
+      "deepslate_chromite_ore",
+      "ferrochrome"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/chromite_ore",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/ferrochrome",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/stainless_steel_from_ferrochrome",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/chromium_ingot",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/stainless_steel_ingot",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_molybdenum",
+    "family": "molybdenum",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "deepslate_molybdenite_ore",
+      "molybdenite",
+      "molybdenite_ore",
+      "molybdenum_ingot",
+      "molybdenum_trioxide"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/molybdenite_ore",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/molybdenum_trioxide",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/molybdenum_ingot",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_steel",
+    "family": "steel",
+    "size": 11,
+    "height": 13,
+    "components": [
+      "carbon_powder",
+      "heated_unfinished_steel",
+      "stainless_steel_block",
+      "stainless_steel_ingot",
+      "stainless_steel_sheet",
+      "steel_block",
+      "steel_ingot",
+      "unprocessed_steel"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/carbon_powder_from_coal",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/carbon_powder_from_charcoal",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/unprocessed_steel",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "pressing",
+          "recipe": "create_refinery_n_reactors:sequenced_assembly/steel_ingot",
+          "offset": 64,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:steel_block",
+          "offset": 96,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          1,
+          6,
+          6
+        ],
+        "process": {
+          "kind": "converter",
+          "recipe": "create_refinery_n_reactors:converter/oxygen_steel",
+          "offset": 128,
+          "width": 16,
+          "height": 13,
+          "machine": [
+            1,
+            6,
+            6
+          ],
+          "input": [
+            4,
+            7,
+            6
+          ],
+          "output": [
+            5,
+            4,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/stainless_steel_from_ferrochrome",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_8",
+        "target": [
+          1,
+          6,
+          6
+        ],
+        "process": {
+          "kind": "converter",
+          "recipe": "create_refinery_n_reactors:converter/aod_stainless_steel",
+          "offset": 128,
+          "width": 16,
+          "height": 13,
+          "machine": [
+            1,
+            6,
+            6
+          ],
+          "input": [
+            4,
+            7,
+            6
+          ],
+          "output": [
+            5,
+            4,
+            6
+          ]
+        }
+      },
+      {
+        "key": "step_9",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "pressing",
+          "recipe": "create_refinery_n_reactors:pressing/stainless_steel_sheet",
+          "offset": 64,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_fluorine",
+    "family": "fluorine",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "fluorite"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/calcite_to_fluorite",
+          "offset": 0,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/hydrogen_fluoride",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            4,
+            6,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:asbestos_wrapped_electrode",
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": null,
+          "offset": 64,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": "operation:fluoride_electrolysis",
+          "offset": 64,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_pigments",
+    "family": "pigments",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "chromium_oxide",
+      "iron_oxide_red",
+      "molybdenum_blue",
+      "nickel_titanium_yellow",
+      "triiron_tetroxide_pile"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/triiron_tetroxide_pile",
+          "offset": 0,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/iron_oxide_red",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/chromium_oxide",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/nickel_titanium_yellow",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/molybdenum_blue",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "milling",
+          "recipe": "create_refinery_n_reactors:milling/red_dye_from_iron_oxide_red",
+          "offset": 64,
+          "width": 11,
+          "height": 5,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            3,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_concrete",
+    "family": "construction",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "borax",
+      "borosilicate_glass_frit",
+      "cement_clinker",
+      "cement_powder",
+      "corrosion_resistant_floor",
+      "corrosion_resistant_floor_slab",
+      "ground_clinker",
+      "gypsum",
+      "industrial_concrete",
+      "industrial_concrete_slab",
+      "industrial_concrete_stairs",
+      "phosphoric_acid_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/phosphate_acidulation",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/cement_clinker",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "crushing",
+          "recipe": "create_refinery_n_reactors:crushing/ground_clinker",
+          "offset": 64,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            4,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/cement_powder",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/industrial_concrete",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "deploying",
+          "recipe": "create_refinery_n_reactors:deploying/corrosion_resistant_floor",
+          "offset": 96,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_glass",
+    "family": "construction",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "borax",
+      "borosilicate_glass_frit",
+      "cement_clinker",
+      "cement_powder",
+      "corrosion_resistant_floor",
+      "corrosion_resistant_floor_slab",
+      "ground_clinker",
+      "gypsum",
+      "industrial_concrete",
+      "industrial_concrete_slab",
+      "industrial_concrete_stairs",
+      "phosphoric_acid_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/borax_from_brine",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/borosilicate_glass_frit",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_washwater",
+    "family": "water",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "clarified_water_bucket",
+      "neutralized_wastewater_bucket",
+      "treatment_sludge",
+      "wastewater_bucket",
+      "water_filter_medium",
+      "water_treatment_flocculant"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/water_treatment_flocculant",
+          "offset": 0,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:water_filter_medium",
+          "offset": 32,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/washwater_neutralization",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/washwater_precipitation",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/washwater_filtration",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/cement_clinker_with_sludge",
+          "offset": 0,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_catalysts",
+    "family": "catalysts",
+    "size": 11,
+    "height": 4,
+    "components": [
+      "cracking_catalyst",
+      "hydrocracking_catalyst",
+      "hydrotreating_catalyst",
+      "iron_catalyst",
+      "oxidation_catalyst",
+      "polymerization_catalyst"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:iron_catalyst",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:oxidation_catalyst",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:cracking_catalyst",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:polymerization_catalyst",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:hydrotreating_catalyst",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:hydrocracking_catalyst",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_7",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:iron_catalyst_regeneration",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_mining_explosives",
+    "family": "mining_explosives",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "ammonium_nitrate",
+      "anfo",
+      "blasting_charge",
+      "minecraft:gunpowder"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/synthesis_gas",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "item": "create_refinery_n_reactors:iron_catalyst",
+        "process": {
+          "kind": "catalytic",
+          "recipe": "operation:haber_bosch",
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/ammonium_nitrate",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:gunpowder_from_ammonium_nitrate",
+          "offset": 64,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/anfo",
+          "offset": 96,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:blasting_charge",
+          "offset": 64,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_deuterium",
+    "family": "deuterium",
+    "size": 8,
+    "height": 9,
+    "components": [
+      "deuterium_depleted_water_bucket",
+      "deuterium_gas_bucket",
+      "heavy_water_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          2,
+          2,
+          3
+        ],
+        "process": {
+          "kind": "centrifuge",
+          "recipe": "process:concentrate_heavy_water",
+          "offset": 0,
+          "width": 8,
+          "height": 5,
+          "machine": [
+            2,
+            2,
+            3
+          ],
+          "input": [
+            2,
+            2,
+            3
+          ],
+          "output": [
+            2,
+            3,
+            3
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "process": {
+          "kind": "electrolyzer",
+          "recipe": "operation:heavy_water_electrolysis",
+          "offset": 32,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            1,
+            5
+          ],
+          "output": [
+            4,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/reuse_deuterium_depleted_water",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_liquid_helium",
+    "family": "liquid_helium",
+    "size": 8,
+    "height": 7,
+    "components": [
+      "helium_gas_bucket",
+      "liquid_helium_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          2,
+          2,
+          3
+        ],
+        "process": {
+          "kind": "centrifuge",
+          "recipe": "process:recover_helium",
+          "offset": 0,
+          "width": 8,
+          "height": 5,
+          "machine": [
+            2,
+            2,
+            3
+          ],
+          "input": [
+            2,
+            2,
+            3
+          ],
+          "output": [
+            2,
+            3,
+            3
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:helium_gas_bucket",
+        "process": {
+          "kind": "cold_box",
+          "recipe": null,
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            3,
+            3
+          ],
+          "output": [
+            4,
+            1,
+            3
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          3
+        ],
+        "item": "create_refinery_n_reactors:liquid_helium_bucket",
+        "process": {
+          "kind": "cold_box",
+          "recipe": null,
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            3
+          ],
+          "input": [
+            4,
+            3,
+            3
+          ],
+          "output": [
+            4,
+            1,
+            3
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_carbon_oxides",
+    "family": "carbon_oxides",
+    "size": 11,
+    "height": 7,
+    "components": [
+      "converter_shell",
+      "gas_receiver",
+      "oxidation_catalyst"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "process:recover_carbon_monoxide",
+          "offset": 0,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "catalytic",
+          "recipe": "process:oxidize_carbon_monoxide",
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      }
+    ]
+  }
+]

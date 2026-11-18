@@ -1,0 +1,532 @@
+{
+  "variants": {
+    "cell=0,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner"
+    },
+    "cell=0,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner"
+    },
+    "cell=1,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side"
+    },
+    "cell=1,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side"
+    },
+    "cell=2,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side"
+    },
+    "cell=2,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side"
+    },
+    "cell=3,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side"
+    },
+    "cell=3,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side"
+    },
+    "cell=4,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner",
+      "y": 90
+    },
+    "cell=4,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner",
+      "y": 90
+    },
+    "cell=5,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 270
+    },
+    "cell=5,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 270
+    },
+    "cell=6,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=6,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=7,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=7,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=8,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=8,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=9,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 90
+    },
+    "cell=9,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 90
+    },
+    "cell=10,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 270
+    },
+    "cell=10,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 270
+    },
+    "cell=11,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=11,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=12,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=12,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=13,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=13,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=14,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 90
+    },
+    "cell=14,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 90
+    },
+    "cell=15,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 270
+    },
+    "cell=15,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 270
+    },
+    "cell=16,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=16,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=17,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=17,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=18,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=18,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=19,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 90
+    },
+    "cell=19,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 90
+    },
+    "cell=20,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner",
+      "y": 270
+    },
+    "cell=20,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner",
+      "y": 270
+    },
+    "cell=21,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 180
+    },
+    "cell=21,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 180
+    },
+    "cell=22,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 180
+    },
+    "cell=22,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 180
+    },
+    "cell=23,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 180
+    },
+    "cell=23,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_side",
+      "y": 180
+    },
+    "cell=24,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner",
+      "y": 180
+    },
+    "cell=24,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/stand_corner",
+      "y": 180
+    },
+    "cell=25,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner"
+    },
+    "cell=25,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner"
+    },
+    "cell=26,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window"
+    },
+    "cell=26,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit"
+    },
+    "cell=27,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window"
+    },
+    "cell=27,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit"
+    },
+    "cell=28,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window"
+    },
+    "cell=28,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit"
+    },
+    "cell=29,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner",
+      "y": 90
+    },
+    "cell=29,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner",
+      "y": 90
+    },
+    "cell=30,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 270
+    },
+    "cell=30,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 270
+    },
+    "cell=31,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=31,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=32,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=32,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=33,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=33,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=34,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 90
+    },
+    "cell=34,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 90
+    },
+    "cell=35,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 270
+    },
+    "cell=35,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 270
+    },
+    "cell=36,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=36,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=37,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=37,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=38,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=38,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=39,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 90
+    },
+    "cell=39,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 90
+    },
+    "cell=40,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 270
+    },
+    "cell=40,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 270
+    },
+    "cell=41,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=41,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=42,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=42,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=43,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=43,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/interior"
+    },
+    "cell=44,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 90
+    },
+    "cell=44,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 90
+    },
+    "cell=45,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner",
+      "y": 270
+    },
+    "cell=45,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner",
+      "y": 270
+    },
+    "cell=46,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 180
+    },
+    "cell=46,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 180
+    },
+    "cell=47,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 180
+    },
+    "cell=47,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 180
+    },
+    "cell=48,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window",
+      "y": 180
+    },
+    "cell=48,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_window_lit",
+      "y": 180
+    },
+    "cell=49,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner",
+      "y": 180
+    },
+    "cell=49,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/wall_corner",
+      "y": 180
+    },
+    "cell=50,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner"
+    },
+    "cell=50,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner_lit"
+    },
+    "cell=51,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side"
+    },
+    "cell=51,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit"
+    },
+    "cell=52,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre"
+    },
+    "cell=52,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre_lit"
+    },
+    "cell=53,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side"
+    },
+    "cell=53,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit"
+    },
+    "cell=54,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner",
+      "y": 90
+    },
+    "cell=54,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner_lit",
+      "y": 90
+    },
+    "cell=55,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side",
+      "y": 270
+    },
+    "cell=55,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit",
+      "y": 270
+    },
+    "cell=56,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=56,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=57,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=57,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=58,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=58,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=59,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side",
+      "y": 90
+    },
+    "cell=59,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit",
+      "y": 90
+    },
+    "cell=60,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre",
+      "y": 270
+    },
+    "cell=60,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre_lit",
+      "y": 270
+    },
+    "cell=61,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=61,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=62,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=62,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=63,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=63,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=64,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre",
+      "y": 90
+    },
+    "cell=64,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre_lit",
+      "y": 90
+    },
+    "cell=65,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side",
+      "y": 270
+    },
+    "cell=65,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit",
+      "y": 270
+    },
+    "cell=66,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=66,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=67,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=67,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=68,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/bath"
+    },
+    "cell=68,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/bath_lit"
+    },
+    "cell=69,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side",
+      "y": 90
+    },
+    "cell=69,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit",
+      "y": 90
+    },
+    "cell=70,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner",
+      "y": 270
+    },
+    "cell=70,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner_lit",
+      "y": 270
+    },
+    "cell=71,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side",
+      "y": 180
+    },
+    "cell=71,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit",
+      "y": 180
+    },
+    "cell=72,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre",
+      "y": 180
+    },
+    "cell=72,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_centre_lit",
+      "y": 180
+    },
+    "cell=73,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side",
+      "y": 180
+    },
+    "cell=73,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_side_lit",
+      "y": 180
+    },
+    "cell=74,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner",
+      "y": 180
+    },
+    "cell=74,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/rim_corner_lit",
+      "y": 180
+    },
+    "cell=75,lit=false": {
+      "model": "create_refinery_n_reactors:block/furnace/loose"
+    },
+    "cell=75,lit=true": {
+      "model": "create_refinery_n_reactors:block/furnace/loose"
+    }
+  }
+}

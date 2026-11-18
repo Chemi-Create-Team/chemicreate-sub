@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SBS",
+    "SBS",
+    "SGS"
+  ],
+  "key": {
+    "S": {
+      "item": "create:iron_sheet"
+    },
+    "B": {
+      "item": "minecraft:coal_block"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:reactor_graphite"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:control_rod",
+    "count": 1
+  }
+}

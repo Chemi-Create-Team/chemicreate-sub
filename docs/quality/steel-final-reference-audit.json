@@ -1,0 +1,80 @@
+{
+  "baseline": "598ab333",
+  "protected_pngs_checked": 222,
+  "protected_mismatches": [],
+  "existing_png_alpha_checks": 564,
+  "alpha_mismatches": [],
+  "changed_pngs": 193,
+  "changed_palette_failures": [],
+  "functional_swatch_checks": 34,
+  "functional_swatch_mismatches": [],
+  "dyed_flywheel_variants": 17,
+  "dye_pixels_checked": 4420,
+  "dye_mismatches": [],
+  "forbidden_resource_changes": [],
+  "field_metrics": {
+    "steel": {
+      "colours": 5,
+      "mean_luma": 88.72,
+      "sd_luma": 11.29,
+      "p05": 62.5,
+      "p95": 113.85,
+      "largest_flat_patch_px": 12,
+      "dominant_fraction": 0.306
+    },
+    "cast_iron": {
+      "colours": 5,
+      "mean_luma": 70.51,
+      "sd_luma": 11.16,
+      "p05": 43.22,
+      "p95": 98.28,
+      "largest_flat_patch_px": 12,
+      "dominant_fraction": 0.333
+    },
+    "brass": {
+      "colours": 5,
+      "mean_luma": 85.33,
+      "sd_luma": 13.82,
+      "p05": 62.03,
+      "p95": 100.78,
+      "largest_flat_patch_px": 12,
+      "dominant_fraction": 0.306
+    },
+    "copper": {
+      "colours": 5,
+      "mean_luma": 82.45,
+      "sd_luma": 13.61,
+      "p05": 59.95,
+      "p95": 98.26,
+      "largest_flat_patch_px": 12,
+      "dominant_fraction": 0.306
+    },
+    "reference_side": {
+      "colours": 7,
+      "mean_luma": 84.36,
+      "sd_luma": 14.76,
+      "p05": 62.5,
+      "p95": 113.85,
+      "largest_flat_patch_px": 12,
+      "dominant_fraction": 0.243
+    },
+    "reference_top": {
+      "colours": 9,
+      "mean_luma": 81.77,
+      "sd_luma": 17.27,
+      "p05": 62.5,
+      "p95": 113.85,
+      "largest_flat_patch_px": 14,
+      "dominant_fraction": 0.215
+    },
+    "previous_alloy": {
+      "colours": 3,
+      "mean_luma": 146.85,
+      "sd_luma": 6.9,
+      "p05": 133.72,
+      "p95": 161.37,
+      "largest_flat_patch_px": 108,
+      "dominant_fraction": 0.75
+    }
+  }
+}

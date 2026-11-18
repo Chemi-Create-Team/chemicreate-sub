@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,open=false": {
+      "model": "create_refinery_n_reactors:block/vault_hatch",
+      "x": 0,
+      "y": 0
+    },
+    "facing=north,open=true": {
+      "model": "create_refinery_n_reactors:block/vault_hatch_open",
+      "x": 0,
+      "y": 0
+    },
+    "facing=east,open=false": {
+      "model": "create_refinery_n_reactors:block/vault_hatch",
+      "x": 0,
+      "y": 90
+    },
+    "facing=east,open=true": {
+      "model": "create_refinery_n_reactors:block/vault_hatch_open",
+      "x": 0,
+      "y": 90
+    },
+    "facing=south,open=false": {
+      "model": "create_refinery_n_reactors:block/vault_hatch",
+      "x": 0,
+      "y": 180
+    },
+    "facing=south,open=true": {
+      "model": "create_refinery_n_reactors:block/vault_hatch_open",
+      "x": 0,
+      "y": 180
+    },
+    "facing=west,open=false": {
+      "model": "create_refinery_n_reactors:block/vault_hatch",
+      "x": 0,
+      "y": 270
+    },
+    "facing=west,open=true": {
+      "model": "create_refinery_n_reactors:block/vault_hatch_open",
+      "x": 0,
+      "y": 270
+    },
+    "facing=up,open=false": {
+      "model": "create_refinery_n_reactors:block/vault_hatch",
+      "x": 270,
+      "y": 0
+    },
+    "facing=up,open=true": {
+      "model": "create_refinery_n_reactors:block/vault_hatch_open",
+      "x": 270,
+      "y": 0
+    },
+    "facing=down,open=false": {
+      "model": "create_refinery_n_reactors:block/vault_hatch",
+      "x": 90,
+      "y": 0
+    },
+    "facing=down,open=true": {
+      "model": "create_refinery_n_reactors:block/vault_hatch_open",
+      "x": 90,
+      "y": 0
+    }
+  }
+}

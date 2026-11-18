@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IGI",
+    "SCS",
+    "IGI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:rubber_gasket"
+    },
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "C": {
+      "item": "create:copper_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:reciprocating_cylinder",
+    "count": 1
+  }
+}

@@ -1,0 +1,27 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def lines = options.exists() ? options.readLines('UTF-8') : []
+                lines.removeAll { it.startsWith('lang:') || it.startsWith('guiScale:') }
+                lines.add('lang:ja_jp'); lines.add('guiScale:2')
+                options.setText(lines.join('\n') + '\n', 'UTF-8')
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'; programArgument '1280'
+            programArgument '--height'; programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualityAllScenes', 'false'
+            systemProperty 'createplant.clientQualityCaptureDelay', '400'
+            systemProperty 'createplant.clientQualityTargets', 'lidded_vessel@vessel_maintenance,fuel_pool@fuel_pool,electrolysis_furnace_busbar@plant_electrolysis_furnace'
+            systemProperty 'createplant.clientQualitySeek.0', '300'
+            systemProperty 'createplant.clientQualitySeek.1', '200'
+            systemProperty 'createplant.clientQualitySeek.2', '300'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '30'
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+        }
+    }
+}

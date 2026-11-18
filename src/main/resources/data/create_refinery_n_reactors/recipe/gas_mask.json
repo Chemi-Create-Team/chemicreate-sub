@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " R ",
+    "GRG",
+    "ICI"
+  ],
+  "key": {
+    "R": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "C": {
+      "item": "minecraft:charcoal"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:gas_mask",
+    "count": 1
+  }
+}

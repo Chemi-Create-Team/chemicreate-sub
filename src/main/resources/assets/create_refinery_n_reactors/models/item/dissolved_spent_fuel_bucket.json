@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "create_refinery_n_reactors:item/dissolved_spent_fuel_bucket"
+  }
+}

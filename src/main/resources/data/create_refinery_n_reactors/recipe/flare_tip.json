@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IBI",
+    "SPS",
+    " C "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_bars"
+    },
+    "B": {
+      "tag": "c:plates/brass"
+    },
+    "S": {
+      "tag": "c:plates/iron"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:gas_pipe"
+    },
+    "C": {
+      "item": "minecraft:flint_and_steel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:flare_tip",
+    "count": 1
+  }
+}

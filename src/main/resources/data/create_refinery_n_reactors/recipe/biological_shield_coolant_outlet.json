@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "V",
+    "P",
+    "B"
+  ],
+  "key": {
+    "B": {
+      "item": "create_refinery_n_reactors:biological_shield"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "V": {
+      "item": "create:fluid_valve"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:biological_shield_coolant_outlet",
+    "count": 1
+  }
+}

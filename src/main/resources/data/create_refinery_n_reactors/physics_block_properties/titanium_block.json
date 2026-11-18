@@ -1,0 +1,7 @@
+{
+  "selector": "create_refinery_n_reactors:titanium_block",
+  "priority": 1001,
+  "properties": {
+    "sable:mass": 2.3
+  }
+}

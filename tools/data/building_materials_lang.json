@@ -1,0 +1,32 @@
+{
+  "en_us": {
+    "item.create_refinery_n_reactors.cement_clinker": "Cement Clinker",
+    "item.create_refinery_n_reactors.ground_clinker": "Ground Clinker",
+    "item.create_refinery_n_reactors.cement_powder": "Portland Cement",
+    "block.create_refinery_n_reactors.industrial_concrete": "Industrial Concrete",
+    "block.create_refinery_n_reactors.industrial_concrete_slab": "Industrial Concrete Slab",
+    "block.create_refinery_n_reactors.industrial_concrete_stairs": "Industrial Concrete Stairs",
+    "block.create_refinery_n_reactors.corrosion_resistant_floor": "Polymer-Lined Floor",
+    "block.create_refinery_n_reactors.corrosion_resistant_floor_slab": "Polymer-Lined Floor Slab"
+  },
+  "ja_jp": {
+    "item.create_refinery_n_reactors.cement_clinker": "セメントクリンカー",
+    "item.create_refinery_n_reactors.ground_clinker": "粉砕クリンカー",
+    "item.create_refinery_n_reactors.cement_powder": "ポルトランドセメント",
+    "block.create_refinery_n_reactors.industrial_concrete": "工場用コンクリート",
+    "block.create_refinery_n_reactors.industrial_concrete_slab": "工場用コンクリートのハーフブロック",
+    "block.create_refinery_n_reactors.industrial_concrete_stairs": "工場用コンクリートの階段",
+    "block.create_refinery_n_reactors.corrosion_resistant_floor": "樹脂張り防食床",
+    "block.create_refinery_n_reactors.corrosion_resistant_floor_slab": "樹脂張り防食床のハーフブロック"
+  },
+  "zh_cn": {
+    "item.create_refinery_n_reactors.cement_clinker": "水泥熟料",
+    "item.create_refinery_n_reactors.ground_clinker": "熟料粉",
+    "item.create_refinery_n_reactors.cement_powder": "波特兰水泥",
+    "block.create_refinery_n_reactors.industrial_concrete": "工业混凝土",
+    "block.create_refinery_n_reactors.industrial_concrete_slab": "工业混凝土台阶",
+    "block.create_refinery_n_reactors.industrial_concrete_stairs": "工业混凝土楼梯",
+    "block.create_refinery_n_reactors.corrosion_resistant_floor": "树脂防腐地板",
+    "block.create_refinery_n_reactors.corrosion_resistant_floor_slab": "树脂防腐地板台阶"
+  }
+}

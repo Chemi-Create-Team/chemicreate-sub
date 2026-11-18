@@ -1,0 +1,111 @@
+package net.createplant.gametest;
+
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
+import net.createplant.CreatePlant;
+import net.createplant.block.HorizontalFluidTankBlock;
+import net.createplant.block.entity.HorizontalTankBlockEntity;
+import net.createplant.registry.CETransport;
+import net.createplant.thermal.FluidThermal;
+import net.createplant.thermal.SteamGrades;
+import net.createplant.registry.CEProcessFluids;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+
+@GameTestHolder(CreatePlant.MOD_ID)
+@PrefixGameTestTemplate(false)
+public final class HorizontalTankBoilerFlowGameTests {
+    private HorizontalTankBoilerFlowGameTests() { }
+
+    private static void pipe(GameTestHelper h, BlockPos pos, Direction first, Direction second) {
+        var state = net.createplant.registry.CETransport.STAINLESS_PIPE.get().defaultBlockState();
+        for (Direction side : Direction.values()) state = state.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side), side == first || side == second);
+        h.setBlock(pos, state);
+    }
+
+    private static CreativeMotorBlockEntity motor(GameTestHelper h, BlockPos pos, Direction facing) {
+        h.setBlock(pos, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, facing));
+        var motor = (CreativeMotorBlockEntity) h.getBlockEntity(pos);motor.generatedSpeed.setValue(0);return motor;
+    }
+
+    private static void firedBurner(GameTestHelper h, BlockPos under) {
+        h.setBlock(under, AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SMOULDERING));
+        var burner=(com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity)h.getBlockEntity(under);
+        var tag=burner.saveWithoutMetadata(h.getLevel().registryAccess());tag.putInt("fuelLevel",1);tag.putInt("burnTimeRemaining",4000);burner.loadWithComponents(tag,h.getLevel().registryAccess());burner.updateBlockState();
+    }
+
+    @GameTest(template = "test_fractionation", timeoutTicks = 280)
+    public static void nativeFeedAndSteamPumpsConserveWaterThroughAStopAndRestart(GameTestHelper h) {
+        BlockPos base = new BlockPos(6, 3, 8), hot = base.east(2), supply = base.north(4), receiver = hot.east(4);
+        var boilerState = CETransport.HORIZONTAL_FLUID_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
+        for (int section = 0; section < 3; section++) { h.setBlock(base.east(section), boilerState);firedBurner(h, base.east(section).below()); }
+        var root = (HorizontalTankBlockEntity) ((HorizontalTankBlockEntity) h.getBlockEntity(base)).getControllerBE();
+        var outlet = (HorizontalTankBlockEntity) h.getBlockEntity(hot);
+        h.assertTrue(root.getHeight() == 3, "Three horizontal tank cells over burners form one boiler");
+
+        h.setBlock(supply, AllBlocks.FLUID_TANK.get());var source = ((FluidTankBlockEntity) h.getBlockEntity(supply)).getTankInventory();
+        source.fill(FluidThermal.at(new FluidStack(Fluids.WATER, 1000), 293.15), EXECUTE);
+        pipe(h, supply.south(), Direction.NORTH, Direction.SOUTH);
+        BlockPos feedPump = supply.south(2);
+        h.setBlock(feedPump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING, Direction.SOUTH));
+        pipe(h, supply.south(3), Direction.NORTH, Direction.SOUTH);
+        h.setBlock(feedPump.east(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
+        var feedMotor = motor(h, feedPump.east().north(), Direction.SOUTH);
+
+        for (int x = 0; x < 3; x++) h.setBlock(receiver.east(x), CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS, Direction.Axis.X));
+        com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti((FluidTankBlockEntity) h.getBlockEntity(receiver));
+        var receiverOwner = ((FluidTankBlockEntity) h.getBlockEntity(receiver)).getControllerBE();var stored = receiverOwner.getTankInventory();
+        h.assertTrue(receiverOwner.getWidth() == 1 && receiverOwner.getHeight() == 3 && stored.getCapacity() == 24000,
+            "The steam receiver is a genuine axial gas tank, large enough for the finite steam charge");
+        pipe(h, hot.east(), Direction.WEST, Direction.EAST);
+        BlockPos steamPump = hot.east(2);
+        h.setBlock(steamPump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+        pipe(h, hot.east(3), Direction.WEST, Direction.EAST);
+        h.setBlock(steamPump.south(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
+        var steamMotor = motor(h, steamPump.south().west(), Direction.EAST);
+
+        int[] pausedAmount = {-1};
+        h.onEachTick(() -> {
+            int total = source.getFluidAmount() + root.getTankInventory().getFluidAmount() + stored.getFluidAmount();
+            for (int section = 0; section < 3; section++) total += ((HorizontalTankBlockEntity) h.getBlockEntity(base.east(section))).steam().getFluidAmount();
+            h.assertTrue(total == 1000, "Every native transport tick keeps feed water plus retained/exported water-equivalent steam at 1000 mB: " + total);
+        });
+        h.runAfterDelay(5, () -> feedMotor.generatedSpeed.setValue(128));
+        h.runAfterDelay(175, () -> {
+            h.assertTrue(source.getFluidAmount() < 1000 && outlet.steam().getFluidAmount() > 0 && stored.isEmpty(),
+                "The stock feed pump supplies finite water while the stopped steam pump exports nothing");
+            h.assertTrue(outlet.steam().getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()),"Finite burner creates the superheated steam grade");
+        });
+        h.runAfterDelay(180, () -> steamMotor.generatedSpeed.setValue(128));
+        h.runAfterDelay(192, () -> steamMotor.generatedSpeed.setValue(0));
+        h.runAfterDelay(202, () -> {
+            h.assertTrue(stored.getFluidAmount() > 0, "A stock pipe and real Create pump deliver the finite superheated steam to the receiver");
+            pausedAmount[0] = stored.getFluidAmount();
+        });
+        h.runAfterDelay(209, () -> h.assertTrue(stored.getFluidAmount() == pausedAmount[0], "Stopping the native pump stops export after its pressure update"));
+        h.runAfterDelay(210, () -> steamMotor.generatedSpeed.setValue(128));
+        h.runAfterDelay(222, () -> steamMotor.generatedSpeed.setValue(0));
+        h.runAfterDelay(240, () -> {
+            h.assertTrue(stored.getFluidAmount() > pausedAmount[0] && stored.getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()),
+                "Restarting the same native pump resumes steam export without replacing the pipe or boiler");
+            int converted = 1000 - source.getFluidAmount() - root.getTankInventory().getFluidAmount();
+            h.assertTrue(converted == outlet.steam().getFluidAmount() + stored.getFluidAmount(),
+                "Feedwater reduction equals the boiler's steam plus the complete receiver water/steam mass");
+            h.assertTrue((outlet.steam().isEmpty() || outlet.steam().getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get())) && !outlet.isRemoved() && !receiverOwner.isRemoved(),
+                "The fired boiler maintains its 650 C outlet and the heat-resistant receiver remains intact");
+            h.succeed();
+        });
+    }
+}

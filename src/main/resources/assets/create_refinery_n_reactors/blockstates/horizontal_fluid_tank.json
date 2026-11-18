@@ -1,0 +1,220 @@
+{
+  "variants": {
+    "axis=x,bottom=false,shape=plain,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_ne,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_nw,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_se,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_sw,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=plain,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_ne,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_nw,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_se,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=false,shape=window_sw,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=plain,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_ne,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_nw,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_se,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_sw,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=plain,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_ne,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_nw,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_se,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270,
+      "y": 270
+    },
+    "axis=x,bottom=true,shape=window_sw,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270,
+      "y": 270
+    },
+    "axis=z,bottom=false,shape=plain,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_ne,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_nw,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_se,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_sw,top=false": {
+      "model": "create:block/fluid_tank/block_middle",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=plain,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_ne,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_nw,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_se,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270
+    },
+    "axis=z,bottom=false,shape=window_sw,top=true": {
+      "model": "create:block/fluid_tank/block_top",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=plain,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_ne,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_nw,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_se,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_sw,top=false": {
+      "model": "create:block/fluid_tank/block_bottom",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=plain,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_ne,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_nw,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_se,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270
+    },
+    "axis=z,bottom=true,shape=window_sw,top=true": {
+      "model": "create:block/fluid_tank/block_single",
+      "x": 270
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "registered_resources_and_subtitles": 10,
+  "stopped_silent": true,
+  "sound_engine_started": "create_heavy_indusstry:machine.blower",
+  "one_voice_after_repeated_discovery": true,
+  "motor_stop_releases_engine": true,
+  "motor_restart": true,
+  "blocks_mute_stops_tickable": true,
+  "blocks_unmute_restarts_engine": true,
+  "distance_culls_engine": true,
+  "return_restarts_engine": true,
+  "actual_chunk_unload_silent": true,
+  "actual_chunk_reload_restarts_engine": true,
+  "broken_structure_releases_engine": true,
+  "explicit_client_cleanup": true,
+  "maximum_voices": 24,
+  "audible_radius_blocks": 32,
+  "status": "PASS"
+}

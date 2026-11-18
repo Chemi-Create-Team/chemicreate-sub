@@ -1,0 +1,207 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "gauge": "create:block/gauge",
+    "valve": "create:block/fluid_valve",
+    "particle": "create:block/gauge"
+  },
+  "elements": [
+    {
+      "name": "GaugeBody",
+      "from": [
+        1.95,
+        2,
+        1.95
+      ],
+      "to": [
+        14.05,
+        14,
+        14.05
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "east": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "south": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "west": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "up": {
+          "uv": [
+            0,
+            10,
+            6,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "down": {
+          "uv": [
+            0,
+            10,
+            6,
+            16
+          ],
+          "texture": "#gauge"
+        }
+      }
+    },
+    {
+      "name": "PipeFlange",
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        2,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            1.5,
+            9.5,
+            6.5,
+            14.5
+          ],
+          "texture": "#valve"
+        }
+      }
+    },
+    {
+      "name": "PipeFlange",
+      "from": [
+        3,
+        14,
+        3
+      ],
+      "to": [
+        13,
+        16,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            1.5,
+            9.5,
+            6.5,
+            14.5
+          ],
+          "texture": "#valve"
+        }
+      }
+    }
+  ]
+}

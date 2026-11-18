@@ -1,0 +1,23 @@
+[
+  {
+    "category": "equipment",
+    "width": 162,
+    "height": 18,
+    "colors": 11,
+    "sha256": "a54248f7a98900960a587bcab1a14c4d1255ca0fb3d1bdf3d764957ab9f66e74"
+  },
+  {
+    "category": "materials",
+    "width": 162,
+    "height": 18,
+    "colors": 14,
+    "sha256": "6ffa4093096db39a5f62748cef862175ef83b3701050897c462a0ae51a47ab56"
+  },
+  {
+    "category": "construction",
+    "width": 162,
+    "height": 18,
+    "colors": 12,
+    "sha256": "d82f30f79796a62f96db61a75f57dcfd6773ae540e5d8705cd486f30fd8be507"
+  }
+]

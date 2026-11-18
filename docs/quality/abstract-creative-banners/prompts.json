@@ -1,0 +1,21 @@
+{
+  "mode": "built-in image_gen edit; individual abstract category patterns",
+  "basePrompt": "Use case: style-transfer / background replacement. Create ONE ABSTRACT PIXEL-ART ORNAMENT for a Minecraft creative-tab category banner. Image 1 is the old header whose literal object illustration must be REPLACED COMPLETELY; keep only its wide banner size, dark left text area and general palette. Images 2 and 3 are the user's Simulated and Cosmonautics STYLE REFERENCES: broad cropped decorative shapes and small restrained pixel grain. The desired result is an ABSTRACT PATTERN suggesting a theme, NOT a drawing of equipment, NOT a collection of object icons. No tanks, valves, gauges, buildings, bolts, tools, visible machine parts, labels, numbers or text. Avoid isolated clip-art symbols on a blank background. Let broad rhythmic shapes bleed off the top/bottom/right edges and overlap slightly. Use flat graphic planes in 2-3 close shades plus sparse stippled 1-pixel texture, about 12-14 colors. Subtle texture without tiny technical detail, no 3D rendering, bevels, metallic glare or deep shadows. LEFT half is a dark low-contrast charcoal version of the pattern so runtime text stays readable, with a gentle stepped/dithered transition into the colored motif on the RIGHT half. Keep native square pixel clusters, no antialiasing or smooth gradients. Geometry: logical canvas 162x54 with a single 162x18 artwork strip in the MIDDLE 18 rows; top and bottom 18 rows pure black padding. Do not frame the entire canvas. The artwork is a 9:1 horizontal strip. Pattern for this category: ",
+  "motifs": {
+    "equipment": "cropped ochre gear-tooth wedges, slate diagonal bands and one partial circular cutout, like the simple Simulated gear ornament; a mechanical rhythm without depicting a machine",
+    "materials": "overlapping turquoise wave bands, amber angular chips and pale ivory speckled patches; an abstract collage suggesting fluids and solid materials",
+    "construction": "large staggered slate-gray rectangular patches, a few thin copper dividing lines and restrained stone-like stipple; an abstract masonry and casing pattern"
+  },
+  "inputRoles": [
+    "old illustrated header to replace",
+    "Simulated style reference",
+    "Cosmonautics style reference"
+  ],
+  "normalization": "Trim black padding, nearest-neighbor normalize to 162x18, quantize without dithering to at most 14 colors",
+  "categories": [
+    "equipment",
+    "materials",
+    "construction"
+  ],
+  "grouping": "Single tab, three broad headings; reactors and instruments join equipment, fuels/spent fuel/explosives join materials."
+}

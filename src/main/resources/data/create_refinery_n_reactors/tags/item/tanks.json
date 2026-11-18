@@ -1,0 +1,10 @@
+{
+  "values": [
+    "create:fluid_tank",
+    "create_refinery_n_reactors:horizontal_fluid_tank",
+    "create_refinery_n_reactors:pressure_tank",
+    "create_refinery_n_reactors:stainless_steel_tank",
+    "create_refinery_n_reactors:gas_receiver",
+    "create_refinery_n_reactors:cryogenic_tank"
+  ]
+}

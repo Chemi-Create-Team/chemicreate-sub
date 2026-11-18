@@ -1,0 +1,10 @@
+{
+  "parent": "create_refinery_n_reactors:block/lime_large_flywheel/flywheel",
+  "loader": "neoforge:obj",
+  "flip_v": true,
+  "model": "create_refinery_n_reactors:models/block/large_flywheel/large_flywheel.obj",
+  "display": {
+    "gui": {"rotation": [30, 225, 0], "translation": [0, 0, 0], "scale": [0.2, 0.2, 0.2]},
+    "fixed": {"rotation": [90, 0, 0], "translation": [0, 0, -1], "scale": [0.1875, 0.1875, 0.1875]}
+  }
+}

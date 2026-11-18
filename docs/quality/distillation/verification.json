@@ -1,0 +1,63 @@
+{
+  "date_utc": "2026-10-24",
+  "base_commit": "d510251d25fea2ca6e4d760b00b1df0e2c75e863",
+  "minecraft": "1.21.1",
+  "neoforge": "21.1.219",
+  "create": "6.0.10-281",
+  "java": 21,
+  "build": "passed",
+  "dedicated_game_tests": {
+    "with_jei": 115,
+    "without_jei": 115,
+    "new_distillation_tests": 7
+  },
+  "existing_resource_validators_passed": 10,
+  "new_assets": {
+    "block_models": 78,
+    "textures_16px": 13,
+    "collision_entries": 72,
+    "new_blocks": 2
+  },
+  "preserved_existing_models_and_textures": 892,
+  "changed_existing_models_and_textures": 0,
+  "native_client": {
+    "language": "ja_jp",
+    "ponder_runtime_scenes": 50,
+    "rendered_distillation_sizes": [
+      "1x1x3",
+      "2x2x4",
+      "3x3x5"
+    ],
+    "renderer": "software; FPS not measured"
+  },
+  "physical_refinery_test": {
+    "crude_mB": 2000,
+    "heavy_oil_mB": 400,
+    "lubricating_oil_mB": 200,
+    "diesel_mB": 600,
+    "gasoline_mB": 400,
+    "naphtha_mB": 400,
+    "full_tank_resume": "passed"
+  },
+  "not_measured": [
+    "actual chunk unload/reload round trip",
+    "live multiplayer",
+    "large modpack long-running compatibility",
+    "TPS",
+    "MSPT",
+    "CPU",
+    "memory",
+    "GC",
+    "FPS"
+  ],
+  "distribution": {
+    "jar": "create-heavy-indusstry-0.1.0.jar",
+    "jar_bytes": 2445157,
+    "sha256": "d9339350ef756225171fdb41d5f80dc47cfcc097d3b46ccf21ed143b14e19922",
+    "zip": "create-plant-release.zip",
+    "zip_bytes": 2066029,
+    "zip_members": [
+      "create-heavy-indusstry-0.1.0.jar"
+    ]
+  }
+}

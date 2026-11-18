@@ -1,0 +1,21 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:green_mox_pellet"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:hydrogen_gas",
+      "amount": 100
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:mox_pellet",
+      "count": 1
+    }
+  ],
+  "processing_time": 300,
+  "heat_requirement": "superheated"
+}

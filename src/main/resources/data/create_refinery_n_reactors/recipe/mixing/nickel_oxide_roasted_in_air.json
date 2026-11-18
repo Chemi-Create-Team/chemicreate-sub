@@ -1,0 +1,21 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:pentlandite"
+    },
+    {
+      "item": "create_refinery_n_reactors:pentlandite"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:nickel_oxide"
+    },
+    {
+      "id": "minecraft:iron_nugget",
+      "count": 3
+    }
+  ],
+  "heat_requirement": "heated"
+}

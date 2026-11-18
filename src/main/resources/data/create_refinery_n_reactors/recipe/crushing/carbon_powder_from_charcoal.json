@@ -1,0 +1,14 @@
+{
+  "type": "create:crushing",
+  "ingredients": [
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "processing_time": 100,
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:carbon_powder"
+    }
+  ]
+}

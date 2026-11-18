@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:high_pressure_turbine_unit"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.power"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.power.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/stainless_steel",
+  "criteria": {
+    "high_pressure_turbine_unit": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:high_pressure_turbine_unit"
+          }
+        ]
+      }
+    },
+    "fuel_cell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:fuel_cell"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "high_pressure_turbine_unit",
+      "fuel_cell"
+    ]
+  ]
+}

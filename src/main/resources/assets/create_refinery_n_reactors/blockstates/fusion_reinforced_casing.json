@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "create_refinery_n_reactors:block/fusion/fusion_reinforced_casing"
+      },
+      {
+        "model": "create_refinery_n_reactors:block/fusion/fusion_reinforced_casing_1"
+      },
+      {
+        "model": "create_refinery_n_reactors:block/fusion/fusion_reinforced_casing_2"
+      }
+    ]
+  }
+}

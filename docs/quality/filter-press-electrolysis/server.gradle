@@ -1,0 +1,8 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('gameTestServer') {
+            gameDirectory.set(new File(System.getProperty('testDir', '/tmp/createplant-electrolysis-tests')))
+            systemProperty 'createplant.gameTestClasses', System.getProperty('testClasses', 'ElectrolysisCellGameTests,CircuitGameTests,ChlorAlkaliGameTests,BasinCompatibilityGameTests,ProductUseGameTests,ModularPortsGameTests,FusionFuelGameTests,MalformedDataGameTests,ManufacturingPonderGameTests,SurvivalReachabilityGameTests')
+        }
+    }
+}

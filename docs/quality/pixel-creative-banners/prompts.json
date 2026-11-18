@@ -1,0 +1,36 @@
+{
+  "mode": "built-in image_gen edit, individual category assets",
+  "basePrompt": "Use case: precise-object-edit. This is a SMALL STYLE ADJUSTMENT to the current Minecraft category banner. Image 1 is the edit target; Images 2 and 3 (Simulated gears, Cosmonautics stars) are style references. Preserve the existing objects, their layout, scale, details, colors and the dark readable left side. Make the current art about one third LESS VOLUMETRIC: remove glossy white glare, thick bevels, deeply recessed shadows, and smooth rounded metal lighting. Replace these with 2-3 restrained CLOSE-VALUE stepped shades per material. Show clear square 1px and 2px pixel clusters, dark pixel outlines, sparse stippled texture and small engraved/rivet/seam details already present. Aim for classic textured Minecraft pixel art like the references, NOT a shiny 3D illustration. About 16-18 colors total. IMPORTANT: do not strip out the small details and do not flatten to solid silhouette shapes; the previous plain 8-color silhouettes were too empty. Keep medium detail and subtle depth. No scene, no additional objects, no letters, no numbers, no text or logo. LEFT 45-55 percent must remain dark charcoal with faint, quiet pixel grain, never bright. No antialiasing, no blur, no smooth gradients, no lens effects. Output geometry: a 162x54 logical canvas with the artwork as a 162x18 strip exactly in its CENTER 18 rows; the top and bottom 18 rows are pure black padding. No outer canvas border. Final native banner has a 9:1 ratio. Category: ",
+  "categories": {
+    "radiation": "radiation meters",
+    "construction": "steel construction plates",
+    "pipes": "copper and iron pipes with a valve",
+    "controls": "analog control instruments",
+    "tanks": "pressure tanks",
+    "kinetics": "brass gears",
+    "thermal": "heating and cooling",
+    "chemistry": "chemical process columns",
+    "reprocessing": "fuel reprocessing equipment",
+    "logistics": "gantry crane",
+    "containers": "metal buckets",
+    "liquids": "liquid sight glasses",
+    "gases": "gas cylinders",
+    "ores": "ore patches",
+    "minerals": "mineral crystals",
+    "powders": "powder piles",
+    "metals": "metal ingots",
+    "polymers": "rubber and plastic",
+    "catalysts": "catalyst basket",
+    "components": "mechanical components",
+    "fuel": "fresh fuel rods",
+    "protection": "respirator",
+    "other": "toolbox and wrench"
+  },
+  "preserved": [
+    "spent_fuel",
+    "explosives",
+    "fission",
+    "fusion"
+  ],
+  "normalization": "Trim black padding, nearest-neighbor normalize to 162x18, quantize without dithering to at most 18 colors"
+}

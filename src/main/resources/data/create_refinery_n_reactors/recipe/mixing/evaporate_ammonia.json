@@ -1,0 +1,18 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:liquid_ammonia",
+      "amount": 1
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:ammonia_gas",
+      "amount": 934
+    }
+  ],
+  "heat_requirement": "heated",
+  "processing_time": 100
+}

@@ -1,0 +1,440 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "stainless": "create_refinery_n_reactors:block/chemical/stainless",
+    "cast_iron": "create_refinery_n_reactors:block/chemical/cast_iron",
+    "brass": "create_refinery_n_reactors:block/chemical/brass",
+    "copper": "create_refinery_n_reactors:block/chemical/copper",
+    "paint_green": "create_refinery_n_reactors:block/chemical/paint_green",
+    "paint_blue": "create_refinery_n_reactors:block/chemical/paint_blue",
+    "rubber": "create_refinery_n_reactors:block/chemical/rubber",
+    "hazard": "create_refinery_n_reactors:block/chemical/hazard",
+    "gauge": "create_refinery_n_reactors:block/chemical/gauge",
+    "vent": "create_refinery_n_reactors:block/chemical/vent",
+    "lamp_off": "create_refinery_n_reactors:block/chemical/lamp_off",
+    "lamp_on": "create_refinery_n_reactors:block/chemical/lamp_on",
+    "refinery_steel": "create_refinery_n_reactors:block/petrochemical/refinery_steel",
+    "teal_enamel": "create_refinery_n_reactors:block/petrochemical/teal_enamel",
+    "cream_enamel": "create_refinery_n_reactors:block/petrochemical/cream_enamel",
+    "refractory": "create_refinery_n_reactors:block/petrochemical/refractory",
+    "burner": "create_refinery_n_reactors:block/petrochemical/burner",
+    "sight_glass": "create_refinery_n_reactors:block/petrochemical/sight_glass",
+    "oil_shale": "create_refinery_n_reactors:block/petrochemical/oil_shale",
+    "asphalt": "create_refinery_n_reactors:block/petrochemical/asphalt",
+    "industrial_glass": "create_refinery_n_reactors:block/petrochemical/industrial_glass",
+    "resin_pipe": "create_refinery_n_reactors:block/petrochemical/resin_pipe",
+    "cable_insulation": "create_refinery_n_reactors:block/petrochemical/cable_insulation",
+    "particle": "create_refinery_n_reactors:block/petrochemical/refinery_steel",
+    "indicator": "create_refinery_n_reactors:block/chemical/lamp_off",
+    "heated": "create_refinery_n_reactors:block/chemical/cast_iron"
+  },
+  "display": {
+    "gui": {
+      "rotation": [
+        25,
+        225,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.42,
+        0.42,
+        0.42
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4,
+        4
+      ],
+      "to": [
+        12,
+        12,
+        12
+      ],
+      "faces": {
+        "up": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "north": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        0
+      ],
+      "to": [
+        12,
+        12,
+        4
+      ],
+      "faces": {
+        "up": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            0,
+            12,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            0,
+            12,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#resin_pipe",
+          "uv": [
+            0,
+            4,
+            4,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#resin_pipe",
+          "uv": [
+            0,
+            4,
+            4,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        2
+      ],
+      "to": [
+        13,
+        13,
+        4
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            2,
+            13,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            2,
+            13,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#brass",
+          "uv": [
+            2,
+            3,
+            4,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#brass",
+          "uv": [
+            2,
+            3,
+            4,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        12
+      ],
+      "to": [
+        12,
+        12,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            12,
+            12,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            12,
+            12,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#resin_pipe",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#resin_pipe",
+          "uv": [
+            12,
+            4,
+            16,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#resin_pipe",
+          "uv": [
+            12,
+            4,
+            16,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        12
+      ],
+      "to": [
+        13,
+        13,
+        14
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            12,
+            13,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            12,
+            13,
+            14
+          ]
+        },
+        "north": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#brass",
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#brass",
+          "uv": [
+            12,
+            3,
+            14,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#brass",
+          "uv": [
+            12,
+            3,
+            14,
+            13
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " G ",
+    "CIC",
+    " G "
+  ],
+  "key": {
+    "G": {
+      "tag": "c:ingots/gold"
+    },
+    "C": {
+      "tag": "c:plates/copper"
+    },
+    "I": {
+      "item": "create_refinery_n_reactors:iron_catalyst"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:oxidation_catalyst",
+    "count": 1
+  }
+}

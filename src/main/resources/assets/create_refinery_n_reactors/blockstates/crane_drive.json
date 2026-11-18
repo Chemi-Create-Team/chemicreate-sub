@@ -1,0 +1,48 @@
+{
+  "variants": {
+    "axis=x,facing=north": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "y": 90
+    },
+    "axis=x,facing=east": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "y": 90
+    },
+    "axis=x,facing=south": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "y": 90
+    },
+    "axis=x,facing=west": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "y": 90
+    },
+    "axis=y,facing=north": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "x": 90
+    },
+    "axis=y,facing=east": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "x": 90
+    },
+    "axis=y,facing=south": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "x": 90
+    },
+    "axis=y,facing=west": {
+      "model": "create_refinery_n_reactors:block/crane/drive",
+      "x": 90
+    },
+    "axis=z,facing=north": {
+      "model": "create_refinery_n_reactors:block/crane/drive"
+    },
+    "axis=z,facing=east": {
+      "model": "create_refinery_n_reactors:block/crane/drive"
+    },
+    "axis=z,facing=south": {
+      "model": "create_refinery_n_reactors:block/crane/drive"
+    },
+    "axis=z,facing=west": {
+      "model": "create_refinery_n_reactors:block/crane/drive"
+    }
+  }
+}

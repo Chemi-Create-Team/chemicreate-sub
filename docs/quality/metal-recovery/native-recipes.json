@@ -1,0 +1,19 @@
+{
+  "ponderRender": "checked",
+  "runtimeTranslations": "passed",
+  "translationScope": "ore_recovery,settling_tank,crystallizer,electrowinning",
+  "scenes": [
+    "create_refinery_n_reactors:crystallizer",
+    "create_refinery_n_reactors:electrowinning",
+    "create_refinery_n_reactors:ore_recovery",
+    "create_refinery_n_reactors:settling_tank"
+  ],
+  "languages": [
+    "ja_jp"
+  ],
+  "renderTargets": [
+    "settling_tank_controller@jei_settling",
+    "crystallizer_controller@jei_crystallizing",
+    "electrolysis_cell@jei_cell_electrolysis"
+  ]
+}

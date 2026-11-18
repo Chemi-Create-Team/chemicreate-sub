@@ -1,0 +1,65 @@
+{
+  "full": {
+    "watts": 3991.701520138003,
+    "output_percent": 100.0,
+    "water_gain_J": 15737.200367529178,
+    "unheated_gain_J": -184.67256525042467,
+    "heater_contribution_J": 15921.872932779603,
+    "vessel_C": 26.65943382118644,
+    "electrical_J": 15966.806080552022
+  },
+  "half": {
+    "watts": 1997.9237643402346,
+    "output_percent": 50.0,
+    "water_gain_J": 7665.409529867349,
+    "unheated_gain_J": -303.8211805038154,
+    "heater_contribution_J": 7969.230710371165,
+    "vessel_C": 29.88578931099937,
+    "electrical_J": 7991.695057360926
+  },
+  "half_plus_one_step": {
+    "watts": 2001.915454339222,
+    "output_percent": 50.1,
+    "water_gain_J": 7614.652063801652,
+    "unheated_gain_J": -370.5195976374671,
+    "heater_contribution_J": 7985.171661439119,
+    "vessel_C": 32.828620995196275,
+    "electrical_J": 8007.661817356874
+  },
+  "one_percent": {
+    "watts": 39.99916887151525,
+    "output_percent": 1.0,
+    "water_gain_J": -255.4137885805685,
+    "unheated_gain_J": -414.9607266357634,
+    "heater_contribution_J": 159.54693805519491,
+    "vessel_C": 32.98586021799076,
+    "electrical_J": 159.9966754860611
+  },
+  "tenth_percent": {
+    "watts": 3.999991688598581,
+    "output_percent": 0.1,
+    "water_gain_J": -392.24092110269703,
+    "unheated_gain_J": -408.1954097186681,
+    "heater_contribution_J": 15.954488615971059,
+    "vessel_C": 32.83870372690728,
+    "electrical_J": 15.999966754394308
+  },
+  "holding": {
+    "watts": 99.99480556839349,
+    "output_percent": 2.5,
+    "water_gain_J": -3.1072425739839673,
+    "unheated_gain_J": -401.9629899421707,
+    "heater_contribution_J": 398.8557473681867,
+    "vessel_C": 32.82483877928098,
+    "electrical_J": 399.9792222735735
+  },
+  "off": {
+    "watts": 0.0,
+    "output_percent": 0.0,
+    "water_gain_J": -397.42471642652526,
+    "unheated_gain_J": -397.42477528052405,
+    "heater_contribution_J": 5.885399878025055E-5,
+    "vessel_C": 32.69478739250724,
+    "electrical_J": 0.0
+  }
+}

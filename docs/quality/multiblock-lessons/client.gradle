@@ -1,0 +1,27 @@
+allprojects {
+    afterEvaluate {
+        tasks.named('runClient').configure {
+            doFirst {
+                def options = new File(project.projectDir, 'run/options.txt')
+                def lines = options.exists() ? options.readLines('UTF-8') : []
+                lines.removeAll { it.startsWith('lang:') }
+                lines.add('lang:' + System.getProperty('qualityLanguage', 'ja_jp'))
+                options.setText(lines.join('\n') + '\n', 'UTF-8')
+            }
+        }
+        extensions.getByName('neoForge').runs.named('client') {
+            programArgument '--width'
+            programArgument '1280'
+            programArgument '--height'
+            programArgument '800'
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityLanguage', System.getProperty('qualityLanguage', 'ja_jp')
+            systemProperty 'createplant.clientQualityAllScenes', System.getProperty('allScenes', 'true')
+            if (System.getProperty('qualityTargets')) systemProperty 'createplant.clientQualityTargets', System.getProperty('qualityTargets')
+            systemProperty 'createplant.clientQualitySkipScreenshots', 'true'
+            systemProperty 'createplant.clientQualitySeekFromEnd', '180'
+            systemProperty 'createplant.clientQualityCaptureDelay', System.getProperty('captureDelay', '45')
+            if (System.getProperty('qualitySeek')) systemProperty 'createplant.clientQualitySeek', System.getProperty('qualitySeek')
+        }
+    }
+}

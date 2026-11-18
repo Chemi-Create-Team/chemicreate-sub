@@ -1,0 +1,37 @@
+{
+  "revision": "829acd2",
+  "duplicate_png_groups": [
+    [
+      "textures/block/turbine/basin.png",
+      "textures/block/turbine/bb_impeller_brushed_metal.png",
+      "textures/block/turbine/impeller_brushed_metal.png"
+    ],
+    [
+      "textures/block/turbine/bb_turbine_casing_basin.png",
+      "textures/block/turbine/bb_turbine_casing_chute.png",
+      "textures/block/turbine/low_pressure_turbine_casing.png"
+    ],
+    [
+      "textures/block/petrochemical/sight_glass.png",
+      "textures/block/ostwald/sight_glass.png"
+    ]
+  ],
+  "copied_item_sprites": {
+    "ammonium_nitrate": "minecraft:item/sugar",
+    "iron_catalyst": "minecraft:item/iron_nugget",
+    "sulfur_dust": "minecraft:item/blaze_powder",
+    "steam_bucket": "minecraft:item/water_bucket"
+  },
+  "identical_finished_item_groups": [
+    [
+      "turbine_blade",
+      "high_pressure_turbine_blade",
+      "low_pressure_turbine_blade"
+    ],
+    [
+      "high_pressure_turbine_casing",
+      "low_pressure_turbine_casing"
+    ]
+  ],
+  "policy": "Shared construction materials and genuine Create shaft interfaces are intentional; independent finished items must differ."
+}

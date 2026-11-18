@@ -1,0 +1,17 @@
+{
+  "translationScope": "plant_uranium_preparation,guide.uranium_preparation,plant_uranium_fuel_finishing,guide.uranium_fuel_finishing,rbmk_compact_core",
+  "scenes": [
+    "create_heavy_indusstry:plant_uranium_fuel_finishing",
+    "create_heavy_indusstry:plant_uranium_preparation",
+    "create_heavy_indusstry:rbmk_compact_core"
+  ],
+  "languages": [
+    "zh_cn"
+  ],
+  "renderTargets": [
+    "uraninite@plant_uranium_preparation",
+    "enriched_uranium_dioxide@plant_uranium_fuel_finishing"
+  ],
+  "ponderRender": "captured",
+  "runtimeTranslations": "passed"
+}

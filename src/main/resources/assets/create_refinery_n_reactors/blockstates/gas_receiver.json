@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "axis=y,bottom=true,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/single"
+    },
+    "axis=z,bottom=true,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/single",
+      "x": 270
+    },
+    "axis=x,bottom=true,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/single",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y,bottom=true,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/bottom"
+    },
+    "axis=z,bottom=true,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/bottom",
+      "x": 270
+    },
+    "axis=x,bottom=true,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/bottom",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y,bottom=false,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/middle"
+    },
+    "axis=z,bottom=false,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/middle",
+      "x": 270
+    },
+    "axis=x,bottom=false,top=false": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/middle",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y,bottom=false,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/top"
+    },
+    "axis=z,bottom=false,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/top",
+      "x": 270
+    },
+    "axis=x,bottom=false,top=true": {
+      "model": "create_refinery_n_reactors:block/gas_receiver/top",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
