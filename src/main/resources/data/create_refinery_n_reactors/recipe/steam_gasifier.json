@@ -7,7 +7,7 @@
   ],
   "key": {
     "S": {
-      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+      "item": "create:iron_sheet"
     },
     "B": {
       "item": "minecraft:bricks"

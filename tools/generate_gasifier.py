@@ -295,7 +295,7 @@ def assets():
 
 def recipes():
     write(D / f'recipe/{BLOCK}.json', {'type': 'minecraft:crafting_shaped', 'pattern': ['SSS', 'BBB', 'SSS'],
-        'key': {'S': {'item': NS + 'stainless_steel_sheet'}, 'B': {'item': 'minecraft:bricks'}}, 'result': {'id': NS + BLOCK, 'count': 6}})
+        'key': {'S': {'item': 'create:iron_sheet'}, 'B': {'item': 'minecraft:bricks'}}, 'result': {'id': NS + BLOCK, 'count': 6}})
     write(D / 'tags/fluid/gasifier_steam.json', {'values': [NS + name for name in ('steam', 'high_pressure_steam', 'superheated_steam')]})
     # Carbon powder from before the furnace took lump fuel stays usable.
     write(D / 'tags/item/gasifier_fuels.json', {'values': ['minecraft:coal', 'minecraft:charcoal', NS + 'carbon_powder',
