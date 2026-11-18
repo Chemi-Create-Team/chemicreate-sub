@@ -1,0 +1,268 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "port": "create_refinery_n_reactors:block/steam_gasifier/port",
+    "particle": "create_refinery_n_reactors:block/steam_gasifier/port"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        16,
+        3
+      ],
+      "to": [
+        5,
+        17,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#port",
+          "uv": [
+            3,
+            3,
+            5,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#port",
+          "uv": [
+            3,
+            3,
+            5,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#port",
+          "uv": [
+            3,
+            3,
+            5,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#port",
+          "uv": [
+            3,
+            3,
+            5,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#port",
+          "uv": [
+            3,
+            3,
+            5,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        16,
+        3
+      ],
+      "to": [
+        13,
+        17,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#port",
+          "uv": [
+            11,
+            3,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#port",
+          "uv": [
+            11,
+            3,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#port",
+          "uv": [
+            11,
+            3,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#port",
+          "uv": [
+            11,
+            3,
+            13,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#port",
+          "uv": [
+            11,
+            3,
+            13,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        16,
+        3
+      ],
+      "to": [
+        11,
+        17,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#port",
+          "uv": [
+            5,
+            3,
+            11,
+            5
+          ]
+        },
+        "south": {
+          "texture": "#port",
+          "uv": [
+            5,
+            3,
+            11,
+            5
+          ]
+        },
+        "west": {
+          "texture": "#port",
+          "uv": [
+            5,
+            3,
+            11,
+            5
+          ]
+        },
+        "east": {
+          "texture": "#port",
+          "uv": [
+            5,
+            3,
+            11,
+            5
+          ]
+        },
+        "up": {
+          "texture": "#port",
+          "uv": [
+            5,
+            3,
+            11,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        16,
+        11
+      ],
+      "to": [
+        11,
+        17,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#port",
+          "uv": [
+            5,
+            11,
+            11,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#port",
+          "uv": [
+            5,
+            11,
+            11,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#port",
+          "uv": [
+            5,
+            11,
+            11,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#port",
+          "uv": [
+            5,
+            11,
+            11,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#port",
+          "uv": [
+            5,
+            11,
+            11,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        15.99,
+        5
+      ],
+      "to": [
+        11,
+        16.01,
+        11
+      ],
+      "faces": {
+        "up": {
+          "texture": "#port",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        }
+      }
+    }
+  ]
+}

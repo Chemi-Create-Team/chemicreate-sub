@@ -1,0 +1,153 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lid": "create_refinery_n_reactors:block/steam_gasifier/lid",
+    "port": "create_refinery_n_reactors:block/steam_gasifier/port",
+    "plate": "create_refinery_n_reactors:block/steam_gasifier/plate",
+    "particle": "create_refinery_n_reactors:block/steam_gasifier/shell"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#lid",
+          "uv": [
+            5.333333333333333,
+            5.333333333333333,
+            10.666666666666666,
+            10.666666666666666
+          ],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "from": [
+        -3,
+        16,
+        -3
+      ],
+      "to": [
+        19,
+        17,
+        19
+      ],
+      "faces": {
+        "up": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        17,
+        7
+      ],
+      "to": [
+        12,
+        18,
+        9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            8,
+            2
+          ]
+        },
+        "north": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            8,
+            2
+          ]
+        },
+        "south": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            8,
+            2
+          ]
+        },
+        "west": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            8,
+            2
+          ]
+        },
+        "east": {
+          "texture": "#port",
+          "uv": [
+            0,
+            0,
+            8,
+            2
+          ]
+        }
+      }
+    }
+  ]
+}

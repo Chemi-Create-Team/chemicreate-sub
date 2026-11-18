@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "create_refinery_n_reactors:block/steam_gasifier/shell",
+    "top": "create_refinery_n_reactors:block/steam_gasifier/plate",
+    "bottom": "create_refinery_n_reactors:block/steam_gasifier/plate"
+  }
+}

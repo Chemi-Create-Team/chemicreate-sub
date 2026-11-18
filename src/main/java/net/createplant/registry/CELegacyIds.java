@@ -16,7 +16,9 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 public final class CELegacyIds {
     private static final String PREVIOUS_MOD_ID = "create_heavy_indusstry";
     /** Retired entries merged into another one: saved blocks, items and block entities of the old id load as the new one. */
-    private static final Map<String, String> MERGED = Map.of("tubular_boiler", "horizontal_fluid_tank");
+    private static final Map<String, String> MERGED = Map.of("tubular_boiler", "horizontal_fluid_tank",
+        "gasifier_casing", "steam_gasifier", "water_cooled_refractory_wall", "steam_gasifier", "entrained_burner_nozzle", "steam_gasifier",
+        "slag_tap_hearth", "steam_gasifier", "quench_sight_glass", "steam_gasifier");
 
     private CELegacyIds() { }
 

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "create_refinery_n_reactors:block/steam_gasifier/shell"
+  },
+  "elements": []
+}

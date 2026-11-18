@@ -41,10 +41,6 @@
     "create_refinery_n_reactors:overflow_weir",
     "create_refinery_n_reactors:underflow_drain",
     "create_refinery_n_reactors:clarifier_center_drive",
-    "create_refinery_n_reactors:gasifier_casing",
-    "create_refinery_n_reactors:water_cooled_refractory_wall",
-    "create_refinery_n_reactors:entrained_burner_nozzle",
-    "create_refinery_n_reactors:slag_tap_hearth",
-    "create_refinery_n_reactors:quench_sight_glass"
+    "create_refinery_n_reactors:steam_gasifier"
   ]
 }

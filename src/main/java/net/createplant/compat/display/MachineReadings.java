@@ -39,7 +39,7 @@ public final class MachineReadings {
         "cold_box_power","flare_height","flare_burnt","flare_vented","redstone_signal","bell_height",
         "bell_travel","console_mode","console_bank_target","console_control_target","console_alarms",
         "console_trace_samples","console_total_flow","reactor_surface_temperature","electrolysis_voltage","electrolysis_current","electrolysis_plates",
-        "electrolysis_limit","electrolysis_rate","electrolysis_cathode","electrolysis_anode","electrolysis_soda","cascade_units","cascade_stages","cascade_required","process_name","stress","superheated","electrolysis_metal","electrolysis_metal_storage","electrolysis_recovered_acid","separation","gasifier_temperature","gasifier_nozzles","gasifier_multiplier");
+        "electrolysis_limit","electrolysis_rate","electrolysis_cathode","electrolysis_anode","electrolysis_soda","cascade_units","cascade_stages","cascade_required","process_name","stress","superheated","electrolysis_metal","electrolysis_metal_storage","electrolysis_recovered_acid","separation","gasifier_temperature");
     private MachineReadings() { }
 
     public static BlockEntity owner(BlockEntity be) {
@@ -149,8 +149,6 @@ public final class MachineReadings {
             return switch (key) {
                 case "progress" -> new Reading(gasifier.progress(), gasifier.duration());
                 case "gasifier_temperature" -> new Reading(gasifier.temperature(), 0);
-                case "gasifier_nozzles" -> new Reading(gasifier.nozzleCount(), 4);
-                case "gasifier_multiplier" -> new Reading(gasifier.speedMultiplier(), 0);
                 default -> null;
             };
         }

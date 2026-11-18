@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lid": "create_refinery_n_reactors:block/steam_gasifier/lid",
+    "particle": "create_refinery_n_reactors:block/steam_gasifier/shell"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#lid",
+          "uv": [
+            5.333333333333333,
+            5.333333333333333,
+            10.666666666666666,
+            10.666666666666666
+          ],
+          "cullface": "down"
+        }
+      }
+    }
+  ]
+}

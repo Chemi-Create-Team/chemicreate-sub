@@ -1,0 +1,16 @@
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            gameDirectory.set(new File('/tmp/createplant-steam-gasifier-client'))
+            systemProperty 'createplant.clientQualityCheck', 'true'
+            systemProperty 'createplant.clientQualityTargets', 'steam_gasifier@entrained_gasifier,steam_gasifier@entrained_gasifier,steam_gasifier@entrained_gasifier,steam_gasifier@entrained_gasifier'
+            systemProperty 'createplant.clientQualityScenes', 'entrained_gasifier'
+            systemProperty 'createplant.clientQualityLanguage', 'ja_jp'
+            systemProperty 'createplant.clientQualitySeek.0', '700'
+            systemProperty 'createplant.clientQualitySeek.1', '1300'
+            systemProperty 'createplant.clientQualitySeek.2', '1900'
+            systemProperty 'createplant.clientQualitySeek.3', '2500'
+            systemProperty 'createplant.clientQualityCaptureDelay', '30'
+        }
+    }
+}

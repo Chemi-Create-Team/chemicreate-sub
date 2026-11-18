@@ -1,0 +1,11 @@
+{
+  "values": [
+    "minecraft:coal",
+    "minecraft:charcoal",
+    "create_refinery_n_reactors:carbon_powder",
+    {
+      "id": "#c:coal_coke",
+      "required": false
+    }
+  ]
+}

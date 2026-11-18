@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "coke": "create_refinery_n_reactors:block/steam_gasifier/coke_cold",
+    "particle": "create_refinery_n_reactors:block/steam_gasifier/coke_cold"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        5,
+        2
+      ],
+      "to": [
+        11,
+        11,
+        3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#coke",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        }
+      }
+    }
+  ]
+}

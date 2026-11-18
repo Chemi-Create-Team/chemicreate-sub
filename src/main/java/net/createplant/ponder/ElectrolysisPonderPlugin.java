@@ -84,9 +84,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
                 .addStoryBoard(tutorial.storyboard(), (scene, util) -> PlantPonderScenes.show(scene, util, tutorial));
         }
         var wetComponents = new java.util.ArrayList<ResourceLocation>();
-        var gasifierParts = net.createplant.registry.CEGasifier.PARTS.values().stream()
-            .map(block -> CreatePlant.location(block.get().role.id)).toArray(ResourceLocation[]::new);
-        helper.forComponents(gasifierParts).addStoryBoard("plant/entrained_gasifier", GasifierPonderScenes::processing);
+        helper.forComponents(CreatePlant.location("steam_gasifier")).addStoryBoard("plant/entrained_gasifier", GasifierPonderScenes::processing);
         net.createplant.registry.CEWetProcessing.PARTS.values().forEach(block -> wetComponents.add(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block.get())));
         wetComponents.add(CreatePlant.location("lidded_vessel"));wetComponents.add(CreatePlant.location("reactor_impeller"));wetComponents.add(CreatePlant.location("clarifier_center_drive"));
         helper.forComponents(wetComponents)

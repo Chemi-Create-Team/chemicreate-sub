@@ -5,7 +5,6 @@ import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.pump.PumpBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
-import java.util.EnumSet;
 import net.createplant.CreatePlant;
 import net.createplant.block.GasifierBlock;
 import net.createplant.block.PulsationTubeBlock;
@@ -17,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.world.level.block.Blocks;
@@ -28,34 +28,16 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.gametest.*;
-import static net.createplant.block.GasifierBlock.Role.*;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.*;
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public final class GasifierGameTests {
     private static final BlockPos BASE = new BlockPos(5, 2, 5);
-    private static final BlockPos NORTH_NOZZLE = BASE.above(3).north();
+    private static final BlockPos INLET = BASE.north(), TOP = BASE.above(5), OUTLET = TOP.north();
 
-    private static GasifierBlockEntity build(GameTestHelper h, EnumSet<Direction> nozzles) {
-        for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
-            var pos = BASE.offset(x, y, z);
-            boolean center = x == 0 && z == 0;
-            if (center && (y == 1 || y == 3 || y == 4)) {
-                h.setBlock(pos, Blocks.AIR);
-                continue;
-            }
-            var role = y == 2 && center ? HEARTH : y == 3 || y == 4 ? WALL : CASING;
-            var face = Direction.NORTH;
-            if ((y == 1 || y == 4) && x == 1 && z == 0) role = WINDOW;
-            if (y == 3 && Math.abs(x) + Math.abs(z) == 1) {
-                var direction = Direction.fromDelta(x, 0, z);
-                if (nozzles.contains(direction)) {
-                    role = NOZZLE;
-                    face = direction;
-                }
-            }
-            h.setBlock(pos, CEGasifier.PARTS.get(role).get().defaultBlockState().setValue(GasifierBlock.FACING, face));
-        }
+    private static GasifierBlockEntity build(GameTestHelper h) {
+        for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++)
+            h.setBlock(BASE.offset(x, y, z), CEGasifier.GASIFIER.get().defaultBlockState());
         return (GasifierBlockEntity) h.getBlockEntity(BASE);
     }
 
@@ -67,11 +49,13 @@ public final class GasifierGameTests {
         return h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(pos), side);
     }
 
-    private static void charge(GameTestHelper h, int carbon, FluidStack steam) {
-        h.assertTrue(items(h, NORTH_NOZZLE, Direction.NORTH).insertItem(0, CEItems.CARBON_POWDER.toStack(carbon), false).isEmpty(),
-            "The nozzle accepts carbon powder from item automation");
-        h.assertTrue(fluid(h, NORTH_NOZZLE, Direction.NORTH).fill(steam, EXECUTE) == steam.getAmount(),
-            "The nozzle accepts the supplied steam");
+    private static int cell(GameTestHelper h, BlockPos pos) { return h.getBlockState(pos).getValue(GasifierBlock.CELL); }
+
+    private static void charge(GameTestHelper h, int coal, FluidStack steam) {
+        h.assertTrue(items(h, TOP.east(), Direction.UP).insertItem(0, new ItemStack(Items.COAL, coal), false).isEmpty(),
+            "The roof accepts coal from item automation");
+        h.assertTrue(fluid(h, INLET, Direction.NORTH).fill(steam, EXECUTE) == steam.getAmount(),
+            "The base inlet accepts the supplied steam");
     }
 
     private static void burner(GameTestHelper h, BlazeBurnerBlock.HeatLevel heat) {
@@ -83,90 +67,110 @@ public final class GasifierGameTests {
     }
 
     @GameTest(template = "test_petrochemical")
-    public static void placementMultipliersAndSharedPorts(GameTestHelper h) {
-        for (var directions : java.util.List.of(
-            EnumSet.noneOf(Direction.class), EnumSet.of(Direction.NORTH), EnumSet.of(Direction.NORTH, Direction.EAST),
-            EnumSet.of(Direction.NORTH, Direction.SOUTH), EnumSet.of(Direction.NORTH, Direction.SOUTH, Direction.EAST),
-            EnumSet.of(Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST))) {
-            var be = build(h, directions);
-            h.assertTrue(be.rebuild() == !directions.isEmpty(), "A real shell requires at least one correctly placed nozzle");
-            double expected = switch (directions.size()) {
-                case 0 -> 0; case 1 -> 1; case 2 -> directions.contains(Direction.SOUTH) ? 2.4 : 1.6;
-                case 3 -> 3; default -> 4.5;
-            };
-            h.assertTrue(be.speedMultiplier() == expected, "Correct bonus for " + directions);
-        }
-        h.assertTrue(fluid(h, NORTH_NOZZLE, Direction.SOUTH) == null && fluid(h, BASE.east(), Direction.WEST) == null,
-            "Only the outward connection faces have capabilities");
-        var gas = fluid(h, BASE.above(5), Direction.UP);
+    public static void formationLooksAndPorts(GameTestHelper h) {
+        var be = build(h);
+        h.setBlock(TOP, Blocks.AIR);
+        h.assertTrue(!be.rebuild() && cell(h, BASE) == 0, "53 blocks do not form a furnace");
+        h.setBlock(TOP, CEGasifier.GASIFIER.get().defaultBlockState().setValue(GasifierBlock.FACING, Direction.NORTH));
+        GasifierBlockEntity.formAround(h.getLevel(), h.absolutePos(TOP));
+        h.assertTrue(be.formed() && be.front() == Direction.NORTH, "Placing the last block forms the furnace with the roof centre's front");
+        h.assertTrue(cell(h, BASE) == GasifierBlock.CONTROLLER && cell(h, OUTLET) == GasifierBlock.cell(5, 0, -1)
+            && cell(h, BASE.above(2).east()) == GasifierBlock.cell(2, 1, 0) && GasifierBlock.viewport(cell(h, BASE.above(2).east()))
+            && !h.getBlockState(BASE.above(2).east()).getValue(GasifierBlock.LIT), "Each block shows its place, the cold sight glasses unlit");
+        h.assertTrue(fluid(h, INLET, Direction.SOUTH) == null && fluid(h, BASE.above(2).north(), Direction.NORTH) == null
+            && fluid(h, TOP, Direction.UP) == null && fluid(h, BASE.north().east(), Direction.NORTH) == null,
+            "Only the base inlets and the outlet have fluid capabilities");
+        var gas = fluid(h, OUTLET, Direction.UP);
         h.assertTrue(gas.getTankCapacity(0) == 16000 && gas.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(), 250), EXECUTE) == 0,
-            "The top face is a 16000 mB output only");
-        var input = fluid(h, NORTH_NOZZLE, Direction.NORTH);
-        h.assertTrue(input.fill(new FluidStack(Fluids.WATER, 250), EXECUTE) == 0, "The nozzle rejects liquid water");
-        var pipePos = NORTH_NOZZLE.north();
+            "The front of the roof is a 16000 mB output only");
+        var input = fluid(h, INLET, Direction.NORTH);
+        h.assertTrue(input.fill(new FluidStack(Fluids.WATER, 250), EXECUTE) == 0
+            && fluid(h, BASE.west(), Direction.WEST).fill(new FluidStack(CEFluids.STEAM.get(), 250), EXECUTE) == 250,
+            "Every base inlet takes steam and rejects liquid water");
+        var feed = items(h, TOP.south().west(), Direction.UP);
+        h.assertTrue(feed.insertItem(0, new ItemStack(Items.CHARCOAL), true).isEmpty() && feed.insertItem(0, CEItems.CARBON_POWDER.toStack(), true).isEmpty()
+            && feed.insertItem(0, new ItemStack(Items.IRON_INGOT), true).getCount() == 1 && items(h, TOP.east(), Direction.EAST) == null,
+            "The roof takes coal, charcoal and carbon powder from above only");
+        var pipePos = INLET.north();
         h.setBlock(pipePos, AllBlocks.FLUID_PIPE.getDefaultState());
-        var state = h.getBlockState(pipePos);
-        h.assertTrue(state.getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(Direction.SOUTH)), "Create's placed pipe connects toward the nozzle");
+        h.assertTrue(h.getBlockState(pipePos).getValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(Direction.SOUTH)), "Create's placed pipe connects toward the inlet");
         h.setBlock(BASE.above(4), Blocks.STONE);
-        var be = (GasifierBlockEntity) h.getBlockEntity(BASE);
-        h.assertTrue(!be.formed() && !be.rebuild() && input.getTankCapacity(0) == 0, "A blocked chamber immediately revokes old ports");
-        h.setBlock(BASE.above(4), Blocks.AIR);
+        h.assertTrue(!be.formed() && !be.rebuild() && input.getTankCapacity(0) == 0 && cell(h, BASE) == 0 && cell(h, OUTLET) == 0,
+            "A removed block unforms the furnace, revokes old ports and returns the others to loose blocks");
+        h.setBlock(BASE.above(4), CEGasifier.GASIFIER.get().defaultBlockState());
         h.assertTrue(be.rebuild() && input.getTankCapacity(0) == 0, "Reformation cannot revive an invalidated handler");
         h.succeed();
     }
 
     @GameTest(template = "test_petrochemical")
+    public static void retiredPartsLoadAsTheGasifier(GameTestHelper h) {
+        var lookup = h.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BLOCK);
+        for (var name : java.util.List.of("gasifier_casing", "water_cooled_refractory_wall", "entrained_burner_nozzle", "slag_tap_hearth", "quench_sight_glass")) {
+            var id = CreatePlant.location(name);
+            var saved = new CompoundTag();
+            saved.putString("Name", id.toString());
+            var properties = new CompoundTag();
+            properties.putString("facing", "east");
+            saved.put("Properties", properties);
+            var state = net.minecraft.nbt.NbtUtils.readBlockState(lookup, saved);
+            h.assertTrue(BuiltInRegistries.BLOCK.get(id) == CEGasifier.GASIFIER.get() && BuiltInRegistries.ITEM.get(id) == CEGasifier.GASIFIER.get().asItem()
+                && state.is(CEGasifier.GASIFIER.get()) && state.getValue(GasifierBlock.CELL) == 0 && state.getValue(GasifierBlock.FACING) == Direction.EAST,
+                "A saved " + name + " loads as a loose gasifier block");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "test_petrochemical")
     public static void externalHeatAndExactBatch(GameTestHelper h) {
-        var be = build(h, EnumSet.of(Direction.NORTH, Direction.SOUTH));
+        var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
-        var nozzle = fluid(h, NORTH_NOZZLE, Direction.NORTH);
+        var inlet = fluid(h, INLET, Direction.NORTH);
         var steam = new FluidStack(CEFluids.STEAM.get(), 9000);
-        h.assertTrue(nozzle.getTanks() == 1 && nozzle.fill(steam, SIMULATE) == 8000 && nozzle.getFluidInTank(0).isEmpty(),
+        h.assertTrue(inlet.getTanks() == 1 && inlet.fill(steam, SIMULATE) == 8000 && inlet.getFluidInTank(0).isEmpty(),
             "The steam tank holds 8000 mB and simulation leaves it empty");
-        h.assertTrue(nozzle.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(), 250), EXECUTE) == 0
-                && nozzle.fill(new FluidStack(CEProcessFluids.COMPRESSED_AIR.get(), 250), EXECUTE) == 0,
+        h.assertTrue(inlet.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(), 250), EXECUTE) == 0
+                && inlet.fill(new FluidStack(CEProcessFluids.COMPRESSED_AIR.get(), 250), EXECUTE) == 0,
             "The inlet rejects both former oxidizers");
         charge(h, 2, steam.copyWithAmount(500));
-        h.assertTrue(nozzle.drain(250, SIMULATE).isEmpty() && fluid(h, BASE.west(), Direction.WEST) == null
-            && fluid(h, BASE.east(), Direction.EAST) == null && fluid(h, BASE.south(), Direction.SOUTH) == null,
-            "A fresh gasifier has an inlet and gas outlet only");
+        h.assertTrue(inlet.drain(250, SIMULATE).isEmpty() && fluid(h, BASE.west(), Direction.WEST).drain(250, SIMULATE).isEmpty(),
+            "A fresh gasifier gives nothing back through its inlets");
         burner(h, BlazeBurnerBlock.HeatLevel.SMOULDERING);
         ticks(be, 75);
         h.assertTrue(be.status().equals("heat_required") && be.temperature() == 20 && be.itemCount(0) == 2,
             "A smouldering burner leaves the cold inventory untouched");
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(be, 53);
-        h.assertTrue(be.temperature() < 1300 && be.status().equals("preheat") && be.progress() == 0,
+        ticks(be, 32);
+        h.assertTrue(be.temperature() < 800 && be.status().equals("preheat") && be.progress() == 0,
             "An active burner preheats the empty chamber without committing feed");
-        ticks(be, 16);
-        h.assertTrue(be.fluid(2).isEmpty(), "Sixteen hot ticks at 2.4x are insufficient");
+        ticks(be, 39);
+        h.assertTrue(be.fluid(2).isEmpty() && h.getBlockState(BASE.above(3).south()).getValue(GasifierBlock.LIT),
+            "Thirty-nine hot ticks are insufficient, and the red-hot bed lights the sight glasses");
         ticks(be, 1);
-        var output = fluid(h, BASE.above(5), Direction.UP);
-        var gas = output.drain(500, EXECUTE);
+        var gas = fluid(h, OUTLET, Direction.UP).drain(500, EXECUTE);
         h.assertTrue(gas.is(CEProcessFluids.WATER_GAS.get()) && gas.getAmount() == 500
             && gas.get(CEThermal.HEAT_GRADE.get()) == Grade.Heat.VERY_HOT.ordinal()
-            && FluidHazards.of(gas).gas(), "Top output delivers 500 mB of very hot water gas");
-        h.assertTrue(be.itemCount(0) == 1 && nozzle.getFluidInTank(0).getAmount() == 250
-            && items(h, BASE, Direction.DOWN) == null, "Each batch consumes one carbon powder and 250 mB of steam with no slag");
+            && FluidHazards.of(gas).gas(), "The outlet delivers 500 mB of very hot water gas");
+        h.assertTrue(be.itemCount(0) == 1 && inlet.getFluidInTank(0).getAmount() == 250
+            && items(h, BASE, Direction.DOWN) == null, "Each batch consumes one coal and 250 mB of steam with no slag");
         h.succeed();
     }
 
     @GameTest(template = "test_petrochemical")
     public static void lossOfExternalHeatPausesBatch(GameTestHelper h) {
-        var be = build(h, EnumSet.of(Direction.NORTH));
+        var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
         charge(h, 1, new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(), 250));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(be, 65);
+        ticks(be, 45);
         double progress = be.progress();
-        h.assertTrue(progress == 12 && be.temperature() == 1450, "The burner has formed a partial batch");
+        h.assertTrue(progress == 13 && be.temperature() == 1000, "The burner has formed a partial batch");
         burner(h, BlazeBurnerBlock.HeatLevel.SMOULDERING);
         ticks(be, 30);
-        h.assertTrue(be.status().equals("heat_required") && be.temperature() > 1300 && be.progress() == progress
+        h.assertTrue(be.status().equals("heat_required") && be.temperature() > 800 && be.progress() == progress
             && be.itemCount(0) == 1 && be.fluid(1).getAmount() == 250 && be.fluid(2).isEmpty(),
             "A hot chamber still pauses immediately when its external heat stops");
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(be, 28);
+        ticks(be, 27);
         h.assertTrue(be.fluid(2).getAmount() == 500 && be.itemCount(0) == 0 && be.fluid(1).isEmpty(),
             "Restoring heat completes the same batch exactly once");
         h.succeed();
@@ -174,18 +178,17 @@ public final class GasifierGameTests {
 
     @GameTest(template = "test_petrochemical")
     public static void blockedOutputPreservesFeed(GameTestHelper h) {
-        var be = build(h, EnumSet.of(Direction.NORTH, Direction.SOUTH));
+        var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
         charge(h, 33, new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 8000));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(be, 600);
-        fluid(h, NORTH_NOZZLE, Direction.NORTH).fill(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 250), EXECUTE);
+        ticks(be, 1400);
+        fluid(h, INLET, Direction.NORTH).fill(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 250), EXECUTE);
         ticks(be, 40);
         h.assertTrue(be.status().equals("gas_output") && be.fluid(2).getAmount() == 16000
             && be.itemCount(0) == 1 && be.fluid(1).getAmount() == 250, "A full tank pauses with feed intact");
-        var output = fluid(h, BASE.above(5), Direction.UP);
-        output.drain(500, EXECUTE);
-        ticks(be, 17);
+        fluid(h, OUTLET, Direction.UP).drain(500, EXECUTE);
+        ticks(be, 40);
         h.assertTrue(be.fluid(2).getAmount() == 16000 && be.itemCount(0) == 0 && be.fluid(1).isEmpty(),
             "Freeing one batch of space restarts production");
         h.succeed();
@@ -193,7 +196,7 @@ public final class GasifierGameTests {
 
     @GameTest(template = "test_fractionation", timeoutTicks = 320)
     public static void pumpedOutputCanBeCooledAndStored(GameTestHelper h) {
-        var gasifier = build(h, EnumSet.of(Direction.NORTH));
+        var gasifier = build(h);
         h.assertTrue(gasifier.rebuild(), "Gasifier forms");
         charge(h, 1, new FluidStack(CEFluids.STEAM.get(), 250));
         burner(h, BlazeBurnerBlock.HeatLevel.SMOULDERING);
@@ -201,7 +204,7 @@ public final class GasifierGameTests {
         h.assertTrue(BlazeBurnerBlock.tryInsert(h.getBlockState(furnace), h.getLevel(), h.absolutePos(furnace),
             Items.COAL.getDefaultInstance(), false, false, false).getResult().consumesAction(), "The external burner lights with ordinary coal");
 
-        var elbow = BASE.above(6);
+        var elbow = OUTLET.above();
         var pump = elbow.east();
         var exchanger = ThermalControlGameTests.build(h.getLevel(), h.absolutePos(pump.east(2)), Direction.NORTH, 2);
         var receivingTube = ThermalControlGameTests.shell(exchanger, 0);
@@ -239,7 +242,7 @@ public final class GasifierGameTests {
 
     @GameTest(template = "test_petrochemical")
     public static void preservedControllerAndLegacyRecovery(GameTestHelper h) {
-        var be = build(h, EnumSet.of(Direction.NORTH));
+        var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
         charge(h, 1, new FluidStack(CEFluids.STEAM.get(), 250));
         var lookup = h.getLevel().registryAccess();
@@ -256,7 +259,7 @@ public final class GasifierGameTests {
         h.assertTrue(be.rebuild(), "Saved layout still forms");
 
         var pos = h.absolutePos(BASE);
-        var inlet = fluid(h, NORTH_NOZZLE, Direction.NORTH);
+        var inlet = fluid(h, INLET, Direction.NORTH);
         h.getLevel().destroyBlock(pos, true);
         var drops = h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
             new net.minecraft.world.phys.AABB(pos).inflate(1));
@@ -269,18 +272,18 @@ public final class GasifierGameTests {
         var use = new net.minecraft.world.item.context.UseOnContext(player, hand,
             new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.UP, pos, false));
         h.assertTrue(((net.minecraft.world.item.BlockItem) stack.getItem()).place(new net.minecraft.world.item.context.BlockPlaceContext(use)).consumesAction(),
-            "Collected casing can be placed normally");
+            "The collected block can be placed normally");
         var restored = (GasifierBlockEntity) h.getBlockEntity(BASE);
-        h.assertTrue(restored.rebuild(), "Reassembled casing restores the controller");
+        h.assertTrue(restored.rebuild(), "The reassembled bottom centre restores the controller");
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
         ticks(restored, 120);
         h.assertTrue(restored.status().equals("gas_output") && restored.itemCount(0) == 1 && restored.fluid(1).getAmount() == 250,
             "Old synthesis gas blocks the outlet without changing composition or consuming feed");
-        var oldGas = fluid(h, BASE.above(5), Direction.UP).drain(16000, EXECUTE);
+        var oldGas = fluid(h, OUTLET, Direction.UP).drain(16000, EXECUTE);
         h.assertTrue(oldGas.is(CEProcessFluids.SYNTHESIS_GAS.get()) && oldGas.getAmount() == 2000, "Legacy product is recoverable");
-        var oldOxidizer = fluid(h, NORTH_NOZZLE, Direction.NORTH).drain(8000, EXECUTE);
+        var oldOxidizer = fluid(h, INLET, Direction.NORTH).drain(8000, EXECUTE);
         h.assertTrue(oldOxidizer.is(CEFluids.OXYGEN_GAS.get()) && oldOxidizer.getAmount() == 900
-            && fluid(h, NORTH_NOZZLE, Direction.NORTH).getTanks() == 1, "Emptying the legacy oxidizer exposes just the steam inlet");
+            && fluid(h, INLET, Direction.NORTH).getTanks() == 1, "Emptying the legacy oxidizer exposes just the steam inlet");
         h.assertTrue(fluid(h, BASE.west(), Direction.WEST).drain(8000, EXECUTE).getAmount() == 300
             && fluid(h, BASE.east(), Direction.EAST).drain(8000, EXECUTE).getAmount() == 150
             && fluid(h, BASE.south(), Direction.SOUTH).drain(4000, EXECUTE).getAmount() == 50

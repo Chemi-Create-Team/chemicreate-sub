@@ -82,7 +82,7 @@ public final class SurvivalReachabilityGameTests {
         if (recipe instanceof net.createplant.recipe.CubicPressRecipe) return has(reached, "cubic_press");
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe)
             return reached.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
-                && has(reached, "gasifier_casing", "entrained_burner_nozzle", "water_cooled_refractory_wall", "slag_tap_hearth");
+                && has(reached, "steam_gasifier");
         if (recipe instanceof ConverterRecipe)
             return has(reached, "converter_shell", "converter_trunnion_bearing", "zirconia_refractory_bricks");
         if (recipe instanceof net.createplant.recipe.FuelCycleRecipe)

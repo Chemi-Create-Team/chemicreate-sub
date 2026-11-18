@@ -1,7 +1,7 @@
 {
   "type": "create_refinery_n_reactors:entrained_gasification",
   "ingredient": {
-    "item": "create_refinery_n_reactors:carbon_powder"
+    "tag": "create_refinery_n_reactors:gasifier_fuels"
   },
   "steam": {
     "tag": "create_refinery_n_reactors:gasifier_steam",

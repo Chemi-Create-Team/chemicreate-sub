@@ -1,14 +1,11 @@
 package net.createplant.registry;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
 import net.createplant.block.GasifierBlock;
 import net.createplant.block.entity.GasifierBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -21,19 +18,12 @@ public final class CEGasifier {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePlant.MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePlant.MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePlant.MOD_ID);
-    public static final Map<GasifierBlock.Role, DeferredBlock<GasifierBlock>> PARTS = new EnumMap<>(GasifierBlock.Role.class);
-    static {
-        for (var role : GasifierBlock.Role.values()) {
-            var properties = BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(4);
-            if (role == GasifierBlock.Role.WINDOW) properties.noOcclusion();
-            var block = BLOCKS.registerBlock(role.id, p -> new GasifierBlock(role, p), properties);
-            PARTS.put(role, block);
-            ITEMS.registerSimpleBlockItem(block);
-        }
-    }
+    public static final DeferredBlock<GasifierBlock> GASIFIER = BLOCKS.registerBlock("steam_gasifier", GasifierBlock::new,
+        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(4).lightLevel(state -> state.getValue(GasifierBlock.LIT) ? 9 : 0));
+    static { ITEMS.registerSimpleBlockItem(GASIFIER); }
     public static final DeferredItem<Item> SLAG = ITEMS.registerSimpleItem("glassy_slag");
     public static final Supplier<BlockEntityType<GasifierBlockEntity>> PART = ENTITIES.register("entrained_gasifier",
-        () -> BlockEntityType.Builder.of(GasifierBlockEntity::new, PARTS.values().stream().map(Supplier::get).toArray(Block[]::new)).build(null));
+        () -> BlockEntityType.Builder.of(GasifierBlockEntity::new, GASIFIER.get()).build(null));
     private CEGasifier() { }
 
     public static void register(IEventBus bus) {

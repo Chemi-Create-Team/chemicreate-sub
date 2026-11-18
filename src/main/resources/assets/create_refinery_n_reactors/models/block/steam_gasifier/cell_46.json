@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lid": "create_refinery_n_reactors:block/steam_gasifier/lid",
+    "band": "create_refinery_n_reactors:block/steam_gasifier/band",
+    "particle": "create_refinery_n_reactors:block/steam_gasifier/shell"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#band",
+          "uv": [
+            10.666666666666666,
+            0.0,
+            16.0,
+            16.0
+          ],
+          "cullface": "north"
+        },
+        "west": {
+          "texture": "#band",
+          "uv": [
+            0.0,
+            0.0,
+            5.333333333333333,
+            16.0
+          ],
+          "cullface": "west"
+        },
+        "up": {
+          "texture": "#lid",
+          "uv": [
+            0.0,
+            0.0,
+            5.333333333333333,
+            5.333333333333333
+          ],
+          "cullface": "up"
+        }
+      }
+    }
+  ]
+}

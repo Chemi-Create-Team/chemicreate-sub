@@ -15,36 +15,35 @@ import net.createplant.registry.CERecipeTypes;
 import net.createplant.thermal.Grade;
 import net.createplant.thermal.ThermalFluidTank;
 import net.minecraft.core.*;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.*;
-import static net.createplant.block.GasifierBlock.Role.*;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.*;
 
 public final class GasifierBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    private static final int REACTION_TEMPERATURE = 1300, HEATER_TARGET = 1450, BATCH_HEAT_LOSS = 60;
+    private static final int REACTION_TEMPERATURE = 800, HEATER_TARGET = 1000, BATCH_HEAT_LOSS = 60, SPEED = 10;
     private static final TagKey<Fluid> STEAM_INPUTS = TagKey.create(Registries.FLUID, CreatePlant.location("gasifier_steam"));
     // Tank indices are part of the saved inventory and include recovery-only slots.
     private static final int OXIDIZER = 0, STEAM = 1, GAS = 2, COOLANT_IN = 3, COOLANT_OUT = 4, QUENCH = 5;
 
     private BlockPos controller;
-    private Map<BlockPos, BlockState> structure = Map.of();
+    private Set<BlockPos> structure = Set.of();
     private List<BlockPos> chunks = List.of();
     private long generation, recheckAt;
-    private int nozzleCount, speedTenths;
-    private boolean formed, syncPending, recoveryPortsChanged;
+    private Direction front = Direction.NORTH;
+    private boolean formed, glowing, syncPending, recoveryPortsChanged;
     private String status = "structure";
     private BlockPos mismatch;
     private Inventory inventory;
@@ -74,84 +73,93 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         syncPending = true;
         setChanged();
     }
-    private GasifierBlock.Role role() { return ((GasifierBlock) getBlockState().getBlock()).role; }
     public GasifierBlockEntity owner() {
         if (formed && (inventory != null || isVirtual())) return this;
         if (controller == null || level == null || !level.hasChunkAt(controller)) return null;
         if (level.getBlockEntity(controller) instanceof GasifierBlockEntity root && root.formed && !root.isRemoved()
-            && (level.isClientSide || isVirtual() || root.structure.containsKey(worldPosition))) return root;
+            && (level.isClientSide || isVirtual() || root.structure.contains(worldPosition))) return root;
         return null;
     }
     public boolean formed() { return formed; }
-    public int nozzleCount() { return nozzleCount; }
-    public double speedMultiplier() { return speedTenths / 10d; }
+    public Direction front() { return front; }
     public int temperature() { return inventory == null ? 20 : inventory.temperature; }
     public double progress() { return inventory == null ? 0 : inventory.progress / 10d; }
     public double duration() { return inventory == null ? 0 : inventory.duration / 10d; }
-    public FluidStack quenchWater() { return fluid(QUENCH); }
     public String status() { return status; }
     public FluidStack fluid(int index) { return inventory == null ? FluidStack.EMPTY : inventory.tanks[index].getFluid().copy(); }
     public int capacity(int index) { return inventory == null ? 0 : inventory.tanks[index].getCapacity(); }
     public int itemCount(int index) { return inventory == null ? 0 : inventory.items.getStackInSlot(index).getCount(); }
     public static Component message(String key, Object... values) { return Component.translatable("gasifier." + CreatePlant.MOD_ID + "." + key, values); }
 
+    /** Forms the furnace whose bottom centre is the loose block at or near a newly placed one, if the 3x3x6 is complete. */
+    public static void formAround(Level level, BlockPos placed) {
+        for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+            var origin = placed.offset(x, -y, z);
+            if (!isGasifier(level, origin) || !isGasifier(level, origin.above(5))) continue;
+            boolean centre = true;
+            for (var side : Direction.Plane.HORIZONTAL) centre &= isGasifier(level, origin.relative(side));
+            if (centre && level.getBlockEntity(origin) instanceof GasifierBlockEntity root && root.owner() == null && root.rebuild()) return;
+        }
+    }
+
+    private static boolean isGasifier(Level level, BlockPos pos) {
+        return level.hasChunkAt(pos) && level.getBlockState(pos).is(CEGasifier.GASIFIER.get());
+    }
+
     public boolean rebuild() {
-        if (level == null || level.isClientSide || isRemoved() || role() != CASING) return false;
+        if (level == null || level.isClientSide || isRemoved()) return false;
         if (formed) return true;
-        if (!level.hasChunkAt(worldPosition.above(2)) || !level.getBlockState(worldPosition.above(2)).is(CEGasifier.PARTS.get(HEARTH).get())) return false;
         var cells = new LinkedHashMap<BlockPos, BlockState>();
-        var nozzles = EnumSet.noneOf(Direction.class);
         var sectionColumns = new HashSet<BlockPos>();
         for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
             var pos = worldPosition.offset(x, y, z);
             if (!level.hasChunkAt(pos)) return incomplete(pos);
             var state = level.getBlockState(pos);
-            var partRole = state.getBlock() instanceof GasifierBlock part ? part.role : null;
-            boolean center = x == 0 && z == 0;
-            boolean edge = Math.abs(x) + Math.abs(z) == 1;
-            boolean valid = switch (y) {
-                case 0, 5 -> partRole == CASING;
-                case 1 -> center ? state.isAir() : partRole == CASING || partRole == WINDOW;
-                case 2 -> partRole == (center ? HEARTH : CASING);
-                case 3 -> center ? state.isAir() : partRole == WALL || edge && partRole == NOZZLE;
-                case 4 -> center ? state.isAir() : partRole == WALL || partRole == WINDOW;
-                default -> false;
-            };
-            if (!valid) return incomplete(pos);
-            if (partRole == NOZZLE) {
-                Direction face = Direction.fromDelta(x, 0, z);
-                if (state.getValue(GasifierBlock.FACING) != face) return incomplete(pos);
-                nozzles.add(face);
-            }
-            if (partRole != null && (!(level.getBlockEntity(pos) instanceof GasifierBlockEntity member)
-                || member != this && (member.formed || member.inventory != null || member.owner() != null))) return incomplete(pos);
+            if (!state.is(CEGasifier.GASIFIER.get()) || !(level.getBlockEntity(pos) instanceof GasifierBlockEntity member)
+                || member != this && (member.formed || member.inventory != null || member.owner() != null)) return incomplete(pos);
             cells.put(pos, state);
             sectionColumns.add(new BlockPos(pos.getX() >> 4 << 4, 0, pos.getZ() >> 4 << 4));
         }
-        if (nozzles.isEmpty()) return incomplete(worldPosition.above(3));
         if (inventory == null) inventory = new Inventory();
-        structure = Map.copyOf(cells);
+        structure = Set.copyOf(cells.keySet());
         chunks = List.copyOf(sectionColumns);
-        nozzleCount = nozzles.size();
-        speedTenths = switch (nozzleCount) {
-            case 1 -> 10;
-            case 2 -> nozzles.contains(nozzles.iterator().next().getOpposite()) ? 24 : 16;
-            case 3 -> 30;
-            default -> 45;
-        };
+        front = level.getBlockState(worldPosition.above(5)).getValue(GasifierBlock.FACING);
+        glowing = inventory.temperature >= REACTION_TEMPERATURE;
         mismatch = null;
         formed = true;
         generation++;
         status = "heat_required";
-        for (var pos : structure.keySet()) if (level.getBlockEntity(pos) instanceof GasifierBlockEntity part && part != this && !worldPosition.equals(part.controller)) {
-            part.controller = worldPosition;
-            part.setChanged();
-            part.sendData();
+        for (var pos : structure) {
+            var delta = pos.subtract(worldPosition);
+            int cell = GasifierBlock.cell(delta.getY(), delta.getX(), delta.getZ());
+            show(pos, cells.get(pos).setValue(GasifierBlock.CELL, cell).setValue(GasifierBlock.FACING, front)
+                .setValue(GasifierBlock.LIT, glowing && GasifierBlock.viewport(cell)));
+            if (level.getBlockEntity(pos) instanceof GasifierBlockEntity part && part != this && !worldPosition.equals(part.controller)) {
+                part.controller = worldPosition;
+                part.setChanged();
+                part.sendData();
+            }
         }
         updatePorts();
         sendData();
         setChanged();
         return true;
+    }
+
+    /** Changes only how a member looks; the members' own state changes are not structure changes. */
+    private void show(BlockPos pos, BlockState state) {
+        if (level.getBlockState(pos) != state) level.setBlock(pos, state, Block.UPDATE_CLIENTS);
+    }
+
+    /** Returns every loaded block of this furnace's footprint that still shows its cell here to a loose block. */
+    private void dissolve() {
+        for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+            var pos = worldPosition.offset(x, y, z);
+            if (!level.hasChunkAt(pos)) continue;
+            var state = level.getBlockState(pos);
+            if (state.is(CEGasifier.GASIFIER.get()) && state.getValue(GasifierBlock.CELL) == GasifierBlock.cell(y, x, z))
+                show(pos, state.setValue(GasifierBlock.CELL, 0).setValue(GasifierBlock.LIT, false));
+        }
     }
 
     private boolean incomplete(BlockPos pos) {
@@ -162,11 +170,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         return false;
     }
 
-    public void cellChanged(BlockPos pos) {
-        if (formed && structure.containsKey(pos) && level.hasChunkAt(pos) && level.getBlockState(pos) != structure.get(pos))
-            invalidateStructure(false);
-    }
-
+    /** Unforms after a member is removed and returns the remaining blocks to loose blocks. */
     public void invalidateStructure(boolean removing) {
         if (level == null || level.isClientSide) return;
         var root = owner();
@@ -175,32 +179,44 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
             return;
         }
         if (!formed) return;
-        formed = false;
-        generation++;
-        status = "structure";
-        updatePorts();
-        structure = Map.of();
-        chunks = List.of();
+        unform();
+        dissolve();
         if (!removing) {
             setChanged();
             sendData();
         }
     }
 
+    private void unform() {
+        formed = false;
+        generation++;
+        status = "structure";
+        updatePorts();
+        structure = Set.of();
+        chunks = List.of();
+    }
+
     @Override public void onChunkUnloaded() {
-        invalidateStructure(false);
+        if (formed && !level.isClientSide) unform();
         super.onChunkUnloaded();
     }
 
+    /** The gas outlet on the roof of the front's middle block, or a steam inlet on the outer face of a base side's middle block. */
     private int bank(BlockPos pos, Direction side) {
         if (side == null) return -1;
         var delta = pos.subtract(worldPosition);
-        if (delta.equals(new BlockPos(0, 5, 0)) && side == Direction.UP) return GAS;
-        if (delta.getY() != 0) return -1;
-        if (delta.getZ() == 0 && delta.getX() == -1 && side == Direction.WEST) return COOLANT_IN;
-        if (delta.getZ() == 0 && delta.getX() == 1 && side == Direction.EAST) return COOLANT_OUT;
-        if (delta.getX() == 0 && delta.getZ() == 1 && side == Direction.SOUTH) return QUENCH;
-        return -1;
+        if (delta.equals(new BlockPos(front.getStepX(), 5, front.getStepZ())) && side == Direction.UP) return GAS;
+        return delta.getY() == 0 && side.getAxis().isHorizontal() && delta.equals(BlockPos.ZERO.relative(side)) ? STEAM : -1;
+    }
+
+    /** The saved fluid an inlet gives back from the furnace's former design: oxidizer, coolant, warm water or quench water. */
+    private static int recoveryBank(Direction side) {
+        return switch (side) {
+            case NORTH -> OXIDIZER;
+            case WEST -> COOLANT_IN;
+            case EAST -> COOLANT_OUT;
+            default -> QUENCH;
+        };
     }
 
     private boolean slagFace(BlockPos pos, Direction face) {
@@ -208,11 +224,11 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
     }
 
     private void updatePorts() {
-        for (var pos : structure.keySet()) {
-            if (!level.hasChunkAt(pos) || !(structure.get(pos).getBlock() instanceof GasifierBlock part)) continue;
+        for (var pos : structure) {
+            if (!level.hasChunkAt(pos)) continue;
             level.invalidateCapabilities(pos);
             for (var face : Direction.values()) {
-                if (bank(pos, face) < 0 && !(part.role == NOZZLE && structure.get(pos).getValue(GasifierBlock.FACING) == face)) continue;
+                if (bank(pos, face) < 0) continue;
                 var adjacent = pos.relative(face);
                 if (!level.hasChunkAt(adjacent)) continue;
                 var state = level.getBlockState(adjacent);
@@ -236,20 +252,20 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
     public IFluidHandler fluidPort(Direction side) {
         var root = owner();
         if (root == null || !root.ready(root.generation)) return null;
-        if (role() == NOZZLE && side == getBlockState().getValue(GasifierBlock.FACING))
-            return root.fluidView(STEAM, !root.inventory.tanks[OXIDIZER].isEmpty());
         int bank = root.bank(worldPosition, side);
-        return bank == GAS || bank >= 0 && !root.inventory.tanks[bank].isEmpty() ? root.fluidView(bank, false) : null;
+        if (bank != STEAM) return bank == GAS ? root.fluidView(GAS, -1) : null;
+        int recovery = recoveryBank(side);
+        return root.fluidView(STEAM, root.inventory.tanks[recovery].isEmpty() ? -1 : recovery);
     }
 
-    private IFluidHandler fluidView(int first, boolean recoverOxidizer) {
+    private IFluidHandler fluidView(int first, int recovery) {
         long epoch = generation;
-        int count = recoverOxidizer ? 2 : 1;
+        int count = recovery < 0 ? 1 : 2;
         return new IFluidHandler() {
             private boolean slot(int index) { return ready(epoch) && index >= 0 && index < count; }
-            private int bank(int index) { return index == 0 ? first : OXIDIZER; }
-            private int outputBank() { return recoverOxidizer ? OXIDIZER : first; }
-            private boolean canDrain() { return ready(epoch) && (first != STEAM || recoverOxidizer); }
+            private int bank(int index) { return index == 0 ? first : recovery; }
+            private int outputBank() { return recovery < 0 ? first : recovery; }
+            private boolean canDrain() { return ready(epoch) && (first != STEAM || recovery >= 0); }
             private FluidStack drained(FluidStack stack, FluidAction action) {
                 if (outputBank() != GAS && !stack.isEmpty() && action.execute() && inventory.tanks[outputBank()].isEmpty())
                     recoveryPortsChanged = true;
@@ -274,7 +290,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
     public IItemHandler itemPort(Direction side) {
         var root = owner();
         if (root == null || !root.ready(root.generation)) return null;
-        if (role() == NOZZLE && side == getBlockState().getValue(GasifierBlock.FACING)) return root.itemView(false);
+        if (side == Direction.UP && worldPosition.getY() == root.worldPosition.getY() + 5) return root.itemView(false);
         return root.slagFace(worldPosition, side) && root.hasLegacySlag() ? root.itemView(true) : null;
     }
 
@@ -376,7 +392,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
             return;
         }
         status = "running";
-        inventory.progress += speedTenths;
+        inventory.progress += SPEED;
         if (inventory.progress < inventory.duration) return;
         inventory.progress = Math.min(inventory.progress - inventory.duration, inventory.duration - 1);
         inventory.items.extractItem(inventory.fuelSlot, 1, false);
@@ -390,20 +406,15 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         if (level == null || level.isClientSide || isVirtual()) return;
         long time = level.getGameTime();
         if (!formed) {
-            if (time >= recheckAt && owner() == null) {
-                recheckAt = time + 20;
-                rebuild();
-            }
-            if (!formed) {
-                if (inventory != null && inventory.temperature > 20) {
-                    heat(20, 4);
-                    setChanged();
-                }
-                return;
-            }
+            if (time < recheckAt) return;
+            recheckAt = time + 20;
+            for (int x = -1; x <= 1; x += 2) for (int z = -1; z <= 1; z += 2)
+                if (!level.hasChunkAt(worldPosition.offset(x, 0, z))) return;
+            if (!rebuild()) dissolve();
+            return;
         }
         if (!ready(generation)) {
-            invalidateStructure(false);
+            unform();
             return;
         }
         if (recoveryPortsChanged) {
@@ -414,9 +425,14 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         int before = inventory.temperature;
         int progress = inventory.progress;
         process();
-        if (status.equals("running") && time % 8 == 0)
-            ((ServerLevel) level).sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + .5, worldPosition.getY() + 4.25,
-                worldPosition.getZ() + .5, 1, .15, .12, .15, .015);
+        if (glowing != inventory.temperature >= REACTION_TEMPERATURE) {
+            glowing = !glowing;
+            for (var pos : structure) {
+                var delta = pos.subtract(worldPosition);
+                int cell = GasifierBlock.cell(delta.getY(), delta.getX(), delta.getZ());
+                if (GasifierBlock.viewport(cell) && level.hasChunkAt(pos)) show(pos, level.getBlockState(pos).setValue(GasifierBlock.LIT, glowing));
+            }
+        }
         if (before != inventory.temperature || progress != inventory.progress || !previous.equals(status)) {
             syncPending = true;
             setChanged();
@@ -431,8 +447,6 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         if (!isVirtual()) return;
         if (inventory == null) inventory = new Inventory();
         formed = true;
-        nozzleCount = 2;
-        speedTenths = 24;
         status = state;
         inventory.temperature = temperature;
         for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
@@ -454,7 +468,6 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
             if (mismatch != null) lines.add(message("check", mismatch.getX(), mismatch.getY(), mismatch.getZ()));
             return true;
         }
-        lines.add(message("nozzles", nozzleCount, speedMultiplier()));
         lines.add(message("heat", Grade.Heat.of(temperature() + 273.15).label()));
         lines.add(message("stock", fluid(GAS).getAmount(), fluid(STEAM).getAmount()));
         return true;
@@ -479,8 +492,6 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         if (controller != null) tag.putLong("Controller", controller.asLong());
         if (packet) {
             tag.putBoolean("Formed", formed);
-            tag.putInt("Nozzles", nozzleCount);
-            tag.putInt("Speed", speedTenths);
             tag.putString("Status", status);
             if (mismatch != null) tag.putLong("Mismatch", mismatch.asLong());
         }
@@ -492,11 +503,9 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         formed = packet && tag.getBoolean("Formed");
         status = packet ? tag.getString("Status") : "structure";
         if (status.isEmpty()) status = "structure";
-        nozzleCount = tag.getInt("Nozzles");
-        speedTenths = tag.getInt("Speed");
         mismatch = tag.contains("Mismatch") ? BlockPos.of(tag.getLong("Mismatch")) : null;
         generation++;
-        if (!tag.contains("Gasifier") || role() != CASING) return;
+        if (!tag.contains("Gasifier")) return;
         inventory = new Inventory();
         var data = tag.getCompound("Gasifier");
         for (int i = 0; i < inventory.tanks.length; i++) inventory.tanks[i].readFromNBT(lookup, data.getCompound("Tank" + i));

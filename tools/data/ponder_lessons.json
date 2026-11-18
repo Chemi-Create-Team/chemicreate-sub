@@ -4530,14 +4530,9 @@
     "zh_cn": "蒸汽气化炉"
   },
   "entrained_gasifier.base": {
-    "en_us": "Build a 3×3 base and leave the second layer hollow. Place the refractory hearth in the center of the third layer.",
-    "ja_jp": "3×3の基礎を作り、2段目の中央は空けます。3段目の中央に耐火炉床を置きます。",
-    "zh_cn": "搭建3×3的底座，第二层中央留空。在第三层中央放置耐火炉床。"
-  },
-  "entrained_gasifier.nozzles": {
-    "en_us": "Leave the chamber hollow and face the nozzles outward. Opposing nozzles are 2.4× faster than a single nozzle.",
-    "ja_jp": "反応室の中央を空け、ノズルを外向きに置きます。対向する2基は1基の2.4倍速です。",
-    "zh_cn": "反应室中央留空，喷嘴朝外。两个相对喷嘴的速度是单喷嘴的2.4倍。"
+    "en_us": "Place 54 Steam Gasifier blocks 3×3 and six layers high. The furnace forms as soon as the last block is in place.",
+    "ja_jp": "水蒸気ガス化炉ブロックを3×3で6段、54個並べます。最後のブロックを置くと炉が形成されます。",
+    "zh_cn": "将54个蒸汽气化炉方块摆成3×3、6层高。放下最后一个方块后，气化炉即成形。"
   },
   "entrained_gasifier.heater": {
     "en_us": "Place an active Blaze Burner directly below the center of the base to heat the furnace from outside.",
@@ -4545,19 +4540,19 @@
     "zh_cn": "在炉底中央正下方放置已添加燃料的烈焰人燃烧室，从外部加热气化炉。"
   },
   "entrained_gasifier.feed": {
-    "en_us": "Use a funnel to feed carbon powder and a pump to send steam into the outward-facing nozzles.",
-    "ja_jp": "ファンネルで炭素粉を送り、ポンプで水蒸気を外向きのノズルに送ります。",
-    "zh_cn": "用漏斗供给碳粉，并通过朝外的喷嘴泵入蒸汽。"
+    "en_us": "Feed coal, charcoal or coke into the top from above, for example with a funnel.",
+    "ja_jp": "石炭・木炭・コークスを、ファンネルなどで天面の上から投入します。",
+    "zh_cn": "用漏斗等从顶面上方投入煤、木炭或焦炭。"
   },
   "entrained_gasifier.preheat": {
-    "en_us": "At 1300 °C, carbon powder reacts with steam to make an equal mixture of carbon monoxide and hydrogen. See JEI for the recipe.",
-    "ja_jp": "炉内が1300℃に達すると、炭素粉と水蒸気から一酸化炭素と水素が1:1の混合気体ができます。配合はJEIで確認できます。",
-    "zh_cn": "炉内达到1300°C后，碳粉与蒸汽反应，生成等比例的一氧化碳和氢气。具体配方可见JEI。"
+    "en_us": "At 800 °C the fuel reacts with steam to make an equal mixture of carbon monoxide and hydrogen. See JEI for the recipe.",
+    "ja_jp": "炉内が800℃に達すると、燃料と水蒸気から一酸化炭素と水素が1:1の混合気体ができます。配合はJEIで確認できます。",
+    "zh_cn": "炉内达到800°C后，燃料与蒸汽反应，生成等比例的一氧化碳和氢气。具体配方可见JEI。"
   },
   "entrained_gasifier.output": {
-    "en_us": "Pump the very hot gas from the top center through stainless steel pipe. Use Engineer’s Goggles to check the operating state.",
-    "ja_jp": "上面中央からステンレス鋼管とポンプで超高温の混合気体を搬出します。ゴーグルで稼働状態を確認できます。",
-    "zh_cn": "用不锈钢管和泵从顶部中央排出超高温混合气体。佩戴护目镜可查看运行状态。"
+    "en_us": "Pump the very hot, low-pressure gas from the outlet flange through stainless steel pipe. The front is the side you stood on when placing the top center block.",
+    "ja_jp": "正面のガス出口フランジから、ステンレス鋼管とポンプで超高温・常圧の混合気体を搬出します。天面中央を置いたときに立っていた側が正面です。",
+    "zh_cn": "用不锈钢管和泵从正面的气体出口法兰排出超高温、常压的混合气体。放置顶面中央方块时所站的一侧即为正面。"
   },
   "entrained_gasifier.stop": {
     "en_us": "When the burner runs out of fuel, the reaction pauses. Supply more fuel to resume once the furnace is hot enough.",
@@ -4573,5 +4568,20 @@
     "en_us": "For automatic refueling, use a pump and connect the gas pipe to a side of the Blaze Burner.",
     "ja_jp": "自動で燃料を補給する場合は、ポンプを使い、配管をブレイズバーナーの側面に接続します。",
     "zh_cn": "要自动补充燃料，请使用泵，并将气体管道接到烈焰人燃烧室侧面。"
+  },
+  "entrained_gasifier.layers": {
+    "en_us": "The top layer is the lid with the charging hatch and, on the front, the gas outlet. Layers 2 to 5 are the brick-lined reaction bed with sight glasses.",
+    "ja_jp": "最上段は投入口ハッチ付きの天板で、正面側にガス出口があります。2～5段目は耐火レンガ張りの反応層で、点検窓が付きます。",
+    "zh_cn": "最上层是带投料舱口的顶盖，正面一侧设有气体出口。第2～5层是衬耐火砖的反应层，装有观察窗。"
+  },
+  "entrained_gasifier.steam": {
+    "en_us": "Pump steam into a flange on the middle block of any side of the bottom layer.",
+    "ja_jp": "最下段の各面中央にあるフランジへ、ポンプで水蒸気を送ります。",
+    "zh_cn": "用泵将蒸汽送入最底层任一侧中央的法兰。"
+  },
+  "entrained_gasifier.glow": {
+    "en_us": "While the bed is red-hot, at 800 °C or more, the sight glasses glow.",
+    "ja_jp": "反応層が800℃以上で赤熱している間は、点検窓が光ります。",
+    "zh_cn": "反应层在800°C以上炽热时，观察窗会发光。"
   }
 }

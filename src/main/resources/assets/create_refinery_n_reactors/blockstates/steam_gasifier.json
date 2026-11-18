@@ -1,0 +1,552 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "cell": "0"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/loose"
+      }
+    },
+    {
+      "when": {
+        "cell": "1"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_1"
+      }
+    },
+    {
+      "when": {
+        "cell": "2"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_2"
+      }
+    },
+    {
+      "when": {
+        "cell": "3"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_3"
+      }
+    },
+    {
+      "when": {
+        "cell": "4"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_4"
+      }
+    },
+    {
+      "when": {
+        "cell": "5"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_5"
+      }
+    },
+    {
+      "when": {
+        "cell": "6"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_6"
+      }
+    },
+    {
+      "when": {
+        "cell": "7"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_7"
+      }
+    },
+    {
+      "when": {
+        "cell": "8"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_8"
+      }
+    },
+    {
+      "when": {
+        "cell": "9"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_9"
+      }
+    },
+    {
+      "when": {
+        "cell": "10"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_10"
+      }
+    },
+    {
+      "when": {
+        "cell": "11"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_11"
+      }
+    },
+    {
+      "when": {
+        "cell": "12"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_12"
+      }
+    },
+    {
+      "when": {
+        "cell": "13"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_13"
+      }
+    },
+    {
+      "when": {
+        "cell": "14"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_14"
+      }
+    },
+    {
+      "when": {
+        "cell": "15"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_15"
+      }
+    },
+    {
+      "when": {
+        "cell": "16"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_16"
+      }
+    },
+    {
+      "when": {
+        "cell": "17"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_17"
+      }
+    },
+    {
+      "when": {
+        "cell": "18"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_18"
+      }
+    },
+    {
+      "when": {
+        "cell": "19"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_19"
+      }
+    },
+    {
+      "when": {
+        "cell": "20"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_20"
+      }
+    },
+    {
+      "when": {
+        "cell": "21"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_21"
+      }
+    },
+    {
+      "when": {
+        "cell": "22"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_22"
+      }
+    },
+    {
+      "when": {
+        "cell": "23"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_23"
+      }
+    },
+    {
+      "when": {
+        "cell": "24"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_24"
+      }
+    },
+    {
+      "when": {
+        "cell": "25"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_25"
+      }
+    },
+    {
+      "when": {
+        "cell": "26"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_26"
+      }
+    },
+    {
+      "when": {
+        "cell": "27"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_27"
+      }
+    },
+    {
+      "when": {
+        "cell": "28"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_28"
+      }
+    },
+    {
+      "when": {
+        "cell": "29"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_29"
+      }
+    },
+    {
+      "when": {
+        "cell": "30"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_30"
+      }
+    },
+    {
+      "when": {
+        "cell": "31"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_31"
+      }
+    },
+    {
+      "when": {
+        "cell": "32"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_32"
+      }
+    },
+    {
+      "when": {
+        "cell": "33"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_33"
+      }
+    },
+    {
+      "when": {
+        "cell": "34"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_34"
+      }
+    },
+    {
+      "when": {
+        "cell": "35"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_35"
+      }
+    },
+    {
+      "when": {
+        "cell": "36"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_36"
+      }
+    },
+    {
+      "when": {
+        "cell": "37"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_37"
+      }
+    },
+    {
+      "when": {
+        "cell": "38"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_38"
+      }
+    },
+    {
+      "when": {
+        "cell": "39"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_39"
+      }
+    },
+    {
+      "when": {
+        "cell": "40"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_40"
+      }
+    },
+    {
+      "when": {
+        "cell": "41"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_41"
+      }
+    },
+    {
+      "when": {
+        "cell": "42"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_42"
+      }
+    },
+    {
+      "when": {
+        "cell": "43"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_43"
+      }
+    },
+    {
+      "when": {
+        "cell": "44"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_44"
+      }
+    },
+    {
+      "when": {
+        "cell": "45"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_45"
+      }
+    },
+    {
+      "when": {
+        "cell": "46"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_46"
+      }
+    },
+    {
+      "when": {
+        "cell": "47"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_47"
+      }
+    },
+    {
+      "when": {
+        "cell": "48"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_48"
+      }
+    },
+    {
+      "when": {
+        "cell": "49"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_49"
+      }
+    },
+    {
+      "when": {
+        "cell": "50"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_50"
+      }
+    },
+    {
+      "when": {
+        "cell": "51"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_51"
+      }
+    },
+    {
+      "when": {
+        "cell": "52"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_52"
+      }
+    },
+    {
+      "when": {
+        "cell": "53"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_53"
+      }
+    },
+    {
+      "when": {
+        "cell": "54"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/cell_54"
+      }
+    },
+    {
+      "when": {
+        "cell": "49",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/outlet_north"
+      }
+    },
+    {
+      "when": {
+        "cell": "22|31",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_hot_north"
+      }
+    },
+    {
+      "when": {
+        "cell": "22|31",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_cold_north"
+      }
+    },
+    {
+      "when": {
+        "cell": "51",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/outlet_south"
+      }
+    },
+    {
+      "when": {
+        "cell": "24|33",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_hot_south"
+      }
+    },
+    {
+      "when": {
+        "cell": "24|33",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_cold_south"
+      }
+    },
+    {
+      "when": {
+        "cell": "47",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/outlet_west"
+      }
+    },
+    {
+      "when": {
+        "cell": "20|29",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_hot_west"
+      }
+    },
+    {
+      "when": {
+        "cell": "20|29",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_cold_west"
+      }
+    },
+    {
+      "when": {
+        "cell": "53",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/outlet_east"
+      }
+    },
+    {
+      "when": {
+        "cell": "26|35",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_hot_east"
+      }
+    },
+    {
+      "when": {
+        "cell": "26|35",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "create_refinery_n_reactors:block/steam_gasifier/coke_cold_east"
+      }
+    }
+  ]
+}
