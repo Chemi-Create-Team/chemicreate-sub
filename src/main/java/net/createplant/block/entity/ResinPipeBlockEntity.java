@@ -21,7 +21,6 @@ public final class ResinPipeBlockEntity extends FluidPipeBlockEntity implements 
         // bracket model. Reject bracket insertion instead of hiding an attached
         // item that the player would then need to recover blindly.
         behaviours.removeIf(BracketedBlockEntityBehaviour.class::isInstance);
-        behaviours.add(new BoilerSteamOutput(this));
     }
 
     @Override public boolean addToGoggleTooltip(java.util.List<net.minecraft.network.chat.Component> lines, boolean sneaking) {

@@ -1,6 +1,6 @@
 # 既存GameTest失敗8件の解消
 
-実装コミットは `f412082a2fc310507ba0f91b2c32aae7220dbbe0`。作業ベースは `4c1861c`（`main`、`69ab73b` に文書2件を加えたもの）。`472fffa`（ボイラー蒸気の通常流体化）は別ブランチ `claude/optimistic-maxwell-4bdgg2` にあり、このブランチには含まない。
+実装コミットは `f412082a2fc310507ba0f91b2c32aae7220dbbe0`。作業ベースは `4c1861c`（`main`、`69ab73b` に文書2件を加えたもの）。その後、`472fffa`（ボイラー蒸気の通常流体化）を含む `main`（`35acc52`）を統合した。
 
 ## 判断と変更
 
@@ -32,6 +32,7 @@
 | --- | --- |
 | 影響8クラスのGameTest（`AuditGameTests`、`CreativeCatalogGameTests`、`WaterResistanceGameTests`、`VesselFoulingGameTests`、`GasBellGameTests`、`VesselBasinGameTests`、`DistillationGameTests`、`TurbineThermalGameTests`） | 70件すべて合格 |
 | 全体の `runGameTestServer`（実装コミット時点の作業ツリー） | 必須627件すべて合格 |
+| 全体の `runGameTestServer`（`main` 統合後） | 必須630件すべて合格 |
 | `validate_ponder_language.py`、`validate_translations.py`、`validate_plant_tutorials.py` | 合格 |
 | `validate_visual_identity.py`、`test_ci_validators.py` | 失敗。作業前のベースでも同じ失敗（下記） |
 
@@ -47,4 +48,4 @@
 
 - 気体を扱う試験の供給元には、保管用液体タンク（Create標準・耐圧・ステンレス・保冷・横置き）を使わず、脈動抑制管・ガスコンテナ・ガスホルダーを使う。
 - 試験で配管を `setBlock` する場合、既定状態は全方向接続で、隣接更新がない面は開放端として流体を放出する。接続面を指定した状態で置く。
-- `472fffa` のブランチと統合する際、`TurbineThermalGameTests` は別のメソッドを変更しているため重ならない見込み。
+- `main` 統合時、3言語ファイルは生成物のため手で衝突を解かず、`main` 側を基に `generate_wet_processing.translations()` と `generate_ponder_language.py` を再実行した。`main` が削除した蒸気出口のゴーグル文言2キーは削除のまま、Ponderは154シーンになった（`coverage.json` も再生成）。

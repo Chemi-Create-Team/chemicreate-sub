@@ -1053,6 +1053,15 @@
     }
   },
   {
+    "scene": "plant_create_boiler_steam",
+    "captions": 4,
+    "pages": {
+      "en_us": 7,
+      "ja_jp": 5,
+      "zh_cn": 4
+    }
+  },
+  {
     "scene": "plant_gas_pipes",
     "captions": 4,
     "pages": {

@@ -189,50 +189,28 @@ public final class TurbineThermalGameTests {
     }
 
     @GameTest(template="test_fractionation",timeoutTicks=300)
-    public static void actualCreateBoilerConsumesRealWaterAtOneToOneMass(GameTestHelper h){
-        var l=h.getLevel();var base=h.absolutePos(BlockPos.ZERO);build(l,base);var at=base.offset(21,4,10);
-        for(int y=0;y<4;y++)l.setBlock(at.above(y),AllBlocks.FLUID_TANK.getDefaultState(),3);
+    public static void aPumpOnACreateBoilerFeedsTheTurbineThroughCopperPipesAtOneToOneMass(GameTestHelper h){
+        var l=h.getLevel();var base=h.absolutePos(BlockPos.ZERO);build(l,base);var at=base.offset(21,4,10);var pump=at.above();
+        l.setBlock(at,AllBlocks.FLUID_TANK.getDefaultState(),3);
         l.setBlock(at.below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL,com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED),3);
         var burner=(com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity)l.getBlockEntity(at.below());var tag=burner.saveWithoutMetadata(l.registryAccess());tag.putInt("fuelLevel",1);tag.putInt("burnTimeRemaining",4000);burner.loadWithComponents(tag,l.registryAccess());burner.updateBlockState();
-        for(int x=15;x<=20;x++)l.setBlock(base.offset(x,6,10),CETransport.STAINLESS_PIPE.get().defaultBlockState(),3);
-        l.setBlock(base.offset(20,4,10),CETransport.STAINLESS_PIPE.get().defaultBlockState(),3);l.setBlock(base.offset(20,5,10),CETransport.STAINLESS_PIPE.get().defaultBlockState(),3);
-        h.runAfterDelay(20,()->{var tank=(com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)l.getBlockEntity(at);com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti(tank);var controller=tank.getControllerBE();controller.getTankInventory().fill(FluidThermal.at(new FluidStack(Fluids.WATER,200),300),EXECUTE);
-            FluidRoutes.changed(l);long before=BoilerSteamOutput.outletScans;int outlets=0;for(int i=0;i<20;i++)outlets=BoilerSteamOutput.countSteamPipeOutlets(controller);
-            h.assertTrue(outlets>0 && BoilerSteamOutput.outletScans-before==1,"A hot multi-tank scans its surface once per cached topology window, not once per pipe tick");});
-        h.runAfterDelay(230,()->{var tank=((com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)l.getBlockEntity(at)).getControllerBE();int steamMass=0;for(int x:new int[]{5,6,7,8,9,13,14,15}){var be=(SteamTurbineBlockEntity)l.getBlockEntity(base.offset(x,4,10));steamMass+=be.thermodynamics().input().getFluidAmount()+be.thermodynamics().exhaust().getFluidAmount();}
-            var pipe=(com.simibubi.create.foundation.blockEntity.SmartBlockEntity)l.getBlockEntity(base.offset(20,4,10));int pending=pipe.getBehaviour(BoilerSteamOutput.TYPE).pendingAmount();h.assertTrue(steamMass>0 && steamMass+tank.getTankInventory().getFluidAmount()+pending==200,"The heated native boiler creates no extra water-equivalent mass: steam="+steamMass+" water="+tank.getTankInventory().getFluidAmount()+" pending="+pending);h.succeed();});
-    }
-    @GameTest(template="test_fractionation",timeoutTicks=300)
-    public static void createsCopperPipeCarriesBoilerSteam(GameTestHelper h){
-        var l=h.getLevel();var base=h.absolutePos(BlockPos.ZERO);build(l,base);var at=base.offset(21,4,10);
-        for(int y=0;y<4;y++)l.setBlock(at.above(y),AllBlocks.FLUID_TANK.getDefaultState(),3);
-        l.setBlock(at.below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL,com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED),3);
-        var burner=(com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity)l.getBlockEntity(at.below());var tag=burner.saveWithoutMetadata(l.registryAccess());tag.putInt("fuelLevel",1);tag.putInt("burnTimeRemaining",4000);burner.loadWithComponents(tag,l.registryAccess());burner.updateBlockState();
-        for(int x=15;x<=20;x++)l.setBlock(base.offset(x,6,10),AllBlocks.FLUID_PIPE.getDefaultState(),3);
-        l.setBlock(base.offset(20,4,10),AllBlocks.FLUID_PIPE.getDefaultState(),3);l.setBlock(base.offset(20,5,10),AllBlocks.FLUID_PIPE.getDefaultState(),3);
-        h.runAfterDelay(20,()->{var tank=(com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)l.getBlockEntity(at);com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti(tank);tank.getControllerBE().getTankInventory().fill(FluidThermal.at(new FluidStack(Fluids.WATER,200),300),EXECUTE);});
+        l.setBlock(pump,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP),3);
+        l.setBlock(pump.south(),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.Y),3);
+        l.setBlock(pump.south().above(),AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.DOWN),3);
+        ((com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity)l.getBlockEntity(pump.south().above())).generatedSpeed.setValue(128);
+        l.setBlock(pump.above(),copper(Direction.DOWN,Direction.WEST),3);
+        for(int x=16;x<=20;x++)l.setBlock(base.offset(x,6,10),copper(Direction.EAST,Direction.WEST),3);
+        l.setBlock(base.offset(15,6,10),copper(Direction.EAST,Direction.DOWN),3);
+        var tank=(com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)l.getBlockEntity(at);tank.getTankInventory().fill(new FluidStack(Fluids.WATER,200),EXECUTE);
         h.runAfterDelay(230,()->{int steamMass=0;for(int x:new int[]{5,6,7,8,9,13,14,15}){var be=(SteamTurbineBlockEntity)l.getBlockEntity(base.offset(x,4,10));steamMass+=be.thermodynamics().input().getFluidAmount()+be.thermodynamics().exhaust().getFluidAmount();}
-            h.assertTrue(steamMass>0,"Create's copper pipe carries boiler steam to the turbine");h.succeed();});
+            int held=TankBoiler.of(tank).steam().getFluidAmount();
+            h.assertTrue(steamMass>0,"A pump on the roof of Create's boiler sends its steam through copper pipes to the turbine");
+            h.assertTrue(steamMass+held+tank.getTankInventory().getFluidAmount()==200,"Boiling creates no extra water-equivalent mass: turbines="+steamMass+" boiler="+held+" water="+tank.getTankInventory().getFluidAmount());h.succeed();});
     }
-    @GameTest(template="test_fractionation")
-    public static void aClosedValveStopsBoilerSteamAndAnOpenOnePassesIt(GameTestHelper h){
-        var l=h.getLevel();var base=h.absolutePos(BlockPos.ZERO);build(l,base);
-        for(int x=15;x<=20;x++)l.setBlock(base.offset(x,6,10),CETransport.STAINLESS_PIPE.get().defaultBlockState(),3);
-        l.setBlock(base.offset(20,4,10),CETransport.STAINLESS_PIPE.get().defaultBlockState(),3);l.setBlock(base.offset(20,5,10),CETransport.STAINLESS_PIPE.get().defaultBlockState(),3);
-        var valve=base.offset(17,6,10);
-        // The valve's pipe runs across its shaft: a vertical shaft and the pipe along X.
-        var closed=AllBlocks.FLUID_VALVE.getDefaultState().setValue(com.simibubi.create.content.fluids.pipes.valve.FluidValveBlock.FACING,Direction.UP);
-        if(com.simibubi.create.content.fluids.pipes.valve.FluidValveBlock.getPipeAxis(closed)!=Direction.Axis.X)closed=closed.cycle(com.simibubi.create.content.kinetics.base.DirectionalAxisKineticBlock.AXIS_ALONG_FIRST_COORDINATE);
-        l.setBlock(valve,closed,3);
-        h.runAfterDelay(5,()->{
-            var output=((com.simibubi.create.foundation.blockEntity.SmartBlockEntity)l.getBlockEntity(base.offset(20,4,10))).getBehaviour(BoilerSteamOutput.TYPE);
-            net.createplant.thermal.FluidRoutes.changed(l);
-            h.assertTrue(!output.leadsToTurbine(),"A closed valve cuts the steam route to the turbine");
-            l.setBlock(valve,l.getBlockState(valve).setValue(com.simibubi.create.content.fluids.pipes.valve.FluidValveBlock.ENABLED,true),3);
-            net.createplant.thermal.FluidRoutes.changed(l);
-            h.assertTrue(output.leadsToTurbine(),"An open valve along the line passes the steam");
-            h.succeed();
-        });
+    private static net.minecraft.world.level.block.state.BlockState copper(Direction a,Direction b){
+        var state=AllBlocks.FLUID_PIPE.getDefaultState();
+        for(var side:Direction.values())state=state.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(side),side==a || side==b);
+        return state;
     }
     @GameTest(template="test_fractionation",timeoutTicks=100)
     public static void wetSteamCanBeDrainedAndOverspeedStopsExtraction(GameTestHelper h){
