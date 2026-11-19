@@ -3479,6 +3479,41 @@
     "ja_jp": "一酸化炭素を回収して二酸化炭素を作る",
     "zh_cn": "回收一氧化碳并制取二氧化碳"
   },
+  "guide.manufacturing_resin_water_loop.title": {
+    "en_us": "Making flame-retardant pellets and reusing water",
+    "ja_jp": "難燃ペレットを作り、水を再利用する",
+    "zh_cn": "制备阻燃颗粒并循环用水"
+  },
+  "guide.manufacturing_resin_water_loop.step_1": {
+    "en_us": "Run the bottom centre of a 3×3 impeller vessel at 32 RPM or more and light a Blaze Burner under a corner. Extract pellets with a funnel and pump the vapor out through the closed vessel's top.\n%s → %s",
+    "ja_jp": "3×3の撹拌槽の底面中央を32 RPM以上で回し、底面の隅でブレイズバーナーを燃やします。ペレットはファンネルで取り出し、蒸気はハッチを閉じた槽の上面からポンプで取り出します。\n%s → %s",
+    "zh_cn": "以至少32 RPM驱动3×3搅拌槽的底部中央，在底角点燃烈焰人燃烧室。用漏斗取出颗粒，封闭舱门后从槽的顶部泵出蒸气。\n%s → %s"
+  },
+  "guide.manufacturing_resin_water_loop.step_2": {
+    "en_us": "Feed vapor into the bottom side of a large absorption tower and water into the top storey. Pump the recovered wash water out of another bottom side.\n%s → %s",
+    "ja_jp": "大型吸収塔の最下段の側面に蒸気を、最上段に水を送ります。中和処理水は最下段の別の面からポンプで回収します。\n%s → %s",
+    "zh_cn": "蒸气从大型吸收塔底层侧面送入，水从顶层送入。从底层另一面泵出中和洗涤水。\n%s → %s"
+  },
+  "guide.manufacturing_resin_water_loop.step_3": {
+    "en_us": "Mix the recovered wash water with flocculant in a second impeller vessel. Filter the outlet for clarified water.\n%s → %s",
+    "ja_jp": "回収した中和処理水と水処理凝集剤を別の撹拌槽で混ぜます。出口のフィルターに澄明水を指定します。\n%s → %s",
+    "zh_cn": "在另一座搅拌槽中混合回收的中和洗涤水和絮凝剂。在出口过滤器上选定澄清水。\n%s → %s"
+  },
+  "guide.manufacturing_resin_water_loop.step_4": {
+    "en_us": "Filter the clarified water in a third impeller vessel. Remove the sludge and return the recovered water to the pellet vessel and the top of the tower.\n%s → %s",
+    "ja_jp": "3基目の撹拌槽で澄明水をろ過します。汚泥を取り出し、回収した水をペレット製造槽と吸収塔の最上段に戻します。\n%s → %s",
+    "zh_cn": "用第三座搅拌槽过滤澄清水。取出污泥，把回收的水送回颗粒制造槽与吸收塔顶层。\n%s → %s"
+  },
+  "guide.manufacturing_resin_water_loop.step_5": {
+    "en_us": "Use a Mechanical Press to make gaskets from the pellets.\n%s → %s",
+    "ja_jp": "メカニカルプレスでペレットを押し、耐熱パッキンを作ります。\n%s → %s",
+    "zh_cn": "用机械冲压机把颗粒压制成耐热密封垫。\n%s → %s"
+  },
+  "guide.manufacturing_resin_water_loop.step_6": {
+    "en_us": "Use the gaskets in high-voltage conductors for cable spools. They also fit the reciprocating cylinder and compressor recipes.\n%s → %s",
+    "ja_jp": "耐熱パッキンは高圧ケーブル導体に使えます。往復式シリンダーと往復式コンプレッサーのレシピにも使えます。\n%s → %s",
+    "zh_cn": "耐热密封垫可用于制作电缆卷筒所需的高压导体，也适用于往复式气缸与压缩机的配方。\n%s → %s"
+  },
   "guide.converter.title": {
     "en_us": "Making steel in a converter",
     "ja_jp": "転炉で鋼を作る",

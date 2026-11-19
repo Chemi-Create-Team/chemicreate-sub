@@ -236,7 +236,7 @@ def resources():
            'B': {'item': 'minecraft:smooth_stone'}})
     craft('high_voltage_conductor', ['CAC', ' R '],
           {'C': {'item': 'electroenergetics:heavily_insulated_wire'}, 'A': {'tag': 'c:ingots/aluminum'},
-           'R': {'item': f'{NS}:rubber_gasket'}}, 4)
+           'R': {'tag': f'{NS}:industrial_gaskets'}}, 4)
     craft('high_voltage_cable', [' C ', 'CSC', ' C '],
           {'C': {'item': f'{NS}:high_voltage_conductor'}, 'S': {'item': 'electroenergetics:empty_spool'}})
     save(DATA / f'loot_table/blocks/{NAME}.json', {

@@ -95,6 +95,35 @@ def simple_units():
     from generate_absorption_tower import ring
     for y in range(1, 7): ring(scene, 4, y, 4)
     units['absorber'] = (scene, (4, 1, 4), (5, 1, 4), (3, 1, 4))
+
+    scene = ponder.Structure(11, 9)
+    scene.reactor(5, 2, 5, 'stirred', 3, burners=((0, 0),), windows=True)
+    scene.block(3, 2, 5, 'create:andesite_funnel', facing='west', extracting='false', waterlogged='false')
+    scene.block(7, 2, 5, 'create:andesite_funnel', facing='east', extracting='true', waterlogged='false')
+    scene.block(8, 1, 5, 'create:depot')
+    pipe(scene, 4, 2, 3, 'north', 'south')
+    motor_pump(scene, 4, 2, 2, 'south', drive_forward=True)
+    scene.block(4, 2, 1, 'create:fluid_tank', bottom='true', top='true', shape='window')
+    pipe(scene, 4, 5, 4, 'up', 'down')
+    scene.pump(4, 6, 4, 'up')
+    scene.block(3, 6, 4, 'create:cogwheel', axis='y', waterlogged='false')
+    scene.block(3, 5, 4, 'create:creative_motor', facing='up')
+    scene.block(4, 7, 4, NS + 'gas_receiver', axis='y', bottom='true', top='true', shape='plain')
+    units['resin_vessel'] = (scene, (4, 2, 4), (3, 2, 5), (7, 2, 5))
+
+    scene = ponder.Structure(11, 9)
+    for y in range(1, 7): ring(scene, 5, y, 5)
+    pipe(scene, 7, 1, 5, 'east', 'west')
+    motor_pump(scene, 8, 1, 5, 'west')
+    scene.block(9, 1, 5, NS + 'gas_receiver', axis='x', bottom='true', top='true', shape='plain')
+    pipe(scene, 3, 1, 5, 'east', 'west')
+    motor_pump(scene, 2, 1, 5, 'west')
+    scene.block(1, 1, 5, 'create:fluid_tank', bottom='true', top='true', shape='window')
+    pipe(scene, 5, 6, 3, 'north', 'south')
+    motor_pump(scene, 5, 6, 2, 'south', drive_forward=True)
+    scene.block(5, 6, 1, 'create:fluid_tank', bottom='true', top='true', shape='window')
+    units['resin_absorber'] = (scene, (5, 1, 5), (7, 1, 5), (3, 1, 5))
+
     scene = ponder.Structure(11, 7)
     scene.block(5, 2, 5, NS + 'lidded_vessel', bottom='true', hatch='none', open='false', drive='false', axis='y', facing='north', ladder='true', north='true', south='true', east='true', west='true')
     scene.burner(5, 1, 5)
@@ -250,13 +279,17 @@ def column_unit(height,air,single_cut=False):
 
 
 def unit_key(stage):
+    if stage['recipe'] == NS + 'pressure_reaction/flame_retardant_pellet':
+        return 'resin_vessel'
+    if stage['recipe'] == 'process:wash_resin_process_vapor':
+        return 'resin_absorber'
     return 'column:'+stage['recipe'] if stage['kind']=='column' else stage['kind']
 
 
 ROUTES = []
 
 
-def step(kind, recipe, english, japanese, chinese, item=None, feed=None, target=None, input_at=None, output_at=None):
+def step(kind, recipe, english=None, japanese=None, chinese=None, item=None, feed=None, target=None, input_at=None, output_at=None):
     if recipe and ':' not in recipe: recipe = NS + recipe
     return {'kind': kind, 'recipe': recipe, 'text': (english, japanese, chinese), 'item': item, 'feed': feed,
         'target': target, 'input': input_at, 'output': output_at}
@@ -605,6 +638,16 @@ route('carbon_oxides', ('Recover carbon monoxide and make carbon dioxide', '一�
     ['gas_receiver', 'converter_shell', 'oxidation_catalyst'], [
     step('column', 'process:recover_carbon_monoxide', 'Recover CO from converter gas in a 2×2 column at least two layers high. In this 14-layer example, feed layer three and collect at the top.', '転炉ガスを2×2・最低2段の分留塔へ送るとCOを回収できます。図の14段塔では3段目に入れ、最上段から取ります。', '转炉煤气用2×2、至少两层分馏塔回收CO，图示十四层塔从第三层进料、顶层取出。'),
     step('catalytic', 'process:oxidize_carbon_monoxide', 'Load an oxidation catalyst into a reaction tower. Supply CO and oxygen at a bottom-layer side and collect CO2 from the bottom layer.', '反応塔に酸化触媒を入れます。COと酸素を最下段の側面へ送り、CO2を最下段から回収します。', '向反应塔装入氧化催化剂，从底层侧面供给CO和氧气，从底层回收CO2。'),
+])
+
+route('resin_water_loop', ('Making flame-retardant pellets and reusing water', '難燃ペレットを作り、水を再利用する', '制备阻燃颗粒并循环用水'),
+    ['flame_retardant_pellet', 'heat_resistant_gasket', 'resin_process_vapor_bucket'], [
+    step('vessel', 'pressure_reaction/flame_retardant_pellet'),
+    step('absorber', 'process:wash_resin_process_vapor'),
+    step('vessel', 'pressure_reaction/washwater_precipitation'),
+    step('vessel', 'pressure_reaction/washwater_filtration'),
+    step('pressing', 'pressing/heat_resistant_gasket'),
+    step('crafting', 'high_voltage_conductor'),
 ])
 
 if __name__ == '__main__':

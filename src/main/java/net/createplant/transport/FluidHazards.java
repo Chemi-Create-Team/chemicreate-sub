@@ -42,6 +42,7 @@ public final class FluidHazards {
         entry("cold_nitric_oxide_mixture",310,1,false,true),
         entry("hot_olefins",780,1,false,true),
         entry("molten_polyethylene",480,1,false,false), entry("molten_polypropylene",490,1,false,false),
+        entry("resin_process_vapor",293,1,false,true),
         entry("warm_water",330,1,false,false), entry("wastewater",293,1,false,false),
         entry("hot_hydrotreater_effluent",650,16,true,false),
         entry("cooled_hydrotreater_effluent",310,16,true,false), entry("hydrogen_sulfide",293,1,true,true),

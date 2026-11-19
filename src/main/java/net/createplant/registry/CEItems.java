@@ -32,6 +32,8 @@ public class CEItems {
     public static final DeferredItem<Item> SYNTHETIC_RUBBER = ITEMS.registerSimpleItem("synthetic_rubber");
     public static final DeferredItem<Item> PLASTIC_SHEET = ITEMS.registerSimpleItem("plastic_sheet");
     public static final DeferredItem<Item> RUBBER_GASKET = ITEMS.registerSimpleItem("rubber_gasket");
+    public static final DeferredItem<Item> FLAME_RETARDANT_PELLET = ITEMS.registerSimpleItem("flame_retardant_pellet");
+    public static final DeferredItem<Item> HEAT_RESISTANT_GASKET = ITEMS.registerSimpleItem("heat_resistant_gasket");
     public static final DeferredItem<Item> INDUSTRIAL_RESIN = ITEMS.registerSimpleItem("industrial_resin");
     public static final DeferredItem<net.createplant.item.ProcessBucketItem> HEAVY_OIL_BUCKET = ITEMS.register("heavy_oil_bucket",
         () -> new net.createplant.item.ProcessBucketItem(CEPetroFluids.HEAVY_OIL.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));

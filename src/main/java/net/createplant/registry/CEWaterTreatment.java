@@ -28,6 +28,7 @@ public final class CEWaterTreatment {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> NEUTRALIZED_WASTEWATER = stream("neutralized_wastewater", 0xFF929981);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CLARIFIED_WATER = stream("clarified_water", 0xBB9FB9B6);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SULFUR_SCRUBBER_LIQUOR = stream("sulfur_scrubber_liquor", 0xFFAA9761);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> RESIN_PROCESS_VAPOR = stream("resin_process_vapor", 0xFFB4CED1);
 
     private CEWaterTreatment() { }
 

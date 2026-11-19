@@ -20,7 +20,7 @@ def tag(id): return {'tag': id}
 
 
 STEEL = item('steel_block'); STEEL_INGOT = item('steel_ingot'); STAINLESS = tag('c:plates/stainless_steel'); PRECISION = item('create:precision_mechanism')
-TUBE = item('create:electron_tube'); GASKET = item('rubber_gasket'); BARS = item('minecraft:iron_bars'); IRON_SHEET = item('create:iron_sheet')
+TUBE = item('create:electron_tube'); GASKET = tag(NS + 'industrial_gaskets'); BARS = item('minecraft:iron_bars'); IRON_SHEET = item('create:iron_sheet')
 AL, NI, TI, ZR, CR, MO = (tag('c:ingots/' + m) for m in ('aluminum', 'nickel', 'titanium', 'zirconium', 'chromium', 'molybdenum'))
 
 BASIC = {}

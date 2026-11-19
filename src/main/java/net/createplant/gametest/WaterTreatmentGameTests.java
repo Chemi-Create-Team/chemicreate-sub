@@ -4,12 +4,16 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import com.simibubi.create.content.kinetics.press.PressingRecipe;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.chemistry.ReactorModule;
+import net.createplant.cloud.GasClouds;
 import net.createplant.recipe.PressureReactionRecipe;
+import net.createplant.registry.CEItems;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
@@ -66,6 +70,77 @@ public final class WaterTreatmentGameTests {
         int amount = 0;var port = owner.itemPort();
         for (int slot = 0; slot < port.getSlots(); slot++) if (port.getStackInSlot(slot).is(item)) amount += port.getStackInSlot(slot).getCount();
         return amount;
+    }
+
+    @GameTest(template = "test_reactor", batch = "resin_water_loop")
+    public static void resinVaporWashingReusesTheEntireWaterCharge(GameTestHelper h) {
+        BlockPos resin = new BlockPos(3, 3, 5), precipitation = resin.east(14), filtration = resin.east(19);
+        var mixer = vessel(h, resin);
+        var clarifier = vessel(h, precipitation);
+        var filter = vessel(h, filtration);
+        var tower = AbsorptionTowerGameTests.tower(h.getLevel(), h.absolutePos(resin.east(7)), 4, true);
+        BlockPos bottom = tower.getBlockPos();
+        var vaporIn = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, bottom.west(), Direction.WEST);
+        var washIn = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, bottom.above(3).north(), Direction.UP);
+        var washOut = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, bottom.east(), Direction.EAST);
+        h.assertTrue(vaporIn != null && washIn != null && washOut != null, "Use the formed tower's Create-compatible gas, water and liquid connections");
+
+        var vaporType = CEWaterTreatment.RESIN_PROCESS_VAPOR.get();
+        var vaporSample = new FluidStack(vaporType, 250);
+        h.assertTrue(FluidMaterials.gas(vaporType) && vaporType.getBucket() != Items.AIR,
+            "Resin process vapor is a gas with a bucket available for filtering");
+        h.assertTrue(!GasClouds.supported(vaporSample), "The fictional process vapor does not create hazardous clouds");
+        var water = new FluidStack(Fluids.WATER, 1000);
+        for (int cycle = 0; cycle < 2; cycle++) {
+            h.assertTrue(fluids(h, resin).fill(water.copyWithAmount(250), EXECUTE) == 250
+                && washIn.fill(water.copyWithAmount(750), EXECUTE) == 750, "Divide the same water supply between the two machines");
+            reagent(h, mixer, CEItems.POLYPROPYLENE.get());
+            reagent(h, mixer, CEItems.POLYPROPYLENE.get());
+            h.assertTrue(mixer.itemPort().insertItem(1, new ItemStack(Items.QUARTZ), false).isEmpty()
+                && mixer.itemPort().insertItem(2, new ItemStack(Items.CALCITE), false).isEmpty(), "The stirred vessel takes both mineral fillers");
+            var vaporOut = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(resin), Direction.UP);
+            h.assertTrue(vaporOut != null, "The closed mixer has an upper fluid connection");
+            if (cycle == 0) {
+                run(mixer, 150);
+                h.assertTrue(mixer.status().equals("heat") && vaporOut.drain(vaporSample, SIMULATE).isEmpty(),
+                    "Solid feed and water wait for burner heat");
+                h.setBlock(resin.below(), AllBlocks.BLAZE_BURNER.getDefaultState()
+                    .setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED));
+            }
+            run(mixer, 150);
+            h.assertTrue(fluids(h, resin).drain(vaporSample, SIMULATE).isEmpty(), "The liquid outlet leaves the vapor in the closed mixer");
+            var vapor = vaporOut.drain(vaporSample, EXECUTE);
+            h.assertTrue(solids(mixer, CEItems.FLAME_RETARDANT_PELLET.get()) == 4 * (cycle + 1) && vapor.getAmount() == 250
+                && solids(mixer, CEItems.POLYPROPYLENE.get()) == 0, "The mixer makes one batch of pellets and vapor at its upper outlet: " + vapor);
+            h.assertTrue(vaporIn.fill(vapor, EXECUTE) == 250, "Process vapor enters at the bottom ring");
+            for (int tick = 0; tick < 101; tick++) tower.tickProcess();
+            var captured = washOut.drain(1000, EXECUTE);
+            h.assertTrue(captured.is(CEWaterTreatment.NEUTRALIZED_WASTEWATER.get()) && captured.getAmount() == 1000
+                && washIn.drain(1000, SIMULATE).isEmpty(), "The tower recovers all wash water at the bottom with no top exhaust");
+
+            reagent(h, clarifier, CEWaterTreatment.FLOCCULANT.get());
+            h.assertTrue(fluids(h, precipitation).fill(captured, EXECUTE) == 1000, "The wash water enters the existing precipitation recipe");
+            run(clarifier, 200);
+            var clarified = fluids(h, precipitation).drain(new FluidStack(CEWaterTreatment.CLARIFIED_WATER.get(), 1000), EXECUTE);
+            reagent(h, filter, CEWaterTreatment.FILTER_MEDIUM.get());
+            h.assertTrue(fluids(h, filtration).fill(clarified, EXECUTE) == 1000, "The clarified stream enters the existing filter recipe");
+            run(filter, 100);
+            water = fluids(h, filtration).drain(new FluidStack(Fluids.WATER, 1000), EXECUTE);
+            h.assertTrue(water.getAmount() == 1000 && solids(filter, CEWaterTreatment.SLUDGE.get()) == 3 * (cycle + 1),
+                "Only sludge leaves the water loop, which can supply another complete batch");
+        }
+
+        var recipes = h.getLevel().getRecipeManager();
+        var press = (PressingRecipe) recipes.byKey(CreatePlant.location("pressing/heat_resistant_gasket")).orElseThrow().value();
+        h.assertTrue(press.getIngredients().getFirst().test(CEItems.FLAME_RETARDANT_PELLET.toStack()), "A Create Mechanical Press can process the pellets");
+        var gasket = press.getResultItem(h.getLevel().registryAccess());
+        h.assertTrue(gasket.is(CEItems.HEAT_RESISTANT_GASKET.get()) && gasket.getCount() == 2, "Each pellet makes two gaskets");
+        for (String id : new String[] {"reciprocating_cylinder", "reciprocating_compressor", "high_voltage_conductor"}) {
+            var recipe = recipes.byKey(CreatePlant.location(id)).orElseThrow().value();
+            h.assertTrue(recipe.getIngredients().stream().anyMatch(ingredient -> ingredient.test(gasket) && ingredient.test(CEItems.RUBBER_GASKET.toStack())),
+                id + " accepts both gasket items in the same slot");
+        }
+        h.succeed();
     }
 
     @GameTest(template = "test_reactor")

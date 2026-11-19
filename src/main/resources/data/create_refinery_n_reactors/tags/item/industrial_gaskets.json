@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:heat_resistant_gasket",
+    "create_refinery_n_reactors:rubber_gasket"
+  ]
+}

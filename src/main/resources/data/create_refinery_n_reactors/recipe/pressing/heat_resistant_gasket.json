@@ -1,0 +1,14 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:flame_retardant_pellet"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:heat_resistant_gasket",
+      "count": 2
+    }
+  ]
+}

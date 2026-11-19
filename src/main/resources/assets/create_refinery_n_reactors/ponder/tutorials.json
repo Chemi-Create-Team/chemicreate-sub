@@ -9611,5 +9611,198 @@
         "key": "step_6"
       }
     ]
+  },
+  {
+    "id": "manufacturing_resin_water_loop",
+    "family": "resin_water_loop",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "flame_retardant_pellet",
+      "heat_resistant_gasket",
+      "resin_process_vapor_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/flame_retardant_pellet",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            5
+          ],
+          "output": [
+            7,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "absorber",
+          "recipe": "process:wash_resin_process_vapor",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            1,
+            5
+          ],
+          "output": [
+            3,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/washwater_precipitation",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/washwater_filtration",
+          "offset": 64,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          3,
+          5
+        ],
+        "process": {
+          "kind": "pressing",
+          "recipe": "create_refinery_n_reactors:pressing/heat_resistant_gasket",
+          "offset": 96,
+          "width": 11,
+          "height": 6,
+          "machine": [
+            5,
+            3,
+            5
+          ],
+          "input": [
+            5,
+            1,
+            5
+          ],
+          "output": [
+            5,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:high_voltage_conductor",
+          "offset": 128,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
   }
 ]

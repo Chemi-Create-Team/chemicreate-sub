@@ -14,7 +14,7 @@
       "item": "create:shaft"
     },
     "G": {
-      "item": "create_refinery_n_reactors:rubber_gasket"
+      "tag": "create_refinery_n_reactors:industrial_gaskets"
     },
     "C": {
       "item": "create:brass_casing"

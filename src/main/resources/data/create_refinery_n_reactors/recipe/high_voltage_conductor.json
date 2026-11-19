@@ -12,7 +12,7 @@
       "tag": "c:ingots/aluminum"
     },
     "R": {
-      "item": "create_refinery_n_reactors:rubber_gasket"
+      "tag": "create_refinery_n_reactors:industrial_gaskets"
     }
   },
   "result": {
