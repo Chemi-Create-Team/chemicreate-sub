@@ -22,7 +22,8 @@ public final class AssemblyPonderScenes {
         var scene = new CreateSceneBuilder(builder);
         scene.title(ID, PonderText.title("ponder.create_refinery_n_reactors." + ID + ".title", ID));
         scene.configureBasePlate(0, 0, 17);
-        scene.scaleSceneView(.5f);
+        scene.scaleSceneView(.33f);
+        scene.setSceneOffsetY(-2);
         scene.showBasePlate();
         BlockPos base = new BlockPos(8, 1, 1), chest = base.west();
         scene.world().modifyBlockEntity(base, SchematicannonBlockEntity.class, be -> ((FacilityConstructorBlockEntity) be).configure(AssemblyPlan.Kind.FUSION.ordinal(), 0));
