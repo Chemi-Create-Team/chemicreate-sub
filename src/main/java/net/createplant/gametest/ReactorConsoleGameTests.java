@@ -147,7 +147,7 @@ public class ReactorConsoleGameTests {
     private static InteractionResult click(GameTestHelper h, BlockPos root, Direction facing, ReactorConsoleButton button, boolean up, boolean sneaking) {
         BlockPos pos = h.absolutePos(root.offset(ReactorConsoleStructure.DESK.offset(button.column, facing)));
         var right = facing.getCounterClockWise();
-        double u = (button.u + (up ? 0 : -button.radius / 2)) / 16d - .5, v = button.v / 16d - .5;
+        double u = (button.u + (up ? button.radius / 2 : -button.radius / 2)) / 16d - .5, v = button.v / 16d - .5;
         Vec3 point = Vec3.atLowerCornerOf(pos).add(.5 + right.getStepX() * u - facing.getStepX() * v,
             (11.25 + Math.min(3, button.v / 4)) / 16d, .5 + right.getStepZ() * u - facing.getStepZ() * v);
         var player = FakePlayerFactory.getMinecraft(h.getLevel());

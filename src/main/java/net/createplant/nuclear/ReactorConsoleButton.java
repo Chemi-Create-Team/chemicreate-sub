@@ -11,7 +11,10 @@ public enum ReactorConsoleButton {
     MODE(2, 8, 12, 2.5, "MODE", "switch"),
     BANK_DIAL(2, 8, 5, 3.5, "BANK", "dial"),
     CHART(3, 8, 10.5, 6, "PAPER", "area"),
-    ACKNOWLEDGE(3, 8, 2.5, 1.5, "ACK", "amber");
+    ACKNOWLEDGE(3, 8, 2.5, 1.5, "ACK", "amber"),
+    CRANE_MODE(0, 2.15, 2.6, 1.35, "CRANE", "amber"),
+    CRANE_ALONG(0, 2.15, 10.5, 1.55, "RAIL", "grey"),
+    CRANE_ACROSS(0, 13.85, 10.5, 1.55, "CROSS", "grey");
 
     public final int column;
     public final double u, v, radius;
@@ -29,6 +32,7 @@ public enum ReactorConsoleButton {
     public boolean dial() {
         return material.equals("dial");
     }
+    public boolean crane() { return this == CRANE_MODE || this == CRANE_ALONG || this == CRANE_ACROSS; }
     public static ReactorConsoleButton at(int section, double u, double v) {
         for (var button : BUTTONS)
             if (button.column == section && Math.abs(u * 16 - button.u) <= button.radius && Math.abs(v * 16 - button.v) <= button.radius)

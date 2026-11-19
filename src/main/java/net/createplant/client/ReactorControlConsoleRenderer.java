@@ -215,10 +215,16 @@ public class ReactorControlConsoleRenderer extends SafeBlockEntityRenderer<React
             else if (button == ReactorConsoleButton.MODE)
                 text = Component.translatable(KEY + "mode." + be.mode());
             double z = button == ReactorConsoleButton.CHART ? 15.4 : button.v - button.radius - .7;
-            topText(text, 1 - button.u / 16d, (surface(Math.max(0, z)) + .05) / 16d, Math.max(.4, z) / 16d, fit(text, .9, .0085f),
+            topText(text, 1 - button.u / 16d, (surface(Math.max(0, z)) + .05) / 16d, Math.max(.4, z) / 16d, fit(text, button.crane() ? .22 : .9, .0085f),
                 button == ReactorConsoleButton.CHART ? 0xFF252B29 : 0xFFEDE8D0, pose, buffers);
             pose.popPose();
         }
+        transformToPanel(be.getBlockPos(), be.deskPos(ReactorConsoleButton.CRANE_MODE.column), yaw, pose);
+        var crane = be.craneModeLabel();
+        double craneStatusDepth = 5.5;
+        topText(crane, 1 - ReactorConsoleButton.CRANE_MODE.u / 16d, (surface(craneStatusDepth) + .05) / 16d,
+            craneStatusDepth / 16d, fit(crane, .24, .0085f), 0xFFE7AC62, pose, buffers);
+        pose.popPose();
         transformToPanel(be.getBlockPos(), be.deskPos(ReactorConsoleButton.CHART.column), yaw, pose);
         for (int chart = 0; chart < 2; chart++) {
             Component title = Component.translatable(KEY + (chart == 0 ? "panel.chart_outlet" : "panel.chart_graphite"));

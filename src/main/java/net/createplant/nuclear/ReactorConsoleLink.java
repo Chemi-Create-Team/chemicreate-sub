@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
 
 /**
  * Like Create's Display Link: a desk unit item right-clicked on a formed display board, or a display board item on a formed desk,
@@ -16,6 +17,7 @@ public final class ReactorConsoleLink {
     /** Farthest a desk and its display board may be apart, in blocks between their masters. */
     public static final int RANGE = 32;
     private static final String KEY = "ReactorConsoleLink";
+    private static final String CRANE = "ReactorConsoleCrane";
 
     private ReactorConsoleLink() {}
 
@@ -29,5 +31,19 @@ public final class ReactorConsoleLink {
     }
     public static boolean inRange(BlockPos a, BlockPos b) {
         return a.closerThan(b, RANGE);
+    }
+
+    public static void rememberCrane(ItemStack stack, BlockPos pos, Player player) {
+        var link = new CompoundTag();
+        link.putLong("Pos", pos.asLong());
+        link.putString("Dimension", player.level().dimension().location().toString());
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.put(CRANE, link));
+        player.displayClientMessage(Component.translatable("reactor_control_console.create_refinery_n_reactors.crane.remembered",
+            pos.getX(), pos.getY(), pos.getZ()), true);
+    }
+
+    public static BlockPos rememberedCrane(ItemStack stack, Level level) {
+        var link = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag().getCompound(CRANE);
+        return link.getString("Dimension").equals(level.dimension().location().toString()) ? BlockPos.of(link.getLong("Pos")) : null;
     }
 }

@@ -272,7 +272,7 @@ def core_map_tiles():
 
 def main():
     controls = buttons()
-    if len(controls) != 10:
+    if len(controls) != 13:
         raise ValueError('Button definitions did not match the generator')
     textures()
     core_map_tiles()
@@ -338,6 +338,19 @@ def main():
 
 
 TEXT = {
+    'crane.remembered': ('Crane at %s %s %s selected. Right-click the assembled desk with this unit.', 'クレーン %s %s %s を記憶しました。このユニットで完成した制御盤を右クリックしてください。', '已记住位于 %s %s %s 的起重机。用此单元右击已组装的控制台。'),
+    'crane.connected': ('Crane at %s %s %s linked and stopped', 'クレーン %s %s %s に接続しました。停止中です。', '已连接位于 %s %s %s 的起重机，当前已停止。'),
+    'crane.disconnected': ('Crane link removed', 'クレーンの接続を解除しました。', '已解除起重机链接。'),
+    'crane.unavailable': ('Load the crane and assemble the full desk to operate it', 'クレーンの場所を読み込み、制御盤を完成させてください。', '请加载起重机所在区域并完成控制台组装。'),
+    'crane.in_use': ('The crane is already linked to another desk', 'クレーンは別の制御盤に接続されています。', '起重机已链接到另一台控制台。'),
+    'crane.no_link': ('Use a desk unit on the crane drive, then on this desk', '制御盤ユニットで駆動部を選び、この制御盤を右クリックしてください。', '使用控制台单元依次右击驱动端与此控制台。'),
+    'crane.no_link_short': ('OFF', '未接続', '未链接'),
+    'crane.manual_required': ('Switch the crane to manual to jog it', '走行・横行を操作するにはクレーンを手動に切り替えてください。', '请切换到手动模式以移动起重机。'),
+    'crane.mode_changed': ('Crane mode %s', 'クレーンモード %s', '起重机模式 %s'),
+    'crane.mode.0': ('STOP', '停止', '停止'),
+    'crane.mode.1': ('MAN', '手動', '手动'),
+    'crane.mode.2': ('AUTO', '自動', '自动'),
+    'crane.goggle': ('Crane %s — %s', 'クレーン %s ／ %s', '起重机 %s ／ %s'),
     'bank_control': ('bank %s', '一括%s', '成组%s'),
     'button.select_indicator': ('Click a control-rod lamp on the map, or use PREV / NEXT', '炉心図の制御棒ランプ、またはPREV／NEXTで棒を選択してください', '点击堆芯图上的控制棒灯，或使用PREV／NEXT选择'),
     'button.guard_open': ('AZ-5 cover opened; press the red button again to scram', 'AZ-5のカバーを開きました。もう一度赤ボタンを押すと緊急停止します', 'AZ-5保护盖已打开；再按红色按钮紧急停堆'),
@@ -368,6 +381,12 @@ TEXT = {
     'mode.1': ('MODE: MAN', 'モード：MAN', '模式：MAN'),
     'mode.2': ('MODE: AUTO', 'モード：AUTO', '模式：AUTO'),
 }
+CRANE_STATUS = {
+    'console_paused': ('Paused by the control desk', '制御盤で停止中', '控制台已暂停'),
+    'console_manual': ('Ready for manual travel', '手動移動待機中', '等待手动移动'),
+    'console_load': ('Grapple paused mid-operation; use AUTO to resume', '昇降途中で保持中。自動に切り替えると再開します。', '吊具在升降途中暂停。切换到自动模式以继续。'),
+    'console_limit': ('The crane has reached its travel limit', 'クレーンの移動範囲の端です。', '起重机已到达行程尽头。'),
+}
 # Desk labels in every language; anything missing falls back to the label written on the control in ReactorConsoleButton.
 LABELS = {
     'az5': ('AZ-5', 'AZ-5', 'AZ-5'),
@@ -377,6 +396,9 @@ LABELS = {
     'bank_dial': ('BANK', '一括', '成组'),
     'chart': ('PRESS TO CLEAR', '押して消去', '按下清除'),
     'acknowledge': ('ACK', '警報確認', '确认'),
+    'crane_mode': ('CRANE', 'クレーン', '起重机'),
+    'crane_along': ('RAIL ±', '走行 ±', '纵移 ±'),
+    'crane_across': ('CROSS ±', '横行 ±', '横移 ±'),
 }
 
 ROOM = {
@@ -422,6 +444,7 @@ def support():
         strings['block.create_refinery_n_reactors.reactor_control_console'] = ('Reactor Control Desk Unit', '原子炉制御盤ユニット', '反应堆控制台单元')[index]
         strings['block.create_refinery_n_reactors.reactor_console_display'] = ('Reactor Display Board Unit', '原子炉表示板ユニット', '反应堆显示板单元')[index]
         for key, words in TEXT.items(): strings[prefix + key] = words[index]
+        for key, words in CRANE_STATUS.items(): strings['crane.create_refinery_n_reactors.status.' + key] = words[index]
         for name, _, _, _, _, label, _ in buttons():
             words = LABELS.get(name.lower())
             strings[prefix + 'label.' + name.lower()] = (words[index] if words else label).replace('%', '％')

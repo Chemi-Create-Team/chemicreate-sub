@@ -235,6 +235,23 @@ public final class RbmkPonderScenes {
         scene.overlay().showControls(util.vector().topOf(automatic), Pointing.DOWN, 60).rightClick();
         scene.overlay().showOutline(PonderPalette.GREEN, "automatic", util.select().position(automatic), 100);
         text(scene, util, ROOM, automatic, "automatic");
+
+        var crane = new BlockPos(9, 1, 2);
+        scene.world().setBlock(crane, net.createplant.registry.CECrane.DRIVE.get().defaultBlockState(), false);
+        scene.world().showSection(util.select().position(crane), Direction.DOWN);
+        var unit = net.createplant.registry.CENuclear.REACTOR_CONTROL_CONSOLE_ITEM.get().getDefaultInstance();
+        scene.overlay().showControls(util.vector().topOf(crane), Pointing.DOWN, 65).withItem(unit).rightClick();
+        scene.idle(25);
+        scene.overlay().showControls(util.vector().topOf(console), Pointing.DOWN, 65).withItem(unit).rightClick();
+        scene.world().modifyBlockEntity(console, net.createplant.block.entity.ReactorControlConsoleBlockEntity.class,
+            be -> be.previewCrane(crane, net.createplant.block.entity.ReactorControlConsoleBlockEntity.CraneMode.STOPPED));
+        text(scene, util, ROOM, console, "crane_link");
+        scene.overlay().showControls(Vec3.atLowerCornerOf(console).add(1 - 2.15 / 16, .7, 2.6 / 16), Pointing.DOWN, 65).rightClick();
+        scene.world().modifyBlockEntity(console, net.createplant.block.entity.ReactorControlConsoleBlockEntity.class,
+            be -> be.previewCrane(crane, net.createplant.block.entity.ReactorControlConsoleBlockEntity.CraneMode.MANUAL));
+        text(scene, util, ROOM, console, "crane_mode");
+        scene.overlay().showControls(Vec3.atLowerCornerOf(console).add(1 - 2.15 / 16, .8, 10.5 / 16), Pointing.DOWN, 65).rightClick();
+        text(scene, util, ROOM, console, "crane_jog");
         scene.markAsFinished();
     }
 

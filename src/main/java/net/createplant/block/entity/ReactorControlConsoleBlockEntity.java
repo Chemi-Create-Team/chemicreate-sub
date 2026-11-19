@@ -36,6 +36,7 @@ import net.minecraft.world.phys.AABB;
  * the console samples it four times a second and sends only compact instrument and rod-map snapshots to clients.
  */
 public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, ReactorConsoleStation {
+    public enum CraneMode { STOPPED, MANUAL, AUTOMATIC }
     public static final int DESK_WIDTH = 4;
     /** Below this per-bundle flow a powered channel is shown blinking on the map and raises the flow alarm. */
     private static final double LOW_FLOW = .5;
@@ -45,6 +46,9 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
     private BlockPos controller, selectedBottom;
     /** The linked display board's master, and the board a placed unit remembered until the desk forms. */
     private BlockPos display, remembered;
+    private BlockPos cranePos;
+    private CraneMode craneMode = CraneMode.STOPPED;
+    private String craneStatus = "unloaded";
     private int selectedSlot = -1, selectedIndex = -1, sentFingerprint;
     private boolean assembled, walled, linked, scram;
     public static final int SAMPLES = 48;
@@ -137,6 +141,7 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
     }
     @Override public void invalidateStation() {
         releaseBank();
+        craneMode = CraneMode.STOPPED;
         assembled = walled = false;
         topologyDirty = true;
         sentFingerprint = 0;
@@ -173,6 +178,63 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
     public void dismantle() {
         releaseBank();
     }
+
+    public boolean linksCrane(BlockPos pos) { return pos.equals(cranePos); }
+
+    public CraneMode craneModeFor(BlockPos pos) {
+        return craneMode != CraneMode.STOPPED && linksCrane(pos) && assembled && stationComplete() ? craneMode : CraneMode.STOPPED;
+    }
+
+    private CraneDriveBlockEntity linkedCrane() {
+        return cranePos != null && level != null && level.hasChunkAt(cranePos)
+            && level.getBlockEntity(cranePos) instanceof CraneDriveBlockEntity crane && worldPosition.equals(crane.console()) ? crane : null;
+    }
+
+    public void linkCrane(Player player, BlockPos pos) {
+        if (!stationComplete() || !level.hasChunkAt(pos) || !(level.getBlockEntity(pos) instanceof CraneDriveBlockEntity crane)) {
+            player.displayClientMessage(Component.translatable(KEY + "crane.unavailable"), true);
+            return;
+        }
+        if (!crane.bindConsole(worldPosition)) {
+            player.displayClientMessage(Component.translatable(KEY + "crane.in_use"), true);
+            return;
+        }
+        var previous = linkedCrane();
+        if (previous != null && previous != crane) previous.unbindConsole(worldPosition);
+        cranePos = pos.immutable();
+        craneMode = CraneMode.STOPPED;
+        refresh();
+        player.displayClientMessage(Component.translatable(KEY + "crane.connected", pos.getX(), pos.getY(), pos.getZ()), true);
+    }
+
+    private void pressCrane(Player player, ReactorConsoleButton button, boolean positive) {
+        var crane = linkedCrane();
+        if (button == ReactorConsoleButton.CRANE_MODE && player.isShiftKeyDown() && cranePos != null) {
+            if (crane != null) crane.unbindConsole(worldPosition);
+            cranePos = null;
+            craneMode = CraneMode.STOPPED;
+            player.displayClientMessage(Component.translatable(KEY + "crane.disconnected"), true);
+        } else if (crane == null) {
+            player.displayClientMessage(Component.translatable(KEY + (cranePos == null ? "crane.no_link" : "crane.unavailable")), true);
+        } else if (button == ReactorConsoleButton.CRANE_MODE) {
+            craneMode = switch (craneMode) {
+                case STOPPED -> CraneMode.MANUAL;
+                case MANUAL -> CraneMode.AUTOMATIC;
+                case AUTOMATIC -> CraneMode.STOPPED;
+            };
+            crane.clearJog();
+            player.displayClientMessage(Component.translatable(KEY + "crane.mode_changed", craneModeLabel()), true);
+        } else if (craneMode == CraneMode.MANUAL) {
+            String reason = crane.jog(button == ReactorConsoleButton.CRANE_ALONG, positive ? 1 : -1);
+            if (reason != null) player.displayClientMessage(Component.translatable("crane.create_refinery_n_reactors.status." + reason), true);
+        } else {
+            player.displayClientMessage(Component.translatable(KEY + "crane.manual_required"), true);
+        }
+    }
+
+    public Component craneModeLabel() {
+        return Component.translatable(KEY + "crane." + (cranePos == null ? "no_link_short" : "mode." + craneMode.ordinal()));
+    }
     private ReactorCore previousCore() {
         return controller != null && level != null && level.hasChunkAt(controller)
                 && level.getBlockEntity(controller) instanceof FuelChannelBlockEntity lead
@@ -205,6 +267,8 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             topologyDirty = !assembled;
         }
         walled = assembled && displayLinked();
+        var crane = linkedCrane();
+        craneStatus = crane == null ? "unloaded" : crane.status();
         ReactorCore previous = previousCore();
         if (!assembled) linkStatus = "incomplete";
         ReactorCore core = assembled ? linkedCore() : null;
@@ -238,7 +302,7 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             quantize(graphiteKelvin, 10), quantize(representativeOutletKelvin, 10), quantize(voidFraction, 1000),
             quantize(rodInsertion, 1000), selectedIndex, Arrays.hashCode(rodMap), Arrays.hashCode(fuelMap), bundles, mode,
             bankTarget, controlTarget, alarms, acknowledged, guardOpen, chartCount, chartCursor, quantize(totalFlow, 10),
-            quantize(xenon, 1000), quantize(surfaceKelvin, 10), quantize(nominalWatts, 1));
+            quantize(xenon, 1000), quantize(surfaceKelvin, 10), quantize(nominalWatts, 1), cranePos, craneMode, craneStatus);
         if (fingerprint != sentFingerprint) {
             sentFingerprint = fingerprint;
             setChanged();
@@ -431,6 +495,7 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
         level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK.value(),
             net.minecraft.sounds.SoundSource.BLOCKS, .35f, .8f);
         switch (button) {
+            case CRANE_MODE, CRANE_ALONG, CRANE_ACROSS -> pressCrane(player, button, up);
             case AZ5 -> {
                 if (guardOpen)
                     pressAz5(player, false);
@@ -636,6 +701,11 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
         display = board;
     }
 
+    public void previewCrane(BlockPos crane, CraneMode mode) {
+        cranePos = crane;
+        craneMode = mode;
+    }
+
     /** Ponder-only moving panel values; never called by ordinary gameplay. */
     public void preview() {
         assembled = walled = linked = true;
@@ -709,12 +779,15 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
         }
         if (controller != null) tag.putLong("Controller", controller.asLong());
         if (display != null) tag.putLong("Display", display.asLong());
+        if (cranePos != null) tag.putLong("Crane", cranePos.asLong());
         if (!packet && remembered != null) tag.putLong("Remembered", remembered.asLong());
         if (selectedBottom != null) tag.putLong("SelectedBottom", selectedBottom.asLong());
         tag.putLongArray("DisplayLinks", displayLinks.stream().mapToLong(BlockPos::asLong).toArray());
         tag.putInt("SelectedSlot", selectedSlot);
         if (!packet) return;
         tag.putBoolean("Assembled", assembled);
+        tag.putInt("CraneMode", craneMode.ordinal());
+        tag.putString("CraneStatus", craneStatus);
         tag.putBoolean("Walled", walled);
         tag.putBoolean("Linked", linked);
         tag.putBoolean("Scram", scram);
@@ -758,6 +831,8 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
         }
         controller = tag.contains("Controller") ? BlockPos.of(tag.getLong("Controller")) : null;
         display = tag.contains("Display") ? BlockPos.of(tag.getLong("Display")) : null;
+        cranePos = tag.contains("Crane") ? BlockPos.of(tag.getLong("Crane")) : null;
+        craneMode = packet ? CraneMode.values()[Math.clamp(tag.getInt("CraneMode"), 0, CraneMode.values().length - 1)] : CraneMode.STOPPED;
         if (!packet) remembered = tag.contains("Remembered") ? BlockPos.of(tag.getLong("Remembered")) : null;
         selectedBottom = tag.contains("SelectedBottom") ? BlockPos.of(tag.getLong("SelectedBottom")) : null;
         displayLinks.clear();
@@ -766,6 +841,7 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
         selectedSlot = tag.getInt("SelectedSlot");
         if (!packet) return;
         assembled = tag.getBoolean("Assembled");
+        craneStatus = tag.contains("CraneStatus") ? tag.getString("CraneStatus") : "unloaded";
         walled = tag.getBoolean("Walled");
         linked = tag.getBoolean("Linked");
         scram = tag.getBoolean("Scram");
@@ -790,6 +866,11 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             return master.addToGoggleTooltip(tooltip, sneaking);
         tooltip.add(linked ? Component.translatable(KEY + "status.linked", Component.translatable("reactor_core.create_refinery_n_reactors.status." + reactorStatus))
             : Component.translatable(KEY + "status." + (assembled ? linkStatus : "incomplete")));
+        if (sneaking && cranePos != null) {
+            tooltip.add(Component.translatable(KEY + "crane.goggle", craneModeLabel(),
+                Component.translatable("crane.create_refinery_n_reactors.status." + craneStatus)));
+            return true;
+        }
         if (selectedBottom == null || selectedIndex < 0) tooltip.add(Component.translatable(KEY + "goggle.no_selection"));
         else tooltip.add(Component.translatable(KEY + "goggle.selection", selectedBottom.getX(), selectedBottom.getZ(), selectedSlot + 1));
         int target = selectedTarget();

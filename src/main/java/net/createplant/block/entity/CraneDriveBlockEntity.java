@@ -11,6 +11,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollVa
 import net.createplant.block.CraneDriveBlock;
 import net.createplant.block.CraneFrame;
 import net.createplant.block.CraneStructure;
+import net.createplant.block.entity.ReactorControlConsoleBlockEntity.CraneMode;
 import net.createplant.nuclear.Finite;
 import net.createplant.nuclear.ReactorCores;
 import net.createplant.nuclear.ReactorPhysics;
@@ -91,6 +92,9 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     private static final int NONE = 0, FRESH = 1, SPENT = 2;
     private double u, v, depth;
     private Task task;
+    private BlockPos console;
+    private boolean jogging;
+    private double jogU, jogV;
     private int remaining, clock, fuelCursor;
     private String status = "structure";
     private String waitReason = "waiting";
@@ -136,7 +140,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
 
     private void configurationChanged() {
         if (level == null || level.isClientSide()) return;
-        cancelTask();structure = null;plan = null;
+        cancelTask();clearJog();structure = null;plan = null;
         if (hasNetwork()) getOrCreateNetwork().updateStressFor(this, calculateStressApplied());
         changed();
     }
@@ -151,6 +155,48 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     public CraneStructure.Result structure() { return structure; }
     public boolean working() { return working; }
     public String status() { return status; }
+    public BlockPos console() { return console; }
+
+    public boolean bindConsole(BlockPos desk) {
+        if (console != null && !console.equals(desk) && (!level.hasChunkAt(console)
+            || level.getBlockEntity(console) instanceof ReactorControlConsoleBlockEntity old && old.linksCrane(worldPosition))) return false;
+        console = desk.immutable();
+        clearJog();
+        changed();
+        return true;
+    }
+
+    public void unbindConsole(BlockPos desk) {
+        if (!desk.equals(console)) return;
+        console = null;
+        clearJog();
+        changed();
+    }
+
+    private CraneMode remoteMode() {
+        if (console == null) return null;
+        if (!level.hasChunkAt(console) || !(level.getBlockEntity(console) instanceof ReactorControlConsoleBlockEntity desk)) return CraneMode.STOPPED;
+        if (!desk.linksCrane(worldPosition) && desk.stationComplete()) {
+            unbindConsole(console);
+            return null;
+        }
+        return desk.craneModeFor(worldPosition);
+    }
+
+    public void clearJog() { jogging = false; }
+
+    /** Requests one block of travel along or across the rails, without operating the grapple. */
+    public String jog(boolean along, int step) {
+        if (structure == null) return "structure";
+        if (remaining > 0) return "console_load";
+        if (getSpeed() == 0) return "speed";
+        double fromU = jogging ? jogU : u, fromV = jogging ? jogV : v;
+        jogU = Math.clamp(fromU + (along ? step : 0), 0, structure.length() - 1);
+        jogV = Math.clamp(fromV + (along ? 0 : step), 1, structure.span() - 1);
+        if (jogU == fromU && jogV == fromV) return "console_limit";
+        jogging = true;
+        return null;
+    }
     public double depth() { return depth; }
     public int carried() { return carried; }
     public int carriedLength() { return carriedLength; }
@@ -214,21 +260,31 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         if (structure != null && (structure.along() != getBlockState().getValue(CraneDriveBlock.FACING)
             || structure.length() != length() || structure.span() != width() + 1)) configurationChanged();
         if (structure == null || clock % 40 == 0) validate();
+        CraneMode remote = remoteMode();
+        boolean enabled = remote == null ? level.hasNeighborSignal(worldPosition) : remote != CraneMode.STOPPED;
+        String disabled = remote == null ? "redstone" : "console_paused";
         if (structure == null) {
-            buildFrame();
+            buildFrame(enabled && remote != CraneMode.MANUAL, remote == CraneMode.MANUAL ? "structure" : disabled);
             return;
         }
         if (!fusion() && Math.abs(depth - SERVICE_MAST_DEPTH) > EPSILON) {
             depth = SERVICE_MAST_DEPTH;
             moved();
         }
-        if (!level.hasNeighborSignal(worldPosition)) {
-            stop("redstone");
+        if (!enabled) {
+            clearJog();
+            stop(disabled);
             return;
         }
         float speed = Math.abs(getSpeed());
         if (speed == 0) {
+            clearJog();
             stop("speed");
+            return;
+        }
+        double step = Math.min(0.49, speed / 256);
+        if (remote == CraneMode.MANUAL) {
+            tickJog(step);
             return;
         }
         if (task == null) {
@@ -244,7 +300,6 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             stop("unloaded");
             return;
         }
-        double step = Math.min(0.49, speed / 256);
         boolean over = Math.abs(u - task.u()) < EPSILON && Math.abs(v - task.v()) < EPSILON;
         if (!over) {
             working = false;
@@ -283,6 +338,22 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
 
     private static double approach(double from, double to, double step) {
         return Math.abs(to - from) <= step ? to : from + Math.signum(to - from) * step;
+    }
+
+    private void tickJog(double step) {
+        if (!jogging || remaining > 0) {
+            stop(remaining > 0 ? "console_load" : "console_manual");
+            return;
+        }
+        working = false;
+        if (fusion() && depth > 0) depth = Math.max(0, depth - step);
+        else {
+            u = approach(u, jogU, step);
+            v = approach(v, jogV, step);
+            if (u == jogU && v == jogV) clearJog();
+        }
+        status(jogging ? "moving" : "console_manual");
+        moved();
     }
 
     private void carry(int next, boolean down) {
@@ -337,8 +408,10 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             v = Math.clamp(v, 1, result.span() - 1);
             depth = fusion() ? Math.max(0, depth) : SERVICE_MAST_DEPTH;
             plan = null;
+            clearJog();
             cancelTask();
         } else if (!result.formed()) {
+            clearJog();
             cancelTask();
             structure = null;
             fault = result.fault();
@@ -643,11 +716,11 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
 
     // Building the frame
 
-    /** One building step while there is a redstone signal: set the next missing girder from the store. */
-    private void buildFrame() {
+    /** Sets the next missing girder from the store when automatic construction is enabled. */
+    private void buildFrame(boolean enabled, String disabled) {
         if (plan == null) plan = configuredFrame();
-        if (!level.hasNeighborSignal(worldPosition)) {
-            stop("redstone");
+        if (!enabled) {
+            stop(disabled);
             return;
         }
         if (!plan.reachable()) {
@@ -746,6 +819,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         tag.putDouble("Reach", reach);
         if (clientPacket) tag.putInt("Remaining", remaining);
         tag.putString("Status", status);
+        if (console != null) tag.putLong("Console", console.asLong());
         tag.putLong("Fault", fault.asLong());
         if (clientPacket) { tag.putInt("FrameDone", frameDone);tag.putInt("FrameTotal", frameTotal);tag.putInt("FrameShortGirders", frameShortGirders); }
         if (structure != null) {
@@ -784,6 +858,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         reach = tag.contains("Reach") ? Finite.of(tag.getDouble("Reach"), ROD_LENGTH, 0, Double.MAX_VALUE) : ROD_LENGTH;
         if (clientPacket) remaining = tag.getInt("Remaining");
         status = tag.getString("Status");
+        console = tag.contains("Console") ? BlockPos.of(tag.getLong("Console")) : null;
         if (status.isEmpty()) status = "structure";
         fault = BlockPos.of(tag.getLong("Fault"));
         structure = tag.contains("Start") ? new CraneStructure.Result(BlockPos.of(tag.getLong("Start")), Direction.from3DDataValue(tag.getInt("Along")),

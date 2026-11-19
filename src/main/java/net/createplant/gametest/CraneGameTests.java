@@ -2,6 +2,7 @@ package net.createplant.gametest;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import java.util.List;
 import net.createplant.CreatePlant;
 import net.createplant.block.CraneDriveBlock;
 import net.createplant.block.CraneFrame;
@@ -9,8 +10,11 @@ import net.createplant.block.CraneStructure;
 import net.createplant.block.entity.CraneDriveBlockEntity;
 import net.createplant.block.entity.FuelChannelBlockEntity;
 import net.createplant.block.entity.FuelPoolBlockEntity;
+import net.createplant.block.entity.ReactorControlConsoleBlockEntity;
 import net.createplant.block.entity.RodCapBlockEntity;
 import net.createplant.nuclear.ReactorCoreStructure;
+import net.createplant.nuclear.ReactorConsoleButton;
+import net.createplant.nuclear.ReactorConsoleStructure;
 import net.createplant.nuclear.ReactorPhysics;
 import net.createplant.registry.CECrane;
 import net.createplant.registry.CENuclear;
@@ -18,11 +22,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -189,6 +196,89 @@ public class CraneGameTests {
                     "Crane moves full 21 m assemblies between the 2 x 2 cap and deep pool without changing mast depth: " + crane.status());
                 h.assertTrue(Math.abs(crane.depth() - CraneDriveBlockEntity.SERVICE_MAST_DEPTH) < 1e-6,
                     "The 10 + 5 handling mast stays at its fixed service depth");
+            })
+            .thenSucceed();
+    }
+
+    @GameTest(template = "test_rbmk", batch = "crane_transfer", timeoutTicks = 2100)
+    public static void thePhysicalDeskJogsTheCraneAndPausesFuelExchange(GameTestHelper h) {
+        reactor(h);
+        pool(h);
+        BlockPos drive = serviceCrane(h, false), desk = new BlockPos(18, CAP_Y, 5);
+        var level = h.getLevel();
+        var crane = (CraneDriveBlockEntity) h.getBlockEntity(drive);
+        var rack = (FuelPoolBlockEntity) h.getBlockEntity(POOL);
+        var column = (FuelChannelBlockEntity) h.getBlockEntity(CORE);
+        Direction facing = Direction.NORTH;
+        ReactorConsoleStructure.DESK.place(h::setBlock, desk, facing);
+        h.assertTrue(ReactorConsoleStructure.DESK.tryForm(level, h.absolutePos(desk)), "Assemble the physical desk without a reactor Display Link");
+        var console = (ReactorControlConsoleBlockEntity) h.getBlockEntity(desk);
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var unit = CENuclear.REACTOR_CONTROL_CONSOLE_ITEM.get().getDefaultInstance();
+        player.setItemInHand(InteractionHand.MAIN_HAND, unit);
+        for (var relative : List.of(drive, desk)) {
+            var pos = h.absolutePos(relative);
+            var hit = new BlockHitResult(pos.getCenter(), Direction.UP, pos, false);
+            h.assertTrue(level.getBlockState(pos).useItemOn(unit, level, player, InteractionHand.MAIN_HAND, hit).consumesAction(),
+                "The same console unit selects the crane and links the desk");
+        }
+        h.assertTrue(h.absolutePos(desk).equals(crane.console()), "Both endpoints link after the physical item interaction");
+        double[] slide = {0};
+        h.startSequence()
+            .thenWaitUntil(() -> h.assertTrue(crane.structure() != null && crane.getSpeed() != 0 && crane.status().equals("console_paused"),
+                "The linked drive starts in STOP with rotation available"))
+            .thenExecute(() -> {
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_ALONG);
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_ACROSS);
+            })
+            .thenWaitUntil(() -> {
+                var craneTag = crane.saveWithoutMetadata(level.registryAccess());
+                h.assertTrue(craneTag.getDouble("U") == 1 && craneTag.getDouble("V") == 2 && crane.status().equals("console_manual"),
+                    "The right halves of both physical buttons move one block in the respective axes");
+            })
+            .thenExecute(() -> {
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_ALONG, false);
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_ACROSS, false);
+            })
+            .thenWaitUntil(() -> {
+                var craneTag = crane.saveWithoutMetadata(level.registryAccess());
+                h.assertTrue(craneTag.getDouble("U") == 0 && craneTag.getDouble("V") == 1 && crane.status().equals("console_manual"),
+                    "The left halves move back toward the near rail and start");
+            })
+            .thenExecute(() -> {
+                var port = level.getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(CAP), Direction.UP);
+                h.assertTrue(port.insertItem(2, CENuclear.FUEL_ROD.toStack(), false).isEmpty(), "Load a fuel position for the exchange");
+                column.burn(column.rodJoules());
+                rack.set(0, FuelPoolBlockEntity.FRESH);
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
+            })
+            .thenWaitUntil(() -> h.assertTrue(crane.working() && crane.carried() == 2 && column.spent() == 0,
+                "AUTO starts withdrawing the spent assembly without local redstone"))
+            .thenExecute(() -> {
+                slide[0] = crane.slide();
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
+                h.setBlock(drive.above(), Blocks.REDSTONE_BLOCK);
+            })
+            .thenIdle(20)
+            .thenExecute(() -> {
+                h.assertTrue(crane.status().equals("console_paused") && crane.carried() == 2 && crane.slide() == slide[0],
+                    "STOP holds the spent assembly and its lift progress even while local redstone is on");
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_ALONG);
+            })
+            .thenWaitUntil(() -> h.assertTrue(crane.status().equals("console_load") && crane.slide() == slide[0],
+                "Manual travel does not move a grapple while it is part way through a lift"))
+            .thenExecute(() -> ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE))
+            .thenWaitUntil(() -> h.assertTrue(column.fresh() == 1 && poolCount(h, FuelPoolBlockEntity.SPENT) == 1 && crane.carried() == 0,
+                "Resuming AUTO deposits one old assembly and loads one new one"))
+            .thenExecute(() -> {
+                console.loadWithComponents(console.saveWithoutMetadata(level.registryAccess()), level.registryAccess());
+                h.assertTrue(console.linksCrane(h.absolutePos(drive)) && console.craneModeFor(h.absolutePos(drive)) == ReactorControlConsoleBlockEntity.CraneMode.STOPPED,
+                    "Saving preserves the link and reloading requires a new command to move");
+                player.setShiftKeyDown(true);
+                console.press(player, ReactorConsoleButton.CRANE_MODE, true);
+                h.assertTrue(crane.console() == null && !console.linksCrane(h.absolutePos(drive)), "Unlinking returns the drive to local redstone control");
             })
             .thenSucceed();
     }

@@ -112,6 +112,18 @@ public class ReactorControlConsoleBlock extends Block implements IBE<ReactorCont
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
         BlockHitResult hit) {
+        if (stack.is(CENuclear.REACTOR_CONTROL_CONSOLE_ITEM.get())) {
+            BlockPos crane = ReactorConsoleLink.rememberedCrane(stack, level);
+            if (crane != null) {
+                BlockPos root = ReactorControlConsoleBlockEntity.masterAt(level, pos);
+                if (root == null || !(level.getBlockEntity(root) instanceof ReactorControlConsoleBlockEntity console)) {
+                    player.displayClientMessage(net.minecraft.network.chat.Component.translatable("reactor_control_console.create_refinery_n_reactors.link.desk_incomplete"), true);
+                    return ItemInteractionResult.FAIL;
+                }
+                if (!level.isClientSide) console.linkCrane(player, crane);
+                return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
         if (!stack.is(CENuclear.REACTOR_CONSOLE_DISPLAY_ITEM.get()))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         BlockPos master = ReactorControlConsoleBlockEntity.masterAt(level, pos);
