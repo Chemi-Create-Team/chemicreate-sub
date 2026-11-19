@@ -8,10 +8,10 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 
 /** Copy on read and commit, so capability simulations cannot mutate an item's component. */
-public final class SprayToolFluidHandler implements IFluidHandlerItem {
+public final class PortableToolFluidHandler implements IFluidHandlerItem {
     private final ItemStack stack;
-    public SprayToolFluidHandler(ItemStack stack) { this.stack=stack; }
-    private SprayToolItem tool() { return (SprayToolItem)stack.getItem(); }
+    public PortableToolFluidHandler(ItemStack stack) { this.stack=stack; }
+    private PortableFluidToolItem tool() { return (PortableFluidToolItem)stack.getItem(); }
     public static FluidStack contents(ItemStack stack) {
         var fluid=stack.get(CEPortableTools.CONTENTS.get());return fluid==null ? FluidStack.EMPTY : fluid.copy();
     }

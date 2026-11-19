@@ -42,7 +42,8 @@
     "CreativeInventorySectionsMixin",
     "GoggleOverlayMixin",
     "FluidTankModelInvoker",
-    "PonderTextWrapMixin"
+    "PonderTextWrapMixin",
+    "SteamGunThrustMixin"
   ],
   "injectors": {
     "defaultRequire": 1

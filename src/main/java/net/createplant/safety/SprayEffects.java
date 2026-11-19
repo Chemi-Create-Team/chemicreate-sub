@@ -37,7 +37,7 @@ public final class SprayEffects {
     private SprayEffects() { }
     public static void spray(ServerLevel level,Player player,ItemStack held,FluidStack fluid,SprayToolItem tool) {
         Vec3 start=player.getEyePosition(),direction=player.getLookAngle();
-        Vec3 requested=loadedEnd(level,start,start.add(direction.scale(tool.range())));
+        Vec3 requested=LoadedRay.end(level,start,start.add(direction.scale(tool.range())));
         var hit=level.clip(new ClipContext(start,requested,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,player));
         Vec3 end=hit.getLocation();
         boolean flame=tool.kind()==SprayToolItem.Kind.FLAME;
@@ -94,20 +94,11 @@ public final class SprayEffects {
         return state.is(BlockTags.FIRE) || (state.is(BlockTags.CAMPFIRES) || state.is(BlockTags.CANDLES) || state.is(BlockTags.CANDLE_CAKES)) && state.getValue(BlockStateProperties.LIT)
             || state.getBlock() instanceof FlareTipBlock && state.getValue(FlareTipBlock.PILOT);
     }
-    private static Vec3 loadedEnd(ServerLevel level,Vec3 start,Vec3 end) {
-        Vec3 previous=start;int steps=Math.max(1,(int)Math.ceil(start.distanceTo(end)*4));
-        for(int i=1;i<=steps;i++) {
-            var point=start.lerp(end,(double)i/steps);
-            if(!level.hasChunkAt(BlockPos.containing(point)))return previous;
-            previous=point;
-        }
-        return end;
-    }
     private static boolean touches(Vec3 start,Vec3 end,AABB bounds) { return bounds.contains(start) || bounds.clip(start,end).isPresent(); }
     private static boolean visible(ServerLevel level,Player player,Vec3 start,BlockPos pos) {
         if(!level.hasChunkAt(pos))return false;
         var end=Vec3.atCenterOf(pos);
-        if(loadedEnd(level,start,end).distanceToSqr(end)>1e-6)return false;
+        if(LoadedRay.end(level,start,end).distanceToSqr(end)>1e-6)return false;
         var hit=level.clip(new ClipContext(start,end,ClipContext.Block.COLLIDER,ClipContext.Fluid.NONE,player));
         return hit.getType()==HitResult.Type.MISS || hit.getBlockPos().equals(pos);
     }

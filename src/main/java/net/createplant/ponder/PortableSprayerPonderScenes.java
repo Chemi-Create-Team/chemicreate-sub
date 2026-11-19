@@ -2,7 +2,7 @@ package net.createplant.ponder;
 
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
-import net.createplant.item.SprayToolFluidHandler;
+import net.createplant.item.PortableToolFluidHandler;
 import net.createplant.registry.CEPortableTools;
 import net.createplant.registry.CEPetroFluids;
 import net.createplant.registry.CEUranium;
@@ -54,7 +54,7 @@ public final class PortableSprayerPonderScenes {
         text(scene,util,new BlockPos(6,1,6),"flame");
         text(scene,util,new BlockPos(4,1,4),"stop");scene.markAsFinished();
     }
-    private static ItemStack loaded(ItemStack stack,FluidStack fluid) { new SprayToolFluidHandler(stack).fill(fluid,FluidAction.EXECUTE);return stack; }
+    private static ItemStack loaded(ItemStack stack,FluidStack fluid) { new PortableToolFluidHandler(stack).fill(fluid,FluidAction.EXECUTE);return stack; }
     private static void fill(CreateSceneBuilder scene,BlockPos pos,FluidStack fluid) { scene.world().modifyBlockEntity(pos,FluidTankBlockEntity.class,be->be.getTankInventory().setFluid(fluid.copy())); }
     private static void text(CreateSceneBuilder scene,SceneBuildingUtil util,BlockPos at,String key) { PonderText.caption(scene,util.vector().centerOf(at),KEY+key,105); }
 }

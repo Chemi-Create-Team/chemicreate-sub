@@ -1,0 +1,40 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    "  A  ",
+    "PSBGP",
+    "  MI ",
+    "  W  "
+  ],
+  "key": {
+    "A": {
+      "item": "create_refinery_n_reactors:gas_receiver"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "G": {
+      "item": "create:cogwheel"
+    },
+    "M": {
+      "item": "create:precision_mechanism"
+    },
+    "I": {
+      "item": "minecraft:iron_sword"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:steam_gun",
+    "count": 1
+  },
+  "accept_mirrored": true
+}

@@ -2,7 +2,10 @@ package net.createplant.registry;
 
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
+import net.createplant.item.PortableToolFluidHandler;
 import net.createplant.item.SprayToolItem;
+import net.createplant.item.SteamGunAction;
+import net.createplant.item.SteamGunItem;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
@@ -21,14 +24,15 @@ public final class CEPortableTools {
     public static final DeferredItem<SprayToolItem> FIRE_EXTINGUISHER=tool("fire_extinguisher",SprayToolItem.Kind.EXTINGUISHER);
     public static final DeferredItem<SprayToolItem> FLAMETHROWER=tool("flamethrower",SprayToolItem.Kind.FLAME);
     public static final DeferredItem<SprayToolItem> CHEMICAL_SPRAYER=tool("chemical_sprayer",SprayToolItem.Kind.LIQUID);
+    public static final DeferredItem<SteamGunItem> STEAM_GUN=ITEMS.register("steam_gun",()->new SteamGunItem(new Item.Properties().stacksTo(1)));
 
     private CEPortableTools() { }
     private static DeferredItem<SprayToolItem> tool(String id,SprayToolItem.Kind kind) {
         return ITEMS.register(id,()->new SprayToolItem(kind,new Item.Properties().stacksTo(1)));
     }
-    public static void register(IEventBus bus) { ITEMS.register(bus);COMPONENTS.register(bus);bus.addListener(CEPortableTools::capabilities); }
+    public static void register(IEventBus bus) { ITEMS.register(bus);COMPONENTS.register(bus);bus.addListener(CEPortableTools::capabilities);bus.addListener(SteamGunAction::register); }
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerItem(Capabilities.FluidHandler.ITEM,(stack,context)->new net.createplant.item.SprayToolFluidHandler(stack),
-            FIRE_EXTINGUISHER.get(),FLAMETHROWER.get(),CHEMICAL_SPRAYER.get());
+        event.registerItem(Capabilities.FluidHandler.ITEM,(stack,context)->new PortableToolFluidHandler(stack),
+            FIRE_EXTINGUISHER.get(),FLAMETHROWER.get(),CHEMICAL_SPRAYER.get(),STEAM_GUN.get());
     }
 }

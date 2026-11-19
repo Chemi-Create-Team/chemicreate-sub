@@ -4818,5 +4818,30 @@
     "en_us": "Pump the blend into the east face of the upper layer of a two-layer 2×2 column. Draw water from the upper north outlet and coolant from the lower north outlet. Return the water to the mixer or another line.\n%s → %s",
     "ja_jp": "冷却原液を2×2・高さ2段の分留塔の上段東面へ送ります。上段北面の回収水と、下段北面の冷却液を別々のポンプで取り出します。回収水は撹拌槽や別の設備に戻せます。\n%s → %s",
     "zh_cn": "将冷却原液泵入2×2两层分馏塔的上层东面。用不同的泵从上层北面收水、下层北面收冷却液。回收的水可以送回搅拌容器或其他设备。\n%s → %s"
+  },
+  "steam_gun.title": {
+    "en_us": "Charging and using the steam gun",
+    "ja_jp": "蒸気銃を充填して使う",
+    "zh_cn": "充填和使用蒸汽枪"
+  },
+  "steam_gun.refill": {
+    "en_us": "Hold Sneak and right-click the end of a steam receiver. The item bar and tooltip show its charge.",
+    "ja_jp": "蒸気を入れた脈動抑制管の端面を、しゃがみながら右クリックします。アイテムの残量バーと説明欄で充填量を確認できます。",
+    "zh_cn": "潜行时右击装有蒸汽的脉动缓冲管端面。物品进度条和提示会显示余量。"
+  },
+  "steam_gun.aim": {
+    "en_us": "Hold the gun in your main hand and keep the use button held to look down the sights.",
+    "ja_jp": "蒸気銃をメインハンドに持ち、右クリックを長押しして照準を合わせます。",
+    "zh_cn": "将蒸汽枪拿在主手，按住右键瞄准。"
+  },
+  "steam_gun.fire": {
+    "en_us": "Press Attack while aiming to fire one shot. Each shot uses steam, even if it misses.",
+    "ja_jp": "照準中に左クリックすると1発発射します。外れたときも蒸気を消費します。",
+    "zh_cn": "瞄准时左击发射一次。即使落空也会消耗蒸汽。"
+  },
+  "steam_gun.bayonet": {
+    "en_us": "Press the Bayonet key (V by default) to thrust at close range. Change the key in Controls.",
+    "ja_jp": "近くの相手には「銃剣で突く」キー（初期設定V）で突きを出せます。キーは操作設定で変更できます。",
+    "zh_cn": "按刺刀键（默认V）近距离突刺。可在控制设置中修改按键。"
   }
 }

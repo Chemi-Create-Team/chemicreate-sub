@@ -24,7 +24,7 @@ SHEET=64
 # Slot view of each tool: (scale, offset), fitted so the whole tool fills the slot.
 GUI={'fire_extinguisher':(.75,[0,-.8,0]),'flamethrower':(.66,[-2.2,.2,0])}
 
-def sheet(name,metals,sprites):
+def sheet(name,metals,sprites,target=TEXTURE):
     """A 64 px sheet for one tool: a 16 px cell per metal lit from the upper left, then the tool's own sprites.
     Returns the pixel origin of every cell."""
     from PIL import Image,ImageDraw
@@ -36,7 +36,7 @@ def sheet(name,metals,sprites):
             draw.rectangle((x+sx,y+sy,x+sx+length-1,y+sy),fill=dark);draw.rectangle((x+sx+1,y+sy+1,x+sx+length,y+sy+1),fill=light)
         draw.rectangle((x+13,y+2,x+13,y+3),fill=seam)
     sprites(lambda x0,y0,x1,y1,colour:draw.rectangle((x0,y0,x1,y1),fill=colour))
-    TEXTURE.mkdir(parents=True,exist_ok=True);image.save(TEXTURE/f'{name}.png')
+    target.mkdir(parents=True,exist_ok=True);image.save(target/f'{name}.png')
     return cells
 
 def box(cells,name,start,end,metal,rotation=None,sides=SIDES,flat=(),sprites=None):
