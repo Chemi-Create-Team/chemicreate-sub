@@ -19,13 +19,11 @@ import net.createplant.registry.CEItems;
 import net.createplant.registry.CEMetals;
 import net.createplant.registry.CERecipeTypes;
 import net.createplant.registry.CETransport;
-import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.ThermalEquipment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -259,14 +257,14 @@ public final class ConverterGameTests {
                 .is(ConverterStructure.stateFor(cell, FACING).getBlock()), "Breaking the bearing returns the upright vessel");
         int itemCount = helper.getLevel().getEntitiesOfClass(ItemEntity.class, helper.getBounds()).stream()
             .mapToInt(entity -> entity.getItem().getCount()).sum();
-        List<AreaEffectCloud> clouds = helper.getLevel().getEntitiesOfClass(AreaEffectCloud.class, helper.getBounds(), ToxicGas::toxic);
+        var clouds = net.createplant.cloud.GasClouds.in(helper.getLevel(), helper.getBounds());
         helper.assertTrue(itemCount == 15, "The owner drops every retained item exactly once: " + itemCount);
         helper.assertTrue(clouds.size() == 1, "Converter gas becomes exactly one toxic cloud");
         helper.setBlock(ConverterStructure.passiveBearing(ORIGIN, FACING), Blocks.AIR);
         int after = helper.getLevel().getEntitiesOfClass(ItemEntity.class, helper.getBounds()).stream()
             .mapToInt(entity -> entity.getItem().getCount()).sum();
         helper.assertTrue(after == itemCount
-            && helper.getLevel().getEntitiesOfClass(AreaEffectCloud.class, helper.getBounds(), ToxicGas::toxic).size() == 1,
+            && net.createplant.cloud.GasClouds.in(helper.getLevel(), helper.getBounds()).size() == 1,
             "Breaking a surviving stationary part duplicates neither items nor gas");
         helper.succeed();
     }

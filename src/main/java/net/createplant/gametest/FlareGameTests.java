@@ -17,6 +17,7 @@ import net.createplant.registry.CEFlare;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CETransport;
+import net.createplant.cloud.GasClouds;
 import net.createplant.safety.FlammableGas;
 import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.FluidMaterials;
@@ -26,7 +27,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -68,7 +68,7 @@ public class FlareGameTests {
         return (FlareTipBlockEntity)h.getLevel().getBlockEntity(pos);
     }
     private static IFluidHandler port(GameTestHelper h,BlockPos pos) { return h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,pos,Direction.DOWN); }
-    private static java.util.List<AreaEffectCloud> clouds(GameTestHelper h,BlockPos pos) { return h.getLevel().getEntitiesOfClass(AreaEffectCloud.class,new AABB(pos).inflate(5),FlammableGas::cloud); }
+    private static java.util.List<net.createplant.cloud.GasCloud> clouds(GameTestHelper h,BlockPos pos) { return GasClouds.in(h.getLevel(),new AABB(pos).inflate(5)); }
 
 
 
@@ -125,13 +125,13 @@ public class FlareGameTests {
     public static void cloudsPersistMergeDissipateAndOnlyRecognizeRealIgnition(GameTestHelper h) {
         var at=h.absolutePos(BASE).above(8);var level=h.getLevel();
         ToxicGas.release(level,at,hydrogen(1000));ToxicGas.release(level,at,hydrogen(2000));
-        h.assertTrue(clouds(h,at).size()==1 && FlammableGas.contents(clouds(h,at).getFirst()).getAmount()==3000,"Repeated leaks merge actual finite gas");
+        h.assertTrue(clouds(h,at).size()==1 && clouds(h,at).getFirst().amount()==3000,"Repeated leaks merge actual finite gas");
         var cloud=clouds(h,at).getFirst();var saved=new net.minecraft.nbt.CompoundTag();cloud.save(saved);cloud.discard();
-        var copy=new AreaEffectCloud(level,0,0,0);copy.load(saved);level.addFreshEntity(copy);
-        h.assertTrue(FlammableGas.cloud(copy) && FlammableGas.contents(copy).getAmount()==3000,"Cloud persistence preserves its gas");
+        var copy=net.createplant.registry.CESafety.GAS_CLOUD.get().create(level);copy.load(saved);level.addFreshEntity(copy);
+        h.assertTrue(copy.amount()==3000 && copy.content().is(net.createplant.registry.CEFluids.HYDROGEN_GAS.get()) && !copy.inert(),"Cloud persistence preserves its gas");
         h.assertTrue(FlammableGas.ignition(AllBlocks.BLAZE_BURNER.getDefaultState().setValue(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL,com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED))
             && !FlammableGas.ignition(AllBlocks.BLAZE_BURNER.getDefaultState()) && !FlammableGas.ignition(Blocks.REDSTONE_TORCH.defaultBlockState()),"Burning Blaze burners ignite; cold burners and redstone signals do not");
-        h.runAfterDelay(60,()->{int remaining=FlammableGas.contents(copy).getAmount();h.assertTrue(remaining>0 && remaining<3000,"Atmospheric cloud disperses without any material generation: "+remaining);copy.discard();h.succeed();});
+        h.runAfterDelay(60,()->{int remaining=copy.amount();h.assertTrue(remaining>0 && remaining<3000,"Atmospheric cloud disperses without any material generation: "+remaining);copy.discard();h.succeed();});
     }
 
 
@@ -158,8 +158,8 @@ public class FlareGameTests {
             ToxicGas.release(level,at.offset(i%8*2,0,i/8*2),hydrogen(500));
         }
         h.runAfterDelay(80,()->{
-            var clouds=level.getEntitiesOfClass(AreaEffectCloud.class,new AABB(at).expandTowards(26,3,26).inflate(3),FlammableGas::cloud);
-            long amount=0;for (var cloud:clouds) { amount+=FlammableGas.contents(cloud).getAmount();h.assertTrue(cloud.getRadius()<=FlammableGas.MAX_RADIUS,"Cloud radius is bounded");cloud.discard(); }
+            var clouds=GasClouds.in(level,new AABB(at).expandTowards(26,3,26).inflate(3));
+            long amount=0;for (var cloud:clouds) { amount+=cloud.amount();h.assertTrue(cloud.volume().size()<=512,"Cloud size is bounded");cloud.discard(); }
             h.assertTrue(!clouds.isEmpty() && clouds.size()<=64 && amount>0 && amount<32000,"64 releases remain finite after 80 ticks: clouds="+clouds.size()+" remaining="+amount);h.succeed();
         });
     }

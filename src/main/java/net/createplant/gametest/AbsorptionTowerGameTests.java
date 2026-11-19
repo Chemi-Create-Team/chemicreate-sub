@@ -136,8 +136,7 @@ public class AbsorptionTowerGameTests {
         var recovered = inlet.drain(500, EXECUTE);
         h.assertTrue(recovered.is(CEWaterTreatment.SULFUR_SCRUBBER_LIQUOR.get()) && recovered.getAmount() == 500
             && topPort.drain(500, SIMULATE).isEmpty(), "A finite batch is captured as sulfur scrubber liquor with no exhaust at the top");
-        h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.AreaEffectCloud.class,
-            new net.minecraft.world.phys.AABB(bottom).inflate(6), net.createplant.safety.ToxicGas::toxic).isEmpty(), "Washing the closed feed creates no gas cloud");
+        h.assertTrue(net.createplant.cloud.GasClouds.in(h.getLevel(), new net.minecraft.world.phys.AABB(bottom).inflate(6)).isEmpty(), "Washing the closed feed creates no gas cloud");
 
         var basinPos = new BlockPos(9, 2, 5);
         h.setBlock(basinPos, com.simibubi.create.AllBlocks.BASIN.get());

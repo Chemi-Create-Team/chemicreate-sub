@@ -3,7 +3,6 @@ package net.createplant.cloud;
 import java.util.List;
 import java.util.WeakHashMap;
 import net.createplant.registry.CESafety;
-import net.createplant.thermal.SteamGrades;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
@@ -14,8 +13,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public final class GasClouds {
     public static final int DETECTOR_REACH = 4;
     private static final int MAX_PER_CHUNK = 8;
-    private static final int REBUILDS_PER_TICK = 4;
-    private static final WeakHashMap<ServerLevel, RebuildBudget> REBUILDS = new WeakHashMap<>();
+    /** A new leak builds its cloud at once so it can merge and be sensed; scheduled rebuilds share a smaller budget. */
+    private static final int REBUILDS_PER_TICK = 4, FIRST_BUILDS_PER_TICK = 64;
+    private static final WeakHashMap<ServerLevel, RebuildBudget> REBUILDS = new WeakHashMap<>(), FIRST_BUILDS = new WeakHashMap<>();
 
     private static final class RebuildBudget {
         long tick = Long.MIN_VALUE;
@@ -24,13 +24,18 @@ public final class GasClouds {
 
     private GasClouds() { }
 
-    public static boolean supported(FluidStack stack) { return SteamGrades.of(stack) != null; }
+    public static boolean supported(FluidStack stack) {
+        return !stack.isEmpty() && GasCloudStyles.find(GasCloudStyles.id(stack.getFluid())) != null;
+    }
 
-    public static void release(ServerLevel level, BlockPos pos, FluidStack stack) {
+    public static void release(ServerLevel level, BlockPos pos, FluidStack stack) { release(level, pos, stack, false); }
+
+    /** {@code inert} marks gas that has already burnt in a flare: its cloud keeps the gas but cannot ignite. */
+    public static void release(ServerLevel level, BlockPos pos, FluidStack stack, boolean inert) {
         if (!supported(stack) || !level.hasChunkAt(pos) || level.isOutsideBuildHeight(pos)) return;
 
         for (var cloud : in(level, new AABB(pos).inflate(1))) {
-            if (cloud.compatible(stack) && cloud.touchesSource(pos)) {
+            if (cloud.compatible(stack, inert) && cloud.touchesSource(pos)) {
                 cloud.merge(stack);
                 return;
             }
@@ -45,7 +50,7 @@ public final class GasClouds {
             double closest = Double.MAX_VALUE;
             for (var cloud : local) {
                 double distance = cloud.blockPosition().distSqr(pos);
-                if (distance < closest && cloud.compatible(stack)) {
+                if (distance < closest && cloud.compatible(stack, inert)) {
                     nearest = cloud;
                     closest = distance;
                 }
@@ -55,18 +60,20 @@ public final class GasClouds {
         }
 
         var cloud = new GasCloud(CESafety.GAS_CLOUD.get(), level);
-        cloud.initialize(pos, stack);
-        if (level.addFreshEntity(cloud) && takeRebuildSlot(level)) cloud.rebuild();
+        cloud.initialize(pos, stack, inert);
+        if (level.addFreshEntity(cloud) && takeSlot(FIRST_BUILDS, level, FIRST_BUILDS_PER_TICK)) cloud.rebuild();
     }
 
-    static boolean takeRebuildSlot(ServerLevel level) {
-        var budget = REBUILDS.computeIfAbsent(level, ignored -> new RebuildBudget());
+    static boolean takeRebuildSlot(ServerLevel level) { return takeSlot(REBUILDS, level, REBUILDS_PER_TICK); }
+
+    private static boolean takeSlot(WeakHashMap<ServerLevel, RebuildBudget> budgets, ServerLevel level, int limit) {
+        var budget = budgets.computeIfAbsent(level, ignored -> new RebuildBudget());
         long time = level.getGameTime();
         if (budget.tick != time) {
             budget.tick = time;
             budget.used = 0;
         }
-        if (budget.used >= REBUILDS_PER_TICK) return false;
+        if (budget.used >= limit) return false;
         budget.used++;
         return true;
     }

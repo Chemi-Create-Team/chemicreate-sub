@@ -22,14 +22,15 @@ public final class GasCloud extends Entity {
     private CloudVolume volume = CloudVolume.empty(BlockPos.ZERO);
     private FluidStack fluid = FluidStack.EMPTY;
     private int age, sampleAge, expires, peak, nextRebuild;
-    private boolean outdoors;
+    private boolean outdoors, inert;
 
     public GasCloud(EntityType<? extends GasCloud> type, Level level) {
         super(type, level);
         noPhysics = true;
     }
 
-    void initialize(BlockPos origin, FluidStack stack) {
+    void initialize(BlockPos origin, FluidStack stack, boolean inert) {
+        this.inert = inert;
         setPos(Vec3.atCenterOf(origin));
         volume = CloudVolume.empty(origin);
         fluid = stack.copy();
@@ -40,7 +41,7 @@ public final class GasCloud extends Entity {
 
     public static GasCloud preview(Level level, BlockPos origin, FluidStack stack) {
         var cloud = new GasCloud(net.createplant.registry.CESafety.GAS_CLOUD.get(), level);
-        cloud.initialize(origin, stack);
+        cloud.initialize(origin, stack, false);
         cloud.rebuild();
         return cloud;
     }
@@ -74,10 +75,15 @@ public final class GasCloud extends Entity {
     }
 
     public FluidStack content() { return fluid.copyWithAmount(amount()); }
+    /** Gas that has already burnt in a flare; such a cloud cannot ignite. */
+    public boolean inert() { return inert; }
     boolean compatible(FluidStack other) { return FluidStack.isSameFluidSameComponents(fluid, other); }
+    boolean compatible(FluidStack other, boolean inert) { return this.inert == inert && compatible(other); }
 
     boolean touchesSource(BlockPos pos) {
         if (blockPosition().equals(pos) || contains(pos)) return true;
+        // A cloud still waiting for its first build is only its source; a leak right beside it joins it.
+        if (volume.size() == 0) return blockPosition().distManhattan(pos) <= 1;
         if (!level().getBlockState(pos).isCollisionShapeFullBlock(level(), pos)) return false;
         for (var side : net.minecraft.core.Direction.values()) if (contains(pos.relative(side))) return true;
         return false;
@@ -176,6 +182,7 @@ public final class GasCloud extends Entity {
         tag.putInt("Peak", peak);
         tag.putInt("NextRebuild", nextRebuild);
         tag.putBoolean("Outdoors", outdoors);
+        tag.putBoolean("Inert", inert);
         tag.put("Volume", volume.save());
     }
 
@@ -189,6 +196,7 @@ public final class GasCloud extends Entity {
         peak = Math.max(fluid.getAmount(), tag.getInt("Peak"));
         nextRebuild = Math.clamp(tag.getInt("NextRebuild"), age, age + REBUILD_INTERVAL);
         outdoors = tag.getBoolean("Outdoors");
+        inert = tag.getBoolean("Inert");
         volume = CloudVolume.load(tag.getCompound("Volume"));
         if (volume.size() > 0 && volume.origin().equals(blockPosition())) {
             setBoundingBox(volume.bounds());

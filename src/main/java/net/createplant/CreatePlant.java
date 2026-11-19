@@ -25,6 +25,7 @@ public class CreatePlant {
         net.createplant.registry.CEDisplays.register(modEventBus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.block.entity.PipeGasFlow::attach);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.safety.ToxicGas::maskKeepsGasOut);
+        net.createplant.safety.ToxicGas.registerCloudStyles();
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.safety.CorrosiveContact::protectWithClothing);
         net.createplant.registry.CEThermal.register(modEventBus);
         net.createplant.registry.CEMixtures.register(modEventBus);

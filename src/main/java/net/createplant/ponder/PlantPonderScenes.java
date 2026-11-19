@@ -115,6 +115,7 @@ public final class PlantPonderScenes {
                 scene.world().setKineticSpeed(util.select().fromTo(2,5,10,19,5,10),256);
             }
             if (tutorial.id().equals("process_gas_recovery")) steamRecovery(scene, util, step.key(), target);
+            if (tutorial.id().equals("toxic_gas")) toxicGas(scene, step.key(), target);
             if (step.speed() != null) {
                 scene.world().setKineticSpeed(factory, step.speed());
                 scene.world().modifyBlockEntityNBT(factory, net.createplant.block.entity.LiddedVesselBlockEntity.class, tag -> tag.putFloat("InputSpeed", step.speed()));
@@ -137,6 +138,18 @@ public final class PlantPonderScenes {
             PonderText.caption(scene, util.vector().centerOf(target), tutorial.translation(step.key()), 120);
         }
         scene.markAsFinished();
+    }
+
+    private static void toxicGas(CreateSceneBuilder scene, String step, BlockPos target) {
+        switch (step) {
+            case "step_2" -> {
+                scene.world().destroyBlock(target);
+                scene.world().createEntity(world -> GasCloud.preview(world, target,
+                    new FluidStack(net.createplant.registry.CEChlorAlkali.CHLORINE.get(), 1000)));
+            }
+            case "step_5" -> scene.world().modifyEntities(GasCloud.class, GasCloud::discard);
+            default -> { }
+        }
     }
 
     private static void steamRecovery(CreateSceneBuilder scene, SceneBuildingUtil util, String step, BlockPos target) {

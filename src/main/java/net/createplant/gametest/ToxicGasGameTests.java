@@ -12,6 +12,8 @@ import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CEReciprocating;
 import net.createplant.registry.CESafety;
+import net.createplant.cloud.GasCloud;
+import net.createplant.cloud.GasClouds;
 import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
@@ -34,38 +36,52 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 
-/** A toxic gas let out hangs as a cloud that poisons, a gas mask keeps it out while its filter lasts, and a burst tank of chlorine lets it out. */
+/** A toxic or flammable gas let out fills a cloud that stops at walls and closed doors; it poisons the breathing, a gas mask keeps it out, and a flame lights it. */
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class ToxicGasGameTests {
-    private static java.util.List<AreaEffectCloud> clouds(GameTestHelper h) {
-        return h.getLevel().getEntitiesOfClass(AreaEffectCloud.class, h.getBounds(), ToxicGas::toxic);
+    private static java.util.List<GasCloud> clouds(GameTestHelper h) {
+        return GasClouds.in(h.getLevel(), h.getBounds());
     }
 
-
-
-
-
-    private static int scrubberAmount(GameTestHelper h) {
-        return ((ReliefScrubberBlockEntity)h.getBlockEntity(new BlockPos(5, 3, 4))).amount();
+    /** A closed stone room whose air is the box from {@code corner} (relative), {@code width} by {@code height} by {@code depth}. */
+    private static void room(GameTestHelper h, BlockPos corner, int width, int height, int depth) {
+        for (int x = -1; x <= width; x++) for (int y = -1; y <= height; y++) for (int z = -1; z <= depth; z++) {
+            boolean inside = x >= 0 && x < width && y >= 0 && y < height && z >= 0 && z < depth;
+            h.setBlock(corner.offset(x, y, z), inside ? Blocks.AIR : Blocks.STONE);
+        }
     }
 
-    @GameTest(template = "test_reactor", timeoutTicks = 120)
+    private static FluidStack gas(net.minecraft.world.level.material.Fluid fluid, int amount) { return new FluidStack(fluid, amount); }
+
+    private static Mob husk(GameTestHelper h, BlockPos at) {
+        Mob mob = h.spawnWithNoFreeWill(EntityType.HUSK, new Vec3(at.getX() + .5, at.getY(), at.getZ() + .5));
+        mob.setNoAi(true);
+        return mob;
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 130)
     public static void aToxicCloudPoisonsTheBareAndAMaskWithFilterKeepsItOut(GameTestHelper h) {
-        BlockPos at = new BlockPos(8, 2, 8);
+        BlockPos corner = new BlockPos(6, 2, 6);
+        room(h, corner, 3, 3, 5);
+        BlockPos at = corner.offset(1, 0, 1);
+        // Sky light under the new roof settles over a few ticks; until then the room would count as open air.
+        h.runAfterDelay(10, () -> poisonInRoom(h, at));
+    }
+
+    private static void poisonInRoom(GameTestHelper h, BlockPos at) {
         ToxicGas.release(h.getLevel(), h.absolutePos(at), new FluidStack(Fluids.WATER, 1000));
         h.assertTrue(clouds(h).isEmpty(), "Water is harmless and makes no cloud");
-        ToxicGas.release(h.getLevel(), h.absolutePos(at), new FluidStack(CEChlorAlkali.CHLORINE.get(), 1000));
-        ToxicGas.release(h.getLevel(), h.absolutePos(at.east()), new FluidStack(CEChlorAlkali.CHLORINE.get(), 4000));
+        ToxicGas.release(h.getLevel(), h.absolutePos(at), gas(CEChlorAlkali.CHLORINE.get(), 1000));
+        ToxicGas.release(h.getLevel(), h.absolutePos(at.south()), gas(CEChlorAlkali.CHLORINE.get(), 4000));
         var all = clouds(h);
-        boolean outdoors = h.getLevel().canSeeSky(h.absolutePos(at).above());
-        h.assertTrue(all.size() == 1 && Math.abs(all.getFirst().getRadius() - 4.5f) < 1e-3, "A second leak beside the first feeds the same cloud, as wide as 4000 mB makes it: " + all.size());
-        h.assertTrue(all.getFirst().getDuration() == (ToxicGas.MIN_TICKS + 800) / (outdoors ? ToxicGas.OUTDOOR_DIVISOR : 1), "It lasts longer indoors than under the sky: " + all.getFirst().getDuration());
-        Mob bare = h.spawnWithNoFreeWill(EntityType.HUSK, new Vec3(at.getX() + .5, at.getY(), at.getZ() + .5));
-        Mob masked = h.spawnWithNoFreeWill(EntityType.HUSK, new Vec3(at.getX() + 1.5, at.getY(), at.getZ() + .5));
-        Mob spent = h.spawnWithNoFreeWill(EntityType.HUSK, new Vec3(at.getX() + .5, at.getY(), at.getZ() + 1.5));
+        h.assertTrue(all.size() == 1 && all.getFirst().amount() == 5000, "A second leak beside the first feeds the same cloud: " + all.size());
+        h.assertTrue(all.getFirst().lifetime() == indoorLifetime(5000) && all.getFirst().volume().size() == 45,
+            "Indoors it lasts its full time and fills the closed room: " + all.getFirst().lifetime() + " " + all.getFirst().volume().size());
+        Mob bare = husk(h, at);
+        Mob masked = husk(h, at.east());
+        Mob spent = husk(h, at.south(2));
         masked.setItemSlot(EquipmentSlot.HEAD, CESafety.GAS_MASK.toStack());
         ItemStack used = CESafety.GAS_MASK.toStack();used.setDamageValue(used.getMaxDamage());spent.setItemSlot(EquipmentSlot.HEAD, used);
-        for (Mob mob : new Mob[]{bare, masked, spent}) mob.setNoAi(true);
         h.runAfterDelay(80, () -> {
             h.assertTrue(bare.getHealth() < bare.getMaxHealth() && spent.getHealth() < spent.getMaxHealth(), "The gas poisons the bare and the wearer of a spent mask: " + bare.getHealth() + " " + spent.getHealth());
             ItemStack mask = masked.getItemBySlot(EquipmentSlot.HEAD);
@@ -74,6 +90,149 @@ public class ToxicGasGameTests {
         });
     }
 
+    @GameTest(template = "test_reactor", timeoutTicks = 20)
+    public static void heavyGasFillsFromTheFloorAndLightGasFromTheCeiling(GameTestHelper h) {
+        for (boolean heavy : new boolean[]{true, false}) {
+            BlockPos corner = new BlockPos(heavy ? 2 : 16, 2, 6);
+            room(h, corner, 5, 4, 5);
+            BlockPos source = h.absolutePos(corner.offset(2, 2, 2));
+            ToxicGas.release(h.getLevel(), source, gas(heavy ? CEChlorAlkali.CHLORINE.get() : CEFluids.AMMONIA_GAS.get(), 400));
+            var cloud = GasClouds.in(h.getLevel(), new net.minecraft.world.phys.AABB(source)).getFirst();
+            int filled = heavy ? 0 : 3, empty = heavy ? 3 : 0;
+            boolean layer = true, other = false;
+            for (int x = 0; x < 5; x++) for (int z = 0; z < 5; z++) {
+                layer &= cloud.contains(h.absolutePos(corner.offset(x, filled, z)));
+                other |= cloud.contains(h.absolutePos(corner.offset(x, empty, z)));
+            }
+            h.assertTrue(layer && !other, (heavy ? "Chlorine settles on the floor" : "Ammonia gathers under the ceiling") + " of the closed room");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 20)
+    public static void aLeakNearTheCeilingStillReachesTheFloor(GameTestHelper h) {
+        BlockPos corner = new BlockPos(6, 2, 6);
+        room(h, corner, 5, 3, 5);
+        BlockPos source = h.absolutePos(corner.offset(2, 2, 2));
+        ToxicGas.release(h.getLevel(), source, gas(CEChlorAlkali.CHLORINE.get(), 600));
+        var cloud = GasClouds.in(h.getLevel(), new net.minecraft.world.phys.AABB(source)).getFirst();
+        h.assertTrue(cloud.contains(h.absolutePos(corner.offset(0, 0, 0))) && cloud.contains(h.absolutePos(corner.offset(4, 0, 4))),
+            "Heavy gas let out under the ceiling lies on the floor");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 160)
+    public static void aClosedDoorHoldsTheGasBackAndAnOpenOneLetsItThrough(GameTestHelper h) {
+        BlockPos corner = new BlockPos(8, 2, 4);
+        room(h, corner, 1, 2, 9);
+        BlockPos door = corner.offset(0, 0, 4);
+        var lower = Blocks.OAK_DOOR.defaultBlockState().setValue(net.minecraft.world.level.block.DoorBlock.FACING, Direction.NORTH);
+        h.setBlock(door, lower);
+        h.setBlock(door.above(), lower.setValue(net.minecraft.world.level.block.DoorBlock.HALF, net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER));
+        ToxicGas.release(h.getLevel(), h.absolutePos(corner), gas(CEChlorAlkali.CHLORINE.get(), 1000));
+        var cloud = clouds(h).getFirst();
+        BlockPos beyond = corner.offset(0, 1, 7);
+        Mob near = husk(h, corner.offset(0, 0, 2));
+        Mob far = husk(h, corner.offset(0, 0, 7));
+        h.assertTrue(cloud.contains(h.absolutePos(corner.offset(0, 1, 3))) && !cloud.contains(h.absolutePos(beyond)), "The closed door stops the cloud");
+        h.runAfterDelay(30, () -> {
+            h.assertTrue(near.hasEffect(CESafety.TOXIC_GAS) && !far.hasEffect(CESafety.TOXIC_GAS), "Only the side of the gas is poisoned");
+            for (var half : new BlockPos[]{door, door.above()})
+                h.setBlock(half, h.getBlockState(half).setValue(net.minecraft.world.level.block.DoorBlock.OPEN, true));
+        });
+        h.runAfterDelay(140, () -> {
+            h.assertTrue(cloud.contains(h.absolutePos(beyond)), "Opened, the door lets the cloud through");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 30)
+    public static void anOpenSkyShortensTheCloud(GameTestHelper h) {
+        BlockPos corner = new BlockPos(4, 2, 6);
+        room(h, corner, 3, 3, 3);
+        h.runAfterDelay(10, () -> {
+            ToxicGas.release(h.getLevel(), h.absolutePos(corner), gas(CEChlorAlkali.CHLORINE.get(), 1000));
+            BlockPos open = h.absolutePos(new BlockPos(20, 6, 20));
+            ToxicGas.release(h.getLevel(), open, gas(CEChlorAlkali.CHLORINE.get(), 1000));
+            var indoor = GasClouds.in(h.getLevel(), new net.minecraft.world.phys.AABB(h.absolutePos(corner))).getFirst();
+            var outdoor = GasClouds.in(h.getLevel(), new net.minecraft.world.phys.AABB(open)).getFirst();
+            h.assertTrue(indoor.lifetime() - indoor.age() == indoorLifetime(1000) && outdoor.lifetime() - outdoor.age() == indoorLifetime(1000) / ToxicGas.OUTDOOR_DIVISOR,
+                "Under the open sky the cloud lasts a third as long: " + indoor.lifetime() + " " + outdoor.lifetime());
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 60)
+    public static void aDetectorSensesAnUnseenGasButNotThroughAWall(GameTestHelper h) {
+        BlockPos corner = new BlockPos(6, 2, 6);
+        room(h, corner, 3, 3, 3);
+        BlockPos inside = corner.offset(2, 0, 2), outside = corner.offset(4, 0, 1);
+        h.setBlock(inside, CESafety.GAS_DETECTOR.get());
+        h.setBlock(outside, CESafety.GAS_DETECTOR.get());
+        ToxicGas.release(h.getLevel(), h.absolutePos(corner), gas(CEProcessFluids.CARBON_MONOXIDE.get(), 1000));
+        h.assertTrue(clouds(h).size() == 1 && clouds(h).getFirst().style().color() == null, "Carbon monoxide makes a single cloud that is not drawn");
+        h.runAfterDelay(40, () -> {
+            h.assertTrue(h.getBlockState(inside).getValue(net.createplant.block.GasDetectorBlock.POWER) > 0
+                && h.getBlockState(outside).getValue(net.createplant.block.GasDetectorBlock.POWER) == 0, "The detector in the room senses it; one behind the wall does not");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 60)
+    public static void burntGasStillPoisonsButNoLongerBurnsAndOldCloudsFade(GameTestHelper h) {
+        BlockPos corner = new BlockPos(6, 2, 6);
+        room(h, corner, 3, 3, 3);
+        ToxicGas.releasePoison(h.getLevel(), h.absolutePos(corner), gas(CEProcessFluids.CARBON_MONOXIDE.get(), 1000));
+        ToxicGas.releasePoison(h.getLevel(), h.absolutePos(new BlockPos(20, 3, 20)), gas(CEFluids.HYDROGEN_GAS.get(), 1000));
+        h.assertTrue(clouds(h).size() == 1 && clouds(h).getFirst().inert(), "Only the toxic part of flared gas remains, as a cloud that cannot burn");
+        h.setBlock(corner.offset(2, 0, 2), Blocks.TORCH);
+        var old = new AreaEffectCloud(h.getLevel(), h.absolutePos(corner).getX(), h.absolutePos(corner).getY() + 8, h.absolutePos(corner).getZ());
+        old.addTag(CreatePlant.MOD_ID + ".toxic_gas");
+        old.setDuration(10);
+        h.getLevel().addFreshEntity(old);
+        h.runAfterDelay(45, () -> {
+            h.assertTrue(clouds(h).size() == 1 && !old.isAlive(), "The torch does not light burnt gas, and a cloud from an older save fades away");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 60)
+    public static void aFlameInsideLightsTheCloudButNotOneBehindAWall(GameTestHelper h) {
+        BlockPos inside = new BlockPos(3, 2, 6), walled = new BlockPos(16, 2, 6);
+        room(h, inside, 3, 3, 3);
+        room(h, walled, 3, 3, 3);
+        ToxicGas.release(h.getLevel(), h.absolutePos(inside), gas(CEProcessFluids.CARBON_MONOXIDE.get(), 1000));
+        ToxicGas.release(h.getLevel(), h.absolutePos(walled), gas(CEFluids.HYDROGEN_GAS.get(), 1000));
+        h.assertTrue(clouds(h).size() == 2, "A toxic, flammable gas makes one cloud carrying both");
+        Mob breathing = husk(h, inside.offset(1, 0, 1));
+        h.setBlock(walled.offset(4, 0, 1), Blocks.CAMPFIRE);
+        h.runAfterDelay(25, () -> {
+            h.assertTrue(breathing.hasEffect(CESafety.TOXIC_GAS) && clouds(h).size() == 2, "Carbon monoxide poisons, and the fire outside the wall lights nothing");
+            h.setBlock(inside.offset(2, 0, 2), Blocks.TORCH);
+        });
+        h.runAfterDelay(50, () -> {
+            var left = clouds(h);
+            h.assertTrue(left.size() == 1 && left.getFirst().content().is(CEFluids.HYDROGEN_GAS.get()), "The torch in the room lights the carbon monoxide");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 40)
+    public static void withExplosionsOffABurningCloudJustGoesOut(GameTestHelper h) {
+        BlockPos corner = new BlockPos(6, 2, 6);
+        room(h, corner, 3, 3, 3);
+        net.createplant.transport.TransportConfig.GAS_EXPLOSIONS.set(false);
+        ToxicGas.release(h.getLevel(), h.absolutePos(corner), gas(CEFluids.HYDROGEN_GAS.get(), 1000));
+        h.setBlock(corner.offset(2, 0, 2), Blocks.TORCH);
+        h.runAfterDelay(25, () -> {
+            net.createplant.transport.TransportConfig.GAS_EXPLOSIONS.set(true);
+            h.assertTrue(clouds(h).isEmpty() && h.getBlockState(corner.offset(-1, 0, 0)).is(Blocks.STONE), "The cloud burns away without breaking the room");
+            h.succeed();
+        });
+    }
+
+    /** How long a cloud of this much gas lasts indoors. */
+    private static int indoorLifetime(int amount) { return Math.min(2400, 400 + amount / 5); }
 
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void dismantlingAReciprocatingCylinderLetsToxicContentsOut(GameTestHelper h) {

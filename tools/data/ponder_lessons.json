@@ -1395,14 +1395,14 @@
     "zh_cn": "氯气、硫化氢等有毒气体须使用适合的管道与储罐。"
   },
   "guide.toxic_gas.step_2": {
-    "en_us": "Leaked gas clouds cause damage. Keep clear and stop the leak.",
-    "ja_jp": "漏れたガスの雲に触れるとダメージを受けます。近づかず、漏れを止めます。",
-    "zh_cn": "接触泄漏气云会受伤，保持距离并停止泄漏。"
+    "en_us": "Leaked gas becomes a cloud in the space it can reach. Heavy gases like chlorine settle on the floor, light ones like ammonia under the ceiling, and walls and closed doors hold them back.",
+    "ja_jp": "漏れたガスは、通れるマスに広がる雲になります。塩素など重いガスは床に、アンモニアなど軽いガスは天井側に溜まり、壁や閉じたドアで止まります。",
+    "zh_cn": "泄漏的气体会在可通过的空间形成气云。氯气等重气体沉在地面，氨等轻气体聚在顶部，墙壁和关闭的门会将其挡住。"
   },
   "guide.toxic_gas.step_3": {
-    "en_us": "Pipe toxic gas directly into a collection system. Keep its product outlet clear.",
-    "ja_jp": "有毒ガスを直接配管で回収設備へ送ります。生成物の出口を空けておきます。",
-    "zh_cn": "把有毒气体直接接管送入回收设备。保持产物出口畅通。"
+    "en_us": "Breathing inside a toxic cloud poisons you. Coloured gases show as mist; colourless ones such as carbon monoxide are unseen, so check with a gas detector.",
+    "ja_jp": "有毒な雲の中で息をすると毒を受けます。色のあるガスはもやとして見えますが、一酸化炭素のような無色のガスは見えないので、ガス検知器で確かめます。",
+    "zh_cn": "在有毒气云中呼吸会中毒。有颜色的气体呈雾状可见，一氧化碳等无色气体看不见，请用气体检测器确认。"
   },
   "guide.toxic_gas.step_4": {
     "en_us": "A gas mask in the head slot protects against inhalation. Craft it with a fresh carbon filter to restore the filter.",
@@ -1435,9 +1435,9 @@
     "zh_cn": "此联动需要Deep Seas，设置位于config/submarine_hull.json。"
   },
   "guide.toxic_gas.step_5": {
-    "en_us": "Pump toxic gas into the scrubber from below and feed caustic soda at the side. Keep the top open for exhaust.",
-    "ja_jp": "除害装置の下から有毒ガス、側面から苛性ソーダを送ります。上面は排気用に空けます。",
-    "zh_cn": "从洗涤器底部泵入有毒气体，侧面供应烧碱。顶部保持排气空间。"
+    "en_us": "A cloud of flammable gas such as hydrogen or carbon monoxide explodes when a flame or a burning creature is inside it or next to it.",
+    "ja_jp": "水素や一酸化炭素など燃えるガスの雲は、範囲の中か隣に火や燃えている生き物があると爆発します。",
+    "zh_cn": "氢气、一氧化碳等可燃气体的气云，若其中或旁边有火焰或燃烧的生物，就会爆炸。"
   },
   "guide.spent_fuel_reprocessing.title": {
     "en_us": "Reprocessing spent fuel",
@@ -1535,9 +1535,9 @@
     "zh_cn": "Right-click the guarded master switch for an emergency magnetic dump. Sneak-right-click it to reset only after the coils are cold and almost fully discharged."
   },
   "guide.toxic_gas.step_6": {
-    "en_us": "Supply caustic soda and check the scrubber with goggles. It removes acid gases; ammonia requires separate handling.",
-    "ja_jp": "スクラバーへ苛性ソーダを供給し、ゴーグルで残量を確認します。酸性ガス用なので、アンモニアは別に扱います。",
-    "zh_cn": "向洗涤器供给烧碱，用护目镜检查余量。它处理酸性气体，氨需另行处理。"
+    "en_us": "Pipe toxic gas directly into a collection system. Keep its product outlet clear.",
+    "ja_jp": "有毒ガスを直接配管で回収設備へ送ります。生成物の出口を空けておきます。",
+    "zh_cn": "把有毒气体直接接管送入回收设备。保持产物出口畅通。"
   },
   "guide.pipe_pressure.title": {
     "en_us": "Moving graded fluids",
@@ -4738,5 +4738,15 @@
     "en_us": "Any pipe carries it, even one lying on the tank. Send it to a turbine, a gas tank or a condenser.",
     "ja_jp": "どの配管でも運べ、タンクに接して通しても構いません。タービン、気体タンク、復水器へ送ります。",
     "zh_cn": "任何管道都能输送，贴着储罐铺设也可以。送往汽轮机、气体储罐或冷凝器。"
+  },
+  "guide.toxic_gas.step_7": {
+    "en_us": "Pump toxic gas into the scrubber from below and feed caustic soda at the side. Keep the top open for exhaust.",
+    "ja_jp": "除害装置の下から有毒ガス、側面から苛性ソーダを送ります。上面は排気用に空けます。",
+    "zh_cn": "从洗涤器底部泵入有毒气体，侧面供应烧碱。顶部保持排气空间。"
+  },
+  "guide.toxic_gas.step_8": {
+    "en_us": "Supply caustic soda and check the scrubber with goggles. It removes acid gases; ammonia requires separate handling.",
+    "ja_jp": "スクラバーへ苛性ソーダを供給し、ゴーグルで残量を確認します。酸性ガス用なので、アンモニアは別に扱います。",
+    "zh_cn": "向洗涤器供给烧碱，用护目镜检查余量。它处理酸性气体，氨需另行处理。"
   }
 }

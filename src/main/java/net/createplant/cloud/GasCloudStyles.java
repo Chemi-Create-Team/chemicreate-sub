@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.createplant.thermal.SteamGrades;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 public final class GasCloudStyles {
     public record Style(boolean ceiling, Integer color, int outdoorDivisor) {
@@ -26,13 +25,20 @@ public final class GasCloudStyles {
         }
     }
 
+    /** Styles registered by fluid id during mod construction, before the fluids themselves can be resolved. */
+    private static final Map<String, Style> NAMED = new ConcurrentHashMap<>();
+
     private GasCloudStyles() { }
 
-    public static void register(Fluid fluid, Style style) {
-        if (SteamGrades.of(new FluidStack(fluid, 1)) == null) throw new IllegalArgumentException("Gas cloud styles are limited to steam");
-        Styles.BY_ID.put(id(fluid), style);
-    }
+    public static void register(Fluid fluid, Style style) { Styles.BY_ID.put(id(fluid), style); }
+    public static void register(String fluidId, Style style) { NAMED.put(fluidId, style); }
 
-    static String id(Fluid fluid) { return BuiltInRegistries.FLUID.getKey(fluid).toString(); }
-    static Style find(String fluidId) { return Styles.BY_ID.get(fluidId); }
+    static String id(Fluid fluid) {
+        var key = BuiltInRegistries.FLUID.getKey(fluid);
+        return key.getNamespace() + ":" + key.getPath().replace("flowing_", "");
+    }
+    static Style find(String fluidId) {
+        var style = Styles.BY_ID.get(fluidId);
+        return style != null ? style : NAMED.get(fluidId);
+    }
 }

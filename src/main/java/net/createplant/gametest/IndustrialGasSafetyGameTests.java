@@ -14,7 +14,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.context.UseOnContext;
@@ -37,7 +36,8 @@ public final class IndustrialGasSafetyGameTests {
     public static void detectorPowersAnAlarmAndClearsAfterTheCloud(GameTestHelper h) {
         var detector = new BlockPos(5, 2, 5);
         var lamp = detector.east();
-        var remote = detector.west(3);
+        // The gas lies on the floor, so a detector mounted higher up reads it more weakly.
+        var remote = detector.west(2).above(3);
         h.setBlock(detector, CESafety.GAS_DETECTOR.get());
         h.setBlock(remote, CESafety.GAS_DETECTOR.get());
         h.setBlock(lamp, Blocks.REDSTONE_LAMP);
@@ -51,8 +51,8 @@ public final class IndustrialGasSafetyGameTests {
             int farPower = h.getBlockState(remote).getValue(GasDetectorBlock.POWER);
             h.assertTrue(farPower > 0 && nearPower > farPower && h.getBlockState(lamp).getValue(BlockStateProperties.LIT),
                 "A nearer detector sends a stronger redstone signal and turns on the lamp");
-        }).thenExecute(() -> world.getEntitiesOfClass(AreaEffectCloud.class, new AABB(emission).inflate(2), ToxicGas::toxic)
-            .forEach(AreaEffectCloud::discard))
+        }).thenExecute(() -> net.createplant.cloud.GasClouds.in(world, new AABB(emission).inflate(2))
+            .forEach(net.createplant.cloud.GasCloud::discard))
             .thenWaitUntil(() -> h.assertTrue(h.getBlockState(detector).getValue(GasDetectorBlock.POWER) == 0
                 && !h.getBlockState(lamp).getValue(BlockStateProperties.LIT), "The alarm clears when the cloud is gone"))
             .thenSucceed();
