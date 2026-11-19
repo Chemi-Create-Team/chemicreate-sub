@@ -6,6 +6,7 @@ import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createplant.registry.CEReactor;
+import net.createplant.registry.CEChlorAlkali;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
@@ -34,6 +35,10 @@ public final class AbsorptionTowerPonderScenes {
         caption(scene, util, LARGE, util.grid().at(6, 1, 5), "ring");
         scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 50).withItem(AllItems.GOGGLES.asStack());
         caption(scene, util, LARGE, top, "observe");
+        var wash = new net.neoforged.neoforge.fluids.FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 1000);
+        scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 50).withItem(wash.getFluidType().getBucket(wash));
+        caption(scene, util, LARGE, top, "wash");
+        caption(scene, util, LARGE, bottom, "recover");
         scene.markAsFinished();
     }
 

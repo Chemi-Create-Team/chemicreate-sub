@@ -26,6 +26,7 @@ public class CreatePlant {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.block.entity.BoilerSteamOutput::attachToCreate);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.block.entity.PipeGasFlow::attach);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.safety.ToxicGas::maskKeepsGasOut);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.safety.CorrosiveContact::protectWithClothing);
         net.createplant.registry.CEThermal.register(modEventBus);
         net.createplant.registry.CEMixtures.register(modEventBus);
         modEventBus.addListener(net.createplant.block.entity.HighPressureTurbinePartBlockEntity::registerCapabilities);

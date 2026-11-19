@@ -160,6 +160,7 @@
     "create_refinery_n_reactors:clarifier_center_drive",
     "create_refinery_n_reactors:ceramic_pipe",
     "create_refinery_n_reactors:steam_gasifier",
-    "create_refinery_n_reactors:transmission_tower"
+    "create_refinery_n_reactors:transmission_tower",
+    "create_refinery_n_reactors:gas_detector"
   ]
 }

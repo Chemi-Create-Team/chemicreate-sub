@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " I ",
+    "IRI",
+    " C "
+  ],
+  "key": {
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "R": {
+      "item": "minecraft:comparator"
+    },
+    "C": {
+      "item": "create:andesite_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:gas_detector",
+    "count": 1
+  }
+}

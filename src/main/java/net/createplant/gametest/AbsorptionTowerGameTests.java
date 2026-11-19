@@ -9,6 +9,7 @@ import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEOstwaldFluids;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CEUranium;
+import net.createplant.registry.CEWaterTreatment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -116,6 +117,37 @@ public class AbsorptionTowerGameTests {
         port(h, bottom.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 500), EXECUTE);run(tower, 101);
         h.assertTrue(port(h, bottom, Direction.NORTH).drain(new FluidStack(CEUranium.SULFUROUS_ACID.get(), 10000), SIMULATE).getAmount() == 500,
             "Two 250 mB batches run in parallel: 500 mB sulfur dioxide and water give 500 mB sulfurous acid");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 40)
+    public static void causticWashCapturesAnIndustrialGasAndRecoversGypsum(GameTestHelper h) {
+        var tower = tower(h, 4, true);
+        var bottom = tower.getBlockPos();
+        var top = bottom.above(3);
+        var gas = new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 250);
+        var wash = new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 250);
+        var inlet = port(h, bottom.east(), Direction.EAST);
+        var topPort = port(h, top.west(), Direction.WEST);
+        h.assertTrue(inlet.fill(gas, EXECUTE) == 250 && inlet.fill(wash, SIMULATE) == 0 && topPort.fill(gas, SIMULATE) == 0,
+            "Only the bottom ring takes exhaust, and only the top ring takes wash liquid");
+        h.assertTrue(topPort.fill(wash, EXECUTE) == 250, "A formed tower accepts caustic wash at the top");
+        run(tower, 101);
+        var recovered = inlet.drain(500, EXECUTE);
+        h.assertTrue(recovered.is(CEWaterTreatment.SULFUR_SCRUBBER_LIQUOR.get()) && recovered.getAmount() == 500
+            && topPort.drain(500, SIMULATE).isEmpty(), "A finite batch is captured as sulfur scrubber liquor with no exhaust at the top");
+        h.assertTrue(h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.AreaEffectCloud.class,
+            new net.minecraft.world.phys.AABB(bottom).inflate(6), net.createplant.safety.ToxicGas::toxic).isEmpty(), "Washing the closed feed creates no gas cloud");
+
+        var basinPos = new BlockPos(9, 2, 5);
+        h.setBlock(basinPos, com.simibubi.create.AllBlocks.BASIN.get());
+        var basin = (com.simibubi.create.content.processing.basin.BasinBlockEntity) h.getBlockEntity(basinPos);
+        basin.getInputInventory().insertItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CALCITE), false);
+        basin.inputTank.getCapability().fill(recovered, EXECUTE);
+        var recovery = h.getLevel().getRecipeManager().byKey(CreatePlant.location("mixing/scrubber_gypsum")).orElseThrow().value();
+        h.assertTrue(com.simibubi.create.content.processing.basin.BasinRecipe.apply(basin, recovery)
+            && basin.getOutputInventory().getStackInSlot(0).is(net.createplant.registry.CEFuelCycle.GYPSUM.get()),
+            "Create's basin consumes the recovered wash liquid and yields gypsum");
         h.succeed();
     }
 

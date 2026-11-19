@@ -6,10 +6,7 @@
       "item": "create_refinery_n_reactors:gas_mask"
     },
     {
-      "item": "minecraft:charcoal"
-    },
-    {
-      "item": "minecraft:charcoal"
+      "item": "create_refinery_n_reactors:gas_mask_filter"
     }
   ],
   "result": {

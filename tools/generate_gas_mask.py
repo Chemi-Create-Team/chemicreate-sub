@@ -83,7 +83,7 @@ def data():
                                        'key': {'R': {'item': NS + 'synthetic_rubber'}, 'G': {'item': 'minecraft:glass_pane'}, 'I': {'tag': 'c:plates/iron'}, 'C': {'item': 'minecraft:charcoal'}},
                                        'result': {'id': NS + 'gas_mask', 'count': 1}})
     write(D / 'recipe/gas_mask_regeneration.json', {'type': 'minecraft:crafting_shapeless', 'category': 'equipment',
-                                                    'ingredients': [{'item': NS + 'gas_mask'}, {'item': 'minecraft:charcoal'}, {'item': 'minecraft:charcoal'}],
+                                                    'ingredients': [{'item': NS + 'gas_mask'}, {'item': NS + 'gas_mask_filter'}],
                                                     'result': {'id': NS + 'gas_mask', 'count': 1}})
 
 

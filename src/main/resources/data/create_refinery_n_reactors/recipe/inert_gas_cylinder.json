@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " N ",
+    "I I",
+    "III"
+  ],
+  "key": {
+    "N": {
+      "item": "create:copper_sheet"
+    },
+    "I": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:inert_gas_cylinder",
+    "count": 1
+  }
+}

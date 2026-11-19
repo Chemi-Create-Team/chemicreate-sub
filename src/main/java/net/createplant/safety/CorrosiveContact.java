@@ -1,6 +1,7 @@
 package net.createplant.safety;
 
 import net.createplant.CreatePlant;
+import net.createplant.registry.CENuclear;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -8,16 +9,26 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 public final class CorrosiveContact {
     public static final ResourceKey<DamageType> DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE, CreatePlant.location("corrosive_contact"));
     private static final String LAST_HIT = CreatePlant.MOD_ID + ".corrosive_contact_tick";
 
     private CorrosiveContact() { }
+
+    public static void protectWithClothing(LivingIncomingDamageEvent event) {
+        if (!event.getSource().is(DAMAGE)) return;
+        var living = event.getEntity();
+        if (living.getItemBySlot(EquipmentSlot.CHEST).is(CENuclear.PROTECTIVE_COAT.get())
+            && living.getItemBySlot(EquipmentSlot.LEGS).is(CENuclear.PROTECTIVE_TROUSERS.get())
+            && living.getItemBySlot(EquipmentSlot.FEET).is(CENuclear.PROTECTIVE_SHOE_COVERS.get())) event.setCanceled(true);
+    }
 
     public static boolean harmful(FluidState state) {
         if (state.isEmpty()) return false;

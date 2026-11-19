@@ -1405,9 +1405,9 @@
     "zh_cn": "把有毒气体直接接管送入回收设备。保持产物出口畅通。"
   },
   "guide.toxic_gas.step_4": {
-    "en_us": "A gas mask on the head keeps the gas out. Its filter lasts 1,200 seconds in the gas; two charcoal at a crafting table renew it.",
-    "ja_jp": "ガスマスクを頭に着けると、ガスを防げます。吸収缶はガスの中で1,200秒もちます。作業台で木炭2個を足すと新しくなります。",
-    "zh_cn": "头戴防毒面具可隔绝气体。滤罐在气云中可使用1,200秒，在工作台加入2个木炭即可更换。"
+    "en_us": "A gas mask in the head slot protects against inhalation. Craft it with a fresh carbon filter to restore the filter.",
+    "ja_jp": "頭にガスマスクを装備すると吸入を防げます。作業台で新品の活性炭フィルターと組み合わせると残量が回復します。",
+    "zh_cn": "头戴防毒面具可防止吸入。将面具与新的活性炭滤芯合成可恢复剩余滤量。"
   },
   "guide.submarine_hull.title": {
     "en_us": "Stainless steel and titanium hulls",
@@ -4638,5 +4638,45 @@
     "en_us": "The six terminals are electrically independent. Use separate runs for both sides of a circuit.",
     "ja_jp": "6個の端子は電気的に独立しています。回路の行きと戻りは別々の端子へつなぎます。",
     "zh_cn": "六个端子在电气上相互独立。一个回路的供电端和回路端应使用不同端子。"
+  },
+  "large_absorption_tower.wash": {
+    "en_us": "To scrub industrial exhaust, feed the wash solution at the top and the gas at the bottom.",
+    "ja_jp": "排ガスを洗浄するときは、最上段へ苛性ソーダ液、最下段へ排ガスを送ります。",
+    "zh_cn": "洗涤工业废气时，从塔顶送入洗涤液，从底层送入废气。"
+  },
+  "large_absorption_tower.recover": {
+    "en_us": "Pump spent wash liquid out at the bottom. Recover gypsum from sulfur scrubber liquor in a Basin with calcite.",
+    "ja_jp": "洗浄後の液は最下段から取り出します。硫黄系の洗浄液は鉢で方解石と混ぜ、石膏を回収できます。",
+    "zh_cn": "从底层抽出洗涤废液。将含硫洗涤液和方解石在搅拌盆中混合可回收石膏。"
+  },
+  "guide.industrial_gas_monitor.title": {
+    "en_us": "Monitoring industrial gas",
+    "ja_jp": "工場のガスを監視する",
+    "zh_cn": "监测工厂气体"
+  },
+  "guide.industrial_gas_monitor.step_1": {
+    "en_us": "Put a detector near equipment that can leak. It senses nearby hazardous gas clouds.",
+    "ja_jp": "漏れを監視したい設備の近くにガス検知器を置きます。周囲の危険なガス雲を検知します。",
+    "zh_cn": "在可能泄漏的设备旁放置气体探测器。它会感应附近的危险气云。"
+  },
+  "guide.industrial_gas_monitor.step_2": {
+    "en_us": "Connect redstone to a lamp. The detector gives a stronger signal near a gas cloud and clears when it disperses.",
+    "ja_jp": "レッドストーンで警報ランプにつなげます。ガス雲に近いほど信号が強くなり、雲が消えると停止します。",
+    "zh_cn": "用红石连接警报灯。越近气云信号越强，气云消散后信号归零。"
+  },
+  "guide.industrial_gas_monitor.step_3": {
+    "en_us": "Right-click a tank with the empty cylinder to take nitrogen, argon or helium.",
+    "ja_jp": "空のボンベでタンクを右クリックすると、窒素・アルゴン・ヘリウムを取り出せます。",
+    "zh_cn": "手持空瓶右击储罐，可抽取氮气、氩气或氦气。"
+  },
+  "guide.industrial_gas_monitor.step_4": {
+    "en_us": "Use the filled cylinder on the receiving tank to transfer its gas.",
+    "ja_jp": "充填したボンベで受け取り側のタンクを右クリックして移送します。",
+    "zh_cn": "使用已充气的气瓶右击接收罐即可转移气体。"
+  },
+  "guide.industrial_gas_monitor.step_5": {
+    "en_us": "Wear a gas mask for breathing protection. Use the protective coat, trousers and shoe covers together for splash protection.",
+    "ja_jp": "吸入対策にはガスマスクを装備します。飛沫対策には保護コート・ズボン・シューズカバーをそろえます。",
+    "zh_cn": "佩戴防毒面具防止吸入。穿齐防护外套、防护裤和鞋套可防液体飞溅。"
   }
 }

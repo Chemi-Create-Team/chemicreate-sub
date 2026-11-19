@@ -27,6 +27,7 @@ public final class CEWaterTreatment {
     public static final DeferredItem<Item> SLUDGE = ITEMS.registerSimpleItem("treatment_sludge");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> NEUTRALIZED_WASTEWATER = stream("neutralized_wastewater", 0xFF929981);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CLARIFIED_WATER = stream("clarified_water", 0xBB9FB9B6);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SULFUR_SCRUBBER_LIQUOR = stream("sulfur_scrubber_liquor", 0xFFAA9761);
 
     private CEWaterTreatment() { }
 
@@ -46,7 +47,7 @@ public final class CEWaterTreatment {
     private static void thermalProperties(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             var properties = new FluidThermal.Properties(293.15, 1, 4180);
-            for (String name : new String[] {"neutralized_wastewater", "clarified_water"}) {
+            for (String name : new String[] {"neutralized_wastewater", "clarified_water", "sulfur_scrubber_liquor"}) {
                 FluidThermal.register(BuiltInRegistries.FLUID.get(CreatePlant.location(name)), properties);
                 FluidThermal.register(BuiltInRegistries.FLUID.get(CreatePlant.location("flowing_" + name)), properties);
             }

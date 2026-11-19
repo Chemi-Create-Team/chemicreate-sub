@@ -9404,5 +9404,66 @@
         }
       }
     ]
+  },
+  {
+    "id": "industrial_gas_monitor",
+    "size": 7,
+    "height": 4,
+    "components": [
+      "gas_detector",
+      "gas_mask_filter",
+      "inert_gas_cylinder"
+    ],
+    "steps": [
+      {
+        "target": [
+          2,
+          1,
+          2
+        ],
+        "key": "step_1",
+        "item": "create_refinery_n_reactors:gas_detector"
+      },
+      {
+        "target": [
+          5,
+          1,
+          2
+        ],
+        "key": "step_2",
+        "smoke": [
+          1,
+          1,
+          2
+        ]
+      },
+      {
+        "target": [
+          2,
+          1,
+          4
+        ],
+        "key": "step_3",
+        "use": "create_refinery_n_reactors:inert_gas_cylinder"
+      },
+      {
+        "target": [
+          5,
+          1,
+          4
+        ],
+        "key": "step_4",
+        "use": "create_refinery_n_reactors:inert_gas_cylinder"
+      },
+      {
+        "target": [
+          2,
+          1,
+          2
+        ],
+        "key": "step_5",
+        "item": "create_refinery_n_reactors:gas_mask_filter"
+      }
+    ]
   }
 ]

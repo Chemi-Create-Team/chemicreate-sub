@@ -58,7 +58,7 @@ public class CECreativeModeTabs {
         List.of("spent_fuel_rod", "spent_control_rod", "chopped_spent_fuel", "spent_cladding_hulls", "spent_blanket_cartridge",
             "irradiated_cartridge", "spent_divertor_cassette", "empty_waste_canister", "vitrified_waste_canister"),
         List.of("anfo", "blasting_charge"),
-        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "gas_mask", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers", "soap")
+        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "gas_mask", "gas_mask_filter", "inert_gas_cylinder", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers", "soap")
     );
 
     /** Equipment and construction groups in display order. */
@@ -70,7 +70,7 @@ public class CECreativeModeTabs {
             "pvc_pipe", "resin_pipe", "ceramic_pipe", "gas_pipe", "large_gas_pipe"),
         List.of("reinforced_pump", "nickel_alloy_pump", "zirconium_pump", "stainless_steel_pump",
             "cryogenic_pump", "pvc_pump", "resin_pump", "gas_pump", "large_gas_pump"),
-        List.of("pressure_reducing_valve", "relief_scrubber", "flow_regulator",
+        List.of("pressure_reducing_valve", "relief_scrubber", "gas_detector", "flow_regulator",
             "pipe_thermometer", "pipe_pressure_gauge", "pipe_flow_meter", "process_transmitter", "control_valve_actuator", "pid_controller",
             "pid_instrument_rack"),
         List.of("horizontal_fluid_tank", "pressure_tank", "stainless_steel_tank", "cryogenic_tank", "gas_receiver", "gas_tank_container",

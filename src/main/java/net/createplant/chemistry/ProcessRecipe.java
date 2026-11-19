@@ -17,6 +17,9 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
     private static ProcessRecipe r(String id, ProcessModule kind, int ticks, List<FluidStack> in, List<FluidStack> out) {
         return new ProcessRecipe(id,kind,ticks,in,out,Items.AIR,HeatCondition.NONE);
     }
+    private static ProcessRecipe wash(String id, Fluid gas, Fluid liquor) {
+        return r(id, ABSORPTION_TRAYS, 100, List.of(f(gas,250),f(CEChlorAlkali.CAUSTIC_SODA.get(),250)),List.of(f(liquor,500)));
+    }
     private ProcessRecipe catalyst(Item item) { return new ProcessRecipe(id,module,ticks,inputs,outputs,item,requiredHeat); }
     private ProcessRecipe heat(HeatCondition heat) { return new ProcessRecipe(id,module,ticks,inputs,outputs,catalyst,heat); }
     public boolean heatAllowed(HeatLevel level) { return requiredHeat.testBlazeBurner(level); }
@@ -37,6 +40,11 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
             r("absorb_sulfuric_acid",ABSORPTION_TRAYS,100,List.of(f(CEUranium.SULFUR_TRIOXIDE.get(),250),f(Fluids.WATER,250)),List.of(f(CEUranium.SULFURIC_ACID.get(),250))),
             r("absorb_sulfurous_acid",ABSORPTION_TRAYS,100,List.of(f(CEUranium.SULFUR_DIOXIDE.get(),250),f(Fluids.WATER,250)),List.of(f(CEUranium.SULFUROUS_ACID.get(),250))),
             r("absorb_hydrochloric_acid",ABSORPTION_TRAYS,100,List.of(f(CEChlorAlkali.HYDROGEN_CHLORIDE.get(),500),f(Fluids.WATER,500)),List.of(f(CEChlorAlkali.HYDROCHLORIC_ACID.get(),1000))),
+            wash("wash_sulfur_dioxide", CEUranium.SULFUR_DIOXIDE.get(), CEWaterTreatment.SULFUR_SCRUBBER_LIQUOR.get()),
+            wash("wash_hydrogen_sulfide", CEProcessFluids.HYDROGEN_SULFIDE.get(), CEWaterTreatment.SULFUR_SCRUBBER_LIQUOR.get()),
+            wash("wash_hydrogen_chloride", CEChlorAlkali.HYDROGEN_CHLORIDE.get(), CEWaterTreatment.NEUTRALIZED_WASTEWATER.get()),
+            wash("wash_chlorine", CEChlorAlkali.CHLORINE.get(), CEWaterTreatment.NEUTRALIZED_WASTEWATER.get()),
+            wash("wash_hydrogen_fluoride", CEUranium.HYDROGEN_FLUORIDE.get(), CEWaterTreatment.NEUTRALIZED_WASTEWATER.get()),
             r("distill_crude",FRACTION_SEPARATOR,100,List.of(f(CEProcessFluids.PREHEATED_CRUDE_OIL.get(),1000)),List.of(f(CEPetroFluids.GASOLINE.get(),200),f(CEPetroFluids.DIESEL.get(),300),f(CEPetroFluids.HEAVY_OIL.get(),200),f(CEPetroFluids.NAPHTHA.get(),200),f(CEPetroFluids.LUBRICATING_OIL.get(),100))),
             r("crack_naphtha",REACTION_VESSEL,120,List.of(f(CEPetroFluids.NAPHTHA.get(),200),f(Fluids.WATER,100)),List.of(f(CEProcessFluids.HOT_OLEFINS.get(),200),f(Fluids.WATER,100))).catalyst(CEItems.CRACKING_CATALYST.get()).heat(HeatCondition.SUPERHEATED),
             r("separate_olefins",FRACTION_SEPARATOR,60,List.of(f(CEProcessFluids.COOLED_OLEFINS.get(),200)),List.of(f(CEPetroFluids.ETHYLENE.get(),150),f(CEPetroFluids.PROPYLENE.get(),50))),
