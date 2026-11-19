@@ -40,10 +40,20 @@ public final class GasPipeGameTests {
         h.runAfterDelay(120,()-> {h.assertTrue(!dest.getTankInventory().isEmpty(),"The native pump moves gas along gas pipes");h.assertTrue(source.getTankInventory().getFluidAmount()+dest.getTankInventory().getFluidAmount()==10000,"Pipes hold no second inventory and gas is conserved");h.assertTrue(flow(h,3).flowBand()==0,"Ordinary gas is silent while it moves");h.succeed();});
     }
     @GameTest(template="test_petrochemical",timeoutTicks=150)
-    public static void incompatibleHighPressureGasStopsAtReinforcedPipeWithoutDamage(GameTestHelper h){
-        var source=tank(h,SOURCE);var dest=tank(h,DEST);for(int i=1;i<6;i++)h.setBlock(SOURCE.east(i),pipe(false));
-        source.getTankInventory().fill(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),2000),EXECUTE);pump(h,SOURCE.east()).generatedSpeed.setValue(64);
-        h.runAfterDelay(100,()-> {h.assertTrue(dest.getTankInventory().isEmpty() && source.getTankInventory().getFluidAmount()==2000,"A pump cannot force an incompatible grade through gas pipe");for(int i=2;i<6;i++)h.assertBlockPresent(CEGasPipes.GAS_PIPE.get(),SOURCE.east(i));h.assertTrue(flow(h,3).flowBand()==0,"Blocked pressure makes no airflow sound");h.succeed();});
+    public static void highPressureGasKeepsItsGradeAcrossMixedOrdinaryPipes(GameTestHelper h){
+        var source=tank(h,SOURCE);var dest=tank(h,DEST);
+        h.setBlock(SOURCE.east(2),AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true));
+        h.setBlock(SOURCE.east(3),AllBlocks.GLASS_FLUID_PIPE.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
+        h.setBlock(SOURCE.east(4),CEBlocks.RESIN_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true));
+        h.setBlock(SOURCE.east(5),CETransport.CERAMIC_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true));
+        var gas=new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),2000);
+        source.getTankInventory().fill(gas,EXECUTE);
+        pump(h,SOURCE.east()).generatedSpeed.setValue(64);
+        h.succeedWhen(()->{
+            var received=dest.getTankInventory().getFluid();
+            h.assertTrue(received.getAmount()==2000 && FluidStack.isSameFluidSameComponents(received,gas) && source.getTankInventory().isEmpty(),
+                "Copper, glass, resin and ceramic pipes carry the whole high-pressure charge unchanged");
+        });
     }
     @GameTest(template="test_petrochemical",timeoutTicks=180)
     public static void twoNativePumpsMoveGasThroughTheDirectionalReducer(GameTestHelper h){
@@ -58,7 +68,8 @@ public final class GasPipeGameTests {
     @GameTest(template="test_petrochemical",timeoutTicks=200)
     public static void gasFlowSoundFollowsTwoPressuresAndStopsWhenTheSupplyRunsOut(GameTestHelper h){
         var source=tank(h,SOURCE);var dest=tank(h,DEST);
-        h.setBlock(SOURCE.east(2),pipe(true));h.setBlock(SOURCE.east(4),pipe(false));
+        h.setBlock(SOURCE.east(2),AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true));
+        h.setBlock(SOURCE.east(4),CETransport.PVC_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true));
         h.setBlock(SOURCE.east(3),CEPressure.REDUCER.get().defaultBlockState().setValue(PressureValveBlock.FACING,Direction.EAST).setValue(PressureValveBlock.AXIS,Direction.Axis.X));
         var inlet=pump(h,SOURCE.east());var outlet=pump(h,SOURCE.east(5));
         int charge=2048;

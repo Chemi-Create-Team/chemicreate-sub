@@ -101,7 +101,7 @@ for ident,title,ja,steps in [
  ('Lay a horizontal tank with a 1×1 to 3×3 section, any length, and put Blaze Burners under it.','横型タンクを断面1×1～3×3、好きな長さで置き、下にブレイズバーナーを並べます。'),
  ('Feed water at an end or side. The last section of each bottom row boils it with the heat of the burners under its row.','端面か側面から給水します。下段の各列の最後の区間が、その列のバーナーの熱で水を沸かします。'),
  ('Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.','加熱なら350 °C、超加熱なら650 °C・20 barの蒸気が出ます。'),
- ('Draw the steam from the top or outer end of that section through rated pipes to a turbine. With a steam engine attached it is Create\'s boiler instead.','その区間の上面か外側の端から、耐熱・耐圧配管でタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。')])]:
+ ('Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.','その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。')])]:
     texts[f'{MOD}.ponder.shared.guide.{ident}.title']=(title,ja)
     texts[f'{MOD}.ponder.plant_{ident}.header']=(title,ja)
     for i,pair in enumerate(steps,1):texts[f'{MOD}.ponder.shared.guide.{ident}.step_{i}']=pair

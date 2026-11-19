@@ -224,7 +224,7 @@ final class SoundClientCheck {
         level.setBlock(gasSource, storage, Block.UPDATE_ALL);
         level.setBlock(gasSource.east(6), storage, Block.UPDATE_ALL);
         for (int i = 2; i <= 5; i++) {
-            var pipe = CETransport.NICKEL_ALLOY_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST, true).setValue(FluidPipeBlock.WEST, true);
+            var pipe = AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.EAST, true).setValue(FluidPipeBlock.WEST, true);
             level.setBlock(gasSource.east(i), pipe, Block.UPDATE_ALL);
         }
         level.setBlock(gasSource.east(), CETransport.MATERIAL_PUMPS.getLast().get().defaultBlockState().setValue(DirectionalKineticBlock.FACING, Direction.EAST), Block.UPDATE_ALL);

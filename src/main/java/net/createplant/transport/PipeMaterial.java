@@ -42,6 +42,7 @@ public enum PipeMaterial {
     /** What patches a worn pipe of this material: a plate, an ingot or the resin of it. */
 
     public String incompatibility(FluidHazards.Properties fluid) {
+        if (fluid.gas() && this!=VALVE) return "safe";
         if (!resists(fluid.corrosion())) return "corrosion";
         if (fluid.heat().compareTo(hottest)>0) return this==RESIN || this==PVC?"softening":"overheat";
         if (fluid.heat().compareTo(coldest)<0) return "brittle";
@@ -49,7 +50,8 @@ public enum PipeMaterial {
         return "safe";
     }
     public boolean carries(net.neoforged.neoforge.fluids.FluidStack stack) {
-        if (!net.createplant.mixture.MixtureHelper.isMixture(stack)) return carries(FluidHazards.of(stack));
+        if (!net.createplant.mixture.MixtureHelper.isMixture(stack))
+            return this!=VALVE && !stack.isEmpty() && stack.getFluidType().isLighterThanAir() || carries(FluidHazards.of(stack));
         return net.createplant.mixture.MixtureHelper.isMixableLiquid(stack) && net.createplant.mixture.MixtureHelper.components(stack).stream().allMatch(this::carries);
     }
     public boolean carries(FluidHazards.Properties fluid) { return incompatibility(fluid).equals("safe"); }
@@ -60,11 +62,12 @@ public enum PipeMaterial {
             || block instanceof com.simibubi.create.content.fluids.pipes.AxisPipeBlock;
         return pipe ? of(state) : null;
     }
-    /** What the material carries, for goggles and tooltips: its temperature range, its pressure grade and the corrosion it resists. */
+    /** Liquid material ratings, alongside the shared gas behaviour. */
     public void describe(java.util.List<net.minecraft.network.chat.Component> lines) {
         lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.carries",coldest.label(),hottest.label(),strongest.label()));
         lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.resistance",
             resists(Corrosion.ACID) ? "○" : "×",resists(Corrosion.HOT_ACID) ? "○" : "×",resists(Corrosion.FLUORIDE) ? "○" : "×"));
+        if (this!=VALVE) lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.gases"));
     }
     public static PipeMaterial of(BlockState state) {
         if (state.getBlock() instanceof MaterialPipeBlock pipe) return pipe.material;

@@ -81,20 +81,20 @@ NAMES = {
 SCENE = 'gas_pipes'
 TEXTS = {
     'title': ('Gas pipes and their bore', '気体パイプと管の太さ', '气体管道与管径'),
-    'step_1': ('Use gas pipes to transfer gas between vessels.',
-        '気体用の配管です。容器同士をつないでガスを移せます。',
-        '气体管道用于连接容器并转移气体。'),
-    'step_2': ('Gas moves from higher to lower pressure. Check both vessels with pressure gauges.',
-        '圧力の高い容器から低い容器へ流れます。圧力計で流れ先を確認します。',
-        '气体从高压容器流向低压容器，可用压力计确认。'),
+    'step_1': ('Use a filled gas bucket on the Creative Fluid Tank to set its supply. Any fluid pipe can carry gas.',
+        'ガス入りバケツでクリエイティブタンクが供給する気体を設定します。気体はどの流体パイプでも送れます。',
+        '用装有气体的桶设定创造模式流体储罐的气源。所有流体管道都能输送气体。'),
+    'step_2': ('Gas needs a pump, just like liquid. Connect rotational power to the pump.',
+        'ガスも液体と同じくポンプで送ります。ポンプへ回転動力を入力します。',
+        '气体与液体一样需要泵输送，给泵接入旋转动力。'),
     'step_3': ('Use large gas pipes for more flow. They connect directly to narrow pipes.',
         '流量を増やすなら太い気体パイプを使います。細い管にもそのままつなげられます。',
         '需要更大流量时使用粗气管，也可直接连接细管。'),
-    'step_4': ('Use steel pipe for high-pressure gas. The moving gas makes a hiss that grows louder with flow.',
-        '高圧ガスにはステンレス鋼管を使います。ガスが流れると、流量に応じて風切り音が大きくなります。',
-        '高压气体使用不锈钢管。气体流动时会发出嘶声，流量越大声音越响。'),
+    'step_4': ('High-pressure gas hisses while flowing in any pipe. Choose a receiving tank rated for that gas.',
+        '高圧ガスはどの配管でも流れると風切り音がします。受け取りには気体の等級に合うタンクを使います。',
+        '高压气体流过任何管道都会发出嘶声。接收端使用符合气体等级的储罐。'),
 }
-STEPS = ([3, 1, 1], [2, 1, 1], [3, 1, 4], [5, 2, 4])
+STEPS = ([1, 1, 1], [2, 1, 1], [3, 1, 4], [5, 1, 1])
 
 
 def translations():
@@ -109,16 +109,16 @@ def translations():
 
 
 def storyboard():
-    """Two pairs of Create tanks: the near pair joined by gas pipes, the far pair by large gas pipes."""
+    """Two gas lines from creative sources to axial gas receivers."""
     s = ponder.Structure(7, 4)
-    for z, pipe in ((1, 'gas_pipe'), (4, 'large_gas_pipe')):
-        for x in (1, 5):
-            for y in (1, 2): s.block(x, y, z, 'create:fluid_tank', bottom=str(y == 1).lower(), top=str(y == 2).lower(), shape='window')
+    for z, pipes in ((1, ('create:fluid_pipe', NS+'gas_pipe')), (4, (NS+'large_gas_pipe', NS+'large_gas_pipe'))):
+        s.block(1, 1, z, 'create:creative_fluid_tank', bottom='true', top='true', shape='window')
+        s.block(5, 1, z, NS+'gas_receiver', bottom='true', top='true', shape='plain', axis='x')
         s.pump(2, 1, z, 'east')
         s.block(2, 1, z+1, 'create:cogwheel', axis='x', waterlogged='false')
         s.block(1, 1, z+1, 'create:creative_motor', facing='east')
-        for x in (3, 4):
-            s.block(x, 1, z, NS + pipe, east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
+        for x, pipe in enumerate(pipes, 3):
+            s.block(x, 1, z, pipe, east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
     ponder.OUT = A / 'ponder/plant'
     s.save(SCENE)
     path = A / 'ponder/tutorials.json'

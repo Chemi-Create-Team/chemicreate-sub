@@ -1,7 +1,6 @@
 package net.createplant.mixin;
 
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
-import net.createplant.transport.FluidHazards;
 import net.createplant.transport.PipeMaterial;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
@@ -11,10 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/**
- * A pipe does not take in a fluid its material cannot carry: too hot, too cold, too high a pressure grade, or corrosive to it. Create's
- * own valves and smart pipes refuse flows the same way, so the network simply does not reach past such a pipe.
- */
+/** Applies material ratings to liquids while retaining Create's routing and filters for every fluid. */
 @Mixin(value = FluidTransportBehaviour.class, remap = false)
 abstract class GradePipeMixin {
     @com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/fluids/FluidStack;isSameFluidSameComponents(Lnet/neoforged/neoforge/fluids/FluidStack;Lnet/neoforged/neoforge/fluids/FluidStack;)Z"))

@@ -65,7 +65,7 @@ public final class FluidRoutes {
         if (path.isEmpty()) return;
         var properties = FluidHazards.of(fluid);
         var pressure = properties.pressure();
-        boolean audible = properties.gas() && pressure != Grade.Pressure.ATMOSPHERIC;
+        boolean audible = pressure != Grade.Pressure.ATMOSPHERIC && (properties.gas() || fluid.getFluidType().isLighterThanAir());
         for (var at : path) {
             if (!level.hasChunkAt(at)) continue;
             var be = level.getBlockEntity(at);

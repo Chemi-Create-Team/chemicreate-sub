@@ -30,15 +30,15 @@ public final class TransportQualityGameTests {
 
     @GameTest(template="test_petrochemical")
     public static void chemicalRatingsDoNotInventForeignFluidHazards(GameTestHelper h) {
-        for (var m:PipeMaterial.values()) for (var f:new Fluid[]{Fluids.WATER,Fluids.LAVA,CEPetroFluids.CRUDE_OIL.get(),CEPetroFluids.GASOLINE.get(),CEFluids.STEAM.get()})
-            h.assertTrue(m.incompatibility(FluidHazards.of(new FluidStack(f,1000))).equals(f!=CEFluids.STEAM.get() ? "safe"
-                    : m==PipeMaterial.PVC || m==PipeMaterial.RESIN ? "softening" : m==PipeMaterial.CRYOGENIC ? "overheat" : "safe"),
-                "Unclassified fluids have no invented hazard; hot steam softens resin and PVC and is too hot for the cryogenic line: "+m+" / "+f);
+        for (var m:PipeMaterial.values()) for (var f:new Fluid[]{Fluids.WATER,Fluids.LAVA,CEPetroFluids.CRUDE_OIL.get(),CEPetroFluids.GASOLINE.get()})
+            h.assertTrue(m.carries(new FluidStack(f,1000)),"Unclassified liquids have no invented hazard: "+m+" / "+f);
         var acid=FluidHazards.of(new FluidStack(CEFluids.NITRIC_ACID.get(),1000));
         h.assertTrue(PipeMaterial.COPPER.incompatibility(acid).equals("corrosion") && PipeMaterial.RESIN.incompatibility(acid).equals("safe"),"Cool nitric acid requires a corrosion-resistant material");
-        h.assertTrue(PipeMaterial.COPPER.incompatibility(FluidHazards.named("compressed_synthesis_feed")).equals("pressure"),"Compressed synthesis feed requires pressure resistance");
-        h.assertTrue(PipeMaterial.REINFORCED.incompatibility(FluidHazards.named("synthesis_gas")).equals("safe"),"Reinforced pipe safely handles hot high-pressure synthesis");
-        h.assertTrue(PipeMaterial.RESIN.incompatibility(FluidHazards.named("hot_nitric_oxide_mixture")).equals("softening"),"Hot oxidation must soften resin");
+        h.assertTrue(PipeMaterial.COPPER.incompatibility(FluidHazards.named("pressurised_water")).equals("pressure"),"Liquid pressure still matters for copper");
+        h.assertTrue(PipeMaterial.RESIN.incompatibility(FluidHazards.named("preheated_crude_oil")).equals("softening"),"Hot liquid still exceeds resin's thermal rating");
+        for (var m:PipeMaterial.values()) if (m!=PipeMaterial.VALVE)
+            for (var f:new Fluid[]{CEFluids.STEAM.get(),CEProcessFluids.SUPERHEATED_STEAM.get(),CEProcessFluids.COMPRESSED_HYDROGEN.get(),CEUranium.HYDROGEN_FLUORIDE.get()})
+                h.assertTrue(m.carries(new FluidStack(f,1000)),"All pipe materials carry gases independently of temperature, pressure and corrosion: "+m+" / "+f);
         h.succeed();
     }
     @GameTest(template="test_petrochemical")
@@ -72,11 +72,10 @@ public final class TransportQualityGameTests {
         transfer(h,straight(AllBlocks.FLUID_PIPE.getDefaultState()),CEPetroFluids.CRUDE_OIL.get(),true,false);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
-    public static void ceramicPipeCarriesAcidButNotPressureOrFluoride(GameTestHelper h) {
+    public static void ceramicPipeCarriesAcidAtAtmosphericPressure(GameTestHelper h) {
         var ceramic=PipeMaterial.CERAMIC;
         h.assertTrue(ceramic.incompatibility(FluidHazards.named("zirconium_sulfate_solution")).equals("safe"),"Fired clay takes hot sulfate liquors");
-        h.assertTrue(ceramic.incompatibility(FluidHazards.named("hydrogen_fluoride")).equals("corrosion"),"Hydrogen fluoride eats ceramic");
-        h.assertTrue(ceramic.incompatibility(FluidHazards.named("compressed_synthesis_feed")).equals("pressure"),"Ceramic is too brittle for pressure");
+        h.assertTrue(ceramic.incompatibility(FluidHazards.named("pressurised_water")).equals("pressure"),"Ceramic still rejects high-pressure liquids");
         transfer(h,straight(CETransport.CERAMIC_PIPE.get().defaultBlockState()),CEUranium.SULFURIC_ACID.get(),false,false);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
@@ -125,7 +124,7 @@ public final class TransportQualityGameTests {
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void nativeSmartFluidFilterAcceptsTheAddonBucket(GameTestHelper h) {
-        transfer(h,AllBlocks.SMART_FLUID_PIPE.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING,Direction.EAST),CEPetroFluids.CRUDE_OIL.get(),true,true);
+        transfer(h,AllBlocks.SMART_FLUID_PIPE.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING,Direction.EAST),CEProcessFluids.COMPRESSED_HYDROGEN.get(),true,true);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void aReallyDrivenCreateValveOpensTheAddonLine(GameTestHelper h) {
@@ -171,7 +170,7 @@ public final class TransportQualityGameTests {
             selection.setFilter(new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
             h.runAfterDelay(40,()->{
                 h.assertTrue(fluids(h,TARGET).getFluidInTank(0).isEmpty(),"A mismatched native filter must reject the addon fluid");
-                selection.setFilter(new ItemStack(com.jesz.createdieselgenerators.CDGFluids.CRUDE_OIL.getBucket().get()));
+                selection.setFilter(fluid.getFluidType().getBucket(new FluidStack(fluid,1000)));
             });
         }
         IFluidHandler source=fluids(h,SOURCE),dest=fluids(h,TARGET);

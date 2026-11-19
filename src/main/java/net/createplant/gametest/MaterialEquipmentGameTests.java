@@ -30,8 +30,8 @@ public class MaterialEquipmentGameTests {
             "Pressure valves keep their acid-proof trim");
         h.assertTrue(PipeMaterial.STAINLESS.incompatibility(liquor).equals("corrosion") && PipeMaterial.ZIRCONIUM.incompatibility(liquor).equals("safe")
             && PipeMaterial.RESIN.incompatibility(liquor).equals("safe"), "Hot acid liquor needs zirconium, or resin at low pressure");
-        h.assertTrue(PipeMaterial.STAINLESS.incompatibility(fluoride).equals("corrosion") && PipeMaterial.ZIRCONIUM.incompatibility(fluoride).equals("corrosion")
-            && PipeMaterial.NICKEL_ALLOY.incompatibility(fluoride).equals("safe"), "Only the nickel alloy holds fluorides");
+        h.assertTrue(!PipeMaterial.STAINLESS.resists(Corrosion.FLUORIDE) && !PipeMaterial.ZIRCONIUM.resists(Corrosion.FLUORIDE)
+            && PipeMaterial.NICKEL_ALLOY.resists(Corrosion.FLUORIDE), "Liquid corrosion ratings retain nickel alloy's fluoride resistance");
         h.succeed();
     }
 }

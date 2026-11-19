@@ -2,6 +2,7 @@ package net.createplant.gametest;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
+import com.simibubi.create.content.fluids.tank.CreativeFluidTankBlockEntity;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import java.util.List;
 import net.createplant.CreatePlant;
@@ -11,9 +12,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -55,7 +60,7 @@ public final class TankGradeGameTests {
 
     @GameTest(template="test_fractionation")
     public static void allLiquidStorageRejectsEveryKnownGasThroughRealHandlers(GameTestHelper h) {
-        for (var block : List.of(AllBlocks.FLUID_TANK.get(), AllBlocks.CREATIVE_FLUID_TANK.get(), CETransport.HORIZONTAL_FLUID_TANK.get(), CETransport.PRESSURE_TANK.get(), CETransport.STAINLESS_STEEL_TANK.get(), CETransport.CRYOGENIC_TANK.get())) {
+        for (var block : List.of(AllBlocks.FLUID_TANK.get(), CETransport.HORIZONTAL_FLUID_TANK.get(), CETransport.PRESSURE_TANK.get(), CETransport.STAINLESS_STEEL_TANK.get(), CETransport.CRYOGENIC_TANK.get())) {
             var be = tank(h, block);
             var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(AT), Direction.UP);
             for (var fluid : net.minecraft.core.registries.BuiltInRegistries.FLUID) {
@@ -64,6 +69,33 @@ public final class TankGradeGameTests {
                 if (!net.createplant.transport.FluidHazards.of(gas).gas() && !fluid.getFluidType().isLighterThanAir()) continue;
                 h.assertTrue(!port.isFluidValid(0, gas) && port.fill(gas, SIMULATE) == 0 && port.fill(gas, EXECUTE) == 0 && be.getTankInventory().isEmpty(), "Liquid storage rejects gas through validation, simulation and execution: " + block + "/" + fluid);
             }
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="test_fractionation")
+    public static void creativeTankSelectsGasFromABucketAndSuppliesItAfterReload(GameTestHelper h) {
+        var be = (CreativeFluidTankBlockEntity) tank(h, AllBlocks.CREATIVE_FLUID_TANK.get());
+        var level = h.getLevel();
+        var at = h.absolutePos(AT);
+        var gas = new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(), 1000);
+        var port = level.getCapability(Capabilities.FluidHandler.BLOCK, at, Direction.UP);
+        h.assertTrue(port != null && port.isFluidValid(0, gas), "The creative tank's actual fluid port validates gas");
+        h.assertTrue(port.fill(gas, SIMULATE) == 1000 && port.fill(gas, EXECUTE) == 1000 && port.getFluidInTank(0).isEmpty(),
+            "Pumped gas is accepted with Create's standard creative sink semantics");
+        var player = h.makeMockPlayer(GameType.CREATIVE);
+        var bucket = gas.getFluidType().getBucket(gas);
+        player.setItemInHand(InteractionHand.MAIN_HAND, bucket);
+        var hit = new BlockHitResult(Vec3.atCenterOf(at).add(0, .5, 0), Direction.UP, at, false);
+        level.getBlockState(at).useItemOn(bucket, level, player, InteractionHand.MAIN_HAND, hit);
+        h.assertTrue(FluidStack.isSameFluidSameComponents(be.getTankInventory().getFluid(), gas), "A real gas bucket sets the creative tank to its high-pressure gas");
+        var saved = be.saveWithoutMetadata(level.registryAccess());
+        be = (CreativeFluidTankBlockEntity) tank(h, AllBlocks.CREATIVE_FLUID_TANK.get());
+        be.loadWithComponents(saved, level.registryAccess());
+        port = level.getCapability(Capabilities.FluidHandler.BLOCK, at, Direction.UP);
+        for (int i = 0; i < 10; i++) {
+            var drained = port.drain(1000, EXECUTE);
+            h.assertTrue(drained.getAmount() == 1000 && FluidStack.isSameFluidSameComponents(drained, gas), "Reload preserves an unlimited gas supply");
         }
         h.succeed();
     }

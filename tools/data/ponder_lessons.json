@@ -1550,9 +1550,9 @@
     "zh_cn": "用工程师护目镜或管线仪表查看流体等级。"
   },
   "guide.pipe_pressure.step_2": {
-    "en_us": "Choose a pipe that accepts both grades and the fluid corrosion.",
-    "ja_jp": "温度・圧力の両等級と耐食性に合う配管を選びます。",
-    "zh_cn": "选择同时满足温度、压力与耐腐蚀要求的管道。"
+    "en_us": "Match the pipe material to the liquid. Gases can pass through any pipe regardless of grade.",
+    "ja_jp": "液体は等級と耐食性に合う配管で運びます。気体は等級を問わず、どの配管でも送れます。",
+    "zh_cn": "液体需要匹配管道的等级与耐腐蚀性。气体可通过任意管道，不受等级限制。"
   },
   "guide.pipe_pressure.step_3": {
     "en_us": "Use a Create pump for gas as well as liquid. Storage amount does not change the pressure grade.",
@@ -1600,29 +1600,29 @@
     "zh_cn": "根据流体选择管道"
   },
   "guide.pipe_materials.step_1": {
-    "en_us": "Create copper pipes and pumps accept ambient through hot fluids at atmospheric pressure. They reject cold / cryogenic and pressurised fluids. Other pipe materials keep their own ratings.",
-    "ja_jp": "Create標準の銅管とポンプは常温〜高温・常圧です。低温・極低温や加圧流体は通りません。材質別配管の等級はそれぞれ異なります。",
-    "zh_cn": "Create普通铜管和泵支持常温至高温、常压。不接收低温、极低温和加压流体。其他材质保持各自等级。"
+    "en_us": "Standard copper pipes carry liquids at atmospheric pressure, from ambient to hot. Gases can use any pipe material.",
+    "ja_jp": "Create標準の銅管は常温〜高温・常圧の液体に対応します。気体はどの材質の配管でも送れます。",
+    "zh_cn": "Create普通铜管可输送常温至高温的常压液体。任何材质的管道都能输送气体。"
   },
   "guide.pipe_materials.step_2": {
-    "en_us": "For acids early on, use ceramic pipe fired from clay. It also takes hot acids, but only at atmospheric pressure and not fluorides.",
-    "ja_jp": "序盤の酸には、粘土を焼いたセラミック管を使います。熱い酸にも耐えますが、常圧だけで、フッ化物には使えません。",
-    "zh_cn": "前期输送酸液使用由黏土烧制的陶瓷管。它也耐热酸，但只能用于常压，不能用于氟化物。"
+    "en_us": "Start with fired ceramic pipe for acidic liquids. It handles hot acid at atmospheric pressure.",
+    "ja_jp": "序盤の酸性液体には、粘土を焼いたセラミック管を使います。常圧なら熱い酸にも対応します。",
+    "zh_cn": "前期输送酸液可以使用烧制陶瓷管。它能输送常压的高温酸液。"
   },
   "guide.pipe_materials.step_3": {
-    "en_us": "Reinforced pipe carries very-hot pressurised fluids. It is not acid resistant.",
-    "ja_jp": "強化管は超高温・加圧まで運べます。酸には対応しません。",
-    "zh_cn": "强化管可输送超高温加压流体。不耐酸。"
+    "en_us": "Reinforced pipe carries very-hot pressurised liquids. It is not acid resistant.",
+    "ja_jp": "強化管は超高温・加圧の液体まで運べます。酸には対応しません。",
+    "zh_cn": "强化管可输送超高温加压液体，但不耐酸。"
   },
   "guide.pipe_materials.step_4": {
-    "en_us": "Stainless pipe carries very-hot high-pressure fluids and acids. Wrench it for a window or add casing.",
-    "ja_jp": "ステンレス管は超高温・高圧と酸に対応します。レンチで窓にし、ケーシングも付けられます。",
-    "zh_cn": "不锈钢管支持超高温、高压和酸液。可用扳手加观察窗或安装机壳。"
+    "en_us": "Stainless pipe carries hot, high-pressure and acidic liquids. Wrench it for a window or add casing.",
+    "ja_jp": "ステンレス管は高温・高圧の液体や酸に対応します。レンチで窓にし、ケーシングも付けられます。",
+    "zh_cn": "不锈钢管支持高温、高压液体及酸液。可用扳手加观察窗或安装机壳。"
   },
   "guide.pipe_materials.step_5": {
-    "en_us": "Use nickel-alloy pipe for fluoride fluids such as uranium hexafluoride.",
-    "ja_jp": "六フッ化ウランなどのフッ化物にはニッケル合金管を使います。",
-    "zh_cn": "六氟化铀等氟化物流体使用镍合金管。"
+    "en_us": "Nickel-alloy pipe resists fluorides. Look at a pipe with goggles to see its liquid ratings.",
+    "ja_jp": "ニッケル合金管はフッ化物に耐えます。液体の対応等級はゴーグルで確認できます。",
+    "zh_cn": "镍合金管耐氟化物腐蚀。用护目镜查看管道支持的液体等级。"
   },
   "guide.pipe_materials.step_6": {
     "en_us": "Zirconium pipe carries hot acids as well as high-grade heat and pressure.",
@@ -1630,14 +1630,14 @@
     "zh_cn": "锆管支持热酸及较高温度、压力等级。"
   },
   "guide.pipe_materials.step_7": {
-    "en_us": "Insulated pipe carries cryogenic fluids. Ordinary metal pipes reject that grade.",
-    "ja_jp": "極低温の流体には保冷管を使います。普通の金属管は受け付けません。",
-    "zh_cn": "极低温流体使用保冷管。普通金属管会拒收。"
+    "en_us": "Use insulated pipe for cryogenic liquids, such as liquid helium.",
+    "ja_jp": "液体ヘリウムなどの極低温液体は、保冷管で運びます。",
+    "zh_cn": "用保温管输送液氦等低温液体。"
   },
   "guide.pipe_materials.step_8": {
-    "en_us": "All grades are fixed by fluid type. An incompatible material blocks the flow without rupture.",
-    "ja_jp": "等級は流体の種類で決まります。適合しない素材は破裂せずに流れを止めます。",
-    "zh_cn": "等级由流体种类固定决定。不匹配的材料会阻止流入，不会破裂。"
+    "en_us": "Liquids outside the pipe ratings stay at the source. Gas retains its grade in transit.",
+    "ja_jp": "配管の等級に合わない液体は供給元に残ります。気体は等級を保ったまま流れます。",
+    "zh_cn": "超出管道等级的液体会留在源头。气体在输送时保持原有等级。"
   },
   "guide.tank_materials.title": {
     "en_us": "Choosing a tank for the fluid",
@@ -2205,9 +2205,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler.step_4": {
-    "en_us": "Draw the steam from the top or outer end of that section through rated pipes to a turbine. With a steam engine attached it is Create's boiler instead.",
-    "ja_jp": "その区間の上面か外側の端から、耐熱・耐圧配管でタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
-    "zh_cn": "从该段顶部或外端经耐热耐压管道送往汽轮机。若连接蒸汽引擎，则作为机械动力锅炉。"
+    "en_us": "Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.",
+    "ja_jp": "その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
+    "zh_cn": "从该段顶部或外端泵送蒸汽至汽轮机。安装蒸汽引擎后切换到Create锅炉模式。"
   },
   "guide.tubular_boiler_2x2.title": {
     "en_us": "2x2 horizontal tank boiler",
@@ -2230,9 +2230,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler_2x2.step_4": {
-    "en_us": "Draw the steam from the top or outer end of that section through rated pipes to a turbine. With a steam engine attached it is Create's boiler instead.",
-    "ja_jp": "その区間の上面か外側の端から、耐熱・耐圧配管でタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
-    "zh_cn": "从该段顶部或外端经耐热耐压管道送往汽轮机。若连接蒸汽引擎，则作为机械动力锅炉。"
+    "en_us": "Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.",
+    "ja_jp": "その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
+    "zh_cn": "从该段顶部或外端泵送蒸汽至汽轮机。安装蒸汽引擎后切换到Create锅炉模式。"
   },
   "guide.tubular_boiler_3x3.title": {
     "en_us": "3x3 horizontal tank boiler",
@@ -2255,9 +2255,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler_3x3.step_4": {
-    "en_us": "Draw the steam from the top or outer end of that section through rated pipes to a turbine. With a steam engine attached it is Create's boiler instead.",
-    "ja_jp": "その区間の上面か外側の端から、耐熱・耐圧配管でタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
-    "zh_cn": "从该段顶部或外端经耐热耐压管道送往汽轮机。若连接蒸汽引擎，则作为机械动力锅炉。"
+    "en_us": "Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.",
+    "ja_jp": "その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
+    "zh_cn": "从该段顶部或外端泵送蒸汽至汽轮机。安装蒸汽引擎后切换到Create锅炉模式。"
   },
   "rbmk_compact_core.fuel": {
     "en_us": "Use the double-striped 5% rods in five- or seven-wide compact cores. They do not fit seven-layer cores.",
@@ -2320,9 +2320,9 @@
     "zh_cn": "气体管道与管径"
   },
   "guide.gas_pipes.step_1": {
-    "en_us": "Use gas pipes to transfer gas between vessels.",
-    "ja_jp": "気体用の配管です。容器同士をつないでガスを移せます。",
-    "zh_cn": "气体管道用于连接容器并转移气体。"
+    "en_us": "Use a filled gas bucket on the Creative Fluid Tank to set its supply. Any fluid pipe can carry gas.",
+    "ja_jp": "ガス入りバケツでクリエイティブタンクが供給する気体を設定します。気体はどの流体パイプでも送れます。",
+    "zh_cn": "用装有气体的桶设定创造模式流体储罐的气源。所有流体管道都能输送气体。"
   },
   "guide.gas_pipes.step_2": {
     "en_us": "Gas needs a pump, just like liquid. Connect rotational power to the pump.",
@@ -2335,9 +2335,9 @@
     "zh_cn": "需要更大流量时使用粗气管，也可直接连接细管。"
   },
   "guide.gas_pipes.step_4": {
-    "en_us": "Use steel pipe for high-pressure gas. The moving gas makes a hiss that grows louder with flow.",
-    "ja_jp": "高圧ガスにはステンレス鋼管を使います。ガスが流れると、流量に応じて風切り音が大きくなります。",
-    "zh_cn": "高压气体使用不锈钢管。气体流动时会发出嘶声，流量越大声音越响。"
+    "en_us": "High-pressure gas hisses while flowing in any pipe. Choose a receiving tank rated for that gas.",
+    "ja_jp": "高圧ガスはどの配管でも流れると風切り音がします。受け取りには気体の等級に合うタンクを使います。",
+    "zh_cn": "高压气体流过任何管道都会发出嘶声。接收端使用符合气体等级的储罐。"
   },
   "fractionating_column.title": {
     "en_us": "Build a five-layer crude fractionation tower",
@@ -2435,9 +2435,9 @@
     "zh_cn": "绿盐和氟气送入棚板槽，用蓝焰超加热，产气从顶面检修口旁取出。"
   },
   "guide.uranium_preparation.step_5": {
-    "en_us": "Close the hatch and use nickel-alloy pipes for fluoride gases. Keep all product outlets clear.",
-    "ja_jp": "ハッチを閉じ、フッ化物の気体にはニッケル合金管を使います。全ての生成物を搬出します。",
-    "zh_cn": "关闭舱盖，氟化物气体使用镍合金管。保持各产物出口畅通。"
+    "en_us": "Close the hatch and pump the fluoride gas out. Keep all product outlets clear.",
+    "ja_jp": "ハッチを閉じ、フッ化物の気体をポンプで取り出します。全ての生成物を搬出できるようにします。",
+    "zh_cn": "关闭舱盖，用泵排出氟化物气体。保持各产物出口畅通。"
   },
   "guide.uranium_fuel_finishing.title": {
     "en_us": "Enriching gas and firing fuel pellets",

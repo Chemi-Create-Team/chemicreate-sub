@@ -38,7 +38,7 @@
     "MixtureTankMixin",
     "MixturePipeConnectionMixin",
     "MixtureFlowSourceMixin",
-    "CreativeLiquidTankMixin"
+    "CreativeTankMixtureMixin"
   ],
   "client": [
     "CreativeInventorySectionsMixin",
