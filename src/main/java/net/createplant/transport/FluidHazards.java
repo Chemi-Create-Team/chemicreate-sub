@@ -27,6 +27,7 @@ public final class FluidHazards {
         entry("dissolved_spent_fuel",293,1,true,false), entry("plutonium_nitrate_solution",293,1,true,false), entry("high_level_raffinate",293,1,true,false),
         entry("phosphoric_acid",293,1,true,false),
         entry("contaminated_gas",293,1,false,true),
+        entry("raw_process_gas",293,1,false,true),
         entry("preheated_crude_oil",620,1,false,false), entry("compressed_air",293,12,false,true), entry("pressurised_hydrogen",293,12,false,true), entry("compressed_hydrogen",293,50,false,true), entry("hydrogen_gas",293,1,false,true), entry("oxygen_gas",293,1,false,true),
         entry("nitrogen_gas",293,1,false,true), entry("ammonia_gas",293,1,false,true),
         entry("argon_gas",293,1,false,true), entry("air_gas",293,1,false,true), entry("liquid_oxygen",90,1,false,false), entry("liquid_nitrogen",77,1,false,false),

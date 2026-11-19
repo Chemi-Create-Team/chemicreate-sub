@@ -11,9 +11,11 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CETransport;
+import net.createplant.safety.ProcessGasIncidents;
 import net.createplant.thermal.Grade;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 
 /** Recent committed gas throughput. Only the audible bands are sent to tracking clients. */
 public final class PipeGasFlow extends BlockEntityBehaviour {
@@ -21,6 +23,7 @@ public final class PipeGasFlow extends BlockEntityBehaviour {
     private static final int SYNC_INTERVAL = 8;
     private static final int SILENCE_DELAY = 10;
     private long observed = Long.MIN_VALUE / 2;
+    private long steamObserved = Long.MIN_VALUE / 2;
     private int volume, grade, synced;
 
     private PipeGasFlow(SmartBlockEntity pipe) { super(pipe); }
@@ -44,6 +47,15 @@ public final class PipeGasFlow extends BlockEntityBehaviour {
         }
         grade = Math.max(grade, pressure.ordinal());
         volume += Math.min(128 - volume, amount);
+    }
+
+    public void observeHighPressureSteam(long time) { steamObserved = time; }
+
+    @Override public void unload() {
+        // Create's copper pipe removes its block entity directly. The site must already be air,
+        // which excludes chunk unloads and replacements such as adding casing.
+        if (getWorld() instanceof ServerLevel level && level.getGameTime() - steamObserved < SILENCE_DELAY)
+            ProcessGasIncidents.record(level, getPos(), 250);
     }
 
     @Override public void tick() {

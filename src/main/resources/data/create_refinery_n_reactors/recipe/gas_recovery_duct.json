@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " I ",
+    "BCP",
+    " I "
+  ],
+  "key": {
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "C": {
+      "item": "create:andesite_casing"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:gas_recovery_duct",
+    "count": 1
+  }
+}

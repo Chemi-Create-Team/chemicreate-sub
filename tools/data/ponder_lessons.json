@@ -4678,5 +4678,45 @@
     "en_us": "Wear a gas mask for breathing protection. Use the protective coat, trousers and shoe covers together for splash protection.",
     "ja_jp": "吸入対策にはガスマスクを装備します。飛沫対策には保護コート・ズボン・シューズカバーをそろえます。",
     "zh_cn": "佩戴防毒面具防止吸入。穿齐防护外套、防护裤和鞋套可防液体飞溅。"
+  },
+  "guide.process_gas_recovery.title": {
+    "en_us": "Detect and recover process gas",
+    "ja_jp": "プロセスガスの検知と回収",
+    "zh_cn": "检测和回收工艺气体"
+  },
+  "guide.process_gas_recovery.step_1": {
+    "en_us": "Steam exhaust can leave a local incident. A gas detector reads the strongest concentration within four blocks.",
+    "ja_jp": "蒸気の排気跡に汚染が残ることがあります。ガス検知器は半径4ブロック内で一番高い濃度を読み取ります。",
+    "zh_cn": "蒸汽排气处可能留下局部污染。气体探测器读取四格内的最高浓度。"
+  },
+  "guide.process_gas_recovery.step_2": {
+    "en_us": "Use a comparator to drive a warning lamp. The same signal can stop the supply pump.",
+    "ja_jp": "コンパレーターで警報ランプを点灯できます。同じ信号で供給側の電動ポンプも停止できます。",
+    "zh_cn": "用比较器点亮警报灯。同一信号也可停止供料电动泵。"
+  },
+  "guide.process_gas_recovery.step_3": {
+    "en_us": "Place a downward-facing Encased Fan on the duct. Run the fan at 32 RPM or faster.",
+    "ja_jp": "ダクトの真上に、下向きのケース入りファンを設置します。ファンを32 RPM以上で回してください。",
+    "zh_cn": "在风管正上方放置朝下的鼓风机。让其以至少 32 RPM 运转。"
+  },
+  "guide.process_gas_recovery.step_4": {
+    "en_us": "Keep the grille side open and connect a pipe to the round nozzle. Goggles show the recovered amount.",
+    "ja_jp": "格子面を空けて、丸いノズル側に配管をつなぎます。ゴーグルでダクト内の回収量が分かります。",
+    "zh_cn": "保持格栅侧畅通，将管道接到圆形接口。护目镜可查看风管内的回收量。"
+  },
+  "guide.process_gas_recovery.step_5": {
+    "en_us": "Pump the recovered gas into the lowest storey of a large absorption tower. Feed water into its highest storey.",
+    "ja_jp": "回収したガスを大型吸収塔の最下段へ送り、水を最上段へ供給します。",
+    "zh_cn": "将回收气体泵入大型吸收塔的底层，从顶层供水。"
+  },
+  "guide.process_gas_recovery.step_6": {
+    "en_us": "Take neutralized wastewater from another bottom port. The alarm clears when the area has been cleaned.",
+    "ja_jp": "最下段の別のポートから中和済み廃水を取り出します。回収が済むと警報が止まります。",
+    "zh_cn": "从另一个底层接口排出已中和废水。污染清除后警报解除。"
+  },
+  "large_absorption_tower.process_gas": {
+    "en_us": "For recovered raw process gas, feed water at the top and collect neutralized wastewater at the bottom.",
+    "ja_jp": "回収した未処理プロセスガスの洗浄には水を最上段へ入れ、中和済み廃水を最下段から取り出します。",
+    "zh_cn": "洗涤回收的未处理工艺气体时，从塔顶加水，并从底层取出已中和废水。"
   }
 }

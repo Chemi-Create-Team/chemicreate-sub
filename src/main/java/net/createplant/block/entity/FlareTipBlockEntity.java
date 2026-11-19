@@ -10,8 +10,10 @@ import net.createmod.catnip.animation.LerpedFloat;
 import net.createplant.block.FlareTipBlock;
 import net.createplant.registry.CEFlare;
 import net.createplant.safety.FlammableGas;
+import net.createplant.safety.ProcessGasIncidents;
 import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.FluidMaterials;
+import net.createplant.thermal.SteamGrades;
 import net.createplant.thermal.ThermalFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -88,7 +90,14 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEFlare.TIP_ENTITY.get(),(be,side)->side==Direction.DOWN ? be.port : null);
     }
-    public void releaseGas() { if (level!=null && !level.isClientSide && !gas.isEmpty()) ToxicGas.release(level,worldPosition.above(),gas.drain(gas.getFluidAmount(),EXECUTE)); }
+    public void releaseGas() {
+        if (level instanceof ServerLevel server && !gas.isEmpty()) releaseExhaust(server, gas.drain(gas.getFluidAmount(), EXECUTE));
+    }
+
+    private void releaseExhaust(ServerLevel level, FluidStack emitted) {
+        if (SteamGrades.of(emitted) != null) ProcessGasIncidents.record(level, worldPosition.above(), emitted.getAmount());
+        else ToxicGas.release(level, worldPosition.above(), emitted);
+    }
 
     @Override public void tick() {
         super.tick();
@@ -109,7 +118,7 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
                 ToxicGas.releasePoison(level,worldPosition.above(),emitted);
             } else {
                 vented+=Math.min(emitted.getAmount(),Long.MAX_VALUE-vented);
-                ToxicGas.release(level,worldPosition.above(),emitted);
+                releaseExhaust(server, emitted);
                 server.sendParticles(ParticleTypes.CLOUD,worldPosition.getX()+.5,worldPosition.getY()+1.3,worldPosition.getZ()+.5,3,.2,.1,.2,.08);
             }
         }

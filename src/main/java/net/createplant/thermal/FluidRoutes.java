@@ -66,6 +66,7 @@ public final class FluidRoutes {
         var properties = FluidHazards.of(fluid);
         var pressure = properties.pressure();
         boolean audible = pressure != Grade.Pressure.ATMOSPHERIC && (properties.gas() || fluid.getFluidType().isLighterThanAir());
+        boolean highPressureSteam = pressure == Grade.Pressure.HIGH && SteamGrades.of(fluid) != null;
         for (var at : path) {
             if (!level.hasChunkAt(at)) continue;
             var be = level.getBlockEntity(at);
@@ -74,7 +75,10 @@ public final class FluidRoutes {
                 else gauge.observe(fluid);
             } else if (audible && be instanceof com.simibubi.create.foundation.blockEntity.SmartBlockEntity pipe) {
                 var sound = pipe.getBehaviour(PipeGasFlow.TYPE);
-                if (sound != null) sound.observe(level.getGameTime(), pressure, fluid.getAmount());
+                if (sound != null) {
+                    sound.observe(level.getGameTime(), pressure, fluid.getAmount());
+                    if (highPressureSteam) sound.observeHighPressureSteam(level.getGameTime());
+                }
             }
         }
     }

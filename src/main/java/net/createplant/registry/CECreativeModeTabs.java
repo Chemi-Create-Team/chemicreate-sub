@@ -70,7 +70,7 @@ public class CECreativeModeTabs {
             "pvc_pipe", "resin_pipe", "ceramic_pipe", "gas_pipe", "large_gas_pipe"),
         List.of("reinforced_pump", "nickel_alloy_pump", "zirconium_pump", "stainless_steel_pump",
             "cryogenic_pump", "pvc_pump", "resin_pump", "gas_pump", "large_gas_pump"),
-        List.of("pressure_reducing_valve", "relief_scrubber", "gas_detector", "flow_regulator",
+        List.of("pressure_reducing_valve", "relief_scrubber", "gas_detector", "gas_recovery_duct", "flow_regulator",
             "pipe_thermometer", "pipe_pressure_gauge", "pipe_flow_meter", "process_transmitter", "control_valve_actuator", "pid_controller",
             "pid_instrument_rack"),
         List.of("horizontal_fluid_tank", "pressure_tank", "stainless_steel_tank", "cryogenic_tank", "gas_receiver", "gas_tank_container",

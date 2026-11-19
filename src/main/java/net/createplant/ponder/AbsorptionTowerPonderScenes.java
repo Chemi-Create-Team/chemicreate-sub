@@ -39,6 +39,7 @@ public final class AbsorptionTowerPonderScenes {
         scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 50).withItem(wash.getFluidType().getBucket(wash));
         caption(scene, util, LARGE, top, "wash");
         caption(scene, util, LARGE, bottom, "recover");
+        caption(scene, util, LARGE, bottom, "process_gas");
         scene.markAsFinished();
     }
 

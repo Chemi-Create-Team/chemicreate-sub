@@ -3,8 +3,11 @@ package net.createplant.registry;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import net.createplant.CreatePlant;
 import net.createplant.block.GasDetectorBlock;
+import net.createplant.block.GasRecoveryDuctBlock;
+import net.createplant.block.entity.GasRecoveryDuctBlockEntity;
 import net.createplant.item.GasCylinderItem;
 import net.createplant.item.GasMaskItem;
 import net.createplant.safety.ToxicGasEffect;
@@ -18,22 +21,31 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-/** Toxic gas and the gas mask that keeps it out. */
+/** Gas safety equipment and the duct's closed recovery stream. */
 public final class CESafety {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePlant.MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePlant.MOD_ID);
     private static final DeferredRegister<DataComponentType<?>> COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, CreatePlant.MOD_ID);
     private static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, CreatePlant.MOD_ID);
     private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, CreatePlant.MOD_ID);
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePlant.MOD_ID);
+    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreatePlant.MOD_ID);
+    private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, CreatePlant.MOD_ID);
     public static final Holder<MobEffect> TOXIC_GAS = EFFECTS.register("toxic_gas", ToxicGasEffect::new);
     public static final Holder<MobEffect> ACID_BURN = EFFECTS.register("acid_burn", net.createplant.safety.AcidBurnEffect::new);
     /** Seconds of toxic gas the filter canister takes before it is spent. */
@@ -46,6 +58,12 @@ public final class CESafety {
     public static final DeferredItem<Item> GAS_MASK_FILTER = ITEMS.registerSimpleItem("gas_mask_filter");
     public static final DeferredBlock<GasDetectorBlock> GAS_DETECTOR = BLOCKS.registerBlock("gas_detector", GasDetectorBlock::new,
         BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).lightLevel(state -> state.getValue(GasDetectorBlock.POWER) == 0 ? 0 : 5));
+    public static final DeferredBlock<GasRecoveryDuctBlock> GAS_RECOVERY_DUCT = BLOCKS.registerBlock("gas_recovery_duct", GasRecoveryDuctBlock::new,
+        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
+    public static final Supplier<BlockEntityType<GasRecoveryDuctBlockEntity>> GAS_RECOVERY_DUCT_ENTITY = BLOCK_ENTITIES.register("gas_recovery_duct",
+        () -> BlockEntityType.Builder.of(GasRecoveryDuctBlockEntity::new, GAS_RECOVERY_DUCT.get()).build(null));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> RAW_PROCESS_GAS = new PlantFluid(FLUID_TYPES, FLUIDS, "raw_process_gas", 0xFFBFCAD0,
+        () -> FluidType.Properties.create().supportsBoating(false), UnaryOperator.identity()).source;
     public static final DeferredItem<GasCylinderItem> GAS_CYLINDER = ITEMS.register("inert_gas_cylinder",
         () -> new GasCylinderItem(new Item.Properties().stacksTo(1)));
     public static final Supplier<DataComponentType<SimpleFluidContent>> CYLINDER_CONTENTS = COMPONENTS.register("cylinder_contents",
@@ -54,11 +72,16 @@ public final class CESafety {
     private CESafety() { }
     public static void register(IEventBus bus) {
         ITEMS.registerSimpleBlockItem(GAS_DETECTOR);
+        ITEMS.registerSimpleBlockItem(GAS_RECOVERY_DUCT);
         BLOCKS.register(bus);ITEMS.register(bus);COMPONENTS.register(bus);EFFECTS.register(bus);ARMOR_MATERIALS.register(bus);
+        BLOCK_ENTITIES.register(bus);
+        FLUID_TYPES.register(bus);
+        FLUIDS.register(bus);
         bus.addListener(CESafety::capabilities);
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerItem(Capabilities.FluidHandler.ITEM, (stack, context) -> GasCylinderItem.handler(stack), GAS_CYLINDER.get());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, GAS_RECOVERY_DUCT_ENTITY.get(), GasRecoveryDuctBlockEntity::port);
     }
 }

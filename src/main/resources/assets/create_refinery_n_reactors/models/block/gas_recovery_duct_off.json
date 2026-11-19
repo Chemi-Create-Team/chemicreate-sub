@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "north": "create_refinery_n_reactors:block/gas_recovery_duct_outlet",
+    "south": "create_refinery_n_reactors:block/gas_recovery_duct_intake_off",
+    "east": "create_refinery_n_reactors:block/gas_recovery_duct_side",
+    "west": "create_refinery_n_reactors:block/gas_recovery_duct_side",
+    "up": "create_refinery_n_reactors:block/gas_recovery_duct_top",
+    "down": "create_refinery_n_reactors:block/gas_recovery_duct_side",
+    "particle": "create_refinery_n_reactors:block/gas_recovery_duct_side"
+  }
+}

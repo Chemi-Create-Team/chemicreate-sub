@@ -9465,5 +9465,72 @@
         "item": "create_refinery_n_reactors:gas_mask_filter"
       }
     ]
+  },
+  {
+    "id": "process_gas_recovery",
+    "size": 11,
+    "height": 8,
+    "scale": 0.6,
+    "components": [
+      "gas_recovery_duct",
+      "gas_detector"
+    ],
+    "steps": [
+      {
+        "target": [
+          2,
+          1,
+          5
+        ],
+        "key": "step_1",
+        "smoke": [
+          1,
+          0,
+          5
+        ]
+      },
+      {
+        "target": [
+          2,
+          1,
+          4
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          4,
+          2,
+          5
+        ],
+        "key": "step_3",
+        "speed": 64
+      },
+      {
+        "target": [
+          4,
+          1,
+          5
+        ],
+        "key": "step_4"
+      },
+      {
+        "target": [
+          7,
+          1,
+          5
+        ],
+        "key": "step_5"
+      },
+      {
+        "target": [
+          8,
+          1,
+          9
+        ],
+        "key": "step_6",
+        "item": "create_refinery_n_reactors:neutralized_wastewater_bucket"
+      }
+    ]
   }
 ]
