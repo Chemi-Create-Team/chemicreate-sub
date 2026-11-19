@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -31,7 +32,9 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 
 public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     private static final ResourceLocation TEXTURE = CreatePlant.location("textures/entity/gas_mist.png");
-    private static final RenderType LAYER = MistRenderType.MIST;
+    private static final ResourceLocation PLUME_TEXTURE = CreatePlant.location("textures/entity/gas_plume.png");
+    private static final RenderType LAYER = MistRenderType.layer("gas_mist", TEXTURE);
+    private static final RenderType PLUME_LAYER = MistRenderType.layer("gas_plume", PLUME_TEXTURE);
     private final WeakHashMap<GasCloud, Mist> mists = new WeakHashMap<>();
 
     private record Wisp(float x, float y, float z, float width, float depth, float phase, float speed, float bend, boolean top) { }
@@ -40,6 +43,7 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         private final float direction;
         private CloudVolume volume;
         private List<Wisp> wisps = List.of();
+        private RisingGasMist plume;
         private float previousCharge, targetCharge, chargeChangedAt;
 
         private Mist(GasCloud cloud) {
@@ -59,16 +63,18 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     }
 
     private static final class MistRenderType extends RenderType {
-        private static final RenderType MIST = create("create_refinery_n_reactors_gas_mist", DefaultVertexFormat.NEW_ENTITY,
-            VertexFormat.Mode.QUADS, 1536, false, true, CompositeState.builder()
+        private static RenderType layer(String name, ResourceLocation texture) {
+            return create(CreatePlant.MOD_ID + "_" + name, DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, false, true,
+                CompositeState.builder()
                 .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-                .setTextureState(new TextureStateShard(TEXTURE, true, false))
+                .setTextureState(new TextureStateShard(texture, true, false))
                 .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                 .setCullState(NO_CULL)
                 .setLightmapState(LIGHTMAP)
                 .setOverlayState(OVERLAY)
                 .setWriteMaskState(COLOR_WRITE)
                 .createCompositeState(false));
+        }
 
         private MistRenderType(String name, VertexFormat format, VertexFormat.Mode mode, int size, boolean crumbling, boolean sort,
             Runnable setup, Runnable clear) {
@@ -78,7 +84,17 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
 
     public GasCloudRenderer(EntityRendererProvider.Context context) { super(context); }
 
-    @Override public ResourceLocation getTextureLocation(GasCloud cloud) { return TEXTURE; }
+    @Override public ResourceLocation getTextureLocation(GasCloud cloud) {
+        return cloud.style() != null && cloud.style().ceiling() ? PLUME_TEXTURE : TEXTURE;
+    }
+
+    @Override public boolean shouldRender(GasCloud cloud, Frustum frustum, double x, double y, double z) {
+        if (super.shouldRender(cloud, frustum, x, y, z)) return true;
+        var style = cloud.style();
+        return style != null && style.ceiling() && style.color() != null && cloud.shouldRender(x, y, z)
+            && frustum.isVisible(cloud.getBoundingBoxForCulling().inflate(RisingGasMist.SKY_SPREAD, 0, RisingGasMist.SKY_SPREAD)
+                .expandTowards(0, RisingGasMist.SKY_RISE, 0));
+    }
 
     @Override public void render(GasCloud cloud, float yaw, float partialTick, PoseStack pose, MultiBufferSource buffers, int light) {
         boolean preview = cloud.level() instanceof PonderLevel;
@@ -90,23 +106,28 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         var mist = mists.computeIfAbsent(cloud, Mist::new);
         float time = cloud.tickCount + partialTick;
         float charge = mist.charge((float) cloud.charge(), time);
-        int alpha = (int) (128 * charge * distanceFade);
-        if (alpha == 0) return;
-        if (mist.volume != cloud.volume()) {
-            mist.volume = cloud.volume();
-            mist.wisps = buildWisps(mist.volume);
+        var layer = style.ceiling() ? PLUME_LAYER : LAYER;
+        var volume = cloud.volume();
+        if (volume.size() == 0 || charge <= 0) return;
+        if (mist.volume != volume) {
+            mist.volume = volume;
+            if (style.ceiling()) mist.plume = new RisingGasMist(volume);
+            else mist.wisps = buildWisps(volume);
         }
-        if (mist.wisps.isEmpty()) return;
-        var buffer = buffers.getBuffer(LAYER);
-        var matrix = pose.last();
-        float topHeight = cloud.topHeight();
         int color = style.color();
-        boolean ceiling = style.ceiling();
-        for (var wisp : mist.wisps) {
-            float height = wisp.top() ? topHeight : 1;
-            drawWisp(buffer, matrix, wisp, time, mist.direction, height, ceiling, color, alpha);
+        var buffer = buffers.getBuffer(layer);
+        var matrix = pose.last();
+        if (style.ceiling()) {
+            mist.plume.render(cloud.level(), preview, entityRenderDispatcher.cameraOrientation(), buffer, matrix, time, charge, distanceFade, color);
+        } else {
+            int alpha = (int) (128 * charge * distanceFade);
+            float topHeight = cloud.topHeight();
+            for (var wisp : mist.wisps) {
+                float height = wisp.top() ? topHeight : 1;
+                drawWisp(buffer, matrix, wisp, time, mist.direction, height, color, alpha);
+            }
         }
-        if (preview && buffers instanceof SuperRenderTypeBuffer ponderBuffers) ponderBuffers.draw(LAYER);
+        if (preview && buffers instanceof SuperRenderTypeBuffer ponderBuffers) ponderBuffers.draw(layer);
     }
 
     private static List<Wisp> buildWisps(CloudVolume volume) {
@@ -141,7 +162,7 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     }
 
     private static void drawWisp(VertexConsumer buffer, PoseStack.Pose matrix, Wisp wisp, float time, float direction, float height,
-        boolean ceiling, int color, int alpha) {
+        int color, int alpha) {
         float clock = time * wisp.speed() + wisp.phase();
         float age = clock - Mth.floor(clock);
         float fadeIn = Mth.clamp(age * 6, 0, 1);
@@ -163,8 +184,8 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         float acrossX = -dz * across * wisp.width(), acrossZ = dx * across * wisp.depth();
         float lift = height * (.028f + .27f * age);
         float thickness = height * (.34f + .24f * age);
-        float base = wisp.y() + (ceiling ? height - lift : lift);
-        float tip = base + (ceiling ? -thickness : thickness);
+        float base = wisp.y() + lift;
+        float tip = base + thickness;
         draw(buffer, matrix, x, z, base, tip, alongX, alongZ, acrossX, acrossZ, color, opacity);
         draw(buffer, matrix, x, z, base, Mth.lerp(.74f, base, tip), acrossX, acrossZ, -alongX, -alongZ, color, opacity * 2 / 3);
     }
@@ -177,7 +198,7 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         vertex(buffer, matrix, x - alongX + acrossX, tip, z - alongZ + acrossZ, 0, 0, color, alpha);
     }
 
-    private static void vertex(VertexConsumer buffer, PoseStack.Pose matrix, float x, float y, float z, float u, float v, int color, int alpha) {
+    static void vertex(VertexConsumer buffer, PoseStack.Pose matrix, float x, float y, float z, float u, float v, int color, int alpha) {
         buffer.addVertex(matrix, x, y, z).setColor(color >> 16 & 255, color >> 8 & 255, color & 255, alpha).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY)
             .setLight(LightTexture.FULL_BRIGHT).setNormal(matrix, 0, 1, 0);
     }

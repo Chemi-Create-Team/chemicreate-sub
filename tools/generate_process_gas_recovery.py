@@ -118,6 +118,23 @@ def mist_texture():
     image.save(path)
 
 
+def plume_texture():
+    size = 32
+    image = Image.new('RGBA', (size, size))
+    lobes = ((-.24, .08, .5, .69), (.28, -.05, .49, .63), (-.31, -.35, .42, .58),
+             (.16, .42, .40, .5), (.48, -.38, .33, .36), (-.43, .38, .36, .42))
+    for y in range(size):
+        v = 2 * y / (size - 1) - 1
+        for x in range(size):
+            u = 2 * x / (size - 1) - 1
+            cloud = sum(weight * exp(-((u - dx) ** 2 + (v - dy) ** 2) / width ** 2) for dx, dy, width, weight in lobes)
+            texture = .92 + .08 * cos(10 * u + 7 * v) + .065 * sin(15 * u - 11 * v)
+            edge = max(0, 1 - u * u - v * v)
+            alpha = round(235 * min(1, cloud * texture) * edge ** .55)
+            image.putpixel((x, y), (255, 255, 255, alpha))
+    image.save(ASSETS / 'textures/entity/gas_plume.png')
+
+
 def storyboard():
     scene = ponder.Structure(11, 5)
     for x in range(1, 6):
@@ -166,4 +183,5 @@ if __name__ == '__main__':
     duct_data()
     bucket_image('raw_process_gas_bucket', 0xFFBFCAD0)
     mist_texture()
+    plume_texture()
     storyboard()
