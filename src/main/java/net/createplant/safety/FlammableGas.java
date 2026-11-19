@@ -29,7 +29,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 @EventBusSubscriber(modid=CreatePlant.MOD_ID)
 public final class FlammableGas {
     private static final String TAG=CreatePlant.MOD_ID+".flammable_gas",CONTENTS="FlammableContents",SETTLED="FlammableSettled";
-    private static final Set<String> FUELS=Set.of("hydrogen_gas","deuterium_gas","tritium_gas","carbon_monoxide",
+    private static final Set<String> FUELS=Set.of("hydrogen_gas","pressurised_hydrogen","compressed_hydrogen","deuterium_gas","tritium_gas","carbon_monoxide",
         "synthesis_gas","water_gas","compressed_synthesis_feed","hot_synthesis_mixture","cold_synthesis_mixture","converter_gas",
         "ethylene","propylene","ammonia_gas","ethylene_oxide","vinyl_chloride","hydrogen_sulfide","hot_olefins","cooled_olefins");
 

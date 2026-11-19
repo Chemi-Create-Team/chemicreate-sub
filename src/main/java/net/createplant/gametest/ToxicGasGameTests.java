@@ -231,6 +231,29 @@ public class ToxicGasGameTests {
         });
     }
 
+    @GameTest(template = "test_reactor", timeoutTicks = 20)
+    public static void everyHarmfulGasInTheModMakesACloud(GameTestHelper h) {
+        int count = 0;
+        for (var fluid : net.minecraft.core.registries.BuiltInRegistries.FLUID) {
+            var id = net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fluid);
+            if (!id.getNamespace().equals(CreatePlant.MOD_ID) || id.getPath().startsWith("flowing_")) continue;
+            var stack = new FluidStack(fluid, 100);
+            boolean harmful = ToxicGas.strength(stack) >= 0 || net.createplant.safety.FlammableGas.fuel(stack);
+            boolean gas = net.createplant.thermal.FluidMaterials.gas(fluid);
+            h.assertTrue(!harmful || GasClouds.supported(stack), "A harmful gas has a cloud: " + id);
+            h.assertTrue(!gas || harmful || net.createplant.thermal.SteamGrades.of(stack) != null || HARMLESS.contains(id.getPath())
+                || id.getPath().equals("raw_process_gas") || id.getPath().equals("contaminated_gas"),
+                "Every gas in the mod is either harmful, known to be harmless, or judged by what it carries: " + id);
+            if (harmful) count++;
+        }
+        h.assertTrue(count >= 30, "The mod's harmful gases are all classified: " + count);
+        h.succeed();
+    }
+
+    /** Gases that neither poison nor burn: the inert and breathing gases and air. */
+    private static final java.util.Set<String> HARMLESS = java.util.Set.of("air_gas", "compressed_air", "oxygen_gas", "nitrogen_gas", "argon_gas",
+        "helium_gas", "helium_recovery_feed");
+
     /** How long a cloud of this much gas lasts indoors. */
     private static int indoorLifetime(int amount) { return Math.min(2400, 400 + amount / 5); }
 
