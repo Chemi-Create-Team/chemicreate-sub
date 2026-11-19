@@ -32,7 +32,7 @@ public final class ManufacturingPonderGameTests {
     @GameTest(template = "test_petrochemical")
     public static void materialsAndEquipmentUseRegisteredItemsAndValidStates(GameTestHelper helper) throws Exception {
         var missing = new ArrayList<String>();
-        helper.assertTrue(tutorials().size() == 31, "All manufacturing chapters must ship");
+        helper.assertTrue(tutorials().size() == 32, "All manufacturing chapters must ship");
         for (var tutorial : tutorials()) {
             var names = new ArrayList<>(tutorial.components());
             for (var step : tutorial.steps()) {
@@ -73,8 +73,8 @@ public final class ManufacturingPonderGameTests {
                 helper.assertTrue(!recipe.products().isEmpty() || !recipe.fluidProducts().isEmpty(), "Recipe has products " + step.process().recipe());
             }
         }
-        helper.assertTrue(families.size() == 28 && families.containsKey("resin_water_loop"),
-            "Manufacturing intermediates are grouped in 28 families, including the resin and water loop");
+        helper.assertTrue(families.size() == 29 && families.containsKey("resin_water_loop") && families.containsKey("methylphosphonate"),
+            "Manufacturing intermediates include the resin water loop and methylphosphonate families");
         helper.succeed();
     }
 

@@ -111,6 +111,19 @@ def simple_units():
     scene.block(4, 7, 4, NS + 'gas_receiver', axis='y', bottom='true', top='true', shape='plain')
     units['resin_vessel'] = (scene, (4, 2, 4), (3, 2, 5), (7, 2, 5))
 
+    scene = ponder.Structure(11, 7)
+    scene.reactor(5, 2, 5, 'stirred', 3, windows=True)
+    scene.block(3, 2, 5, 'create:andesite_funnel', facing='west', extracting='false', waterlogged='false')
+    scene.block(7, 2, 5, 'create:andesite_funnel', facing='east', extracting='true', waterlogged='false')
+    scene.block(8, 1, 5, 'create:depot')
+    scene.tank(5, 2, 1)
+    motor_pump(scene, 5, 2, 2, 'south', drive_forward=True)
+    pipe(scene, 5, 2, 3, 'north', 'south')
+    scene.filter(5, 2, 7, 'south')
+    motor_pump(scene, 5, 2, 8, 'south')
+    scene.tank(5, 2, 9)
+    units['liquid_vessel'] = (scene, (4, 2, 4), (3, 2, 5), (5, 2, 7))
+
     scene = ponder.Structure(11, 9)
     for y in range(1, 7): ring(scene, 5, y, 5)
     pipe(scene, 7, 1, 5, 'east', 'west')
@@ -281,6 +294,8 @@ def column_unit(height,air,single_cut=False):
 def unit_key(stage):
     if stage['recipe'] == NS + 'pressure_reaction/flame_retardant_pellet':
         return 'resin_vessel'
+    if stage['recipe'] in (NS + 'pressure_reaction/trimethyl_phosphite_rearrangement', NS + 'pressure_reaction/methylphosphonate_filtration'):
+        return 'liquid_vessel'
     if stage['recipe'] == 'process:wash_resin_process_vapor':
         return 'resin_absorber'
     return 'column:'+stage['recipe'] if stage['kind']=='column' else stage['kind']
@@ -648,6 +663,12 @@ route('resin_water_loop', ('Making flame-retardant pellets and reusing water', '
     step('vessel', 'pressure_reaction/washwater_filtration'),
     step('pressing', 'pressing/heat_resistant_gasket'),
     step('crafting', 'high_voltage_conductor'),
+])
+
+route('methylphosphonate', ('Making dimethyl methylphosphonate', 'メチルホスホン酸ジメチルを作る', '制备甲基膦酸二甲酯'),
+    ['iodine', 'trimethyl_phosphite_bucket', 'crude_methylphosphonate_bucket', 'dimethyl_methylphosphonate_bucket'], [
+    step('vessel', 'pressure_reaction/trimethyl_phosphite_rearrangement'),
+    step('vessel', 'pressure_reaction/methylphosphonate_filtration', output_at=(7, 2, 5)),
 ])
 
 if __name__ == '__main__':

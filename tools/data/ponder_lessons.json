@@ -4783,5 +4783,20 @@
     "en_us": "Supply caustic soda and check the scrubber with goggles. It removes acid gases; ammonia requires separate handling.",
     "ja_jp": "スクラバーへ苛性ソーダを供給し、ゴーグルで残量を確認します。酸性ガス用なので、アンモニアは別に扱います。",
     "zh_cn": "向洗涤器供给烧碱，用护目镜检查余量。它处理酸性气体，氨需另行处理。"
+  },
+  "guide.manufacturing_methylphosphonate.title": {
+    "en_us": "Making dimethyl methylphosphonate",
+    "ja_jp": "メチルホスホン酸ジメチルを作る",
+    "zh_cn": "制备甲基膦酸二甲酯"
+  },
+  "guide.manufacturing_methylphosphonate.step_1": {
+    "en_us": "Fit an impeller, shut the lid and drive the bottom centre at 32 RPM or more. Feed liquid through the side pipe and iodine through the funnel. Set the smart pipe to draw only the crude product.\n%s → %s",
+    "ja_jp": "撹拌羽根を取り付け、ふたを閉めて底面中央を32 RPM以上で駆動します。側面の配管から原料液、ファンネルからヨウ素を供給します。スマート液体パイプには粗生成液入りバケツを指定します。\n%s → %s",
+    "zh_cn": "安装搅拌叶轮并关闭盖板，从底部中央输入至少32 RPM。用侧面管道供原料液，用漏斗供碘。将智能流体管道设为仅抽取粗产物。\n%s → %s"
+  },
+  "guide.manufacturing_methylphosphonate.step_2": {
+    "en_us": "Feed the crude product and filter medium into a second impeller vessel. Set its smart pipe to the purified product and return the iodine from the output funnel to the first vessel. Check the goggles if either vessel stops.\n%s → %s",
+    "ja_jp": "粗生成液とろ材を次の撹拌槽に送ります。スマート液体パイプに精製品を指定し、搬出ファンネルから回収したヨウ素を最初の槽へ戻します。槽が止まったらゴーグルで状態を確認します。\n%s → %s",
+    "zh_cn": "将粗产物和滤料送入第二个搅拌容器。将它的智能管道设为仅抽取精制产物，再把输出漏斗回收的碘送回第一个容器。任一容器停工时用护目镜检查状态。\n%s → %s"
   }
 }

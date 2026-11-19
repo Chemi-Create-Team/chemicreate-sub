@@ -101,6 +101,40 @@ public class ReactorGameTests {
         if(heat!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE) be.getLevel().setBlock(be.getBlockPos().below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, heat==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? BlazeBurnerBlock.HeatLevel.SEETHING : BlazeBurnerBlock.HeatLevel.KINDLED),3);
     }
     private static void run(ReactorMachineBlockEntity be,int ticks) { speed(be,32);for (int i=0;i<ticks;i++) be.tickProcess(); }
+    @GameTest(template = "test_reactor")
+    public static void filtrationReturnsTheIodineForAnotherRearrangement(GameTestHelper h) {
+        var mixer = build(h, ReactorModule.STIRRED, 1);
+        var filter = assemble(h.getLevel(), h.absolutePos(BASE.east(5)), ReactorModule.STIRRED, 1);
+        var feed = new FluidStack(CEProcessFluids.TRIMETHYL_PHOSPHITE.get(), 1000);
+        var crude = new FluidStack(CEProcessFluids.CRUDE_METHYLPHOSPHONATE.get(), 1000);
+        var product = new FluidStack(CEProcessFluids.DIMETHYL_METHYLPHOSPHONATE.get(), 1000);
+        ItemStack iodine = CEItems.IODINE.toStack();
+
+        h.assertTrue(in(mixer).fill(feed, EXECUTE) == 1000, "The rearrangement vessel accepts its liquid feed");
+        run(mixer, 150);
+        h.assertTrue(out(mixer).drain(crude, SIMULATE).isEmpty(), "The rearrangement needs iodine");
+        for (int batch = 0; batch < 2; batch++) {
+            h.assertTrue(mixer.itemPort().insertItem(0, iodine, false).isEmpty(), "The mixer takes one finite catalyst item");
+            run(mixer, 150);
+            h.assertTrue(mixer.itemPort().getStackInSlot(0).isEmpty() && out(mixer).drain(product, SIMULATE).isEmpty(),
+                "The first vessel puts only the crude stream in its output");
+            var unfiltered = out(mixer).drain(crude, EXECUTE);
+            h.assertTrue(unfiltered.getAmount() == 1000 && in(filter).fill(unfiltered, EXECUTE) == 1000,
+                "The conserved crude parcel is accepted by the second vessel");
+            run(filter, 100);
+            h.assertTrue(out(filter).drain(product, SIMULATE).isEmpty(), "The second vessel waits for filter medium");
+            h.assertTrue(filter.itemPort().insertItem(0, CEWaterTreatment.FILTER_MEDIUM.toStack(), false).isEmpty(),
+                "The existing filter medium fits the second vessel");
+            run(filter, 100);
+            iodine = filter.itemPort().extractItem(9, 64, false);
+            h.assertTrue(out(filter).drain(product, EXECUTE).getAmount() == 1000
+                && iodine.is(CEItems.IODINE.get()) && iodine.getCount() == 1 && filter.itemPort().getStackInSlot(0).isEmpty(),
+                "Filtration consumes the medium and yields exactly one purified parcel and one reusable catalyst item");
+            if (batch == 0) h.assertTrue(in(mixer).fill(feed, EXECUTE) == 1000, "A fresh feed is needed for the next batch");
+        }
+        h.succeed();
+    }
+
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void simulatedHandlersAndExactBatchConservation(GameTestHelper h) {
         var be=build(h,ReactorModule.STIRRED,1);var input=in(be);var output=out(be);

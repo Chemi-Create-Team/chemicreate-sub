@@ -49,6 +49,9 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CARBON_DIOXIDE = stream("carbon_dioxide");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HOT_HYDROCRACKER_EFFLUENT = stream("hot_hydrocracker_effluent");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> COOLED_HYDROCRACKER_EFFLUENT = stream("cooled_hydrocracker_effluent");
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TRIMETHYL_PHOSPHITE = stream("trimethyl_phosphite", 0xFFC7C4AC);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CRUDE_METHYLPHOSPHONATE = stream("crude_methylphosphonate", 0xFF8F748C);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DIMETHYL_METHYLPHOSPHONATE = stream("dimethyl_methylphosphonate", 0xFFBDD6D7);
     private CEProcessFluids() { }
     public static void register(IEventBus bus) { TYPES.register(bus); FLUIDS.register(bus); }
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name) {
@@ -57,6 +60,9 @@ public final class CEProcessFluids {
             : name.contains("heavy_oil") ? 0xFF3A3026 : name.contains("hydrocracker") ? 0xFFB9A05A
             : name.equals("wastewater") ? 0xFF6F7357 : name.equals("liquid_nitrogen") ? 0xBBD4E4EA
             : name.equals("antifreeze") ? 0xEE5FD38A : name.contains("glycol") ? 0xEEE6EEF0 : 0xBBD3DFDB;
+        return stream(name, color);
+    }
+    private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name, int color) {
         return new PlantFluid(TYPES, FLUIDS, name, color, () -> FluidType.Properties.create()
             .descriptionId("fluid." + CreatePlant.MOD_ID + "." + name).supportsBoating(false)
             .temperature(net.createplant.transport.FluidHazards.named(name).kelvin())

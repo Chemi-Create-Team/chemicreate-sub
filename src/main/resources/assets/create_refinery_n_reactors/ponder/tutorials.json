@@ -9804,5 +9804,79 @@
         }
       }
     ]
+  },
+  {
+    "id": "manufacturing_methylphosphonate",
+    "family": "methylphosphonate",
+    "size": 11,
+    "height": 7,
+    "components": [
+      "crude_methylphosphonate_bucket",
+      "dimethyl_methylphosphonate_bucket",
+      "iodine",
+      "trimethyl_phosphite_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/trimethyl_phosphite_rearrangement",
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            2,
+            7
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/methylphosphonate_filtration",
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            5
+          ],
+          "output": [
+            7,
+            2,
+            5
+          ]
+        }
+      }
+    ]
   }
 ]

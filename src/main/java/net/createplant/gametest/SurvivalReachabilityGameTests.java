@@ -41,8 +41,9 @@ public final class SurvivalReachabilityGameTests {
         "fusion_console_panel", "lithium_lead_blanket_cartridge", "spent_blanket_cartridge", "spent_divertor_cassette");
     /** Recipe-internal stock and wood created directly in the world are not inventory goals. */
     private static final Set<String> NON_GOALS = Set.of("charred_wood");
-    /** The retained contaminated stream has no survival producer; its new bucket is requested for creative access. */
-    private static final Set<String> CREATIVE_ONLY = Set.of("contaminated_gas_bucket");
+    /** The contaminated stream and the feedstock for rearrangement are supplied externally. */
+    private static final Set<String> CREATIVE_ONLY = Set.of("contaminated_gas_bucket", "iodine", "trimethyl_phosphite_bucket",
+        "crude_methylphosphonate_bucket", "dimethyl_methylphosphonate_bucket");
     // Keep items recovered from old machines out of the new-world production audit.
     private static final Set<String> LEGACY_ONLY = Set.of("glassy_slag", "raw_process_gas_bucket");
 
