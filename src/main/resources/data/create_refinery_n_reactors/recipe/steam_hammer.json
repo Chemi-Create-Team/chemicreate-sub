@@ -1,0 +1,41 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " SBS ",
+    " PGAP",
+    "  M  ",
+    "  W  ",
+    "  L  "
+  ],
+  "key": {
+    "A": {
+      "item": "create_refinery_n_reactors:gas_receiver"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "G": {
+      "item": "create:cogwheel"
+    },
+    "M": {
+      "item": "create:precision_mechanism"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:steam_hammer",
+    "count": 1
+  },
+  "accept_mirrored": true
+}

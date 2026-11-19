@@ -1,6 +1,7 @@
 package net.createplant.item;
 
 import java.util.List;
+import net.createplant.registry.CEPortableTools;
 import net.createplant.safety.LoadedRay;
 import net.createplant.thermal.SteamGrades;
 import net.minecraft.core.particles.ParticleTypes;
@@ -50,7 +51,8 @@ public final class SteamGunItem extends PortableFluidToolItem {
 
     void act(ServerPlayer player, boolean bayonet) {
         ItemStack stack = player.getMainHandItem();
-        if (!stack.is(this) || !player.isAlive() || player.isSpectator() || player.getCooldowns().isOnCooldown(this)) return;
+        if (!stack.is(this) || !player.isAlive() || player.isSpectator() || player.hasEffect(CEPortableTools.DAZED)
+            || player.getCooldowns().isOnCooldown(this)) return;
         var level = player.serverLevel();
         if (bayonet) {
             player.swing(InteractionHand.MAIN_HAND, true);

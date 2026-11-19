@@ -4843,5 +4843,30 @@
     "en_us": "Press the Bayonet key (V by default) to thrust at close range. Change the key in Controls.",
     "ja_jp": "近くの相手には「銃剣で突く」キー（初期設定V）で突きを出せます。キーは操作設定で変更できます。",
     "zh_cn": "按刺刀键（默认V）近距离突刺。可在控制设置中修改按键。"
+  },
+  "steam_hammer.title": {
+    "en_us": "Charging and using the steam hammer",
+    "ja_jp": "蒸気ハンマーを充填して使う",
+    "zh_cn": "充填和使用蒸汽战锤"
+  },
+  "steam_hammer.charge": {
+    "en_us": "Sneak and use the end of a receiver filled with steam. The item bar and tooltip show the charge.",
+    "ja_jp": "蒸気入りの脈動抑制管の端面を、しゃがみながら右クリックします。残量バーと説明欄で充填量を確認できます。",
+    "zh_cn": "潜行时右击装有蒸汽的脉动缓冲管端面。物品进度条和提示会显示余量。"
+  },
+  "steam_hammer.swing": {
+    "en_us": "Press Attack with the hammer in your main hand. Steam boosts you forward as you swing the head down.",
+    "ja_jp": "メインハンドに持って左クリックします。蒸気で前へ踏み込みながら、ハンマーを振り下ろします。",
+    "zh_cn": "主手持锤时左击。挥锤下砸时，蒸汽会推动你向前。"
+  },
+  "steam_hammer.impact": {
+    "en_us": "A hit knocks the target back and dazes it briefly. The Speed effect lasts after the daze clears.",
+    "ja_jp": "命中した相手はノックバックし、短い間スタンします。スタンが解けた後も移動速度上昇が残ります。",
+    "zh_cn": "命中会击退目标并短暂眩晕。眩晕解除后，速度效果仍会持续。"
+  },
+  "steam_hammer.guard": {
+    "en_us": "Hold Use to guard attacks coming from the front. Guarding uses no steam.",
+    "ja_jp": "右クリックを長押しすると正面からの攻撃をガードします。ガードは蒸気を消費しません。",
+    "zh_cn": "按住右键可以格挡正面攻击。格挡不消耗蒸汽。"
   }
 }
