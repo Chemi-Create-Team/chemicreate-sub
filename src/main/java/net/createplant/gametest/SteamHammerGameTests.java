@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
@@ -50,6 +51,9 @@ public final class SteamHammerGameTests {
     @GameTest(template = "test_reactor")
     public static void poweredSwingSpendsOneDoseAndHitsAfterTheBoost(GameTestHelper h) {
         var player = fighter(h, 500);
+        h.assertTrue(player.getMainHandItem().getAttributeModifiers().modifiers().stream().anyMatch(entry ->
+            entry.attribute().equals(Attributes.ATTACK_DAMAGE) && entry.slot().test(EquipmentSlot.MAINHAND) && entry.modifier().amount() == 44),
+            "The hammer adds 44 damage to the player's base point in the main hand");
         var tank = FluidUtil.getFluidHandler(player.getMainHandItem()).orElseThrow();
         h.assertTrue(tank.fill(new FluidStack(Fluids.WATER, 500), EXECUTE) == 0, "The hammer rejects liquid water");
         var target = h.spawn(EntityType.IRON_GOLEM, new BlockPos(2, 2, 4));
@@ -61,14 +65,20 @@ public final class SteamHammerGameTests {
         h.assertTrue(player.swinging && player.getDeltaMovement().z > .7 && tank.getFluidInTank(0).getAmount() == 250 && target.getHealth() == 100,
             "One steam dose starts a forward boost and a wind-up before damage");
         h.runAfterDelay(7, () -> {
-            h.assertTrue(target.getHealth() == 96 && (target.getZ() > startZ || target.getDeltaMovement().z > 0) && target.hasEffect(MobEffects.MOVEMENT_SPEED)
+            h.assertTrue(target.getHealth() == 55 && (target.getZ() > startZ || target.getDeltaMovement().z > 0)
+                && target.hasEffect(MobEffects.MOVEMENT_SLOWDOWN) && !target.hasEffect(MobEffects.MOVEMENT_SPEED)
                 && target.hasEffect(CEPortableTools.DAZED) && target.getAttributeValue(Attributes.MOVEMENT_SPEED) == 0,
-                "The blow deals four damage, knocks back and dazes the target with Speed active: health=" + target.getHealth()
+                "The blow deals 45 damage, knocks back and dazes the target with Slowness active: health=" + target.getHealth()
                     + ", displacement=" + (target.getZ() - startZ) + ", velocity=" + target.getDeltaMovement() + ", effects=" + target.getActiveEffects());
         });
         h.runAfterDelay(24, () -> {
-            h.assertTrue(!target.hasEffect(CEPortableTools.DAZED) && target.hasEffect(MobEffects.MOVEMENT_SPEED)
-                && target.getAttributeValue(Attributes.MOVEMENT_SPEED) > originalSpeed, "Speed remains after the stun wears off");
+            h.assertTrue(!target.hasEffect(CEPortableTools.DAZED) && target.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)
+                && Math.abs(target.getAttributeValue(Attributes.MOVEMENT_SPEED) / originalSpeed - .25) < .0001,
+                "The target moves at a quarter of its original speed after the stun wears off");
+        });
+        h.runAfterDelay(89, () -> {
+            h.assertTrue(!target.hasEffect(MobEffects.MOVEMENT_SLOWDOWN) && target.getAttributeValue(Attributes.MOVEMENT_SPEED) == originalSpeed,
+                "The target recovers its original movement speed after Slowness expires");
             h.succeed();
         });
     }

@@ -42,8 +42,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 @EventBusSubscriber(modid = CreatePlant.MOD_ID)
 public final class SteamHammerItem extends PortableFluidToolItem {
-    public static final int CAPACITY = 2000, STEAM_PER_SWING = 250, DAMAGE = 4;
-    private static final int WINDUP_TICKS = 3, LAST_IMPACT_TICK = 6, DAZE_TICKS = 14, SPEED_TICKS = 80;
+    public static final int CAPACITY = 2000, STEAM_PER_SWING = 250, DAMAGE = 45;
+    private static final int WINDUP_TICKS = 3, LAST_IMPACT_TICK = 6, DAZE_TICKS = 14, SLOWNESS_TICKS = 80, SLOWNESS_AMPLIFIER = 4;
     private static final String TOOLTIP = "tooltip.create_refinery_n_reactors.steam_hammer.";
     private final Map<ServerPlayer, Swing> swings = new HashMap<>();
 
@@ -132,7 +132,7 @@ public final class SteamHammerItem extends PortableFluidToolItem {
         if (!target.hurt(level.damageSources().playerAttack(player), DAMAGE) || !target.isAlive()) return true;
         target.knockback(1.25, -swing.direction.x, -swing.direction.z);
         if (target instanceof ServerPlayer) target.hurtMarked = true;
-        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, SPEED_TICKS), player);
+        target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, SLOWNESS_TICKS, SLOWNESS_AMPLIFIER), player);
         if (target.addEffect(new MobEffectInstance(CEPortableTools.DAZED, DAZE_TICKS), player)) target.stopUsingItem();
         var impact = hit.getLocation();
         level.sendParticles(ParticleTypes.CRIT, impact.x, impact.y, impact.z, 12, .23, .23, .23, .16);

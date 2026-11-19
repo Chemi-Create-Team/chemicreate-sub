@@ -4860,9 +4860,9 @@
     "zh_cn": "主手持锤时左击。挥锤下砸时，蒸汽会推动你向前。"
   },
   "steam_hammer.impact": {
-    "en_us": "A hit knocks the target back and dazes it briefly. The Speed effect lasts after the daze clears.",
-    "ja_jp": "命中した相手はノックバックし、短い間スタンします。スタンが解けた後も移動速度上昇が残ります。",
-    "zh_cn": "命中会击退目标并短暂眩晕。眩晕解除后，速度效果仍会持续。"
+    "en_us": "A hit deals 45 base damage, knocks the target back and dazes it briefly. After the daze clears, Slowness V reduces movement speed to 25%.",
+    "ja_jp": "命中すると基礎ダメージ45を与え、相手はノックバックして短時間スタンします。スタンが解けた後は、移動速度低下Vで相手の移動速度が約4分の1になります。",
+    "zh_cn": "命中会造成45点基础伤害，击退目标并使其短暂眩晕。眩晕解除后，迟缓V会使目标的移动速度降至原来的约四分之一。"
   },
   "steam_hammer.guard": {
     "en_us": "Hold Use to guard attacks coming from the front. Guarding uses no steam.",
