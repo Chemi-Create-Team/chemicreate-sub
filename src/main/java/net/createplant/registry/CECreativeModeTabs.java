@@ -113,6 +113,7 @@ public class CECreativeModeTabs {
         for (var paths : MATERIAL_GROUPS) for (var path : paths) listed.add(item(path));
         for (var paths : EQUIPMENT_GROUPS) for (var path : paths) listed.add(item(path));
         listed.add(CEWorldFluids.EMPTY_ALLOY_BUCKET.get());
+        listed.add(CESafety.RAW_PROCESS_GAS.get().getBucket());
         // Dyed flywheels are made by dyeing the placed yellow one.
         CEItems.LARGE_FLYWHEELS.forEach(item -> listed.add(item.get()));
         var liquids = new ArrayList<Item>();

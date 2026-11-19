@@ -4680,44 +4680,39 @@
     "zh_cn": "佩戴防毒面具防止吸入。穿齐防护外套、防护裤和鞋套可防液体飞溅。"
   },
   "guide.process_gas_recovery.title": {
-    "en_us": "Detect and recover process gas",
-    "ja_jp": "プロセスガスの検知と回収",
-    "zh_cn": "检测和回收工艺气体"
+    "en_us": "Detect and recover steam mist",
+    "ja_jp": "水蒸気のもやの検知と回収",
+    "zh_cn": "检测和回收蒸汽雾"
   },
   "guide.process_gas_recovery.step_1": {
-    "en_us": "Steam exhaust can leave a local incident. A gas detector reads the strongest concentration within four blocks.",
-    "ja_jp": "蒸気の排気跡に汚染が残ることがあります。ガス検知器は半径4ブロック内で一番高い濃度を読み取ります。",
-    "zh_cn": "蒸汽排气处可能留下局部污染。气体探测器读取四格内的最高浓度。"
+    "en_us": "Breaking a high-pressure steam pipe leaves a white mist that rises inside the room.",
+    "ja_jp": "高圧蒸気管が破損すると白いもやが出て、部屋の天井側に広がります。",
+    "zh_cn": "高压蒸汽管道破裂后会出现白雾，向室内上方扩散。"
   },
   "guide.process_gas_recovery.step_2": {
-    "en_us": "Use a comparator to drive a warning lamp. The same signal can stop the supply pump.",
-    "ja_jp": "コンパレーターで警報ランプを点灯できます。同じ信号で供給側の電動ポンプも停止できます。",
-    "zh_cn": "用比较器点亮警报灯。同一信号也可停止供料电动泵。"
+    "en_us": "A closed door keeps the steam mist on this side.",
+    "ja_jp": "ドアを閉めている間、もやは手前で止まります。",
+    "zh_cn": "门关闭时，蒸汽雾停留在这一侧。"
   },
   "guide.process_gas_recovery.step_3": {
-    "en_us": "Place a downward-facing Encased Fan on the duct. Run the fan at 32 RPM or faster.",
-    "ja_jp": "ダクトの真上に、下向きのケース入りファンを設置します。ファンを32 RPM以上で回してください。",
-    "zh_cn": "在风管正上方放置朝下的鼓风机。让其以至少 32 RPM 运转。"
+    "en_us": "Open the door to connect the rooms. The mist can spread through on its next update.",
+    "ja_jp": "ドアを開けると部屋がつながり、次の更新でもやが向こうへ広がります。",
+    "zh_cn": "打开门连接两个房间，蒸汽雾会在下次更新时扩散到另一侧。"
   },
   "guide.process_gas_recovery.step_4": {
-    "en_us": "Keep the grille side open and connect a pipe to the round nozzle. Goggles show the recovered amount.",
-    "ja_jp": "格子面を空けて、丸いノズル側に配管をつなぎます。ゴーグルでダクト内の回収量が分かります。",
-    "zh_cn": "保持格栅侧畅通，将管道接到圆形接口。护目镜可查看风管内的回收量。"
+    "en_us": "A detector reads nearby mist through the open passage. Its comparator output can drive a warning lamp.",
+    "ja_jp": "検知器は空気が通る範囲のもやを読み取ります。コンパレーター経由で警報ランプを点灯できます。",
+    "zh_cn": "探测器感应通路附近的雾。比较器输出可以点亮警报灯。"
   },
   "guide.process_gas_recovery.step_5": {
-    "en_us": "Pump the recovered gas into the lowest storey of a large absorption tower. Feed water into its highest storey.",
-    "ja_jp": "回収したガスを大型吸収塔の最下段へ送り、水を最上段へ供給します。",
-    "zh_cn": "将回收气体泵入大型吸收塔的底层，从顶层供水。"
+    "en_us": "Run the downward-facing fan above the duct at 32 RPM or faster. Pump recovered steam out through the round nozzle.",
+    "ja_jp": "ダクトの真上の下向きファンを32 RPM以上で回します。回収した蒸気は丸いノズルからポンプで搬出できます。",
+    "zh_cn": "让风管正上方朝下的风机以至少32 RPM运转。用泵从圆形接口输出回收的蒸汽。"
   },
   "guide.process_gas_recovery.step_6": {
-    "en_us": "Take neutralized wastewater from another bottom port. The alarm clears when the area has been cleaned.",
-    "ja_jp": "最下段の別のポートから中和済み廃水を取り出します。回収が済むと警報が止まります。",
-    "zh_cn": "从另一个底层接口排出已中和废水。污染清除后警报解除。"
-  },
-  "large_absorption_tower.process_gas": {
-    "en_us": "For recovered raw process gas, feed water at the top and collect neutralized wastewater at the bottom.",
-    "ja_jp": "回収した未処理プロセスガスの洗浄には水を最上段へ入れ、中和済み廃水を最下段から取り出します。",
-    "zh_cn": "洗涤回收的未处理工艺气体时，从塔顶加水，并从底层取出已中和废水。"
+    "en_us": "Steam mist dissipates much faster under a clear sky.",
+    "ja_jp": "上が開けている場所では、蒸気のもやは早く薄まります。",
+    "zh_cn": "蒸汽雾在露天处消散得更快。"
   },
   "guide.create_boiler_steam.title": {
     "en_us": "Boil steam in a Create tank",

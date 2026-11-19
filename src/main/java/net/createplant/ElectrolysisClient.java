@@ -55,6 +55,8 @@ public class ElectrolysisClient {
         if (Boolean.getBoolean("createplant.powerPlantClientCheck")) NeoForge.EVENT_BUS.addListener(net.createplant.client.PowerPlantClientCheck::tick);
         if (System.getProperty("createplant.rbmkVariantsPlaytest")!=null) NeoForge.EVENT_BUS.addListener(net.createplant.client.RbmkVariantsPlaytestWorld::tick);
         if (System.getProperty("createplant.fusionPlaytest")!=null) NeoForge.EVENT_BUS.addListener(net.createplant.client.FusionPlaytestWorld::tick);
+        NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogColor);
+        NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogDistance);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.StructureGuideRenderer::tick);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.MachineSounds::tick);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.StructureGuideRenderer::render);
@@ -98,6 +100,7 @@ public class ElectrolysisClient {
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(net.createplant.registry.CESafety.GAS_CLOUD.get(), net.createplant.client.GasCloudRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get(), com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEHighStressMachines.PRESS_ENTITY.get(), net.createplant.client.CubicPressRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.MATERIAL_PUMP_ENTITY.get(), com.simibubi.create.content.fluids.pump.PumpRenderer::new);

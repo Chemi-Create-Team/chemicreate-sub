@@ -11,7 +11,9 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CETransport;
-import net.createplant.safety.ProcessGasIncidents;
+import net.createplant.cloud.GasClouds;
+import net.createplant.registry.CEFluids;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.createplant.thermal.Grade;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -54,8 +56,9 @@ public final class PipeGasFlow extends BlockEntityBehaviour {
     @Override public void unload() {
         // Create's copper pipe removes its block entity directly. The site must already be air,
         // which excludes chunk unloads and replacements such as adding casing.
-        if (getWorld() instanceof ServerLevel level && level.getGameTime() - steamObserved < SILENCE_DELAY)
-            ProcessGasIncidents.record(level, getPos(), 250);
+        if (getWorld() instanceof ServerLevel level && level.getGameTime() - steamObserved < SILENCE_DELAY
+            && level.hasChunkAt(getPos()) && level.getBlockState(getPos()).isAir())
+            GasClouds.release(level, getPos(), new FluidStack(CEFluids.STEAM.get(), 250));
     }
 
     @Override public void tick() {

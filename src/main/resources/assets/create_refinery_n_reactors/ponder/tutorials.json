@@ -9535,8 +9535,8 @@
   {
     "id": "process_gas_recovery",
     "size": 11,
-    "height": 8,
-    "scale": 0.6,
+    "height": 5,
+    "scale": 0.67,
     "components": [
       "gas_recovery_duct",
       "gas_detector"
@@ -9545,57 +9545,51 @@
       {
         "target": [
           2,
-          1,
+          2,
           5
         ],
-        "key": "step_1",
-        "smoke": [
-          1,
-          0,
-          5
-        ]
+        "key": "step_1"
       },
       {
         "target": [
-          2,
+          3,
           1,
-          4
+          5
         ],
         "key": "step_2"
       },
       {
         "target": [
-          4,
-          2,
-          5
-        ],
-        "key": "step_3",
-        "speed": 64
-      },
-      {
-        "target": [
-          4,
+          3,
           1,
           5
         ],
-        "key": "step_4"
+        "key": "step_3"
       },
       {
         "target": [
           7,
           1,
-          5
+          4
         ],
-        "key": "step_5"
+        "key": "step_4"
       },
       {
         "target": [
-          8,
-          1,
-          9
+          5,
+          2,
+          5
         ],
-        "key": "step_6",
-        "item": "create_refinery_n_reactors:neutralized_wastewater_bucket"
+        "key": "step_5",
+        "speed": 64
+      },
+      {
+        "target": [
+          2,
+          4,
+          5
+        ],
+        "key": "step_6"
       }
     ]
   }

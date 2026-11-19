@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Build the recovery duct's casing and the model-scale recovery line."""
 import json
+from math import cos, tau
 from random import Random
 
 from PIL import Image, ImageDraw
 
 import generate_petrochemical_ponder as ponder
-from generate_absorption_tower import ring
 from generate_industrial_gas_safety import ASSETS, DATA, id_for, write
 from generate_world_liquids import bucket_image
 
@@ -96,45 +96,60 @@ def duct_data():
         write(tag_path, tag)
 
 
+def mist_texture():
+    image = Image.new('RGBA', (32, 32))
+    random = Random(83)
+    waves = [(x, y, random.uniform(0, tau), 1 / (x + y))
+             for x, y in ((1, 1), (1, 2), (2, 1), (2, 3), (3, 1), (3, 4), (5, 3), (7, 6))]
+    for y in range(32):
+        for x in range(32):
+            mist = sum(cos(tau * (x * fx + y * fy) / 32 + phase) * weight for fx, fy, phase, weight in waves)
+            alpha = max(0, min(255, round(145 + 75 * mist)))
+            image.putpixel((x, y), (255, 255, 255, alpha))
+    path = ASSETS / 'textures/entity/gas_mist.png'
+    path.parent.mkdir(parents=True, exist_ok=True)
+    image.save(path)
+
+
 def storyboard():
-    scene = ponder.Structure(11, 8)
-    scene.block(2, 1, 5, id_for('gas_detector'), power='9')
-    scene.block(2, 1, 4, 'minecraft:comparator', facing='south', mode='compare', powered='true')
-    scene.block(2, 1, 3, 'minecraft:redstone_lamp', lit='true')
-    scene.block(4, 1, 5, id_for(DUCT), facing='east', active='true')
-    scene.block(4, 2, 5, 'create:encased_fan', facing='down')
-    scene.block(4, 3, 5, 'create:creative_motor', facing='down')
-    scene.pump(5, 1, 5, 'east')
-    scene.block(5, 1, 6, 'create:cogwheel', axis='x', waterlogged='false')
-    scene.block(4, 1, 6, 'create:creative_motor', facing='east')
-    scene.block(6, 1, 5, 'create:fluid_pipe', east='true', west='true')
-    for y in range(1, 5):
-        ring(scene, 8, y, 5)
-    scene.block(8, 5, 5, 'create:fluid_pipe', up='true', down='true')
-    scene.pump(8, 6, 5, 'down')
-    scene.block(7, 6, 5, 'create:cogwheel', axis='y', waterlogged='false')
-    scene.block(7, 7, 5, 'create:creative_motor', facing='down')
-    scene.block(8, 7, 5, 'create:fluid_tank', bottom='true', top='true', shape='window')
-    scene.block(8, 1, 7, 'create:fluid_pipe', north='true', south='true')
-    scene.pump(8, 1, 8, 'south')
-    scene.block(9, 1, 8, 'create:cogwheel', axis='z', waterlogged='false')
-    scene.block(9, 1, 7, 'create:creative_motor', facing='south')
-    scene.block(8, 1, 9, 'create:fluid_tank', bottom='true', top='true', shape='window')
+    scene = ponder.Structure(11, 5)
+    for x in range(1, 6):
+        for y in range(1, 5):
+            for z in range(3, 8):
+                if (x, y, z) in ((5, 1, 4), (5, 1, 5), (5, 2, 5), (5, 3, 5), (5, 1, 6), (3, 1, 5), (3, 2, 5)):
+                    continue
+                if x in (1, 3, 5) or z in (3, 7) or y == 4:
+                    scene.block(x, y, z, 'minecraft:glass')
+    for y, half in ((1, 'lower'), (2, 'upper')):
+        scene.block(3, y, 5, 'minecraft:oak_door', facing='east', half=half, hinge='left', open='false', powered='false')
+    for y in (2, 3):
+        scene.block(2, y, 5, 'create:fluid_pipe', up='true', down='true')
+    scene.block(5, 1, 4, id_for('gas_detector'), power='0')
+    scene.block(6, 1, 4, 'minecraft:comparator', facing='west', mode='compare', powered='false')
+    scene.block(7, 1, 4, 'minecraft:redstone_lamp', lit='false')
+    scene.block(5, 1, 5, id_for(DUCT), facing='east', active='false')
+    scene.block(5, 2, 5, 'create:encased_fan', facing='down')
+    scene.block(5, 3, 5, 'create:creative_motor', facing='down')
+    scene.pump(6, 1, 5, 'east')
+    scene.block(6, 1, 6, 'create:cogwheel', axis='x', waterlogged='false')
+    scene.block(5, 1, 6, 'create:creative_motor', facing='east')
+    scene.block(7, 1, 5, 'create:fluid_pipe', east='true', west='true')
+    scene.block(8, 1, 5, id_for('gas_receiver'), axis='x', bottom='true', top='true', shape='plain')
     ponder.OUT = ASSETS / 'ponder/plant'
     scene.save(SCENE)
 
     path = ASSETS / 'ponder/tutorials.json'
     guides = json.loads(path.read_text())
     steps = [
-        {'target': [2, 1, 5], 'key': 'step_1', 'smoke': [1, 0, 5]},
-        {'target': [2, 1, 4], 'key': 'step_2'},
-        {'target': [4, 2, 5], 'key': 'step_3', 'speed': 64},
-        {'target': [4, 1, 5], 'key': 'step_4'},
-        {'target': [7, 1, 5], 'key': 'step_5'},
-        {'target': [8, 1, 9], 'key': 'step_6', 'item': id_for('neutralized_wastewater_bucket')},
+        {'target': [2, 2, 5], 'key': 'step_1'},
+        {'target': [3, 1, 5], 'key': 'step_2'},
+        {'target': [3, 1, 5], 'key': 'step_3'},
+        {'target': [7, 1, 4], 'key': 'step_4'},
+        {'target': [5, 2, 5], 'key': 'step_5', 'speed': 64},
+        {'target': [2, 4, 5], 'key': 'step_6'},
     ]
     guides = [guide for guide in guides if guide['id'] != SCENE]
-    guides.append({'id': SCENE, 'size': 11, 'height': 8, 'scale': .6,
+    guides.append({'id': SCENE, 'size': 11, 'height': 5, 'scale': .67,
                    'components': [DUCT, 'gas_detector'], 'steps': steps})
     write(path, guides)
 
@@ -143,4 +158,5 @@ if __name__ == '__main__':
     duct_assets()
     duct_data()
     bucket_image('raw_process_gas_bucket', 0xFFBFCAD0)
+    mist_texture()
     storyboard()

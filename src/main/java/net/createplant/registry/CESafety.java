@@ -8,6 +8,7 @@ import net.createplant.CreatePlant;
 import net.createplant.block.GasDetectorBlock;
 import net.createplant.block.GasRecoveryDuctBlock;
 import net.createplant.block.entity.GasRecoveryDuctBlockEntity;
+import net.createplant.cloud.GasCloud;
 import net.createplant.item.GasCylinderItem;
 import net.createplant.item.GasMaskItem;
 import net.createplant.safety.ToxicGasEffect;
@@ -16,6 +17,8 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
@@ -46,6 +49,9 @@ public final class CESafety {
     private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePlant.MOD_ID);
     private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreatePlant.MOD_ID);
     private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, CreatePlant.MOD_ID);
+    private static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(Registries.ENTITY_TYPE, CreatePlant.MOD_ID);
+    public static final Supplier<EntityType<GasCloud>> GAS_CLOUD = ENTITIES.register("gas_cloud", () ->
+        EntityType.Builder.<GasCloud>of(GasCloud::new, MobCategory.MISC).sized(1, 1).clientTrackingRange(4).updateInterval(20).build("gas_cloud"));
     public static final Holder<MobEffect> TOXIC_GAS = EFFECTS.register("toxic_gas", ToxicGasEffect::new);
     public static final Holder<MobEffect> ACID_BURN = EFFECTS.register("acid_burn", net.createplant.safety.AcidBurnEffect::new);
     /** Seconds of toxic gas the filter canister takes before it is spent. */
@@ -75,6 +81,7 @@ public final class CESafety {
         ITEMS.registerSimpleBlockItem(GAS_RECOVERY_DUCT);
         BLOCKS.register(bus);ITEMS.register(bus);COMPONENTS.register(bus);EFFECTS.register(bus);ARMOR_MATERIALS.register(bus);
         BLOCK_ENTITIES.register(bus);
+        ENTITIES.register(bus);
         FLUID_TYPES.register(bus);
         FLUIDS.register(bus);
         bus.addListener(CESafety::capabilities);

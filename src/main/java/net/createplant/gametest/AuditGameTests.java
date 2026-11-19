@@ -65,8 +65,8 @@ public class AuditGameTests {
         var shown=new HashSet<net.minecraft.world.item.Item>();
         for (var tab:BuiltInRegistries.CREATIVE_MODE_TAB) { tab.buildContents(new net.minecraft.world.item.CreativeModeTab.ItemDisplayParameters(h.getLevel().enabledFeatures(),true,h.getLevel().registryAccess()));for (var s:tab.getDisplayItems()) shown.add(s.getItem()); }
         var hidden=new TreeSet<String>();for (var e:BuiltInRegistries.ITEM.entrySet()) if (e.getKey().location().getNamespace().equals(CreatePlant.MOD_ID) && !shown.contains(e.getValue())) hidden.add(e.getKey().location().getPath());
-        // An assembly intermediate, the steam bucket and the dyed flywheels may stay out of the tab.
-        hidden.removeAll(Set.of("steam_bucket"));hidden.removeIf(path->path.endsWith("_large_flywheel"));
+        // Hidden legacy gas and steam buckets keep their registered assets.
+        hidden.removeAll(Set.of("steam_bucket", "raw_process_gas_bucket"));hidden.removeIf(path->path.endsWith("_large_flywheel"));
         h.assertTrue(hidden.isEmpty(),"Items missing from the creative tab: "+hidden);
         h.assertTrue(problems.isEmpty(),"Missing assets, translations or loot: "+problems);
         h.succeed();

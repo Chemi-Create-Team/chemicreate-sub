@@ -10,6 +10,11 @@ import net.createmod.ponder.api.scene.Selection;
 import net.createplant.block.CoolerRadiatorBlock;
 import net.createplant.block.CoolingFanShroudBlock;
 import net.createplant.block.ThermalCasingBlock;
+import net.createplant.cloud.GasCloud;
+import net.createplant.registry.CEFluids;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -109,6 +114,7 @@ public final class PlantPonderScenes {
                 scene.world().modifyBlockEntity(new BlockPos(17,5,10),net.createplant.block.entity.SteamTurbineBlockEntity.class,rotor->{rotor.thermodynamics().input().fill(net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.createplant.registry.CEFluids.STEAM.get(),1000),750),net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);rotor.thermodynamics().step(true,64);});
                 scene.world().setKineticSpeed(util.select().fromTo(2,5,10,19,5,10),256);
             }
+            if (tutorial.id().equals("process_gas_recovery")) steamRecovery(scene, util, step.key(), target);
             if (step.speed() != null) {
                 scene.world().setKineticSpeed(factory, step.speed());
                 scene.world().modifyBlockEntityNBT(factory, net.createplant.block.entity.LiddedVesselBlockEntity.class, tag -> tag.putFloat("InputSpeed", step.speed()));
@@ -131,6 +137,39 @@ public final class PlantPonderScenes {
             PonderText.caption(scene, util.vector().centerOf(target), tutorial.translation(step.key()), 120);
         }
         scene.markAsFinished();
+    }
+
+    private static void steamRecovery(CreateSceneBuilder scene, SceneBuildingUtil util, String step, BlockPos target) {
+        switch (step) {
+            case "step_1" -> {
+                scene.world().destroyBlock(target);
+                scene.world().createEntity(world -> GasCloud.preview(world, target, new FluidStack(CEFluids.STEAM.get(), 1100)));
+            }
+            case "step_3" -> {
+                scene.world().modifyBlocks(util.select().fromTo(target, target.above()),
+                    state -> state.setValue(BlockStateProperties.OPEN, true), false);
+                scene.world().modifyEntities(GasCloud.class, cloud -> cloud.refreshPreview(1100));
+            }
+            case "step_4" -> {
+                scene.world().modifyBlock(target.west(2), state -> state.setValue(BlockStateProperties.POWER, 12), false);
+                scene.world().modifyBlock(target.west(), state -> state.setValue(BlockStateProperties.POWERED, true), false);
+                scene.world().modifyBlock(target, state -> state.setValue(BlockStateProperties.LIT, true), false);
+            }
+            case "step_5" -> {
+                scene.world().modifyBlock(target.below(), state -> state.setValue(net.createplant.block.GasRecoveryDuctBlock.ACTIVE, true), false);
+                scene.world().modifyEntities(GasCloud.class, cloud -> cloud.refreshPreview(550));
+            }
+            case "step_6" -> {
+                scene.world().setBlocks(util.select().fromTo(1, 4, 3, 5, 4, 7), Blocks.AIR.defaultBlockState(), false);
+                scene.world().modifyEntities(GasCloud.class, cloud -> cloud.refreshPreview(200));
+                scene.idle(25);
+                scene.world().modifyEntities(GasCloud.class, cloud -> cloud.refreshPreview(50));
+                scene.idle(20);
+                scene.world().modifyEntities(GasCloud.class, GasCloud::discard);
+                scene.world().modifyBlock(new BlockPos(7, 1, 4), state -> state.setValue(BlockStateProperties.LIT, false), false);
+            }
+            default -> { }
+        }
     }
 
     private static Selection converterVessel(SceneBuildingUtil util) {

@@ -30,8 +30,9 @@ public class CreativeCatalogGameTests {
         base.getDisplayItems().forEach(stack->catalogue.add(stack.getItem()));
         var own=BuiltInRegistries.ITEM.stream().filter(item->BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID)).toList();
         var dyed=CEItems.LARGE_FLYWHEELS.stream().map(holder->(Item)holder.get()).filter(item->item!=CEItems.LARGE_FLYWHEEL.get()).toList();
-        for(var item:own) h.assertTrue(dyed.contains(item)?!catalogue.contains(item):catalogue.contains(item),
-            "Every registered item appears once and dyed flywheels only by dyeing: "+BuiltInRegistries.ITEM.getKey(item));
+        var retiredBucket = net.createplant.registry.CESafety.RAW_PROCESS_GAS.get().getBucket();
+        for(var item:own) h.assertTrue(catalogue.contains(item) == (!dyed.contains(item) && item != retiredBucket),
+            "Current items appear once, with dyed variants and the legacy gas bucket hidden: "+BuiltInRegistries.ITEM.getKey(item));
         var order=base.getDisplayItems().stream().map(stack->BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()).toList();
         h.assertTrue(order.indexOf("corrosion_resistant_bucket")>order.indexOf("industrial_dispatch_board")&&order.indexOf("sulfuric_acid_bucket")<order.indexOf("hydrogen_gas_bucket")
             &&order.indexOf("hydrogen_gas_bucket")<order.indexOf("uranium_ore")&&order.indexOf("salt")<order.indexOf("aluminum_ingot")

@@ -23,7 +23,10 @@ public class ProcessRemovalGameTests {
             if (!id.getNamespace().equals(CreatePlant.MOD_ID) || !(fluid instanceof FlowingFluid flowing) || flowing.getSource() != fluid) continue;
             if (fluid instanceof net.createplant.mixture.MixtureFluid) continue;
             var stack = FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
-            if (stack.isEmpty() || tab.getDisplayItems().stream().noneMatch(entry -> entry.is(stack.getItem()))) { missing.add(id.toString());continue; }
+            boolean listed = tab.getDisplayItems().stream().anyMatch(entry -> entry.is(stack.getItem()));
+            if (id.equals(CreatePlant.location("raw_process_gas"))) {
+                h.assertTrue(!stack.isEmpty() && !listed, "The legacy gas still has a bucket and is hidden from Creative");
+            } else if (stack.isEmpty() || !listed) { missing.add(id.toString());continue; }
             var contained = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
             h.assertTrue(contained.is(fluid) && contained.getAmount() == 1000, "Bucket contains its named source fluid: " + id);
             h.assertTrue(fluid.getBucket() == stack.getItem(), "Fluid and FluidType resolve to the same container: " + id);

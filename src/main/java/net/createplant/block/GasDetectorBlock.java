@@ -1,7 +1,7 @@
 package net.createplant.block;
 
 import net.createplant.safety.FlammableGas;
-import net.createplant.safety.ProcessGasIncidents;
+import net.createplant.cloud.GasClouds;
 import net.createplant.safety.ToxicGas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +35,7 @@ public final class GasDetectorBlock extends Block {
     }
 
     @Override protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        int signal = (15 * ProcessGasIncidents.concentration(level, pos) + 99) / 100;
+        int signal = GasClouds.signal(level, pos);
         for (var cloud : level.getEntitiesOfClass(AreaEffectCloud.class, new AABB(pos).inflate(REACH),
                 cloud -> cloud.isAlive() && (ToxicGas.toxic(cloud) || FlammableGas.cloud(cloud)))) {
             double distance = Math.sqrt(pos.distToCenterSqr(cloud.getX(), cloud.getY(), cloud.getZ()));

@@ -44,7 +44,7 @@ public final class SurvivalReachabilityGameTests {
     /** The retained contaminated stream has no survival producer; its new bucket is requested for creative access. */
     private static final Set<String> CREATIVE_ONLY = Set.of("contaminated_gas_bucket");
     // Keep items recovered from old machines out of the new-world production audit.
-    private static final Set<String> LEGACY_ONLY = Set.of("glassy_slag");
+    private static final Set<String> LEGACY_ONLY = Set.of("glassy_slag", "raw_process_gas_bucket");
 
     private SurvivalReachabilityGameTests() { }
 
@@ -180,10 +180,6 @@ public final class SurvivalReachabilityGameTests {
         }
         // Create boilers and the thermal plant can change physical phase without changing the chemical feedstock.
         if (fluids.contains(Fluids.WATER)) changed |= fluids.add(CEFluids.STEAM.get());
-        if (has(items, "flare_tip", "gas_recovery_duct") && fluids.contains(CEFluids.STEAM.get())
-            && items.contains(com.simibubi.create.AllBlocks.ENCASED_FAN.asItem())
-            && items.contains(com.simibubi.create.AllBlocks.MECHANICAL_PUMP.asItem()))
-            changed |= fluids.add(CESafety.RAW_PROCESS_GAS.get());
         if (has(items, "cooler_radiator", "cooling_fan") && fluids.contains(CEFluids.AMMONIA_GAS.get()))
             changed |= fluids.add(CEProcessFluids.LIQUID_AMMONIA.get());
         if (has(items, "tube_piped_tank", "pressure_reducing_valve", "reciprocating_compressor", "reciprocating_cylinder")

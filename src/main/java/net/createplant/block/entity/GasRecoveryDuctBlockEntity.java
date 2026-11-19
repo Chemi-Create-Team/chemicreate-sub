@@ -7,7 +7,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createplant.block.GasRecoveryDuctBlock;
 import net.createplant.registry.CESafety;
-import net.createplant.safety.ProcessGasIncidents;
+import net.createplant.cloud.GasClouds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -32,7 +32,7 @@ public class GasRecoveryDuctBlockEntity extends SmartBlockEntity implements IHav
     private String status = "unpowered";
     private boolean syncPending;
 
-    private final FluidTank buffer = new FluidTank(CAPACITY, stack -> stack.is(CESafety.RAW_PROCESS_GAS.get())) {
+    private final FluidTank buffer = new FluidTank(CAPACITY, stack -> GasClouds.supported(stack) || stack.is(CESafety.RAW_PROCESS_GAS.get())) {
         @Override protected void onContentsChanged() {
             setChanged();
             syncPending = true;
@@ -86,9 +86,9 @@ public class GasRecoveryDuctBlockEntity extends SmartBlockEntity implements IHav
         if (!level.hasChunkAt(intake) || !level.getBlockState(intake).isAir()) return "blocked";
         int space = CAPACITY - buffer.getFluidAmount();
         if (space == 0) return "full";
-        int captured = ProcessGasIncidents.collect(level, intake, Math.min(space, SAMPLE_LIMIT));
-        if (captured == 0) return "ready";
-        buffer.fill(new FluidStack(CESafety.RAW_PROCESS_GAS.get(), captured), IFluidHandler.FluidAction.EXECUTE);
+        var captured = GasClouds.collect(level, intake, buffer.getFluid(), Math.min(space, SAMPLE_LIMIT));
+        if (captured.isEmpty()) return "ready";
+        buffer.fill(captured, IFluidHandler.FluidAction.EXECUTE);
         return "collecting";
     }
 
@@ -118,6 +118,7 @@ public class GasRecoveryDuctBlockEntity extends SmartBlockEntity implements IHav
     @Override public boolean addToGoggleTooltip(List<Component> text, boolean sneaking) {
         text.add(Component.translatable("gas_recovery_duct.create_refinery_n_reactors.status." + status));
         text.add(Component.translatable("gas_recovery_duct.create_refinery_n_reactors.buffer", buffer.getFluidAmount(), CAPACITY));
+        if (!buffer.isEmpty()) text.add(buffer.getFluid().getHoverName());
         return true;
     }
 }

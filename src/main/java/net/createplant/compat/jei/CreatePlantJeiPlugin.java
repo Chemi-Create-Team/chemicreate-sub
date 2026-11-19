@@ -127,7 +127,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         registration.addRecipes(type("tray_reactor"), reactions(ReactorModule.ABSORBER));
         for (var module : List.of(ProcessModule.REACTION_VESSEL, ProcessModule.FRACTION_SEPARATOR, ProcessModule.GAS_CENTRIFUGE, ProcessModule.ABSORPTION_TRAYS)) {
             List<PlantProcess> list = new ArrayList<>();
-            for (ProcessRecipe recipe : ProcessRecipe.all()) if (recipe.module() == module) {
+            for (ProcessRecipe recipe : ProcessRecipe.all()) if (recipe.module() == module && !recipe.id().equals("wash_raw_process_gas")) {
                 boolean fractionation=module==ProcessModule.FRACTION_SEPARATOR;
                 var inputs=recipe.inputs();
                 Component conditions = fractionation ? note("fractionation",recipe.ticks(),DistillationProfile.requiredHeight(recipe.id()))
@@ -352,6 +352,11 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         var hidden=net.minecraft.core.registries.BuiltInRegistries.ITEM.stream()
             .map(ItemStack::new).filter(net.createplant.compat.diesel.DieselIntegration::disabledItem).toList();
         runtime.getIngredientManager().removeIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK,hidden);
+        var legacyGas = net.createplant.registry.CESafety.RAW_PROCESS_GAS.get();
+        runtime.getIngredientManager().removeIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK,
+            List.of(new ItemStack(legacyGas.getBucket())));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(mezz.jei.api.neoforge.NeoForgeTypes.FLUID_STACK,
+            List.of(new FluidStack(legacyGas, 1000)));
         if (Boolean.getBoolean("createplant.clientQualityCheck")) {
             for (var stack:hidden) if (runtime.getIngredientVisibility().isIngredientVisible(mezz.jei.api.constants.VanillaTypes.ITEM_STACK,stack))
                 throw new IllegalStateException("CDG distillation remains visible in JEI");

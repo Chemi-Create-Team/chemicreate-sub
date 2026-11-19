@@ -10,7 +10,7 @@ import net.createmod.catnip.animation.LerpedFloat;
 import net.createplant.block.FlareTipBlock;
 import net.createplant.registry.CEFlare;
 import net.createplant.safety.FlammableGas;
-import net.createplant.safety.ProcessGasIncidents;
+import net.createplant.cloud.GasClouds;
 import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.FluidMaterials;
 import net.createplant.thermal.SteamGrades;
@@ -95,7 +95,7 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
     }
 
     private void releaseExhaust(ServerLevel level, FluidStack emitted) {
-        if (SteamGrades.of(emitted) != null) ProcessGasIncidents.record(level, worldPosition.above(), emitted.getAmount());
+        if (SteamGrades.of(emitted) != null) GasClouds.release(level, worldPosition.above(), emitted);
         else ToxicGas.release(level, worldPosition.above(), emitted);
     }
 
@@ -119,7 +119,7 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
             } else {
                 vented+=Math.min(emitted.getAmount(),Long.MAX_VALUE-vented);
                 releaseExhaust(server, emitted);
-                server.sendParticles(ParticleTypes.CLOUD,worldPosition.getX()+.5,worldPosition.getY()+1.3,worldPosition.getZ()+.5,3,.2,.1,.2,.08);
+                if (SteamGrades.of(emitted) == null) server.sendParticles(ParticleTypes.CLOUD,worldPosition.getX()+.5,worldPosition.getY()+1.3,worldPosition.getZ()+.5,3,.2,.1,.2,.08);
             }
         }
         if (flame>0) {
