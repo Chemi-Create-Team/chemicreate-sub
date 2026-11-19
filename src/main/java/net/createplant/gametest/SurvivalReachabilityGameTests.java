@@ -162,6 +162,8 @@ public final class SurvivalReachabilityGameTests {
         }
         if (has(items, "cooler_radiator", "cooling_fan")) for (var stream : ThermalStreams.cooledStreams().entrySet())
             if (fluids.contains(stream.getKey())) changed |= fluids.add(stream.getValue());
+        if (has(items, "tube_piped_tank") && fluids.contains(CEFluids.STEAM.get()) && fluids.contains(CEProcessFluids.SLIME_COOLANT.get()))
+            changed |= fluids.add(CEProcessFluids.WARM_SLIME_COOLANT.get());
         if(has(items,"reciprocating_compressor","reciprocating_cylinder"))for(var fluid:new ArrayList<>(fluids)){
             var converted=net.createplant.thermal.Compression.convert(new FluidStack(fluid,1),true);
             if(converted.getFluid()!=fluid)changed|=fluids.add(converted.getFluid());

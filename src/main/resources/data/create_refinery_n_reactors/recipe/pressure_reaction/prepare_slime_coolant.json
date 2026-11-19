@@ -1,0 +1,24 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    {
+      "item": "minecraft:slime_ball"
+    },
+    {
+      "item": "minecraft:glowstone_dust"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:slime_coolant_feed",
+      "amount": 1000
+    }
+  ],
+  "heat_requirement": "heated",
+  "processing_time": 100
+}

@@ -52,6 +52,9 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TRIMETHYL_PHOSPHITE = stream("trimethyl_phosphite", 0xFFC7C4AC);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CRUDE_METHYLPHOSPHONATE = stream("crude_methylphosphonate", 0xFF8F748C);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DIMETHYL_METHYLPHOSPHONATE = stream("dimethyl_methylphosphonate", 0xFFBDD6D7);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SLIME_COOLANT_FEED = stream("slime_coolant_feed", 0xFF729649);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SLIME_COOLANT = stream("slime_coolant", 0xFF409D86);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> WARM_SLIME_COOLANT = stream("warm_slime_coolant", 0xFFB7914A);
     private CEProcessFluids() { }
     public static void register(IEventBus bus) { TYPES.register(bus); FLUIDS.register(bus); }
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name) {

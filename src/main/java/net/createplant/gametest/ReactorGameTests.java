@@ -102,6 +102,43 @@ public class ReactorGameTests {
     }
     private static void run(ReactorMachineBlockEntity be,int ticks) { speed(be,32);for (int i=0;i<ticks;i++) be.tickProcess(); }
     @GameTest(template = "test_reactor")
+    public static void heatedSlimeBlendBecomesTwoCutsAndAReusableCoolant(GameTestHelper h) {
+        var mixer = build(h, ReactorModule.STIRRED, 1);
+        var water = new FluidStack(Fluids.WATER, 1000);
+        var blend = new FluidStack(CEProcessFluids.SLIME_COOLANT_FEED.get(), 1000);
+        h.assertTrue(in(mixer).fill(water, EXECUTE) == 1000
+            && mixer.itemPort().insertItem(0, new ItemStack(Items.SLIME_BALL), false).isEmpty()
+            && mixer.itemPort().insertItem(1, new ItemStack(Items.GLOWSTONE_DUST), false).isEmpty(), "Load the water and both Minecraft ingredients");
+        run(mixer, 120);
+        h.assertTrue(out(mixer).drain(blend, SIMULATE).isEmpty() && in(mixer).getFluidInTank(0).getAmount() == 1000,
+            "The mixture waits for burner heat");
+        heat(mixer, com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
+        run(mixer, 120);
+        var batch = out(mixer).drain(blend, EXECUTE);
+        h.assertTrue(batch.getAmount() == 1000 && mixer.itemPort().getStackInSlot(0).isEmpty() && mixer.itemPort().getStackInSlot(1).isEmpty(),
+            "A heated batch makes one finite blend and consumes its ingredients");
+
+        var column = DistillationGameTests.build(h.getLevel(), h.absolutePos(BASE.east(6)), 2, 2);
+        h.assertTrue(DistillationGameTests.inlet(column, 1).fill(batch, EXECUTE) == batch.getAmount(), "The two-layer tower accepts the blend");
+        DistillationGameTests.run(column, 90);
+        var recovered = DistillationGameTests.outlet(column, 1).drain(1000, EXECUTE);
+        var coolant = DistillationGameTests.outlet(column, 0).drain(1000, EXECUTE);
+        h.assertTrue(recovered.is(Fluids.WATER) && recovered.getAmount() == 250 && column.stock(0) == 0
+            && coolant.is(CEProcessFluids.SLIME_COOLANT.get()) && coolant.getAmount() == 750, "The top and bottom cuts conserve the full batch");
+
+        var exchanger = ThermalControlGameTests.build(h.getLevel(), h.absolutePos(BASE.east(12)), Direction.NORTH, 2);
+        h.assertTrue(ThermalControlGameTests.tube(exchanger, 0).fill(coolant, EXECUTE) == 750
+            && ThermalControlGameTests.shell(exchanger, 0).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 750), EXECUTE) == 750,
+            "The heat exchanger accepts the refined coolant on its cold side");
+        for (int i = 0; i < 25; i++) exchanger.thermal().tick();
+        var warmed = ThermalControlGameTests.tube(exchanger, 1).drain(1000, EXECUTE);
+        var recooling = net.createplant.thermal.ThermalStreams.cooling(warmed);
+        h.assertTrue(warmed.is(CEProcessFluids.WARM_SLIME_COOLANT.get()) && warmed.getAmount() == 750 && recooling != null
+            && FluidStack.matches(recooling.result(warmed, 750), coolant), "The radiator's cooling table returns the original coolant and volume");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
     public static void filtrationReturnsTheIodineForAnotherRearrangement(GameTestHelper h) {
         var mixer = build(h, ReactorModule.STIRRED, 1);
         var filter = assemble(h.getLevel(), h.absolutePos(BASE.east(5)), ReactorModule.STIRRED, 1);

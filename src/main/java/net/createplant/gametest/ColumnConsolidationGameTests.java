@@ -102,7 +102,7 @@ public class ColumnConsolidationGameTests {
                 h.assertTrue(out.drain(1,EXECUTE).isEmpty(),"A cut cannot be recovered twice");
             }
         }
-        h.assertTrue(index==6,"All six registered distillation recipes run on the tower");h.succeed();
+        h.assertTrue(index==7,"All seven registered distillation recipes run on the tower");h.succeed();
     }
     @GameTest(template="test_fractionation")
     public static void chemicalCutsRunAtTheirMinimumHeightAtTwoByTwo(GameTestHelper h) {
@@ -125,7 +125,7 @@ public class ColumnConsolidationGameTests {
             h.assertTrue(owner.stock(0)==0,"All parallel input batches are consumed exactly once");
             index++;
         }
-        h.assertTrue(index==6,"All six chemical feeds have minimum-height coverage");h.succeed();
+        h.assertTrue(index==7,"All seven chemical feeds have minimum-height coverage");h.succeed();
     }
     @GameTest(template="test_fractionation")
     public static void shorterThanTheCutCountRejectsFeedAndOutletLayersNeverCollide(GameTestHelper h) {

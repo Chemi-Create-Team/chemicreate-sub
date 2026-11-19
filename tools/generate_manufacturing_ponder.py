@@ -257,7 +257,7 @@ def load_units():
         (TEMPLATE_DATA / (kind + '.nbt')).unlink()
     heights={'operation:air_separation':14,'process:separate_nitric_oxide':2,
         'process:distill_crude':5,'process:separate_olefins':2,'process:separate_hydrotreater_effluent':3,
-        'process:separate_hydrocracker_effluent':4,'process:recover_carbon_monoxide':2}
+        'process:separate_hydrocracker_effluent':4,'process:recover_carbon_monoxide':2,'process:distill_slime_coolant':2}
     for recipe,height in heights.items():
         scene=column_unit(height,recipe=='operation:air_separation',recipe=='process:recover_carbon_monoxide')
         old=ponder.OUT;ponder.OUT=TEMPLATE_DATA;scene.save('_column');ponder.OUT=old
@@ -294,7 +294,8 @@ def column_unit(height,air,single_cut=False):
 def unit_key(stage):
     if stage['recipe'] == NS + 'pressure_reaction/flame_retardant_pellet':
         return 'resin_vessel'
-    if stage['recipe'] in (NS + 'pressure_reaction/trimethyl_phosphite_rearrangement', NS + 'pressure_reaction/methylphosphonate_filtration'):
+    if stage['recipe'] in (NS + 'pressure_reaction/trimethyl_phosphite_rearrangement', NS + 'pressure_reaction/methylphosphonate_filtration',
+                           NS + 'pressure_reaction/prepare_slime_coolant'):
         return 'liquid_vessel'
     if stage['recipe'] == 'process:wash_resin_process_vapor':
         return 'resin_absorber'
@@ -669,6 +670,12 @@ route('methylphosphonate', ('Making dimethyl methylphosphonate', 'メチルホ�
     ['iodine', 'trimethyl_phosphite_bucket', 'crude_methylphosphonate_bucket', 'dimethyl_methylphosphonate_bucket'], [
     step('vessel', 'pressure_reaction/trimethyl_phosphite_rearrangement'),
     step('vessel', 'pressure_reaction/methylphosphonate_filtration', output_at=(7, 2, 5)),
+])
+
+route('slime_coolant', ('Making slime coolant', 'スライム冷却液を作る', '制备史莱姆冷却液'),
+    ['slime_coolant_feed_bucket', 'slime_coolant_bucket', 'warm_slime_coolant_bucket'], [
+    step('vessel', 'pressure_reaction/prepare_slime_coolant'),
+    step('column', 'process:distill_slime_coolant'),
 ])
 
 if __name__ == '__main__':

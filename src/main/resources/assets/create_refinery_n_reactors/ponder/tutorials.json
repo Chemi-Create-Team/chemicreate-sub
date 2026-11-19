@@ -9878,5 +9878,78 @@
         }
       }
     ]
+  },
+  {
+    "id": "manufacturing_slime_coolant",
+    "family": "slime_coolant",
+    "size": 11,
+    "height": 7,
+    "components": [
+      "slime_coolant_bucket",
+      "slime_coolant_feed_bucket",
+      "warm_slime_coolant_bucket"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/prepare_slime_coolant",
+          "offset": 0,
+          "width": 11,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            2,
+            7
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "column",
+          "recipe": "process:distill_slime_coolant",
+          "offset": 32,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            7,
+            2,
+            5
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      }
+    ]
   }
 ]

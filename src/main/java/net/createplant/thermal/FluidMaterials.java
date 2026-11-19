@@ -43,6 +43,8 @@ public final class FluidMaterials {
         entry("ethylene_oxide",44.05,283.6),entry("ethylene_glycol",62.07,470.4),
         // Half ethylene glycol and half water by mass, as a pseudo-pure liquid.
         entry("antifreeze",24.4,380.15),
+        // Fictional coolant cuts below water in the column's game model.
+        entry("slime_coolant",80,420),
         entry("hydrogen_sulfide",34.08,212.8),
         entry("chlorine",70.9,239.1),entry("liquid_chlorine",70.9,239.1),entry("hydrogen_chloride",36.46,188.1),
         entry("vinyl_chloride",62.5,259.8),entry("liquid_vinyl_chloride",62.5,259.8),entry("ethylene_dichloride",98.96,356.7),entry("sulfur_dioxide",64.066,263.13),entry("liquid_sulfur_dioxide",64.066,263.13),
