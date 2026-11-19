@@ -3814,6 +3814,72 @@
     ]
   },
   {
+    "id": "create_boiler_steam",
+    "size": 9,
+    "height": 6,
+    "components": [
+      "create:fluid_tank"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_1",
+        "reveal": [
+          4,
+          1,
+          4,
+          5,
+          2,
+          4
+        ]
+      },
+      {
+        "target": [
+          4,
+          1,
+          4
+        ],
+        "key": "step_2"
+      },
+      {
+        "target": [
+          4,
+          3,
+          4
+        ],
+        "key": "step_3",
+        "reveal": [
+          4,
+          3,
+          4,
+          4,
+          3,
+          4
+        ]
+      },
+      {
+        "target": [
+          1,
+          4,
+          4
+        ],
+        "key": "step_4",
+        "reveal": [
+          1,
+          4,
+          4,
+          4,
+          4,
+          4
+        ]
+      }
+    ]
+  },
+  {
     "id": "gas_pipes",
     "size": 7,
     "height": 4,

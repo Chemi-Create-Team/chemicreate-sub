@@ -30,7 +30,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public class SteamTurbineBlockEntity extends GeneratingKineticBlockEntity {
     private static final float OUTPUT_SPEED_DIVISOR = 10f;
-    private static final float MAX_OUTPUT_SPEED = BoilerSteamOutput.MAX_TURBINE_RPM / OUTPUT_SPEED_DIVISOR;
+    private static final int MAX_TURBINE_RPM = 2560;
+    private static final float MAX_OUTPUT_SPEED = MAX_TURBINE_RPM / OUTPUT_SPEED_DIVISOR;
 
     private final IFluidHandler steamCapability = LiveMachinePorts.fluid(this, new SteamHandler());
     private final IFluidHandler liquidPort = new LiquidHandler();
