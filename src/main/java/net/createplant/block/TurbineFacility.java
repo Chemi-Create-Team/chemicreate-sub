@@ -7,8 +7,6 @@ import java.util.Locale;
 import java.util.Queue;
 import java.util.Set;
 
-import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
-
 import net.createplant.block.HighPressureTurbineMultiblock.AssemblyInfo;
 import net.createplant.block.entity.SteamTurbineBlockEntity;
 import net.createplant.registry.CEBlocks;
@@ -181,7 +179,7 @@ public final class TurbineFacility {
                 if (!net.createplant.thermal.FluidPipeTopology.opens(level, pipePos, direction.getOpposite())) continue;
                 PipeNetwork network = inspectPipeNetwork(level, pipePos, low);
                 checked.addAll(network.pipes());
-                if (network.touchesTarget() && !network.touchesBoiler()) {
+                if (network.touchesTarget()) {
                     return network;
                 }
             }
@@ -195,7 +193,6 @@ public final class TurbineFacility {
         queue.add(origin);
         pipes.add(origin);
         boolean touchesTarget = false;
-        boolean touchesBoiler = false;
 
         while (!queue.isEmpty() && pipes.size() <= MAX_SEARCHED_PIPES) {
             BlockPos current = queue.poll();
@@ -213,13 +210,9 @@ public final class TurbineFacility {
                 if (belongsToAssembly(level, target, adjacent, state)) {
                     touchesTarget = true;
                 }
-                FluidTankBlockEntity boiler = net.createplant.block.entity.BoilerSteamOutput.getCreateBoilerController(level, adjacent, state);
-                if (boiler != null) {
-                    touchesBoiler = true;
-                }
             }
         }
-        return new PipeNetwork(pipes, queue.isEmpty() && touchesTarget, touchesBoiler);
+        return new PipeNetwork(pipes, queue.isEmpty() && touchesTarget);
     }
 
     private static Set<BlockPos> contacts(BlockGetter level, AssemblyInfo assembly) {
@@ -289,7 +282,7 @@ public final class TurbineFacility {
             .append(value);
     }
 
-    private record PipeNetwork(Set<BlockPos> pipes, boolean touchesTarget, boolean touchesBoiler) {
+    private record PipeNetwork(Set<BlockPos> pipes, boolean touchesTarget) {
     }
 
     public record SteamStats(int highInput, int lowInput) {

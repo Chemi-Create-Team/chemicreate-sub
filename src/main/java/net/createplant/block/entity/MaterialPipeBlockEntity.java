@@ -15,7 +15,6 @@ public final class MaterialPipeBlockEntity extends FluidPipeBlockEntity implemen
     @Override public void addBehaviours(List<BlockEntityBehaviour> list) {
         super.addBehaviours(list);
         list.removeIf(BracketedBlockEntityBehaviour.class::isInstance);
-        list.add(new BoilerSteamOutput(this));
     }
     @Override public boolean addToGoggleTooltip(List<Component> lines,boolean sneaking) {
         net.createplant.transport.PipeMaterial.of(getBlockState()).describe(lines);
