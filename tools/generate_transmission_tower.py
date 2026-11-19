@@ -2,6 +2,7 @@
 """Build the 24-block single-block lattice tower, variants and teaching scene."""
 import json
 from pathlib import Path
+from random import Random
 from PIL import Image, ImageDraw
 import generate_petrochemical_ponder as ponder
 
@@ -97,10 +98,10 @@ def model():
             box(x, .876, z, .265, .027, .37, f'terminal_{row * 3 + col + 1}')
 
     textures = {
-        'particle': f'{NS}:block/electric_utilities/steel',
+        'particle': f'{NS}:block/transmission_tower/zinc',
         'zinc': f'{NS}:block/transmission_tower/zinc',
         'braces': f'{NS}:block/transmission_tower/braces',
-        'dark': f'{NS}:block/electric_utilities/dark',
+        'dark': f'{NS}:block/transmission_tower/fittings',
         'ceramic': f'{NS}:block/transmission_tower/ceramic',
         'concrete': 'minecraft:block/smooth_stone',
         'grate': f'{NS}:block/transmission_tower/grate',
@@ -125,24 +126,72 @@ def model():
     save(ASSETS / f'blockstates/{NAME}.json', {'variants': variants})
 
 
+def mottled_tile(color, seed, contrast):
+    rng = Random(seed)
+    patches = [[rng.choice((-2, -1, 0, 0, 1, 2)) for _ in range(4)] for _ in range(6)]
+    bands = [rng.choice((-1, 0, 0, 1)) for _ in range(8)]
+    image = Image.new('RGB', (16, 16))
+    for y in range(16):
+        for x in range(16):
+            patch = patches[(y + (x // 4) % 2) // 3][x // 4]
+            grain = rng.choice((-1, 0, 0, 0, 1))
+            shift = (patch + bands[y // 2]) * contrast + grain * max(2, contrast // 2)
+            image.putpixel((x, y), tuple(max(0, min(255, channel + shift)) for channel in color))
+    return image
+
+
+def cable(path):
+    image = mottled_tile((51, 58, 62), seed=83, contrast=6)
+    for y in range(16):
+        for x in range(16):
+            strand = (x + y // 2) % 7
+            relief = 13 if strand < 2 else -10 if strand == 6 else 0
+            image.putpixel((x, y), tuple(max(0, value + relief) for value in image.getpixel((x, y))))
+    image.save(path / 'cable.png')
+
+    # A half-block segment is the unit used by Electro Energetics' cable renderer.
+    texture = f'{NS}:block/transmission_tower/cable'
+    faces = {
+        'north': {'uv': [0, 12, 3, 15]},
+        'south': {'uv': [0, 12, 3, 15]},
+        'east': {'uv': [0, 1, 16, 4]},
+        'west': {'uv': [16, 5, 0, 8]},
+        'up': {'uv': [0, 8, 16, 11], 'rotation': 90},
+        'down': {'uv': [16, 12, 0, 15], 'rotation': 90},
+    }
+    for face in faces.values():
+        face['texture'] = '#cable'
+    save(ASSETS / 'models/block/transmission_tower/cable_segment.json', {
+        'textures': {'cable': texture, 'particle': texture},
+        'elements': [{'from': [-1.5, -1.5, 0], 'to': [1.5, 1.5, 8], 'faces': faces}],
+    })
+
+
 def textures():
     path = ASSETS / 'textures/block/transmission_tower'
     path.mkdir(parents=True, exist_ok=True)
-    for name, rgb in [('zinc', (115, 126, 131)), ('braces', (82, 93, 100)), ('ceramic', (53, 65, 66)), ('grate', (94, 102, 106))]:
-        image = Image.new('RGB', (16, 16))
-        for x in range(16):
-            for y in range(16):
-                offset = (x * 13 + y * 5 + x * y) % 11 - 5
-                if x in (0, 15):
-                    offset += 22 if x == 0 else -22
+    surfaces = (
+        ('zinc', (118, 125, 128), 11),
+        ('braces', (83, 92, 98), 9),
+        ('ceramic', (54, 67, 65), 7),
+        ('grate', (94, 101, 103), 9),
+        ('fittings', (62, 70, 75), 8),
+    )
+    for seed, (name, color, contrast) in enumerate(surfaces, 44):
+        image = mottled_tile(color, seed, contrast)
+        for y in range(16):
+            for x in range(16):
+                relief = 17 if x < 2 else -15 if x > 13 else 0
                 if name == 'grate' and x % 4 == 1:
-                    offset -= 30
+                    relief -= 28
                 if name == 'ceramic' and y in (3, 7, 12):
-                    offset += 24
-                image.putpixel((x, y), tuple(c + offset for c in rgb))
+                    relief += 20
+                image.putpixel((x, y), tuple(max(0, min(255, value + relief)) for value in image.getpixel((x, y))))
         image.save(path / f'{name}.png')
 
-    warning = Image.new('RGB', (16, 16), '#d29d30')
+    cable(path)
+
+    warning = mottled_tile((210, 157, 48), seed=24, contrast=5)
     draw = ImageDraw.Draw(warning)
     draw.rectangle((0, 0, 15, 15), outline='#40392b')
     draw.polygon([(9, 2), (5, 8), (8, 8), (6, 13), (12, 6), (9, 6)], fill='#433522')
@@ -151,7 +200,7 @@ def textures():
     glyphs = ('010110010010111', '110001010100111', '110001010001110',
               '101101111001001', '111100110001110', '011100110101010')
     for n, glyph in enumerate(glyphs, 1):
-        image = Image.new('RGB', (16, 16), '#273845' if n <= 3 else '#675031')
+        image = mottled_tile((39, 56, 69) if n <= 3 else (103, 80, 49), seed=n, contrast=4)
         draw = ImageDraw.Draw(image)
         for i, pixel in enumerate(glyph):
             if pixel == '1':

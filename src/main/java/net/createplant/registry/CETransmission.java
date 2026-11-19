@@ -9,7 +9,6 @@ import net.createplant.block.TransmissionTowerBlock;
 import net.createplant.block.entity.TransmissionTowerBlockEntity;
 import net.createplant.item.HighVoltageCableItem;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -35,8 +34,8 @@ public final class CETransmission {
     public static final DeferredItem<HighVoltageCableItem> SPOOL = ITEMS.register("high_voltage_cable",
         () -> new HighVoltageCableItem(new Item.Properties(), CETransmission::wire));
     private static final Supplier<WireType> WIRE = WIRES.register("high_voltage_cable", () -> new WireType.Builder(
-        PartialModel.of(ResourceLocation.fromNamespaceAndPath("electroenergetics", "block/heavily_insulated_wire_segment")))
-        .sag(0).maxLength(() -> MAX_SPAN).thickness(.095f)
+        PartialModel.of(CreatePlant.location("block/transmission_tower/cable_segment")))
+        .sag(.20f).maxLength(() -> MAX_SPAN).thickness(.095f)
         .resistance(() -> .005).insulationResistance(100_000_000).maxInsulationVoltage(() -> 35_000)
         .maxTemperature(() -> 700).spoolItem(SPOOL::get).droppedItem(CONDUCTOR).build());
 

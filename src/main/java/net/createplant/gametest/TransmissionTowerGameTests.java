@@ -4,6 +4,7 @@ import com.george_vi.electroenergetics.CEEBlocks;
 import com.george_vi.electroenergetics.CEEDataComponents;
 import com.george_vi.electroenergetics.content.creative_battery.CreativeBatteryDevice;
 import com.george_vi.electroenergetics.devices.device.DevicesSavedData;
+import com.george_vi.electroenergetics.foundation.QuadraticWireHelper;
 import com.george_vi.electroenergetics.foundation.nodes.InWorldNode;
 import com.george_vi.electroenergetics.foundation.nodes.InWorldNodeConnection;
 import com.george_vi.electroenergetics.simulation.infrastructure.InfrastructureSavedData;
@@ -71,8 +72,17 @@ public final class TransmissionTowerGameTests {
 
         var infrastructure = InfrastructureSavedData.load(level);
         var span = infrastructure.getConnectionData(new InWorldNodeConnection(first, last));
-        h.assertTrue(span != null && span.wireType() == CETransmission.wire() && span.getSag(128) == 0,
-            "The actual Electro Energetics wire is straight at its maximum span");
+        h.assertTrue(span != null && span.wireType() == CETransmission.wire(),
+            "The installed connection uses the registered high-voltage cable");
+        var from = first.getPosition(level);
+        var to = last.getPosition(level);
+        float sag = span.getSag(from.distanceTo(to));
+        var center = QuadraticWireHelper.posAt(from, to, .5f, sag);
+        double drop = from.lerp(to, .5).y - center.y;
+        h.assertTrue(Math.abs(drop - 1.28) < .01
+            && QuadraticWireHelper.posAt(from, to, 0, sag).equals(from)
+            && QuadraticWireHelper.posAt(from, to, 1, sag).equals(to),
+            "A 128-block span has a shallow 1.28-block sag and stays attached to both insulators: " + drop);
 
         var batteryPos = source.north(2);
         var pumpPos = destination.south(2);

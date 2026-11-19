@@ -2,10 +2,10 @@
   "loader": "create_refinery_n_reactors:lattice_beams",
   "ambientocclusion": false,
   "textures": {
-    "particle": "create_refinery_n_reactors:block/electric_utilities/steel",
+    "particle": "create_refinery_n_reactors:block/transmission_tower/zinc",
     "zinc": "create_refinery_n_reactors:block/transmission_tower/zinc",
     "braces": "create_refinery_n_reactors:block/transmission_tower/braces",
-    "dark": "create_refinery_n_reactors:block/electric_utilities/dark",
+    "dark": "create_refinery_n_reactors:block/transmission_tower/fittings",
     "ceramic": "create_refinery_n_reactors:block/transmission_tower/ceramic",
     "concrete": "minecraft:block/smooth_stone",
     "grate": "create_refinery_n_reactors:block/transmission_tower/grate",

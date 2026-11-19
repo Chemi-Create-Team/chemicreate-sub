@@ -36,7 +36,7 @@ public final class TransmissionTowerPonderScenes {
 
         var wires = new WireConnectionInstructions(builder);
         wires.createConnection(new InWorldNode(1, first), new InWorldNode(1, second), CETransmission.wire());
-        PonderText.caption(scene, new Vec3(5.08, 19.82, 9.5), LANG + "straight", 130);
+        PonderText.caption(scene, new Vec3(5.08, 19.82, 9.5), LANG + "span", 130);
         for (int id : new int[]{0, 2, 3, 4, 5}) {
             wires.createConnection(new InWorldNode(id, first), new InWorldNode(id, second), CETransmission.wire());
             scene.idle(5);

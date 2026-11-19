@@ -4599,10 +4599,10 @@
     "ja_jp": "高圧ケーブルリールを持ち、基部にある番号付きの端子を右クリックします。番号ごとに腕金の碍子が割り当てられています。",
     "zh_cn": "手持高压电缆卷轴右击塔基的编号端子。每个编号对应一个独立的绝缘子。"
   },
-  "transmission_tower.straight": {
-    "en_us": "Click the corresponding pad on the second tower. The cable runs straight between the insulators for up to 128 blocks.",
-    "ja_jp": "次の鉄塔で同じ番号を押すと、碍子間にケーブルが直線で張られます。接続は最大128ブロックです。",
-    "zh_cn": "右击下一座铁塔上相同编号的端子。绝缘子之间的电缆保持笔直，连接距离最长128格。"
+  "transmission_tower.span": {
+    "en_us": "Click the matching pad on the next tower. The cable sags slightly between insulators and spans up to 128 blocks.",
+    "ja_jp": "次の鉄塔で同じ番号を押すと、碍子間にケーブルが張られます。わずかにたるみがあり、最大128ブロックつなげます。",
+    "zh_cn": "右击下一座铁塔上相同编号的端子。电缆在绝缘子之间略微下垂，连接距离最长128格。"
   },
   "transmission_tower.circuit": {
     "en_us": "The six terminals are electrically independent. Use separate runs for both sides of a circuit.",
