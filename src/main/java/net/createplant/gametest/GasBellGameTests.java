@@ -231,7 +231,7 @@ public final class GasBellGameTests {
     @GameTest(template="test_rbmk",timeoutTicks=180)
     public static void aNativeMechanicalPumpKeepsIncompatibleGasAtTheSource(GameTestHelper h) {
         var be=holder(h);var at=be.getBlockPos();var level=h.getLevel();port(h,at).fill(hydrogen(10000),EXECUTE);
-        level.setBlock(at.below(),AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP),3);level.setBlock(at.below(2),net.createplant.registry.CETransport.PRESSURE_TANK.get().defaultBlockState(),3);
+        level.setBlock(at.below(),AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP),3);level.setBlock(at.below(2),net.createplant.registry.CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.Y),3);
         var source=((FluidTankBlockEntity)level.getBlockEntity(at.below(2))).getTankInventory();source.fill(nitrogen(16000),EXECUTE);
         h.onEachTick(()->((KineticBlockEntity)level.getBlockEntity(at.below())).setSpeed(32));h.runAfterDelay(3,()->((KineticBlockEntity)level.getBlockEntity(at.below())).onSpeedChanged(0));
         h.runAfterDelay(120,()->{h.assertTrue(source.getFluidAmount()==16000 && be.gas().getFluidAmount()==10000,"Refused inflow stays at the source without loss");h.succeed();});

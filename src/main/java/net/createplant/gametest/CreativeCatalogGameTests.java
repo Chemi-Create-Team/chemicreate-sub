@@ -44,7 +44,7 @@ public class CreativeCatalogGameTests {
         for(String id:List.of("ammonia_oxidizer","catalytic_cracker","distillation_tower","asbestos_mesh","electrolyzer","gas_holder_anchor","gas_holder_guide_rail"))
             h.assertTrue(!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id)),"Retired equipment stays unregistered: "+id);
         for(String id:List.of("uranium_hexafluoride_bucket","enriched_uranium_hexafluoride_bucket","depleted_uranium_hexafluoride_bucket","compact_enriched_uranium_hexafluoride_bucket"))
-            h.assertTrue(!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id)),"Contained UF6 streams have no fictitious bucket: "+id);
+            h.assertTrue(BuiltInRegistries.ITEM.get(CreatePlant.location(id)) instanceof net.createplant.item.GasBucketItem,"UF6 streams use the shared gas bucket like every process gas: "+id);
         for(String id:List.of("gas_holder_shell","gas_holder_anchor","gas_holder_guide_rail"))
             h.assertTrue(!BuiltInRegistries.BLOCK.containsKey(CreatePlant.location(id)) && !BuiltInRegistries.BLOCK_ENTITY_TYPE.containsKey(CreatePlant.location(id)),"Retired gas holder blocks and entities stay unregistered: "+id);
         h.assertTrue(BuiltInRegistries.BLOCK.containsKey(CreatePlant.location("gas_holder"))

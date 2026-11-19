@@ -112,7 +112,7 @@ public class DistillationGameTests {
     public static void aPumpFeedsCompressedAirFromATankIntoTheColdBox(GameTestHelper h) {
         var owner=build(h.getLevel(),h.absolutePos(new BlockPos(5,2,5)),2,14);
         BlockPos pump=new BlockPos(7,4,5),tank=new BlockPos(8,4,5),motor=new BlockPos(8,4,6);
-        h.setBlock(tank,com.simibubi.create.AllBlocks.FLUID_TANK.get());
+        h.setBlock(tank,CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS,Direction.Axis.X));
         h.setBlock(pump,com.simibubi.create.AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,Direction.WEST));
         h.setBlock(new BlockPos(7,4,6),com.simibubi.create.AllBlocks.COGWHEEL.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,Direction.Axis.X));
         h.setBlock(motor,com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,Direction.WEST));

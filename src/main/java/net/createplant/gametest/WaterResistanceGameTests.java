@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -36,7 +38,11 @@ public final class WaterResistanceGameTests {
             for (var support:List.of(pos.below(),pos.north(),pos.south(),pos.east(),pos.west())) h.setBlock(support,Blocks.IRON_BLOCK);
             h.setBlock(pos,block.defaultBlockState());
             var id=BuiltInRegistries.BLOCK.getKey(block);placed.add(new Placed(block,pos,id));
-            h.setBlock(pos.above(),Blocks.WATER);
+            if (block.defaultBlockState().hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+                h.setBlock(pos.above(),block.defaultBlockState().setValue(BlockStateProperties.DOUBLE_BLOCK_HALF,DoubleBlockHalf.UPPER));
+                placed.add(new Placed(block,pos.above(),id));
+                h.setBlock(pos.above().north(),Blocks.WATER);
+            } else h.setBlock(pos.above(),Blocks.WATER);
         }
         h.runAfterDelay(40,()->{
             List<String> failures=new ArrayList<>();

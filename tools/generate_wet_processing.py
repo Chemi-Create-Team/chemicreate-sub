@@ -125,6 +125,7 @@ def translations():
  metals={'copper':('Copper Leach Slurry','銅浸出スラリー','铜浸出矿浆'),'iron':('Iron Leach Slurry','鉄浸出スラリー','铁浸出矿浆'),'zinc':('Zinc Leach Slurry','亜鉛浸出スラリー','锌浸出矿浆'),'tin':('Tin Leach Slurry','錫浸出スラリー','锡浸出矿浆'),'wastewater':('Flocculated Wastewater Slurry','凝集懸濁廃水','絮凝废水浆')}
  for name,v in metals.items():
   n=name+'_leach_slurry' if name!='wastewater' else 'wastewater_slurry';texts['fluid.create_refinery_n_reactors.'+n]=v
+  texts['block.create_refinery_n_reactors.'+n]=v
   texts['item.create_refinery_n_reactors.'+n+'_bucket']=(v[0]+' Bucket',v[1]+'入りバケツ',v[2]+'桶')
  for i,lang in enumerate(('en_us','ja_jp','zh_cn')):
   path=A/f'lang/{lang}.json';data=json.loads(path.read_text());data.update({k:v[i] for k,v in texts.items()});write(path,data)

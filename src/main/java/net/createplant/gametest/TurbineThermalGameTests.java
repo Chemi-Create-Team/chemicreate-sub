@@ -280,12 +280,20 @@ public final class TurbineThermalGameTests {
         low.thermodynamics().exhaust().drain(Integer.MAX_VALUE,EXECUTE);low.thermodynamics().removeCondenserHeat(Double.MAX_VALUE);
     }
 
+    private static net.minecraft.world.level.block.state.BlockState stainless(Direction... sides){
+        var state=CETransport.STAINLESS_PIPE.get().defaultBlockState();
+        for(var side:Direction.values())state=state.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(side),java.util.List.of(sides).contains(side));
+        return state;
+    }
+
     @GameTest(template="test_fractionation",timeoutTicks=200)
     public static void aPumpLineOnTwoCasingFacesLosesNoSteam(GameTestHelper h){
         var l=h.getLevel();var base=h.absolutePos(BlockPos.ZERO);var hp=build(l,base)[0];var tankPos=base.offset(18,2,8);var pump=base.offset(16,6,8);
-        for(int y=0;y<3;y++)l.setBlock(tankPos.above(y),AllBlocks.FLUID_TANK.getDefaultState(),3);
-        var pipe=CETransport.STAINLESS_PIPE.get().defaultBlockState();
-        for(var cell:new BlockPos[]{base.offset(18,5,8),base.offset(18,6,8),base.offset(17,6,8),base.offset(15,6,8),base.offset(14,6,8),base.offset(13,6,8),base.offset(13,5,8),base.offset(13,4,8)})l.setBlock(cell,pipe,3);
+        for(int y=0;y<3;y++)l.setBlock(tankPos.above(y),CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS,Direction.Axis.Y),3);
+        l.setBlock(base.offset(18,5,8),stainless(Direction.DOWN,Direction.UP),3);l.setBlock(base.offset(18,6,8),stainless(Direction.DOWN,Direction.WEST),3);
+        for(int x:new int[]{17,15,14})l.setBlock(base.offset(x,6,8),stainless(Direction.EAST,Direction.WEST),3);
+        l.setBlock(base.offset(13,6,8),stainless(Direction.EAST,Direction.DOWN),3);l.setBlock(base.offset(13,5,8),stainless(Direction.UP,Direction.DOWN,Direction.SOUTH),3);
+        l.setBlock(base.offset(13,4,8),stainless(Direction.UP,Direction.SOUTH),3);
         l.setBlock(pump,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.WEST),3);
         l.setBlock(pump.above(),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X),3);
         l.setBlock(pump.above().east(),AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.WEST),3);

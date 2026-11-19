@@ -10,7 +10,6 @@ import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createplant.CreatePlant;
-import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.chemistry.VesselFouling;
@@ -250,12 +249,11 @@ public class VesselFoulingGameTests {
             owner.itemPort().insertItem(0, new ItemStack(Items.CLAY_BALL), false);
             owner.port(Direction.NORTH).fill(new FluidStack(Fluids.WATER, 1000), EXECUTE);
             soil(owner, 400);
-            BlockPos receiver = BASE.east(2), motor = receiver.east();
-            h.setBlock(receiver, h.getBlockState(receiver).setValue(LiddedVesselBlock.AXIS, Direction.Axis.X));
-            h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.WEST));
+            BlockPos motor = BASE.offset(1, -1, 1);
+            h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.UP));
             h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(128));
             h.runAfterDelay(60, () -> guarded(h, () -> {
-                h.assertTrue(owner.fouling().blocked() && !owner.running() && owner.progress() == 0
+                h.assertTrue(owner.rotationSpeed() != 0 && owner.fouling().blocked() && !owner.running() && owner.progress() == 0
                     && count(owner.itemPort(), Items.CLAY_BALL) == 1 && count(owner.itemPort(), Items.BRICK) == 0,
                     "A fully fouled but genuinely driven process consumes no feed or progress");
                 h.setBlock(motor, Blocks.AIR);
@@ -265,7 +263,7 @@ public class VesselFoulingGameTests {
                 h.assertTrue(owner.fouling().dirtLevel() == 360 && player.getMainHandItem().getDamageValue() == 1,
                     "One real top-face brush removes 40 trace load for one durability while stopped");
                 owner.toggleLid();
-                h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.WEST));
+                h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.UP));
                 ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(128);
             }));
             h.runAfterDelay(180, () -> {
