@@ -11,7 +11,10 @@ import com.simibubi.create.content.kinetics.belt.item.BeltConnectorItem;
 import com.simibubi.create.content.kinetics.chainDrive.ChainDriveBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -50,16 +53,79 @@ public record QuarryBeltLayout(BlockPos start, Direction along, Direction across
         return true;
     }
     public boolean complete(Level level, Segment segment) {
-        BlockPos controller = belt(segment.last());
+        return matches(level, segment, along.getOpposite());
+    }
+
+    private boolean matches(Level level, Segment segment, Direction facing) {
+        boolean reversed = facing == along;
+        int count = segment.last() - segment.first() + 1;
+        BlockPos controller = belt(reversed ? segment.first() : segment.last());
         for (int u = segment.first(); u <= segment.last(); u++) {
-            BlockPos pos = belt(u);var state = level.getBlockState(pos);
+            BlockPos pos = belt(u);
+            if (!level.isLoaded(pos)) return false;
+            var state = level.getBlockState(pos);
             if (!AllBlocks.BELT.has(state) || state.getValue(BeltBlock.SLOPE) != BeltSlope.HORIZONTAL
-                || state.getValue(BeltBlock.HORIZONTAL_FACING) != along.getOpposite()
-                || !(level.getBlockEntity(pos) instanceof BeltBlockEntity entity) || !controller.equals(entity.getController())) return false;
+                || state.getValue(BeltBlock.HORIZONTAL_FACING) != facing
+                || !(level.getBlockEntity(pos) instanceof BeltBlockEntity entity) || !controller.equals(entity.getController())
+                || entity.beltLength != count || entity.index != (reversed ? u - segment.first() : segment.last() - u)) return false;
             BeltPart part = state.getValue(BeltBlock.PART);
-            if (u == segment.first() && part != BeltPart.END || u == segment.last() && part != BeltPart.START) return false;
+            if (u == segment.first() && part != (reversed ? BeltPart.START : BeltPart.END)
+                || u == segment.last() && part != (reversed ? BeltPart.END : BeltPart.START)
+                || u > segment.first() && u < segment.last() && part != BeltPart.MIDDLE && part != BeltPart.PULLEY) return false;
         }
         return true;
+    }
+
+    public boolean repairReversed(Level level, Segment segment) {
+        if (level.isClientSide() || !matches(level, segment, along)) return false;
+        int count = segment.last() - segment.first() + 1;
+        var belts = new ArrayList<BeltBlockEntity>(count);
+        var states = new ArrayList<BlockState>(count);
+        for (int u = segment.first(); u <= segment.last(); u++) {
+            var entity = (BeltBlockEntity) level.getBlockEntity(belt(u));
+            belts.add(entity);
+            states.add(entity.getBlockState());
+        }
+        var registries = level.registryAccess();
+        var oldInventory = belts.getFirst().getInventory();
+        CompoundTag inventory = oldInventory.write(registries);
+        for (Tag item : inventory.getList("Items", Tag.TAG_COMPOUND)) reversePosition((CompoundTag) item, count);
+        if (inventory.contains("LazyItem")) reversePosition(inventory.getCompound("LazyItem"), count);
+        inventory.putBoolean("PositiveOrder", !inventory.getBoolean("PositiveOrder"));
+        for (var entity : belts) {
+            entity.detachKinetics();
+            entity.removeSource();
+        }
+        for (int i = 0; i < count; i++) {
+            BlockState state = states.get(i).setValue(BeltBlock.HORIZONTAL_FACING, along.getOpposite());
+            if (i == 0) state = state.setValue(BeltBlock.PART, BeltPart.END);
+            if (i == count - 1) state = state.setValue(BeltBlock.PART, BeltPart.START);
+            if (level.setBlock(belts.get(i).getBlockPos(), state, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE)) continue;
+            for (int n = 0; n < count; n++) level.setBlock(belts.get(n).getBlockPos(), states.get(n), Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
+            for (var entity : belts) entity.attachKinetics();
+            return false;
+        }
+        oldInventory.read(new CompoundTag(), registries);
+        BlockPos controller = belt(segment.last());
+        for (int i = 0; i < count; i++) {
+            var entity = belts.get(i);
+            entity.setController(controller);
+            entity.index = count - 1 - i;
+            entity.invalidateItemHandler();
+        }
+        belts.getLast().getInventory().read(inventory, registries);
+        for (var entity : belts) {
+            entity.attachKinetics();
+            entity.notifyUpdate();
+            level.updateNeighborsAt(entity.getBlockPos(), entity.getBlockState().getBlock());
+        }
+        return true;
+    }
+
+    private static void reversePosition(CompoundTag item, int count) {
+        item.putFloat("Pos", count - item.getFloat("Pos"));
+        item.putFloat("PrevPos", count - item.getFloat("PrevPos"));
+        item.putInt("InSegment", count - 1 - item.getInt("InSegment"));
     }
     public boolean complete(Level level) {
         if (!loaded(level)) return false;
@@ -72,10 +138,10 @@ public record QuarryBeltLayout(BlockPos start, Direction along, Direction across
     }
 
     public boolean hasItems(Level level) {
-        for (var segment : segments()) {
-            BlockPos controller = belt(segment.last());
-            if (level.getBlockEntity(controller) instanceof BeltBlockEntity entity && entity.isController()
-                && !entity.getInventory().getTransportedItems().isEmpty()) return true;
+        for (int u = -1; u < length; u++) {
+            BlockPos pos = belt(u);
+            if (level.isLoaded(pos) && level.getBlockEntity(pos) instanceof BeltBlockEntity entity && entity.isController()
+                && !entity.getInventory().write(level.registryAccess()).getList("Items", Tag.TAG_COMPOUND).isEmpty()) return true;
         }
         return false;
     }

@@ -156,6 +156,7 @@ public final class CranePonderScenes {
         scene.world().setKineticSpeed(util.select().fromTo(3, 4, 1, 11, 4, 1), 64);
         quarryHoist(scene, util, 0, 1, 0, false);
         quarryText(scene, util, lang, "belt", new BlockPos(7, 4, 1));
+        quarryText(scene, util, lang, "belt_repair", new BlockPos(7, 4, 1));
 
         BlockPos water = new BlockPos(6, 3, 5), lava = new BlockPos(9, 3, 5);
         scene.world().setBlock(water, Blocks.WATER.defaultBlockState(), false);
