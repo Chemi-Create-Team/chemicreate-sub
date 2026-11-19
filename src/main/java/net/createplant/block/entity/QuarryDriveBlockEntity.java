@@ -253,6 +253,7 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
         }
         for (var segment : layout.segments()) {
             if (layout.complete(level, segment)) continue;
+            if (layout.repairReversed(level, segment)) { status("belt_build");changed();return; }
             for (int u = segment.first(); u <= segment.last(); u++) {
                 BlockPos pos = layout.belt(u);
                 if (AllBlocks.BELT.has(level.getBlockState(pos))) { blocked(pos, "belt_blocked");return; }

@@ -3919,6 +3919,11 @@
     "ja_jp": "長い搬出路は、通常のCreateベルト数本につないで作ります。ベルトコネクター・シャフト・ケース入りチェーンドライブも補給します。",
     "zh_cn": "长距离输出由多条不超过配置上限的普通传送带连接，需补给传送带连接器、传动杆和封装链传动箱。"
   },
+  "quarry_frame.belt_repair": {
+    "en_us": "Reversed horizontal sections matching the output route are repaired automatically. Cargo stays on the belt as digging resumes.",
+    "ja_jp": "搬出路の寸法に合う水平ベルトが逆向きなら、自動で向きを直します。搬送品を保ったまま採掘を再開します。",
+    "zh_cn": "与输出路线尺寸相符的反向水平传送带会自动修复，保留货物并恢复采掘。"
+  },
   "quarry_frame.flow": {
     "en_us": "The bellows chute lifts ore onto the moving bridge belt, which feeds the side belt. Stopping rotation stops both transport and the bridge belt.",
     "ja_jp": "蛇腹シュートで上げた鉱石を、動く橋のベルトから側面のベルトへ渡します。回転を止めると搬送と橋のベルトも止まります。",
