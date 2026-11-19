@@ -4835,9 +4835,9 @@
     "zh_cn": "将蒸汽枪拿在主手，按住右键瞄准。"
   },
   "steam_gun.fire": {
-    "en_us": "Press Attack while aiming to fire one shot. Each shot uses steam, even if it misses.",
-    "ja_jp": "照準中に左クリックすると1発発射します。外れたときも蒸気を消費します。",
-    "zh_cn": "瞄准时左击发射一次。即使落空也会消耗蒸汽。"
+    "en_us": "Press Attack to fire from the hip or through the sights. Each shot uses steam, even if it misses.",
+    "ja_jp": "左クリックで発射します。腰撃ちと照準撃ちのどちらでも、1発ごとに蒸気を使います。",
+    "zh_cn": "左击即可射击，腰射和瞄准射击都可以。每次射击都会消耗蒸汽。"
   },
   "steam_gun.bayonet": {
     "en_us": "Press the Bayonet key (V by default) to thrust at close range. Change the key in Controls.",
@@ -4868,5 +4868,10 @@
     "en_us": "Hold Use to guard attacks coming from the front. Guarding uses no steam.",
     "ja_jp": "右クリックを長押しすると正面からの攻撃をガードします。ガードは蒸気を消費しません。",
     "zh_cn": "按住右键可以格挡正面攻击。格挡不消耗蒸汽。"
+  },
+  "guide.gas_pipes.step_5": {
+    "en_us": "A powered pump sends gas out through a pipe or pump face that leads into air. Attach a suitable tank to collect it.",
+    "ja_jp": "ポンプを回すと、先が空気ブロックのパイプやポンプの開放端から気体が出ます。回収するなら対応するタンクをつなぎます。",
+    "zh_cn": "泵运转时，气体会从通向空气方块的管道或泵端口排出。接上适用的储罐即可收集。"
   }
 }

@@ -85,7 +85,8 @@ public final class GasClouds {
 
     private static AABB includeAnchors(AABB box) {
         // Entity sections are indexed by the release position even when the visible cloud extends past it.
-        return box.inflate(CloudVolume.HORIZONTAL_REACH, CloudVolume.VERTICAL_REACH, CloudVolume.HORIZONTAL_REACH);
+        return box.inflate(CloudVolume.HORIZONTAL_REACH, CloudVolume.VERTICAL_REACH, CloudVolume.HORIZONTAL_REACH)
+            .expandTowards(0, CloudVolume.DOWNWARD_REACH - CloudVolume.VERTICAL_REACH, 0);
     }
 
     public static int signal(ServerLevel level, BlockPos detector) {

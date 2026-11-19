@@ -5392,9 +5392,7 @@
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim": "蒸気銃をメインハンドに持ち、右クリックを長押しして照準を合わせます。",
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim.lesson_pages.0": "蒸気銃をメインハンドに持ち、右クリックを長押しして照準を合わせます。",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire": "照準中に左クリックすると1発発射します。外れたときも蒸気を消費します。",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.count": "1",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.0": "照準中に左クリックすると1発発射します。外れたときも蒸気を消費します。",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire": "左クリックで発射します。腰撃ちと照準撃ちのどちらでも、1発ごとに蒸気を使います。",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet": "近くの相手には「銃剣で突く」キー（初期設定V）で突きを出せます。キーは操作設定で変更できます。",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet.lesson_pages.0": "近くの相手には「銃剣で突く」キー（初期設定V）で突きを出せます。キーは操作設定で変更できます。",
@@ -5428,5 +5426,12 @@
   "effect.create_refinery_n_reactors.dazed": "めまい",
   "tooltip.create_refinery_n_reactors.steam_hammer.swing": "左クリックで踏み込んで打撃。1回に蒸気%s mBを消費。",
   "tooltip.create_refinery_n_reactors.steam_hammer.guard": "右クリック長押しで正面をガード。",
-  "tooltip.create_refinery_n_reactors.steam_hammer.empty": "蒸気を充填すると攻撃できます。"
+  "tooltip.create_refinery_n_reactors.steam_hammer.empty": "蒸気を充填すると攻撃できます。",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.0": "左クリックで発射します。腰撃ちと照準撃ちのどちらでも、1発ごとに蒸気を使います。",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.1": "左クリックで発射します。腰撃ちと照準撃ちのどちらでも、1発ごとに蒸気を使います。",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5": "ポンプを回すと、先が空気ブロックのパイプやポンプの開放端から気体が出ます。回収するなら対応するタンクをつなぎます。",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.0": "ポンプを回すと、先が空気ブロックのパイプやポンプの開放端から気体が出ます。回収するなら対応するタンクをつなぎます。",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.1": "ポンプを回すと、先が空気ブロックのパイプやポンプの開放端から気体が出ます。回収するなら対応するタンクをつなぎます。"
 }

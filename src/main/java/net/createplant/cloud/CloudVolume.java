@@ -24,6 +24,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public final class CloudVolume {
     private static final int WIDTH = 17, HEIGHT = 9, LIMIT = 512;
     public static final int HORIZONTAL_REACH = WIDTH / 2, VERTICAL_REACH = HEIGHT / 2;
+    public static final int DOWNWARD_REACH = 12;
+    private static final int CELL_COUNT = WIDTH * WIDTH * (HEIGHT + DOWNWARD_REACH - VERTICAL_REACH);
     private static final Direction[] DIRECTIONS = Direction.values();
     private static final ConcurrentHashMap<BlockState, Integer> OCCLUSION = new ConcurrentHashMap<>();
 
@@ -46,11 +48,17 @@ public final class CloudVolume {
 
     public static CloudVolume build(Level level, BlockPos origin, int amount, boolean ceiling) {
         int target = Math.min(LIMIT, 8 + Math.max(0, amount) / 20);
+        if (!ceiling) {
+            var bottom = origin;
+            while (origin.getY() - bottom.getY() < DOWNWARD_REACH && connected(level, bottom, bottom.below(), Direction.DOWN))
+                bottom = bottom.below();
+            target = Math.min(LIMIT, target + Math.max(0, origin.getY() - bottom.getY() - VERTICAL_REACH));
+        }
         var ordering = Comparator.comparingInt((BlockPos pos) -> ceiling ? -pos.getY() : pos.getY())
             .thenComparingDouble(origin::distSqr).thenComparing(Comparator.naturalOrder());
         var pending = new PriorityQueue<>(ordering);
-        var visited = new BitSet(WIDTH * WIDTH * HEIGHT);
-        var filled = new BitSet(WIDTH * WIDTH * HEIGHT);
+        var visited = new BitSet(ceiling ? WIDTH * WIDTH * HEIGHT : CELL_COUNT);
+        var filled = new BitSet(ceiling ? WIDTH * WIDTH * HEIGHT : CELL_COUNT);
         if (open(level, origin)) {
             pending.add(origin);
             visited.set(index(origin, origin));
@@ -68,6 +76,7 @@ public final class CloudVolume {
             filled.set(index(origin, pos));
             for (var direction : DIRECTIONS) {
                 var next = pos.relative(direction);
+                if (ceiling && next.getY() < origin.getY() - VERTICAL_REACH) continue;
                 int index = index(origin, next);
                 if (index < 0 || visited.get(index) || !connected(level, pos, next, direction)) continue;
                 visited.set(index);
@@ -145,19 +154,28 @@ public final class CloudVolume {
 
     private static int index(BlockPos origin, BlockPos pos) {
         int x = pos.getX() - origin.getX() + HORIZONTAL_REACH;
-        int y = pos.getY() - origin.getY() + VERTICAL_REACH;
+        int y = pos.getY() - origin.getY();
         int z = pos.getZ() - origin.getZ() + HORIZONTAL_REACH;
-        return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && z >= 0 && z < WIDTH ? (y * WIDTH + z) * WIDTH + x : -1;
+        if (x < 0 || x >= WIDTH || y < -DOWNWARD_REACH || y > VERTICAL_REACH || z < 0 || z >= WIDTH) return -1;
+        // Keep the existing nine layers at their original offsets in saved clouds.
+        int layer = y < -VERTICAL_REACH ? HEIGHT - y - VERTICAL_REACH - 1 : y + VERTICAL_REACH;
+        return (layer * WIDTH + z) * WIDTH + x;
     }
 
     private BlockPos position(int index) {
-        return origin.offset(index % WIDTH - HORIZONTAL_REACH, index / (WIDTH * WIDTH) - VERTICAL_REACH,
-            index / WIDTH % WIDTH - HORIZONTAL_REACH);
+        int layer = index / (WIDTH * WIDTH);
+        int y = layer < HEIGHT ? layer - VERTICAL_REACH : HEIGHT - layer - VERTICAL_REACH - 1;
+        return origin.offset(index % WIDTH - HORIZONTAL_REACH, y, index / WIDTH % WIDTH - HORIZONTAL_REACH);
     }
 
     public boolean contains(BlockPos pos) {
         int index = index(origin, pos);
         return index >= 0 && cells.get(index);
+    }
+
+    public boolean flowsThrough(Level level, BlockPos pos, Direction side) {
+        var next = pos.relative(side);
+        return contains(next) && connected(level, pos, next, side);
     }
 
     public boolean contains(Vec3 point, float topHeight) {
@@ -204,7 +222,7 @@ public final class CloudVolume {
 
     public static CloudVolume load(CompoundTag tag) {
         var raw = tag.getLongArray("Cells");
-        int max = WIDTH * WIDTH * HEIGHT;
+        int max = CELL_COUNT;
         var bits = raw.length > (max + 63) / 64 ? new BitSet() : BitSet.valueOf(raw);
         if (bits.length() > max || bits.cardinality() > LIMIT) bits.clear();
         return new CloudVolume(BlockPos.of(tag.getLong("Origin")), bits);

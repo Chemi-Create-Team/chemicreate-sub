@@ -93,7 +93,7 @@ public final class SteamGunClient {
             boolean fire = client.options.keyAttack.consumeClick();
             while (client.options.keyAttack.consumeClick()) { }
             if (player.getCooldowns().isOnCooldown(player.getMainHandItem().getItem())) return;
-            if (thrust || fire && client.options.keyUse.isDown() && SteamGunItem.aiming(player)) {
+            if (thrust || fire) {
                 PacketDistributor.sendToServer(new SteamGunAction(thrust));
             }
         }

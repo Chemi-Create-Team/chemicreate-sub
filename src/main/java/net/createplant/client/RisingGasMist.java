@@ -11,8 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 final class RisingGasMist {
     static final int SKY_RISE = 7;
@@ -40,30 +38,20 @@ final class RisingGasMist {
         columns = List.copyOf(found);
     }
 
-    void render(Level level, boolean preview, Quaternionf camera, VertexConsumer buffer, PoseStack.Pose pose,
+    void render(Level level, boolean preview, VertexConsumer buffer, PoseStack.Pose pose, GasBillboard billboard,
         float time, float charge, float distanceFade, int color) {
         if (time >= nextCheck) {
             updateLanes(level, preview);
             nextCheck = time + 20;
         }
-        var right = new Vector3f(1, 0, 0);
-        var up = new Vector3f(0, 1, 0);
-        if (preview) {
-            var view = pose.pose();
-            right.set(view.m00(), view.m10(), view.m20()).normalize();
-            up.set(view.m01(), view.m11(), view.m21()).normalize();
-        } else {
-            right.rotate(camera);
-            up.rotate(camera);
-        }
         for (var lane : lanes) {
-            int count = lane.open() ? 8 : 2;
+            int count = lane.open() ? 14 : 4;
             for (int i = 0; i < count; i++) {
                 float spacing = (i + lane.phase() + .2f * Mth.sin(i * 2.3f)) / count;
                 float clock = time / (lane.open() ? 68f : 42f) - spacing;
                 if (clock < 0) continue;
                 float age = clock - Mth.floor(clock);
-                drawPuff(buffer, pose, lane, right, up, age, i, charge, distanceFade, color);
+                drawPuff(buffer, pose, lane, billboard, age, i, charge, distanceFade, color);
             }
         }
     }
@@ -106,16 +94,16 @@ final class RisingGasMist {
         return level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z);
     }
 
-    private static void drawPuff(VertexConsumer buffer, PoseStack.Pose pose, Lane lane, Vector3f right, Vector3f up,
+    private static void drawPuff(VertexConsumer buffer, PoseStack.Pose pose, Lane lane, GasBillboard billboard,
         float age, int index, float charge, float distanceFade, int color) {
         float fadeIn = Mth.clamp(age * 11, 0, 1);
         float left = 1 - age;
         float emission = lane.open() ? Mth.lerp(age, Mth.clamp(charge * 2 - .16f, 0, 1), 1) : 1;
-        int alpha = (int) (235 * Mth.sqrt(charge) * distanceFade * fadeIn * left * (.71f + .29f * left) * emission);
+        int alpha = (int) (205 * Mth.sqrt(charge) * distanceFade * fadeIn * left * (.71f + .29f * left) * emission);
         if (alpha == 0) return;
 
         float end = lane.top() + (lane.open() ? SKY_RISE - .45f : -.16f);
-        float y = Mth.lerp(age * (.74f + .26f * age), lane.bottom() + .19f, end);
+        float y = Mth.lerp(age * (.48f + .52f * age), lane.bottom() + .19f, end);
         float room = lane.open() ? Mth.clamp((y - lane.wideAbove() - .28f) / 1.35f, 0, 1) : 0;
         float phase = lane.phase() * Mth.TWO_PI + index * 1.83f;
         float drift = .07f + room * (.16f + .37f * age);
@@ -126,14 +114,7 @@ final class RisingGasMist {
         radius = Math.min(radius, y - lane.bottom());
         if (lane.open()) radius = Math.min(radius, Math.min(Math.max(.39f, y - lane.wideAbove()), lane.top() + SKY_RISE - y));
         else radius = Math.min(radius, lane.top() - y);
-        float size = radius * .7071f;
         float roll = .7f * Mth.sin(phase + age * 2);
-        float cos = size * Mth.cos(roll), sin = size * Mth.sin(roll);
-        float ax = right.x * cos + up.x * sin, ay = right.y * cos + up.y * sin, az = right.z * cos + up.z * sin;
-        float bx = up.x * cos - right.x * sin, by = up.y * cos - right.y * sin, bz = up.z * cos - right.z * sin;
-        GasCloudRenderer.vertex(buffer, pose, x - ax - bx, y - ay - by, z - az - bz, 0, 1, color, alpha);
-        GasCloudRenderer.vertex(buffer, pose, x + ax - bx, y + ay - by, z + az - bz, 1, 1, color, alpha);
-        GasCloudRenderer.vertex(buffer, pose, x + ax + bx, y + ay + by, z + az + bz, 1, 0, color, alpha);
-        GasCloudRenderer.vertex(buffer, pose, x - ax + bx, y - ay + by, z - az + bz, 0, 0, color, alpha);
+        billboard.draw(buffer, pose, x, y, z, radius, radius, roll, color, alpha);
     }
 }

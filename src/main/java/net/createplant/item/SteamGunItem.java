@@ -59,7 +59,6 @@ public final class SteamGunItem extends PortableFluidToolItem {
             player.getCooldowns().addCooldown(this, BAYONET_DELAY);
             level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_WEAK, SoundSource.PLAYERS, .6f, .9f);
         } else {
-            if (!aiming(player)) return;
             var tank = new PortableToolFluidHandler(stack);
             var available = tank.drain(STEAM_PER_SHOT, FluidAction.SIMULATE);
             if (available.getAmount() != STEAM_PER_SHOT || !accepts(available)) {

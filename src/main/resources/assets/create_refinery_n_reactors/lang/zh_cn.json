@@ -5392,9 +5392,7 @@
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim": "将蒸汽枪拿在主手，按住右键瞄准。",
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim.lesson_pages.0": "将蒸汽枪拿在主手，按住右键瞄准。",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire": "瞄准时左击发射一次。即使落空也会消耗蒸汽。",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.count": "1",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.0": "瞄准时左击发射一次。即使落空也会消耗蒸汽。",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire": "左击即可射击，腰射和瞄准射击都可以。每次射击都会消耗蒸汽。",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet": "按刺刀键（默认V）近距离突刺。可在控制设置中修改按键。",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet.lesson_pages.0": "按刺刀键（默认V）近距离突刺。可在控制设置中修改按键。",
@@ -5428,5 +5426,12 @@
   "effect.create_refinery_n_reactors.dazed": "眩晕",
   "tooltip.create_refinery_n_reactors.steam_hammer.swing": "左击可突进挥锤，每次消耗%s mB蒸汽。",
   "tooltip.create_refinery_n_reactors.steam_hammer.guard": "按住右键格挡正面攻击。",
-  "tooltip.create_refinery_n_reactors.steam_hammer.empty": "充填蒸汽后才能攻击。"
+  "tooltip.create_refinery_n_reactors.steam_hammer.empty": "充填蒸汽后才能攻击。",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.0": "左击即可射击，腰射和瞄准射击都可以。每次射击都会消耗蒸汽。",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.1": "左击即可射击，腰射和瞄准射击都可以。每次射击都会消耗蒸汽。",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5": "泵运转时，气体会从通向空气方块的管道或泵端口排出。接上适用的储罐即可收集。",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.0": "泵运转时，气体会从通向空气方块的管道或泵端口排出。接上适用的储罐即可收集。",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.1": "泵运转时，气体会从通向空气方块的管道或泵端口排出。接上适用的储罐即可收集。"
 }

@@ -66,31 +66,34 @@ public final class SteamGunGameTests {
     }
 
     @GameTest(template = "test_reactor")
-    public static void aShotRequiresAimConsumesSteamAndHitsTheNearestMobForThirtyTwo(GameTestHelper h) {
+    public static void hipFireAndAimedFireUseOneSteamChargeAndHitTheNearestMob(GameTestHelper h) {
         var player = shooter(h);
         var target = h.spawn(EntityType.IRON_GOLEM, new BlockPos(2, 2, 6));
         var behind = h.spawn(EntityType.IRON_GOLEM, new BlockPos(2, 2, 10));
         var held = player.getMainHandItem();
         var tank = FluidUtil.getFluidHandler(held).orElseThrow();
-        tank.fill(new FluidStack(CEFluids.STEAM.get(), 500), EXECUTE);
+        tank.fill(new FluidStack(CEFluids.STEAM.get(), 750), EXECUTE);
         var shot = new SteamGunAction(false);
         shot.handle(player);
-        h.assertTrue(target.getHealth() == 100 && tank.getFluidInTank(0).getAmount() == 500, "A packet cannot fire the gun before it is raised");
+        shot.handle(player);
+        h.assertTrue(!player.isUsingItem() && target.getHealth() == 68 && behind.getHealth() == 100, "A shot from the hip hits the nearest target for 32 damage");
+        h.assertTrue(tank.getFluidInTank(0).getAmount() == 500, "The cooldown blocks a second charge in the same tick");
+        for (int tick = 0; tick < 20; tick++) player.getCooldowns().tick();
+        target.invulnerableTime = 0;
         held.use(h.getLevel(), player, InteractionHand.MAIN_HAND);
         shot.handle(player);
-        shot.handle(player);
-        h.assertTrue(target.getHealth() == 68 && behind.getHealth() == 100, "One shot deals 32 damage to the nearest target only");
-        h.assertTrue(tank.getFluidInTank(0).getAmount() == 250, "The cooldown blocks a second charge in the same tick");
+        h.assertTrue(player.isUsingItem() && target.getHealth() == 36 && behind.getHealth() == 100 && tank.getFluidInTank(0).getAmount() == 250,
+            "Aimed fire has the same damage and consumes one charge");
         for (int tick = 0; tick < 20; tick++) player.getCooldowns().tick();
         h.setBlock(new BlockPos(2, 3, 4), Blocks.STONE);
         target.invulnerableTime = 0;
         shot.handle(player);
-        h.assertTrue(target.getHealth() == 68 && tank.getFluidInTank(0).isEmpty(), "A wall blocks the next shot, but the shot still uses its steam");
+        h.assertTrue(target.getHealth() == 36 && tank.getFluidInTank(0).isEmpty(), "A wall blocks the next shot, but the shot still uses its steam");
         for (int tick = 0; tick < 20; tick++) player.getCooldowns().tick();
         h.setBlock(new BlockPos(2, 3, 4), Blocks.AIR);
         target.invulnerableTime = 0;
         shot.handle(player);
-        h.assertTrue(target.getHealth() == 68, "An empty gun cannot fire");
+        h.assertTrue(target.getHealth() == 36, "An empty gun cannot fire");
         h.succeed();
     }
 

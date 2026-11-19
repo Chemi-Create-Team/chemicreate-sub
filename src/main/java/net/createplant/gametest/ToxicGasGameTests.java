@@ -14,6 +14,7 @@ import net.createplant.registry.CEReciprocating;
 import net.createplant.registry.CESafety;
 import net.createplant.cloud.GasCloud;
 import net.createplant.cloud.GasClouds;
+import net.createplant.cloud.CloudVolume;
 import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
@@ -29,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -118,6 +120,20 @@ public class ToxicGasGameTests {
         var cloud = GasClouds.in(h.getLevel(), new net.minecraft.world.phys.AABB(source)).getFirst();
         h.assertTrue(cloud.contains(h.absolutePos(corner.offset(0, 0, 0))) && cloud.contains(h.absolutePos(corner.offset(4, 0, 4))),
             "Heavy gas let out under the ceiling lies on the floor");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void heavyGasFollowsADeepShaftAndItsVolumeRoundTrips(GameTestHelper h) {
+        var lowest = new BlockPos(3, 3, 3);
+        room(h, lowest, 1, 11, 1);
+        var source = h.absolutePos(lowest.above(10));
+        var floor = h.absolutePos(lowest);
+        GasClouds.release(h.getLevel(), source, gas(CEChlorAlkali.CHLORINE.get(), 100));
+        var cloud = GasClouds.in(h.getLevel(), new AABB(floor)).stream().filter(gas -> gas.blockPosition().equals(source)).findFirst().orElseThrow();
+        h.assertTrue(cloud.contains(floor) && !cloud.contains(floor.below()) && !cloud.contains(floor.east()),
+            "Heavy gas reaches a lower floor through the air column and stays inside solid walls");
+        h.assertTrue(CloudVolume.load(cloud.volume().save()).sameCells(cloud.volume()), "Deep cells keep their positions through saving and loading");
         h.succeed();
     }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the recovery duct's casing and the model-scale recovery line."""
 import json
-from math import cos, exp, pi, sin, tau
+from math import cos, exp, sin
 from random import Random
 
 from PIL import Image, ImageDraw
@@ -96,28 +96,6 @@ def duct_data():
         write(tag_path, tag)
 
 
-def mist_texture():
-    width, height = 64, 32
-    image = Image.new('RGBA', (width, height))
-    random = Random(83)
-    waves = [(fx, fy, random.uniform(0, tau), weight) for fx, fy, weight in
-             ((2, 1, .18), (3, 2, .12), (5, -2, .09), (7, 4, .06), (11, -5, .035))]
-    for y in range(height):
-        v = y / (height - 1)
-        for x in range(width):
-            u = x / (width - 1)
-            center = .54 + .1 * sin(tau * u + .5) + .038 * sin(2 * tau * u)
-            main = exp(-((v - center) / (.18 + .05 * sin(pi * u))) ** 2)
-            trailing = .38 * exp(-((v - center + .19) / .13) ** 2)
-            detail = .69 + sum(cos(tau * (u * fx + v * fy) + phase) * weight for fx, fy, phase, weight in waves)
-            envelope = sin(pi * u) ** 1.5 * sin(pi * v)
-            alpha = round(255 * envelope * min(1, (main + trailing) * detail))
-            image.putpixel((x, y), (255, 255, 255, alpha))
-    path = ASSETS / 'textures/entity/gas_mist.png'
-    path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path)
-
-
 def plume_texture():
     size = 32
     image = Image.new('RGBA', (size, size))
@@ -182,6 +160,5 @@ if __name__ == '__main__':
     duct_assets()
     duct_data()
     bucket_image('raw_process_gas_bucket', 0xFFBFCAD0)
-    mist_texture()
     plume_texture()
     storyboard()

@@ -5393,9 +5393,7 @@
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim": "Hold the gun in your main hand and keep the use button held to look down the sights.",
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.steam_gun.aim.lesson_pages.0": "Hold the gun in your main hand and keep the use button held to look down the sights.",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire": "Press Attack while aiming to fire one shot. Each shot uses steam, even if it misses.",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.count": "1",
-  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.0": "Press Attack while aiming to fire one shot. Each shot uses steam, even if it misses.",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire": "Press Attack to fire from the hip or through the sights. Each shot uses steam, even if it misses.",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet": "Press the Bayonet key (V by default) to thrust at close range. Change the key in Controls.",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet.lesson_pages.count": "2",
   "create_refinery_n_reactors.ponder.shared.steam_gun.bayonet.lesson_pages.0": "Press the Bayonet key (V by default) to thrust at close range.",
@@ -5428,5 +5426,12 @@
   "effect.create_refinery_n_reactors.dazed": "Dazed",
   "tooltip.create_refinery_n_reactors.steam_hammer.swing": "Attack to lunge and swing. Each swing uses %s mB of steam.",
   "tooltip.create_refinery_n_reactors.steam_hammer.guard": "Hold Use to guard frontal attacks.",
-  "tooltip.create_refinery_n_reactors.steam_hammer.empty": "Refill the steam hammer before swinging."
+  "tooltip.create_refinery_n_reactors.steam_hammer.empty": "Refill the steam hammer before swinging.",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.count": "2",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.0": "Press Attack to fire from the hip or through the sights.",
+  "create_refinery_n_reactors.ponder.shared.steam_gun.fire.lesson_pages.1": "Each shot uses steam, even if it misses.",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5": "A powered pump sends gas out through a pipe or pump face that leads into air. Attach a suitable tank to collect it.",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.count": "2",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.0": "A powered pump sends gas out through a pipe or pump face that leads into air.",
+  "create_refinery_n_reactors.ponder.shared.guide.gas_pipes.step_5.lesson_pages.1": "Attach a suitable tank to collect it."
 }

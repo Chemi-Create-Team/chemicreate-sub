@@ -1,8 +1,11 @@
 package net.createplant.mixin;
 
 import com.simibubi.create.content.fluids.OpenEndedPipe;
+import net.createplant.cloud.GasClouds;
+import net.createplant.registry.CETransport;
 import net.createplant.registry.CEWorldFluids;
 import net.createplant.thermal.FluidThermal;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
@@ -22,19 +25,25 @@ public class WorldLiquidOpenEndHandlerMixin {
         if (net.createplant.mixture.MixtureHelper.isMixture(resource)) { cir.setReturnValue(0);return; }
         FluidTank tank = (FluidTank) (Object) this;
         FluidStack held = tank.getFluid();
-        if (resource.is(net.createplant.registry.CEFluids.AIR_GAS.get())) {
+        if (CETransport.gas(resource)) {
             var world = this$0.getWorld();
             var pos = this$0.getOutputPos();
-            if (world == null || !world.hasChunkAt(pos) || !world.getBlockState(pos).isAir()
-                || !held.isEmpty() && !held.is(resource.getFluid())) {
+            if (world == null || world.isOutsideBuildHeight(pos) || !world.hasChunkAt(pos) || !world.getBlockState(pos).isAir()
+                || !held.isEmpty() && !FluidStack.isSameFluidSameComponents(held, resource)) {
                 cir.setReturnValue(0);
                 return;
             }
+            int accepted = Math.min(resource.getAmount(), tank.getCapacity());
             if (action.execute()) {
                 tank.setFluid(FluidStack.EMPTY);
                 ((WorldLiquidOpenEndAccess) this$0).createPlant$setPulling(false);
+                if (world instanceof ServerLevel server) {
+                    var emitted = resource.copyWithAmount(accepted + held.getAmount());
+                    net.createplant.nuclear.RadiationContamination.spill(server, pos, emitted);
+                    GasClouds.release(server, pos, emitted);
+                }
             }
-            cir.setReturnValue(Math.min(resource.getAmount(), 1000));
+            cir.setReturnValue(accepted);
             return;
         }
         if (!CEWorldFluids.isLiquid(resource.getFluid()) && !CEWorldFluids.isLiquid(held.getFluid())) return;

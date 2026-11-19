@@ -93,8 +93,11 @@ TEXTS = {
     'step_4': ('High-pressure gas hisses while flowing in any pipe. Choose a receiving tank rated for that gas.',
         '高圧ガスはどの配管でも流れると風切り音がします。受け取りには気体の等級に合うタンクを使います。',
         '高压气体流过任何管道都会发出嘶声。接收端使用符合气体等级的储罐。'),
+    'step_5': ('A powered pump sends gas out through a pipe or pump face that leads into air. Attach a suitable tank to collect it.',
+        'ポンプを回すと、先が空気ブロックのパイプやポンプの開放端から気体が出ます。回収するなら対応するタンクをつなぎます。',
+        '泵运转时，气体会从通向空气方块的管道或泵端口排出。接上适用的储罐即可收集。'),
 }
-STEPS = ([1, 1, 1], [2, 1, 1], [3, 1, 4], [5, 1, 1])
+STEPS = ([1, 1, 1], [2, 1, 1], [3, 1, 4], [5, 1, 1], [5, 1, 4])
 
 
 def translations():

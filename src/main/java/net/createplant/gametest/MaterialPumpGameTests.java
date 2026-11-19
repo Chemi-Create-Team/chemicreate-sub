@@ -12,6 +12,8 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createmod.catnip.math.BlockFace;
 import net.createplant.CreatePlant;
+import net.createplant.block.PulsationTubeBlock;
+import net.createplant.cloud.GasClouds;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CETransport;
@@ -27,6 +29,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -66,6 +69,53 @@ public final class MaterialPumpGameTests {
     private static FluidTankBlockEntity tank(GameTestHelper h, BlockPos pos) {
         h.setBlock(pos, CETransport.PRESSURE_TANK.get());
         return (FluidTankBlockEntity) h.getBlockEntity(pos);
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 180)
+    public static void copperPipeDischargesSteamFromAnExposedOutput(GameTestHelper h) {
+        ventSteam(h, true);
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 180)
+    public static void mechanicalPumpCanDischargeSteamDirectly(GameTestHelper h) {
+        ventSteam(h, false);
+    }
+
+    private static void ventSteam(GameTestHelper h, boolean copperPipe) {
+        var pump = new BlockPos(2, 2, 3);
+        var outlet = pump.east(copperPipe ? 2 : 1);
+        h.setBlock(outlet, Blocks.STONE);
+        if (copperPipe) {
+            for (var side : Direction.values())
+                if (side.getAxis() != Direction.Axis.X) h.setBlock(pump.east().relative(side), Blocks.STONE);
+        }
+        h.setBlock(pump.west(), CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS, Direction.Axis.X));
+        var source = (FluidTankBlockEntity) h.getBlockEntity(pump.west());
+        h.assertTrue(source.getTankInventory().fill(new FluidStack(CEFluids.STEAM.get(), 500), EXECUTE) == 500, "The source receiver accepts its steam charge");
+        h.setBlock(pump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(PumpBlock.FACING, Direction.EAST));
+        h.setBlock(pump.south(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
+        h.setBlock(pump.south().west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+        var motor = (CreativeMotorBlockEntity) h.getBlockEntity(pump.south().west());
+        motor.generatedSpeed.setValue(64);
+        if (copperPipe) h.setBlock(pump.east(), AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.EAST, true).setValue(FluidPipeBlock.WEST, true));
+        var worldOutlet = h.absolutePos(outlet);
+        h.runAfterDelay(25, () -> {
+            h.assertTrue(source.getTankInventory().getFluidAmount() == 500 && GasClouds.in(h.getLevel(), new AABB(worldOutlet)).isEmpty(),
+                "A blocked outlet holds the charge, remaining=" + source.getTankInventory().getFluidAmount());
+            h.setBlock(outlet, Blocks.AIR);
+            var end = new OpenEndedPipe(new BlockFace(worldOutlet.west(), Direction.EAST));
+            end.manageSource(h.getLevel(), null);
+            var handler = end.provideHandler().getCapability();
+            h.assertTrue(handler.fill(new FluidStack(CEFluids.STEAM.get(), 500), SIMULATE) == 500
+                && handler.getFluidInTank(0).isEmpty() && GasClouds.in(h.getLevel(), new AABB(worldOutlet)).isEmpty(),
+                "Simulating a steam outlet produces no clouds or inventory changes");
+        });
+        h.succeedWhen(() -> {
+            var clouds = GasClouds.in(h.getLevel(), new AABB(worldOutlet));
+            h.assertTrue(source.getTankInventory().isEmpty() && h.getLevel().getBlockState(worldOutlet).isAir()
+                && clouds.stream().anyMatch(cloud -> cloud.blockPosition().equals(worldOutlet) && cloud.content().is(CEFluids.STEAM.get()) && cloud.amount() <= 500),
+                "The native pump vents finite steam at the air block without placing a fluid source, remaining=" + source.getTankInventory().getFluidAmount());
+        });
     }
 
     @GameTest(template = "test_fractionation", timeoutTicks = 300)

@@ -115,6 +115,10 @@ public final class PlantPonderScenes {
                 scene.world().setKineticSpeed(util.select().fromTo(2,5,10,19,5,10),256);
             }
             if (tutorial.id().equals("process_gas_recovery")) steamRecovery(scene, util, step.key(), target);
+            if (tutorial.id().equals("gas_pipes") && step.key().equals("step_5")) {
+                scene.world().destroyBlock(target);
+                scene.world().createEntity(world -> GasCloud.preview(world, target, new FluidStack(CEFluids.STEAM.get(), 1000)));
+            }
             if (tutorial.id().equals("toxic_gas")) toxicGas(scene, step.key(), target);
             if (step.speed() != null) {
                 scene.world().setKineticSpeed(factory, step.speed());
