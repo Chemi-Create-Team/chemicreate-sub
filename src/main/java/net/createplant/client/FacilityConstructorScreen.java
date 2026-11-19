@@ -115,8 +115,8 @@ public class FacilityConstructorScreen extends SchematicannonScreen {
             graphics.drawCenteredString(font, Component.literal(Integer.toString(be.selectedSize())), x + 80, y + 125, 0xFFFFFF);
         if (be.kind() == AssemblyPlan.Kind.RBMK || be.kind() == AssemblyPlan.Kind.CLARIFIER)
             graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor." + (be.kind() == AssemblyPlan.Kind.CLARIFIER ? "basin_height" : "core_height"), be.planHeight()), x + 10, y + 145, 0x383830, false);
-        int width = be.kind() == AssemblyPlan.Kind.RBMK ? ReactorCoreVariants.outerDiameter(be.coreSize()) : be.selectedSize();
-        graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor.dimensions", width, width, be.totalHeight()), x + 10, y + 187, 0x383830, false);
+        var dimensions = be.dimensions();
+        graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor.dimensions", dimensions.width(), dimensions.depth(), dimensions.height()), x + 10, y + 187, 0x383830, false);
         graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor." + (be.canConfigure() ? "preview" : "stop_to_configure")), x + 10, y + 202, 0x383830, false);
     }
 

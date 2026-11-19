@@ -1,17 +1,15 @@
 package net.createplant.block.entity;
 
+import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import java.util.List;
 import net.createplant.assembly.AssemblyPlan;
 import net.createplant.assembly.AssemblySchematic;
-import net.createplant.block.CoolingTowerStructure;
 import net.createplant.block.FacilityConstructorBlock;
-import net.createplant.fusion.FusionPhysics;
 import net.createplant.inventory.FacilityConstructorMenu;
 import net.createplant.nuclear.ReactorCoreVariants;
-import net.createplant.nuclear.ReactorPhysics;
 import net.createplant.registry.CEAssembly;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,14 +47,8 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
     public int planHeight() { return kind == AssemblyPlan.Kind.CLARIFIER ? net.createplant.block.WetProcessStructure.CLARIFIER_HEIGHTS.get(clarifierHeightIndex) : coreHeight(); }
     public int coreHeight() { return AssemblyPlan.CORE_HEIGHTS.get(heightIndex); }
     public int selectedSize() { return AssemblyPlan.sizes(kind).get(sizeIndex()); }
-    public int totalHeight() {
-        return switch (kind) {
-            case RBMK -> ReactorPhysics.layout(coreHeight()).totalHeight();
-            case FUSION -> FusionPhysics.HEIGHT;
-            case COOLING_TOWER -> CoolingTowerStructure.SIZES.get(sizeIndex()).height();
-            case CLARIFIER -> planHeight();
-        };
-    }
+    public AssemblyPlan.Dimensions dimensions() { return AssemblyPlan.dimensions(kind, selectedSize(), planHeight()); }
+    public int totalHeight() { return dimensions().height(); }
     public Direction facing() { return getBlockState().getValue(FacilityConstructorBlock.FACING); }
     public IItemHandler supplies() { return supplies; }
     public boolean canConfigure() { return state == State.STOPPED && flyingBlocks.isEmpty(); }
@@ -111,6 +103,12 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
         if (!completed) {
             String key = AssemblyPlan.fileName(kind, facing(), selectedSize(), planHeight());
             if (!key.equals(preparedKey) && level.getGameTime() >= retryAt) {
+                ItemStack previous = inventory.getStackInSlot(0);
+                if (!previous.isEmpty() && !key.equals(previous.get(AllDataComponents.SCHEMATIC_FILE))) {
+                    if (!flyingBlocks.isEmpty()) { tickFlyingBlocks();setChanged();return; }
+                    resetPrinter();
+                    inventory.setStackInSlot(0, ItemStack.EMPTY);
+                }
                 ItemStack blueprint = AssemblySchematic.blueprint(level, key, plan());
                 if (!blueprint.isEmpty()) { inventory.setStackInSlot(0, blueprint);preparedKey = key; }
                 else { retryAt = level.getGameTime() + 100;statusMsg = "schematicErrored";sendUpdate = true; }

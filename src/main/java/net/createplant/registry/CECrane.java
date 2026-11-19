@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Gantry cranes over Create gantry shaft rails: the service crane's drive, and the quarry's corner drive. */
+/** Gantry cranes on Create metal-girder rails: the service crane drives and the quarry's corner drive. */
 public final class CECrane {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePlant.MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePlant.MOD_ID);

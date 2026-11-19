@@ -5107,5 +5107,13 @@
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation": "放置时，铁塔会按视线方向以15度为一档对齐。用扳手右击塔基可顺时针转动15度。",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.0": "放置时，铁塔会按视线方向以15度为一档对齐。用扳手右击塔基可顺时针转动15度。",
-  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "放置时，铁塔会按视线方向以15度为一档对齐。用扳手右击塔基可顺时针转动15度。"
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "放置时，铁塔会按视线方向以15度为一档对齐。用扳手右击塔基可顺时针转动15度。",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction": "红色轮廓标出阻挡框架或侧面传送带施工的方块。移除它即可继续建造。",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.0": "红色轮廓标出阻挡框架或侧面传送带施工的方块。移除它即可继续建造。",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane": "两种反应堆的方案都包括配有金属桁架轨道的维护起重机及其驱动端。给驱动端输入旋转动力和红石信号即可运行起重机。",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.0": "两种反应堆的方案都包括配有金属桁架轨道的维护起重机及其驱动端。给驱动端输入旋转动力和红石信号即可运行起重机。",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.1": "红色轮廓标出阻挡框架或侧面传送带施工的方块。移除它即可继续建造。",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.1": "两种反应堆的方案都包括配有金属桁架轨道的维护起重机及其驱动端。给驱动端输入旋转动力和红石信号即可运行起重机。"
 }

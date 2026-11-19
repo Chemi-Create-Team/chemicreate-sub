@@ -113,9 +113,13 @@ public final class CraneFrame {
 
     /** A metal girder lying along {@code axis}, or standing for a leg, joined to the girders already around it. */
     public static BlockState girder(LevelAccessor level, BlockPos pos, Direction.Axis axis) {
-        BlockState state = AllBlocks.METAL_GIRDER.getDefaultState().setValue(GirderBlock.AXIS, axis)
-            .setValue(GirderBlock.X, axis == Direction.Axis.X).setValue(GirderBlock.Z, axis == Direction.Axis.Z);
+        BlockState state = girder(axis);
         for (Direction side : Direction.values()) state = GirderBlock.updateState(level, pos, state, side);
         return state;
+    }
+
+    public static BlockState girder(Direction.Axis axis) {
+        return AllBlocks.METAL_GIRDER.getDefaultState().setValue(GirderBlock.AXIS, axis)
+            .setValue(GirderBlock.X, axis == Direction.Axis.X).setValue(GirderBlock.Z, axis == Direction.Axis.Z);
     }
 }

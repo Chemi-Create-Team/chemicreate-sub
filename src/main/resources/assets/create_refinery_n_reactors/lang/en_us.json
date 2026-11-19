@@ -5107,5 +5107,13 @@
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation": "Your view sets the tower’s heading in 15° steps when you place it. Right-click the base with a wrench to turn it 15° clockwise.",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.count": "2",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.0": "Your view sets the tower’s heading in 15° steps when you place it.",
-  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "Right-click the base with a wrench to turn it 15° clockwise."
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "Right-click the base with a wrench to turn it 15° clockwise.",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction": "A red outline marks the block that stops construction of the frame or side belt. Remove it to resume building.",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.count": "2",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.0": "A red outline marks the block that stops construction of the frame or side belt.",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.1": "Remove it to resume building.",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane": "Both reactor plans include a service crane with metal-girder rails and its own drive. Supply rotation and redstone to the drive to operate the crane.",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.count": "2",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.0": "Both reactor plans include a service crane with metal-girder rails and its own drive.",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.1": "Supply rotation and redstone to the drive to operate the crane."
 }

@@ -65,7 +65,7 @@ def main():
         if NS + ':facility_constructor' not in data['values']: data['values'].append(NS + ':facility_constructor')
         write(path, data)
     ponder.OUT = A / 'ponder/plant'
-    scene = ponder.Structure(17, 10)
+    scene = ponder.Structure(17, 12)
     scene.block(8, 1, 1, NS + ':facility_constructor', facing='south')
     scene.block(7, 1, 1, 'minecraft:chest', facing='north', type='single', waterlogged='false')
     scene.save('facility_constructor')

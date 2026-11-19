@@ -67,6 +67,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     private static final double EPSILON = 1e-3;
     private static final BehaviourType<ScrollValueBehaviour> LENGTH_TYPE = new BehaviourType<>("crane_length");
     private static final BehaviourType<ScrollValueBehaviour> WIDTH_TYPE = new BehaviourType<>("crane_width");
+    private static final String LENGTH_KEY = "CraneLength", WIDTH_KEY = "CraneWidth";
     private ScrollValueBehaviour lengthSetting, widthSetting;
     /** The configured frame while it is being built, how much of it stands and how many girders are still short. */
     private CraneFrame.Plan plan;
@@ -106,10 +107,10 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
         lengthSetting = new CraneRangeSetting(Component.translatable(KEY + "crane_length"), this,
-            (state, side) -> side == state.getValue(CraneDriveBlock.FACING).getCounterClockWise(), LENGTH_TYPE, "CraneLength",
+            (state, side) -> side == state.getValue(CraneDriveBlock.FACING).getCounterClockWise(), LENGTH_TYPE, LENGTH_KEY,
             CraneStructure.MIN_LENGTH, CraneStructure.MAX_LENGTH, 0);
         widthSetting = new CraneRangeSetting(Component.translatable(KEY + "crane_width"), this,
-            (state, side) -> side == state.getValue(CraneDriveBlock.FACING).getClockWise(), WIDTH_TYPE, "CraneWidth",
+            (state, side) -> side == state.getValue(CraneDriveBlock.FACING).getClockWise(), WIDTH_TYPE, WIDTH_KEY,
             CraneStructure.MIN_SPAN - 1, CraneStructure.MAX_SPAN - 1, 1);
         for (var setting : List.of(lengthSetting, widthSetting))
             setting.withCallback(value -> configurationChanged()).onlyActiveWhen(() -> level == null || !level.hasNeighborSignal(worldPosition));
@@ -119,6 +120,12 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     public int length() { return lengthSetting == null ? 16 : lengthSetting.getValue(); }
     public int width() { return widthSetting == null ? 16 : widthSetting.getValue(); }
     public void size(int length, int width) { lengthSetting.setValue(length);widthSetting.setValue(width); }
+
+    public static CompoundTag rangeSettings(int length, int width) {
+        var tag = new CompoundTag();
+        tag.putInt(LENGTH_KEY, length);tag.putInt(WIDTH_KEY, width);
+        return tag;
+    }
 
     /** The rails run forward from the drive; the far rail lies to its right. */
     private CraneFrame.Plan configuredFrame() {

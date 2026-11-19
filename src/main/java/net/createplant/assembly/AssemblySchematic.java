@@ -57,6 +57,7 @@ public final class AssemblySchematic {
             CompoundTag block = new CompoundTag();
             block.put("pos", position(at.getX(), at.getY(), at.getZ()));
             block.putInt("state", palette.computeIfAbsent(target.state(), state -> palette.size()));
+            if (target.blockEntityData() != null) block.put("nbt", target.blockEntityData());
             blocks.add(block);
         }
         ListTag states = new ListTag();

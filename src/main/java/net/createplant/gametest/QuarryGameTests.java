@@ -105,6 +105,35 @@ public class QuarryGameTests {
             "All deficits are current: " + tag.getInt("MissingGirders") + "/" + tag.getInt("MissingDrills") + "/" + tag.getInt("MissingBelts"));
     }
 
+    @GameTest(template = "test_rbmk", timeoutTicks = 300)
+    public static void constructionHighlightsTheCurrentFrameAndBeltObstruction(GameTestHelper h) {
+        configuredQuarry(h, 64);
+        BlockPos firstRail = DRIVE.east(), secondRail = firstRail.east(), chain = DRIVE.north(2);
+        for (BlockPos pos : List.of(firstRail, secondRail, chain)) h.setBlock(pos, Blocks.CHEST);
+        supplyAll(h);
+        var quarry = (QuarryDriveBlockEntity) h.getBlockEntity(DRIVE);
+        var client = new QuarryDriveBlockEntity(CECrane.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
+        h.startSequence()
+            .thenWaitUntil(() -> obstruction(h, quarry, client, firstRail, "frame_blocked"))
+            .thenExecute(() -> h.setBlock(firstRail, Blocks.AIR))
+            .thenWaitUntil(() -> obstruction(h, quarry, client, secondRail, "frame_blocked"))
+            .thenExecute(() -> h.setBlock(secondRail, Blocks.AIR))
+            .thenWaitUntil(() -> obstruction(h, quarry, client, chain, "belt_blocked"))
+            .thenExecute(() -> h.setBlock(chain, Blocks.AIR))
+            .thenWaitUntil(() -> {
+                client.readClient(clientData(h, quarry), h.getLevel().registryAccess());
+                h.assertTrue(quarry.structure() != null && client.constructionObstruction() == null
+                    && h.getBlockState(chain).is(AllBlocks.ENCASED_CHAIN_DRIVE.get()), "Construction resumes and clears the highlight");
+            })
+            .thenSucceed();
+    }
+
+    private static void obstruction(GameTestHelper h, QuarryDriveBlockEntity quarry, QuarryDriveBlockEntity client, BlockPos at, String status) {
+        client.readClient(clientData(h, quarry), h.getLevel().registryAccess());
+        h.assertTrue(client.status().equals(status) && h.absolutePos(at).equals(client.constructionObstruction())
+            && h.getBlockState(at).is(Blocks.CHEST), "The client receives the exact blocking chest for " + status + ": " + client.status());
+    }
+
     @GameTest(template = "test_rbmk", timeoutTicks = 200)
     public static void gogglesShowTheWholeShortageBeforeStartingAndAfterResizing(GameTestHelper h) {
         configuredQuarry(h, 0);

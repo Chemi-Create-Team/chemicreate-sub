@@ -5107,5 +5107,13 @@
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation": "設置時の視線に合わせて、鉄塔の向きが15度刻みで決まります。レンチで基部を右クリックすると、時計回りに15度回ります。",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.0": "設置時の視線に合わせて、鉄塔の向きが15度刻みで決まります。レンチで基部を右クリックすると、時計回りに15度回ります。",
-  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "設置時の視線に合わせて、鉄塔の向きが15度刻みで決まります。レンチで基部を右クリックすると、時計回りに15度回ります。"
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "設置時の視線に合わせて、鉄塔の向きが15度刻みで決まります。レンチで基部を右クリックすると、時計回りに15度回ります。",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction": "枠や側面ベルトの建設を止めているブロックが赤い枠で表示されます。取り除くと建設が再開します。",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.0": "枠や側面ベルトの建設を止めているブロックが赤い枠で表示されます。取り除くと建設が再開します。",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane": "核分裂炉と核融合炉には、メタルガーダーのレールと保守クレーン駆動部が含まれます。運転するには駆動部に回転とレッドストーン信号を入れます。",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.0": "核分裂炉と核融合炉には、メタルガーダーのレールと保守クレーン駆動部が含まれます。運転するには駆動部に回転とレッドストーン信号を入れます。",
+  "create_refinery_n_reactors.ponder.shared.quarry_frame.obstruction.lesson_pages.1": "枠や側面ベルトの建設を止めているブロックが赤い枠で表示されます。取り除くと建設が再開します。",
+  "create_refinery_n_reactors.ponder.shared.facility_constructor.crane.lesson_pages.1": "核分裂炉と核融合炉には、メタルガーダーのレールと保守クレーン駆動部が含まれます。運転するには駆動部に回転とレッドストーン信号を入れます。"
 }

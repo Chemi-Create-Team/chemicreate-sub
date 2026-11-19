@@ -3904,6 +3904,11 @@
     "ja_jp": "外側のチェーンドライブ列で、各ベルト区画へ回転を渡します。この列と受け渡し部分を空けておきます。",
     "zh_cn": "外侧链传动箱把旋转动力传给每一段传送带，保持该排及交接点畅通。"
   },
+  "quarry_frame.obstruction": {
+    "en_us": "A red outline marks the block that stops construction of the frame or side belt. Remove it to resume building.",
+    "ja_jp": "枠や側面ベルトの建設を止めているブロックが赤い枠で表示されます。取り除くと建設が再開します。",
+    "zh_cn": "红色轮廓标出阻挡框架或侧面传送带施工的方块。移除它即可继续建造。"
+  },
   "horizontal_tank.heating": {
     "en_us": "A burning Blaze Burner raises the contents by one heat grade every ten seconds. This also works for gases and other tank types.",
     "ja_jp": "燃焼中のバーナーで同じ中身を10秒加熱すると、温度等級が1段階上がります。気体やほかの種類のタンクも同様です。",
@@ -4013,6 +4018,11 @@
     "en_us": "Press Play to build with the schematicannon mechanism. Completed blocks disappear from the preview.",
     "ja_jp": "開始を押すと概略図砲の仕組みで組み立てます。設置された部分はプレビューから消えます。",
     "zh_cn": "点击开始按钮，建造机会使用蓝图加农炮的机制施工。已完成部分将从预览中消失。"
+  },
+  "facility_constructor.crane": {
+    "en_us": "Both reactor plans include a service crane with metal-girder rails and its own drive. Supply rotation and redstone to the drive to operate the crane.",
+    "ja_jp": "核分裂炉と核融合炉には、メタルガーダーのレールと保守クレーン駆動部が含まれます。運転するには駆動部に回転とレッドストーン信号を入れます。",
+    "zh_cn": "两种反应堆的方案都包括配有金属桁架轨道的维护起重机及其驱动端。给驱动端输入旋转动力和红石信号即可运行起重机。"
   },
   "facility_constructor.stop": {
     "en_us": "Stop and wait for flying blocks to land before changing the facility or size. A wrench turns the stopped constructor and its preview.",

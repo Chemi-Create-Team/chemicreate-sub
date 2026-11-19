@@ -8,6 +8,7 @@ import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.QuarryDriveBlockEntity;
@@ -23,6 +24,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -60,8 +62,14 @@ public class QuarryRenderer extends KineticBlockEntityRenderer<QuarryDriveBlockE
 
     @Override protected void renderSafe(QuarryDriveBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
+        var level = be.getLevel();
+        if (level == null) return;
+        BlockPos obstruction = be.constructionObstruction();
+        if (obstruction != null && level.hasChunkAt(obstruction) && !level.isEmptyBlock(obstruction))
+            Outliner.getInstance().showAABB(be, new AABB(obstruction).inflate(1 / 64d)).colored(0xff403a).lineWidth(1 / 16f).disableLineNormals();
+        else Outliner.getInstance().remove(be);
         var quarry = be.visibleStructure();
-        if (quarry == null || be.getLevel() == null) return;
+        if (quarry == null) return;
         BlockState state = be.getBlockState();
         VertexConsumer solid = buffer.getBuffer(RenderType.cutout());
         double u = be.renderedU(partialTicks), v = be.renderedV(partialTicks), depth = be.renderedDepth(partialTicks);

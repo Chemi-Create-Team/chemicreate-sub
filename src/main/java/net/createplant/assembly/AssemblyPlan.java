@@ -1,15 +1,23 @@
 package net.createplant.assembly;
 
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.decoration.girder.GirderBlock;
 import java.util.ArrayList;
 import java.util.List;
 import net.createplant.block.CoolingTowerStructure;
+import net.createplant.block.CraneDriveBlock;
+import net.createplant.block.CraneFrame;
+import net.createplant.block.entity.CraneDriveBlockEntity;
 import net.createplant.fusion.FusionPhysics;
 import net.createplant.fusion.FusionStructure;
 import net.createplant.nuclear.ReactorCoreVariants;
 import net.createplant.nuclear.ReactorPhysics;
+import net.createplant.registry.CECrane;
 import net.createplant.registry.CENuclear;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,9 +33,11 @@ public final class AssemblyPlan {
 
         public final String id;
         Kind(String id) { this.id = id; }
+        public boolean hasServiceCrane() { return this == RBMK || this == FUSION; }
     }
 
     public static final List<Integer> CORE_HEIGHTS = List.of(ReactorPhysics.COMPACT_CORE_HEIGHT, ReactorPhysics.CORE_HEIGHT);
+    private static final int FUSION_CRANE_RAIL_Y = FusionPhysics.HEIGHT + 2;
 
     public static List<Integer> sizes(Kind kind) {
         return switch (kind) {
@@ -38,7 +48,11 @@ public final class AssemblyPlan {
         };
     }
 
-    public record Target(BlockPos pos, BlockState state) { }
+    public record Target(BlockPos pos, BlockState state, CompoundTag blockEntityData) {
+        public Target(BlockPos pos, BlockState state) { this(pos, state, null); }
+    }
+
+    public record Dimensions(int width, int depth, int height) { }
 
     private AssemblyPlan() { }
 
@@ -53,7 +67,44 @@ public final class AssemblyPlan {
     }
 
     public static String fileName(Kind kind, Direction facing, int size, int coreHeight) {
-        return kind.id + "_" + size + (kind == Kind.RBMK || kind == Kind.CLARIFIER ? "_h" + coreHeight : "") + "_" + facing.getSerializedName() + ".nbt";
+        return kind.id + (kind.hasServiceCrane() ? "_crane_" : "_") + size
+            + (kind == Kind.RBMK || kind == Kind.CLARIFIER ? "_h" + coreHeight : "") + "_" + facing.getSerializedName() + ".nbt";
+    }
+
+    public static Dimensions dimensions(Kind kind, int size, int height) {
+        int width = kind == Kind.RBMK ? ReactorCoreVariants.outerDiameter(size) : size;
+        int totalHeight = switch (kind) {
+            case RBMK -> rbmkCraneRailY(height) + 1;
+            case FUSION -> FUSION_CRANE_RAIL_Y + 1;
+            case COOLING_TOWER -> CoolingTowerStructure.SIZES.get(sizes(kind).indexOf(size)).height();
+            case CLARIFIER -> height;
+        };
+        return kind.hasServiceCrane() ? new Dimensions(width + 2, width + 1, totalHeight) : new Dimensions(width, width, totalHeight);
+    }
+
+    private static int rbmkCraneRailY(int coreHeight) {
+        return ReactorPhysics.layout(coreHeight).totalHeight() - 1 + CraneDriveBlockEntity.SERVICE_MAST_LENGTH;
+    }
+
+    private static void serviceCrane(List<Target> targets, Kind kind, BlockPos base, Direction facing, int width, int railY) {
+        Direction across = facing.getClockWise();
+        BlockPos start = base.relative(facing, 2).relative(across.getOpposite(), width / 2 + 1).above(railY);
+        int leg = railY - 1;
+        var frame = new CraneFrame.Plan(start, facing, across, width, width, new int[]{leg, leg, leg, leg});
+        for (int i = 0; i < 4; i++)
+            targets.add(new Target(frame.corner(i).below(railY), AllBlocks.INDUSTRIAL_IRON_BLOCK.getDefaultState()));
+        BlockState upright = CraneFrame.girder(Direction.Axis.Y), rail = CraneFrame.girder(facing.getAxis());
+        int legs = frame.legs();
+        for (int n = 0; n < legs; n++) targets.add(new Target(frame.pos(n), upright));
+        for (int n = 0; n < frame.rails(); n++) {
+            int along = n % frame.length();
+            targets.add(new Target(frame.pos(legs + n), rail.setValue(GirderBlock.BOTTOM, along == 0 || along == frame.length() - 1)));
+        }
+        var drive = kind == Kind.RBMK ? CECrane.DRIVE.get() : CECrane.FUSION_DRIVE.get();
+        var settings = CraneDriveBlockEntity.rangeSettings(frame.length(), frame.width());
+        settings.putString("id", BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(CECrane.DRIVE_ENTITY.get()).toString());
+        targets.add(new Target(start.relative(facing.getOpposite()), drive.defaultBlockState()
+            .setValue(CraneDriveBlock.FACING, facing).setValue(BlockStateProperties.AXIS, facing.getAxis()), settings));
     }
 
     private static List<Target> wetProcess(BlockPos base, Direction facing, int width, int height) {
@@ -67,6 +118,7 @@ public final class AssemblyPlan {
         BlockPos controller = base.relative(facing).above(FusionPhysics.MIDPLANE);
         for (var cell : FusionStructure.cells(controller, facing, width))
             targets.add(new Target(cell.pos(), cell.role() == FusionStructure.Role.CLEAR ? Blocks.AIR.defaultBlockState() : cell.expected()));
+        serviceCrane(targets, Kind.FUSION, base, facing, width, FUSION_CRANE_RAIL_Y);
         return targets;
     }
 
@@ -105,6 +157,7 @@ public final class AssemblyPlan {
                 targets.add(new Target(base.offset(new BlockPos(i - outer / 2, y, j + 1).rotate(rotation)), state.rotate(rotation)));
             }
         }
+        serviceCrane(targets, Kind.RBMK, base, facing, outer, rbmkCraneRailY(coreHeight));
         return targets;
     }
 

@@ -9,6 +9,7 @@ import net.createplant.block.CoolingTowerStructure;
 import net.createplant.block.FacilityConstructorBlock;
 import net.createplant.block.FusionFluidPortBlock;
 import net.createplant.block.entity.CoolingTowerBlockEntity;
+import net.createplant.block.entity.CraneDriveBlockEntity;
 import net.createplant.block.entity.FacilityConstructorBlockEntity;
 import net.createplant.block.entity.FusionReactorControllerBlockEntity;
 import net.createplant.block.entity.RodCapBlockEntity;
@@ -18,6 +19,7 @@ import net.createplant.nuclear.ReactorCoreStructure;
 import net.createplant.nuclear.ReactorCoreVariants;
 import net.createplant.nuclear.ReactorPhysics;
 import net.createplant.registry.CEAssembly;
+import net.createplant.registry.CECrane;
 import net.createplant.registry.CEFusion;
 import net.createplant.registry.CENuclear;
 import net.createplant.registry.CEPlantSystems;
@@ -51,7 +53,25 @@ public class AssemblyGameTests {
     }
 
     private static void build(GameTestHelper h, FacilityConstructorBlockEntity be) {
-        for (var target : be.plan()) h.getLevel().setBlock(target.pos(), target.state(), Block.UPDATE_CLIENTS);
+        for (var target : be.plan()) {
+            h.getLevel().setBlock(target.pos(), target.state(), Block.UPDATE_CLIENTS);
+            if (target.blockEntityData() != null)
+                h.getLevel().getBlockEntity(target.pos()).loadWithComponents(target.blockEntityData().copy(), h.getLevel().registryAccess());
+        }
+    }
+
+    private static CraneDriveBlockEntity formedCrane(GameTestHelper h, FacilityConstructorBlockEntity be) {
+        boolean fusion = be.kind() == AssemblyPlan.Kind.FUSION;
+        var block = fusion ? CECrane.FUSION_DRIVE.get() : CECrane.DRIVE.get();
+        var drive = be.plan().stream().filter(t -> t.state().is(block)).findFirst().orElseThrow();
+        h.assertTrue(h.getLevel().getBlockEntity(drive.pos()) instanceof CraneDriveBlockEntity, "The expected service drive was placed");
+        var crane = (CraneDriveBlockEntity) h.getLevel().getBlockEntity(drive.pos());
+        crane.tick();
+        var frame = crane.structure();
+        h.assertTrue(frame != null && frame.along() == be.facing() && frame.legs() > 0
+            && frame.length() == be.dimensions().depth() - 1 && frame.span() == be.dimensions().width() - 1,
+            "Configured metal-girder frame forms on the supplied supports: " + crane.status());
+        return crane;
     }
 
     @GameTest(template = "test_fusion", timeoutTicks = 100)
@@ -60,11 +80,13 @@ public class AssemblyGameTests {
         build(h, fusion);
         var controller = fusion.plan().stream().filter(t -> t.state().is(CEFusion.CONTROLLER.get())).findFirst().orElseThrow();
         h.assertTrue(FusionStructure.scan(h.getLevel(), controller.pos(), Direction.EAST).formed(), "Fusion plan forms to the east");
+        formedCrane(h, fusion);
         var rbmk = constructor(h, AssemblyPlan.Kind.RBMK, new BlockPos(30, 2, 30), Direction.NORTH);
         build(h, rbmk);
         BlockPos channel = rbmk.plan().stream().filter(t -> t.state().is(CENuclear.FUEL_CHANNEL.get())).findFirst().orElseThrow().pos();
         var core = ReactorCoreStructure.scan(h.getLevel(), channel);
         h.assertTrue(core.formed() && core.circular() && core.width() == 5, "Selected 5 m RBMK forms: " + core.reason());
+        formedCrane(h, rbmk);
         var tower = constructor(h, AssemblyPlan.Kind.COOLING_TOWER, new BlockPos(65, 2, 10), Direction.WEST);
         build(h, tower);
         var at = tower.plan().stream().filter(t -> t.state().is(CEPlantSystems.COOLING_TOWER.get())).findFirst().orElseThrow().pos();
@@ -90,7 +112,7 @@ public class AssemblyGameTests {
                     int across = direction.getAxis() == Direction.Axis.X ? target.pos().getZ() : target.pos().getX();
                     min = Math.min(min, across);max = Math.max(max, across);
                 }
-                h.assertTrue(max - min + 1 == diameter, "Preview uses the selected shield diameter");
+                h.assertTrue(max - min + 1 == diameter + 2, "Crane supports stand just outside the selected shield diameter");
             }
         }
         h.assertTrue(!be.configure(-1, 0) && !be.configure(AssemblyPlan.Kind.values().length, 0) && !be.configure(0, 99), "Unknown selections are rejected");
@@ -153,7 +175,8 @@ public class AssemblyGameTests {
         var player = h.makeMockPlayer(GameType.SURVIVAL);player.setPos(be.getBlockPos().getCenter());
         var menu = new FacilityConstructorMenu(1, player.getInventory(), be);
         h.assertTrue(menu.clickMenuButton(player, 14) && menu.clickMenuButton(player, 20), "RBMK diameter and height are independent menu settings");
-        h.assertTrue(be.coreSize() == 13 && be.coreHeight() == 3 && be.totalHeight() == 11, "Compact layout includes reduced upper and lower structures");
+        h.assertTrue(be.coreSize() == 13 && be.coreHeight() == 3 && be.totalHeight() == 11 + CraneDriveBlockEntity.SERVICE_MAST_LENGTH,
+            "Compact layout adds the service crane above the reduced reactor structure");
         String compact = net.createplant.assembly.AssemblyPlan.fileName(be.kind(), be.facing(), be.selectedSize(), be.coreHeight());
         menu.clickMenuButton(player, 21);
         h.assertTrue(!compact.equals(net.createplant.assembly.AssemblyPlan.fileName(be.kind(), be.facing(), be.selectedSize(), be.coreHeight())), "Different heights cannot share stale schematic files");
@@ -191,6 +214,9 @@ public class AssemblyGameTests {
             var layout = ReactorPhysics.layout(be.coreHeight());
             var cap = (RodCapBlockEntity) h.getLevel().getBlockEntity(channel.above(layout.fuelAssemblyLength()));
             h.assertTrue(cap != null && cap.column() != null, "Operating cap reaches the actual selected-height fuel column");
+            var crane = formedCrane(h, be);
+            h.assertTrue(crane.getBlockPos().getY() - cap.getBlockPos().getY() == CraneDriveBlockEntity.SERVICE_MAST_LENGTH,
+                "The crane's fixed mast reaches both RBMK cap elevations");
             var drive = be.plan().stream().filter(t -> t.state().is(CENuclear.SHIELD_DRIVE.get())).findFirst().orElseThrow();
             h.assertTrue(drive.pos().getY() >= channel.getY() && drive.pos().getY() < channel.getY() + be.coreHeight(), "Drive remains within the selected active height");
             int maxY = be.plan().stream().mapToInt(t -> t.pos().getY()).max().orElseThrow();
@@ -209,6 +235,15 @@ public class AssemblyGameTests {
             var controller = (FusionReactorControllerBlockEntity) h.getLevel().getBlockEntity(control);
             controller.tick();
             h.assertTrue(controller.formed() && controller.structureWidth() == be.selectedSize(), "Controller detects the selected fusion width in every direction");
+            var frame = formedCrane(h, be).structure();
+            var tops = FusionStructure.serviceTops(control, direction, be.selectedSize());
+            h.assertTrue(tops.stream().anyMatch(top -> {
+                BlockPos offset = top.subtract(frame.start());
+                int u = offset.getX() * frame.along().getStepX() + offset.getZ() * frame.along().getStepZ();
+                int v = offset.getX() * frame.across().getStepX() + offset.getZ() * frame.across().getStepZ();
+                int depth = -offset.getY() - 1;
+                return u >= 0 && u < frame.length() && v > 0 && v < frame.span() && depth >= 1 && depth <= CraneDriveBlockEntity.SERVICE_MAST_DEPTH;
+            }), "The fusion crane can reach a blanket service position");
             var centre = controller.centre();
             var cells = FusionStructure.cells(control, direction, be.selectedSize());
             var map = new java.util.HashMap<BlockPos, FusionStructure.Cell>();for (var cell : cells) map.put(cell.pos(), cell);
@@ -265,13 +300,32 @@ public class AssemblyGameTests {
     }
 
     @GameTest(template = "test_fusion", timeoutTicks = 100)
-    public static void cannonActuallyBuildsTheWholeFusionReactorUsingFiniteMaterials(GameTestHelper h) {
+    public static void cannonBuildsBothReactorsAndTheirCranesUsingFiniteMaterials(GameTestHelper h) {
         var be = constructor(h, AssemblyPlan.Kind.FUSION, new BlockPos(20, 240, 4), Direction.SOUTH);
         be.configure(1, 2);
+        print(h, be);
+        var controller = be.plan().stream().filter(t -> t.state().is(CEFusion.CONTROLLER.get())).findFirst().orElseThrow();
+        var result = FusionStructure.scan(h.getLevel(), controller.pos(), Direction.SOUTH);
+        h.assertTrue(result.formed(), "Actual projectile placements form the fusion reactor: " + result.reason() + " at " + result.fault());
+        formedCrane(h, be);
+
+        var rbmk = constructor(h, AssemblyPlan.Kind.RBMK, new BlockPos(60, 240, 4), Direction.EAST);
+        rbmk.configureHeight(0);
+        print(h, rbmk);
+        var channel = rbmk.plan().stream().filter(t -> t.state().is(CENuclear.FUEL_CHANNEL.get())).findFirst().orElseThrow();
+        h.assertTrue(ReactorCoreStructure.scan(h.getLevel(), channel.pos()).formed(), "Actual projectile placements form the RBMK");
+        formedCrane(h, rbmk);
+        h.succeed();
+    }
+
+    private static void print(GameTestHelper h, FacilityConstructorBlockEntity be) {
         h.assertTrue(be.plan().stream().allMatch(t -> h.getLevel().isEmptyBlock(t.pos())), "The complete cannon fixture starts in clear space above the other parallel test structures");
         BlockPos chestPos = be.getBlockPos().west();
         h.getLevel().setBlockAndUpdate(chestPos, Blocks.CHEST.defaultBlockState());
         var chest = (ChestBlockEntity) h.getLevel().getBlockEntity(chestPos);
+        BlockPos extraPos = be.getBlockPos().north();
+        h.getLevel().setBlockAndUpdate(extraPos, Blocks.CHEST.defaultBlockState());
+        var extra = (ChestBlockEntity) h.getLevel().getBlockEntity(extraPos);
         var required = new LinkedHashMap<Item, Integer>();
         for (var target : be.plan()) {
             h.getLevel().getChunkAt(target.pos());
@@ -281,9 +335,11 @@ public class AssemblyGameTests {
         for (var entry : required.entrySet()) {
             int remaining = entry.getValue();
             while (remaining > 0) {
-                h.assertTrue(slot < chest.getContainerSize(), "Fixture chest holds finite building materials");
+                h.assertTrue(slot < chest.getContainerSize() + extra.getContainerSize(), "Fixture chests hold finite building materials");
                 int count = Math.min(remaining, entry.getKey().getDefaultMaxStackSize());
-                chest.setItem(slot++, new ItemStack(entry.getKey(), count));remaining -= count;
+                if (slot < chest.getContainerSize()) chest.setItem(slot, new ItemStack(entry.getKey(), count));
+                else extra.setItem(slot - chest.getContainerSize(), new ItemStack(entry.getKey(), count));
+                slot++;remaining -= count;
             }
         }
         be.inventory.setStackInSlot(4, new ItemStack(Items.GUNPOWDER, 64));
@@ -295,12 +351,7 @@ public class AssemblyGameTests {
         h.assertTrue(be.statusMsg.equals("finished") && be.flyingBlocks.isEmpty(), "Cannon finishes the complete plan: " + be.statusMsg + " after " + ticks + " ticks");
         h.assertTrue(be.inventory.getStackInSlot(1).isEmpty(), "No free empty schematic is produced");
         h.assertTrue(be.inventory.getStackInSlot(4).getCount() < 64, "Construction consumes real gunpowder");
-        var controller = be.plan().stream().filter(t -> t.state().is(CEFusion.CONTROLLER.get())).findFirst().orElseThrow();
-        var result = FusionStructure.scan(h.getLevel(), controller.pos(), Direction.SOUTH);
-        h.assertTrue(result.formed(), "Actual projectile placements form the fusion reactor: " + result.reason() + " at " + result.fault()
-            + "; actual=" + h.getLevel().getBlockState(result.fault()) + "; width=" + result.width()
-            + "; mismatches=" + be.plan().stream().filter(t -> !h.getLevel().getBlockState(t.pos()).is(t.state().getBlock())).limit(8).toList());
         for (int i = 0; i < chest.getContainerSize(); i++) h.assertTrue(chest.getItem(i).isEmpty(), "Exactly the supplied building materials were consumed");
-        h.succeed();
+        for (int i = 0; i < extra.getContainerSize(); i++) h.assertTrue(extra.getItem(i).isEmpty(), "The extra chest supplied the remaining building materials");
     }
 }

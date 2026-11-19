@@ -150,6 +150,9 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
     public boolean drill() { return drill; }
     public boolean working() { return working; }
     public String status() { return status; }
+    public BlockPos constructionObstruction() {
+        return status.equals("frame_blocked") || status.equals("belt_blocked") || status.equals("frame_dimensions") ? fault : null;
+    }
     public IItemHandler store() { return store; }
     public QuarryConveyor conveyor() { return conveyor; }
     public CraneStructure.Result visibleStructure() { return level!=null && level.isClientSide() && visibleStructure!=null ? visibleStructure : structure; }
@@ -232,9 +235,8 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
     private boolean clearBeltSpace(BlockPos pos) {
         var state = level.getBlockState(pos);
         if (state.isAir() || state.canBeReplaced()) return true;
-        fault = pos;
-        if (!mineable(state, pos)) stop("belt_blocked");
-        else dig(pos, state, false);
+        if (!mineable(state, pos)) blocked(pos, "belt_blocked");
+        else if (dig(pos, state, false)) status("belt_build");
         return false;
     }
 
@@ -253,7 +255,7 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
             if (layout.complete(level, segment)) continue;
             for (int u = segment.first(); u <= segment.last(); u++) {
                 BlockPos pos = layout.belt(u);
-                if (AllBlocks.BELT.has(level.getBlockState(pos))) { fault = pos;stop("belt_layout");return; }
+                if (AllBlocks.BELT.has(level.getBlockState(pos))) { blocked(pos, "belt_blocked");return; }
                 if ((u == segment.first() || u == segment.last()) && layout.shaft(level, u)) continue;
                 if (!clearBeltSpace(pos)) return;
             }
@@ -478,6 +480,13 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
         sync();
     }
 
+    private void blocked(BlockPos pos, String reason) {
+        boolean moved = status.equals(reason) && !fault.equals(pos);
+        fault = pos;
+        stop(reason);
+        if (moved) sync();
+    }
+
     private void sync() {
         if (batchingSync) syncPending = true;
         else sendData();
@@ -501,7 +510,11 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
         } else if (!result.formed()) {
             cancelTask();
             structure = null;
-            fault = result.fault();
+            if (!status.equals("frame_blocked") && !status.equals("belt_blocked")) {
+                boolean moved = constructionObstruction() != null && !fault.equals(result.fault());
+                fault = result.fault();
+                if (moved) sync();
+            }
             frameProblem = result.reason();
             if (plan == null) stop(frameProblem);
         }
@@ -758,10 +771,8 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
         BlockPos pos = plan.pos(next);
         BlockState there = level.getBlockState(pos);
         if (!there.isAir() && !there.canBeReplaced()) {
-            if (!mineable(there, pos)) {
-                fault = pos;
-                status("frame_blocked");
-            } else dig(pos, there, false);
+            if (!mineable(there, pos)) blocked(pos, "frame_blocked");
+            else if (dig(pos, there, false)) status("frame_build");
             return;
         }
         if (!take(AllBlocks.METAL_GIRDER.asItem())) {

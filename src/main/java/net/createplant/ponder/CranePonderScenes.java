@@ -7,6 +7,7 @@ import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createplant.block.CraneFrame;
 import net.createplant.block.entity.CraneDriveBlockEntity;
 import net.createplant.block.entity.FuelPoolBlockEntity;
 import net.createplant.block.entity.QuarryConveyor;
@@ -20,7 +21,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Legs, gantry shaft rails, the drive, then the bridge and hoist moving over the work area to service it. The storyboard
+ * Metal-girder legs and rails, the drive, then the bridge and hoist moving over the work area to service it. The storyboard
  * has its rails at y = 14 from x = 2 to 8 along z = 1 and z = 7, the drive at (1, 14, 1) and a motor west of it.
  */
 public final class CranePonderScenes {
@@ -137,6 +138,14 @@ public final class CranePonderScenes {
 
         for (int[] c : new int[][] {{4, 2}, {11, 2}, {4, 8}, {11, 8}})
             PonderText.build(scene, util, c[0], 1, c[1], c[0], 3, c[1], Direction.DOWN);
+        var obstruction = QUARRY_START.east(2);
+        scene.world().setBlock(obstruction, Blocks.CHEST.defaultBlockState(), false);
+        scene.world().showSection(util.select().position(obstruction), Direction.DOWN);
+        scene.overlay().showOutline(PonderPalette.RED, "obstruction", util.select().position(obstruction), 130);
+        quarryText(scene, util, lang, "obstruction", obstruction);
+        scene.world().setBlock(obstruction, Blocks.AIR.defaultBlockState(), false);
+        scene.idle(10);
+        scene.world().setBlock(obstruction, CraneFrame.girder(Direction.Axis.X), false);
         PonderText.build(scene, util, 4, 4, 2, 11, 4, 2, Direction.WEST);
         PonderText.build(scene, util, 4, 4, 8, 11, 4, 8, Direction.NORTH);
         quarryText(scene, util, lang, "build", QUARRY_START);
