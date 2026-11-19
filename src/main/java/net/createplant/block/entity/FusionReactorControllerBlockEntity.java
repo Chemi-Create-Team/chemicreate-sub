@@ -55,6 +55,7 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
     public static final double MIN_PLASMA_HEATING_WATTS = 40_000_000;
     private static final double BLANKET_HEAT_CAPACITY = 500_000_000;
     private static final double BLANKET_TRIP_KELVIN = 650;
+    private static final double OFFLINE_COOLDOWN_KELVIN_PER_TICK = .25;
     private static final double COIL_COOLDOWN_HELIUM_MB = 32_000;
     /** Create moves large fluid parcels asynchronously; one second filters scheduling gaps without masking a stopped loop. */
     private static final int COOLANT_FLOW_GRACE_TICKS = 20;
@@ -199,10 +200,13 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
             startupJoules = 0;
             dumpMagnets(quench);
         } else {
-            chargeMagnets();
+            if (magnetCommand) chargeMagnets();
+            else dumpMagnets(false);
             runPlasma(pumpRpm);
         }
         transferBlanketHeat();
+        if ((emergency || !plasmaCommand) && blanketKelvin > FusionPhysics.AMBIENT_KELVIN)
+            blanketKelvin = Math.max(FusionPhysics.AMBIENT_KELVIN, blanketKelvin - OFFLINE_COOLDOWN_KELVIN_PER_TICK);
         if (previousFusion > 0 && fusionWatts == 0 && (plasmaCommand || emergency || quench)) damageFromDisruption(previousFusion);
         updateStatus();
         sync(fusionWatts > 0);

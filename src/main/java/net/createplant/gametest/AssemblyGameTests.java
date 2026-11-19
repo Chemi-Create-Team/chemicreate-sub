@@ -1,6 +1,8 @@
 package net.createplant.gametest;
 
 import com.simibubi.create.AllDataComponents;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.schematics.cannon.SchematicannonBlockEntity;
 import java.util.LinkedHashMap;
 import net.createplant.CreatePlant;
@@ -13,9 +15,12 @@ import net.createplant.block.entity.CraneDriveBlockEntity;
 import net.createplant.block.entity.FacilityConstructorBlockEntity;
 import net.createplant.block.entity.FusionReactorControllerBlockEntity;
 import net.createplant.block.entity.RodCapBlockEntity;
+import net.createplant.fusion.FusionPhysics;
 import net.createplant.fusion.FusionStructure;
 import net.createplant.inventory.FacilityConstructorMenu;
 import net.createplant.nuclear.ReactorCoreStructure;
+import net.createplant.nuclear.ReactorConsoleButton;
+import net.createplant.nuclear.ReactorConsoleStructure;
 import net.createplant.nuclear.ReactorCoreVariants;
 import net.createplant.nuclear.ReactorPhysics;
 import net.createplant.registry.CEAssembly;
@@ -36,6 +41,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -299,7 +305,7 @@ public class AssemblyGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "test_fusion", timeoutTicks = 100)
+    @GameTest(template = "test_fusion", batch = "assembly_fusion_service", timeoutTicks = 1600)
     public static void cannonBuildsBothReactorsAndTheirCranesUsingFiniteMaterials(GameTestHelper h) {
         var be = constructor(h, AssemblyPlan.Kind.FUSION, new BlockPos(20, 240, 4), Direction.SOUTH);
         be.configure(1, 2);
@@ -307,7 +313,7 @@ public class AssemblyGameTests {
         var controller = be.plan().stream().filter(t -> t.state().is(CEFusion.CONTROLLER.get())).findFirst().orElseThrow();
         var result = FusionStructure.scan(h.getLevel(), controller.pos(), Direction.SOUTH);
         h.assertTrue(result.formed(), "Actual projectile placements form the fusion reactor: " + result.reason() + " at " + result.fault());
-        formedCrane(h, be);
+        var fusionCrane = formedCrane(h, be);
 
         var rbmk = constructor(h, AssemblyPlan.Kind.RBMK, new BlockPos(60, 240, 4), Direction.EAST);
         rbmk.configureHeight(0);
@@ -315,7 +321,76 @@ public class AssemblyGameTests {
         var channel = rbmk.plan().stream().filter(t -> t.state().is(CENuclear.FUEL_CHANNEL.get())).findFirst().orElseThrow();
         h.assertTrue(ReactorCoreStructure.scan(h.getLevel(), channel.pos()).formed(), "Actual projectile placements form the RBMK");
         formedCrane(h, rbmk);
-        h.succeed();
+        checkFusionServiceAfterShutdown(h, (FusionReactorControllerBlockEntity) h.getLevel().getBlockEntity(controller.pos()), fusionCrane);
+    }
+
+    private static void checkFusionServiceAfterShutdown(GameTestHelper h, FusionReactorControllerBlockEntity reactor, CraneDriveBlockEntity crane) {
+        var level = h.getLevel();
+        var drive = crane.getBlockPos();
+        var desk = new BlockPos(20, 240, 0);
+        Direction facing = Direction.NORTH;
+        ReactorConsoleStructure.DESK.place(h::setBlock, desk, facing);
+        h.assertTrue(ReactorConsoleStructure.DESK.tryForm(level, h.absolutePos(desk)), "The assembled console can control the printed crane");
+        var player = ReactorConsoleGameTests.linkCrane(h, drive, h.absolutePos(desk));
+
+        reactor.tick();
+        var wornBlanket = CEFusion.LITHIUM_LEAD_BLANKET.toStack();
+        wornBlanket.setDamageValue(12000);
+        var wornDivertor = CEFusion.DIVERTOR_CASSETTE.toStack();
+        wornDivertor.setDamageValue(8000);
+        h.assertTrue(reactor.blanketPort().insertItem(0, wornBlanket, false).isEmpty()
+            && reactor.blanketPort().insertItem(1, wornDivertor, false).isEmpty(), "Seed both worn parts from a previous run");
+        var hot = reactor.saveWithoutMetadata(level.registryAccess());
+        hot.putBoolean("MagnetCommand", true);hot.putBoolean("PlasmaCommand", true);
+        hot.putDouble("CoilKelvin", FusionPhysics.LIQUID_HELIUM_KELVIN);
+        hot.putDouble("MagnetJoules", FusionPhysics.MAGNET_STORED_JOULES * .03);
+        hot.putDouble("BlanketKelvin", FusionPhysics.COOLANT_INLET_KELVIN + 5);
+        reactor.loadWithComponents(hot, level.registryAccess());
+        reactor.toggle(FusionReactorControllerBlockEntity.Command.PLASMA, player);
+        reactor.toggle(FusionReactorControllerBlockEntity.Command.MAGNETS, player);
+        h.assertTrue(!reactor.maintenanceReady(), "Turning both controls off does not skip the maintenance checks");
+
+        var items = level.getCapability(Capabilities.ItemHandler.BLOCK, crane.getBlockPos(), Direction.UP);
+        var damagedCartridge = CEFusion.IRRADIATION_CARTRIDGE.toStack();
+        damagedCartridge.setDamageValue(1);
+        h.assertTrue(items.insertItem(0, damagedCartridge, false).isEmpty()
+            && items.insertItem(1, CEFusion.LITHIUM_LEAD_BLANKET.toStack(), false).isEmpty()
+            && items.insertItem(2, CEFusion.DIVERTOR_CASSETTE.toStack(), false).isEmpty(), "Supply parts through the crane's item capability");
+        for (int slot = 3; slot < items.getSlots(); slot++)
+            h.assertTrue(items.insertItem(slot, AllBlocks.METAL_GIRDER.asStack(64), false).isEmpty(), "Fill every remaining store slot");
+        level.setBlockAndUpdate(drive.north(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.SOUTH));
+        h.runAfterDelay(2, () -> ((CreativeMotorBlockEntity) level.getBlockEntity(drive.north())).generatedSpeed.setValue(128));
+        startAutomatic(h, desk, facing);
+
+        h.startSequence()
+            .thenWaitUntil(() -> h.assertTrue(crane.status().equals("fusion_unsafe"), "A hot, charged tokamak makes the crane wait"))
+            .thenWaitUntil(() -> h.assertTrue(crane.working() && crane.status().equals("fusion_service") && !reactor.emergency(),
+                "A normal shutdown reaches maintenance temperature and charge: " + reactor.blanketKelvin() + " K, " + reactor.magnetCharge()))
+            .thenExecute(() -> ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE))
+            .thenIdle(25)
+            .thenExecute(() -> {
+                h.assertTrue(crane.status().equals("console_paused") && reactor.componentRemaining(0) == 12000 && reactor.componentRemaining(1) == 8000,
+                    "A stopped crane preserves the worn parts and has yet to consume the replacements");
+                startAutomatic(h, desk, facing);
+            })
+            .thenWaitUntil(() -> h.assertTrue(reactor.componentRemaining(0) == 24000 && reactor.componentRemaining(1) == 16000,
+                "AUTO finishes both exchanges with a full store and a damaged cartridge at the head: " + crane.status()))
+            .thenExecute(() -> {
+                int blankets = 0, divertors = 0;
+                for (int slot = 0; slot < items.getSlots(); slot++) {
+                    var stack = items.getStackInSlot(slot);
+                    if (stack.is(CEFusion.SPENT_BLANKET.get())) blankets += items.extractItem(slot, 1, false).getCount();
+                    if (stack.is(CEFusion.SPENT_DIVERTOR.get())) divertors += items.extractItem(slot, 1, false).getCount();
+                }
+                h.assertTrue(blankets == 1 && divertors == 1 && items.getStackInSlot(0).getDamageValue() == 1,
+                    "The item port returns exactly one spent part of each kind and the damaged spare stays untouched");
+            })
+            .thenSucceed();
+    }
+
+    private static void startAutomatic(GameTestHelper h, BlockPos desk, Direction facing) {
+        ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
+        ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
     }
 
     private static void print(GameTestHelper h, FacilityConstructorBlockEntity be) {

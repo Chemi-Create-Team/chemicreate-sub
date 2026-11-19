@@ -35,8 +35,8 @@ public final class CETransport {
     public static final DeferredBlock<MaterialPipeBlock> CERAMIC_PIPE=pipe("ceramic_pipe",PipeMaterial.CERAMIC,BlockBehaviour.Properties.ofFullCopy(Blocks.TERRACOTTA).noOcclusion());
     static { ITEMS.registerSimpleItem("unfired_ceramic_pipe"); }
     public static final java.util.List<DeferredBlock<net.createplant.block.MaterialPumpBlock>> MATERIAL_PUMPS=
-        java.util.stream.Stream.of("reinforced", "nickel_alloy", "zirconium", "stainless_steel",
-            "cryogenic", "pvc", "resin", "gas", "large_gas").map(CETransport::pump).toList();
+        java.util.List.of(pump("reinforced", .92f), pump("nickel_alloy", 1.11f), pump("zirconium", 1.18f), pump("stainless_steel", 1.04f),
+            pump("cryogenic", .82f), pump("pvc", 1.27f), pump("resin", 1.01f), pump("gas", 1.14f), pump("large_gas", .73f));
     public static final Supplier<BlockEntityType<com.simibubi.create.content.fluids.pump.PumpBlockEntity>> MATERIAL_PUMP_ENTITY=TYPES.register("material_pump",()->
         BlockEntityType.Builder.of((pos,state)->new com.simibubi.create.content.fluids.pump.PumpBlockEntity(CETransport.MATERIAL_PUMP_ENTITY.get(),pos,state),
             MATERIAL_PUMPS.stream().map(DeferredBlock::get).toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
@@ -113,8 +113,8 @@ public final class CETransport {
         var block=BLOCKS.registerBlock(id,p->new MaterialPipeBlock(p,material),properties);
         ITEMS.registerSimpleBlockItem(block);return block;
     }
-    private static DeferredBlock<net.createplant.block.MaterialPumpBlock> pump(String material) {
-        var block=BLOCKS.registerBlock(material+"_pump",net.createplant.block.MaterialPumpBlock::new,
+    private static DeferredBlock<net.createplant.block.MaterialPumpBlock> pump(String material,float pitch) {
+        var block=BLOCKS.registerBlock(material+"_pump",properties->new net.createplant.block.MaterialPumpBlock(properties,pitch),
             BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion());
         ITEMS.registerSimpleBlockItem(block);return block;
     }

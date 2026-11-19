@@ -382,6 +382,7 @@ TEXT = {
     'mode.2': ('MODE: AUTO', 'モード：AUTO', '模式：AUTO'),
 }
 CRANE_STATUS = {
+    'output': ('Crane storage is full. Clear a slot for recovered parts.', 'クレーンの格納庫が満杯です。回収用のスロットを空けてください。', '起重机储物槽已满，请腾出一个回收槽位。'),
     'console_paused': ('Paused by the control desk', '制御盤で停止中', '控制台已暂停'),
     'console_manual': ('Ready for manual travel', '手動移動待機中', '等待手动移动'),
     'console_load': ('Grapple paused mid-operation; use AUTO to resume', '昇降途中で保持中。自動に切り替えると再開します。', '吊具在升降途中暂停。切换到自动模式以继续。'),

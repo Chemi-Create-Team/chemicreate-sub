@@ -5,18 +5,17 @@ This is a numerical asset check, not an assessment of perceived sound quality.
 Requires libsndfile with Vorbis support; no Python audio package is needed.
 """
 import argparse
-import ast
 import ctypes
 import ctypes.util
 import hashlib
 import json
 import math
 from pathlib import Path
+from generate_machine_sounds import PROFILES, RATE, SECONDS, SHORT_SECONDS
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
 NAMESPACE = 'create_refinery_n_reactors'
-RATE, SECONDS = 22050, 6
 
 
 class Info(ctypes.Structure):
@@ -39,13 +38,13 @@ def sound_library():
     return lib
 
 
-def decode(lib, path):
+def decode(lib, path, seconds):
     info = Info()
     handle = lib.sf_open(str(path).encode(), 0x10, ctypes.byref(info))
     assert handle, f'Cannot decode {path.name}: {lib.sf_strerror(None).decode()}'
     try:
         assert info.channels == 1 and info.samplerate == RATE, (path.name, info.channels, info.samplerate)
-        assert info.frames == RATE * SECONDS, (path.name, 'Expected exactly six seconds', info.frames)
+        assert info.frames == RATE * seconds, (path.name, f'Expected exactly {seconds} seconds', info.frames)
         assert info.format & 0x0fff0000 == 0x200000 and info.format & 0xffff == 0x0060, \
             (path.name, 'Expected Ogg/Vorbis', hex(info.format))
         buffer = (ctypes.c_double * info.frames)()
@@ -93,7 +92,7 @@ def definitions(profiles, required):
         assert not required, 'sounds.json has not been created yet'
         return {'status': 'pending', 'reason': 'sounds.json has not been created yet'}
     events = json.loads(path.read_text())
-    languages = {locale: json.loads((ASSETS / 'lang' / (locale + '.json')).read_text()) for locale in ('en_us', 'ja_jp')}
+    languages = {locale: json.loads((ASSETS / 'lang' / (locale + '.json')).read_text()) for locale in ('en_us', 'ja_jp', 'zh_cn')}
     matched, checked = set(), []
     for event, spec in events.items():
         references = spec.get('sounds', [])
@@ -113,7 +112,7 @@ def definitions(profiles, required):
             continue
         subtitle = spec.get('subtitle')
         assert subtitle and all(isinstance(values.get(subtitle), str) and values[subtitle].strip() for values in languages.values()), \
-            (event, 'Missing English/Japanese subtitle', subtitle)
+            (event, 'Missing English/Japanese/Chinese subtitle', subtitle)
         checked.append({'event': event, 'files': machine_files, 'subtitle': subtitle})
     assert matched == profiles, ('Machine loops missing from sounds.json', sorted(profiles - matched))
     return {'status': 'passed', 'events': checked}
@@ -124,9 +123,7 @@ def main():
     parser.add_argument('--require-definitions', action='store_true', help='fail while sounds.json or its subtitles are missing')
     parser.add_argument('--output', type=Path, default=Path('/workspace/outputs/powders-compact-reactor-sounds/audio-validation.json'))
     args = parser.parse_args()
-    source = ast.parse((ROOT / 'tools/generate_machine_sounds.py').read_text())
-    profiles = set(next(ast.literal_eval(node.value) for node in source.body if isinstance(node, ast.Assign)
-                        and any(isinstance(target, ast.Name) and target.id == 'PROFILES' for target in node.targets)))
+    profiles = set(PROFILES)
     files = {path.stem: path for path in (ASSETS / 'sounds/machine').glob('*.ogg')}
     assert profiles and files.keys() == profiles, ('Missing or unexpected loop assets', sorted(profiles), sorted(files))
     lib = sound_library()
@@ -139,7 +136,8 @@ def main():
     failures = []
     for name, path in sorted(files.items()):
         try:
-            metrics = signal_metrics(decode(lib, path)) | {'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
+            seconds = SHORT_SECONDS if len(PROFILES[name]) == 6 else SECONDS
+            metrics = signal_metrics(decode(lib, path, seconds)) | {'bytes': path.stat().st_size, 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
             report['loops'][name] = metrics
             failures.extend(name + ': ' + check for check, passed in metrics['checks'].items() if not passed)
         except AssertionError as error:
@@ -150,6 +148,9 @@ def main():
     except AssertionError as error:
         report['resources'] = {'status': 'failed', 'reason': str(error)}
         failures.append('resources: ' + str(error))
+    hashes = [metrics['sha256'] for metrics in report['loops'].values() if 'sha256' in metrics]
+    if len(hashes) != len(set(hashes)):
+        failures.append('Multiple machine loops use identical Vorbis files')
     report['status'] = 'failed' if failures else 'passed' if report['resources']['status'] == 'passed' else 'audio_passed_resources_pending'
     report['failures'] = failures
     args.output.parent.mkdir(parents=True, exist_ok=True)

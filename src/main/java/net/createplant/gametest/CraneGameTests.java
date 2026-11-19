@@ -2,7 +2,6 @@ package net.createplant.gametest;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
-import java.util.List;
 import net.createplant.CreatePlant;
 import net.createplant.block.CraneDriveBlock;
 import net.createplant.block.CraneFrame;
@@ -22,14 +21,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -213,15 +209,7 @@ public class CraneGameTests {
         ReactorConsoleStructure.DESK.place(h::setBlock, desk, facing);
         h.assertTrue(ReactorConsoleStructure.DESK.tryForm(level, h.absolutePos(desk)), "Assemble the physical desk without a reactor Display Link");
         var console = (ReactorControlConsoleBlockEntity) h.getBlockEntity(desk);
-        var player = h.makeMockPlayer(GameType.SURVIVAL);
-        var unit = CENuclear.REACTOR_CONTROL_CONSOLE_ITEM.get().getDefaultInstance();
-        player.setItemInHand(InteractionHand.MAIN_HAND, unit);
-        for (var relative : List.of(drive, desk)) {
-            var pos = h.absolutePos(relative);
-            var hit = new BlockHitResult(pos.getCenter(), Direction.UP, pos, false);
-            h.assertTrue(level.getBlockState(pos).useItemOn(unit, level, player, InteractionHand.MAIN_HAND, hit).consumesAction(),
-                "The same console unit selects the crane and links the desk");
-        }
+        var player = ReactorConsoleGameTests.linkCrane(h, h.absolutePos(drive), h.absolutePos(desk));
         h.assertTrue(h.absolutePos(desk).equals(crane.console()), "Both endpoints link after the physical item interaction");
         double[] slide = {0};
         h.startSequence()
@@ -250,6 +238,14 @@ public class CraneGameTests {
                 var port = level.getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(CAP), Direction.UP);
                 h.assertTrue(port.insertItem(2, CENuclear.FUEL_ROD.toStack(), false).isEmpty(), "Load a fuel position for the exchange");
                 column.burn(column.rodJoules());
+                var target = net.createplant.registry.CEFusionFuel.LITHIUM_TARGET.toStack();
+                h.assertTrue(port.insertItem(0, target, false).isEmpty(), "Load a separate irradiation target");
+                var saved = column.saveWithoutMetadata(level.registryAccess());
+                var holes = saved.getByteArray("Holes");
+                holes[0] = 4;
+                saved.putByteArray("Holes", holes);
+                column.loadWithComponents(saved, level.registryAccess());
+                h.assertTrue(column.irradiatedTargets() == 1, "Restore an irradiated target from a finished run");
                 rack.set(0, FuelPoolBlockEntity.FRESH);
                 ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
             })
@@ -269,9 +265,26 @@ public class CraneGameTests {
             })
             .thenWaitUntil(() -> h.assertTrue(crane.status().equals("console_load") && crane.slide() == slide[0],
                 "Manual travel does not move a grapple while it is part way through a lift"))
-            .thenExecute(() -> ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE))
-            .thenWaitUntil(() -> h.assertTrue(column.fresh() == 1 && poolCount(h, FuelPoolBlockEntity.SPENT) == 1 && crane.carried() == 0,
-                "Resuming AUTO deposits one old assembly and loads one new one"))
+            .thenExecute(() -> {
+                h.setBlock(drive.west(), Blocks.AIR);
+                crane.loadWithComponents(crane.saveWithoutMetadata(level.registryAccess()), level.registryAccess());
+                console.loadWithComponents(console.saveWithoutMetadata(level.registryAccess()), level.registryAccess());
+                h.setBlock(drive.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+                h.runAfterDelay(2, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(drive.west())).generatedSpeed.setValue(128));
+            })
+            .thenWaitUntil(() -> h.assertTrue(crane.carried() == 2 && crane.status().equals("console_paused")
+                && h.absolutePos(desk).equals(crane.console()) && console.linksCrane(h.absolutePos(drive)),
+                "Both saved endpoints and the spent rod survive reload with the crane stopped"))
+            .thenWaitUntil(() -> h.assertTrue(crane.getSpeed() != 0, "The reattached motor restores Create power"))
+            .thenExecute(() -> {
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
+                ReactorConsoleGameTests.click(h, desk, facing, ReactorConsoleButton.CRANE_MODE);
+            })
+            .thenWaitUntil(() -> h.assertTrue(column.fresh() == 1 && poolCount(h, FuelPoolBlockEntity.SPENT) == 1 && crane.carried() == 0
+                && column.irradiatedTargets() == 1, "Resuming AUTO exchanges only the fuel rod and leaves the irradiated target intact: "
+                    + crane.status() + ", speed=" + crane.getSpeed() + ", carried=" + crane.carried() + ", loaded=" + column.fresh()
+                    + ", target=" + column.irradiatedTargets() + ", pool spent=" + poolCount(h, FuelPoolBlockEntity.SPENT)
+                    + ", mode=" + console.craneModeFor(h.absolutePos(drive))))
             .thenExecute(() -> {
                 console.loadWithComponents(console.saveWithoutMetadata(level.registryAccess()), level.registryAccess());
                 h.assertTrue(console.linksCrane(h.absolutePos(drive)) && console.craneModeFor(h.absolutePos(drive)) == ReactorControlConsoleBlockEntity.CraneMode.STOPPED,
@@ -299,7 +312,10 @@ public class CraneGameTests {
                 var column = (FuelChannelBlockEntity) h.getBlockEntity(CORE);
                 column.wearControl(0, .5);
                 var port = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(drive), Direction.UP);
-                port.insertItem(0, new ItemStack(CENuclear.CONTROL_ROD.get(), 2), false);
+                h.assertTrue(port.insertItem(0, CENuclear.CONTROL_ROD.toStack(), false).isEmpty()
+                    && port.insertItem(1, CENuclear.CONTROL_ROD.toStack(), false).isEmpty(), "Supply two replacement absorbers");
+                for (int slot = 2; slot < port.getSlots(); slot++)
+                    port.insertItem(slot, AllBlocks.METAL_GIRDER.asStack(64), false);
                 h.setBlock(drive.above(), Blocks.REDSTONE_BLOCK);
             })
             .thenWaitUntil(() -> {

@@ -528,7 +528,7 @@ CAPTIONS = {
     'fusion_maintenance': {
         'title': ('Remote blanket and divertor maintenance', 'クレーンでブランケットとダイバータを遠隔交換する'),
         'build': ('Span the 11 m tokamak with the existing gantry crane. The top of the reactor must be within 15 m below the rails.', '既存門型クレーンで11 mのトカマクを跨ぎます。炉の上面からレールまでを15 m以内にします。'),
-        'safe': ('Stop plasma, discharge magnets below 1%, and circulate cold water until the blanket falls below 100 °C.', 'プラズマを停止、磁場を1%未満へ放電し、冷水を循環させてブランケットを100 ℃以下へ冷却します。'),
+        'safe': ('Switch off the plasma and magnets. Wait for the field to fall below 1% and the blanket to cool to 100 °C or below.', 'プラズマと磁石を切ります。磁場が1％未満に下がり、ブランケットが100℃以下になるまで待ちます。'),
         'supply': ('Select Fusion Remote Maintenance with the Create wrench. Feed fresh blanket cartridges and tungsten divertor cassettes to the drive using a funnel.', 'Createレンチで核融合遠隔保守モードを選び、駆動部へファンネルで新品ブランケットとタングステンダイバータを搬入します。'),
         'exchange': ('Apply rotation and redstone. The bridge and trolley travel to the nearest point on top of the reactor, lower the handling tool and exchange components with more than 25 percent wear.', '回転とレッドストーンを供給すると、橋桁と台車が炉の上面の最寄りの位置へ移動し、吊具を下ろして25パーセント以上損耗した部品を交換します。'),
         'damage': ('Ordinary operation wears both parts; an unplanned plasma trip damages them further. Used components leave through the drive output funnel.', '通常運転で両部品が損耗し、プラズマ異常停止で追加損傷。使用済み部品は駆動部の搬出ファンネルから回収します。'),

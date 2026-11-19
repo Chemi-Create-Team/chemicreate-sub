@@ -450,11 +450,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             double ru = u(top), rv = v(top), serviceDepth = depthAbove(top);
             if (!reactor.maintenanceReady()) { waitReason = "fusion_unsafe";continue; }
             for (int index = 0; index < 2; index++) {
-                var item = fusionSupply(index);
-                int lifetime = index == 0 ? 24_000 : 16_000;
-                // An irradiation cartridge is only worth its yield once used up, so it stays in until then.
-                boolean irradiating = reactor.blanketPort().getStackInSlot(index).is(net.createplant.registry.CEFusion.IRRADIATION_CARTRIDGE.get());
-                if (reactor.componentRemaining(index) > (irradiating ? 0 : lifetime * .75) || item == null) continue;
+                if (!fusionServiceDue(reactor, index) || fusionSupply(index) < 0) continue;
                 fusionComponent = index;
                 return new Task(Job.FUSION, ru, rv, serviceDepth, 0, 120, pos, index);
             }
@@ -468,12 +464,14 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         BlockPos a = structure.start(), b = structure.at(structure.length() - 1, structure.span());
         var tops = new java.util.ArrayList<BlockPos>();
         boolean clearance = false;
+        int absorber = carried == NONE ? freshSlot(CENuclear.CONTROL_ROD.get()) : -1;
+        boolean blockedAbsorber = false;
         for (BlockPos controller : ReactorCores.controllersIn(level, Math.min(a.getX(), b.getX()), Math.min(a.getZ(), b.getZ()), Math.max(a.getX(), b.getX()), Math.max(a.getZ(), b.getZ()))) {
             if (!(level.getBlockEntity(controller) instanceof FuelChannelBlockEntity lead) || lead.core() == null || !lead.core().formed()) continue;
             var core = lead.core();
-            for (int j = 0; j < core.rodColumns(); j++) {
+            for (int j = 0; absorber >= 0 && !blockedAbsorber && j < core.rodColumns(); j++) {
                 BlockPos top = core.rodTop(j);
-                if (!core.rodWithdrawn(j) || core.rodWear(j) < RENEW_WEAR || count(CENuclear.CONTROL_ROD.get()) == 0) continue;
+                if (!core.rodWithdrawn(j) || core.rodWear(j) < RENEW_WEAR) continue;
                 float[] at = FuelChannelBlockEntity.HOLES[core.rodSlot(j)];
                 double ru = u(top) + at[0] * structure.along().getStepX() + at[1] * structure.along().getStepZ();
                 double rv = v(top) + at[0] * structure.across().getStepX() + at[1] * structure.across().getStepZ();
@@ -482,6 +480,10 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
                     clearance = true;
                     continue;
                 }
+                if (!outputRoomAfterExchange(store.getStackInSlot(absorber), CENuclear.SPENT_CONTROL_ROD.toStack())) {
+                    blockedAbsorber = true;
+                    break;
+                }
                 return new Task(Job.ROD, ru, rv, SERVICE_MAST_DEPTH, SERVICE_MAST_DEPTH, 60, controller, j);
             }
             for (BlockPos top : core.fuelTops()) if (reachable(u(top), v(top))) {
@@ -489,7 +491,8 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
                 else clearance = true;
             }
         }
-        return planFuel(tops, clearance);
+        Task fuel = planFuel(tops, clearance);
+        return fuel == null && blockedAbsorber && waitReason.equals("waiting") ? waitFor("output") : fuel;
     }
 
     /**
@@ -507,20 +510,22 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             if (drop != null) return drop;
             if (!allPools.isEmpty()) return waitFor(poolWaitReason(allPools, pools));
             if (!ItemHandlerHelper.insertItem(store, new ItemStack(CENuclear.SPENT_FUEL_ROD.get()), false).isEmpty()) {
-                return waitFor("full");
+                return waitFor("output");
             }
             carry(NONE, false);
         }
         int spent = -1, empty = -1, spentSlot = 0, emptySlot = 0;
         ItemStack freshFuel = carried == FRESH ? carriedFuel() : new ItemStack(CENuclear.FUEL_ROD.get());
-        for (int i = 0; i < tops.size() && spent < 0; i++) {
+        for (int i = 0; i < tops.size(); i++) {
             int c = (fuelCursor + i) % tops.size();
             var column = level.getCapability(Capabilities.ItemHandler.BLOCK, tops.get(c), Direction.UP);
             if (column == null) continue;
             for (int slot = 0; slot < column.getSlots(); slot++) {
-                if (spent < 0 && !column.extractItem(slot, 1, true).isEmpty()) { spent = c; spentSlot = slot; }
-                if (empty < 0 && column.getStackInSlot(slot).isEmpty() && column.isItemValid(slot, freshFuel)) { empty = c; emptySlot = slot; }
+                var stack = column.getStackInSlot(slot);
+                if (carried != FRESH && spent < 0 && stack.is(CENuclear.SPENT_FUEL_ROD.get())) { spent = c; spentSlot = slot; }
+                if (empty < 0 && stack.isEmpty() && column.isItemValid(slot, freshFuel)) { empty = c; emptySlot = slot; }
             }
+            if (empty >= 0 && (carried == FRESH || spent >= 0)) break;
         }
         if (carried == FRESH) {
             if (empty >= 0) return holeTask(Job.INSERT, tops.get(fuelCursor = empty), emptySlot);
@@ -528,7 +533,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             if (back != null) return back;
             if (!allPools.isEmpty()) return waitFor(poolWaitReason(allPools, pools));
             if (!ItemHandlerHelper.insertItem(store, carriedFuel(), false).isEmpty()) {
-                return waitFor("full");
+                return waitFor("output");
             }
             carry(NONE, false);
             return null;
@@ -536,7 +541,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         boolean room = pools.stream().anyMatch(p -> pool(p).find(FuelPoolBlockEntity.EMPTY) >= 0)
             || allPools.isEmpty() && ItemHandlerHelper.insertItem(store, new ItemStack(CENuclear.SPENT_FUEL_ROD.get()), true).isEmpty();
         if (spent >= 0 && room) return holeTask(Job.EXTRACT, tops.get(fuelCursor = spent), spentSlot);
-        if (empty < 0) return spent >= 0 && !allPools.isEmpty() ? waitFor(poolWaitReason(allPools, pools))
+        if (empty < 0) return spent >= 0 ? waitFor(allPools.isEmpty() ? "output" : poolWaitReason(allPools, pools))
             : waitFor(tops.isEmpty() ? (clearance ? "clearance" : "reactor") : "waiting");
         Task fetch = poolTask(pools, Job.PICK, FuelPoolBlockEntity.FRESH, tops);
         if (fetch != null) return fetch;
@@ -613,7 +618,8 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         switch (task.job()) {
             case EXTRACT -> {
                 var column = level.getCapability(Capabilities.ItemHandler.BLOCK, task.target(), Direction.UP);
-                if (column == null || column.extractItem(task.index(), 1, false).isEmpty()) return false;
+                if (column == null || !column.extractItem(task.index(), 1, true).is(CENuclear.SPENT_FUEL_ROD.get())
+                    || column.extractItem(task.index(), 1, false).isEmpty()) return false;
                 carry(SPENT, false);
             }
             case PICK -> {
@@ -642,11 +648,21 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     }
 
     /** The fresh part for a fusion slot: an irradiation cartridge in the store takes the blanket's place before lithium-lead does. */
-    private net.minecraft.world.item.Item fusionSupply(int index) {
-        if (index == 1) return count(net.createplant.registry.CEFusion.DIVERTOR_CASSETTE.get()) > 0 ? net.createplant.registry.CEFusion.DIVERTOR_CASSETTE.get() : null;
-        for (var item : List.of(net.createplant.registry.CEFusion.IRRADIATION_CARTRIDGE.get(), net.createplant.registry.CEFusion.LITHIUM_LEAD_BLANKET.get()))
-            if (count(item) > 0) return item;
-        return null;
+    private int fusionSupply(int index) {
+        if (index == 1) return freshSlot(net.createplant.registry.CEFusion.DIVERTOR_CASSETTE.get());
+        int cartridge = freshSlot(net.createplant.registry.CEFusion.IRRADIATION_CARTRIDGE.get());
+        return cartridge >= 0 ? cartridge : freshSlot(net.createplant.registry.CEFusion.LITHIUM_LEAD_BLANKET.get());
+    }
+
+    private int freshSlot(Item item) {
+        int first = -1;
+        for (int slot = 0; slot < SLOTS; slot++) {
+            var stack = store.getStackInSlot(slot);
+            if (!stack.is(item) || stack.getDamageValue() != 0) continue;
+            if (stack.getCount() == 1) return slot;
+            if (first < 0) first = slot;
+        }
+        return first;
     }
 
     private static ItemStack spent(ItemStack installed, int index) {
@@ -656,23 +672,30 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         return installed.getDamageValue() >= installed.getMaxDamage() ? new ItemStack(net.createplant.registry.CEFusion.IRRADIATED_CARTRIDGE.get()) : installed.copy();
     }
 
+    private static boolean fusionServiceDue(FusionReactorControllerBlockEntity reactor, int index) {
+        int lifetime = index == 0 ? 24_000 : 16_000;
+        boolean irradiating = reactor.blanketPort().getStackInSlot(index).is(net.createplant.registry.CEFusion.IRRADIATION_CARTRIDGE.get());
+        return reactor.componentRemaining(index) <= (irradiating ? 0 : lifetime * .75);
+    }
+
+    private boolean outputRoomAfterExchange(ItemStack replacement, ItemStack used) {
+        return used.isEmpty() || replacement.getCount() == 1 || ItemHandlerHelper.insertItem(store, used, true).isEmpty();
+    }
+
     private boolean serviceFusion(BlockPos pos, int index) {
         if (!(level.getBlockEntity(pos) instanceof FusionReactorControllerBlockEntity reactor) || !reactor.formed() || !reactor.maintenanceReady()) {
             cancelTask();stop("fusion_unsafe");return false;
         }
-        var item = fusionSupply(index);
-        if (item == null) { cancelTask();stop("waiting");return false; }
+        if (!fusionServiceDue(reactor, index)) return true;
+        int slot = fusionSupply(index);
+        if (slot < 0) { cancelTask();stop("waiting");return false; }
+        ItemStack fresh = store.getStackInSlot(slot);
         ItemStack spent = spent(reactor.blanketPort().getStackInSlot(index), index);
-        if (!spent.isEmpty() && !ItemHandlerHelper.insertItem(store, spent, true).isEmpty()) { stop("output");return false; }
-        for (int slot = 0; slot < SLOTS; slot++) {
-            ItemStack fresh = store.getStackInSlot(slot);
-            if (!fresh.is(item) || fresh.getDamageValue() != 0) continue;
-            if (!reactor.exchangeComponent(index, fresh.copyWithCount(1))) return false;
-            store.extractItem(slot, 1, false);
-            if (!spent.isEmpty()) ItemHandlerHelper.insertItem(store, spent, false);
-            changed();return true;
-        }
-        cancelTask();stop("waiting");return false;
+        if (!outputRoomAfterExchange(fresh, spent)) { stop("output");return false; }
+        if (!reactor.exchangeComponent(index, fresh.copyWithCount(1))) return false;
+        store.extractItem(slot, 1, false);
+        if (!spent.isEmpty()) ItemHandlerHelper.insertItem(store, spent, false);
+        changed();return true;
     }
 
     /** The fresh rod in the grapple goes into its hole; if the hole has been filled meanwhile it stays in the grapple. */
@@ -699,18 +722,13 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     private boolean renew(BlockPos controller, int rod) {
         if (!(level.getBlockEntity(controller) instanceof FuelChannelBlockEntity lead) || lead.core() == null || !lead.core().formed()) return true;
         var core = lead.core();
-        if (rod >= core.rodColumns() || !core.rodWithdrawn(rod) || count(CENuclear.CONTROL_ROD.get()) == 0) return true;
-        if (!ItemHandlerHelper.insertItem(store, new ItemStack(CENuclear.SPENT_CONTROL_ROD.get()), true).isEmpty()) {
-            status("full");
-            return false;
-        }
+        int slot = freshSlot(CENuclear.CONTROL_ROD.get());
+        if (rod >= core.rodColumns() || !core.rodWithdrawn(rod) || core.rodWear(rod) < RENEW_WEAR || slot < 0) return true;
+        ItemStack used = CENuclear.SPENT_CONTROL_ROD.toStack();
+        if (!outputRoomAfterExchange(store.getStackInSlot(slot), used)) { stop("output");return true; }
         if (!core.renewRod(level, rod)) return true;
-        for (int slot = 0; slot < SLOTS; slot++)
-            if (store.getStackInSlot(slot).is(CENuclear.CONTROL_ROD.get())) {
-                store.extractItem(slot, 1, false);
-                break;
-            }
-        ItemHandlerHelper.insertItem(store, new ItemStack(CENuclear.SPENT_CONTROL_ROD.get()), false);
+        store.extractItem(slot, 1, false);
+        ItemHandlerHelper.insertItem(store, used, false);
         return true;
     }
 

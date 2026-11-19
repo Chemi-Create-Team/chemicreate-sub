@@ -56,6 +56,7 @@ public final class GasCentrifugeBlockEntity extends KineticBlockEntity {
         return result;
     }
     public GasCentrifugeBlockEntity leader() { var units = units();return units.isEmpty() ? this : units.getFirst(); }
+    public boolean spinningCascade() { return (members.isEmpty() || members.getFirst().equals(worldPosition)) && stages > 0; }
     public int unitCount() { return members.size(); }
     public int stages() { return leader().stages; }
     public int required() { return leader().required; }

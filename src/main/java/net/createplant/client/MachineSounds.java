@@ -22,14 +22,16 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 /** Client-only, bounded discovery; block entities and server chunks never acquire audio state. */
 public final class MachineSounds {
     static final int RANGE = 32, MAX_LOOPS = 24;
-    private static final int CHUNK_RADIUS = 6, SCAN_INTERVAL = 5, ENTITY_BUDGET = 128, CHUNK_BUDGET = 4;
+    private static final int MAX_PIPE_LOOPS = 4, PIPE_SPACING_SQUARED = 64;
+    private static final int CHUNK_RADIUS = 6, SCAN_INTERVAL = 4, ENTITY_BUDGET = 128, CHUNK_BUDGET = 8, NEAR_CHUNKS = 9;
     private static final Map<BlockPos, Loop> LOOPS = new LinkedHashMap<>();
     private static final List<ChunkPos> OFFSETS = offsets();
     private static ClientLevel level;
     private static ChunkPos origin;
     private static LevelChunk scanningChunk;
     private static Iterator<BlockEntity> scanning;
-    private static int chunkIndex, ticks;
+    private static int nearIndex, farIndex = NEAR_CHUNKS, ticks;
+    private static boolean scanNearby;
 
     private MachineSounds() { }
 
@@ -56,11 +58,11 @@ public final class MachineSounds {
 
     private static void discover(Minecraft mc, Vec3 listener) {
         var nextOrigin = new ChunkPos(BlockPos.containing(listener));
-        if (!nextOrigin.equals(origin)) { origin = nextOrigin;scanning = null;scanningChunk = null;chunkIndex = 0; }
+        if (!nextOrigin.equals(origin)) { resetScan();origin = nextOrigin; }
         int entities = 0, chunks = 0;
         while (entities < ENTITY_BUDGET && chunks < CHUNK_BUDGET) {
             if (scanning == null) {
-                var offset = OFFSETS.get(chunkIndex);chunkIndex=(chunkIndex+1)%OFFSETS.size();
+                var offset = nextOffset();
                 scanningChunk = level.getChunkSource().getChunk(origin.x + offset.x, origin.z + offset.z, ChunkStatus.FULL, false);
                 chunks++;
                 if (scanningChunk == null) continue;
@@ -76,13 +78,63 @@ public final class MachineSounds {
             var source = MachineSoundSource.find(be);
             if (source == null || LOOPS.containsKey(source.owner().getBlockPos()) || !source.active()
                 || source.position().distanceToSqr(listener) > source.range() * source.range()) continue;
+            if (source.pipe() && !roomForPipe(mc, source, listener)) continue;
             if (LOOPS.size() == MAX_LOOPS) {
-                var farthest = LOOPS.entrySet().stream().max(Comparator.comparingDouble(entry -> entry.getValue().source.position().distanceToSqr(listener))).orElseThrow();
-                if (source.position().distanceToSqr(listener) + 4 >= farthest.getValue().source.position().distanceToSqr(listener)) continue;
-                farthest.getValue().finish();mc.getSoundManager().stop(farthest.getValue());LOOPS.remove(farthest.getKey());
+                if (source.pipe()) continue;
+                var farthest = LOOPS.values().stream().max(Comparator.<Loop, Boolean>comparing(loop -> loop.source.pipe())
+                    .thenComparingDouble(loop -> loop.source.position().distanceToSqr(listener))).orElseThrow();
+                if (!farthest.source.pipe() && source.position().distanceToSqr(listener) + 4 >= farthest.source.position().distanceToSqr(listener)) continue;
+                stop(mc, farthest);
             }
             var loop = new Loop(source, ticks);LOOPS.put(source.owner().getBlockPos(), loop);mc.getSoundManager().play(loop);
         }
+    }
+
+    private static ChunkPos nextOffset() {
+        scanNearby = !scanNearby;
+        if (scanNearby) {
+            var near = OFFSETS.get(nearIndex);
+            nearIndex = (nearIndex + 1) % NEAR_CHUNKS;
+            return near;
+        }
+        var far = OFFSETS.get(farIndex++);
+        if (farIndex == OFFSETS.size()) farIndex = NEAR_CHUNKS;
+        return far;
+    }
+
+    private static void resetScan() {
+        scanning = null;scanningChunk = null;origin = null;nearIndex = 0;farIndex = NEAR_CHUNKS;scanNearby = false;
+    }
+
+    private static boolean roomForPipe(Minecraft mc, MachineSoundSource source, Vec3 listener) {
+        Loop nearby = null, farthest = null;
+        double distance = source.position().distanceToSqr(listener), farthestDistance = 0;
+        int pipes = 0;
+        for (Loop loop : LOOPS.values()) {
+            if (!loop.source.pipe()) continue;
+            pipes++;
+            double otherDistance = loop.source.position().distanceToSqr(listener);
+            if (source.kind() == loop.source.kind() && source.position().distanceToSqr(loop.source.position()) < PIPE_SPACING_SQUARED) {
+                if (nearby != null || distance + 4 >= otherDistance) return false;
+                nearby = loop;
+            }
+            if (farthest == null || otherDistance > farthestDistance) {
+                farthest = loop;
+                farthestDistance = otherDistance;
+            }
+        }
+        if (nearby != null) stop(mc, nearby);
+        else if (pipes >= MAX_PIPE_LOOPS) {
+            if (distance + 4 >= farthestDistance) return false;
+            stop(mc, farthest);
+        }
+        return true;
+    }
+
+    private static void stop(Minecraft mc, Loop loop) {
+        loop.finish();
+        mc.getSoundManager().stop(loop);
+        LOOPS.remove(loop.source.owner().getBlockPos());
     }
 
     static int activeCount() { return LOOPS.size(); }
@@ -91,7 +143,7 @@ public final class MachineSounds {
 
     static void clear(Minecraft mc) {
         for (var loop : LOOPS.values()) { loop.finish();mc.getSoundManager().stop(loop); }
-        LOOPS.clear();scanning = null;scanningChunk = null;origin = null;chunkIndex = 0;ticks = 0;
+        LOOPS.clear();resetScan();ticks = 0;
     }
 
     private static List<ChunkPos> offsets() {
@@ -108,7 +160,7 @@ public final class MachineSounds {
         private Loop(MachineSoundSource source, int started) {
             super(source.kind().event.get(), SoundSource.BLOCKS, SoundInstance.createUnseededRandom());
             this.source = source;this.started = started;
-            looping = true;delay = 0;relative = false;volume = source.kind().volume;
+            looping = true;delay = 0;relative = false;volume = source.volume();pitch = source.pitch();
             x = source.position().x;y = source.position().y;z = source.position().z;
         }
 
@@ -119,7 +171,12 @@ public final class MachineSounds {
 
         @Override public void tick() {
             var mc = Minecraft.getInstance();
-            if (mc.level != level || mc.player == null || muted(mc) || !valid(mc.gameRenderer.getMainCamera().getPosition())) finish();
+            if (mc.level != level || mc.player == null || muted(mc) || !valid(mc.gameRenderer.getMainCamera().getPosition())) {
+                finish();
+                return;
+            }
+            volume += (source.volume() - volume) * .2f;
+            pitch += (source.pitch() - pitch) * .2f;
         }
 
         private void finish() { stop(); }

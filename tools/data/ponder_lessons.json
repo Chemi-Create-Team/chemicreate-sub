@@ -1865,9 +1865,9 @@
     "zh_cn": "Span the 11 m tokamak with a Fusion Maintenance Crane. The top of the reactor must be within 15 m below the rails."
   },
   "fusion_maintenance.safe": {
-    "en_us": "Stop the plasma, discharge the magnets below 1 percent, and circulate cold water until the blanket has cooled.",
-    "ja_jp": "プラズマを停止、磁場を1パーセント未満へ放電し、ブランケットが冷えるまで冷水を循環させます。",
-    "zh_cn": "Stop the plasma, discharge the magnets below 1 percent, and circulate cold water until the blanket has cooled."
+    "en_us": "Switch off the plasma and magnets. Wait for the field to fall below 1% and the blanket to cool to 100 °C or below.",
+    "ja_jp": "プラズマと磁石を切ります。磁場が1％未満に下がり、ブランケットが100℃以下になるまで待ちます。",
+    "zh_cn": "关闭等离子体加热和磁体，等待磁场降至1%以下、包层冷却到100℃或更低。"
   },
   "fusion_maintenance.supply": {
     "en_us": "Feed fresh blanket cartridges and tungsten divertor cassettes to the drive using a funnel.",
@@ -2335,9 +2335,9 @@
     "zh_cn": "需要更大流量时使用粗气管，也可直接连接细管。"
   },
   "guide.gas_pipes.step_4": {
-    "en_us": "Both gas pipe sizes carry up to pressurised gas. Use stainless pipe for high-pressure gas.",
-    "ja_jp": "どちらも加圧まで運べます。高圧の気体はステンレス鋼管へ接続します。",
-    "zh_cn": "两种气管均支持加压气体，高压气体使用不锈钢管。"
+    "en_us": "Use steel pipe for high-pressure gas. The moving gas makes a hiss that grows louder with flow.",
+    "ja_jp": "高圧ガスにはステンレス鋼管を使います。ガスが流れると、流量に応じて風切り音が大きくなります。",
+    "zh_cn": "高压气体使用不锈钢管。气体流动时会发出嘶声，流量越大声音越响。"
   },
   "fractionating_column.title": {
     "en_us": "Build a five-layer crude fractionation tower",

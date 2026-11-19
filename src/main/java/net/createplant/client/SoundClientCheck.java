@@ -2,6 +2,8 @@ package net.createplant.client;
 
 import com.google.gson.GsonBuilder;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import java.nio.file.Files;
@@ -9,10 +11,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import net.createplant.block.CoolingFanShroudBlock;
+import net.createplant.block.PulsationTubeBlock;
 import net.createplant.block.entity.CoolingFanBlockEntity;
 import net.createplant.block.entity.RadiatorBlockEntity;
 import net.createplant.registry.CEProcessBlocks;
-import net.createplant.thermal.FluidThermal;
+import net.createplant.registry.CEProcessFluids;
+import net.createplant.registry.CETransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
@@ -22,18 +26,19 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.slf4j.LoggerFactory;
 
 /** Opt-in real-world audio lifecycle check, driven through a real motor and the synchronized bank controller. */
 final class SoundClientCheck {
-    private enum Stage { SETUP, STOPPED, STARTING, RUNNING, STOPPING, RESTART, MUTED, UNMUTED, AWAY, RETURN, UNLOADING, RELOADED, BROKEN, CLEANUP }
+    private enum Stage { SETUP, STOPPED, STARTING, RUNNING, STOPPING, RESTART, MUTED, UNMUTED, AWAY, RETURN, UNLOADING, RELOADED, BROKEN,
+        GAS_IDLE, GAS_RUNNING, GAS_STOPPED, CLEANUP }
     private static final Map<String, Object> RESULTS = new LinkedHashMap<>();
     private static Stage stage;
-    private static BlockPos owner, fan, motor;
+    private static BlockPos owner, fan, motor, gasSource, gasMotor;
     private static SoundInstance previous;
     private static int ticks;
     private static double blocksVolume, masterVolume;
@@ -66,7 +71,7 @@ final class SoundClientCheck {
             bank.lazyTick();
             if (bank.owner() != bank || bank.fanCount() != 1) throw new IllegalStateException("The real fan bank did not form");
             var inlet = ((RadiatorBlockEntity) level.getBlockEntity(owner.above().north())).port(Direction.NORTH);
-            if (inlet == null || inlet.fill(FluidThermal.at(new FluidStack(Fluids.WATER, 1000), 353.15), FluidAction.EXECUTE) != 1000)
+            if (inlet == null || inlet.fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 1000), FluidAction.EXECUTE) != 1000)
                 throw new IllegalStateException("The fan bank did not accept its finite water inventory");
             level.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.UP), Block.UPDATE_ALL);
             ((CreativeMotorBlockEntity) level.getBlockEntity(motor)).generatedSpeed.setValue(0);
@@ -155,9 +160,48 @@ final class SoundClientCheck {
                     RESULTS.put("broken_structure_releases_engine", true);
                     MachineSounds.clear(mc);
                     require(MachineSounds.activeCount() == 0, "Explicit client cleanup must empty every owned loop");
+                    gasSource = owner.south(7).west(3);gasMotor = gasSource.south();
                     server(mc, level -> {
                         for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) for (int y = -1; y <= 3; y++)
                             level.setBlock(owner.offset(x, y, z), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                        gasLine(level);
+                    });
+                    next(Stage.GAS_IDLE);
+                }
+                case GAS_IDLE -> {
+                    if (ticks < 30 || !(mc.level.getBlockEntity(gasSource) instanceof FluidTankBlockEntity)) return false;
+                    require(MachineSounds.activeCount() == 0, "Stored high-pressure gas stays silent with the pump off");
+                    server(mc, level -> ((CreativeMotorBlockEntity) level.getBlockEntity(gasMotor)).generatedSpeed.setValue(64));
+                    next(Stage.GAS_RUNNING);
+                }
+                case GAS_RUNNING -> {
+                    SoundInstance gasSound = null;
+                    for (int i = 2; i <= 5; i++) {
+                        var instance = MachineSounds.instance(gasSource.east(i));
+                        if (instance == null || !mc.getSoundManager().isActive(instance)) continue;
+                        require(gasSound == null, "An adjacent run of pipe must share one audible hiss");
+                        gasSound = instance;
+                    }
+                    var pumpSound = MachineSounds.instance(gasSource.east());
+                    if (ticks < 45 || gasSound == null || pumpSound == null || !mc.getSoundManager().isActive(pumpSound)) return false;
+                    require(gasSound.getLocation().equals(MachineSoundSource.Kind.HIGH_PRESSURE_GAS.event.get().getLocation()),
+                        "Moving high-pressure gas uses the dedicated whistle");
+                    require(pumpSound.getLocation().equals(MachineSoundSource.Kind.MATERIAL_PUMP.event.get().getLocation())
+                        && Math.abs(pumpSound.getPitch() - .73f) < .02f, "The gas pump plays its own motor loop at the pitch of the large pump");
+                    previous = gasSound;
+                    RESULTS.put("high_pressure_pipe_sound_engine_started", gasSound.getLocation().toString());
+                    RESULTS.put("one_voice_along_pipe", true);
+                    RESULTS.put("mechanical_pump_pitch", pumpSound.getPitch());
+                    server(mc, level -> ((CreativeMotorBlockEntity) level.getBlockEntity(gasMotor)).generatedSpeed.setValue(0));
+                    next(Stage.GAS_STOPPED);
+                }
+                case GAS_STOPPED -> {
+                    if (ticks < 12 || MachineSounds.activeCount() != 0 || mc.getSoundManager().isActive(previous)) return false;
+                    RESULTS.put("high_pressure_pipe_sound_engine_stopped", true);
+                    server(mc, level -> {
+                        for (int i = 0; i <= 6; i++) level.removeBlock(gasSource.east(i), false);
+                        level.removeBlock(gasMotor, false);
+                        level.removeBlock(gasMotor.east(), false);
                     });
                     next(Stage.CLEANUP);
                 }
@@ -173,6 +217,23 @@ final class SoundClientCheck {
             }
             return false;
         } catch (Exception failure) { restore(mc);throw failure; }
+    }
+
+    private static void gasLine(ServerLevel level) {
+        var storage = CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS, Direction.Axis.X);
+        level.setBlock(gasSource, storage, Block.UPDATE_ALL);
+        level.setBlock(gasSource.east(6), storage, Block.UPDATE_ALL);
+        for (int i = 2; i <= 5; i++) {
+            var pipe = CETransport.NICKEL_ALLOY_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST, true).setValue(FluidPipeBlock.WEST, true);
+            level.setBlock(gasSource.east(i), pipe, Block.UPDATE_ALL);
+        }
+        level.setBlock(gasSource.east(), CETransport.MATERIAL_PUMPS.getLast().get().defaultBlockState().setValue(DirectionalKineticBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(gasMotor.east(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X), Block.UPDATE_ALL);
+        level.setBlock(gasMotor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        ((CreativeMotorBlockEntity) level.getBlockEntity(gasMotor)).generatedSpeed.setValue(0);
+        var storageEntity = (FluidTankBlockEntity) level.getBlockEntity(gasSource);
+        require(storageEntity.getTankInventory().fill(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(), 16000), FluidAction.EXECUTE) >= 6000,
+            "The source holds a finite gas supply long enough to confirm audio");
     }
 
     private static boolean playing(Minecraft mc) {

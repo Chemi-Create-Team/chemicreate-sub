@@ -4,6 +4,9 @@ import java.util.*;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import net.createmod.catnip.math.BlockFace;
+import net.createplant.block.entity.PipeGasFlow;
+import net.createplant.block.entity.PipeGaugeBlockEntity;
+import net.createplant.transport.FluidHazards;
 import net.minecraft.core.*;
 import net.minecraft.world.level.Level;
 
@@ -59,8 +62,20 @@ public final class FluidRoutes {
         if (!queue.isEmpty()) { ambiguous.clear();parents.clear(); }
     }
     public void observe(Level level,List<BlockPos> path,net.neoforged.neoforge.fluids.FluidStack fluid) {
-        for(var at:path) if(level.hasChunkAt(at) && level.getBlockEntity(at) instanceof net.createplant.block.entity.PipeGaugeBlockEntity gauge) {
-            if(gauge.kind()==net.createplant.block.PipeGaugeBlock.Kind.FLOW)gauge.observeFlow(fluid.getAmount(),2);else gauge.observe(fluid);
+        if (path.isEmpty()) return;
+        var properties = FluidHazards.of(fluid);
+        var pressure = properties.pressure();
+        boolean audible = properties.gas() && pressure != Grade.Pressure.ATMOSPHERIC;
+        for (var at : path) {
+            if (!level.hasChunkAt(at)) continue;
+            var be = level.getBlockEntity(at);
+            if (be instanceof PipeGaugeBlockEntity gauge) {
+                if (gauge.kind() == net.createplant.block.PipeGaugeBlock.Kind.FLOW) gauge.observeFlow(fluid.getAmount(), 2);
+                else gauge.observe(fluid);
+            } else if (audible && be instanceof com.simibubi.create.foundation.blockEntity.SmartBlockEntity pipe) {
+                var sound = pipe.getBehaviour(PipeGasFlow.TYPE);
+                if (sound != null) sound.observe(level.getGameTime(), pressure, fluid.getAmount());
+            }
         }
     }
 }

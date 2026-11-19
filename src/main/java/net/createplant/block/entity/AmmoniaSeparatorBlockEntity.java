@@ -21,7 +21,7 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     private final ThermalFluidTank feed=tank(),liquid=tank(),recycle=tank(),water=tank(),steam=tank();
     private double progress;
     private int clock,portEpoch;
-    private boolean syncNeeded;
+    private boolean syncNeeded, separating;
     private Direction front=Direction.NORTH;
     public AmmoniaSeparatorBlockEntity(BlockPos pos,BlockState state){super(pos,state);}
     private ThermalFluidTank tank(){return new ThermalFluidTank(16000,f->changed()){@Override protected int storageRatio(){return Grade.Pressure.HIGH.storageRatio();}};}
@@ -50,6 +50,7 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     public FluidStack water(){return water.getFluid().copy();}
     public FluidStack steam(){return steam.getFluid().copy();}
     public boolean ready(){return isController() && getHeight()>=2 && !isRemoved() && level!=null;}
+    public boolean separating(){return ready() && separating;}
     private boolean chemicalContents(){return !feed.isEmpty() || !liquid.isEmpty() || !recycle.isEmpty() || progress>0;}
     public boolean hasProcessContents(){return chemicalContents() || !water.isEmpty() || !steam.isEmpty();}
     private AmmoniaSeparatorBlockEntity owner(){return getControllerBE() instanceof AmmoniaSeparatorBlockEntity be && be.ready() ? be : null;}
@@ -67,17 +68,20 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     private FluidStack product(ProcessRecipe recipe,int slot,int count){return product(recipe,slot,count,feed.getFluid());}
     private FluidStack product(ProcessRecipe recipe,int slot,int count,FluidStack source){var result=recipe.outputs().get(slot).copyWithAmount(recipe.outputs().get(slot).getAmount()*count);if(!result.isEmpty() && source.is(CEProcessFluids.HOT_REACTOR_COOLANT.get()))FluidThermal.processComponents(source,result);return result;}
     public void process(double seconds){
-        if(!ready() || !Double.isFinite(seconds) || seconds<=0 || !water.isEmpty() || !steam.isEmpty())return;
-        var recipe=recipe(feed.getFluid());if(recipe==null)return;
+        if(!ready() || !Double.isFinite(seconds) || seconds<=0)return;
+        var recipe=water.isEmpty() && steam.isEmpty() ? recipe(feed.getFluid()) : null;
+        if(recipe==null){setSeparating(false);return;}
         int count=Math.min(getWidth()*getWidth()*getHeight(),feed.getFluidAmount()/recipe.inputs().getFirst().getAmount());
         count=Math.min(count,liquid.fill(product(recipe,0,count),IFluidHandler.FluidAction.SIMULATE)/recipe.outputs().get(0).getAmount());
         count=Math.min(count,recycle.fill(product(recipe,1,count),IFluidHandler.FluidAction.SIMULATE)/recipe.outputs().get(1).getAmount());
+        setSeparating(count>0);
         if(count<=0)return;progress+=Math.min(1,seconds)*20;
         if(progress>=recipe.ticks()){
             var madeLiquid=product(recipe,0,count);var madeGas=product(recipe,1,count);feed.drain(recipe.inputs().getFirst().getAmount()*count,IFluidHandler.FluidAction.EXECUTE);
             liquid.fill(madeLiquid,IFluidHandler.FluidAction.EXECUTE);recycle.fill(madeGas,IFluidHandler.FluidAction.EXECUTE);progress=0;
         }changed();
     }
+    private void setSeparating(boolean active){if(separating!=active){separating=active;syncNeeded=true;}}
     @Override public void removeController(boolean keepFluids){front=front();portEpoch++;super.removeController(keepFluids);}
     public void vent(){
         if(level==null || level.isClientSide)return;
@@ -108,6 +112,6 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
         var source=root.feed.isEmpty() ? root.steam.getFluid() : root.feed.getFluid();if(!source.isEmpty())text.add(FluidThermal.readout(source));
         text.add(Component.translatable("grade.create_refinery_n_reactors.separator",root.feed.getFluidAmount(),root.liquid.getFluidAmount()+root.water.getFluidAmount(),root.recycle.getFluidAmount()+root.steam.getFluidAmount()));return true;
     }
-    @Override public void write(CompoundTag tag,HolderLookup.Provider lookup,boolean packet){super.write(tag,lookup,packet);var tanks=List.of(feed,liquid,recycle,water,steam);var names=List.of("Feed","Liquid","Recycle","SeparatorWater","SeparatorSteam");for(int i=0;i<tanks.size();i++)tag.put(names.get(i),tanks.get(i).writeToNBT(lookup,new CompoundTag()));tag.putDouble("Progress",progress);tag.putString("Front",front.getSerializedName());}
-    @Override public void read(CompoundTag tag,HolderLookup.Provider lookup,boolean packet){super.read(tag,lookup,packet);resize();var tanks=List.of(feed,liquid,recycle,water,steam);var names=List.of("Feed","Liquid","Recycle","SeparatorWater","SeparatorSteam");for(int i=0;i<tanks.size();i++)tanks.get(i).readFromNBT(lookup,tag.getCompound(names.get(i)));var recipe=recipe(feed.getFluid());double saved=tag.getDouble("Progress");progress=recipe!=null && Double.isFinite(saved) ? Math.clamp(saved,0,recipe.ticks()-1) : 0;var side=Direction.byName(tag.getString("Front"));front=side!=null && side.getAxis().isHorizontal() ? side : Direction.NORTH;portEpoch++;if(level!=null)invalidateCapabilities();}
+    @Override public void write(CompoundTag tag,HolderLookup.Provider lookup,boolean packet){super.write(tag,lookup,packet);var tanks=List.of(feed,liquid,recycle,water,steam);var names=List.of("Feed","Liquid","Recycle","SeparatorWater","SeparatorSteam");for(int i=0;i<tanks.size();i++)tag.put(names.get(i),tanks.get(i).writeToNBT(lookup,new CompoundTag()));tag.putDouble("Progress",progress);tag.putString("Front",front.getSerializedName());if(packet)tag.putBoolean("Separating",separating);}
+    @Override public void read(CompoundTag tag,HolderLookup.Provider lookup,boolean packet){super.read(tag,lookup,packet);resize();var tanks=List.of(feed,liquid,recycle,water,steam);var names=List.of("Feed","Liquid","Recycle","SeparatorWater","SeparatorSteam");for(int i=0;i<tanks.size();i++)tanks.get(i).readFromNBT(lookup,tag.getCompound(names.get(i)));var recipe=recipe(feed.getFluid());double saved=tag.getDouble("Progress");progress=recipe!=null && Double.isFinite(saved) ? Math.clamp(saved,0,recipe.ticks()-1) : 0;var side=Direction.byName(tag.getString("Front"));front=side!=null && side.getAxis().isHorizontal() ? side : Direction.NORTH;separating=packet && tag.getBoolean("Separating");portEpoch++;if(level!=null)invalidateCapabilities();}
 }

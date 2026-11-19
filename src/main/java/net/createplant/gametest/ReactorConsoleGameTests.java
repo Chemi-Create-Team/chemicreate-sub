@@ -139,6 +139,21 @@ public class ReactorConsoleGameTests {
         return click(h, root, facing, button, true);
     }
 
+    static net.minecraft.world.entity.player.Player linkCrane(GameTestHelper h, BlockPos drive, BlockPos desk) {
+        var level = h.getLevel();
+        var player = h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var unit = CENuclear.REACTOR_CONTROL_CONSOLE_ITEM.get().getDefaultInstance();
+        var hand = net.minecraft.world.InteractionHand.MAIN_HAND;
+        player.setItemInHand(hand, unit);
+        for (var pos : java.util.List.of(drive, desk)) {
+            var hit = new BlockHitResult(pos.getCenter(), Direction.UP, pos, false);
+            h.assertTrue(level.getBlockState(pos).useItemOn(unit, level, player, hand, hit).consumesAction(),
+                "Select and link using the same desk unit at " + pos + " (" + level.getBlockState(pos) + ")");
+        }
+        player.setItemInHand(hand, ItemStack.EMPTY);
+        return player;
+    }
+
     /** Clicks the centre of a control, or a dial's operator-left half when {@code up} is false. */
     public static InteractionResult click(GameTestHelper h, BlockPos root, Direction facing, ReactorConsoleButton button, boolean up) {
         return click(h, root, facing, button, up, false);

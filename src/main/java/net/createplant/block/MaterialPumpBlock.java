@@ -6,9 +6,14 @@ import net.createplant.registry.CETransport;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public final class MaterialPumpBlock extends PumpBlock {
-    public MaterialPumpBlock(Properties properties) {
+    private final float soundPitch;
+
+    public MaterialPumpBlock(Properties properties, float soundPitch) {
         super(properties);
+        this.soundPitch = soundPitch;
     }
+
+    public float soundPitch() { return soundPitch; }
 
     @Override
     public BlockEntityType<? extends PumpBlockEntity> getBlockEntityType() {

@@ -90,9 +90,9 @@ TEXTS = {
     'step_3': ('Use large gas pipes for more flow. They connect directly to narrow pipes.',
         '流量を増やすなら太い気体パイプを使います。細い管にもそのままつなげられます。',
         '需要更大流量时使用粗气管，也可直接连接细管。'),
-    'step_4': ('Use large pipes at big tanks and compressor outlets. Both pipe sizes are rated to 16 bar.',
-        '大きなタンクや圧縮機の出口には太い管を使います。どちらの管も耐圧は16 barです。',
-        '大型储罐或压缩机出口使用粗管，两种管径耐压均为16 bar。'),
+    'step_4': ('Use steel pipe for high-pressure gas. The moving gas makes a hiss that grows louder with flow.',
+        '高圧ガスにはステンレス鋼管を使います。ガスが流れると、流量に応じて風切り音が大きくなります。',
+        '高压气体使用不锈钢管。气体流动时会发出嘶声，流量越大声音越响。'),
 }
 STEPS = ([3, 1, 1], [2, 1, 1], [3, 1, 4], [5, 2, 4])
 
