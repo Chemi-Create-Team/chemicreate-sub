@@ -5103,5 +5103,9 @@
   "create_refinery_n_reactors.ponder.shared.transmission_tower.circuit.lesson_pages.count": "2",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.circuit.lesson_pages.0": "The six terminals are electrically independent.",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.circuit.lesson_pages.1": "Use separate runs for both sides of a circuit.",
-  "create_refinery_n_reactors.ponder.transmission_tower.header": "Stringing a transmission line"
+  "create_refinery_n_reactors.ponder.transmission_tower.header": "Stringing a transmission line",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation": "Your view sets the tower’s heading in 15° steps when you place it. Right-click the base with a wrench to turn it 15° clockwise.",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.count": "2",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.0": "Your view sets the tower’s heading in 15° steps when you place it.",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "Right-click the base with a wrench to turn it 15° clockwise."
 }

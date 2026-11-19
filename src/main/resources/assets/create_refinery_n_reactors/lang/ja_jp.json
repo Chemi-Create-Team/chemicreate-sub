@@ -5103,5 +5103,9 @@
   "create_refinery_n_reactors.ponder.shared.transmission_tower.terminal.lesson_pages.1": "高圧ケーブルリールを持ち、基部にある番号付きの端子を右クリックします。番号ごとに腕金の碍子が割り当てられています。",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.span.lesson_pages.1": "次の鉄塔で同じ番号を押すと、碍子間にケーブルが張られます。わずかにたるみがあり、最大128ブロックつなげます。",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.circuit.lesson_pages.1": "6個の端子は電気的に独立しています。回路の行きと戻りは別々の端子へつなぎます。",
-  "create_refinery_n_reactors.ponder.transmission_tower.header": "送電鉄塔と長距離高圧ケーブル"
+  "create_refinery_n_reactors.ponder.transmission_tower.header": "送電鉄塔と長距離高圧ケーブル",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation": "設置時の視線に合わせて、鉄塔の向きが15度刻みで決まります。レンチで基部を右クリックすると、時計回りに15度回ります。",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.0": "設置時の視線に合わせて、鉄塔の向きが15度刻みで決まります。レンチで基部を右クリックすると、時計回りに15度回ります。",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "設置時の視線に合わせて、鉄塔の向きが15度刻みで決まります。レンチで基部を右クリックすると、時計回りに15度回ります。"
 }

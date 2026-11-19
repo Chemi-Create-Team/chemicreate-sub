@@ -1,6 +1,7 @@
 package net.createplant.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.createplant.CreatePlant;
 import net.createplant.block.TransmissionTowerBlock;
 import net.createplant.block.entity.TransmissionTowerBlockEntity;
@@ -30,8 +31,16 @@ public final class TransmissionTowerRenderer implements BlockEntityRenderer<Tran
         var dispatcher = Minecraft.getInstance().getBlockRenderer();
         var renderType = RenderType.solid();
         int towerLight = tower.getLevel() == null ? light : LevelRenderer.getLightColor(tower.getLevel(), tower.getBlockPos().above());
+        pose.pushPose();
+        int step = state.getValue(TransmissionTowerBlock.ROTATION_STEP);
+        if (step != 0) {
+            pose.translate(.5, 0, .5);
+            pose.mulPose(Axis.YN.rotationDegrees(step * TransmissionTowerBlock.DEGREES_PER_STEP));
+            pose.translate(-.5, 0, -.5);
+        }
         dispatcher.getModelRenderer().renderModel(pose.last(), buffers.getBuffer(renderType), state, dispatcher.getBlockModel(state),
             1, 1, 1, towerLight, overlay, ModelData.EMPTY, renderType);
+        pose.popPose();
     }
     @Override public boolean shouldRenderOffScreen(TransmissionTowerBlockEntity tower) { return true; }
     @Override public int getViewDistance() { return 192; }

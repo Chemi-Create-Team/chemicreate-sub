@@ -8,21 +8,28 @@ import com.george_vi.electroenergetics.foundation.QuadraticWireHelper;
 import com.george_vi.electroenergetics.foundation.nodes.InWorldNode;
 import com.george_vi.electroenergetics.foundation.nodes.InWorldNodeConnection;
 import com.george_vi.electroenergetics.simulation.infrastructure.InfrastructureSavedData;
+import com.simibubi.create.AllItems;
 import net.createplant.CreatePlant;
+import net.createplant.block.TransmissionTowerBlock;
 import net.createplant.block.entity.ElectricPumpBlockEntity;
 import net.createplant.registry.CEElectricUtilities;
 import net.createplant.registry.CETransmission;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -34,6 +41,66 @@ public final class TransmissionTowerGameTests {
     private static InteractionResult click(Player player, BlockPos tower, double x, double z) {
         var hit = new BlockHitResult(Vec3.atLowerCornerOf(tower).add(x, .875, z), Direction.UP, tower, false);
         return CETransmission.SPOOL.get().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, hit));
+    }
+
+    @GameTest(template = "test_empty")
+    public static void placesAndWrenchesInFifteenDegreeSteps(GameTestHelper h) {
+        var level = h.getLevel();
+        var tower = CETransmission.TOWER.get();
+        var pos = h.absolutePos(new BlockPos(2, 2, 2));
+        var player = h.makeMockPlayer(GameType.CREATIVE);
+        var hit = new BlockHitResult(Vec3.atLowerCornerOf(pos).add(.5, .875, .5), Direction.UP, pos, false);
+        var placement = new BlockPlaceContext(player, InteractionHand.MAIN_HAND, CETransmission.TOWER.toStack(), hit);
+        for (int degrees = 0; degrees < 360; degrees += 15) {
+            player.setYRot(degrees + 3);
+            var state = tower.getStateForPlacement(placement);
+            double radians = Math.toRadians(degrees);
+            for (int id = 0; id < 6; id++) {
+                int row = id % 3;
+                double span = (row == 1 ? 4.42 : 3.42) * (id < 3 ? -1 : 1);
+                var expected = new Vec3(.5 + span * Math.cos(radians), 21.82 - row * 3, .5 + span * Math.sin(radians));
+                var pad = new Vec3((row - 1) * .33, .875, id < 3 ? -.235 : .235).yRot((float) -radians).add(.5, 0, .5);
+                h.assertTrue(expected.distanceToSqr(tower.getNodePosition(level, pos, state, id)) < 1e-12
+                    && tower.terminalAt(state, pad) == id, "Aiming at " + degrees + " degrees rotates endpoint and pad " + id);
+            }
+        }
+        player.setYRot(-15);
+        var west345 = tower.getStateForPlacement(placement);
+        player.setYRot(15);
+        var north15 = tower.getStateForPlacement(placement);
+        h.assertTrue(west345.mirror(Mirror.FRONT_BACK) == north15
+            && west345.rotate(Rotation.CLOCKWISE_90).getValue(TransmissionTowerBlock.ROTATION_STEP) == 5,
+            "Structure rotations and mirrors preserve the intermediate angles");
+        h.assertTrue(north15.mirror(Mirror.LEFT_RIGHT).getValue(HorizontalDirectionalBlock.FACING) == Direction.EAST
+            && north15.mirror(Mirror.LEFT_RIGHT).getValue(TransmissionTowerBlock.ROTATION_STEP) == 5,
+            "A north-south mirror maps 15 degrees to 165 degrees");
+
+        var north = tower.defaultBlockState();
+        var saved = NbtUtils.writeBlockState(north.setValue(HorizontalDirectionalBlock.FACING, Direction.WEST));
+        saved.getCompound("Properties").remove("rotation_step");
+        var legacy = NbtUtils.readBlockState(level.holderLookup(Registries.BLOCK), saved);
+        h.assertTrue(legacy.getValue(HorizontalDirectionalBlock.FACING) == Direction.WEST
+            && legacy.getValue(TransmissionTowerBlock.ROTATION_STEP) == 0, "Old cardinal towers keep their heading");
+
+        var otherPos = pos.south(6);
+        level.setBlockAndUpdate(pos, north);
+        level.setBlockAndUpdate(otherPos, north);
+        var first = new InWorldNode(4, pos);
+        var second = new InWorldNode(4, otherPos);
+        var connection = new InWorldNodeConnection(first, second);
+        var infrastructure = InfrastructureSavedData.load(level);
+        infrastructure.connect(first, second, CETransmission.wire());
+        player.setItemInHand(InteractionHand.MAIN_HAND, AllItems.WRENCH.asStack());
+        h.assertTrue(AllItems.WRENCH.get().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, hit)).consumesAction()
+            && level.getBlockState(pos) == north15, "The Create wrench turns a placed tower by 15 degrees");
+        var endpoint = tower.getNodePosition(level, pos, north15, 4).add(Vec3.atLowerCornerOf(pos));
+        var wire = infrastructure.wireSimulationState.getConnection(connection);
+        h.assertTrue(infrastructure.isConnected(first, second) && wire != null
+            && (wire.pos1.distanceToSqr(endpoint) < 1e-12 || wire.pos2.distanceToSqr(endpoint) < 1e-12),
+            "An attached conductor follows the new insulator position in the wire simulation");
+        level.destroyBlock(pos, false);
+        level.destroyBlock(otherPos, false);
+        h.succeed();
     }
 
     @GameTest(template = "test_empty", timeoutTicks = 160)

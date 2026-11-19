@@ -5103,5 +5103,9 @@
   "create_refinery_n_reactors.ponder.shared.transmission_tower.terminal.lesson_pages.1": "手持高压电缆卷轴右击塔基的编号端子。每个编号对应一个独立的绝缘子。",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.span.lesson_pages.1": "右击下一座铁塔上相同编号的端子。电缆在绝缘子之间略微下垂，连接距离最长128格。",
   "create_refinery_n_reactors.ponder.shared.transmission_tower.circuit.lesson_pages.1": "六个端子在电气上相互独立。一个回路的供电端和回路端应使用不同端子。",
-  "create_refinery_n_reactors.ponder.transmission_tower.header": "输电铁塔与长距离高压电缆"
+  "create_refinery_n_reactors.ponder.transmission_tower.header": "输电铁塔与长距离高压电缆",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation": "放置时，铁塔会按视线方向以15度为一档对齐。用扳手右击塔基可顺时针转动15度。",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.0": "放置时，铁塔会按视线方向以15度为一档对齐。用扳手右击塔基可顺时针转动15度。",
+  "create_refinery_n_reactors.ponder.shared.transmission_tower.rotation.lesson_pages.1": "放置时，铁塔会按视线方向以15度为一档对齐。用扳手右击塔基可顺时针转动15度。"
 }
