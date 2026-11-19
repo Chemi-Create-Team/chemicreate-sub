@@ -119,7 +119,7 @@ public final class GasCentrifugeBlockEntity extends KineticBlockEntity {
     public void process() {
         if (level == null || level.isClientSide) return;
         String oldStatus = status;String oldRecipe = recipeId;int oldStages = stages;
-        var group = units();if (group.isEmpty()) { status = "unloaded";return; }
+        var group = units();if (group.isEmpty()) { status = "unloaded";ProductionMonitor.limitedBy(this, "structure");return; }
         if (group.getFirst() != this) return;
         stages = (int) group.stream().filter(be -> Math.abs(be.getSpeed()) >= 32).count();
         if (group.stream().anyMatch(be -> be.contentsChanged)) {
@@ -131,17 +131,25 @@ public final class GasCentrifugeBlockEntity extends KineticBlockEntity {
         else {
             if (!recipe.id().equals(recipeId)) { progress = 0;recipeId = recipe.id(); }
             required = requiredStages(recipeId);
+            double speed = Math.min(4, (double) group.size() / required);
+            ProductionMonitor.plan(this, group.size() < required ? 0 : ProductionMonitor.fluids(recipe.outputs()) * 20 * Math.min(1, speed / recipe.ticks()), 0, 0);
             if (stages < required) status = limited && group.size() == 1 ? "limit" : stages == 0 ? "speed" : "stages";
             else if (space(group, 1, recipe.outputs().get(0)) < recipe.outputs().get(0).getAmount() || space(group, 2, recipe.outputs().get(1)) < recipe.outputs().get(1).getAmount()) status = "output";
             else {
                 status = "running";progress += Math.min(4, (double) stages / required);setChanged();
                 if (progress >= recipe.ticks()) {
                     drain(group, 0, recipe.inputs().getFirst(), recipe.inputs().getFirst().getAmount(), IFluidHandler.FluidAction.EXECUTE);
-                    fill(group, 1, recipe.outputs().get(0), IFluidHandler.FluidAction.EXECUTE);
-                    fill(group, 2, recipe.outputs().get(1), IFluidHandler.FluidAction.EXECUTE);progress -= recipe.ticks();
+                    int made = fill(group, 1, recipe.outputs().get(0), IFluidHandler.FluidAction.EXECUTE);
+                    made += fill(group, 2, recipe.outputs().get(1), IFluidHandler.FluidAction.EXECUTE);progress -= recipe.ticks();
+                    ProductionMonitor.produced(this, made, 0, 0);
                 }
             }
         }
+        ProductionMonitor.limitedBy(this, switch (status) {
+            case "limit", "stages" -> group.size() < required ? "stages" : "speed";
+            case "running" -> stages < Math.min(group.size(), required * 4) ? "speed" : "rated";
+            default -> status;
+        });
         if (!oldStatus.equals(status) || !oldRecipe.equals(recipeId) || oldStages != stages || status.equals("running") && level.getGameTime() - synced >= 10) { synced = level.getGameTime();sendData(); }
     }
     public void preview(ProcessRecipe recipe, boolean complete) {

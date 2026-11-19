@@ -81,7 +81,15 @@ public final class TankBoiler {
         }
         String previous = status;
         int amount = steam.getFluidAmount();
+        var meter = ProductionMonitor.of(owner);
+        var feed = owner.getTankInventory().getFluid();
+        boolean tracked = feed.is(Fluids.WATER) || feed.is(CEProcessFluids.WARM_WATER.get()) || meter != null && meter.read(ProductionMonitor.Output.FLUID) != null;
+        if (tracked) ProductionMonitor.plan(owner, Math.min(MAX_HEAT, owner.getWidth() * owner.getWidth() * JOULES_PER_HEAT_LEVEL * 2) * 20 / SteamGrades.ORDINARY.joulesPerMb(), 0, 0);
         boil();
+        if (tracked) ProductionMonitor.limitedBy(owner, switch (status) {
+            case "running", "working" -> heatWatts < owner.getWidth() * owner.getWidth() * JOULES_PER_HEAT_LEVEL * 40 ? "heat" : "rated";
+            default -> status;
+        });
         if (!previous.equals(status) || amount != steam.getFluidAmount()) owner.sendData();
     }
 
@@ -112,7 +120,7 @@ public final class TankBoiler {
         owner.setChanged();
         if (amount <= 0) { status = "working"; return; }
         feed.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        steam.fill(sample.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE);
+        ProductionMonitor.produced(owner, steam.fill(sample.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE), 0, 0);
         heatJoules -= amount * SteamGrades.ORDINARY.joulesPerMb();
         status = "running";
     }

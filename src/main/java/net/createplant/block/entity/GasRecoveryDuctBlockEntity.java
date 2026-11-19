@@ -65,7 +65,15 @@ public class GasRecoveryDuctBlockEntity extends SmartBlockEntity implements IHav
     @Override public void tick() {
         super.tick();
         if (!(level instanceof ServerLevel server) || server.getGameTime() % SAMPLE_TICKS != 0) return;
+        ProductionMonitor.plan(this, SAMPLE_LIMIT * 20d / SAMPLE_TICKS, 0, 0);
         String step = sample(server);
+        if (!step.equals("collecting")) ProductionMonitor.limitedBy(this, switch (step) {
+            case "unpowered" -> "fan";
+            case "blocked" -> "intake";
+            case "full" -> "output";
+            case "ready" -> "feed";
+            default -> step;
+        });
         if (!status.equals(step)) {
             status = step;
             syncPending = true;
@@ -88,7 +96,9 @@ public class GasRecoveryDuctBlockEntity extends SmartBlockEntity implements IHav
         if (space == 0) return "full";
         var captured = GasClouds.collect(level, intake, buffer.getFluid(), Math.min(space, SAMPLE_LIMIT));
         if (captured.isEmpty()) return "ready";
-        buffer.fill(captured, IFluidHandler.FluidAction.EXECUTE);
+        int amount = buffer.fill(captured, IFluidHandler.FluidAction.EXECUTE);
+        ProductionMonitor.produced(this, amount, 0, 0);
+        ProductionMonitor.limitedBy(this, amount >= SAMPLE_LIMIT ? "rated" : space < SAMPLE_LIMIT && amount == space ? "output" : "feed");
         return "collecting";
     }
 

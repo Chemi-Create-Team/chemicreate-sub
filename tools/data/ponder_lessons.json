@@ -2205,9 +2205,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler.step_4": {
-    "en_us": "Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.",
-    "ja_jp": "その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
-    "zh_cn": "从该段顶部或外端泵送蒸汽至汽轮机。安装蒸汽引擎后切换到Create锅炉模式。"
+    "en_us": "Pump steam from the last section to a turbine; a steam engine switches it to Create boiler mode. Wear goggles to see the current rate, the rating for this build and what limits it.",
+    "ja_jp": "各列の最後の区間から蒸気を送ります。蒸気エンジンを付けるとCreateのボイラーになります。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
+    "zh_cn": "从各列末段泵出蒸汽；安装蒸汽引擎后切换到Create锅炉模式。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
   },
   "guide.tubular_boiler_2x2.title": {
     "en_us": "2x2 horizontal tank boiler",
@@ -2230,9 +2230,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler_2x2.step_4": {
-    "en_us": "Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.",
-    "ja_jp": "その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
-    "zh_cn": "从该段顶部或外端泵送蒸汽至汽轮机。安装蒸汽引擎后切换到Create锅炉模式。"
+    "en_us": "Pump steam from the last section to a turbine; a steam engine switches it to Create boiler mode. Wear goggles to see the current rate, the rating for this build and what limits it.",
+    "ja_jp": "各列の最後の区間から蒸気を送ります。蒸気エンジンを付けるとCreateのボイラーになります。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
+    "zh_cn": "从各列末段泵出蒸汽；安装蒸汽引擎后切换到Create锅炉模式。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
   },
   "guide.tubular_boiler_3x3.title": {
     "en_us": "3x3 horizontal tank boiler",
@@ -2255,9 +2255,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler_3x3.step_4": {
-    "en_us": "Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.",
-    "ja_jp": "その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。",
-    "zh_cn": "从该段顶部或外端泵送蒸汽至汽轮机。安装蒸汽引擎后切换到Create锅炉模式。"
+    "en_us": "Pump steam from the last section to a turbine; a steam engine switches it to Create boiler mode. Wear goggles to see the current rate, the rating for this build and what limits it.",
+    "ja_jp": "各列の最後の区間から蒸気を送ります。蒸気エンジンを付けるとCreateのボイラーになります。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
+    "zh_cn": "从各列末段泵出蒸汽；安装蒸汽引擎后切换到Create锅炉模式。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
   },
   "rbmk_compact_core.fuel": {
     "en_us": "Use the double-striped 5% rods in five- or seven-wide compact cores. They do not fit seven-layer cores.",
@@ -4620,9 +4620,9 @@
     "zh_cn": "用普通流体管道和泵从正面的气体出口法兰排出高温、常压的混合气体。放置顶面中央方块时所站的一侧即为正面。"
   },
   "entrained_gasifier.stop": {
-    "en_us": "When the burner runs out of fuel, the reaction pauses. Supply more fuel to resume once the furnace is hot enough.",
-    "ja_jp": "熱源の火が消えると反応が止まります。燃料を補給すると、炉が十分に温まった時点から再開します。",
-    "zh_cn": "燃烧室耗尽燃料后反应暂停。补充燃料并升温后即可继续。"
+    "en_us": "If the burner goes out, refuel and wait for the furnace to heat up again. Wear goggles to see the current rate, the rating for this build and what limits it.",
+    "ja_jp": "火が消えたら熱源に燃料を補給し、炉が温まるまで待ちます。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
+    "zh_cn": "燃烧室熄灭后补充燃料，等待气化炉重新升温。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
   },
   "entrained_gasifier.fuel_bucket": {
     "en_us": "Right-click a Blaze Burner with a carbon monoxide–hydrogen mixture bucket to superheat it. The empty bucket is returned.",
@@ -4775,9 +4775,9 @@
     "zh_cn": "沸腾时顶面输出蒸汽，与其他流体一样用顶部的泵抽出。其他面仍可供水。"
   },
   "guide.create_boiler_steam.step_4": {
-    "en_us": "Any pipe carries it, even one lying on the tank. Send it to a turbine, a gas tank or a condenser.",
-    "ja_jp": "どの配管でも運べ、タンクに接して通しても構いません。タービン、気体タンク、復水器へ送ります。",
-    "zh_cn": "任何管道都能输送，贴着储罐铺设也可以。送往汽轮机、气体储罐或冷凝器。"
+    "en_us": "Pump steam to a turbine, a gas tank or a condenser. Wear goggles to see the current rate, the rating for this build and what limits it.",
+    "ja_jp": "蒸気をタービン、気体タンク、復水器へポンプで送ります。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
+    "zh_cn": "用泵将蒸汽送往汽轮机、气体储罐或冷凝器。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
   },
   "guide.toxic_gas.step_7": {
     "en_us": "Pump toxic gas into the scrubber from below and feed caustic soda at the side. Keep the top open for exhaust.",

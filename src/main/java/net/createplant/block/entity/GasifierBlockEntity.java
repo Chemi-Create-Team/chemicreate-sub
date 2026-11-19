@@ -360,7 +360,18 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         inventory.temperature += Math.clamp(target - inventory.temperature, -rate, rate);
     }
 
+    private void planProduction(EntrainedGasificationRecipe recipe) {
+        ProductionMonitor.plan(this, ProductionMonitor.batchRate(recipe.hotGasResult().getAmount(), 1, recipe.duration(), 1), 0, 0);
+    }
+
     private void process() {
+        var recipe = findRecipe();
+        var meter = ProductionMonitor.of(this);
+        if (recipe != null) planProduction(recipe);
+        else if (meter != null && meter.read(ProductionMonitor.Output.FLUID) == null) {
+            var recipes = recipes();
+            if (recipes.size() == 1) planProduction(recipes.getFirst().value());
+        }
         var heater = worldPosition.below();
         if (!(BoilerHeater.findHeat(level, heater, level.getBlockState(heater)) > 0)) {
             status = "heat_required";
@@ -372,7 +383,6 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
             status = "preheat";
             return;
         }
-        var recipe = findRecipe();
         if (recipe == null) {
             inventory.progress = 0;
             inventory.duration = 0;
@@ -397,7 +407,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         inventory.progress = Math.min(inventory.progress - inventory.duration, inventory.duration - 1);
         inventory.items.extractItem(inventory.fuelSlot, 1, false);
         inventory.tanks[STEAM].drain(recipe.steam().amount(), EXECUTE);
-        inventory.tanks[GAS].fill(gas, EXECUTE);
+        ProductionMonitor.produced(this, inventory.tanks[GAS].fill(gas, EXECUTE), 0, 0);
         heat(20, BATCH_HEAT_LOSS);
     }
 
@@ -425,6 +435,12 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         int before = inventory.temperature;
         int progress = inventory.progress;
         process();
+        ProductionMonitor.limitedBy(this, switch (status) {
+            case "heat_required", "preheat" -> "heat";
+            case "gas_output" -> "output";
+            case "running" -> "rated";
+            default -> status;
+        });
         if (glowing != inventory.temperature >= REACTION_TEMPERATURE) {
             glowing = !glowing;
             for (var pos : structure) {

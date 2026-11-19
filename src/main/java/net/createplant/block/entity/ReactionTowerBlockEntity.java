@@ -278,8 +278,11 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         var recipe = formed ? recipe() : null;
         var working = recipe == null || separator ? List.<ReactionTowerBlockEntity>of() : working(recipe.catalyst());
         int batches = separator ? layers() : working.size();
+        int feedBatches = batches;
         if (recipe != null) {
-            for (int i = 0; i < recipe.inputs().size(); i++) batches = Math.min(batches, tanks[i].getAmount() / recipe.inputs().get(i).getAmount());
+            ProductionMonitor.plan(this, ProductionMonitor.batchRate(ProductionMonitor.fluids(recipe.outputs()), layers(), ((recipe.ticks()+4)/5)*5, 1), 0, 0);
+            for (int i = 0; i < recipe.inputs().size(); i++) feedBatches = Math.min(feedBatches, tanks[i].getAmount() / recipe.inputs().get(i).getAmount());
+            batches = feedBatches;
             for (int i = 0; i < recipe.outputs().size(); i++) {
                 FluidStack out = recipe.outputs().get(i), stored = tanks[2 + i];
                 batches = !stored.isEmpty() && !FluidThermal.compatible(stored, out) ? 0 : Math.min(batches, (capacity(out) - stored.getAmount()) / out.getAmount());
@@ -289,6 +292,14 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
             : mixed() ? "mixed" : recipe == null ? "no_feed" : working.isEmpty() ? "catalyst"
             : !recipe.heatAllowed(heat()) ? "heat" : batches > 0 ? "running" : feedShort(recipe) ? "no_feed" : "output";
         if (!next.equals(status)) { status = next;changed(); }
+        ProductionMonitor.limitedBy(this, switch (next) {
+            case "running" -> batches < feedBatches ? "output" : feedBatches < (separator ? layers() : working.size()) ? "feed"
+                : !separator && working.size() < layers() ? "catalyst" : "rated";
+            case "unformed" -> "structure";
+            case "no_feed" -> "feed";
+            case "mixed" -> "catalyst";
+            default -> next;
+        });
         glaze(separator && holdsFluid());
         instruments(ticks, !separator && status.equals("running") ? recipe : null);
         if (!status.equals("running")) return;
@@ -300,6 +311,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
             FluidStack made = recipe.outputs().get(i).copyWithAmount(recipe.outputs().get(i).getAmount() * batches);
             tanks[2 + i] = tanks[2 + i].isEmpty() ? made : tanks[2 + i].copyWithAmount(tanks[2 + i].getAmount() + made.getAmount());
         }
+        ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.outputs()) * batches, 0, 0);
         // Each layer that ran wears its own catalyst by one batch.
         for (int i = 0; i < batches && !separator && recipe.catalyst() != Items.AIR; i++) { var layer = working.get(i);var worn = layer.catalyst.copy();worn.setDamageValue(worn.getDamageValue() + 1);layer.setLayer(true, worn); }
         changed();

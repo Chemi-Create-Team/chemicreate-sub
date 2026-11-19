@@ -162,7 +162,8 @@ public class ElectrolysisControllerBlockEntity extends SmartBlockEntity implemen
     private int maximum(ElectrolysisProcess recipe) {
         if (recipe == null) { status = "feed";return 0; }
         int feed = cells.stream().mapToInt(cell -> cell.tanks.getFirst().getFluid().is(recipe.feed()) ? cell.tanks.getFirst().getFluidAmount() : 0).sum();
-        int cycles = Math.min((plates * limit + 99) / 100, feed / recipe.input());
+        int setpoint = (plates * limit + 99) / 100;
+        int cycles = Math.min(setpoint, feed / recipe.input());
         if (cycles == 0) { status = "feed";return 0; }
         int low = 0, high = cycles;
         while (low < high) {
@@ -170,6 +171,8 @@ public class ElectrolysisControllerBlockEntity extends SmartBlockEntity implemen
             if (fits(recipe, candidate)) low = candidate;else high = candidate - 1;
         }
         if (low == 0) status = "output";
+        ProductionMonitor.limitedBy(this, low < cycles ? "output" : cycles < setpoint ? "feed"
+            : limit < 100 ? "control" : plates < plateCapacity() ? "plates" : "rated");
         return low;
     }
 
@@ -217,17 +220,26 @@ public class ElectrolysisControllerBlockEntity extends SmartBlockEntity implemen
 
     public void step() {
         running = cathodeRate = anodeRate = sodaRate = metalRate = recoveredAcidRate = 0;watts = 0;volts = 0;
-        if (!ready()) return;
+        var recipe = intact() ? process() : null;
+        if (recipe != null) {
+            int capacity = plateCapacity();
+            int cycles = Math.min(capacity, (int) (ElectrolysisProcess.BUFFER_JOULES / ElectrolysisProcess.work(recipe, 1, capacity)));
+            double fluid = recipe.cathodeAmount() + (recipe.anodeGas() && !recipe.electrowinning() ? 1 : 0)
+                + recipe.recoveredAmount() + recipe.soda() + (recipe.soda() > 0 ? recipe.input() / 4d : 0);
+            ProductionMonitor.plan(this, fluid * cycles * 20, recipe.metalAmount() * cycles * 20d, 0);
+        }
+        if (!ready()) { ProductionMonitor.limitedBy(this, status);return; }
         if (suppliedAt >= level.getGameTime() - 2 && suppliedOhms > 0) {
             volts = Math.sqrt(suppliedVoltsSquared);
             watts = suppliedVoltsSquared / suppliedOhms;
             double accepted = Math.min(watts / 20, ElectrolysisProcess.BUFFER_JOULES - joules);
             joules += accepted;consumed += accepted;
         }
-        var recipe = process();
-        int cycles = maximum(recipe);
-        if (cycles == 0) return;
+        int available = maximum(recipe);
+        if (available == 0) { ProductionMonitor.limitedBy(this, status);return; }
+        int cycles = available;
         while (cycles > 0 && cycleWork(recipe, cycles) > joules + 1e-9) cycles--;
+        if (cycles < available) ProductionMonitor.limitedBy(this, "power");
         if (cycles == 0) { status = "power";return; }
         double usedWork = cycleWork(recipe, cycles);
         int input = cycles * recipe.input(), soda = cycles * recipe.soda();
@@ -244,6 +256,7 @@ public class ElectrolysisControllerBlockEntity extends SmartBlockEntity implemen
         }
         joules = Math.max(0, joules - usedWork);
         running = cycles;cathodeRate = cycles * recipe.cathodeAmount();anodeRate = recipe.anodeGas() && !recipe.electrowinning() ? cycles : 0;metalRate = cycles * recipe.metalAmount();sodaRate = soda;recoveredAcidRate = cycles * recipe.recoveredAmount();status = "running";
+        ProductionMonitor.produced(this, cathodeRate + anodeRate + sodaRate + recoveredAcidRate, metalRate, 0);
     }
 
     private int fill(int bank, FluidStack fluid, boolean execute) {

@@ -189,6 +189,9 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
     }
     private void process() {
         selectExistingRecipe();
+        var fraction = DistillationProfile.fraction(activeRecipe);
+        if (airMode()) planProduction(Arrays.stream(DistillationProfile.PRODUCT_AMOUNT).sum(), DistillationProfile.CYCLE_TICKS);
+        else if (fraction != null) planProduction(ProductionMonitor.fluids(fraction.outputs()), fraction.ticks());
         if(height<requiredHeight()) { setStatus(totalStored()==0 ? "feed" : "height",false);return; }
         if (level.hasNeighborSignal(worldPosition)) { setStatus("redstone",false);return; }
         boolean active=airMode() ? separate() : fractionate();
@@ -219,30 +222,42 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
     }
     private boolean fractionate() {
         var recipe=DistillationProfile.fraction(activeRecipe);if(recipe==null)return false;
-        int batches=Math.min(batchCapacity(),stock(0)/recipe.input().getAmount());
+        int feed=Math.min(batchCapacity(),stock(0)/recipe.input().getAmount());
+        int batches=feed;
         for(int i=0;i<recipe.outputs().size();i++)batches=Math.min(batches,(capacity()-stock(i+1))/recipe.outputs().get(i).getAmount());
+        reportBatch(feed, batches);
         if(batches<=0)return false;
         if(progress==0 || scale>batches){scale=batches;progress=0;}progress+=INTERVAL;
         if(progress>=recipe.ticks()) {
             move(0,-recipe.input().getAmount()*scale);
             for(int i=0;i<recipe.outputs().size();i++)move(i+1,recipe.outputs().get(i).getAmount()*scale);
+            ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.outputs()) * scale, 0, 0);
             progress=0;
         }
         return true;
     }
     /** A batch is fixed when its progress starts and is consumed and produced together once the cycle ends. */
     private boolean separate() {
-        int batches=Math.min(batchCapacity(),stock(DistillationProfile.AIR)/DistillationProfile.AIR_BATCH);
+        int feed=Math.min(batchCapacity(),stock(DistillationProfile.AIR)/DistillationProfile.AIR_BATCH);
+        int batches=feed;
         for (int i=0;i<DistillationProfile.PRODUCT.length;i++) batches=Math.min(batches,(capacity()-stock(DistillationProfile.PRODUCT[i]))/DistillationProfile.PRODUCT_AMOUNT[i]);
+        reportBatch(feed, batches);
         if (batches==0) return false;
         if (progress==0 || scale>batches) { scale=batches;progress=0; }
         progress+=INTERVAL;
         if (progress>=DistillationProfile.CYCLE_TICKS) {
             move(DistillationProfile.AIR,-DistillationProfile.AIR_BATCH*scale);
             for (int i=0;i<DistillationProfile.PRODUCT.length;i++) move(DistillationProfile.PRODUCT[i],DistillationProfile.PRODUCT_AMOUNT[i]*scale);
+            ProductionMonitor.produced(this, Arrays.stream(DistillationProfile.PRODUCT_AMOUNT).sum() * scale, 0, 0);
             progress=0;
         }
         return true;
+    }
+    private void planProduction(int amount, int ticks) {
+        ProductionMonitor.plan(this, ProductionMonitor.batchRate(amount, batchCapacity(), ticks, INTERVAL) / INTERVAL, 0, 0);
+    }
+    private void reportBatch(int feed, int batches) {
+        ProductionMonitor.limitedBy(this, batches < feed ? "output" : feed < batchCapacity() ? "feed" : "rated");
     }
     private void move(int slot,int amount) {
         int remaining=Math.abs(amount);
@@ -274,6 +289,11 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
         return null;
     }
     private void setStatus(String value,boolean work) {
+        if (!work) ProductionMonitor.limitedBy(this, switch (value) {
+            case "products_full" -> "output";
+            case "redstone", "feed" -> value;
+            default -> "structure";
+        });
         if (status.equals(value) && running==work) return;status=value;running=work;syncNeeded=true;setChanged();
     }
     public void vent() {

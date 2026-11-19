@@ -126,8 +126,39 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         String previous = status;
         int amount = steam.getFluidAmount();
         generateSteam();
+        if (isController()) reportProduction();
         if (!previous.equals(status) || amount != steam.getFluidAmount()) notifyUpdate();
     }
+
+    private void planProduction() {
+        int length = getHeight();
+        double high = (2 * length - 1) * 80_000 / SteamGrades.HIGH_PRESSURE.joulesPerMb();
+        double superheated = length * 160_000 / SteamGrades.SUPERHEATED.joulesPerMb();
+        ProductionMonitor.plan(this, getWidth() * Math.max(high, superheated), 0, 0);
+    }
+
+    private void reportProduction() {
+        var meter = ProductionMonitor.of(this);
+        if (meter == null) return;
+        var feed = getTankInventory().getFluid();
+        var rates = meter.read(ProductionMonitor.Output.FLUID);
+        if (!boils(feed) && rates == null) return;
+        planProduction();
+        int length = getHeight();
+        double maximum = meter.read(ProductionMonitor.Output.FLUID).maximum() / getWidth();
+        String limit = !boils(feed) ? "water" : boiler.attachedEngines > 0 ? "engines" : "rated";
+        for (int across = 0; limit.equals("rated") && across < getWidth(); across++) {
+            var end = getMainConnectionAxis() == Direction.Axis.X ? TankCells.at(this, length - 1, 0, across) : TankCells.at(this, length - 1, across, 0);
+            if (!level.hasChunkAt(end) || !(level.getBlockEntity(end) instanceof HorizontalTankBlockEntity cell)) limit = "structure";
+            else if (cell.status.equals("output")) limit = "output";
+            else if (cell.status.equals("water")) limit = "water";
+            else if (cell.status.equals("structure")) limit = "structure";
+            else if (cell.status.equals("heat") || cell.heatWatts / cell.heatedGrade.joulesPerMb() + .001 < maximum) limit = "heat";
+        }
+        ProductionMonitor.limitedBy(this, limit);
+    }
+
+    private SteamGrades heatedGrade = SteamGrades.HIGH_PRESSURE;
 
     public void generateSteam() {
         heatWatts = 0;
@@ -142,6 +173,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         float heat = BoilerHeater.findHeat(level, under, level.getBlockState(under));
         if (!(heat > 0)) { status = "heat"; return; }
         var grade = heat >= 2 ? SteamGrades.SUPERHEATED : SteamGrades.HIGH_PRESSURE;
+        heatedGrade = grade;
         var sample = new FluidStack(grade.fluid(), 1);
         FluidThermal.processComponents(water, sample);
         if (steam.fill(sample, IFluidHandler.FluidAction.SIMULATE) != 1) { status = "output"; return; }
@@ -162,8 +194,9 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
             if (provided > 0) setChanged();
             return;
         }
+        root.planProduction();
         feed.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        steam.fill(sample.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE);
+        ProductionMonitor.produced(root, steam.fill(sample.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE), 0, 0);
         heatJoules -= amount * grade.joulesPerMb();
         status = "running";
         setChanged();

@@ -183,10 +183,12 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
             if (magnetJoules > 0) emergency = true;
             dumpMagnets(false);
             updateStatus();
+            ProductionMonitor.limitedBy(this, "structure");
             sync(false);
             return;
         }
 
+        ProductionMonitor.plan(this, 0, 0, FusionPhysics.RATED_FUSION_WATTS / 1000);
         double pumpRpm = pumpRpm();
         vacuumPascals = FusionPhysics.vacuumStep(vacuumPascals, pumpRpm, vacuumCommand);
         coolMagnets();
@@ -209,6 +211,20 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
             blanketKelvin = Math.max(FusionPhysics.AMBIENT_KELVIN, blanketKelvin - OFFLINE_COOLDOWN_KELVIN_PER_TICK);
         if (previousFusion > 0 && fusionWatts == 0 && (plasmaCommand || emergency || quench)) damageFromDisruption(previousFusion);
         updateStatus();
+        ProductionMonitor.produced(this, 0, 0, fusionWatts / 20);
+        ProductionMonitor.limitedBy(this, switch (status) {
+            case "burning" -> fusionWatts < FusionPhysics.targetWatts(targetPercent) ? "power" : targetPercent < 100 ? "control" : "rated";
+            case "pumping", "vacuum_off" -> "vacuum";
+            case "helium", "cooling" -> "cryogenic";
+            case "magnets_off", "charging" -> "magnets";
+            case "blanket", "divertor" -> "maintenance";
+            case "fuel" -> "feed";
+            case "quench", "dumping" -> "safety";
+            case "ready" -> "stopped";
+            case "heating" -> "preheat";
+            case "heating_power" -> ash.getAmount() >= HELIUM_EXHAUST_CAPACITY - 1 ? "output" : "power";
+            default -> status;
+        });
         sync(fusionWatts > 0);
     }
 

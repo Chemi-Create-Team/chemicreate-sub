@@ -9,6 +9,7 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
 import net.createplant.block.HorizontalFluidTankBlock;
 import net.createplant.block.entity.HorizontalTankBlockEntity;
+import net.createplant.compat.display.MachineReadings;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.SteamGrades;
@@ -91,6 +92,14 @@ public final class HorizontalTankBoilerFlowGameTests {
         h.runAfterDelay(180, () -> steamMotor.generatedSpeed.setValue(128));
         h.runAfterDelay(192, () -> steamMotor.generatedSpeed.setValue(0));
         h.runAfterDelay(202, () -> {
+            var current = MachineReadings.read(outlet, "production_fluid");
+            var rated = MachineReadings.read(outlet, "production_fluid_max");
+            double theoretical = Math.max(400_000 / SteamGrades.HIGH_PRESSURE.joulesPerMb(), 480_000 / SteamGrades.SUPERHEATED.joulesPerMb());
+            h.assertTrue(current != null && current.value() > 0 && rated != null && Math.abs(rated.value() - theoretical) < .001,
+                "A noncontroller boiler section shows the observed output and the full structure's heat-limited rating");
+            h.assertTrue(MachineReadings.productionBottleneck(outlet).getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents reason
+                && reason.getKey().endsWith(".heat"),
+                "Three normally heated burners are below this structure's highest heat rate");
             h.assertTrue(stored.getFluidAmount() > 0, "A stock pipe and real Create pump deliver the finite superheated steam to the receiver");
             pausedAmount[0] = stored.getFluidAmount();
         });

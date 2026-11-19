@@ -70,15 +70,20 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     public void process(double seconds){
         if(!ready() || !Double.isFinite(seconds) || seconds<=0)return;
         var recipe=water.isEmpty() && steam.isEmpty() ? recipe(feed.getFluid()) : null;
-        if(recipe==null){setSeparating(false);return;}
-        int count=Math.min(getWidth()*getWidth()*getHeight(),feed.getFluidAmount()/recipe.inputs().getFirst().getAmount());
+        if(recipe==null){ProductionMonitor.limitedBy(this,"feed");setSeparating(false);return;}
+        int size=getWidth()*getWidth()*getHeight();
+        ProductionMonitor.plan(this,ProductionMonitor.batchRate(ProductionMonitor.fluids(recipe.outputs()),size,((recipe.ticks()+4)/5)*5,1),0,0);
+        int feedCount=feed.getFluidAmount()/recipe.inputs().getFirst().getAmount();
+        int count=Math.min(size,feedCount);
         count=Math.min(count,liquid.fill(product(recipe,0,count),IFluidHandler.FluidAction.SIMULATE)/recipe.outputs().get(0).getAmount());
         count=Math.min(count,recycle.fill(product(recipe,1,count),IFluidHandler.FluidAction.SIMULATE)/recipe.outputs().get(1).getAmount());
+        ProductionMonitor.limitedBy(this,count<Math.min(size,feedCount) ? "output" : feedCount<size ? "feed" : "rated");
         setSeparating(count>0);
         if(count<=0)return;progress+=Math.min(1,seconds)*20;
         if(progress>=recipe.ticks()){
             var madeLiquid=product(recipe,0,count);var madeGas=product(recipe,1,count);feed.drain(recipe.inputs().getFirst().getAmount()*count,IFluidHandler.FluidAction.EXECUTE);
             liquid.fill(madeLiquid,IFluidHandler.FluidAction.EXECUTE);recycle.fill(madeGas,IFluidHandler.FluidAction.EXECUTE);progress=0;
+            ProductionMonitor.produced(this,madeLiquid.getAmount()+madeGas.getAmount(),0,0);
         }changed();
     }
     private void setSeparating(boolean active){if(separating!=active){separating=active;syncNeeded=true;}}

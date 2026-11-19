@@ -69,6 +69,7 @@ public final class CubicPressBlockEntity extends KineticBlockEntity {
     public void process() {
         if (level == null || level.isClientSide) return;
         boolean previous = running;String old = status;running = false;
+        if (!pending.isEmpty()) planProduction(pending, duration);
         if (Math.abs(getSpeed()) < 64) status = "speed";
         else if (!superheated()) status = "heat";
         else {
@@ -81,6 +82,7 @@ public final class CubicPressBlockEntity extends KineticBlockEntity {
                         var output = inventory.getStackInSlot(2).copy();
                         if (output.isEmpty()) output = pending.copy();else output.grow(pending.getCount());
                         inventory.setStackInSlot(2, output);
+                        ProductionMonitor.produced(this, 0, pending.getCount(), 0);
                         if (!returned.isEmpty()) {
                             var catalyst = inventory.getStackInSlot(1).copy();
                             if (catalyst.isEmpty()) catalyst = returned.copy();else catalyst.grow(returned.getCount());
@@ -91,6 +93,11 @@ public final class CubicPressBlockEntity extends KineticBlockEntity {
                 }
             }
         }
+        ProductionMonitor.limitedBy(this, switch (status) {
+            case "materials" -> "feed";
+            case "running" -> Math.abs(getSpeed()) < 256 ? "speed" : "rated";
+            default -> status;
+        });
         if (!old.equals(status) || previous != running || level.getGameTime() - lastSync >= 10 && running) { lastSync = level.getGameTime();sendData(); }
     }
     private void start() {
@@ -100,6 +107,7 @@ public final class CubicPressBlockEntity extends KineticBlockEntity {
         var recipe = found.get().value();
         if (!recipe.getRequiredHeat().testBlazeBurner(BlazeBurnerBlock.HeatLevel.SEETHING) || recipe.getRollableResults().isEmpty()) { status = "materials";return; }
         var main = recipe.getRollableResults().getFirst().getStack();
+        planProduction(main, recipe.getProcessingDuration());
         if (!outputFits(main)) { status = "output";return; }
         var results = recipe.rollResults(level.random);
         if (results.isEmpty()) return;
@@ -111,6 +119,9 @@ public final class CubicPressBlockEntity extends KineticBlockEntity {
         paidFeed = input.feed().copyWithCount(1);paidCatalyst = input.catalyst().copyWithCount(1);
         inventory.extractItem(0, 1, false);inventory.extractItem(1, 1, false);
         duration = Math.max(1, recipe.getProcessingDuration());progress = 0;setChanged();
+    }
+    private void planProduction(ItemStack output, int ticks) {
+        ProductionMonitor.plan(this, 0, ProductionMonitor.batchRate(output.getCount(), 1, ticks, 4), 0);
     }
     public void dropContents() {
         if (level == null || level.isClientSide) return;

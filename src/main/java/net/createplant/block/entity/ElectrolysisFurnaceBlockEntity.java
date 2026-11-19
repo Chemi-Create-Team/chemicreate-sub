@@ -111,6 +111,7 @@ public class ElectrolysisFurnaceBlockEntity extends SmartBlockEntity implements 
         }
         watts = formed ? voltsSquared / OHMS : 0;
         var oxide = inventory.getStackInSlot(OXIDE);var reduction = reductions().get(oxide.getItem());
+        if (reduction != null) ProductionMonitor.plan(this, 0, 20, 0);
         boolean fed = reduction != null && !inventory.getStackInSlot(CARBON).isEmpty()
             && inventory.insertItem(PRODUCT, new ItemStack(reduction.metal()), true).isEmpty();
         String next;
@@ -118,11 +119,17 @@ public class ElectrolysisFurnaceBlockEntity extends SmartBlockEntity implements 
         else if (watts < MINIMUM_WATTS) next = "power";
         else if (!fed) next = reduction == null || inventory.getStackInSlot(CARBON).isEmpty() ? "materials" : "output";
         else next = "running";
+        ProductionMonitor.limitedBy(this, switch (next) {
+            case "running" -> watts < reduction.joules() * 20 ? "power" : "rated";
+            case "materials" -> "feed";
+            default -> next;
+        });
         if (next.equals("running")) {
             progress += watts / 20;
             if (progress >= reduction.joules()) {
                 progress -= reduction.joules();
                 inventory.extractItem(OXIDE, 1, false);inventory.extractItem(CARBON, 1, false);inventory.insertItem(PRODUCT, new ItemStack(reduction.metal()), false);
+                ProductionMonitor.produced(this, 0, 1, 0);
             }
         } else progress = Math.min(progress, reduction == null ? 0 : reduction.joules());
         boolean molten = formed && watts >= MINIMUM_WATTS, statusChanged = !next.equals(status);

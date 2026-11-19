@@ -81,20 +81,27 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
         formed = structure();
         if(wasFormed!=formed){portEpoch++;level.invalidateCapabilities(worldPosition);}
         if (formed) runCycle();
+        if (!formed) ProductionMonitor.limitedBy(this, "structure");
+        else if (!status.equals("running")) ProductionMonitor.limitedBy(this, status);
         if (hasNetwork()) getOrCreateNetwork().updateStressFor(this, calculateStressApplied());
         if (!previous.equals(status) || wasFormed != formed || watts > 0) { setChanged();sendData(); }
     }
 
     private void runCycle() {
+        var recipe=net.createplant.thermal.ThermalStreams.liquefaction(gas.getFluid());
+        int workPerLiquid=gas.getFluid().is(CEFusion.HELIUM_GAS.get()) ? 4000 : 1000;
+        int maximum = (int) (256 * WATTS_PER_RPM * .25 / workPerLiquid);
+        if (recipe != null) ProductionMonitor.plan(this, recipe.result(gas.getFluid(), maximum).getAmount() * 4d, 0, 0);
         if(Math.abs(getSpeed())<32 || isOverStressed()){status="speed";return;}
         if(level.hasNeighborSignal(worldPosition)){status="redstone";return;}
-        var recipe=net.createplant.thermal.ThermalStreams.liquefaction(gas.getFluid());if(recipe==null){status="feed";return;}
+        if(recipe==null){status="feed";return;}
         if(!water.getFluid().is(Fluids.WATER)){status="water";return;}
         if(gas.getFluidAmount()<recipe.inputAmount()){status="feed";return;}
-        int workPerLiquid=gas.getFluid().is(CEFusion.HELIUM_GAS.get()) ? 4000 : 1000;
         int coolantPerLiquid=workPerLiquid/20;
-        int count=Math.min(gas.getFluidAmount()/recipe.inputAmount(),(int)(Math.min(256,Math.abs(getSpeed()))*WATTS_PER_RPM*.25/workPerLiquid));
-        count=Math.min(count,water.getFluidAmount()/coolantPerLiquid);
+        int power = (int)(Math.min(256,Math.abs(getSpeed()))*WATTS_PER_RPM*.25/workPerLiquid);
+        int feed = Math.min(gas.getFluidAmount()/recipe.inputAmount(), power);
+        int cooled = Math.min(feed,water.getFluidAmount()/coolantPerLiquid);
+        int count = cooled;
         count=Math.min(count,liquid.fill(recipe.result(gas.getFluid(),count),SIMULATE));
         var discharge=net.createplant.thermal.ThermalStreams.coolant(water.getFluid()).result(water.getFluid(),Math.max(1,count*coolantPerLiquid));
         count=Math.min(count,warm.fill(discharge,SIMULATE)/coolantPerLiquid);
@@ -102,6 +109,8 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
         lastStressApplied=(float)(count*workPerLiquid*4/Math.abs(getSpeed()));
         if(hasNetwork())getOrCreateNetwork().updateStressFor(this,lastStressApplied);if(isOverStressed()){status="speed";return;}
         var product=recipe.result(gas.getFluid(),count);gas.drain(count*recipe.inputAmount(),EXECUTE);liquid.fill(product,EXECUTE);water.drain(count*coolantPerLiquid,EXECUTE);warm.fill(discharge.copyWithAmount(count*coolantPerLiquid),EXECUTE);
+        ProductionMonitor.produced(this, product.getAmount(), 0, 0);
+        ProductionMonitor.limitedBy(this, count < cooled ? "output" : cooled < feed ? "water" : feed < power ? "feed" : power < maximum ? "speed" : "rated");
         watts=count*workPerLiquid*4;flow=count;status="running";
     }
 

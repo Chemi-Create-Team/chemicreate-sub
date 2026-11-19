@@ -59,8 +59,22 @@ public class FuelCellBlockEntity extends SmartBlockEntity implements IHaveGoggle
             && water.getAmount() <= CAPACITY - 3 * MAX_REACTIONS_PER_TICK && gameTime >= backfedUntil;
     }
 
+    @Override public void tick() {
+        super.tick();
+        if (level == null || level.isClientSide) return;
+        planProduction();
+        if (level.getGameTime() - lastSupplied > 2) ProductionMonitor.limitedBy(this, "unwired");
+    }
+
+    private void planProduction() {
+        double maxWater = OPEN_VOLTS * OPEN_VOLTS / OHMS / JOULES_PER_HYDROGEN * WATER_PER_HYDROGEN;
+        double maxPower = OPEN_VOLTS * OPEN_VOLTS / (4 * OHMS) / 1000;
+        ProductionMonitor.plan(this, maxWater, 0, maxPower);
+    }
+
     /** The circuit's answer: the voltage across the terminals, node 0 positive, while the stack was a source; zero when it was not. */
     public void supplied(double terminalVolts, boolean sourced, long gameTime) {
+        planProduction();
         String before = status;
         lastSupplied = gameTime;
         volts = sourced ? terminalVolts : 0;
@@ -72,6 +86,7 @@ public class FuelCellBlockEntity extends SmartBlockEntity implements IHaveGoggle
             status = "backfed";
         } else if (amps > BACKFED_AMPS && ready(gameTime)) {
             burn(OPEN_VOLTS * amps / 20 / JOULES_PER_HYDROGEN);
+            ProductionMonitor.produced(this, 0, 0, watts() / 20);
             status = "running";
         } else {
             amps = 0;
@@ -80,6 +95,13 @@ public class FuelCellBlockEntity extends SmartBlockEntity implements IHaveGoggle
                 : water.getAmount() > CAPACITY - 3 * MAX_REACTIONS_PER_TICK ? "water"
                 : gameTime < backfedUntil ? "backfed" : "idle";
         }
+        ProductionMonitor.limitedBy(this, switch (status) {
+            case "fuel", "oxygen" -> "feed";
+            case "water" -> "output";
+            case "idle" -> "demand";
+            case "running" -> watts() < .99 * OPEN_VOLTS * OPEN_VOLTS / (4 * OHMS) ? "load_match" : "rated";
+            default -> status;
+        });
         setChanged();
         if (!status.equals(before) || gameTime % 20 == 0) sendData();
     }
@@ -95,6 +117,7 @@ public class FuelCellBlockEntity extends SmartBlockEntity implements IHaveGoggle
         oxygen = shrink(oxygen, reactions);
         int produced = reactions * 3;
         water = FluidThermal.add(water, FluidThermal.at(new FluidStack(Fluids.WATER, produced), WATER_KELVIN), produced);
+        ProductionMonitor.produced(this, produced, 0, 0);
         reactionDue = Math.clamp(reactionDue - reactions, 0, 1);
     }
 

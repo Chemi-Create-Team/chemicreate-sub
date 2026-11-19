@@ -84,13 +84,21 @@ public class CondenserWaterboxBlockEntity extends SmartBlockEntity implements IH
         }
         watts = 0;
         var rotor = rotor();
-        if (!formed || rotor == null || cold.isEmpty() || rotor.thermodynamics().pendingCondenserJoules() <= 0) return;
-        int amount=Math.min(845000,Math.min(cold.getFluidAmount(),(int)Math.floor(rotor.thermodynamics().pendingCondenserJoules()/20)));
+        if (!formed || rotor == null) { ProductionMonitor.limitedBy(this, "structure");return; }
+        int maximum = Math.min(845000, (int) (net.createplant.thermal.TurbineThermal.MAX_FLOW * net.createplant.thermal.SteamGrades.CONDENSER_JOULES_PER_MB / 20));
+        ProductionMonitor.plan(this, maximum * 20d, 0, 0);
+        if (cold.isEmpty() || rotor.thermodynamics().pendingCondenserJoules() <= 0) {
+            ProductionMonitor.limitedBy(this, cold.isEmpty() ? "water" : "steam");return;
+        }
+        int available = Math.min(845000, (int) Math.floor(rotor.thermodynamics().pendingCondenserJoules()/20));
+        int amount = Math.min(cold.getFluidAmount(), available);
         if(amount<=0)return;
         var result=net.createplant.thermal.ThermalStreams.coolant(cold.getFluid()).result(cold.getFluid(),amount);
-        if(hot.fill(result,IFluidHandler.FluidAction.SIMULATE)!=amount)return;
+        if(hot.fill(result,IFluidHandler.FluidAction.SIMULATE)!=amount){ProductionMonitor.limitedBy(this, "output");return;}
+        ProductionMonitor.limitedBy(this, amount < available ? "water" : amount < maximum ? "steam" : "rated");
         double q=amount*20d;cold.drain(amount,IFluidHandler.FluidAction.EXECUTE);hot.fill(result,IFluidHandler.FluidAction.EXECUTE);
         rotor.thermodynamics().removeCondenserHeat(q);watts = q * 20;setChanged();
+        ProductionMonitor.produced(this, amount, 0, 0);
     }
     public IFluidHandler coolingPort(boolean input) {
         return new IFluidHandler() {

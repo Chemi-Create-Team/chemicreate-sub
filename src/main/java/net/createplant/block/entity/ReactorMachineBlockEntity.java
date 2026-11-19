@@ -320,12 +320,15 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             recipeDirty=false;
         }
         if (recipe==null) { setStatus(idle,false);return; }
+        double ratedRate = ProductionMonitor.batchRate(1, sections, recipe.ticks(), module().stress == 0 ? 1 : 4);
+        ProductionMonitor.plan(this, ProductionMonitor.fluids(recipe.outputs()) * ratedRate, 0, 0);
         if (!recipe.heatAllowed(currentBurnerHeat())) { setStatus("heat",false);return; }
         int available=batches(recipe);
         if (available==0) { recipeDirty=true;setStatus("materials",false);return; }
         if (!batch.equals(recipe.id()) || scale<=0 || scale>available || progress==0 && scale!=available) { batch=recipe.id();scale=available;progress=0; }
         cycleTicks=recipe.ticks();
         if(recipe.requiredHeat()!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE && takeBurnerHeat(recipe.requiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)<(recipe.requiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)){setStatus("heat",false);return;}
+        ProductionMonitor.limitedBy(this, available < sections ? "throughput" : module().stress != 0 && rpm < 128 ? "speed" : "rated");
         setStatus("running",true);progress+=Math.min(4,rpm/32f);setChanged();
         if (progress>=recipe.ticks()) {
             if (!ready() || batches(recipe)<scale) return;
@@ -335,6 +338,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
                 var portion=out.copyWithAmount(out.getAmount()*scale);
                 tanks[i+2]=tanks[i+2].isEmpty() ? portion : FluidThermal.mix(tanks[i+2],portion,portion.getAmount());
             }
+            ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.outputs()) * scale, 0, 0);
             progress=0;changed();
         }
         if (clock%10==0) syncNeeded=true;
@@ -377,20 +381,29 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             return module()==ReactorModule.STIRRED;
         }
         var recipe=reaction.value();
+        int duration = Math.clamp(recipe.getProcessingDuration() > 0 ? recipe.getProcessingDuration() : 100, 1, 200);
+        double ratedRate = ProductionMonitor.batchRate(1, sections, duration, module().stress == 0 ? 1 : 4);
+        double itemCount = recipe.getRollableResults().stream().mapToDouble(result -> result.getStack().getCount() * result.getChance()).sum();
+        ProductionMonitor.plan(this, ProductionMonitor.fluids(recipe.getFluidResults()) * ratedRate, itemCount * ratedRate, 0);
         if (!recipe.getRequiredHeat().testBlazeBurner(heat)) { recipeDirty=true;progress=0;setStatus("heat",false);return true; }
         int available=batches(recipe);
         if (available==0) { recipeDirty=true;setStatus("materials",false);return true; }
         String id=reaction.id().toString();
         if (!batch.equals(id) || scale<=0 || scale>available || progress==0 && scale!=available) { batch=id;scale=available;progress=0; }
-        cycleTicks=Math.clamp(recipe.getProcessingDuration()>0 ? recipe.getProcessingDuration() : 100,1,200);
+        cycleTicks=duration;
         if(recipe.getRequiredHeat()!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE && takeBurnerHeat(recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)<(recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)){setStatus("heat",false);return true;}
-        setStatus("running",true);progress+=Math.min(4,rpm/32f)*processingSpeedFactor();setChanged();
+        float efficiency = processingSpeedFactor();
+        ProductionMonitor.limitedBy(this, available < sections ? "throughput" : efficiency < 1 ? "fouled"
+            : module().stress != 0 && rpm < 128 ? "speed" : "rated");
+        setStatus("running",true);progress+=Math.min(4,rpm/32f)*efficiency;setChanged();
         if (progress<cycleTicks || batches(recipe)<scale) return true;
         for (int i=0;i<scale;i++) {
             ItemStack[] items=items();FluidStack[] fluids=mixingFluids();
-            if (!runBatch(recipe,items,fluids,recipe.rollResults(level.random))) break;
+            var products = recipe.rollResults(level.random);
+            if (!runBatch(recipe,items,fluids,products)) break;
             for (int slot=0;slot<CHARGE_SLOTS;slot++) charge.setStackInSlot(slot,items[slot]);
             commitMixingFluids(fluids);
+            ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.getFluidResults()), ProductionMonitor.items(products), 0);
             completedStirredBatch(recipe,1);
         }
         progress=0;changed();return true;
@@ -522,6 +535,12 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     private static int bufferCapacity(FluidStack fluid) { return FluidMaterials.gas(fluid.getFluid()) ? CAPACITY*64 : CAPACITY; }
     private void setStatus(String reason,boolean work) { setStatus(reason,work,false); }
     private void setStatus(String reason,boolean work,boolean measured) {
+        if (!work) ProductionMonitor.limitedBy(this, switch (reason) {
+            case "materials", "contents" -> "throughput";
+            case "heat", "redstone", "speed", "lid", "output" -> reason;
+            case "two_streams" -> "feed";
+            default -> "structure";
+        });
         if (!measured && module()==ReactorModule.PREHEATER && !work && thermal!=null) thermal.stop();
         if (running==work && status.equals(reason)) return;
         running=work;status=reason;syncNeeded=true;

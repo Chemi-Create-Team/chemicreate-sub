@@ -64,7 +64,7 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
         clock++;
         if (!loaded()) {
             boolean knownSize = formed;
-            invalidateStructure();status = "unloaded";
+            invalidateStructure();status = "unloaded";ProductionMonitor.limitedBy(this, "structure");
             if (!knownSize) nextSize();
             return;
         }
@@ -72,7 +72,7 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
         watts = 0;
         if (formed) {
             process();
-        }
+        } else ProductionMonitor.limitedBy(this, "structure");
         if (clock % 20 == 0) { setChanged();sendData(); }
     }
 
@@ -122,13 +122,17 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
     }
 
     public void process() {
-        watts=0;flow=0;if(!formed || isRemoved()){status="structure";return;}
-        if(tanks[0].isEmpty() && tanks[2].isEmpty()){status="feed";return;}
+        watts=0;flow=0;if(!formed || isRemoved()){status="structure";ProductionMonitor.limitedBy(this, status);return;}
+        int maximum = maximumFlow();
+        ProductionMonitor.plan(this, maximum * 20d, 0, 0);
+        if(tanks[0].isEmpty() && tanks[2].isEmpty()){status="feed";ProductionMonitor.limitedBy(this, status);return;}
         var recipe=net.createplant.thermal.ThermalStreams.cooling(tanks[0].getFluid());
+        int feed = Math.min(maximum, tanks[0].getFluidAmount());
         if(recipe!=null && tanks[0].getFluid().is(net.createplant.registry.CEProcessFluids.WARM_WATER.get())){
-            int count=Math.min(maximumFlow(),tanks[0].getFluidAmount());count=Math.min(count,tanks[1].fill(recipe.result(tanks[0].getFluid(),count),IFluidHandler.FluidAction.SIMULATE));
-            if(count>0){var product=recipe.result(tanks[0].getFluid(),count);tanks[0].drain(count,IFluidHandler.FluidAction.EXECUTE);tanks[1].fill(product,IFluidHandler.FluidAction.EXECUTE);flow=count;watts=count*400d;setChanged();}
+            int count=Math.min(feed,tanks[1].fill(recipe.result(tanks[0].getFluid(),feed),IFluidHandler.FluidAction.SIMULATE));
+            if(count>0){var product=recipe.result(tanks[0].getFluid(),count);tanks[0].drain(count,IFluidHandler.FluidAction.EXECUTE);ProductionMonitor.produced(this, tanks[1].fill(product,IFluidHandler.FluidAction.EXECUTE), 0, 0);flow=count;watts=count*400d;setChanged();}
         }
+        ProductionMonitor.limitedBy(this, flow < feed ? "output" : feed < maximum ? "feed" : "rated");
         if(!tanks[2].isEmpty()){
             int count=tanks[1].fill(tanks[2].getFluid().copyWithAmount(Math.min(MAX_FLOW,tanks[2].getFluidAmount())),IFluidHandler.FluidAction.SIMULATE);
             if(count>0)tanks[1].fill(tanks[2].drain(count,IFluidHandler.FluidAction.EXECUTE),IFluidHandler.FluidAction.EXECUTE);

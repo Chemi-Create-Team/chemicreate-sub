@@ -242,14 +242,24 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
             revalidate = true;
         }
         if (revalidate || !formed && clock % 20 == Math.floorMod(worldPosition.hashCode(), 20)) validateStructure();
-        if (!formed) return;
+        if (!formed) { ProductionMonitor.limitedBy(this, "structure");return; }
         if (running || tiltRequested || getSpeed() > 0) {
             String next = tilted() && hasProduct() ? "tapping" : "tilting";
+            ProductionMonitor.limitedBy(this, "upright");
             if (!status.equals(next)) { status = next;changed(); }
             if (running) invalidatePortCapabilities();
             return;
         }
         runProcessUnchecked(1);
+        ProductionMonitor.limitedBy(this, switch (status) {
+            case "blowing" -> "rated";
+            case "no_feed" -> hasProduct() ? "tap" : "feed";
+            case "gas_disconnected" -> "offgas";
+            case "output_full" -> hasProduct() ? "tap" : "output";
+            case "ready" -> "tap";
+            case "tilting" -> "upright";
+            default -> "recipe";
+        });
     }
 
     public void validateStructure() {
@@ -351,6 +361,8 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
             return;
         }
         ConverterRecipe recipe = holder.value();
+        ProductionMonitor.plan(this, ProductionMonitor.batchRate(recipe.byproduct().getAmount(), 1, recipe.duration(), 1),
+            ProductionMonitor.batchRate(recipe.result().getCount(), 1, recipe.duration(), 1), 0);
         if (!upright()) { status = "tilting";return; }
         if (!recipe.byproduct().isEmpty() && !offgasConnected()) { status = "gas_disconnected";return; }
         if (!canStoreResult(recipe.result()) || !canStoreGas(recipe.byproduct())) { status = "output_full";return; }
@@ -362,7 +374,8 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
             return;
         }
         insertResult(recipe.result(), false);
-        if (!recipe.byproduct().isEmpty()) gasOutput.fill(recipe.byproduct(), IFluidHandler.FluidAction.EXECUTE);
+        int gas = recipe.byproduct().isEmpty() ? 0 : gasOutput.fill(recipe.byproduct(), IFluidHandler.FluidAction.EXECUTE);
+        ProductionMonitor.produced(this, gas, recipe.result().getCount(), 0);
         consumeReservation();
         activeRecipe = null;
         progress = 0;
@@ -378,6 +391,8 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
             int gasToDrain = gasDrainAmount(recipe);
             if (gasToDrain <= 0 || !hasItems(recipe.itemIngredients())) continue;
             sawInputs = true;
+            ProductionMonitor.plan(this, ProductionMonitor.batchRate(recipe.byproduct().getAmount(), 1, recipe.duration(), 1),
+                ProductionMonitor.batchRate(recipe.result().getCount(), 1, recipe.duration(), 1), 0);
             if (!canStoreResult(recipe.result()) || !canStoreGas(recipe.byproduct())) { sawOutputProblem = true;continue; }
             if (!recipe.byproduct().isEmpty() && !offgasConnected()) { sawConnectionProblem = true;continue; }
             reserveItems(recipe.itemIngredients());

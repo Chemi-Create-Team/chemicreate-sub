@@ -6,6 +6,7 @@ import com.simibubi.create.content.fluids.pump.PumpBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
+import net.createplant.compat.display.MachineReadings;
 import net.createplant.block.GasifierBlock;
 import net.createplant.block.PulsationTubeBlock;
 import net.createplant.block.entity.GasifierBlockEntity;
@@ -222,7 +223,19 @@ public final class GasifierGameTests {
 
         var receiver = pump.east(6);
         h.setBlock(receiver, CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS, Direction.Axis.X));
+        h.runAfterDelay(5, () -> {
+            var maximum = MachineReadings.read(gasifier, "production_fluid_max");
+            h.assertTrue(maximum != null && maximum.value() == 250 && MachineReadings.productionBottleneck(gasifier).getContents()
+                instanceof net.minecraft.network.chat.contents.TranslatableContents reason && reason.getKey().endsWith(".heat"),
+                "A preheating gasifier shows the single recipe's 250 mB/s rating and the heating bottleneck");
+        });
+        h.runAfterDelay(130, () -> {
+            var current = MachineReadings.read(gasifier, "production_fluid");
+            h.assertTrue(current != null && current.value() > 0, "The rolling meter counts the committed gasification batch");
+        });
         h.runAfterDelay(610, () -> {
+            var current = MachineReadings.read(gasifier, "production_fluid");
+            h.assertTrue(current != null && current.value() == 0, "The old batch ages out of the rolling window");
             var gas = ThermalControlGameTests.tube(exchanger, 1).drain(500, EXECUTE);
             h.assertTrue(gas.is(CEProcessFluids.WATER_GAS.get()) && gas.getAmount() == 500 && gasifier.fluid(2).isEmpty(),
                 "Create's copper pipe and mechanical pump draw the whole batch from the outlet into the exchanger");

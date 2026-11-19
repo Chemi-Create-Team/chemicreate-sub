@@ -5,7 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import java.util.List;
+import net.createplant.compat.display.MachineReadings;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -15,7 +17,9 @@ public class GoggleOverlayMixin {
     @WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/api/equipment/goggles/IHaveGoggleInformation;addToGoggleTooltip(Ljava/util/List;Z)Z"))
     private static boolean createPlant$indent(IHaveGoggleInformation goggles, List<Component> tooltip, boolean sneaking, Operation<Boolean> original) {
         boolean result = original.call(goggles, tooltip, sneaking);
+        int before = tooltip.size();
+        if (goggles instanceof BlockEntity source) MachineReadings.appendProduction(source, tooltip);
         tooltip.replaceAll(line -> line.getString().isEmpty() || line.getString().startsWith(" ") ? line : Component.literal("    ").append(line));
-        return result;
+        return result || tooltip.size() > before;
     }
 }

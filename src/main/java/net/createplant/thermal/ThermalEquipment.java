@@ -1,5 +1,6 @@
 package net.createplant.thermal;
 
+import net.createplant.block.entity.ProductionMonitor;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.registry.*;
 import net.minecraft.core.HolderLookup;
@@ -75,16 +76,22 @@ public final class ThermalEquipment {
             var process=ThermalStreams.cooling(tanks[hot*2].getFluid());var coolant=ThermalStreams.coolant(tanks[(1-hot)*2].getFluid());
             if(process==null || coolant==null)continue;
             var first=hot==0 ? process : coolant;var second=hot==0 ? coolant : process;
-            int batches=flowPerStep();
+            int maximum = owner.sections() * 150;
+            int products = first.outputAmount() + second.outputAmount();
+            ProductionMonitor.plan(owner, maximum * products * 4d, 0, 0);
+            int capacity = flowPerStep();
+            int feed = Math.min(capacity, Math.min(tanks[0].getFluidAmount()/first.inputAmount(), tanks[2].getFluidAmount()/second.inputAmount()));
+            int batches = feed;
             for(int row=0;row<2;row++){
                 var conversion=row==0 ? first : second;
-                batches=Math.min(batches,tanks[row*2].getFluidAmount()/conversion.inputAmount());
                 batches=Math.min(batches,tanks[row*2+1].fill(conversion.result(tanks[row*2].getFluid(),batches),IFluidHandler.FluidAction.SIMULATE)/conversion.outputAmount());
             }
             if(batches<=0){owner.thermalStatus(tanks[0].isEmpty() || tanks[2].isEmpty() ? "two_streams" : "output",false);return;}
+            ProductionMonitor.limitedBy(owner, batches < feed ? "output" : feed < capacity ? "feed" : capacity < maximum ? "counterflow" : "rated");
             for(int row=0;row<2;row++){
                 var conversion=row==0 ? first : second;var result=conversion.result(tanks[row*2].getFluid(),batches);tanks[row*2].drain(conversion.inputAmount()*batches,IFluidHandler.FluidAction.EXECUTE);tanks[row*2+1].fill(result,IFluidHandler.FluidAction.EXECUTE);
             }
+            ProductionMonitor.produced(owner, products * batches, 0, 0);
             lastCold=first.inputAmount()*batches;lastHot=second.inputAmount()*batches;owner.thermalStatus("exchange",true);owner.thermalChanged();return;
         }
         owner.thermalStatus(tanks[0].isEmpty() || tanks[2].isEmpty() ? "two_streams" : "materials",false);

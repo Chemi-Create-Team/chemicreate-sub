@@ -97,6 +97,7 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
 
     private void idle(String reason, ReciprocatingShaftBlockEntity shaft) {
         status = reason;
+        ProductionMonitor.limitedBy(this, reason.equals("no_cylinder") || reason.equals("no_shaft") ? "structure" : reason);
         load = 0;
         if (shaft != null) shaft.setLoad(0);
     }
@@ -109,23 +110,31 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         ReciprocatingShaftBlockEntity shaft = shaft();
         if (shaft == null) { idle("no_shaft", null);return; }
         double rpm = Math.abs(shaft.getSpeed());
-        if (rpm < MIN_RPM) { idle("speed", shaft);return; }
         var inlet = cylinder.inlet();
         var outlet = cylinder.outlet();
-        if (inlet.isEmpty()) { idle("feed", shaft);return; }
-        int n=Math.min(inlet.getFluidAmount(),Math.max(1,(int)(rpm*FLOW_PER_RPM)));
+        if (inlet.isEmpty()) { idle(rpm < MIN_RPM ? "speed" : "feed", shaft);return; }
         var converted=Compression.convert(inlet.getFluid(),true);
         double perMb=(net.createplant.transport.FluidHazards.of(converted).pressure().ordinal()+1)/EFFICIENCY;
-        n=Math.min(n,(int)(rpm*WATTS_PER_RPM/20/perMb));
-        n=Math.min(n,outlet.fill(converted.copyWithAmount(n),FluidAction.SIMULATE));
+        double maxRpm = com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
+        int maximum = capacityAt(maxRpm, perMb);
+        ProductionMonitor.plan(this, maximum * 20d, 0, 0);
+        if (rpm < MIN_RPM) { idle("speed", shaft);return; }
+        int capacity = capacityAt(rpm, perMb);
+        int feed = Math.min(inlet.getFluidAmount(), capacity);
+        int n = Math.min(feed, outlet.fill(converted.copyWithAmount(feed),FluidAction.SIMULATE));
         if(n<=0){idle("output",shaft);return;}
         load=n*perMb*20/Math.max(1,rpm);
         shaft.setLoad((float)load);
-        if(shaft.isOverStressed()){status="power";return;}
+        if(shaft.isOverStressed()){status="power";ProductionMonitor.limitedBy(this, status);return;}
         inlet.drain(n,FluidAction.EXECUTE);
-        outlet.fill(converted.copyWithAmount(n),FluidAction.EXECUTE);
+        ProductionMonitor.produced(this, outlet.fill(converted.copyWithAmount(n),FluidAction.EXECUTE), 0, 0);
+        ProductionMonitor.limitedBy(this, n < feed ? "output" : feed < capacity ? "feed" : capacity < maximum ? "speed" : "rated");
         flow=n;work=n*perMb;
         status = "running";
+    }
+
+    private static int capacityAt(double rpm, double work) {
+        return Math.min(Math.max(1, (int) (rpm * FLOW_PER_RPM)), (int) (rpm * WATTS_PER_RPM / 20 / work));
     }
 
     @Override protected net.minecraft.world.phys.AABB createRenderBoundingBox() {

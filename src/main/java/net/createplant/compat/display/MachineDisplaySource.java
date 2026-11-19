@@ -36,17 +36,25 @@ public class MachineDisplaySource extends PercentOrProgressBarDisplaySource {
         if (metric(context).equals("dispatch_order") && context.getSourceBlockEntity() instanceof net.createplant.block.entity.IndustrialDispatchBlockEntity dispatch) return dispatch.orderDescription().copy();
         if (metric(context).equals("exchange_mode")) return MachineReadings.exchangeMode(context.getSourceBlockEntity()).copy();
         if (metric(context).equals("status")) return MachineReadings.status(context.getSourceBlockEntity()).copy();
+        if (metric(context).equals("production_bottleneck")) return MachineReadings.productionBottleneck(context.getSourceBlockEntity()).copy();
         var r=reading(context);
         if (r==null || !Double.isFinite(r.value())) return Component.literal("--");
         if (context.sourceConfig().getInt("Mode")!=0) return r.maximum()>0 ? super.provideLine(context,stats) : Component.literal("--");
         return Component.literal(String.format(Locale.ROOT,"%.2f",r.value()).replaceAll("\\.?0+$",""));
     }
     @Override protected String getFlapDisplayLayoutName(DisplayLinkContext context) {
-        return (metric(context).equals("process_name") || metric(context).equals("status") || metric(context).equals("exchange_mode") || metric(context).equals("dispatch_order")) ? "MachineStatus" : super.getFlapDisplayLayoutName(context);
+        return textMetric(context) ? "MachineStatus" : super.getFlapDisplayLayoutName(context);
     }
     @Override protected FlapDisplaySection createSectionForValue(DisplayLinkContext context,int size) {
-        return (metric(context).equals("process_name") || metric(context).equals("status") || metric(context).equals("exchange_mode") || metric(context).equals("dispatch_order")) ? new FlapDisplaySection(size*FlapDisplaySection.MONOSPACE,"alphabet",false,false)
+        return textMetric(context) ? new FlapDisplaySection(size*FlapDisplaySection.MONOSPACE,"alphabet",false,false)
             : super.createSectionForValue(context,size);
+    }
+
+    private boolean textMetric(DisplayLinkContext context) {
+        return switch (metric(context)) {
+            case "process_name", "status", "exchange_mode", "dispatch_order", "production_bottleneck" -> true;
+            default -> false;
+        };
     }
     @Override protected boolean allowsLabeling(DisplayLinkContext context) { return true; }
     @Override public int getPassiveRefreshTicks() { return 20; }

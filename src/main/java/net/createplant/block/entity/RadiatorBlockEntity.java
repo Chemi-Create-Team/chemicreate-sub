@@ -112,12 +112,24 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
         int previousFlow=flow;float previousRpm=fanRpm;fanRpm=0;flow=0;
         for(var pos:fans)if(level.hasChunkAt(pos) && level.getBlockEntity(pos) instanceof CoolingFanBlockEntity fan)fanRpm+=Math.abs(fan.getSpeed());
         try{
-            if(fans.isEmpty() || clock%40==0 && fans.stream().anyMatch(f->!cell(f))){fans=List.of();controller=null;fanRpm=0;return;}
-            if(fanRpm<=0 || input.isEmpty())return;
-            var recipe=ThermalStreams.cooling(input.getFluid());if(recipe==null)return;
-            int batches=Math.min(input.getFluidAmount()/recipe.inputAmount(),Math.max(1,(int)(100*fanRpm/64*SeasonalThermal.cooling(level))));
-            batches=Math.min(batches,output.fill(recipe.result(input.getFluid(),batches),IFluidHandler.FluidAction.SIMULATE)/recipe.outputAmount());if(batches<=0)return;
-            var result=recipe.result(input.getFluid(),batches);input.drain(recipe.inputAmount()*batches,IFluidHandler.FluidAction.EXECUTE);output.fill(result,IFluidHandler.FluidAction.EXECUTE);flow=recipe.inputAmount()*batches;setChanged();
+            if(fans.isEmpty() || clock%40==0 && fans.stream().anyMatch(f->!cell(f))){
+                fans=List.of();controller=null;fanRpm=0;ProductionMonitor.limitedBy(this, "structure");return;
+            }
+            var recipe=ThermalStreams.cooling(input.getFluid());
+            if (recipe == null) { ProductionMonitor.limitedBy(this, "feed");return; }
+            double season = SeasonalThermal.cooling(level);
+            int maxRpm = com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
+            int maximum = Math.max(1, (int) (100d * fans.size() * maxRpm / 64 * season));
+            ProductionMonitor.plan(this, recipe.outputAmount() * maximum * 4d, 0, 0);
+            if(fanRpm<=0){ProductionMonitor.limitedBy(this, "speed");return;}
+            int capacity = Math.max(1,(int)(100*fanRpm/64*season));
+            int feed = Math.min(input.getFluidAmount()/recipe.inputAmount(),capacity);
+            int batches = Math.min(feed, output.fill(recipe.result(input.getFluid(),feed),IFluidHandler.FluidAction.SIMULATE)/recipe.outputAmount());
+            ProductionMonitor.limitedBy(this, batches < feed ? "output" : feed < capacity ? "feed" : capacity < maximum ? "speed" : "rated");
+            if(batches<=0)return;
+            var result=recipe.result(input.getFluid(),batches);input.drain(recipe.inputAmount()*batches,IFluidHandler.FluidAction.EXECUTE);
+            ProductionMonitor.produced(this, output.fill(result,IFluidHandler.FluidAction.EXECUTE), 0, 0);
+            flow=recipe.inputAmount()*batches;setChanged();
         }finally{if(clock%20==0 && flow>0 || previousFlow>0 && flow==0 || previousRpm!=fanRpm)sendData();}
     }
     public IFluidHandler port(Direction side) {

@@ -127,16 +127,22 @@ public class FuelCycleMachineBlockEntity extends KineticBlockEntity implements I
         return true;
     }
     public void process() {
-        if (!formed || isRemoved()) return;
-        if (melter() && watts < 100_000) { status = "power";return; }
-        if (!melter() && Math.abs(getSpeed()) < 32) { status = "speed";return; }
+        if (!formed || isRemoved()) { ProductionMonitor.limitedBy(this, "structure");return; }
         RecipeHolder<FuelCycleRecipe> holder = null;
         for (var candidate : recipes()) if (inputs(candidate.value())) { holder = candidate;break; }
-        if (holder == null) { progress = 0;batch = "";status = "feed";return; }
+        if (holder != null) {
+            var recipe = holder.value();
+            double batches = ProductionMonitor.batchRate(1, 1, recipe.getProcessingDuration(), melter() ? 1 : 2);
+            ProductionMonitor.plan(this, ProductionMonitor.fluids(recipe.getFluidResults()) * batches, productCount(recipe) * batches, 0);
+        }
+        if (melter() && watts < 100_000) { status = "power";ProductionMonitor.limitedBy(this, status);return; }
+        if (!melter() && Math.abs(getSpeed()) < 32) { status = "speed";ProductionMonitor.limitedBy(this, status);return; }
+        if (holder == null) { progress = 0;batch = "";status = "feed";ProductionMonitor.limitedBy(this, status);return; }
         var recipe = holder.value();
-        if (!outputs(recipe)) { status = "output";return; }
+        if (!outputs(recipe)) { status = "output";ProductionMonitor.limitedBy(this, status);return; }
         if (!holder.id().toString().equals(batch)) { batch = holder.id().toString();progress = 0; }
         double rate = melter() ? Math.min(1, watts / 1_500_000) : Math.min(2, Math.abs(getSpeed()) / 64);
+        ProductionMonitor.limitedBy(this, rate >= (melter() ? 1 : 2) ? "rated" : melter() ? "power" : "speed");
         progress += rate;status = melter() ? "vitrifying" : "extracting";setChanged();
         if (progress < Math.max(1, recipe.getProcessingDuration())) return;
         int[] required = itemRequirements(recipe);
@@ -149,7 +155,11 @@ public class FuelCycleMachineBlockEntity extends KineticBlockEntity implements I
             if (!items.getStackInSlot(2).isEmpty()) result.grow(items.getStackInSlot(2).getCount());
             items.setStackInSlot(2, result);
         }
+        ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.getFluidResults()), productCount(recipe), 0);
         progress = 0;setChanged();
+    }
+    private static int productCount(FuelCycleRecipe recipe) {
+        return recipe.getRollableResults().isEmpty() ? 0 : recipe.getRollableResults().getFirst().getStack().getCount();
     }
     public IFluidHandler fluidPort(Direction side) {
         if (side == null) return null;

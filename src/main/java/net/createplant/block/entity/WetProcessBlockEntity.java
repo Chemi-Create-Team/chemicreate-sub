@@ -155,15 +155,18 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
             && (mud.isEmpty() || items.insertItem(4, mud, true).isEmpty());
     }
     public void process() {
-        if (!formed || isRemoved()) return;
+        if (!formed || isRemoved()) { ProductionMonitor.limitedBy(this, "structure");return; }
         if (contentsChanged || cached != null && level.getRecipeManager().byKey(cached.id()).map(RecipeHolder::value).orElse(null) != cached.value()) {
             cached = null;
             for (var recipe : recipes()) if (inputs(recipe.value())) { cached = recipe;break; }
             contentsChanged = false;
         }
-        if (cached == null || !inputs(cached.value())) { progress = 0;boosted = false;batch = "";status = "feed";return; }
+        if (cached == null || !inputs(cached.value())) { progress = 0;boosted = false;batch = "";status = "feed";ProductionMonitor.limitedBy(this, "feed");return; }
         var recipe = cached.value();
-        if (!outputs(recipe)) { status = "output";return; }
+        var fluid = result(recipe);var mud = mud(recipe);
+        double batches = ProductionMonitor.batchRate(1, 1, recipe.getProcessingDuration(), 2);
+        ProductionMonitor.plan(this, fluid.getAmount() * batches, mud.getCount() * batches, 0);
+        if (!outputs(recipe)) { status = "output";ProductionMonitor.limitedBy(this, "output");return; }
         if (!cached.id().toString().equals(batch)) { batch = cached.id().toString();progress = 0;boosted = false; }
         duration = Math.max(1, recipe.getProcessingDuration());
         if (!boosted && progress == 0 && items.getStackInSlot(3).is(CEWetProcessing.FLOCCULANT.get()) && Math.abs(getSpeed()) < 17) {
@@ -171,13 +174,18 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
         }
         progress += boosted ? 2 : 1;
         status = (Math.abs(getSpeed()) >= 17 ? "turbulent" : impurity(getSpeed()) > 0 ? "dirty" : getSpeed() == 0 ? "stagnant" : "clarifying");
+        ProductionMonitor.limitedBy(this, switch (status) {
+            case "turbulent" -> "reduce_speed";
+            case "dirty", "stagnant" -> "clarifier_speed";
+            default -> boosted ? "rated" : "flocculant";
+        });
         changed();
         if (progress < duration) return;
-        var fluid = result(recipe);var mud = mud(recipe);
         if (!inputs(recipe) || !outputs(recipe)) return;
         for (int i = 0; i < recipe.getFluidIngredients().size(); i++) tanks[i].drain(recipe.getFluidIngredients().get(i).amount(), EXECUTE);
         tanks[2].fill(fluid, EXECUTE);
         if (!mud.isEmpty()) items.insertItem(4, mud, false);
+        ProductionMonitor.produced(this, fluid.getAmount(), mud.getCount(), 0);
         progress = 0;boosted = false;contentsChanged = true;
     }
     private boolean validInput(int index, FluidStack fluid) {

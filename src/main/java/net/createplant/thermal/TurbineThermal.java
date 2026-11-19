@@ -2,6 +2,7 @@ package net.createplant.thermal;
 
 import net.createplant.block.entity.*;
 import net.createplant.registry.CEBlocks;
+import net.createplant.block.entity.ProductionMonitor;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -66,16 +67,26 @@ public final class TurbineThermal {
     }
     public int step(boolean enabled,int limit){
         work=condenserJoules=0;previewDirty=true;status=enabled ? "feed" : "structure";
-        if(!enabled || input.isEmpty())return 0;
-        if(wear>=WEAR_LIMIT){status="wear";return 0;}
-        var grade=SteamGrades.of(input.getFluid());if(grade==null){status="fluid";return 0;}
-        int n=available(limit);if(n<=0){status=lowPressure() && CONDENSER_HEAT_CAPACITY-pendingCondenserJoules<SteamGrades.CONDENSER_JOULES_PER_MB ? "condenser" : "output";return 0;}
+        var grade = SteamGrades.of(input.getFluid());
+        var ratedGrade = grade == null ? SteamGrades.SUPERHEATED : grade;
+        double perMb = ratedGrade.workPerMb(lowPressure());
+        int maximum = perMb <= 0 ? MAX_FLOW : Math.min(MAX_FLOW, (int) Math.floor(MAX_J / perMb));
+        if (enabled) ProductionMonitor.plan(owner, maximum * 20d, 0, maximum * perMb / 50);
+        if(!enabled || input.isEmpty()){ProductionMonitor.limitedBy(owner, status);return 0;}
+        if(wear>=WEAR_LIMIT){status="wear";ProductionMonitor.limitedBy(owner, status);return 0;}
+        if(grade==null){status="fluid";ProductionMonitor.limitedBy(owner, "steam");return 0;}
+        int feed = Math.min(maximum, input.getFluidAmount());
+        int n=available(limit);
+        boolean limitedCooling = lowPressure() && CONDENSER_HEAT_CAPACITY - pendingCondenserJoules < feed * SteamGrades.CONDENSER_JOULES_PER_MB;
+        ProductionMonitor.limitedBy(owner, limitedCooling ? "condenser" : n < feed ? "output" : feed < maximum ? "steam" : perMb == 0 ? "steam_grade" : "rated");
+        if(n<=0){status=lowPressure() && CONDENSER_HEAT_CAPACITY-pendingCondenserJoules<SteamGrades.CONDENSER_JOULES_PER_MB ? "condenser" : "output";return 0;}
         var result=SteamGrades.outlet(input.getFluid(),n,lowPressure());input.drain(n,EXECUTE);exhaust.fill(result,EXECUTE);
         work=n*grade.workPerMb(lowPressure());totalWork+=work;wear+=n*grade.wearPerMb();
         if(lowPressure()){condenserJoules=n*SteamGrades.CONDENSER_JOULES_PER_MB;pendingCondenserJoules+=condenserJoules;totalCondenserJoules+=condenserJoules;totalCondensate+=n;}
+        ProductionMonitor.produced(owner, result.getAmount(), 0, work);
         status=work>0 ? "running" : "pass";owner.thermalChanged();return n;
     }
-    public void stop(String why){work=condenserJoules=0;status=why;previewDirty=true;}
+    public void stop(String why){work=condenserJoules=0;status=why;previewDirty=true;ProductionMonitor.limitedBy(owner, why);}
     public record Vent(int mass,double joules){ }
     public Vent release(){var grade=SteamGrades.of(input.getFluid());var outGrade=SteamGrades.of(exhaust.getFluid());var result=new Vent(input.getFluidAmount()+exhaust.getFluidAmount(),pendingCondenserJoules+(grade==null ? 0 : input.getFluidAmount()*grade.joulesPerMb())+(outGrade==null ? 0 : exhaust.getFluidAmount()*outGrade.joulesPerMb()));clear();return result;}
     public void clear(){input.setFluid(FluidStack.EMPTY);exhaust.setFluid(FluidStack.EMPTY);work=condenserJoules=pendingCondenserJoules=0;previewDirty=true;}

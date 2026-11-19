@@ -174,7 +174,21 @@ public class FuelChannelBlockEntity extends SmartBlockEntity implements IHaveGog
             }
             releaseReducedGridItems();
             if (level.getGameTime() % 20 == 0) irradiateTargets();
-            if (core != null) core.tick();
+            if (core != null) {
+                core.tick();
+                if (core.formed()) {
+                    ProductionMonitor.plan(this, 0, 0, core.nominalWatts() / 1000);
+                    ProductionMonitor.produced(this, 0, 0, core.power() / 20);
+                    ProductionMonitor.limitedBy(this, switch (core.status()) {
+                        case "critical" -> core.power() < core.nominalWatts() * .99 ? "reactor_load" : "rated";
+                        case "subcritical" -> "reactor_load";
+                        case "shutdown" -> "stopped";
+                        case "overheat" -> "coolant";
+                        case "rods_jammed" -> "maintenance";
+                        default -> "safety";
+                    });
+                } else ProductionMonitor.limitedBy(this, "structure");
+            }
         }
     }
 

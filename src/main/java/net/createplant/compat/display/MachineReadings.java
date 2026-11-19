@@ -39,15 +39,21 @@ public final class MachineReadings {
         "cold_box_power","flare_height","flare_burnt","flare_vented","redstone_signal","bell_height",
         "bell_travel","console_mode","console_bank_target","console_control_target","console_alarms",
         "console_trace_samples","console_total_flow","reactor_surface_temperature","electrolysis_voltage","electrolysis_current","electrolysis_plates",
-        "electrolysis_limit","electrolysis_rate","electrolysis_cathode","electrolysis_anode","electrolysis_soda","cascade_units","cascade_stages","cascade_required","process_name","stress","superheated","electrolysis_metal","electrolysis_metal_storage","electrolysis_recovered_acid","separation","gasifier_temperature");
+        "electrolysis_limit","electrolysis_rate","electrolysis_cathode","electrolysis_anode","electrolysis_soda","cascade_units","cascade_stages","cascade_required","process_name","stress","superheated","electrolysis_metal","electrolysis_metal_storage","electrolysis_recovered_acid","separation","gasifier_temperature",
+        "production_fluid","production_fluid_max","production_items","production_items_max","production_power","production_power_max","production_bottleneck");
     private MachineReadings() { }
 
     public static BlockEntity owner(BlockEntity be) {
         if (be instanceof GasifierBlockEntity gasifier) return gasifier.owner() == null ? gasifier : gasifier.owner();
+        if (be instanceof ReactionTowerBlockEntity tower) return tower.owner();
         if (be instanceof WetProcessPartBlockEntity part) return part.owner();
         if (be instanceof GasCentrifugePortBlockEntity port) return port.owner();
         if (be instanceof GasCentrifugeBlockEntity centrifuge) return centrifuge.leader();
+        if (be instanceof ElectrodeHeadBlockEntity head) return head.controller();
         if (be instanceof ElectrolysisCellBlockEntity cell) return cell.controller();
+        if (be instanceof ElectrolysisFurnacePartBlockEntity part && part.owner() != null && part.getLevel() != null
+            && part.getLevel().hasChunkAt(part.owner())) return part.getLevel().getBlockEntity(part.owner());
+        if (be instanceof StackedReactorBlockEntity column) return column.bottomStorey();
         if (be instanceof ElectrolysisControllerBlockEntity control) return control.master();
         if(be instanceof ReactorControlConsoleBlockEntity console && console.owner()!=null)return console.owner();
         if (be instanceof LiddedVesselBlockEntity vessel) return vessel.getControllerBE();
@@ -64,6 +70,8 @@ public final class MachineReadings {
             var controller=part.owner();return controller!=null && controller.owns(part.getBlockPos()) ? controller : null;
         }
         if (be instanceof FractionatingColumnBlockEntity column) return column.getControllerBE();
+        if (be instanceof HighPressureTurbineEndBlockEntity end) return end.exhaustSource();
+        if (be instanceof HighPressureTurbinePartBlockEntity part) return part.rotor();
         if (be instanceof ConverterShellBlockEntity converter) return converter.controller();
         if (be instanceof FuelChannelBlockEntity || be instanceof RodCapBlockEntity) return reactorController(be);
         if (be instanceof com.simibubi.create.content.fluids.tank.FluidTankBlockEntity tank) {
@@ -138,6 +146,7 @@ public final class MachineReadings {
     public static Reading read(BlockEntity original,String key) { return read(original,key,null); }
 
     public static Reading read(BlockEntity original,String key,Direction face) {
+        if (key.startsWith("production_")) return ProductionReadings.read(owner(original), key);
         if (owner(original) instanceof GasifierBlockEntity gasifier) {
             if (key.equals("formed")) return new Reading(gasifier.formed() ? 1 : 0, 1);
             if (!gasifier.formed()) return null;
@@ -537,6 +546,10 @@ public final class MachineReadings {
         }
         return null;
     }
+
+    public static Component productionBottleneck(BlockEntity original) { return ProductionReadings.limit(owner(original)); }
+
+    public static void appendProduction(BlockEntity original, List<Component> tooltip) { ProductionReadings.append(owner(original), tooltip); }
 
     public static void compact(List<Component> text) {
         text.removeIf(c->c.getString().isBlank());
