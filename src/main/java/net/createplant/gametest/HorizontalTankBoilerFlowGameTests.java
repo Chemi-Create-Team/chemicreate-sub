@@ -49,7 +49,18 @@ public final class HorizontalTankBoilerFlowGameTests {
 
     @GameTest(template = "test_fractionation", timeoutTicks = 280)
     public static void nativeFeedAndSteamPumpsConserveWaterThroughAStopAndRestart(GameTestHelper h) {
-        BlockPos base = new BlockPos(6, 3, 8), hot = base.east(2), supply = base.north(4), receiver = hot.east(4);
+        verifyNativePumps(h, false);
+    }
+
+    @GameTest(template = "test_fractionation", timeoutTicks = 280)
+    public static void nativeSteamPumpDrawsFromTheMiddleOfTheRoof(GameTestHelper h) {
+        verifyNativePumps(h, true);
+    }
+
+    private static void verifyNativePumps(GameTestHelper h, boolean roof) {
+        BlockPos base = new BlockPos(6, 3, 8), hot = base.east(2), supply = base.north(4);
+        BlockPos outletPipe = roof ? base.east().above() : hot.east();
+        BlockPos receiver = outletPipe.east(3);
         var boilerState = CETransport.HORIZONTAL_FLUID_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
         for (int section = 0; section < 3; section++) { h.setBlock(base.east(section), boilerState);firedBurner(h, base.east(section).below()); }
         var root = (HorizontalTankBlockEntity) ((HorizontalTankBlockEntity) h.getBlockEntity(base)).getControllerBE();
@@ -70,10 +81,10 @@ public final class HorizontalTankBoilerFlowGameTests {
         var receiverOwner = ((FluidTankBlockEntity) h.getBlockEntity(receiver)).getControllerBE();var stored = receiverOwner.getTankInventory();
         h.assertTrue(receiverOwner.getWidth() == 1 && receiverOwner.getHeight() == 3 && stored.getCapacity() == 24000,
             "The steam receiver is a genuine axial gas tank, large enough for the finite steam charge");
-        pipe(h, hot.east(), Direction.WEST, Direction.EAST);
-        BlockPos steamPump = hot.east(2);
+        pipe(h, outletPipe, roof ? Direction.DOWN : Direction.WEST, Direction.EAST);
+        BlockPos steamPump = outletPipe.east();
         h.setBlock(steamPump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
-        pipe(h, hot.east(3), Direction.WEST, Direction.EAST);
+        pipe(h, steamPump.east(), Direction.WEST, Direction.EAST);
         h.setBlock(steamPump.south(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
         var steamMotor = motor(h, steamPump.south().west(), Direction.EAST);
 

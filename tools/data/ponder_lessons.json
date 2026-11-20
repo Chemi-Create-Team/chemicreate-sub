@@ -1150,14 +1150,14 @@
     "zh_cn": "截面为1×1～3×3，沿同一方向延长，最大长度为Create储罐高度上限。"
   },
   "horizontal_tank.boiler": {
-    "en_us": "Cover the underside with Blaze Burners to use it as a Create boiler. Attach steam engines or whistles to the tank.",
-    "ja_jp": "下面全体へブレイズバーナーを置くとCreateボイラーになります。周囲へ蒸気エンジンや汽笛を付けられます。",
-    "zh_cn": "在底面下铺满烈焰人燃烧室即可作为Create锅炉，周围可安装蒸汽引擎或汽笛。"
+    "en_us": "Add Blaze Burners below the ends of the rows to make a boiler.",
+    "ja_jp": "列の末端の下にブレイズバーナーを付けるとボイラーになります。",
+    "zh_cn": "在各列末端下方安装烈焰人燃烧室，即可作为锅炉。"
   },
   "horizontal_tank.pipe": {
-    "en_us": "Connect Create pipes and pumps to any face. Engineer's Goggles show what it holds.",
-    "ja_jp": "Createのパイプとポンプはどの面にもつなげます。ゴーグルで中身を確認できます。",
-    "zh_cn": "任意面可连接 Create 管道和动力泵。工程师护目镜显示内容物。"
+    "en_us": "Feed water from the long side. Pump steam from the top or either end.",
+    "ja_jp": "長辺の側面から給水します。上面か両端面からポンプで蒸気を取り出します。",
+    "zh_cn": "从长侧面供水，从顶部或任一端面泵出蒸汽。"
   },
   "guide.electrolysis_furnace.title": {
     "en_us": "Molten-salt electrolysis furnace",
@@ -2195,9 +2195,9 @@
     "zh_cn": "卧式储罐截面1×1～3×3、长度任意，在下方放置烈焰人燃烧室。"
   },
   "guide.tubular_boiler.step_2": {
-    "en_us": "Feed water at an end or side. The last section of each bottom row boils it with the heat of the burners under its row.",
-    "ja_jp": "端面か側面から給水します。下段の各列の最後の区間が、その列のバーナーの熱で水を沸かします。",
-    "zh_cn": "从端面或侧面供水。底层每一列的最后一段利用该列燃烧室的热量煮沸水。"
+    "en_us": "Feed water from the long side. Light a burner below the end of each row.",
+    "ja_jp": "長辺の側面から給水します。各列の末端の下にあるバーナーに点火します。",
+    "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler.step_3": {
     "en_us": "Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.",
@@ -2205,9 +2205,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler.step_4": {
-    "en_us": "Pump steam from the last section to a turbine; a steam engine switches it to Create boiler mode. Wear goggles to see the current rate, the rating for this build and what limits it.",
-    "ja_jp": "各列の最後の区間から蒸気を送ります。蒸気エンジンを付けるとCreateのボイラーになります。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
-    "zh_cn": "从各列末段泵出蒸汽；安装蒸汽引擎后切换到Create锅炉模式。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
+    "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
+    "ja_jp": "加熱した列の上面か両端面から蒸気を送ります。計器の針は蒸気の充填率を示します。",
+    "zh_cn": "从已加热列的顶部或任一端面泵出蒸汽。仪表指针显示蒸汽充填率。"
   },
   "guide.tubular_boiler_2x2.title": {
     "en_us": "2x2 horizontal tank boiler",
@@ -2220,9 +2220,9 @@
     "zh_cn": "卧式储罐截面1×1～3×3、长度任意，在下方放置烈焰人燃烧室。"
   },
   "guide.tubular_boiler_2x2.step_2": {
-    "en_us": "Feed water at an end or side. The last section of each bottom row boils it with the heat of the burners under its row.",
-    "ja_jp": "端面か側面から給水します。下段の各列の最後の区間が、その列のバーナーの熱で水を沸かします。",
-    "zh_cn": "从端面或侧面供水。底层每一列的最后一段利用该列燃烧室的热量煮沸水。"
+    "en_us": "Feed water from the long side. Light a burner below the end of each row.",
+    "ja_jp": "長辺の側面から給水します。各列の末端の下にあるバーナーに点火します。",
+    "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler_2x2.step_3": {
     "en_us": "Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.",
@@ -2230,9 +2230,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler_2x2.step_4": {
-    "en_us": "Pump steam from the last section to a turbine; a steam engine switches it to Create boiler mode. Wear goggles to see the current rate, the rating for this build and what limits it.",
-    "ja_jp": "各列の最後の区間から蒸気を送ります。蒸気エンジンを付けるとCreateのボイラーになります。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
-    "zh_cn": "从各列末段泵出蒸汽；安装蒸汽引擎后切换到Create锅炉模式。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
+    "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
+    "ja_jp": "加熱した列の上面か両端面から蒸気を送ります。計器の針は蒸気の充填率を示します。",
+    "zh_cn": "从已加热列的顶部或任一端面泵出蒸汽。仪表指针显示蒸汽充填率。"
   },
   "guide.tubular_boiler_3x3.title": {
     "en_us": "3x3 horizontal tank boiler",
@@ -2245,9 +2245,9 @@
     "zh_cn": "卧式储罐截面1×1～3×3、长度任意，在下方放置烈焰人燃烧室。"
   },
   "guide.tubular_boiler_3x3.step_2": {
-    "en_us": "Feed water at an end or side. The last section of each bottom row boils it with the heat of the burners under its row.",
-    "ja_jp": "端面か側面から給水します。下段の各列の最後の区間が、その列のバーナーの熱で水を沸かします。",
-    "zh_cn": "从端面或侧面供水。底层每一列的最后一段利用该列燃烧室的热量煮沸水。"
+    "en_us": "Feed water from the long side. Light a burner below the end of each row.",
+    "ja_jp": "長辺の側面から給水します。各列の末端の下にあるバーナーに点火します。",
+    "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler_3x3.step_3": {
     "en_us": "Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.",
@@ -2255,9 +2255,9 @@
     "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
   },
   "guide.tubular_boiler_3x3.step_4": {
-    "en_us": "Pump steam from the last section to a turbine; a steam engine switches it to Create boiler mode. Wear goggles to see the current rate, the rating for this build and what limits it.",
-    "ja_jp": "各列の最後の区間から蒸気を送ります。蒸気エンジンを付けるとCreateのボイラーになります。ゴーグルで現在の生産量・この寸法での理論上限・改善箇所を確認できます。",
-    "zh_cn": "从各列末段泵出蒸汽；安装蒸汽引擎后切换到Create锅炉模式。戴上护目镜可查看当前产量、按设备尺寸计算的额定上限及瓶颈。"
+    "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
+    "ja_jp": "加熱した列の上面か両端面から蒸気を送ります。計器の針は蒸気の充填率を示します。",
+    "zh_cn": "从已加热列的顶部或任一端面泵出蒸汽。仪表指针显示蒸汽充填率。"
   },
   "rbmk_compact_core.fuel": {
     "en_us": "Use the double-striped 5% rods in five- or seven-wide compact cores. They do not fit seven-layer cores.",
@@ -3965,9 +3965,9 @@
     "zh_cn": "红色轮廓标出阻挡框架或侧面传送带施工的方块。移除它即可继续建造。"
   },
   "horizontal_tank.heating": {
-    "en_us": "A burning Blaze Burner raises the contents by one heat grade every ten seconds. This also works for gases and other tank types.",
-    "ja_jp": "燃焼中のバーナーで同じ中身を10秒加熱すると、温度等級が1段階上がります。気体やほかの種類のタンクも同様です。",
-    "zh_cn": "燃烧中的烈焰人燃烧室持续加热同一批内容物10秒后，温度等级提升一级。气体和其他储罐也适用。"
+    "en_us": "The Create gauge shows how much steam the boiler is holding.",
+    "ja_jp": "Create標準の計器の針は蒸気の充填率を示します。",
+    "zh_cn": "Create 的仪表指针显示锅炉的蒸汽充填率。"
   },
   "portable_sprayers.title": {
     "en_us": "Fire extinguishers and fluid sprayers",

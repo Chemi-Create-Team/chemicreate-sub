@@ -13,6 +13,7 @@ import net.createplant.block.entity.FuelCycleMachineBlockEntity;
 import net.createplant.block.entity.FusionFluidPortBlockEntity;
 import net.createplant.block.entity.FuelPoolBlockEntity;
 import net.createplant.block.entity.GasifierBlockEntity;
+import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.IndustrialDispatchBlockEntity;
 import net.createplant.block.entity.PressurePumpPortBlockEntity;
@@ -47,6 +48,7 @@ public final class ProcessPorts {
         if (state.getBlock() instanceof IRotate rotation && !(be instanceof GeneratingKineticBlockEntity)
             && rotation.hasShaftTowards(level, pos, state, face)) return Kind.SHAFT;
         if (be instanceof FluidPipeBlockEntity) return null;
+        if (be instanceof HorizontalTankBlockEntity tank && tank.isSteamOutlet(face)) return Kind.OUTLET;
         if (be instanceof ReactionTowerBlockEntity tower) {
             if (face == Direction.UP && tower.hasServiceHatch()) return Kind.HATCH;
             if (fluid(be, face) == null) return null;

@@ -205,8 +205,18 @@ public final class IndustrialExpansionGameTests {
         int held = boiler.steam().getFluidAmount();var preview = output.drain(held, FluidAction.SIMULATE);
         h.assertTrue(SteamGrades.of(preview)!=null && preview.getAmount() == held && boiler.steam().getFluidAmount() == held
             && preview.is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()), "Normal burner steam is 350 C and simulated output retains its mass");
-        h.assertTrue(feed.drain(1, FluidAction.SIMULATE).is(Fluids.WATER), "A side face gives the tank's water, never its steam");
-        h.assertTrue(output.drain(held, FluidAction.EXECUTE).getAmount() == held && output.drain(held, FluidAction.EXECUTE).isEmpty(), "An output charge can be extracted only once");h.succeed();
+        h.assertTrue(feed.drain(1, FluidAction.SIMULATE).isEmpty() && port(h, BASE, Direction.DOWN).drain(1, FluidAction.SIMULATE).is(Fluids.WATER),
+            "The side is the water inlet and the bottom is the water drain");
+        h.assertTrue(output.drain(held, FluidAction.EXECUTE).getAmount() == held && output.drain(held, FluidAction.EXECUTE).isEmpty(),
+            "An output charge can be extracted only once");
+        var under = BASE.east(2).below();
+        h.setBlock(under, AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SMOULDERING));
+        boiler.generateSteam();
+        h.assertTrue(output.drain(1, FluidAction.EXECUTE).isEmpty() && boiler.steam().isEmpty(),
+            "A fitted burner that runs out of fuel does not turn the outlet into a feedwater connection");
+        h.setBlock(under, Blocks.AIR);
+        h.assertTrue(output.drain(1, FluidAction.SIMULATE).is(Fluids.WATER), "Removing the terminal burner restores cold storage on the same connection");
+        h.succeed();
     }
 
     @GameTest(template = "test_fractionation")

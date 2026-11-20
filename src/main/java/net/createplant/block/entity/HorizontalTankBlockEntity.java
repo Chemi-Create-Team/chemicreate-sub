@@ -1,5 +1,6 @@
 package net.createplant.block.entity;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -26,6 +27,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
  * Create's tank logic for a tank lying along X or Z: the length runs along the block's axis, the section is width x width, and the boiler
@@ -35,7 +37,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  */
 public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     public static final int STEAM_CAPACITY = 16_000;
+    private static final IFluidHandler UNAVAILABLE = new FluidTank(0);
     private final ThermalFluidTank steam = new ThermalFluidTank(STEAM_CAPACITY, stack -> setChanged()) { @Override protected int storageRatio() { return 1; } };
+    private final LerpedFloat tubeGauge = LerpedFloat.linear().startWithValue(0);
     private final IFluidHandler steamOutlet = new IFluidHandler() {
         @Override public int getTanks() { return 1; }
         @Override public FluidStack getFluidInTank(int tank) { return tank == 0 ? steam.getFluid().copy() : FluidStack.EMPTY; }
@@ -45,6 +49,9 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         @Override public FluidStack drain(int amount, FluidAction action) { return isRemoved() ? FluidStack.EMPTY : steam.drain(amount, action); }
         @Override public FluidStack drain(FluidStack request, FluidAction action) { return FluidThermal.compatible(steam.getFluid(), request) ? drain(request.getAmount(), action) : FluidStack.EMPTY; }
     };
+    private final IFluidHandler engineFeed;
+    private boolean tubeMode;
+    private int tubeGaugePercent;
     private double heatJoules, heatWatts;
     private String status = "heat";
 
@@ -53,6 +60,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     protected HorizontalTankBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         boiler = new HorizontalBoilerData();
+        engineFeed = boiler.createHandler();
     }
 
     @Override protected com.simibubi.create.foundation.fluid.SmartFluidTank createInventory() {
@@ -103,18 +111,83 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     public String status() { return status; }
     public boolean boiling() { return !steam.isEmpty() || status.equals("running") || status.equals("working") || status.equals("output"); }
 
-    /** The top and the outer end of a boiling cell give its steam; every other face, and these while nothing boils, are the tank's own. */
+    private HorizontalTankBlockEntity owner() {
+        if (isRemoved() || level == null || !level.hasChunkAt(getController())) return null;
+        return getControllerBE() instanceof HorizontalTankBlockEntity root && root.isController() && !root.isRemoved() ? root : null;
+    }
+
+    private BlockPos rowEnd(int across) {
+        return getMainConnectionAxis() == Direction.Axis.X ? TankCells.at(this, height - 1, 0, across) : TankCells.at(this, height - 1, across, 0);
+    }
+
+    private HorizontalTankBlockEntity endCell(BlockPos end) {
+        return level.hasChunkAt(end) && level.getBlockEntity(end) instanceof HorizontalTankBlockEntity part
+            && worldPosition.equals(part.getController()) ? part : null;
+    }
+
+    private float heatBelow(BlockPos part) {
+        BlockPos under = part.below();
+        return level.hasChunkAt(under) ? BoilerHeater.findHeat(level, under, level.getBlockState(under)) : 0;
+    }
+
+    private boolean tubeBoiler() {
+        if (level.isClientSide) return tubeMode;
+        if (!getBlockState().is(CETransport.HORIZONTAL_FLUID_TANK.get())) return false;
+        var feed = getTankInventory().getFluid();
+        boolean canBoil = boiler.attachedEngines == 0 && (feed.isEmpty() || boils(feed));
+        for (int across = 0; across < width; across++) {
+            var end = rowEnd(across);
+            var part = endCell(end);
+            if (part != null && (!part.steam.isEmpty() || canBoil && hasTubeHeater(end.below()))) return true;
+        }
+        return false;
+    }
+
+    private boolean hasTubeHeater(BlockPos under) {
+        if (!level.hasChunkAt(under)) return false;
+        var state = level.getBlockState(under);
+        return AllBlocks.BLAZE_BURNER.has(state) || BoilerHeater.findHeat(level, under, state) > 0;
+    }
+
+    private boolean outletFace(HorizontalTankBlockEntity root, Direction side) {
+        if (side == Direction.UP) return worldPosition.getY() == root.worldPosition.getY() + root.width - 1;
+        if (side == null || side.getAxis() != root.getMainConnectionAxis()) return false;
+        int along = root.getMainConnectionAxis().choose(getBlockPos().getX() - root.worldPosition.getX(), 0, getBlockPos().getZ() - root.worldPosition.getZ());
+        return along == (side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? root.height - 1 : 0);
+    }
+
+    public boolean isSteamOutlet(Direction side) {
+        var root = owner();
+        return root != null && outletFace(root, side) && (root.tubeBoiler() || !steam.isEmpty());
+    }
+
+    private IFluidHandler outlet(HorizontalTankBlockEntity root) {
+        if (!steam.isEmpty()) return steamOutlet;
+        int across = root.getMainConnectionAxis() == Direction.Axis.X ? worldPosition.getZ() - root.worldPosition.getZ()
+            : worldPosition.getX() - root.worldPosition.getX();
+        var end = root.endCell(root.rowEnd(across));
+        return end == null ? UNAVAILABLE : end.steamOutlet;
+    }
+
+    /** Keep cached Create pipe connections attached to the current controller and mode. */
     private IFluidHandler port(Direction side) {
-        if (side != Direction.UP && side != Direction.fromAxisAndDirection(getMainConnectionAxis(), Direction.AxisDirection.POSITIVE)) return fluidCapability;
         return new IFluidHandler() {
-            private IFluidHandler held() { return boiling() ? steamOutlet : fluidCapability; }
-            @Override public int getTanks() { return held().getTanks(); }
-            @Override public FluidStack getFluidInTank(int tank) { return held().getFluidInTank(tank); }
-            @Override public int getTankCapacity(int tank) { return held().getTankCapacity(tank); }
-            @Override public boolean isFluidValid(int tank, FluidStack stack) { return held().isFluidValid(tank, stack); }
-            @Override public int fill(FluidStack stack, FluidAction action) { return held().fill(stack, action); }
-            @Override public FluidStack drain(int amount, FluidAction action) { return held().drain(amount, action); }
-            @Override public FluidStack drain(FluidStack request, FluidAction action) { return held().drain(request, action); }
+            private IFluidHandler held(boolean extracting) {
+                var root = owner();
+                if (root == null) return UNAVAILABLE;
+                boolean tubes = root.tubeBoiler();
+                if (outletFace(root, side) && (tubes || !steam.isEmpty())) return outlet(root);
+                if (root.boiler.attachedEngines > 0) return root.engineFeed;
+                if (tubes && extracting && side != Direction.DOWN) return UNAVAILABLE;
+                return root.getTankInventory();
+            }
+            @Override public int getTanks() { return 1; }
+            @Override public FluidStack getFluidInTank(int tank) { return held(true).getFluidInTank(tank); }
+            @Override public int getTankCapacity(int tank) { return held(false).getTankCapacity(tank); }
+            @Override public boolean isFluidValid(int tank, FluidStack stack) { return held(false).isFluidValid(tank, stack); }
+            @Override public int fill(FluidStack stack, FluidAction action) { return held(false).fill(stack, action); }
+            @Override public FluidStack drain(int amount, FluidAction action) { return held(true).drain(amount, action); }
+            @Override public FluidStack drain(FluidStack request, FluidAction action) { return held(true).drain(request, action); }
         };
     }
 
@@ -122,12 +195,41 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
 
     @Override public void tick() {
         super.tick();
-        if (level == null || level.isClientSide) return;
+        if (level == null) return;
+        if (level.isClientSide) {
+            if (isController()) tubeGauge.tickChaser();
+            return;
+        }
         String previous = status;
         int amount = steam.getFluidAmount();
         generateSteam();
-        if (isController()) reportProduction();
+        if (isController()) {
+            reportProduction();
+            updateTubeGauge();
+        }
         if (!previous.equals(status) || amount != steam.getFluidAmount()) notifyUpdate();
+    }
+
+    private void updateTubeGauge() {
+        boolean active = tubeBoiler();
+        if (active == tubeMode && (!active || level.getGameTime() % 5 != 0)) return;
+        int steamAmount = 0;
+        if (active) for (int across = 0; across < width; across++) {
+            var end = endCell(rowEnd(across));
+            if (end != null) steamAmount += end.steam.getFluidAmount();
+        }
+        int percent = Math.round(100f * steamAmount / (width * STEAM_CAPACITY));
+        if (tubeMode != active || percent != tubeGaugePercent) {
+            tubeMode = active;
+            tubeGaugePercent = percent;
+            notifyUpdate();
+        }
+    }
+
+    public boolean hasBoilerGauge() { return tubeMode || boiler.isActive(); }
+
+    public float boilerGauge(float partialTicks) {
+        return boiler.isActive() ? boiler.gauge.getValue(partialTicks) : tubeGauge.getValue(partialTicks);
     }
 
     private void planProduction() {
@@ -144,11 +246,10 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         var rates = meter.read(ProductionMonitor.Output.FLUID);
         if (!boils(feed) && rates == null) return;
         planProduction();
-        int length = getHeight();
         double maximum = meter.read(ProductionMonitor.Output.FLUID).maximum() / getWidth();
         String limit = !boils(feed) ? "water" : boiler.attachedEngines > 0 ? "engines" : "rated";
         for (int across = 0; limit.equals("rated") && across < getWidth(); across++) {
-            var end = getMainConnectionAxis() == Direction.Axis.X ? TankCells.at(this, length - 1, 0, across) : TankCells.at(this, length - 1, across, 0);
+            var end = rowEnd(across);
             if (!level.hasChunkAt(end) || !(level.getBlockEntity(end) instanceof HorizontalTankBlockEntity cell)) limit = "structure";
             else if (cell.status.equals("output")) limit = "output";
             else if (cell.status.equals("water")) limit = "water";
@@ -162,15 +263,15 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
 
     public void generateSteam() {
         heatWatts = 0;
-        if (!level.hasChunkAt(getController()) || !(getControllerBE() instanceof HorizontalTankBlockEntity root)) { status = "structure"; return; }
+        var root = owner();
+        if (root == null) { status = "structure"; return; }
         int along = getMainConnectionAxis().choose(worldPosition.getX() - root.getBlockPos().getX(), 0, worldPosition.getZ() - root.getBlockPos().getZ());
         if (worldPosition.getY() != root.getBlockPos().getY() || along != root.getHeight() - 1) { status = "heat"; return; }
         var feed = root.getTankInventory();
         var water = feed.getFluid();
         if (!boils(water)) { status = "water"; return; }
         if (root.boiler.attachedEngines > 0) { status = "engines"; return; }
-        var under = worldPosition.below();
-        float heat = BoilerHeater.findHeat(level, under, level.getBlockState(under));
+        float heat = heatBelow(worldPosition);
         if (!(heat > 0)) { status = "heat"; return; }
         var grade = heat >= 2 ? SteamGrades.SUPERHEATED : SteamGrades.HIGH_PRESSURE;
         heatedGrade = grade;
@@ -210,8 +311,8 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         double watts = 0;
         HorizontalTankBlockEntity sample = null;
         for (int across = 0; across < root.getWidth(); across++) {
-            var end = getMainConnectionAxis() == Direction.Axis.X ? TankCells.at(root, root.getHeight() - 1, 0, across) : TankCells.at(root, root.getHeight() - 1, across, 0);
-            if (!(level.getBlockEntity(end) instanceof HorizontalTankBlockEntity cell) || !cell.boiling()) continue;
+            var cell = root.endCell(root.rowEnd(across));
+            if (cell == null || !cell.boiling()) continue;
             held += cell.steam.getFluidAmount();
             watts += cell.heatWatts;
             if (sample == null || !cell.steam.isEmpty()) sample = cell;
@@ -229,6 +330,10 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         tag.putDouble("TubeHeat", heatJoules);
         tag.putDouble("TubeWatts", heatWatts);
         tag.putString("TubeStatus", status);
+        if (packet && isController()) {
+            tag.putBoolean("TubeMode", tubeMode);
+            tag.putInt("TubeGauge", tubeGaugePercent);
+        }
     }
 
     @Override protected void read(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
@@ -237,6 +342,10 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         heatJoules = Double.isFinite(tag.getDouble("TubeHeat")) ? Math.clamp(tag.getDouble("TubeHeat"), 0, 400000) : 0;
         heatWatts = Math.max(0, tag.getDouble("TubeWatts"));
         status = tag.contains("TubeStatus") ? tag.getString("TubeStatus") : "heat";
+        if (packet || isVirtual()) {
+            tubeMode = tag.getBoolean("TubeMode");
+            tubeGauge.chase(tag.getInt("TubeGauge") / 100f, .25f, LerpedFloat.Chaser.EXP);
+        }
     }
 
     /** Lava and other light sources light the cells the fluid reaches, counted from the lowest row of the section. */

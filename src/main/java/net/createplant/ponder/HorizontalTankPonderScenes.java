@@ -34,6 +34,7 @@ public final class HorizontalTankPonderScenes {
         }
         var tank = util.select().fromTo(2, 2, 3, 5, 3, 4);
         var burners = util.select().fromTo(2, 1, 3, 5, 1, 4);
+        var feed = util.select().position(3, 2, 2);
         var pipe = util.select().fromTo(0, 2, 3, 1, 2, 3);
         scene.idle(10);
 
@@ -44,17 +45,17 @@ public final class HorizontalTankPonderScenes {
         text(scene, util, util.grid().at(2, 3, 4), 120, "size");
 
         scene.world().modifyBlockEntity(controller,FluidTankBlockEntity.class,be->be.getTankInventory().setFluid(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER,12000)));
+        scene.world().showSection(feed, Direction.SOUTH);
         scene.world().showSection(burners, Direction.UP);
         scene.world().modifyBlocks(burners,state->state.setValue(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL,com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED),false);
+        scene.world().modifyBlockEntityNBT(util.select().position(controller), FluidTankBlockEntity.class, tag -> {
+            tag.putBoolean("TubeMode", true);
+            tag.putInt("TubeGauge", 35);
+        });
         scene.overlay().showOutline(PonderPalette.RED, "burners", burners, 120);
         text(scene, util, util.grid().at(3, 1, 3), 120, "boiler");
 
-        scene.idle(200);
-        scene.world().modifyBlockEntity(controller,FluidTankBlockEntity.class,be->{
-            var fluid=be.getTankInventory().getFluid().copy();fluid.set(net.createplant.registry.CEThermal.HEAT_GRADE.get(),net.createplant.thermal.Grade.Heat.HOT.ordinal());be.getTankInventory().setFluid(fluid);
-        });
-        scene.overlay().showControls(util.vector().topOf(controller),Pointing.DOWN,100).withItem(AllItems.GOGGLES.asStack());
-        text(scene,util,controller,120,"heating");
+        text(scene, util, util.grid().at(4, 2, 4), 120, "heating");
         scene.world().showSection(pipe, Direction.EAST);
         scene.overlay().showControls(util.vector().topOf(util.grid().at(4, 3, 3)), Pointing.DOWN, 100).withItem(AllItems.GOGGLES.asStack());
         text(scene, util, util.grid().at(1, 2, 3), 110, "pipe");

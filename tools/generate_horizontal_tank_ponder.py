@@ -13,7 +13,8 @@ for x in range(2, 6):
             s.block(x, y, z, NS + 'horizontal_fluid_tank', axis='x', bottom=str(x == 2).lower(), top=str(x == 5).lower(), shape='plain')
     for z in (3, 4): s.burner(x, 1, z)
 s.block(1, 2, 3, 'create:fluid_pipe', east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
-s.pump(0, 2, 3, 'east')
+s.pump(0, 2, 3, 'west')
+s.pump(3, 2, 2, 'south')
 s.save('horizontal_tank')
 (A / 'ponder/plant/horizontal_tank.nbt').write_bytes((OUT / 'horizontal_tank.nbt').read_bytes())
 (OUT / 'horizontal_tank.nbt').unlink()
@@ -24,10 +25,12 @@ TEXTS = {
         '向いている方向に横置きします。既設タンクへ置くと延長し、スニークで別の向きにできます。'),
     'size': ('The section is 1x1 to 3x3, and the length runs up to Create\'s tank height limit. Only tanks lying along the same axis join. It has no windows.',
         '断面は1×1～3×3で、長さはCreateのタンクの高さの上限まで延ばせます。同じ向きに寝かせたタンクとだけつながります。窓はありません。'),
-    'boiler': ('Blaze Burners under the whole lowest layer make it a Create boiler, like a standing tank. Engines and whistles fit around any of its blocks.',
-        '最下層の下全体にブレイズバーナーを置くと、立てたタンクと同じくCreateのボイラーになります。エンジンや汽笛は、どのブロックの周りにも付けられます。'),
-    'pipe': ('Connect Create pipes and pumps to any face. Engineer\'s Goggles show what it holds.',
-        'Createのパイプとポンプはどの面にもつなげます。ゴーグルで中身を確認できます。'),
+    'boiler': ('Add Blaze Burners below the ends of the rows to make a boiler.',
+        '列の末端の下にブレイズバーナーを付けるとボイラーになります。'),
+    'heating': ('The Create gauge shows how much steam the boiler is holding.',
+        'Create標準の計器の針は蒸気の充填率を示します。'),
+    'pipe': ('Feed water from the long side. Pump steam from the top or either end.',
+        '長辺の側面から給水します。上面か両端面からポンプで蒸気を取り出します。'),
 }
 for lang, index in (('en_us', 0), ('ja_jp', 1)):
     p = A / 'lang' / f'{lang}.json'

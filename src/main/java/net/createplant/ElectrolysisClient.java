@@ -127,6 +127,7 @@ public class ElectrolysisClient {
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.PRESSURE_TANK_ENTITY.get(), com.simibubi.create.content.fluids.tank.FluidTankRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.STAINLESS_STEEL_TANK_ENTITY.get(), com.simibubi.create.content.fluids.tank.FluidTankRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.CRYOGENIC_TANK_ENTITY.get(), com.simibubi.create.content.fluids.tank.FluidTankRenderer::new);
+        event.registerBlockEntityRenderer(net.createplant.registry.CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(), net.createplant.client.HorizontalTankRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.LIDDED_VESSEL_ENTITY.get(), net.createplant.client.LiddedVesselRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.REACTION_TOWER_ENTITY.get(), net.createplant.client.ReactionTowerRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.AMMONIA_SEPARATOR_ENTITY.get(), net.createplant.client.AmmoniaSeparatorRenderer::new);

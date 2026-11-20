@@ -76,6 +76,12 @@ public final class PlantPonderScenes {
                 scene.world().setBlock(target, BuiltInRegistries.BLOCK.get(ResourceLocation.parse(step.replace())).defaultBlockState(), false);
             }
             if (step.key().equals(tutorial.formed())) scene.world().restoreBlocks(factory);
+            if (tutorial.id().startsWith("tubular_boiler") && step.key().equals("step_3")) {
+                scene.world().modifyBlockEntityNBT(util.select().position(2, 2, 3), net.createplant.block.entity.HorizontalTankBlockEntity.class, tag -> {
+                    tag.putBoolean("TubeMode", true);
+                    tag.putInt("TubeGauge", 42);
+                });
+            }
             if (converter) {
                 BlockPos owner = new BlockPos(1, 6, 6), origin = new BlockPos(5, 1, 6);
                 if (step.key().equals("step_1"))

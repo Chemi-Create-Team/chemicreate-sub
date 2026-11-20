@@ -88,16 +88,24 @@ public final class HorizontalTankBoilerSizeGameTests {
         Direction feedFace = axis == Direction.Axis.X ? Direction.NORTH : Direction.WEST;
         BlockPos end = cell(axis, LENGTH - 1, 0, 0);
         var inlet = port(h, end, feedFace);var output = port(h, end, endFace);var hot = part(h, end);
+        var roof = port(h, cell(axis, 1, width - 1, 0), Direction.UP);
+        var oppositeEnd = port(h, cell(axis, 0, width - 1, 0), endFace.getOpposite());
         var feed = FluidThermal.at(new FluidStack(Fluids.WATER, FEED), 293.15);
         h.assertTrue(inlet.fill(feed, SIMULATE) == FEED && root.getTankInventory().isEmpty(), "The lower end side previews a shared feed fill without consuming water");
         h.assertTrue(inlet.fill(feed, EXECUTE) == FEED && root.getTankInventory().getFluidAmount() == FEED,
             "Water inserted through the remote lower end reaches the real shared controller");
+        h.assertTrue(roof.drain(1, SIMULATE).is(Fluids.WATER) && oppositeEnd.drain(1, SIMULATE).is(Fluids.WATER),
+            "The same roof and end connections work as standard storage while cold");
         h.assertTrue(inlet.fill(new FluidStack(Fluids.LAVA, 1000), EXECUTE) == 0, "The water already inside keeps lava out");
         var level = h.getLevel();var absolute = h.absolutePos(end);
         h.assertTrue(FluidPipeBlock.canConnectTo(level, absolute, level.getBlockState(absolute), endFace.getOpposite())
             && FluidPipeBlock.canConnectTo(level, absolute, level.getBlockState(absolute), feedFace.getOpposite()),
             "Stock Create pipes recognize both accessible end connections");
         for (int along = 0; along < LENGTH; along++) for (int across = 0; across < width; across++) firedBurner(h, cell(axis, along, 0, across).below());
+        h.assertTrue(roof.getFluidInTank(0).isEmpty() && roof.drain(1, SIMULATE).isEmpty()
+            && oppositeEnd.drain(feed.copyWithAmount(1), SIMULATE).isEmpty()
+            && output.drain(1, SIMULATE).isEmpty() && inlet.drain(1, SIMULATE).isEmpty(),
+            "After ignition, cached steam outlets and the feed face cannot export water before the first steam tick");
         part(h, cell(axis, LENGTH - 1, 1, 0)).generateSteam();
         h.assertTrue(root.getTankInventory().getFluidAmount() == FEED && storedMass(h, axis, width) == FEED,
             "An upper wall cell does not duplicate the heated lower row's production");
@@ -120,9 +128,13 @@ public final class HorizontalTankBoilerSizeGameTests {
         int held = hot.steam().getFluidAmount();var preview = output.drain(held, SIMULATE);
         h.assertTrue(preview.is(CEProcessFluids.SUPERHEATED_STEAM.get()) && preview.getAmount() == held && hot.steam().getFluidAmount() == held,
             "An end outlet previews the lower row's retained steam without draining it");
+        h.assertTrue(roof.getFluidInTank(0).getAmount() == held && roof.drain(held, SIMULATE).is(preview.getFluid())
+            && oppositeEnd.drain(preview, SIMULATE).getAmount() == held,
+            "A remote roof inlet and the opposite end look up the same lower row's buffer");
         int exported = output.drain(preview, EXECUTE).getAmount();
-        h.assertTrue(exported == held && output.drain(held, EXECUTE).isEmpty() && storedMass(h, axis, width) + exported == FEED,
-            "The accessible end transfers its steam once even though an upper tank wall covers the top face");
+        h.assertTrue(exported == held && output.drain(held, EXECUTE).isEmpty() && roof.drain(1, EXECUTE).isEmpty()
+            && oppositeEnd.drain(1, EXECUTE).isEmpty() && storedMass(h, axis, width) + exported == FEED,
+            "Draining one outlet empties the same row at all three ports and never falls through to water");
         var drain = port(h, end, Direction.DOWN);int remaining = root.getTankInventory().getFluidAmount();
         var drainPreview = drain.drain(1, SIMULATE);
         h.assertTrue(drainPreview.is(Fluids.WATER) && drainPreview.getAmount() == 1 && root.getTankInventory().getFluidAmount() == remaining,

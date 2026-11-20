@@ -87,10 +87,10 @@ for width in (1,2,3):
             s.block(x,1,z,'create:blaze_burner',blaze='seething')
             for y in range(2,2+width):
                 s.block(x,y,z,NS+'horizontal_fluid_tank',axis='x',bottom=str(x==2).lower(),top=str(x==4).lower(),shape='plain')
-    s.block(1,2,3,'create:mechanical_pump',facing='east',waterlogged='false')
+    s.block(3,2,2,'create:mechanical_pump',facing='south',waterlogged='false')
     s.block(5,2,3,'create:mechanical_pump',facing='east',waterlogged='false')
     s.save(ident);(A/f'ponder/plant/{ident}.nbt').write_bytes((OUT/f'{ident}.nbt').read_bytes());(OUT/f'{ident}.nbt').unlink()
-    lessons.append({'id':ident,'size':9,'height':6,'components':['horizontal_fluid_tank'],'steps':[{'target':[3,2,3],'key':'step_1'},{'target':[1,2,3],'key':'step_2'},{'target':[3,1,3],'key':'step_3'},{'target':[5,2,3],'key':'step_4'}]})
+    lessons.append({'id':ident,'size':9,'height':6,'components':['horizontal_fluid_tank'],'steps':[{'target':[3,2,3],'key':'step_1'},{'target':[3,2,2],'key':'step_2'},{'target':[3,1,3],'key':'step_3'},{'target':[5,2,3],'key':'step_4'}]})
 for ident,title,ja,steps in [
  ('industrial_dispatch','Deliver industrial products','工業製品を出荷する',[
  ('Mount the dispatch board on a Create item vault. Right-click to choose the next order; sneak-click for the previous one. Read the goggles or a Display Link.','Createのアイテム保管庫へ出荷票を取り付けます。右クリックで次の注文、スニーク右クリックで前の注文。ゴーグルやDisplay Linkで内容を確認します。'),
@@ -99,9 +99,9 @@ for ident,title,ja,steps in [
  ('Keep supplies coming by train or package. Orders advance after dispatch; redstone pauses them.','列車やパッケージで補給を続けます。出荷後に次の注文へ進み、赤石で停止できます。')]),
  ('tubular_boiler','Boil steam in a horizontal tank','横型タンクで蒸気を作る',[
  ('Lay a horizontal tank with a 1×1 to 3×3 section, any length, and put Blaze Burners under it.','横型タンクを断面1×1～3×3、好きな長さで置き、下にブレイズバーナーを並べます。'),
- ('Feed water at an end or side. The last section of each bottom row boils it with the heat of the burners under its row.','端面か側面から給水します。下段の各列の最後の区間が、その列のバーナーの熱で水を沸かします。'),
+ ('Feed water from the long side. Light a burner below the end of each row.','長辺の側面から給水します。各列の末端の下にあるバーナーに点火します。'),
  ('Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.','加熱なら350 °C、超加熱なら650 °C・20 barの蒸気が出ます。'),
- ('Draw steam from the top or outer end of that section and pump it to a turbine. A steam engine switches it to Create boiler mode.','その区間の上面か外側の端から、ポンプで蒸気をタービンへ送ります。蒸気エンジンを付けるとCreateのボイラーになります。')])]:
+ ('Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.','加熱した列の上面か両端面から蒸気を送ります。計器の針は蒸気の充填率を示します。')])]:
     texts[f'{MOD}.ponder.shared.guide.{ident}.title']=(title,ja)
     texts[f'{MOD}.ponder.plant_{ident}.header']=(title,ja)
     for i,pair in enumerate(steps,1):texts[f'{MOD}.ponder.shared.guide.{ident}.step_{i}']=pair
