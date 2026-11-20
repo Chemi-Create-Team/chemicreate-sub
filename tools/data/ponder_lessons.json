@@ -4873,5 +4873,25 @@
     "en_us": "A powered pump sends gas out through a pipe or pump face that leads into air. Attach a suitable tank to collect it.",
     "ja_jp": "ポンプを回すと、先が空気ブロックのパイプやポンプの開放端から気体が出ます。回収するなら対応するタンクをつなぎます。",
     "zh_cn": "泵运转时，气体会从通向空气方块的管道或泵端口排出。接上适用的储罐即可收集。"
+  },
+  "pipe_configurator.title": {
+    "en_us": "Isolating a pipe connection",
+    "ja_jp": "配管の継手を切断・再接続する",
+    "zh_cn": "断开和恢复管道连接"
+  },
+  "pipe_configurator.select": {
+    "en_us": "Hold the Pipe Configurator. Aim at the short sleeve between two pipes.",
+    "ja_jp": "配管コンフィギュレーターを持ち、パイプの間に伸びた短い継手を狙います。",
+    "zh_cn": "手持管道连接配置器，瞄准两段管道间伸出的短接头。"
+  },
+  "pipe_configurator.cut": {
+    "en_us": "Right-click to close that joint. The other arms continue to carry fluid.",
+    "ja_jp": "右クリックすると、その継手だけが閉じます。ほかの継手には流体が通ります。",
+    "zh_cn": "右键只关闭这个接头，流体仍可流经其他分支。"
+  },
+  "pipe_configurator.restore": {
+    "en_us": "Aim at the marked gap and right-click to reconnect. Closed joints stay closed when the world reloads.",
+    "ja_jp": "切断跡の目印を狙って右クリックすると再接続します。切断状態はワールドを開き直しても残ります。",
+    "zh_cn": "瞄准有标记的断口并右键重新连接。断开的接头在重载世界后仍保持关闭。"
   }
 }

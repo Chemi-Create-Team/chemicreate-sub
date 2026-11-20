@@ -2,6 +2,7 @@ package net.createplant.registry;
 
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
+import net.createplant.item.PipeConfiguratorItem;
 import net.createplant.item.PortableToolFluidHandler;
 import net.createplant.item.SprayToolItem;
 import net.createplant.item.SteamGunAction;
@@ -32,6 +33,7 @@ public final class CEPortableTools {
     public static final DeferredItem<SprayToolItem> CHEMICAL_SPRAYER=tool("chemical_sprayer",SprayToolItem.Kind.LIQUID);
     public static final DeferredItem<SteamGunItem> STEAM_GUN=ITEMS.register("steam_gun",()->new SteamGunItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<SteamHammerItem> STEAM_HAMMER=ITEMS.register("steam_hammer",()->new SteamHammerItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<PipeConfiguratorItem> PIPE_CONFIGURATOR=ITEMS.register("pipe_configurator",()->new PipeConfiguratorItem(new Item.Properties().stacksTo(1)));
     public static final Holder<MobEffect> DAZED=EFFECTS.register("dazed",DazedEffect::new);
 
     private CEPortableTools() { }

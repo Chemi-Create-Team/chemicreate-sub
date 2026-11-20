@@ -16,6 +16,9 @@
     "WorldLiquidOpenEndAccess",
     "WorldLiquidOpenEndHandlerMixin",
     "FluidTopologyMixin",
+    "PipeShapeMixin",
+    "GlassPipeShapeMixin",
+    "PipeFlowFacesMixin",
     "PlantTankItemMixin",
     "DieselDistillationMixin",
     "DieselDistillationControllerMixin",
@@ -42,6 +45,7 @@
     "CreativeInventorySectionsMixin",
     "GoggleOverlayMixin",
     "FluidTankModelInvoker",
+    "PipeArmModelMixin",
     "PonderTextWrapMixin",
     "SteamGunThrustMixin",
     "SteamHammerSwingMixin"

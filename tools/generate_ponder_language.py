@@ -9,7 +9,7 @@ HEADERS={'pulsation_tube':'pulsation_tube.title','turbine_multiblock': 'turbine_
 
 HEADERS.update({scene: scene + '.title' for scene in (
     'transmission_tower', 'entrained_gasifier', 'wet_processing', 'chemical_mixtures', 'seasonal_thermal', 'ore_recovery', 'electrowinning', 'material_pump', 'vault_hatch', 'portable_sprayers', 'steam_gun', 'steam_hammer', 'electric_pump', 'steel_forging', 'fluorite_sources', 'radiation_measurement', 'radiation_decontamination', 'rbmk_core', 'rbmk_control_rods', 'gantry_crane', 'fuel_pool', 'crane_refuelling', 'rbmk_control_room',
-    'pipe_gauges', 'quarry_frame', 'horizontal_tank', 'fusion_tokamak', 'fusion_console', 'fusion_motor_generator',
+    'pipe_gauges', 'pipe_configurator', 'quarry_frame', 'horizontal_tank', 'fusion_tokamak', 'fusion_console', 'fusion_motor_generator',
     'natural_draft_tower', 'condenser_loop', 'process_pid', 'fuel_cycle', 'fusion_maintenance', 'lidded_vessel',
     'lidded_vessel_2x2', 'vessel_internals', 'large_absorption_tower', 'reaction_tower', 'reaction_tower_separator', 'vessel_basin', 'vessel_maintenance', 'diorite_casing', 'rbmk_compact_core',
     'flare_stack', 'gas_centrifuge', 'cubic_press', 'facility_constructor', 'electrolysis_cell', 'fractionating_column_binary', 'fractionating_column_air', 'helium_cold_box')})

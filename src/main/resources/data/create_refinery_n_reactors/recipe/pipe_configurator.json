@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " BB",
+    " PB",
+    "A  "
+  ],
+  "key": {
+    "B": { "item": "create:brass_sheet" },
+    "P": { "item": "create:fluid_pipe" },
+    "A": { "item": "create:andesite_alloy" }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:pipe_configurator"
+  }
+}

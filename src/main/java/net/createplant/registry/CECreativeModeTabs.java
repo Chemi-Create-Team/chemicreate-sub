@@ -59,7 +59,7 @@ public class CECreativeModeTabs {
         List.of("spent_fuel_rod", "spent_control_rod", "chopped_spent_fuel", "spent_cladding_hulls", "spent_blanket_cartridge",
             "irradiated_cartridge", "spent_divertor_cassette", "empty_waste_canister", "vitrified_waste_canister"),
         List.of("anfo", "blasting_charge"),
-        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "steam_gun", "steam_hammer", "gas_mask", "gas_mask_filter", "inert_gas_cylinder", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers", "soap")
+        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "steam_gun", "steam_hammer", "pipe_configurator", "gas_mask", "gas_mask_filter", "inert_gas_cylinder", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers", "soap")
     );
 
     /** Equipment and construction groups in display order. */
