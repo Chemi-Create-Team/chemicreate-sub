@@ -84,6 +84,7 @@ public class CreatePlant {
         net.createplant.registry.CEWorldFluids.register(modEventBus);
         net.createplant.registry.CEGasBuckets.register(modEventBus);
         net.createplant.registry.CEPortableTools.register(modEventBus);
+        net.createplant.registry.CEAgriculture.register(modEventBus);
         net.createplant.registry.CECarbonization.register(modEventBus);
         net.createplant.registry.CEVault.register(modEventBus);
         net.createplant.registry.CEAssembly.register(modEventBus);

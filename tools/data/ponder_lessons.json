@@ -5063,5 +5063,75 @@
     "en_us": "Harvest treated crops while the fertilizer is active to collect extra produce.",
     "ja_jp": "肥料の効果が続いている間に成熟した作物を収穫すると、収穫物が増えます。",
     "zh_cn": "在肥效持续期间收获成熟作物，可额外获得农产品。"
+  },
+  "agricultural_sprayer_bearing.title": {
+    "en_us": "Spraying with a rotating arm",
+    "ja_jp": "回転アームで散布する",
+    "zh_cn": "使用旋转臂喷洒"
+  },
+  "agricultural_sprayer_bearing.glue": {
+    "en_us": "Glue the arm, sprayer and tank together. Point the nozzle toward the crops.",
+    "ja_jp": "アーム、散布機、タンクを接着します。ノズルを作物に向けます。",
+    "zh_cn": "将转臂、喷雾机和储罐粘在一起。将喷嘴朝向作物。"
+  },
+  "agricultural_sprayer_bearing.tank": {
+    "en_us": "Fill the mounted Create fluid tank before starting the bearing.",
+    "ja_jp": "ベアリングを起動する前に、搭載したCreateの流体タンクを満たします。",
+    "zh_cn": "启动轴承前，向搭载的 Create 流体储罐注液。"
+  },
+  "agricultural_sprayer_bearing.move": {
+    "en_us": "As the arm turns, the nozzle treats crops in front of it. It draws from the tank on the arm.",
+    "ja_jp": "アームの回転に合わせて、ノズルの前方に散布します。液体はアーム上のタンクから使います。",
+    "zh_cn": "转臂旋转时会喷洒喷嘴前方的作物。液体取自转臂上的储罐。"
+  },
+  "agricultural_sprayer_bearing.recipes": {
+    "en_us": "Find valid liquids and their effects in the JEI Spraying category.",
+    "ja_jp": "対応する液体と効果はJEIの散布カテゴリで確認できます。",
+    "zh_cn": "在 JEI 的喷洒分类查看可用液体及效果。"
+  },
+  "agricultural_sprayer_gantry.title": {
+    "en_us": "Spraying a field with a gantry",
+    "ja_jp": "ガントリーで畑を散布する",
+    "zh_cn": "使用龙门架喷洒农田"
+  },
+  "agricultural_sprayer_gantry.glue": {
+    "en_us": "Glue the sprayer and tank to the gantry carriage. Aim the nozzle across the rows.",
+    "ja_jp": "ノズルを畝に向け、散布機とタンクをガントリーキャリッジに接着します。",
+    "zh_cn": "将喷雾机和储罐粘到龙门滑架上。使喷嘴朝向田垄。"
+  },
+  "agricultural_sprayer_gantry.tank": {
+    "en_us": "Fill the mounted tank with liquid fertilizer or diluted pesticide.",
+    "ja_jp": "搭載タンクに液体肥料か希釈農薬を入れます。",
+    "zh_cn": "向搭载的储罐注入液体肥料或稀释农药。"
+  },
+  "agricultural_sprayer_gantry.move": {
+    "en_us": "The carriage treats plants one to three blocks ahead of the nozzle. Solid blocks interrupt the spray.",
+    "ja_jp": "ノズルの前方1〜3ブロックに散布します。途中に壁がある場合は遮られます。",
+    "zh_cn": "喷洒喷嘴前方一到三格的作物。实体方块会阻挡喷雾。"
+  },
+  "agricultural_sprayer_gantry.stop": {
+    "en_us": "A stationary carriage or an empty tank stops spraying.",
+    "ja_jp": "キャリッジが止まったときやタンクが空になったときは散布が止まります。",
+    "zh_cn": "滑架停止或储罐用尽时，停止喷洒。"
+  },
+  "agricultural_sprayer_stationary.title": {
+    "en_us": "Feeding a stationary sprayer",
+    "ja_jp": "据え置きの散布機を動かす",
+    "zh_cn": "使用固定喷雾机"
+  },
+  "agricultural_sprayer_stationary.pipe": {
+    "en_us": "Connect a Create pipe or pump to the rear inlet.",
+    "ja_jp": "散布機の背面にCreateのパイプかポンプを接続します。",
+    "zh_cn": "将 Create 管道或泵连接到喷雾机的后部进液口。"
+  },
+  "agricultural_sprayer_stationary.signal": {
+    "en_us": "Power the sprayer with redstone to treat the row in front.",
+    "ja_jp": "散布機にレッドストーン信号を入れると、正面の作物に散布します。",
+    "zh_cn": "向喷雾机输入红石信号，喷洒正前方的一排作物。"
+  },
+  "agricultural_sprayer_stationary.goggles": {
+    "en_us": "Check the remaining liquid and redstone state with Engineer’s Goggles.",
+    "ja_jp": "エンジニアのゴーグルで、液体の残量と信号を確認できます。",
+    "zh_cn": "使用工程师护目镜查看余量和红石状态。"
   }
 }

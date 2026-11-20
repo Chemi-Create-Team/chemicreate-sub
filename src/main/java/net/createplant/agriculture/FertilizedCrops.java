@@ -24,6 +24,7 @@ public final class FertilizedCrops extends SavedData {
     private static final String FILE = "createplant_fertilized_crops";
     private static final Factory<FertilizedCrops> FACTORY = new Factory<>(FertilizedCrops::new, FertilizedCrops::load);
     private static final int CLEANUP_INTERVAL = 1200;
+    private static final int PROTECTION_DURATION = 24_000;
 
     private record Treatment(Block crop, FertilizerProfile profile, long expires, int uses, long removed) {
         boolean expired(long now) {
@@ -31,6 +32,13 @@ public final class FertilizedCrops extends SavedData {
         }
     }
 
+    private record Protection(Block crop, long expires, long removed) {
+        boolean expired(long now) {
+            return expires <= now || expires - now > PROTECTION_DURATION || removed >= 0 && removed != now;
+        }
+    }
+
+    private final Long2ObjectOpenHashMap<Protection> protection = new Long2ObjectOpenHashMap<>();
     private final Long2ObjectOpenHashMap<Treatment> crops = new Long2ObjectOpenHashMap<>();
 
     private static FertilizedCrops existing(ServerLevel level) { return level.getDataStorage().get(FACTORY, FILE); }
@@ -50,6 +58,17 @@ public final class FertilizedCrops extends SavedData {
         var crop = (CropBlock) state.getBlock();
         if (!level.setBlock(pos, crop.getStateForAge(crop.getAge(state) + 1), Block.UPDATE_CLIENTS)) return false;
         data.crops.put(key, new Treatment(crop, profile, now + profile.duration, profile.growthUses, -1));
+        data.setDirty();
+        return true;
+    }
+
+    public static boolean protect(ServerLevel level, BlockPos pos, BlockState state) {
+        if (!(state.getBlock() instanceof CropBlock) || !state.canSurvive(level, pos)) return false;
+        var data = level.getDataStorage().computeIfAbsent(FACTORY, FILE);
+        long key = pos.asLong(), now = level.getGameTime();
+        var active = data.protection.get(key);
+        if (active != null && active.crop == state.getBlock() && !active.expired(now) && active.removed < 0) return false;
+        data.protection.put(key, new Protection(state.getBlock(), now + PROTECTION_DURATION, -1));
         data.setDirty();
         return true;
     }
@@ -83,12 +102,21 @@ public final class FertilizedCrops extends SavedData {
         if (data == null) return;
         long key = pos.asLong();
         var active = data.crops.get(key);
-        if (active == null) return;
-        if (!isCrop && wasCrop && active.crop == before.getBlock() && active.removed < 0
-                && !active.expired(level.getGameTime()) && ((CropBlock) before.getBlock()).isMaxAge(before)) {
-            // Vanilla can obtain drops after removing the block. The old crop is eligible only during this tick.
-            data.crops.put(key, new Treatment(active.crop, active.profile, active.expires, 0, level.getGameTime()));
-        } else data.crops.remove(key);
+        var protectedCrop = data.protection.get(key);
+        long now = level.getGameTime();
+        if (active == null && protectedCrop == null) return;
+        boolean harvest = !isCrop && wasCrop && ((CropBlock) before.getBlock()).isMaxAge(before);
+        if (active != null) {
+            // The harvest hook may run after the crop has been removed.
+            if (harvest && active.crop == before.getBlock() && active.removed < 0 && !active.expired(now))
+                data.crops.put(key, new Treatment(active.crop, active.profile, active.expires, 0, now));
+            else data.crops.remove(key);
+        }
+        if (protectedCrop != null) {
+            if (harvest && protectedCrop.crop == before.getBlock() && protectedCrop.removed < 0 && !protectedCrop.expired(now))
+                data.protection.put(key, new Protection(protectedCrop.crop, protectedCrop.expires, now));
+            else data.protection.remove(key);
+        }
         data.setDirty();
     }
 
@@ -98,12 +126,17 @@ public final class FertilizedCrops extends SavedData {
         if (data == null) return ItemStack.EMPTY;
         long key = pos.asLong();
         var active = data.crops.get(key);
-        if (active == null || active.crop != crop || active.expired(level.getGameTime())) return ItemStack.EMPTY;
-        data.crops.remove(key);
+        var protectedCrop = data.protection.get(key);
+        long now = level.getGameTime();
+        boolean fertilized = active != null && active.crop == crop && !active.expired(now);
+        boolean protectedHarvest = protectedCrop != null && protectedCrop.crop == crop && !protectedCrop.expired(now);
+        if (!fertilized && !protectedHarvest) return ItemStack.EMPTY;
+        if (fertilized) data.crops.remove(key);
+        if (protectedHarvest) data.protection.remove(key);
         data.setDirty();
         Item produce = produce(crop, normalDrops);
         if (produce == Items.AIR) return ItemStack.EMPTY;
-        int count = active.profile.rollHarvest(level.random);
+        int count = (fertilized ? active.profile.rollHarvest(level.random) : 0) + (protectedHarvest ? 1 : 0);
         return count == 0 ? ItemStack.EMPTY : new ItemStack(produce, count);
     }
 
@@ -120,7 +153,9 @@ public final class FertilizedCrops extends SavedData {
         long now = level.getGameTime();
         if (now % CLEANUP_INTERVAL != 0) return;
         var data = existing(level);
-        if (data != null && data.crops.values().removeIf(treatment -> treatment.expired(now))) data.setDirty();
+        if (data == null) return;
+        boolean changed = data.crops.values().removeIf(treatment -> treatment.expired(now));
+        if (data.protection.values().removeIf(treatment -> treatment.expired(now)) || changed) data.setDirty();
     }
 
     public static FertilizedCrops load(CompoundTag tag, HolderLookup.Provider lookup) {
@@ -133,6 +168,13 @@ public final class FertilizedCrops extends SavedData {
             if (profile == null || !(crop instanceof CropBlock) || row.getLong("Expires") <= 0) continue;
             data.crops.put(row.getLong("Pos"), new Treatment(crop, profile, row.getLong("Expires"),
                 Math.clamp(row.getInt("Uses"), 0, profile.growthUses), -1));
+        }
+        for (var raw : tag.getList("Protected", Tag.TAG_COMPOUND)) {
+            var row = (CompoundTag) raw;
+            var id = ResourceLocation.tryParse(row.getString("Crop"));
+            var crop = id == null ? Blocks.AIR : BuiltInRegistries.BLOCK.get(id);
+            if (crop instanceof CropBlock && row.getLong("Expires") > 0)
+                data.protection.put(row.getLong("Pos"), new Protection(crop, row.getLong("Expires"), -1));
         }
         return data;
     }
@@ -151,6 +193,17 @@ public final class FertilizedCrops extends SavedData {
             rows.add(row);
         }
         tag.put("Crops", rows);
+        var protectedRows = new ListTag();
+        for (var entry : protection.long2ObjectEntrySet()) {
+            var active = entry.getValue();
+            if (active.removed >= 0) continue;
+            var row = new CompoundTag();
+            row.putLong("Pos", entry.getLongKey());
+            row.putString("Crop", BuiltInRegistries.BLOCK.getKey(active.crop).toString());
+            row.putLong("Expires", active.expires);
+            protectedRows.add(row);
+        }
+        tag.put("Protected", protectedRows);
         return tag;
     }
 }

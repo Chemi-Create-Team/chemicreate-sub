@@ -80,6 +80,8 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HEXANE = stream("hexane", 0xFFDDDFBE);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> RECOVERED_SOLVENT = stream("recovered_solvent", 0xFFC0C1A3);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIQUID_FERTILIZER = stream("liquid_fertilizer", 0xFF8EA660);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CROP_PROTECTANT = stream("crop_protectant", 0xFF927B9E);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DILUTED_PESTICIDE = stream("diluted_pesticide", 0xFFB7A6BF);
     private CEProcessFluids() { }
     public static void register(IEventBus bus) { TYPES.register(bus); FLUIDS.register(bus); }
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name) {

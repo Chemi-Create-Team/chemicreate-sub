@@ -34,6 +34,10 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/portable_sprayers",PortableSprayerPonderScenes::tools);
         helper.forComponents(CreatePlant.location("chemical_sprayer"), CreatePlant.location("liquid_fertilizer_bucket"))
             .addStoryBoard("plant/liquid_fertilizer", CropSprayerPonderScenes::fertilize);
+        helper.forComponents(CreatePlant.location("agricultural_sprayer"), CreatePlant.location("diluted_pesticide_bucket"))
+            .addStoryBoard("plant/agricultural_sprayer_bearing", AgriculturalSprayerPonderScenes::bearing)
+            .addStoryBoard("plant/agricultural_sprayer_gantry", AgriculturalSprayerPonderScenes::gantry)
+            .addStoryBoard("plant/agricultural_sprayer_stationary", AgriculturalSprayerPonderScenes::stationary);
         helper.forComponents(CreatePlant.location("steam_gun")).addStoryBoard("plant/steam_gun", SteamGunPonderScenes::controls);
         helper.forComponents(CreatePlant.location("steam_hammer")).addStoryBoard("plant/steam_hammer", SteamHammerPonderScenes::controls);
         helper.forComponents(CreatePlant.location("ammonium_nitrate"), CreatePlant.location("ammonium_sulfate"),

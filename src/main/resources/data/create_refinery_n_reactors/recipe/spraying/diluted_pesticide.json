@@ -1,0 +1,9 @@
+{
+  "type": "create_refinery_n_reactors:spraying",
+  "liquid": {
+    "type": "neoforge:single",
+    "fluid": "create_refinery_n_reactors:diluted_pesticide",
+    "amount": 15
+  },
+  "effect": "protection"
+}

@@ -81,7 +81,7 @@ public class CECreativeModeTabs {
             "gas_holder", "lidded_vessel", "ammonia_separator"),
         List.of("high_pressure_turbine_unit", "low_pressure_turbine_unit", "large_flywheel", "high_pressure_turbine_casing", "low_pressure_turbine_casing", "reciprocating_cylinder",
             "reciprocating_compressor"),
-        List.of("electric_pump",
+        List.of("electric_pump", "agricultural_sprayer",
             "tube_piped_tank", "jacketed_pipe",
             "cooler_radiator", "cooling_fan", "cooling_fan_shroud", "natural_draft_cooling_tower", "cooling_tower_shell", "cooling_tower_basin",
             "cooling_tower_fill", "cooling_tower_distributor", "cooling_tower_hot_inlet", "cooling_tower_cold_outlet",

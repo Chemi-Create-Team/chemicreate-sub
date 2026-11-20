@@ -1,0 +1,22 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:crop_protectant",
+      "amount": 250
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 750
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:diluted_pesticide",
+      "amount": 1000
+    }
+  ],
+  "processing_time": 60
+}

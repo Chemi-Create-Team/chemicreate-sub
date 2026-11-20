@@ -110,7 +110,10 @@ public class PlantProcessCategory implements IRecipeCategory<PlantProcess> {
             drawConditions(recipe, graphics);
             return;
         }
-        arrow.draw(graphics, 66, 20);
+        if (type.getUid().getPath().equals("spraying")) {
+            arrow.draw(graphics, 66, 6);
+            graphics.renderItem(new net.minecraft.world.item.ItemStack(Items.WHEAT), 104, 1);
+        } else arrow.draw(graphics, 66, 20);
         scene.draw(graphics, 0, SCENE, WIDTH, SCENE_HEIGHT);
         var font = Minecraft.getInstance().font;
         List<net.minecraft.util.FormattedCharSequence> lines = font.split(recipe.note(), WIDTH);

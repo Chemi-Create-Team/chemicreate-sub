@@ -24,6 +24,7 @@ import net.createplant.chemistry.ProcessRecipe;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.recipe.ConverterRecipe;
 import net.createplant.recipe.PressureReactionRecipe;
+import net.createplant.recipe.SprayingRecipe;
 import net.createplant.registry.*;
 import net.createplant.thermal.ThermalStreams;
 import net.createplant.thermal.FluidThermal;
@@ -69,6 +70,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("haber_bosch", "plant/reaction_tower", CETransport.REACTION_TOWER.get(), CETransport.REACTION_TOWER.get(), CEReactor.CATALYST_BASKET.get(), CEItems.IRON_CATALYST.get()),
             new Kind("absorption_tower", "plant/large_absorption_tower", CEReactor.LARGE_ABSORPTION_TOWER.get(), CEReactor.LARGE_ABSORPTION_TOWER.get()),
             new Kind("entrained_gasification", "plant/entrained_gasifier", CEGasifier.GASIFIER.get(), CEGasifier.GASIFIER.get(), AllBlocks.BLAZE_BURNER.get()),
+            new Kind("spraying", "plant/agricultural_sprayer_gantry", CEAgriculture.SPRAYER.get(), CEAgriculture.SPRAYER.get()),
             new Kind("fertilizer_filling", "plant/liquid_fertilizer", AllBlocks.SPOUT.get(), AllBlocks.SPOUT.get()),
             new Kind("clarifying", "plant/wet_processing", CEWetProcessing.CLARIFIER.get(), CEWetProcessing.CLARIFIER.get()),
             new Kind("converter", "plant/converter", CEConverter.SHELL.get(), CEConverter.SHELL.get()),
@@ -105,6 +107,14 @@ public class CreatePlantJeiPlugin implements IModPlugin {
     private static ItemStack stack(String name) { return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(CreatePlant.location(name)).getDefaultInstance(); }
     private static PlantProcess service(String input, String output, String key) { return new PlantProcess(List.of(List.of(stack(input))), List.of(), List.of(), List.of(stack(output)), List.of(), note(key)); }
     @Override public void registerRecipes(IRecipeRegistration registration) {
+        var world = Minecraft.getInstance().level;
+        if (world != null) registration.addRecipes(type("spraying"), SprayingRecipe.available(world).stream().flatMap(holder -> {
+            var recipe = holder.value();
+            var fluids = Arrays.asList(recipe.liquid().getFluids());
+            if (fluids.isEmpty()) return java.util.stream.Stream.empty();
+            return java.util.stream.Stream.of(PlantProcess.fluids(List.of(fluids.getFirst()), List.of(),
+                recipe.effect().description(recipe.liquid().amount())).withFluidOptions(List.of(fluids)));
+        }).toList());
         if (Minecraft.getInstance().level != null) registration.addRecipes(type("entrained_gasification"), Minecraft.getInstance().level.getRecipeManager()
             .getAllRecipesFor(CERecipeTypes.ENTRAINED_GASIFICATION.<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.EntrainedGasificationRecipe>getType())
             .stream().flatMap(holder -> {
