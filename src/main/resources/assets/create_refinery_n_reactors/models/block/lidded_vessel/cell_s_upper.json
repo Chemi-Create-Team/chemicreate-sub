@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "particle": "create_refinery_n_reactors:block/reactor/silver/shell",
-    "floor": "create_refinery_n_reactors:block/reactor/steel",
-    "bottom": "create_refinery_n_reactors:block/reactor/silver/top",
-    "inner": "create_refinery_n_reactors:block/reactor/steel",
+    "particle": "create_refinery_n_reactors:block/tank/ammonia_separator",
+    "floor": "create_refinery_n_reactors:block/tank/ammonia_separator_inner",
+    "bottom": "create_refinery_n_reactors:block/tank/ammonia_separator_top",
+    "inner": "create_refinery_n_reactors:block/tank/ammonia_separator_inner",
     "rim": "create_refinery_n_reactors:block/lidded_vessel/internal/steel",
-    "side": "create_refinery_n_reactors:block/reactor/silver/shell"
+    "side": "create_refinery_n_reactors:block/tank/ammonia_separator"
   },
   "elements": [
     {

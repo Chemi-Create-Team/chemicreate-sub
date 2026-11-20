@@ -1,5 +1,6 @@
 package net.createplant.block;
 
+import java.util.function.Supplier;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import net.createplant.registry.CETransport;
@@ -17,13 +18,19 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 /** Create's fluid tank laid on its side, like its item vault: it connects only with tanks lying along the same axis, has no windows, and is a boiler like the standing tank. */
 public class HorizontalFluidTankBlock extends FluidTankBlock {
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
+    private final Supplier<? extends BlockEntityType<? extends FluidTankBlockEntity>> type;
 
     public HorizontalFluidTankBlock(Properties properties) {
+        this(properties, CETransport.HORIZONTAL_FLUID_TANK_ENTITY);
+    }
+
+    public HorizontalFluidTankBlock(Properties properties, Supplier<? extends BlockEntityType<? extends FluidTankBlockEntity>> type) {
         super(properties, false);
+        this.type = type;
         registerDefaultState(defaultBlockState().setValue(AXIS, Direction.Axis.X));
     }
 
-    @Override public BlockEntityType<? extends FluidTankBlockEntity> getBlockEntityType() { return CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(); }
+    @Override public BlockEntityType<? extends FluidTankBlockEntity> getBlockEntityType() { return type.get(); }
 
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);

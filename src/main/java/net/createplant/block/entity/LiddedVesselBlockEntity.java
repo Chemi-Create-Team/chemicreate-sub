@@ -339,6 +339,8 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (level!=null && !level.isClientSide && isController()) { fouling().tick(); }
         super.tick();
         if (level == null || !isController()) return;
+        if (!level.isClientSide && !isRemoved() && module()==ReactorModule.NONE && ReactorStructure.loaded(level,worldPosition))
+            tickHeatOnlyReactions(height,!tankInventory.isEmpty());
         if (!level.isClientSide && Math.floorMod(level.getGameTime()+worldPosition.asLong(),20)==0) heatContents();
         if (!level.isClientSide && Math.floorMod(level.getGameTime()+worldPosition.asLong(),5)==0) updateDisplayedHeat();
         if (lastKnownPos == null) lastKnownPos = worldPosition;
@@ -526,7 +528,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             net.createplant.mixture.MixtureGoggleHelper.appendSummary(tooltip, owner.tankInventory.getFluid());return true;
         }
         String key="lidded_vessel.create_refinery_n_reactors.";
-        var status=Component.translatable(owner.module()==ReactorModule.NONE ? key+"storage" : "reactor.create_refinery_n_reactors.status."+owner.status());
+        var status=Component.translatable(owner.module()==ReactorModule.NONE && !owner.running() && !owner.status().equals("heat") ? key+"storage" : "reactor.create_refinery_n_reactors.status."+owner.status());
         tooltip.add(Component.translatable(key+"summary",status,Component.translatable(key+"lid."+(owner.width==1 ? "fixed" : owner.open() ? "open" : "closed")),owner.width,owner.height));
         var heat=owner.currentBurnerHeat();
         var condition=heat==com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING ? com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED : heat.isAtLeast(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED) ? com.simibubi.create.content.processing.recipe.HeatCondition.HEATED : com.simibubi.create.content.processing.recipe.HeatCondition.NONE;

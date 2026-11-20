@@ -1,0 +1,10 @@
+{
+  "parent": "create:block/fluid_tank/block_bottom",
+  "render_type": "minecraft:cutout_mipped",
+  "textures": {
+    "0": "create_refinery_n_reactors:block/tank/ammonia_separator_top",
+    "1": "create_refinery_n_reactors:block/tank/ammonia_separator",
+    "4": "create_refinery_n_reactors:block/tank/ammonia_separator_inner",
+    "particle": "create_refinery_n_reactors:block/tank/ammonia_separator"
+  }
+}

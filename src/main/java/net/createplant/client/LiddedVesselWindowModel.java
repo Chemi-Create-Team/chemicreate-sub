@@ -29,7 +29,7 @@ public class LiddedVesselWindowModel extends BakedModelWrapperWithData {
     private static final Map<LiddedVesselBlockEntity, Profile> PROFILES = Collections.synchronizedMap(new WeakHashMap<>());
     private static final Profile EMPTY = new Profile(null, List.of());
     private static final float EPSILON = 1e-5f;
-    private static final ResourceLocation RIM = CreatePlant.location("block/lidded_vessel/internal/steel"), BOTTOM = CreatePlant.location("block/reactor/silver/top");
+    private static final ResourceLocation RIM = CreatePlant.location("block/lidded_vessel/internal/steel"), BOTTOM = CreatePlant.location("block/tank/ammonia_separator_top");
 
     public LiddedVesselWindowModel(BakedModel model) { super(model); }
 

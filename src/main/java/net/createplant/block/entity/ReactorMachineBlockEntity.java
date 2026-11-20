@@ -309,7 +309,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (module()==ReactorModule.PREHEATER) { thermal().tick();return; }
         float rpm=module().stress==0 ? 32 : Math.abs(rotationSpeed());
         if (rpm<32) { setStatus("speed",false);return; }
-        if ((module()==ReactorModule.STIRRED || module()==ReactorModule.ABSORBER) && react(rpm)) {
+        if ((module()==ReactorModule.STIRRED || module()==ReactorModule.ABSORBER) && react(rpm,sections)) {
             if (clock%10==0) syncNeeded=true;return;
         }
         if (recipeDirty) {
@@ -354,7 +354,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
     private List<RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>>> vesselRecipes() {
         var recipes=new ArrayList<RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>>>();
-        for(var holder:reactions())if(holder.value().module()==module())recipes.add(holder);
+        var installed=module();
+        for(var holder:reactions())if(holder.value().module()==installed || installed==ReactorModule.STIRRED && holder.value().module()==ReactorModule.NONE)recipes.add(holder);
         recipes.sort(Comparator.comparingInt((RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> r)->r.value().getIngredients().size()+r.value().getFluidIngredients().size()).reversed());
         if(module()!=ReactorModule.STIRRED)return recipes;
         var mixing=new ArrayList<>(level.getRecipeManager().getAllRecipesFor(AllRecipeTypes.MIXING.<RecipeInput,MixingRecipe>getType()));
@@ -362,19 +363,34 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         recipes.addAll(mixing);
         return recipes;
     }
-    /** Shared item/fluid batches; tray vessels need heat but no mechanical stirring. */
-    private boolean react(float rpm) {
+    protected void tickHeatOnlyReactions(int parallel, boolean fed) {
+        if (!fed || vesselOpen() || level.hasNeighborSignal(worldPosition) || !processInhibit().isEmpty()) {
+            if (reaction!=null || running) {
+                reaction=null;recipeDirty=true;progress=0;
+                setStatus(!fed ? "materials" : vesselOpen() ? "lid" : level.hasNeighborSignal(worldPosition) ? "redstone" : processInhibit(),false);
+            }
+            return;
+        }
+        for(int slot=0;slot<FEED_SLOTS;slot++) if(!charge.getStackInSlot(slot).isEmpty()) {
+            if(!react(32,parallel) && running)setStatus("materials",false);
+            return;
+        }
+        if(running)setStatus("materials",false);
+    }
+
+    /** Shared item/fluid batches; heated and tray vessels do not need mechanical stirring. */
+    private boolean react(float rpm,int parallel) {
         var heat=burnerHeat();
         if (heat!=burnerHeat) { burnerHeat=heat;recipeDirty=true; }
         if (recipeDirty) {
             reaction=null;
             RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> blocked=null;
-            for (var holder:vesselRecipes()) if (batches(holder.value())>0) {
+            for (var holder:vesselRecipes()) if (batches(holder.value(),parallel)>0) {
                 if (holder.value().getRequiredHeat().testBlazeBurner(heat)) { reaction=holder;break; }
                 if(blocked==null)blocked=holder;
             }
             if(reaction==null)reaction=blocked;
-            if(reaction!=null || module()==ReactorModule.STIRRED)recipeDirty=false;
+            if(reaction!=null || module()!=ReactorModule.ABSORBER)recipeDirty=false;
         }
         if (reaction==null) {
             if(module()==ReactorModule.STIRRED)setStatus("materials",false);
@@ -382,21 +398,21 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         }
         var recipe=reaction.value();
         int duration = Math.clamp(recipe.getProcessingDuration() > 0 ? recipe.getProcessingDuration() : 100, 1, 200);
-        double ratedRate = ProductionMonitor.batchRate(1, sections, duration, module().stress == 0 ? 1 : 4);
+        double ratedRate = ProductionMonitor.batchRate(1, parallel, duration, module().stress == 0 ? 1 : 4);
         double itemCount = recipe.getRollableResults().stream().mapToDouble(result -> result.getStack().getCount() * result.getChance()).sum();
         ProductionMonitor.plan(this, ProductionMonitor.fluids(recipe.getFluidResults()) * ratedRate, itemCount * ratedRate, 0);
-        if (!recipe.getRequiredHeat().testBlazeBurner(heat)) { recipeDirty=true;progress=0;setStatus("heat",false);return true; }
-        int available=batches(recipe);
+        if (!recipe.getRequiredHeat().testBlazeBurner(heat)) { progress=0;setStatus("heat",false);return true; }
+        int available=batches(recipe,parallel);
         if (available==0) { recipeDirty=true;setStatus("materials",false);return true; }
         String id=reaction.id().toString();
         if (!batch.equals(id) || scale<=0 || scale>available || progress==0 && scale!=available) { batch=id;scale=available;progress=0; }
         cycleTicks=duration;
         if(recipe.getRequiredHeat()!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE && takeBurnerHeat(recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)<(recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)){setStatus("heat",false);return true;}
         float efficiency = processingSpeedFactor();
-        ProductionMonitor.limitedBy(this, available < sections ? "throughput" : efficiency < 1 ? "fouled"
+        ProductionMonitor.limitedBy(this, available < parallel ? "throughput" : efficiency < 1 ? "fouled"
             : module().stress != 0 && rpm < 128 ? "speed" : "rated");
         setStatus("running",true);progress+=Math.min(4,rpm/32f)*efficiency;setChanged();
-        if (progress<cycleTicks || batches(recipe)<scale) return true;
+        if (progress<cycleTicks || batches(recipe,parallel)<scale) return true;
         for (int i=0;i<scale;i++) {
             ItemStack[] items=items();FluidStack[] fluids=mixingFluids();
             var products = recipe.rollResults(level.random);
@@ -441,7 +457,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     protected int[] mixingInputs() { return new int[]{0,1,THIRD_FEED}; }
     protected void commitMixingFluids(FluidStack[] fluids) { System.arraycopy(fluids,0,tanks,0,tanks.length); }
     /** How many batches, one per section at most, the feed and the free product space allow; every product is counted as if it were rolled. */
-    private int batches(StandardProcessingRecipe<RecipeInput> recipe) {
+    private int batches(StandardProcessingRecipe<RecipeInput> recipe,int parallel) {
         ItemStack[] items=items();FluidStack[] fluids=mixingFluids();
         if(recipe instanceof PressureReactionRecipe && recipe.getIngredients().isEmpty() && recipe.getFluidIngredients().size()==1){
             var ingredient=recipe.getFluidIngredients().getFirst();
@@ -449,7 +465,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             for(int slot:mixingInputs())if(!fluids[slot].isEmpty() && !ingredient.test(fluids[slot]))return 0;
         }
         int count=0;
-        while (count<sections && runBatch(recipe,items,fluids,recipe.getRollableResultsAsItemStacks())) count++;
+        while (count<parallel && runBatch(recipe,items,fluids,recipe.getRollableResultsAsItemStacks())) count++;
         return count;
     }
     /** Takes one batch out of the given stacks and puts its products in; false when it does not fit, the stacks then being spoilt. */

@@ -1885,9 +1885,9 @@
     "zh_cn": "Ordinary operation wears both parts; an unplanned plasma trip damages them further. Used components leave through the drive output funnel."
   },
   "lidded_vessel.title": {
-    "en_us": "Lidded vessel",
-    "ja_jp": "ふた付き槽",
-    "zh_cn": "带盖槽"
+    "en_us": "Stainless Tank",
+    "ja_jp": "ステンレスタンク",
+    "zh_cn": "不锈钢罐"
   },
   "lidded_vessel.place": {
     "en_us": "Place vessels in a square up to 3×3, then stack up to four layers. Hold a full layer of blocks to extend the top in one click.",
@@ -2470,9 +2470,9 @@
     "zh_cn": "小型炉燃料须将浓缩气再离心一次，再按相同流程制粉、冲压、烧结，仅用于三层燃料部。"
   },
   "guide.manufacturing_air.step_1": {
-    "en_us": "Connect an open gas pipe and a driven pump to the compressor inlet.\n%s → %s",
-    "ja_jp": "開放した気体パイプと回転するポンプを、圧縮機上面の吸入管へつなぎます。\n%s → %s",
-    "zh_cn": "将开放的气体管道和旋转泵连接到压缩机顶部吸气管。\n%s → %s"
+    "en_us": "Connect an air filter and a driven pump to the compressor inlet.\n%s → %s",
+    "ja_jp": "エアフィルターと回転するポンプを圧縮機上面の吸入管へつなぎます。\n%s → %s",
+    "zh_cn": "将空气过滤器和旋转泵连接到压缩机顶部吸气管。\n%s → %s"
   },
   "guide.manufacturing_air.step_2": {
     "en_us": "Fit the drive to the cylinder and turn its crank two blocks away. Air enters above and compressed air exits below.",
@@ -3870,9 +3870,9 @@
     "zh_cn": "逐段拼接的蒸汽轮机"
   },
   "turbine_multiblock.factory": {
-    "en_us": "Craft each pressure stage with a full 9×9 Mechanical Crafter recipe.",
-    "ja_jp": "各圧力段は9×9のメカニカルクラフターで作ります。",
-    "zh_cn": "各压力级均使用完整的9×9机械合成配方制作。"
+    "en_us": "Craft the high-pressure section in a 5×5 Mechanical Crafter and the low-pressure section in a 7×7.",
+    "ja_jp": "メカニカルクラフターは高圧断面が5×5、低圧断面が7×7です。",
+    "zh_cn": "高压截面使用5×5机械合成，低压截面使用7×7机械合成。"
   },
   "turbine_multiblock.place": {
     "en_us": "One item places one block of depth: HP 3×3, LP 9×9. Place the bottom center on a foundation.",
@@ -4190,9 +4190,9 @@
     "zh_cn": "停止驱动即停止输送。无法输送时检查管材和连接。"
   },
   "material_pump.intake": {
-    "en_us": "An open gas pipe draws atmospheric air when a pump pulls on it. Connect the outlet to the compressor top inlet.",
-    "ja_jp": "気体パイプの開放端をポンプで吸引すると空気を取り込めます。送り先を圧縮機上面の入口につなぎます。",
-    "zh_cn": "用泵抽吸气体管道开放端即可吸入空气。将出口连接到压缩机顶部入口。"
+    "en_us": "Attach an air filter to the pump or its intake pipe. Leave a filter face exposed to air.",
+    "ja_jp": "エアフィルターをポンプの吸い込み口か吸気配管につなぎ、フィルターの一面を空気に触れさせます。",
+    "zh_cn": "将空气过滤器接到泵入口或进气管，并留出过滤器的一面接触空气。"
   },
   "ore_recovery.title": {
     "en_us": "Ore recovery: three ingots",
@@ -5198,5 +5198,25 @@
     "en_us": "Use a funnel at the opposite wall to load flocculant. One item halves a 200-tick batch.",
     "ja_jp": "反対側の壁からファンネルで凝集剤を投入できます。1個で200 tickの処理時間が半分になります。",
     "zh_cn": "在对侧壁用漏斗送入絮凝剂。每份可将200 tick的处理时间减半。"
+  },
+  "horizontal_tank.stainless_title": {
+    "en_us": "Stainless Boiler",
+    "ja_jp": "ステンレスボイラー",
+    "zh_cn": "不锈钢锅炉"
+  },
+  "lidded_vessel.sulfur_title": {
+    "en_us": "Sulfur dioxide in a stainless tank",
+    "ja_jp": "ステンレスタンクで二酸化硫黄を作る",
+    "zh_cn": "用不锈钢罐制取二氧化硫"
+  },
+  "lidded_vessel.sulfur_feed": {
+    "en_us": "Feed sulfur through a funnel and supply oxygen at the roof. Keep the stainless tank closed.",
+    "ja_jp": "ファンネルから硫黄を入れ、上面の配管から酸素を送ります。ステンレスタンクのふたは閉じます。",
+    "zh_cn": "用漏斗加入硫，从顶面管道送入氧气。盖好不锈钢罐。"
+  },
+  "lidded_vessel.sulfur_heat": {
+    "en_us": "Superheat the tank from below. Pump sulfur dioxide out through the roof.",
+    "ja_jp": "下から超加熱します。二酸化硫黄は上面からポンプで取り出します。",
+    "zh_cn": "从底部超热，从顶面用泵导出二氧化硫。"
   }
 }

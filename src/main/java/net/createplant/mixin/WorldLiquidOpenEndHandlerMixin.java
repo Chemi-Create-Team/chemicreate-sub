@@ -69,15 +69,6 @@ public class WorldLiquidOpenEndHandlerMixin {
         FluidStack held = tank.getFluid();
         var world = this$0.getWorld();
         var pos = this$0.getOutputPos();
-        if (held.isEmpty() && world != null && world.hasChunkAt(pos)
-            && world.getBlockState(this$0.getPos()).getBlock() instanceof net.createplant.block.GasPipeBlock
-            && world.getBlockState(pos).isAir()) {
-            FluidStack air = new FluidStack(net.createplant.registry.CEFluids.AIR_GAS.get(), Math.clamp(amount, 0, 1000));
-            if (filter != null && !FluidThermal.compatible(air, filter)) air = FluidStack.EMPTY;
-            if (action.execute() && !air.isEmpty()) ((WorldLiquidOpenEndAccess) this$0).createPlant$setPulling(true);
-            cir.setReturnValue(air);
-            return;
-        }
         if (!CEWorldFluids.isLiquid(held.getFluid()) && (world == null || !world.hasChunkAt(pos)
             || !CEWorldFluids.isLiquid(world.getFluidState(pos).getType()))) return;
         if (amount <= 0 || !held.isEmpty() && filter != null && !FluidThermal.compatible(held, filter)) {

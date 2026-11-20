@@ -35,6 +35,31 @@ public final class LiddedVesselPonderScenes {
 
     private LiddedVesselPonderScenes() { }
 
+    public static void sulfur(SceneBuilder builder, SceneBuildingUtil util) {
+        var scene = new CreateSceneBuilder(builder);
+        scene.title("stainless_tank_sulfur", PonderText.title(LANG + "sulfur_title", "Sulfur dioxide in a stainless-steel tank"));
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+        var tank = new BlockPos(3, 2, 3);
+        var heat = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
+        scene.world().setBlock(tank, CETransport.LIDDED_VESSEL.get().defaultBlockState(), false);
+        scene.world().setBlock(tank.below(), com.simibubi.create.AllBlocks.BLAZE_BURNER.getDefaultState().setValue(heat,
+            com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING), false);
+        scene.world().setBlock(tank.above(), CETransport.STAINLESS_PIPE.get().defaultBlockState()
+            .setValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.UP,true).setValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.DOWN,true),false);
+        scene.world().setBlock(tank.west(), com.simibubi.create.AllBlocks.ANDESITE_FUNNEL.getDefaultState()
+            .setValue(com.simibubi.create.content.logistics.funnel.FunnelBlock.FACING, Direction.WEST)
+            .setValue(com.simibubi.create.content.logistics.funnel.FunnelBlock.EXTRACTING, false),false);
+        scene.world().showSection(util.select().fromTo(3, 1, 3, 3, 3, 3), Direction.DOWN);
+        scene.world().showSection(util.select().position(tank.west()), Direction.EAST);
+        scene.overlay().showControls(util.vector().centerOf(tank.west()), Pointing.RIGHT, 100).withItem(net.createplant.registry.CEItems.SULFUR_DUST.toStack());
+        scene.overlay().showControls(util.vector().centerOf(tank.above()), Pointing.DOWN, 100).withItem(new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("oxygen_gas_bucket"))));
+        text(scene,util,tank,120,"sulfur_feed");
+        scene.overlay().showControls(util.vector().centerOf(tank.above()), Pointing.DOWN, 100).withItem(new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("sulfur_dioxide_bucket"))));
+        text(scene,util,tank.below(),120,"sulfur_heat");
+        scene.markAsFinished();
+    }
+
     public static void vessel(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("lidded_vessel", PonderText.title(LANG + "title", "Lidded vessel"));

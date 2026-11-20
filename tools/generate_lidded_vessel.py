@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Square lidded vessels up to 3x3 and four high, their reaction-plant internals, item models, loot, recipes and names.
 
-It is dressed in the silver plate shared by the reactor-family vessels (block/reactor/silver). Run from the repository root.
+The walls use the original tank-shaped separator's skin. Run from the repository root.
 """
 import json
 import math
@@ -23,8 +23,9 @@ def write(path, data):
     path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
 
 
-TEXTURES = {'particle': S + 'shell', 'floor': f'{NS}:block/reactor/steel', 'bottom': S + 'top',
-            'inner': f'{NS}:block/reactor/steel', 'rim': f'{NS}:block/lidded_vessel/internal/steel', 'side': S + 'shell'}
+SEPARATOR = f'{NS}:block/tank/ammonia_separator'
+TEXTURES = {'particle': SEPARATOR, 'floor': SEPARATOR + '_inner', 'bottom': SEPARATOR + '_top',
+            'inner': SEPARATOR + '_inner', 'rim': f'{NS}:block/lidded_vessel/internal/steel', 'side': SEPARATOR}
 
 
 def cell(outer, bottom=True):
@@ -82,7 +83,7 @@ def models():
     write(A / 'blockstates/lidded_vessel.json', {'multipart': parts})
     item = cell({face: True for face in SIDES})
     item['parent'] = 'minecraft:block/block'
-    item['textures']['lid'] = S + 'top'
+    item['textures']['lid'] = SEPARATOR + '_top'
     item['elements'].append({'from': [2, 14, 2], 'to': [14, 16, 14], 'faces': {'up': {'texture': '#lid'}, 'down': {'texture': '#inner'},
         **{face: {'texture': '#rim', 'uv': [0, 0, 12, 2]} for face in SIDES}}})
     write(A / 'models/item/lidded_vessel.json', item)
@@ -396,7 +397,7 @@ INTERNAL_RECIPES = (
 
 
 NAMES = {
-    f'block.{NS}.lidded_vessel': ('Lidded Vessel', 'ふた付き槽'),
+    f'block.{NS}.lidded_vessel': ('Stainless Tank', 'ステンレスタンク'),
     f'lidded_vessel.{NS}.lid.open': ('Hatch open', 'ハッチ：開'),
     f'lidded_vessel.{NS}.lid.closed': ('Hatch closed', 'ハッチ：閉'),
     f'item.{NS}.reactor_catalyst_basket': ('Catalyst Basket', '触媒充填バスケット'),

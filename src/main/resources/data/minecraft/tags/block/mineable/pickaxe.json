@@ -14,6 +14,8 @@
     "create_refinery_n_reactors:pressure_reducing_valve",
     "create_refinery_n_reactors:stainless_steel_pipe",
     "create_refinery_n_reactors:horizontal_fluid_tank",
+    "create_refinery_n_reactors:stainless_boiler",
+    "create_refinery_n_reactors:air_filter",
     "create_refinery_n_reactors:reciprocating_cylinder",
     "create_refinery_n_reactors:reciprocating_compressor",
     "create_refinery_n_reactors:reciprocating_drive_shaft",

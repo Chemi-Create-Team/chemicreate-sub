@@ -60,6 +60,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     private String status = "heat";
 
     public HorizontalTankBlockEntity(BlockPos pos, BlockState state) { this(CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(), pos, state); }
+    public static HorizontalTankBlockEntity stainless(BlockPos pos, BlockState state) { return new HorizontalTankBlockEntity(CETransport.STAINLESS_BOILER_ENTITY.get(), pos, state); }
 
     protected HorizontalTankBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -108,6 +109,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(), (be, side) -> be.port(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.STAINLESS_BOILER_ENTITY.get(), (be, side) -> be.port(side));
     }
 
     public ThermalFluidTank steam() { return steam; }
@@ -135,7 +137,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
 
     private boolean tubeBoiler() {
         if (level.isClientSide) return tubeMode;
-        if (!getBlockState().is(CETransport.HORIZONTAL_FLUID_TANK.get())) return false;
+        if (!getBlockState().is(CETransport.HORIZONTAL_FLUID_TANK.get()) && !getBlockState().is(CETransport.STAINLESS_BOILER.get())) return false;
         var feed = getTankInventory().getFluid();
         boolean canBoil = boiler.attachedEngines == 0 && (feed.isEmpty() || boils(feed));
         for (int across = 0; across < width; across++) {

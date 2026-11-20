@@ -147,7 +147,9 @@ public class PlantProcessCategory implements IRecipeCategory<PlantProcess> {
             int divisor = java.math.BigInteger.valueOf(a).gcd(java.math.BigInteger.valueOf(b)).intValue();
             metric(graphics, ratio, 118, Component.translatable(CONDITION + "ratio", a / divisor, b / divisor));
         }
-        graphics.drawString(font, Component.translatable(CONDITION + "batch", conditions.minimumLevels()), 1, CAPTION, 0xFF4F4F4F, false);
+        var structure = conditions.minimumLevels() == 0 ? Component.translatable(CONDITION + "heated_tank")
+            : Component.translatable(CONDITION + "batch", conditions.minimumLevels());
+        graphics.drawString(font, structure, 1, CAPTION, 0xFF4F4F4F, false);
     }
 
     private static void drawAmounts(GuiGraphics graphics, List<FluidStack> fluids, int left, int offset) {

@@ -228,8 +228,14 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/flare_stack",FlarePonderScenes::flare);
         helper.forComponents(CreatePlant.location("horizontal_fluid_tank"))
             .addStoryBoard("plant/horizontal_tank", HorizontalTankPonderScenes::tank);
+        helper.forComponents(CreatePlant.location("stainless_boiler"))
+            .addStoryBoard("plant/horizontal_tank", HorizontalTankPonderScenes::stainless);
+        helper.forComponents(CreatePlant.location("air_filter"))
+            .addStoryBoard("plant/material_pump", (scene,util)->MaterialPumpPonderScenes.pump(scene,util,"gas"));
         helper.forComponents(CreatePlant.location("lidded_vessel"))
             .addStoryBoard("plant/lidded_vessel", LiddedVesselPonderScenes::vessel);
+        helper.forComponents(CreatePlant.location("lidded_vessel"), CreatePlant.location("sulfur_dioxide_bucket"))
+            .addStoryBoard("plant/material_pump", LiddedVesselPonderScenes::sulfur);
         helper.forComponents(CreatePlant.location("lidded_vessel"))
             .addStoryBoard("plant/lidded_vessel_2x2", LiddedVesselPonderScenes::compactVessel);
         helper.forComponents(CreatePlant.location("reactor_impeller"), CreatePlant.location("gas_centrifuge"), CreatePlant.location("lidded_vessel"))

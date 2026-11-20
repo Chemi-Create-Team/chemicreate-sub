@@ -3,15 +3,13 @@
   "accept_mirrored": true,
   "category": "misc",
   "pattern": [
-    "CCCCECCCC",
-    "CBBBCBBBC",
-    "CBSBSBSBC",
-    "CBBBCBBBC",
-    "ECCCSCCCE",
-    "CBBBCBBBC",
-    "CBSBSBSBC",
-    "CBBBCBBBC",
-    "CCCCECCCC"
+    "CCCECCC",
+    "CBBBBBC",
+    "CBSBSBC",
+    "EBBSBBE",
+    "CBSBSBC",
+    "CBBBBBC",
+    "CCCECCC"
   ],
   "key": {
     "C": {

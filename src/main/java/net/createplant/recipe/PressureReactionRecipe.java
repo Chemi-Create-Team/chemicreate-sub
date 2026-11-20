@@ -16,13 +16,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 /**
- * A reaction of gases with other materials, run by stirred or tray-equipped vessels. The JSON is Create's
+ * A reaction of gases with other materials, run by heated, stirred or tray-equipped vessels. The JSON is Create's
  * processing format: item and fluid ingredients, item and fluid results, heat_requirement and processing_time.
  */
 public class PressureReactionRecipe extends StandardProcessingRecipe<RecipeInput> {
     private ReactorModule module=ReactorModule.STIRRED;
     private static final Codec<ReactorModule> MODULE_CODEC=StringRepresentable.fromEnum(ReactorModule::values)
-        .validate(value->value==ReactorModule.STIRRED || value==ReactorModule.ABSORBER ? DataResult.success(value) : DataResult.error(()->"Reaction requires stirred or absorber internals"));
+        .validate(value->supported(value) ? DataResult.success(value) : DataResult.error(()->"Reaction module must be none, stirred or absorber"));
+    private static boolean supported(ReactorModule module) { return module==ReactorModule.NONE || module==ReactorModule.STIRRED || module==ReactorModule.ABSORBER; }
     public PressureReactionRecipe(ProcessingRecipeParams params) { super(CERecipeTypes.PRESSURE_REACTION, params); }
     public ReactorModule module() { return module; }
 
@@ -42,7 +43,7 @@ public class PressureReactionRecipe extends StandardProcessingRecipe<RecipeInput
         ).apply(instance,(recipe,module)->{recipe.module=module;return recipe;}));
         private final StreamCodec<RegistryFriendlyByteBuf,PressureReactionRecipe> stream=StreamCodec.of(
             (buffer,recipe)->{standard.streamCodec().encode(buffer,recipe);buffer.writeEnum(recipe.module);},
-            buffer->{var recipe=standard.streamCodec().decode(buffer);recipe.module=buffer.readEnum(ReactorModule.class);if(recipe.module!=ReactorModule.STIRRED && recipe.module!=ReactorModule.ABSORBER)throw new IllegalArgumentException("Invalid reaction module");return recipe;});
+            buffer->{var recipe=standard.streamCodec().decode(buffer);recipe.module=buffer.readEnum(ReactorModule.class);if(!supported(recipe.module))throw new IllegalArgumentException("Invalid reaction module");return recipe;});
         @Override public MapCodec<PressureReactionRecipe> codec() { return codec; }
         @Override public StreamCodec<RegistryFriendlyByteBuf,PressureReactionRecipe> streamCodec() { return stream; }
     }

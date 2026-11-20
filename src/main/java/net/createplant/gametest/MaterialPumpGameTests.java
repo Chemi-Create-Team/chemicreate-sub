@@ -189,50 +189,39 @@ public final class MaterialPumpGameTests {
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 250)
-    public static void openGasPipeSuppliesAirOnlyWhilePumpedAndExposed(GameTestHelper h) {
+    public static void atmosphericAirNeedsAnExposedFilterAndAWorkingPump(GameTestHelper h) {
         Line line = line(h, 3, BuiltInRegistries.BLOCK.get(CreatePlant.location("gas_pump")), true);
-        h.setBlock(new BlockPos(1, 2, 3), Blocks.AIR);
-        BlockPos intake = h.absolutePos(new BlockPos(2, 2, 3));
-        var open = new OpenEndedPipe(new BlockFace(intake, Direction.WEST));
+        var filterPos = new BlockPos(1, 2, 3);
+        h.setBlock(filterPos, Blocks.AIR);
+        var open = new OpenEndedPipe(new BlockFace(h.absolutePos(filterPos.east()), Direction.WEST));
         open.manageSource(h.getLevel(), null);
-        var handler = open.provideHandler().getCapability();
-        var before = open.serializeNBT(h.getLevel().registryAccess());
-        h.assertTrue(handler.drain(125, SIMULATE).is(CEFluids.AIR_GAS.get())
-            && before.equals(open.serializeNBT(h.getLevel().registryAccess())), "Air simulation has no state changes");
-        h.assertTrue(handler.drain(new FluidStack(Fluids.WATER, 1000), EXECUTE).isEmpty(), "An air intake rejects a liquid filter");
-        var air = new FluidStack(CEFluids.AIR_GAS.get(), 1000);
-        var beforeVenting = open.serializeNBT(h.getLevel().registryAccess());
-        h.assertTrue(handler.fill(air, SIMULATE) == 1000 && beforeVenting.equals(open.serializeNBT(h.getLevel().registryAccess())),
-            "Simulating an air vent leaves all state untouched");
-        h.assertTrue(handler.fill(air, EXECUTE) == 1000 && h.getLevel().getBlockState(intake.west()).isAir()
-            && handler.getFluidInTank(0).isEmpty(), "Exhausted air disperses without creating world fluid source blocks");
-        h.assertTrue(handler.drain(0, EXECUTE).isEmpty() && handler.drain(2000, EXECUTE).getAmount() == 1000,
-            "Intake respects zero and native per-drain limits");
-        h.setBlock(new BlockPos(2, 2, 3), CEGasPipes.LARGE_GAS_PIPE.get().defaultBlockState());
-        h.assertTrue(handler.drain(100, SIMULATE).is(CEFluids.AIR_GAS.get()), "The large gas pipe also exposes atmospheric intake");
-        h.setBlock(new BlockPos(2, 2, 3), AllBlocks.FLUID_PIPE.getDefaultState());
-        h.assertTrue(handler.drain(100, SIMULATE).isEmpty(), "A standard copper pipe keeps its native empty-space behaviour");
-        h.setBlock(new BlockPos(2, 2, 3), CEGasPipes.GAS_PIPE.get().defaultBlockState()
-            .setValue(FluidPipeBlock.EAST, true).setValue(FluidPipeBlock.WEST, true));
-        h.setBlock(new BlockPos(1, 2, 3), Blocks.WATER);
-        h.assertTrue(handler.drain(new FluidStack(CEFluids.AIR_GAS.get(), 100), SIMULATE).isEmpty(),
-            "A submerged gas intake cannot create atmospheric air");
-        h.setBlock(new BlockPos(1, 2, 3), Blocks.AIR);
-        h.setBlock(new BlockPos(1, 2, 3), Blocks.STONE);
-        h.assertTrue(handler.drain(1000, EXECUTE).isEmpty(), "A blocked intake cannot collect atmosphere");
-        h.setBlock(new BlockPos(1, 2, 3), Blocks.AIR);
+        var outlet = open.provideHandler().getCapability();
+        h.assertTrue(outlet.drain(125, SIMULATE).isEmpty() && outlet.drain(125, EXECUTE).isEmpty(), "An open gas pipe no longer draws atmospheric air");
+        h.assertTrue(outlet.fill(new FluidStack(CEFluids.AIR_GAS.get(), 1000), EXECUTE) == 1000
+            && h.getBlockState(filterPos).isAir(), "Exhausted air still disperses into the world");
+        h.setBlock(filterPos, CEGasPipes.AIR_FILTER.get());
+        var capability = net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK;
+        var filter = h.getLevel().getCapability(capability, h.absolutePos(filterPos), Direction.EAST);
+        h.assertTrue(filter != null && filter.drain(125, SIMULATE).is(CEFluids.AIR_GAS.get())
+            && filter.drain(2000, EXECUTE).getAmount() == 1000 && filter.drain(new FluidStack(Fluids.WATER, 100), EXECUTE).isEmpty(),
+            "The filter exposes only ambient air and respects the per-draw cap");
+        for (var side : Direction.values()) if (side != Direction.EAST) h.setBlock(filterPos.relative(side), Blocks.STONE);
+        h.assertTrue(filter.drain(125, SIMULATE).isEmpty(), "A covered filter cannot collect atmosphere");
+        h.setBlock(filterPos.above(), Blocks.AIR);
         h.runAfterDelay(25, () -> {
-            h.assertTrue(line.destination.getTankInventory().isEmpty(), "Atmosphere does not fill tanks without a pump");
+            h.assertTrue(line.destination.getTankInventory().isEmpty(), "A fitted filter needs a powered pump");
             line.motor.generatedSpeed.setValue(64);
         });
-        h.runAfterDelay(120, () -> {
-            h.assertTrue(line.destination.getTankInventory().getFluid().is(CEFluids.AIR_GAS.get()), "A real driven gas pump draws atmospheric air");
-            line.motor.generatedSpeed.setValue(0);
+        int[] first = new int[1];
+        h.runAfterDelay(115, () -> {
+            h.assertTrue(line.destination.getTankInventory().getFluid().is(CEFluids.AIR_GAS.get()), "The real pump draws air through a pipe connected to the filter");
+            first[0] = line.destination.getTankInventory().getFluidAmount();
+            h.setBlock(filterPos, Blocks.AIR);
+            h.assertTrue(filter.drain(1, EXECUTE).isEmpty(), "The cached atmospheric capability expires when the filter is removed");
+            h.setBlock(filterPos.east(), CEGasPipes.AIR_FILTER.get());
         });
-        int[] stopped = new int[1];
-        h.runAfterDelay(160, () -> stopped[0] = line.destination.getTankInventory().getFluidAmount());
-        h.runAfterDelay(200, () -> {
-            h.assertTrue(stopped[0] == line.destination.getTankInventory().getFluidAmount(), "Stopping the pump stops air collection");
+        h.runAfterDelay(220, () -> {
+            h.assertTrue(line.destination.getTankInventory().getFluidAmount() > first[0], "The filter also supplies air when placed directly at the pump");
             h.succeed();
         });
     }

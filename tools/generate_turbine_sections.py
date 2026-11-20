@@ -1,4 +1,4 @@
-"""Crafted octagonal sections, two pressure stages, Create's 9x9 recipe limit."""
+"""Crafted octagonal sections for the high- and low-pressure stages."""
 import json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -12,11 +12,14 @@ def write(path,data):
  path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 
 
+patterns={
+ 'high':['CCECC','CBSBC','EBSBE','CBSBC','CCECC'],
+ 'low':['CCCECCC','CBBBBBC','CBSBSBC','EBBSBBE','CBSBSBC','CBBBBBC','CCCECCC']}
 for stage in ('high','low'):
  item=stage+'_pressure_turbine_unit'
  pressure='low' if stage=='low' else 'high'
  recipe={'type':'create:mechanical_crafting','accept_mirrored':True,'category':'misc',
-  'pattern':['CCCCECCCC','CBBBCBBBC','CBSBSBSBC','CBBBCBBBC','ECCCSCCCE','CBBBCBBBC','CBSBSBSBC','CBBBCBBBC','CCCCECCCC'],
+  'pattern':patterns[stage],
   'key':{'C':{'item':NS+pressure+'_pressure_turbine_casing'},'B':{'item':NS+pressure+'_pressure_turbine_blade'},
          'E':{'item':NS+('low_pressure_turbine_end' if stage=='low' else 'tarbin_end')},'S':{'item':'create:shaft'}},
   'result':{'id':NS+item,'count':1}}
@@ -33,21 +36,21 @@ for stage in ('high','low'):
 texts={
  'en_us':[
   'Turbine sections: build the length you need',
-  "Craft each pressure stage with a full 9×9 Mechanical Crafter recipe.",
+  'Craft the high-pressure section in a 5×5 Mechanical Crafter and the low-pressure section in a 7×7.',
   'One item places one block of depth: HP 3×3, LP 9×9. Place the bottom center on a foundation.',
   'Use a matching section on an end, casing or top face to extend the same shaft. Casing clicks extend the nearest exposed end without changing height or axis. Exactly 5 HP or 10 LP sections are required.',
   'Align the shafts. Pipe HP exhaust into LP. Central shaft faces are mechanical outputs.',
   'Pump 30 °C condensate from the LP underside. Drain before recovering individual sections with Shift + wrench.'],
  'ja_jp':[
   '断面を並べて作る蒸気タービン',
-  '各圧力段は9×9のメカニカルクラフターで作ります。',
+  'メカニカルクラフターは高圧断面が5×5、低圧断面が7×7です。',
   '1個で奥行き1ブロック分を置きます。高圧3×3、低圧9×9です。底の中央を台に置きます。',
   '同じ断面を端面・側面・上面へ使うと、軸と高さをそろえて延長します。側面・上面ではプレイヤーに近い端へ追加し、高圧5断面・低圧10断面で稼働します。',
   '軸をそろえ、高圧の排気を低圧へ配管します。中心は回転出力です。',
   '低圧の下から30 ℃の復水をポンプで出します。中身を抜いてからShift＋レンチで1断面ずつ回収します。'],
  'zh_cn':[
   '逐段拼接的蒸汽轮机',
-  '各压力级均使用完整的9×9机械合成配方制作。',
+  '高压截面使用5×5机械合成，低压截面使用7×7机械合成。',
   '每个物品放置一格深的截面：高压3×3、低压9×9。将底部中心放在基础上。',
   '在端面、侧面或顶面使用同类截面，即可保持轴向和高度延长。点击侧面或顶面时会加到离玩家最近的外端，高压需5段、低压需10段才能运行。',
   '对齐轴心，用管道将高压排汽送入低压。中央轴面输出旋转动力。',

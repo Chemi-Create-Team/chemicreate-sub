@@ -17,14 +17,21 @@ public final class HorizontalTankPonderScenes {
 
     private HorizontalTankPonderScenes() { }
 
-    public static void tank(SceneBuilder builder, SceneBuildingUtil util) {
+    public static void tank(SceneBuilder builder, SceneBuildingUtil util) { tank(builder,util,false); }
+    public static void stainless(SceneBuilder builder, SceneBuildingUtil util) { tank(builder,util,true); }
+
+    private static void tank(SceneBuilder builder, SceneBuildingUtil util, boolean stainless) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("horizontal_tank", PonderText.title(LANG + "title", "Horizontal fluid tank"));
+        scene.title(stainless ? "stainless_boiler" : "horizontal_tank", PonderText.title(LANG + (stainless ? "stainless_title" : "title"), stainless ? "Stainless-steel boiler" : "Horizontal fluid tank"));
         scene.configureBasePlate(0, 0, 9);
         scene.scaleSceneView(.8f);
         scene.showBasePlate();
         // Create joins the cells on placement; the drawn tank is given the controller data that joining would write.
         BlockPos controller = util.grid().at(2, 2, 3);
+        var tank = util.select().fromTo(2, 2, 3, 5, 3, 4);
+        if (stainless) scene.world().modifyBlocks(tank,state->net.createplant.registry.CETransport.STAINLESS_BOILER.get().defaultBlockState()
+            .setValue(com.simibubi.create.content.fluids.tank.FluidTankBlock.BOTTOM,state.getValue(com.simibubi.create.content.fluids.tank.FluidTankBlock.BOTTOM))
+            .setValue(com.simibubi.create.content.fluids.tank.FluidTankBlock.TOP,state.getValue(com.simibubi.create.content.fluids.tank.FluidTankBlock.TOP)), false);
         for (int x = 0; x < 4; x++) for (int y = 0; y < 2; y++) for (int z = 0; z < 2; z++) {
             BlockPos part = controller.offset(x, y, z);
             scene.world().modifyBlockEntityNBT(util.select().position(part), FluidTankBlockEntity.class, tag -> {
@@ -32,7 +39,6 @@ public final class HorizontalTankPonderScenes {
                 else tag.put("Controller", NbtUtils.writeBlockPos(controller));
             });
         }
-        var tank = util.select().fromTo(2, 2, 3, 5, 3, 4);
         var burners = util.select().fromTo(2, 1, 3, 5, 1, 4);
         var feed = util.select().position(3, 2, 2);
         var pipe = util.select().fromTo(0, 2, 3, 1, 2, 3);

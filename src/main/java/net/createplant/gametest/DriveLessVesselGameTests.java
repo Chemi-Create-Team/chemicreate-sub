@@ -26,6 +26,42 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 public class DriveLessVesselGameTests {
     private static final BlockPos BASE = new BlockPos(4, 3, 4);
 
+    @GameTest(template = "test_reactor", timeoutTicks = 180)
+    public static void closedStainlessTankBurnsSulfurWithOxygenAtSuperheat(GameTestHelper h) {
+        var burnerPos = BASE.below();
+        var heat = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
+        var idleBurner = AllBlocks.BLAZE_BURNER.getDefaultState().setValue(heat,com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SMOULDERING);
+        h.setBlock(BASE, CETransport.LIDDED_VESSEL.get());
+        h.setBlock(burnerPos,idleBurner);
+        var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(BASE);
+        var level = h.getLevel();
+        var tank = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(BASE), Direction.UP);
+        var oxygen = new FluidStack(net.createplant.registry.CEFluids.OXYGEN_GAS.get(), 500);
+        var sulfur = net.createplant.registry.CEItems.SULFUR_DUST.toStack();
+        h.assertTrue(tank != null && tank.fill(oxygen, EXECUTE) == 500 && vessel.itemPort().insertItem(0, sulfur, false).isEmpty(), "Closed tank accepts sulfur and oxygen on its normal ports");
+        var coal = new ItemStack(net.minecraft.world.item.Items.COAL);
+        com.simibubi.create.content.processing.burner.BlazeBurnerBlock.tryInsert(h.getBlockState(burnerPos), level, h.absolutePos(burnerPos), coal, false, false, false);
+        h.runAfterDelay(25, () -> {
+            h.assertTrue(h.getBlockState(burnerPos).getValue(heat) == com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED
+                && vessel.status().equals("heat") && vessel.progress() == 0 && vessel.getTankInventory().getFluidAmount() == 500,
+                "Normal heat keeps the original sulfur and oxygen intact");
+            h.setBlock(burnerPos,Blocks.AIR);
+            h.setBlock(burnerPos,idleBurner);
+            var cake = com.simibubi.create.AllItems.BLAZE_CAKE.asStack();
+            com.simibubi.create.content.processing.burner.BlazeBurnerBlock.tryInsert(h.getBlockState(burnerPos), level, h.absolutePos(burnerPos), cake, false, false, false);
+            h.assertTrue(h.getBlockState(burnerPos).getValue(heat) == com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING,
+                "A finite Blaze Cake supplies real superheat");
+        });
+        h.runAfterDelay(150, () -> {
+            var sulfurDioxide = net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get();
+            var product = tank.drain(new FluidStack(sulfurDioxide, 500), EXECUTE);
+            h.assertTrue(product.getAmount() == 500 && product.is(sulfurDioxide) && vessel.getTankInventory().isEmpty()
+                && vessel.itemPort().getStackInSlot(0).isEmpty() && vessel.internal().isEmpty() && vessel.rotationSpeed() == 0,
+                "The stock roof port gives one batch of SO2 without an agitator or a rotation source");
+            h.succeed();
+        });
+    }
+
     private static LiddedVesselBlockEntity vessel(GameTestHelper h) {
         var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 1);
         h.setBlock(BASE.below(), AllBlocks.BLAZE_BURNER.getDefaultState().setValue(

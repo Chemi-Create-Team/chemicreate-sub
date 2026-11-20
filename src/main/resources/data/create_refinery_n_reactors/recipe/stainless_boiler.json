@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:lidded_vessel"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:stainless_boiler",
+    "count": 1
+  }
+}

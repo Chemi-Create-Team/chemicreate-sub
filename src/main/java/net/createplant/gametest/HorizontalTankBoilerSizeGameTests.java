@@ -206,7 +206,8 @@ public final class HorizontalTankBoilerSizeGameTests {
     public static void shorterBoilerScalesTurbineSuWithLength(GameTestHelper h) { verifyTurbine(h, 5, false); }
 
     private static void verifyTurbine(GameTestHelper h, int length, boolean superheated) {
-        var state = CETransport.HORIZONTAL_FLUID_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
+        var block = superheated ? CETransport.STAINLESS_BOILER.get() : CETransport.HORIZONTAL_FLUID_TANK.get();
+        var state = block.defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
         for (int along = 0; along < length; along++) for (int across = 0; across < 3; across++) {
             var bottom = BASE.offset(along, 0, across);
             for (int y = 0; y < 3; y++) h.setBlock(bottom.above(y), state);

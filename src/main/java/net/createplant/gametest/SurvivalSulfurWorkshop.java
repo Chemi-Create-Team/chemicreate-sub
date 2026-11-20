@@ -260,6 +260,7 @@ final class SurvivalSulfurWorkshop {
                 place(level, at, pump.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.SOUTH));
             } else level.setBlock(at, pipe, 2);
         }
+        place(level, target.north(6), CEGasPipes.AIR_FILTER.get().defaultBlockState());
         var drive = airPump.above();
         place(level, drive, axis(AllBlocks.COGWHEEL.getDefaultState(), Direction.Axis.Z));
         place(level, drive.north(), axis(AllBlocks.SHAFT.getDefaultState(), Direction.Axis.Z));

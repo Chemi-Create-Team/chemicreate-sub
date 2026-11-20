@@ -401,6 +401,7 @@ public class ReactorGameTests {
         var recipes=h.getLevel().getRecipeManager().getAllRecipesFor(CERecipeTypes.PRESSURE_REACTION.<net.minecraft.world.item.crafting.RecipeInput,net.createplant.recipe.PressureReactionRecipe>getType());
         h.assertTrue(recipes.size()>=18,"Vessel reactions load: "+recipes.size());
         for (var holder:recipes) {
+            if (holder.value().module()==ReactorModule.NONE) continue;
             var recipe=holder.value();clear(h,2);
             var be=build(h,recipe.module(),recipe.module().minSections);
             var heat=recipe.getRequiredHeat();

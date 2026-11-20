@@ -67,6 +67,12 @@ public final class CETransport {
     static { ITEMS.registerSimpleBlockItem(HORIZONTAL_FLUID_TANK); }
     public static final Supplier<BlockEntityType<net.createplant.block.entity.HorizontalTankBlockEntity>> HORIZONTAL_FLUID_TANK_ENTITY=TYPES.register("horizontal_fluid_tank",()->
         BlockEntityType.Builder.of(net.createplant.block.entity.HorizontalTankBlockEntity::new,HORIZONTAL_FLUID_TANK.get()).build(null));
+    public static final DeferredBlock<net.createplant.block.HorizontalFluidTankBlock> STAINLESS_BOILER=BLOCKS.registerBlock("stainless_boiler",
+        p->new net.createplant.block.HorizontalFluidTankBlock(p,()->CETransport.STAINLESS_BOILER_ENTITY.get()),
+        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().sound(SoundType.METAL));
+    static { ITEMS.registerSimpleBlockItem(STAINLESS_BOILER); }
+    public static final Supplier<BlockEntityType<net.createplant.block.entity.HorizontalTankBlockEntity>> STAINLESS_BOILER_ENTITY=TYPES.register("stainless_boiler",()->
+        BlockEntityType.Builder.of(net.createplant.block.entity.HorizontalTankBlockEntity::stainless,STAINLESS_BOILER.get()).build(null));
     // A gas tank in a container frame, formed only at the container sizes.
     public static final DeferredBlock<net.createplant.block.GasTankContainerBlock> GAS_TANK_CONTAINER=BLOCKS.registerBlock("gas_tank_container",net.createplant.block.GasTankContainerBlock::new,
         BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().sound(SoundType.NETHERITE_BLOCK));

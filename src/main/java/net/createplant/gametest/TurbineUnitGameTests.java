@@ -123,11 +123,12 @@ public final class TurbineUnitGameTests {
         for (var kind : TurbineUnit.Stage.values()) {
             var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(kind.item());
             var recipe = h.getLevel().getRecipeManager().byKey(id).orElseThrow().value();
+            int craftingSize = kind == TurbineUnit.Stage.HIGH ? 5 : 7;
             h.assertTrue(
                     recipe instanceof MechanicalCraftingRecipe r
-                            && r.getWidth() == 9
-                            && r.getHeight() == 9,
-                    "Both recipes still use the maximum 9x9 grid");
+                            && r.getWidth() == craftingSize
+                            && r.getHeight() == craftingSize,
+                    "The turbine recipe uses the selected stage's mechanical crafting size");
         }
         h.succeed();
     }

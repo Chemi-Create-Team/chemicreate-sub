@@ -199,7 +199,7 @@ def simple_units():
     compressor(scene, 2, 2, 3)
     pipe(scene, 2, 3, 3, 'up', 'down');pipe(scene, 2, 4, 3, 'west', 'down')
     motor_pump(scene, 1, 4, 3, 'east')
-    scene.block(0, 4, 3, NS + 'gas_pipe', east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
+    scene.block(0, 4, 3, NS + 'air_filter')
     pipe(scene, 2, 1, 3, 'up', 'west');motor_pump(scene, 1, 1, 3, 'west')
     scene.block(0, 1, 3, NS + 'gas_receiver', axis='x', bottom='true', top='true', shape='plain')
     units['compressor'] = (scene, (3, 2, 3), (2, 3, 3), (2, 1, 3))
@@ -377,7 +377,7 @@ def generate(selected=None):
 # Shared utilities and bulk chemicals.
 route('air', ('Separating industrial gases from air', '空気から工業用ガスを分離する', '从空气分离工业气体'),
     ['gas_pump', 'air_gas_bucket', 'nitrogen_gas_bucket', 'oxygen_gas_bucket', 'liquid_oxygen_bucket', 'argon_gas_bucket', 'liquid_nitrogen_bucket'], [
-    step('crafting', 'gas_pump', 'Connect an open gas pipe and a driven pump to the compressor inlet.', '開放した気体パイプと回転するポンプを圧縮機上面の吸入管へつなぎます。', '将开放的气体管道和旋转泵连接到压缩机顶部吸气管。'),
+    step('crafting', 'gas_pump', 'Connect an air filter and a driven pump to the compressor inlet.', 'エアフィルターと回転するポンプを圧縮機上面の吸入管へつなぎます。', '将空气过滤器和旋转泵连接到压缩机顶部吸气管。'),
     step('compressor', None, 'Mount the engine on the cylinder and drive its crank shaft two blocks out. Air enters the cylinder top and compressed gas leaves the bottom. Set pressure with a wrench.', 'シリンダーに駆動部を付け、2マス先のクランク軸へ回転を入力します。空気はシリンダー上面から入り、圧縮後は下面へ出ます。レンチで圧力を設定します。', '把驱动部装在气缸上，驱动两格外的曲轴。空气从气缸顶面进入，压缩后从底面排出，用扳手设定压力。', 'air_gas_bucket'),
     step('compressor', None, 'Cool the hot compressor discharge in a driven radiator. The fractionation feed must remain at least 6 bar and no warmer than 40 °C.', '圧縮後の熱い空気を駆動したラジエーターで冷やします。分留塔へ6 bar以上・40℃以下で送ります。', '用有动力的散热器冷却压缩后的空气，以至少6 bar、最高40℃送入分馏塔。', 'air_gas_bucket'),
     step('column', 'operation:air_separation', 'Build 2×2×14 and feed the east side of layer three. North outlets: liquid oxygen at 1, Ar at 10, N2 at 14. Amounts are gas-equivalent.', '2×2・14段に組み、東面3段目から給気します。北面出口は1段目が液体酸素、10段目がAr、14段目がN2です。量は気体換算です。', '搭建2×2×14塔，第三层东面进气，北面第一层出液氧、第十层Ar、第十四层N2，数量为气体当量。'),

@@ -50,7 +50,7 @@ public final class ProductionMonitor extends BlockEntityBehaviour {
         var id = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(type);
         if (id == null || !id.getNamespace().equals(CreatePlant.MOD_ID)) return false;
         return switch (id.getPath()) {
-            case "horizontal_fluid_tank", "entrained_gasifier", "lidded_vessel", "reactor_machine", "reaction_tower", "ammonia_separator", "fractionating_column",
+            case "horizontal_fluid_tank", "stainless_boiler", "entrained_gasifier", "lidded_vessel", "reactor_machine", "reaction_tower", "ammonia_separator", "fractionating_column",
                 "electrolysis_cell_controller", "electrolysis_furnace", "wet_process_drive", "gas_centrifuge", "cubic_press", "cryogenic_cold_box",
                 "steam_turbine", "reciprocating_compressor", "fuel_cell", "natural_draft_cooling_tower", "condenser_waterbox",
                 "fuel_cycle_machine", "converter_trunnion_bearing", "cooler_radiator",

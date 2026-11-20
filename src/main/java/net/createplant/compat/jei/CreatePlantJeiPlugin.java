@@ -62,7 +62,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("gas_centrifuge", "plant/gas_centrifuge", CEHighStressMachines.CENTRIFUGE.get(), CEHighStressMachines.CENTRIFUGE.get()),
             new Kind("cell_electrolysis", "plant/electrolysis_cell", CEElectrolysis.CELL.get(), CEElectrolysis.CONTROLLER.get(), CEElectrolysis.ELECTRODE_PLATE.get(), CEElectrolysis.CELL.get()),
             new Kind("solar_salt", "plant/open_tank", CEBlocks.TANK_CASING.get(), CEBlocks.TANK_CASING.get()),
-            new Kind("steam_generation", "plant/tubular_boiler", CETransport.HORIZONTAL_FLUID_TANK.get(), CETransport.HORIZONTAL_FLUID_TANK.get(), AllBlocks.FLUID_TANK.get(), AllBlocks.BLAZE_BURNER.get()),
+            new Kind("steam_generation", "plant/tubular_boiler", CETransport.STAINLESS_BOILER.get(), CETransport.STAINLESS_BOILER.get(), CETransport.HORIZONTAL_FLUID_TANK.get(), AllBlocks.FLUID_TANK.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("steam_turbine", "turbine/multiblock", CEItems.HIGH_PRESSURE_TURBINE_UNIT.get(), CEItems.HIGH_PRESSURE_TURBINE_UNIT.get(), CEItems.LOW_PRESSURE_TURBINE_UNIT.get()),
             new Kind("fuel_cell", "plant/fuel_cell", CEFuelCell.FUEL_CELL.get(), CEFuelCell.FUEL_CELL.get()),
             new Kind("electrolysis_furnace", "plant/electrolysis_furnace", CEFurnace.BUSBAR.get(), CEFurnace.BUSBAR.get(), CEFurnace.SHELL.get(), CEFurnace.ANODE.get()),
@@ -125,7 +125,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
                     List.of(steam.getFirst()), List.of(), List.of(), List.of(recipe.hotGasResult()),
                     note("entrained_gasification", recipe.duration())).withFluidOptions(List.of(steam)));
             }).toList());
-        registration.addRecipes(type("clarifying"), wetReactions(CERecipeTypes.CLARIFYING));
+        registration.addRecipes(type("clarifying"), ordinaryRoutesFirst(wetReactions(CERecipeTypes.CLARIFYING)));
         registration.addRecipes(type("irradiation_products"), List.of(
             new PlantProcess(List.of(List.of(stack("fuel_rod"), stack("compact_enriched_fuel_rod"), stack("mox_fuel_rod"))), List.of(), List.of(), List.of(stack("spent_fuel_rod")), List.of(), note("spent_fuel")),
             service("control_rod", "spent_control_rod", "spent_control"),
@@ -171,7 +171,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             }
             if (module == ProcessModule.FRACTION_SEPARATOR) for (var fraction : DistillationProfile.registered())
                 list.add(new PlantProcess(List.of(), List.of(fraction.input()), List.of(), List.of(), DistillationProfile.fraction(fraction.id()).outputs(), note("fractionation", fraction.ticks())));
-            registration.addRecipes(type(module == ProcessModule.REACTION_VESSEL ? "reaction_vessel" : module == ProcessModule.FRACTION_SEPARATOR ? "fractionating_column" : module == ProcessModule.ABSORPTION_TRAYS ? "absorption_tower" : "gas_centrifuge"), list);
+            registration.addRecipes(type(module == ProcessModule.REACTION_VESSEL ? "reaction_vessel" : module == ProcessModule.FRACTION_SEPARATOR ? "fractionating_column" : module == ProcessModule.ABSORPTION_TRAYS ? "absorption_tower" : "gas_centrifuge"), ordinaryRoutesFirst(list));
         }
         int ticks = 100;long energy = Math.round(ticks * ElectrolysisProcess.JOULES_PER_PLATE / 1000);
         int diaphragmTicks = 5000;long diaphragmEnergy = Math.round(diaphragmTicks * ElectrolysisProcess.JOULES_PER_PLATE / 1000);
@@ -201,9 +201,9 @@ public class CreatePlantJeiPlugin implements IModPlugin {
                     : note("compression", speed));
         }).toList());
         registration.addRecipes(type("haber_bosch"), PlantProcess.ammoniaSynthesis());
-        registration.addRecipes(type("converter"), converterReactions());
-        registration.addRecipes(type("solvent_extraction"), fuelCycleReactions(CERecipeTypes.SOLVENT_EXTRACTION));
-        registration.addRecipes(type("vitrification"), fuelCycleReactions(CERecipeTypes.VITRIFICATION));
+        registration.addRecipes(type("converter"), ordinaryRoutesFirst(converterReactions()));
+        registration.addRecipes(type("solvent_extraction"), ordinaryRoutesFirst(fuelCycleReactions(CERecipeTypes.SOLVENT_EXTRACTION)));
+        registration.addRecipes(type("vitrification"), ordinaryRoutesFirst(fuelCycleReactions(CERecipeTypes.VITRIFICATION)));
         registration.addRecipes(type("industrial_delivery"), deliveries());
         var liquefaction=new ArrayList<PlantProcess>();
         for(var gas:List.of(CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEFusion.HELIUM_GAS.get())){
@@ -250,19 +250,49 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         if (level == null) return list;
         for (RecipeHolder<PressureReactionRecipe> holder : level.getRecipeManager().getAllRecipesFor(CERecipeTypes.PRESSURE_REACTION.<net.minecraft.world.item.crafting.RecipeInput, PressureReactionRecipe>getType())) {
             var recipe = holder.value();
-            if (recipe.module() != module) continue;
+            boolean heatOnly = recipe.module() == ReactorModule.NONE;
+            if (recipe.module() != module && !(module == ReactorModule.STIRRED && heatOnly)) continue;
             List<List<ItemStack>> items = recipe.getIngredients().stream().map(ingredient -> Arrays.asList(ingredient.getItems())).toList();
             List<FluidStack> fluids = recipe.getFluidIngredients().stream().map(ingredient -> ingredient.getFluids()[0]).toList();
             int ticks = recipe.getProcessingDuration() > 0 ? recipe.getProcessingDuration() : 100;
-            Component conditions=note(module==ReactorModule.ABSORBER ? "tray_reactor" : "stirred_reactor",ticks,Component.translatable("create."+recipe.getRequiredHeat().getTranslationKey()));
+            Component conditions=note(heatOnly ? "heated_tank" : module==ReactorModule.ABSORBER ? "tray_reactor" : "stirred_reactor",ticks,Component.translatable("create."+recipe.getRequiredHeat().getTranslationKey()));
             var products = recipe.getRollableResults().stream().map(ProcessingOutput::getStack).toList();
             var entry = new PlantProcess(items, fluids, List.of(), products, recipe.getFluidResults(), conditions)
                 .withFluidOptions(recipe.getFluidIngredients().stream().map(ingredient->Arrays.asList(ingredient.getFluids())).toList());
-            if (items.size() + fluids.size() <= 6 && products.size() + recipe.getFluidResults().size() <= 6)
+            if (!heatOnly && items.size() + fluids.size() <= 6 && products.size() + recipe.getFluidResults().size() <= 6)
                 entry = entry.withConditions(ticks, recipe.getRequiredHeat(), module.minSections);
-            list.add(entry);
+            list.add(heatOnly ? entry.withConditions(ticks, recipe.getRequiredHeat(), 0) : entry);
         }
-        return list;
+        return ordinaryRoutesFirst(list);
+    }
+
+    private static List<PlantProcess> ordinaryRoutesFirst(List<PlantProcess> list) {
+        return list.stream().sorted(java.util.Comparator.comparingInt(CreatePlantJeiPlugin::routeCost)).toList();
+    }
+
+    private static int routeCost(PlantProcess recipe) {
+        int cost = recipe.conditions() != null && recipe.conditions().minimumLevels() > 0 ? 2 : 0;
+        for (var options : recipe.items()) cost += 1 + options.stream().mapToInt(CreatePlantJeiPlugin::itemCost).min().orElse(4);
+        for (var stack : recipe.kept()) cost += 1 + itemCost(stack);
+        for (var options : recipe.fluidOptions()) cost += 1 + options.stream().mapToInt(CreatePlantJeiPlugin::fluidCost).min().orElse(4);
+        return cost + Math.max(0, recipe.results().size() + recipe.fluidResults().size() - 1);
+    }
+
+    private static int itemCost(ItemStack stack) {
+        var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
+        String name = id.getPath();
+        if (id.getNamespace().equals("minecraft") || name.startsWith("crushed_") || name.endsWith("_ore")
+            || name.startsWith("raw_") || name.equals("sulfur") || name.equals("sulfur_dust") || name.equals("salt")) return 0;
+        return name.contains("waste") || name.contains("spent") || name.contains("residue") ? 6 : 3;
+    }
+
+    private static int fluidCost(FluidStack stack) {
+        String name = net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(stack.getFluid()).getPath();
+        return switch (name) {
+            case "water", "air_gas", "crude_oil", "brine" -> 0;
+            case "oxygen_gas", "hydrogen_gas", "nitrogen_gas", "compressed_air", "lava" -> 1;
+            default -> name.contains("waste") || name.contains("spent") || name.contains("residue") || name.contains("offgas") ? 6 : 3;
+        };
     }
 
     private static List<PlantProcess> wetReactions(CERecipeTypes type) {
