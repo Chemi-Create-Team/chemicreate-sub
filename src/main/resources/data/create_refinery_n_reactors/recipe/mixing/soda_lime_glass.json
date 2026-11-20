@@ -1,0 +1,25 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "tag": "minecraft:sand"
+    },
+    {
+      "tag": "minecraft:sand"
+    },
+    {
+      "item": "create_refinery_n_reactors:sodium_carbonate"
+    },
+    {
+      "item": "create_refinery_n_reactors:quicklime"
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:glass",
+      "count": 4
+    }
+  ],
+  "processing_time": 160,
+  "heat_requirement": "superheated"
+}

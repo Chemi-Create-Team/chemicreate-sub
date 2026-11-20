@@ -14,6 +14,8 @@ HEADERS.update({scene: scene + '.title' for scene in (
     'lidded_vessel_2x2', 'vessel_internals', 'large_absorption_tower', 'reaction_tower', 'reaction_tower_separator', 'vessel_basin', 'vessel_maintenance', 'diorite_casing', 'rbmk_compact_core',
     'flare_stack', 'gas_centrifuge', 'cubic_press', 'facility_constructor', 'electrolysis_cell', 'fractionating_column_binary', 'fractionating_column_air', 'helium_cold_box')})
 
+HEADERS.update({'fertilizer_cycle': 'fertilizer_cycle.title', 'fertilizer_industry': 'fertilizer_industry.title'})
+
 def generate():
  lessons=json.loads((Path(__file__).parent/'data/ponder_lessons.json').read_text())
  headers=dict(HEADERS)

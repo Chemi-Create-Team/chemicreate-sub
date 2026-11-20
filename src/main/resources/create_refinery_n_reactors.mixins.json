@@ -27,6 +27,8 @@
     "GameTestShutdownMixin",
     "LivingEntityMixin",
     "RadiationBlockChangesMixin",
+    "FertilizedCropChangesMixin",
+    "CreateCropDropsMixin",
     "RadiationInventoryChangesMixin",
     "RadiationFluidMixMixin",
     "RadiationFluidIdentityMixin",

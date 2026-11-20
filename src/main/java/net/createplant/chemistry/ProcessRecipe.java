@@ -26,6 +26,10 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
     private static final class Recipes {
         static final List<ProcessRecipe> ALL = List.of(
             r("recover_carbon_monoxide",FRACTION_SEPARATOR,60,List.of(f(CEFluids.CONVERTER_GAS.get(),1000)),List.of(f(CEProcessFluids.CARBON_MONOXIDE.get(),1000))),
+            r("separate_water_gas",FRACTION_SEPARATOR,80,List.of(f(CEProcessFluids.WATER_GAS.get(),1000)),
+                List.of(f(CEProcessFluids.CARBON_MONOXIDE.get(),500),f(CEFluids.HYDROGEN_GAS.get(),500))),
+            r("synthesize_methanol",REACTION_VESSEL,120,List.of(f(CEProcessFluids.CARBON_MONOXIDE.get(),500),f(CEProcessFluids.COMPRESSED_HYDROGEN.get(),500)),
+                List.of(f(CEProcessFluids.METHANOL.get(),250))).catalyst(CEItems.HYDROTREATING_CATALYST.get()).heat(HeatCondition.HEATED),
             r("oxidize_carbon_monoxide",REACTION_VESSEL,100,List.of(f(CEProcessFluids.CARBON_MONOXIDE.get(),1000),f(CEFluids.OXYGEN_GAS.get(),465)),List.of(f(CEProcessFluids.CARBON_DIOXIDE.get(),1000))).catalyst(CEItems.OXIDATION_CATALYST.get()),
             r("concentrate_heavy_water",GAS_CENTRIFUGE,200,List.of(f(Fluids.WATER,1000)),List.of(f(CEFusionFuel.HEAVY_WATER.get(),10),f(CEFusionFuel.DEPLETED_WATER.get(),990))),
             r("recover_helium",GAS_CENTRIFUGE,200,List.of(f(CEFusionFuel.HELIUM_FEED.get(),1000)),List.of(f(CEFusion.HELIUM_GAS.get(),750),f(CEFluids.NITROGEN_GAS.get(),250))),

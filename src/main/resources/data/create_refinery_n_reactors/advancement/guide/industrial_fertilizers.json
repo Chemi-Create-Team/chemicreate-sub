@@ -1,0 +1,29 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:npk_fertilizer"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.industrial_fertilizers"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.industrial_fertilizers.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/fertilizer",
+  "criteria": {
+    "make_npk": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:npk_fertilizer"
+          }
+        ]
+      }
+    }
+  }
+}

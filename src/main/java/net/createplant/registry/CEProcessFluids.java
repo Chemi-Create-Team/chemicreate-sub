@@ -55,6 +55,8 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SLIME_COOLANT_FEED = stream("slime_coolant_feed", 0xFF729649);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SLIME_COOLANT = stream("slime_coolant", 0xFF409D86);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> WARM_SLIME_COOLANT = stream("warm_slime_coolant", 0xFFB7914A);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> METHANOL = stream("methanol", 0xCCD9EAE9);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> AMMONIUM_CHLORIDE_LIQUOR = stream("ammonium_chloride_liquor", 0xD2D8D1B3);
     private CEProcessFluids() { }
     public static void register(IEventBus bus) { TYPES.register(bus); FLUIDS.register(bus); }
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name) {

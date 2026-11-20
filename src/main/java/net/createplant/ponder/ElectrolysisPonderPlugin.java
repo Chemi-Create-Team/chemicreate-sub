@@ -34,6 +34,13 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/portable_sprayers",PortableSprayerPonderScenes::tools);
         helper.forComponents(CreatePlant.location("steam_gun")).addStoryBoard("plant/steam_gun", SteamGunPonderScenes::controls);
         helper.forComponents(CreatePlant.location("steam_hammer")).addStoryBoard("plant/steam_hammer", SteamHammerPonderScenes::controls);
+        helper.forComponents(CreatePlant.location("ammonium_nitrate"), CreatePlant.location("ammonium_sulfate"),
+                CreatePlant.location("npk_fertilizer"), CreatePlant.location("phosphate_fertilizer"), CreatePlant.location("urea"))
+            .addStoryBoard("plant/fertilizer_cycle", FertilizerPonderScenes::cycle);
+        helper.forComponents(CreatePlant.location("quicklime"), CreatePlant.location("sodium_bicarbonate"),
+                CreatePlant.location("sodium_carbonate"), CreatePlant.location("methanol_bucket"),
+                CreatePlant.location("ammonium_chloride_liquor_bucket"))
+            .addStoryBoard("plant/fertilizer_cycle", FertilizerPonderScenes::industry);
         helper.forComponents(CreatePlant.location("pipe_configurator"), com.simibubi.create.AllBlocks.FLUID_PIPE.getId())
             .addStoryBoard("plant/pipe_configurator", PipeConfiguratorPonderScenes::tool);
         helper.forComponents(CreatePlant.location("vault_hatch"), com.simibubi.create.AllBlocks.ITEM_VAULT.getId())

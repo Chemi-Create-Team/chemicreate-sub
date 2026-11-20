@@ -1,0 +1,23 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "item": "minecraft:calcite"
+    },
+    {
+      "item": "minecraft:calcite"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:quicklime",
+      "count": 2
+    },
+    {
+      "id": "create_refinery_n_reactors:carbon_dioxide",
+      "amount": 500
+    }
+  ],
+  "processing_time": 160,
+  "heat_requirement": "superheated"
+}

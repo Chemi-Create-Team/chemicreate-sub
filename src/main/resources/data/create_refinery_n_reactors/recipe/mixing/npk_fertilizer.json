@@ -1,0 +1,21 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:urea"
+    },
+    {
+      "item": "create_refinery_n_reactors:phosphate_fertilizer"
+    },
+    {
+      "item": "create_refinery_n_reactors:potash"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:npk_fertilizer",
+      "count": 2
+    }
+  ],
+  "processing_time": 100
+}

@@ -3,6 +3,8 @@ package net.createplant.registry;
 import java.util.List;
 
 import net.createplant.CreatePlant;
+import net.createplant.agriculture.FertilizerProfile;
+import net.createplant.item.FertilizerItem;
 import net.createplant.item.GasBucketItem;
 import net.createplant.item.TurbineBladeItem;
 import net.minecraft.world.item.BlockItem;
@@ -137,15 +139,21 @@ public class CEItems {
         "iron_catalyst",
         () -> new Item(catalyst())
     );
-    /** Nitrogen fertilisers for the 3 x 3 crops around the clicked one: ammonium nitrate grows each as far as two bone meals. */
     public static final DeferredItem<Item> AMMONIUM_NITRATE = ITEMS.register(
         "ammonium_nitrate",
-        () -> new net.createplant.item.FertilizerItem(2, new Item.Properties())
+        () -> new FertilizerItem(FertilizerProfile.NITRATE, new Item.Properties())
     );
     public static final DeferredItem<Item> AMMONIUM_SULFATE = ITEMS.register(
         "ammonium_sulfate",
-        () -> new net.createplant.item.FertilizerItem(1, new Item.Properties())
+        () -> new FertilizerItem(FertilizerProfile.SULFATE, new Item.Properties())
     );
+    public static final DeferredItem<Item> QUICKLIME = ITEMS.registerSimpleItem("quicklime");
+    public static final DeferredItem<Item> SODIUM_BICARBONATE = ITEMS.registerSimpleItem("sodium_bicarbonate");
+    public static final DeferredItem<Item> SODIUM_CARBONATE = ITEMS.registerSimpleItem("sodium_carbonate");
+    public static final DeferredItem<Item> UREA = ITEMS.register("urea", () -> new FertilizerItem(FertilizerProfile.UREA, new Item.Properties()));
+    public static final DeferredItem<Item> POTASH = ITEMS.registerSimpleItem("potash");
+    public static final DeferredItem<Item> PHOSPHATE_FERTILIZER = ITEMS.register("phosphate_fertilizer", () -> new FertilizerItem(FertilizerProfile.PHOSPHATE, new Item.Properties()));
+    public static final DeferredItem<Item> NPK_FERTILIZER = ITEMS.register("npk_fertilizer", () -> new FertilizerItem(FertilizerProfile.NPK, new Item.Properties()));
     public static final DeferredItem<Item> SULFUR_DUST = ITEMS.register(
         "sulfur_dust",
         () -> new Item(new Item.Properties())

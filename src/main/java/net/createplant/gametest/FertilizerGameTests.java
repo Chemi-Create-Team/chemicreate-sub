@@ -1,20 +1,32 @@
 package net.createplant.gametest;
 
+import java.util.ArrayList;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import com.simibubi.create.foundation.utility.BlockHelper;
 import net.createplant.CreatePlant;
+import net.createplant.agriculture.FertilizedCrops;
+import net.createplant.agriculture.FertilizerProfile;
 import net.createplant.registry.CEItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -69,5 +81,85 @@ public class FertilizerGameTests {
             h.assertTrue(grownAround(h) == 9, "The deployer's use grows all nine crops: " + grownAround(h));
             h.succeed();
         });
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void naturalGrowthGetsABonusAndBoneMealWorksAsUsual(GameTestHelper h) {
+        field(h);
+        var level = h.getLevel();
+        var pos = h.absolutePos(CENTRE);
+        h.assertTrue(FertilizedCrops.apply(level, pos, FertilizerProfile.NPK), "A fresh seedling accepts NPK");
+        h.assertTrue(!FertilizedCrops.apply(level, pos, FertilizerProfile.NITRATE)
+            && h.getBlockState(CENTRE).getValue(CropBlock.AGE) == 1, "A second fertilizer gives no immediate growth");
+
+        var wheat = (CropBlock) Blocks.WHEAT;
+        var random = RandomSource.create(15);
+        for (int i = 0; i < 160 && wheat.getAge(level.getBlockState(pos)) == 1; i++)
+            level.getBlockState(pos).randomTick(level, pos, random);
+        h.assertTrue(wheat.getAge(level.getBlockState(pos)) == 4, "One vanilla growth tick adds the normal stage and two NPK stages");
+
+        var control = h.absolutePos(CENTRE.east());
+        level.setBlockAndUpdate(control, wheat.getStateForAge(4));
+        wheat.performBonemeal(level, RandomSource.create(6), pos, level.getBlockState(pos));
+        wheat.performBonemeal(level, RandomSource.create(6), control, level.getBlockState(control));
+        h.assertTrue(level.getBlockState(pos).equals(level.getBlockState(control)), "Bone meal advances treated and ordinary wheat equally");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void matureVanillaHarvestAddsProduceOnlyOnce(GameTestHelper h) {
+        field(h);
+        var level = h.getLevel();
+        var pos = h.absolutePos(CENTRE);
+        h.assertTrue(FertilizedCrops.apply(level, pos, FertilizerProfile.NPK), "The crop receives NPK");
+        BlockState mature = ((CropBlock) Blocks.WHEAT).getStateForAge(7);
+        level.setBlockAndUpdate(pos, mature);
+        h.assertTrue(level.destroyBlock(pos, true), "The crop breaks through the vanilla drop path");
+        int first = wheatDrops(h, pos);
+        h.assertTrue(first >= 3 && first <= 4, "The original wheat and exactly 2–3 bonus wheat drop, found " + first);
+
+        level.setBlockAndUpdate(pos, mature);
+        level.destroyBlock(pos, true);
+        h.assertTrue(wheatDrops(h, pos) == first + 1, "A new crop at the same position pays only its ordinary drop");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void createHarvesterCollectsTheBonusAfterSavedDataReload(GameTestHelper h) {
+        field(h);
+        var level = h.getLevel();
+        var pos = h.absolutePos(CENTRE);
+        var expired = pos.east();
+        h.assertTrue(FertilizedCrops.apply(level, pos, FertilizerProfile.NPK)
+            && FertilizedCrops.apply(level, expired, FertilizerProfile.NPK), "Both plots can be treated independently");
+        var storage = level.getDataStorage();
+        String key = "createplant_fertilized_crops";
+        var factory = new SavedData.Factory<>(FertilizedCrops::new, FertilizedCrops::load);
+        var snapshot = storage.get(factory, key).save(new CompoundTag(), level.registryAccess());
+        snapshot.getList("Crops", Tag.TAG_COMPOUND).stream().map(CompoundTag.class::cast)
+            .filter(row -> row.getLong("Pos") == expired.asLong())
+            .forEach(row -> row.putLong("Expires", level.getGameTime()));
+        storage.set(key, FertilizedCrops.load(snapshot, level.registryAccess()));
+
+        var mature = ((CropBlock) Blocks.WHEAT).getStateForAge(7);
+        level.setBlockAndUpdate(pos, mature);
+        level.setBlockAndUpdate(expired, mature);
+        int collected = collectWithHarvester(h, pos);
+        h.assertTrue(collected >= 3 && collected <= 4, "The contraption collects normal and bonus wheat from the saved crop, found " + collected);
+        h.assertTrue(collectWithHarvester(h, expired) == 1, "An expired treatment cannot add drops after being restored");
+        level.setBlockAndUpdate(pos, mature);
+        h.assertTrue(collectWithHarvester(h, pos) == 1, "The automated harvest spends the treatment");
+        h.succeed();
+    }
+
+    private static int wheatDrops(GameTestHelper h, BlockPos absolute) {
+        return h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(absolute).inflate(1)).stream()
+            .map(ItemEntity::getItem).filter(stack -> stack.is(Items.WHEAT)).mapToInt(ItemStack::getCount).sum();
+    }
+
+    private static int collectWithHarvester(GameTestHelper h, BlockPos absolute) {
+        var items = new ArrayList<ItemStack>();
+        BlockHelper.destroyBlockAs(h.getLevel(), absolute, null, ItemStack.EMPTY, 0, items::add);
+        return items.stream().filter(stack -> stack.is(Items.WHEAT)).mapToInt(ItemStack::getCount).sum();
     }
 }

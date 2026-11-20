@@ -4893,5 +4893,55 @@
     "en_us": "Aim at the marked gap and right-click to reconnect. Closed joints stay closed when the world reloads.",
     "ja_jp": "切断跡の目印を狙って右クリックすると再接続します。切断状態はワールドを開き直しても残ります。",
     "zh_cn": "瞄准有标记的断口并右键重新连接。断开的接头在重载世界后仍保持关闭。"
+  },
+  "fertilizer_cycle.title": {
+    "en_us": "Industrial fertilizers",
+    "ja_jp": "化学肥料を使う",
+    "zh_cn": "使用化学肥料"
+  },
+  "fertilizer_industry.title": {
+    "en_us": "From gas to manufacturing",
+    "ja_jp": "ガスから工業製品へ",
+    "zh_cn": "从气体到工业制品"
+  },
+  "fertilizer_cycle.blend": {
+    "en_us": "Mix urea, phosphate fertilizer and potash to make NPK. Look up each ingredient in JEI.",
+    "ja_jp": "尿素・リン酸肥料・カリ灰を混ぜるとNPK肥料になります。原料はJEIでたどれます。",
+    "zh_cn": "混合尿素、磷肥与钾灰制得复合肥。各原料的配方可在 JEI 查看。"
+  },
+  "fertilizer_cycle.apply": {
+    "en_us": "Right-click an immature crop. One fertilizer advances eligible crops in a 3 by 3 area by one stage.",
+    "ja_jp": "未成熟の作物を右クリックします。肥料1個で3×3の範囲の対象作物が1段階成長します。",
+    "zh_cn": "右键点击未成熟的作物。一份肥料使 3×3 范围内符合条件的作物生长一阶段。"
+  },
+  "fertilizer_cycle.grow": {
+    "en_us": "NPK adds two stages to each of the next four natural growth steps. Bone meal still works independently.",
+    "ja_jp": "NPKは次の自然成長4回まで、1回につき2段階を追加します。骨粉は通常どおり使えます。",
+    "zh_cn": "接下来的四次自然生长中，复合肥每次额外增加两个阶段。骨粉仍可照常使用。"
+  },
+  "fertilizer_cycle.harvest": {
+    "en_us": "Harvest a mature treated crop for a chance at extra produce. Fertilizer expires and cannot stack on the same crop.",
+    "ja_jp": "効果中に成熟作物を収穫すると、肥料に応じて収穫が増えます。効果には期限があり、同じ株には重ねがけできません。",
+    "zh_cn": "肥效期间收获成熟作物有机会获得额外产物。肥效会过期，同一株作物无法叠加肥效。"
+  },
+  "fertilizer_industry.carbon": {
+    "en_us": "Heat calcite in a stirred vessel to collect quicklime and carbon dioxide. Use carbon dioxide with liquid ammonia for urea.",
+    "ja_jp": "撹拌式の蓋付き容器で方解石を加熱し、生石灰と二酸化炭素を回収します。二酸化炭素と液体アンモニアから尿素を作れます。",
+    "zh_cn": "在搅拌式带盖容器中加热方解石，收集生石灰和二氧化碳。二氧化碳可与液氨制取尿素。"
+  },
+  "fertilizer_industry.carbonate": {
+    "en_us": "Feed brine, ammonia and carbon dioxide into the stirred vessel. Heat the bicarbonate, then mix the soda ash with sand and quicklime to make glass.",
+    "ja_jp": "撹拌式の蓋付き容器に食塩水、アンモニア、二酸化炭素を入れます。炭酸水素ナトリウムを焼成し、得たソーダ灰を砂と生石灰と一緒に混ぜてガラスを作ります。",
+    "zh_cn": "向搅拌式带盖容器通入盐水、氨气和二氧化碳。煅烧碳酸氢钠，再将纯碱与沙子、生石灰混合制玻璃。"
+  },
+  "fertilizer_industry.recovery": {
+    "en_us": "Heat the chloride liquor with quicklime in a stirred vessel to recover ammonia. Drain the wastewater to keep the vessel running.",
+    "ja_jp": "副生した塩化アンモニウム母液と生石灰を撹拌式の蓋付き容器で加熱し、アンモニアを回収します。排水を取り出して運転を続けます。",
+    "zh_cn": "在搅拌式带盖容器中加热氯化铵母液与生石灰以回收氨气。排出废水后可继续运行。"
+  },
+  "fertilizer_industry.methanol": {
+    "en_us": "Separate gasifier water gas in a fractionating column. Feed carbon monoxide and compressed hydrogen into a heated catalytic tower for methanol, then mix it with water for antifreeze.",
+    "ja_jp": "ガス化炉の水性ガスを分留塔で分けます。一酸化炭素と圧縮水素を加熱した触媒反応塔に送り、得られたメタノールを水と混ぜて不凍液を作ります。",
+    "zh_cn": "用分馏塔分离气化炉产生的水煤气。将一氧化碳与压缩氢气送入加热的催化反应塔制取甲醇，再与水混合制成防冻液。"
   }
 }
