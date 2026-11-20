@@ -4943,5 +4943,70 @@
     "en_us": "Separate gasifier water gas in a fractionating column. Feed carbon monoxide and compressed hydrogen into a heated catalytic tower for methanol, then mix it with water for antifreeze.",
     "ja_jp": "ガス化炉の水性ガスを分留塔で分けます。一酸化炭素と圧縮水素を加熱した触媒反応塔に送り、得られたメタノールを水と混ぜて不凍液を作ります。",
     "zh_cn": "用分馏塔分离气化炉产生的水煤气。将一氧化碳与压缩氢气送入加热的催化反应塔制取甲醇，再与水混合制成防冻液。"
+  },
+  "entrained_gasifier.syngas": {
+    "en_us": "Send water gas to the absorption tower for refining. Press U on the gas in JEI to find this step.",
+    "ja_jp": "水性ガスを吸収塔に送って精製します。JEIで水性ガスにUキーを押すと、その工程を確認できます。",
+    "zh_cn": "将水煤气送入吸收塔净化。在 JEI 中对水煤气按 U 可查看这一步。"
+  },
+  "large_absorption_tower.syngas": {
+    "en_us": "Feed water gas below and caustic soda above. Purified gas exits above and sulfur scrubber liquor below.",
+    "ja_jp": "下部に水性ガス、上部に苛性ソーダ水溶液を供給します。上部から精製合成ガス、下部から脱硫排液を取り出します。",
+    "zh_cn": "从下部送水煤气、上部送烧碱溶液。上部产出净化合成气，下部排出脱硫洗涤液。"
+  },
+  "synthetic_reactions.title": {
+    "en_us": "From water gas to synthetic crude",
+    "ja_jp": "水性ガスから合成原油へ",
+    "zh_cn": "从水煤气到合成原油"
+  },
+  "synthetic_reactions.separate": {
+    "en_us": "The absorption tower produces purified syngas. A two-layer column splits that gas into carbon monoxide and hydrogen.",
+    "ja_jp": "吸収塔で水性ガスを精製します。2段の分留塔で精製ガスを一酸化炭素と水素に分けます。",
+    "zh_cn": "在吸收塔净化水煤气。用两层分馏塔把净化气分成一氧化碳和氢气。"
+  },
+  "synthetic_reactions.shift": {
+    "en_us": "Open the hatch and fit a basket and a shift core. Heat the tower and feed water and some of the CO through its bottom sides.",
+    "ja_jp": "ハッチを開けてバスケットとシフト触媒を入れます。加熱し、底段の側面から水と一酸化炭素の一部を供給します。",
+    "zh_cn": "打开舱盖，装入催化篮和变换芯。加热，从底层侧面供入水和部分一氧化碳。"
+  },
+  "synthetic_reactions.compress": {
+    "en_us": "Collect the extra hydrogen and carbon dioxide at the bottom. Use separate compressors on the remaining CO and the combined hydrogen.",
+    "ja_jp": "追加の水素と二酸化炭素は底段から取り出します。残した一酸化炭素と合流させた水素を別々の圧縮機で加圧します。",
+    "zh_cn": "在底层收集新增氢气与二氧化碳。用各自的压缩机给剩余一氧化碳和合并后的氢气加压。"
+  },
+  "synthetic_reactions.ft": {
+    "en_us": "Use a heated tower with iron FT cores and a 1:2 CO to H₂ charge. Two filtered pumps draw off crude and light gas separately.",
+    "ja_jp": "鉄系FT触媒のある加熱塔へ、加圧した一酸化炭素と水素を1：2で供給します。フィルターで合成原油と軽質ガスを分けて搬出します。",
+    "zh_cn": "向加热的铁系费托塔以 1∶2 供入加压一氧化碳和氢气。用过滤泵分别取出合成原油与轻质气。"
+  },
+  "synthetic_reactions.cobalt": {
+    "en_us": "Cobalt FT takes a 1:3 gas charge and makes more crude per batch. Drain the old feeds and products before changing the core.",
+    "ja_jp": "コバルト系FTはガスを1：3で使い、1バッチの原油量が増えます。触媒を交換する前に原料と製品を抜いてください。",
+    "zh_cn": "钴系费托进气比为 1∶3，每批原油更多。换芯前排空原料和产物。"
+  },
+  "synthetic_reactions.btx": {
+    "en_us": "Fit ZSM-5 cores to make BTX. Use heat for methanol or superheat for synthetic naphtha.",
+    "ja_jp": "ZSM-5触媒を入れるとBTXを作れます。メタノールは加熱、合成ナフサは超加熱で処理します。",
+    "zh_cn": "装入 ZSM-5 芯制取 BTX。甲醇需要加热，合成石脑油需要超加热。"
+  },
+  "synthetic_fractionation.title": {
+    "en_us": "Distilling synthetic crude",
+    "ja_jp": "合成原油を分留する",
+    "zh_cn": "分馏合成原油"
+  },
+  "synthetic_fractionation.feed": {
+    "en_us": "Feed synthetic crude through the east inlet. Four layers are enough; the fifth layer here spreads the outlets.",
+    "ja_jp": "合成原油は東側の入口に送ります。最小4段で稼働し、この例の5段では出口の間隔が広がります。",
+    "zh_cn": "从东侧入口送入合成原油。至少四层即可运转，此处用五层拉开出口间距。"
+  },
+  "synthetic_fractionation.products": {
+    "en_us": "From the highest outlet to the lowest, collect light gas, synthetic naphtha, low-sulfur diesel and molten paraffin.",
+    "ja_jp": "上から順に、軽質ガス、合成ナフサ、低硫黄軽油、溶融パラフィンを回収します。",
+    "zh_cn": "从最高出口到最低出口依次收集轻质气、合成石脑油、低硫柴油和熔融石蜡。"
+  },
+  "synthetic_fractionation.uses": {
+    "en_us": "Fractionate the light gas for ethylene and propylene. Reform naphtha into BTX, then combine it with ethylene in a sealed vessel for resin.",
+    "ja_jp": "軽質ガスからエチレンとプロピレンを分けます。合成ナフサをBTXに改質し、蓋付き容器でエチレンと反応させて樹脂にします。",
+    "zh_cn": "用轻质气分离乙烯和丙烯。石脑油改质成 BTX，再在带盖容器中与乙烯反应制树脂。"
   }
 }

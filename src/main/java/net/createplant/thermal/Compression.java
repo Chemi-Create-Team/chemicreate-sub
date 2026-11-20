@@ -16,7 +16,8 @@ public final class Compression {
         new Pair(CEFluids.AIR_GAS,CEProcessFluids.COMPRESSED_AIR),
         new Pair(CEProcessFluids.SYNTHESIS_GAS,CEProcessFluids.COMPRESSED_SYNTHESIS_FEED),
         new Pair(CEFluids.HYDROGEN_GAS,CEProcessFluids.PRESSURISED_HYDROGEN),
-        new Pair(CEProcessFluids.PRESSURISED_HYDROGEN,CEProcessFluids.COMPRESSED_HYDROGEN));
+        new Pair(CEProcessFluids.PRESSURISED_HYDROGEN,CEProcessFluids.COMPRESSED_HYDROGEN),
+        new Pair(CEProcessFluids.CARBON_MONOXIDE,CEProcessFluids.PRESSURISED_CARBON_MONOXIDE));
     private Compression() { }
     /** Each low-pressure fluid with the fluid one compression step makes of it, in compressor order. */
     public static java.util.Map<Fluid,Fluid> steps() {

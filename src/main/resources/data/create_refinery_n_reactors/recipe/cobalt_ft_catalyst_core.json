@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " F ",
+    "BCB",
+    " F "
+  ],
+  "key": {
+    "C": {
+      "item": "create_refinery_n_reactors:hydrotreating_catalyst"
+    },
+    "F": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "B": {
+      "tag": "c:ingots/molybdenum"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cobalt_ft_catalyst_core"
+  }
+}

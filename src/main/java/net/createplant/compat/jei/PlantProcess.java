@@ -1,5 +1,6 @@
 package net.createplant.compat.jei;
 
+import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -18,7 +19,10 @@ public record PlantProcess(
         List<ItemStack> results,
         List<FluidStack> fluidResults,
         Component note,
-        List<List<FluidStack>> fluidOptions) {
+        List<List<FluidStack>> fluidOptions,
+        Conditions conditions) {
+    public record Conditions(int ticks, HeatCondition heat, int minimumLevels) { }
+
     public PlantProcess(
             List<List<ItemStack>> items,
             List<FluidStack> fluids,
@@ -33,13 +37,18 @@ public record PlantProcess(
                 results,
                 fluidResults,
                 note,
-                fluids.stream().map(java.util.List::of).toList());
+                fluids.stream().map(java.util.List::of).toList(), null);
     }
 
     public PlantProcess withFluidOptions(List<List<FluidStack>> options) {
         if (options.size() != fluids.size() || options.stream().anyMatch(List::isEmpty))
             throw new IllegalArgumentException("Missing fluid ingredient alternatives");
-        return new PlantProcess(items, fluids, kept, results, fluidResults, note, options);
+        return new PlantProcess(items, fluids, kept, results, fluidResults, note, options, conditions);
+    }
+
+    public PlantProcess withConditions(int ticks, HeatCondition heat, int minimumLevels) {
+        return new PlantProcess(items, fluids, kept, results, fluidResults, note, fluidOptions,
+            new Conditions(ticks, heat, minimumLevels));
     }
 
     public static List<FluidStack> acceptedFluids(FluidStack required) {

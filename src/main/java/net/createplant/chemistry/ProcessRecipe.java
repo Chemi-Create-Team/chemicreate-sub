@@ -24,7 +24,10 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
     private ProcessRecipe heat(HeatCondition heat) { return new ProcessRecipe(id,module,ticks,inputs,outputs,catalyst,heat); }
     public boolean heatAllowed(HeatLevel level) { return requiredHeat.testBlazeBurner(level); }
     private static final class Recipes {
-        static final List<ProcessRecipe> ALL = List.of(
+        static final List<ProcessRecipe> ALL = java.util.stream.Stream.concat(legacy().stream(), SynthesisProcesses.load().stream()).toList();
+
+        private static List<ProcessRecipe> legacy() {
+            return List.of(
             r("recover_carbon_monoxide",FRACTION_SEPARATOR,60,List.of(f(CEFluids.CONVERTER_GAS.get(),1000)),List.of(f(CEProcessFluids.CARBON_MONOXIDE.get(),1000))),
             r("separate_water_gas",FRACTION_SEPARATOR,80,List.of(f(CEProcessFluids.WATER_GAS.get(),1000)),
                 List.of(f(CEProcessFluids.CARBON_MONOXIDE.get(),500),f(CEFluids.HYDROGEN_GAS.get(),500))),
@@ -71,6 +74,7 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
             // 0.7 % feed to 4 % product with 0.25 % tails: one part in eight of the feed leaves as product.
             r("enrich_uranium",GAS_CENTRIFUGE,200,List.of(f(CEUranium.URANIUM_HEXAFLUORIDE.get(),1000)),List.of(f(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get(),125),f(CEUranium.DEPLETED_URANIUM_HEXAFLUORIDE.get(),875))),
             r("enrich_compact_uranium",GAS_CENTRIFUGE,240,List.of(f(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get(),1000)),List.of(f(CEUranium.COMPACT_ENRICHED_URANIUM_HEXAFLUORIDE.get(),789),f(CEUranium.DEPLETED_URANIUM_HEXAFLUORIDE.get(),211)))
-        );
+            );
+        }
     }
 }

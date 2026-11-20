@@ -21,6 +21,7 @@ import net.minecraft.world.level.material.Fluid;
 /** A four-layer reaction tower: with a basket, catalyst and gauges per layer, loaded through its roof hatch, as a reactor, and without baskets as a gas-liquid separator behind its sight glasses. */
 public final class ReactionTowerPonderScenes {
     private static final String LANG = "ponder.create_refinery_n_reactors.reaction_tower.", SEPARATOR = "ponder.create_refinery_n_reactors.reaction_tower_separator.";
+    private static final String SYNTHESIS = "ponder.create_refinery_n_reactors.synthetic_reactions.";
     private static final int LAYERS = 4;
 
     private ReactionTowerPonderScenes() { }
@@ -105,6 +106,51 @@ public final class ReactionTowerPonderScenes {
         scene.overlay().showOutline(PonderPalette.OUTPUT, "window", util.select().position(4, 3, 3), 100);
         caption(scene, util, SEPARATOR, util.grid().at(4, 3, 3), "window");
         scene.markAsFinished();
+    }
+
+    public static void synthesis(SceneBuilder builder, SceneBuildingUtil util) {
+        var scene = new CreateSceneBuilder(builder);
+        scene.title("synthetic_reactions", PonderText.title(SYNTHESIS + "title", "From water gas to synthetic crude"));
+        scene.configureBasePlate(0, 0, 9);
+        scene.scaleSceneView(.65f);
+        scene.showBasePlate();
+        BlockPos centre = util.grid().at(4, 2, 4), top = centre.above(LAYERS - 1);
+        form(scene, util);
+        PonderText.build(scene, util, 3, 2, 3, 5, 5, 5, Direction.DOWN);
+        PonderText.build(scene, util, 0, 1, 4, 2, 2, 4, Direction.EAST);
+        PonderText.build(scene, util, 6, 1, 4, 8, 2, 4, Direction.WEST);
+        scene.world().showSection(util.select().position(3, 1, 3), Direction.UP);
+        PonderText.caption(scene, util.vector().centerOf(centre), SYNTHESIS + "separate", 115);
+        showCore(scene, util, centre, top, CEItems.SHIFT_CATALYST_CORE.toStack(), "shift");
+        PonderText.caption(scene, util.vector().centerOf(centre.west(2)), SYNTHESIS + "compress", 120);
+        showCore(scene, util, centre, top, CEItems.IRON_FT_CATALYST_CORE.toStack(), "ft");
+        showCore(scene, util, centre, top, CEItems.COBALT_FT_CATALYST_CORE.toStack(), "cobalt");
+        showCore(scene, util, centre, top, CEItems.ZSM5_CATALYST_CORE.toStack(), "btx");
+        scene.markAsFinished();
+    }
+
+    private static void showCore(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos owner, BlockPos top,
+            net.minecraft.world.item.ItemStack stack, String key) {
+        hatch(scene, util, owner, top, true);
+        if (key.equals("shift")) {
+            scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 32)
+                .rightClick().withItem(CEReactor.CATALYST_BASKET.get().getDefaultInstance());
+            scene.idle(15);
+        } else {
+            scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 26)
+                .rightClick().withItem(AllItems.WRENCH.asStack());
+            scene.idle(16);
+        }
+        scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 80).rightClick().withItem(stack);
+        scene.world().modifyBlockEntity(owner, ReactionTowerBlockEntity.class, be -> {
+            var lookup = be.getLevel().registryAccess();
+            var data = be.saveWithoutMetadata(lookup);
+            data.putBoolean("Basket", true);
+            data.put("Catalyst", stack.save(lookup));
+            be.loadWithComponents(data, lookup);
+        });
+        hatch(scene, util, owner, top, false);
+        PonderText.caption(scene, util.vector().topOf(top), SYNTHESIS + key, 130);
     }
 
     /** An empty hand on the roof swings the hatch open or shut. */

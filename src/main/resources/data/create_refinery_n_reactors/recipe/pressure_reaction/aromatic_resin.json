@@ -1,0 +1,23 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:btx",
+      "amount": 100
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:ethylene",
+      "amount": 150
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:industrial_resin",
+      "count": 2
+    }
+  ],
+  "processing_time": 100,
+  "heat_requirement": "heated"
+}

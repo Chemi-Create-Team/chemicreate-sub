@@ -113,6 +113,10 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/fractionating_column", FractionationPonderScenes::column);
         helper.forComponents(CreatePlant.location("fractionating_column"))
             .addStoryBoard("plant/fractionating_column_binary", FractionationPonderScenes::binary);
+        helper.forComponents(CreatePlant.location("fractionating_column"), CreatePlant.location("synthetic_crude_oil_bucket"),
+                CreatePlant.location("synthetic_naphtha_bucket"), CreatePlant.location("ft_offgas_bucket"),
+                CreatePlant.location("molten_paraffin_bucket"))
+            .addStoryBoard("plant/fractionating_column", FractionationPonderScenes::synthetic);
         helper.forComponents(CreatePlant.location("fractionating_column"),CreatePlant.location("gas_pipe"))
             .addStoryBoard("plant/fractionating_column_air", FractionationPonderScenes::air);
         helper.forComponents(
@@ -131,6 +135,11 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
                 CreatePlant.location("hydrotreating_catalyst"), CreatePlant.location("hydrocracking_catalyst"))
             .addStoryBoard("plant/reaction_tower", ReactionTowerPonderScenes::tower)
             .addStoryBoard("plant/reaction_tower_separator", ReactionTowerPonderScenes::separator);
+        helper.forComponents(CreatePlant.location("reaction_tower"), CreatePlant.location("shift_catalyst_core"),
+                CreatePlant.location("iron_ft_catalyst_core"), CreatePlant.location("cobalt_ft_catalyst_core"),
+                CreatePlant.location("zsm5_catalyst_core"), CreatePlant.location("purified_syngas_bucket"),
+                CreatePlant.location("btx_bucket"))
+            .addStoryBoard("plant/reaction_tower", ReactionTowerPonderScenes::synthesis);
         helper.forComponents(CreatePlant.location("ammonia_separator"))
             .addStoryBoard("chemistry/ammonia_separator", AmmoniaSeparatorPonderScenes::separator);
         helper.forComponents(

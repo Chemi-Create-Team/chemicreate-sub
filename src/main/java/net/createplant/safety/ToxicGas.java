@@ -46,7 +46,8 @@ public final class ToxicGas {
         Map.entry("tritium_gas", new Gas(0, false, null)),
         Map.entry("hydrogen_sulfide", new Gas(1, true, null)), Map.entry("chlorine", new Gas(1, true, 0xC8D85A)), Map.entry("liquid_chlorine", new Gas(1, true, 0xC8D85A)),
         Map.entry("converter_gas", new Gas(1, false, null)), Map.entry("carbon_monoxide", new Gas(1, false, null)),
-        Map.entry("water_gas", new Gas(1, false, null)),
+        Map.entry("water_gas", new Gas(1, false, null)), Map.entry("purified_syngas", new Gas(1, false, null)),
+        Map.entry("pressurised_carbon_monoxide", new Gas(1, false, null)),
         Map.entry("nitrogen_dioxide", new Gas(1, true, 0xA66E48)), Map.entry("sulfur_trioxide", new Gas(1, true, 0xE0DCC8)),
         Map.entry("hydrogen_fluoride", new Gas(1, false, null)), Map.entry("uranium_hexafluoride", new Gas(1, true, 0xE8E8D0)),
         Map.entry("enriched_uranium_hexafluoride", new Gas(1, true, 0xE8E8D0)), Map.entry("depleted_uranium_hexafluoride", new Gas(1, true, 0xE8E8D0)),
@@ -55,9 +56,11 @@ public final class ToxicGas {
         Map.entry("carbon_dioxide", new Gas(0, true, null)),
         Map.entry("fluorine", new Gas(2, true, 0xE0E080)));
     /** Gases that only burn: where their unseen clouds settle. */
-    private static final Map<String, Boolean> FUEL_FLOOR = Map.of("hydrogen_gas", false, "pressurised_hydrogen", false, "compressed_hydrogen", false,
-        "deuterium_gas", false, "synthesis_gas", false, "compressed_synthesis_feed", false, "ethylene", true, "propylene", true, "hot_olefins", true,
-        "cooled_olefins", true);
+    private static final Map<String, Boolean> FUEL_FLOOR = Map.ofEntries(
+        Map.entry("hydrogen_gas", false), Map.entry("pressurised_hydrogen", false), Map.entry("compressed_hydrogen", false),
+        Map.entry("deuterium_gas", false), Map.entry("synthesis_gas", false), Map.entry("compressed_synthesis_feed", false),
+        Map.entry("ethylene", true), Map.entry("propylene", true), Map.entry("hot_olefins", true),
+        Map.entry("cooled_olefins", true), Map.entry("ft_offgas", true));
     private static final Set<String> CAUSTIC_SCRUBBABLE = Set.of("chlorine", "liquid_chlorine", "hydrogen_chloride", "hydrogen_sulfide", "sulfur_dioxide", "liquid_sulfur_dioxide",
         "sulfur_trioxide", "nitrogen_dioxide", "hydrogen_fluoride", "fluorine");
     public static final int EFFECT_TICKS = 60, OUTDOOR_DIVISOR = 3;

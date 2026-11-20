@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " F ",
+    "BCB",
+    " F "
+  ],
+  "key": {
+    "C": {
+      "item": "create_refinery_n_reactors:hydrocracking_catalyst"
+    },
+    "F": {
+      "item": "minecraft:quartz"
+    },
+    "B": {
+      "item": "minecraft:amethyst_shard"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:zsm5_catalyst_core"
+  }
+}

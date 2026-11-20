@@ -1,0 +1,23 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:low_sulfur_diesel",
+      "amount": 175
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:molten_paraffin",
+      "amount": 75
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:lubricating_oil",
+      "amount": 250
+    }
+  ],
+  "processing_time": 100,
+  "heat_requirement": "heated"
+}

@@ -41,6 +41,25 @@ public final class FractionationPonderScenes {
         text(scene,util,OWNER.above(),"fractionating_column_binary.outputs");
         text(scene,util,OWNER,"fractionating_column.empty");scene.markAsFinished();
     }
+
+    public static void synthetic(SceneBuilder builder, SceneBuildingUtil util) {
+        int height = 5;
+        String recipe = "distill_synthetic_crude";
+        var scene = begin(builder, "synthetic_fractionation", height);
+        PonderText.build(scene, util, 8, 1, 13, 9, height, 14, Direction.DOWN);
+        input(scene, util, height);
+        text(scene, util, OWNER.east().above(2), "synthetic_fractionation.feed");
+        preview(scene, height, recipe, false);
+        var fraction = DistillationProfile.fraction(recipe);
+        for (int slot = 1; slot <= fraction.outputs().size(); slot++) {
+            int layer = DistillationProfile.fractionLayer(slot, height, fraction.outputs().size());
+            output(scene, util, layer, height - 1 - layer);
+        }
+        preview(scene, height, recipe, true);
+        text(scene, util, OWNER.above(4), "synthetic_fractionation.products");
+        text(scene, util, OWNER, "synthetic_fractionation.uses");
+        scene.markAsFinished();
+    }
     public static void air(SceneBuilder builder,SceneBuildingUtil util) {
         var scene=begin(builder,"fractionating_column_air",14);
         PonderText.build(scene,util,8,1,13,9,14,14,Direction.DOWN);

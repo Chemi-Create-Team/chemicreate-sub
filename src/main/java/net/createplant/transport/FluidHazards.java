@@ -35,6 +35,8 @@ public final class FluidHazards {
         entry("nitric_oxide",293,1,false,true), entry("steam",373,1,false,true), entry("high_pressure_steam",557,70,false,true), entry("superheated_steam",923,70,false,true), entry("hot_reactor_coolant",523,70,false,false), entry("pressurised_water",473,70,false,false),
         entry("ethylene",293,1,false,true), entry("propylene",293,1,false,true),
         entry("synthesis_gas",293,1,false,true), entry("water_gas",293,1,false,true),
+        entry("purified_syngas",293,1,false,true), entry("pressurised_carbon_monoxide",293,12,false,true),
+        entry("ft_offgas",293,1,false,true),
         entry("compressed_synthesis_feed",320,12,false,true),
         entry("hot_synthesis_mixture",740,12,false,true),
         entry("cold_synthesis_mixture",310,12,false,true),

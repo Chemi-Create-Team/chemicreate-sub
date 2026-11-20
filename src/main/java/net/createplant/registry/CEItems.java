@@ -52,6 +52,12 @@ public class CEItems {
     public static final DeferredItem<Item> OXIDATION_CATALYST = ITEMS.registerSimpleItem("oxidation_catalyst", catalyst());
     public static final DeferredItem<Item> HYDROTREATING_CATALYST = ITEMS.registerSimpleItem("hydrotreating_catalyst", catalyst());
     public static final DeferredItem<Item> HYDROCRACKING_CATALYST = ITEMS.registerSimpleItem("hydrocracking_catalyst", catalyst());
+    public static final DeferredItem<Item> SHIFT_CATALYST_CORE = ITEMS.registerSimpleItem("shift_catalyst_core", catalyst());
+    public static final DeferredItem<Item> IRON_FT_CATALYST_CORE = ITEMS.registerSimpleItem("iron_ft_catalyst_core", catalyst());
+    public static final DeferredItem<Item> COBALT_FT_CATALYST_CORE = ITEMS.registerSimpleItem("cobalt_ft_catalyst_core", catalyst());
+    public static final DeferredItem<Item> ZSM5_CATALYST_CORE = ITEMS.registerSimpleItem("zsm5_catalyst_core", catalyst());
+    public static final DeferredItem<Item> PARAFFIN_WAX = ITEMS.register("paraffin_wax",
+        () -> new net.minecraft.world.item.HoneycombItem(new Item.Properties()));
     public static final DeferredItem<GasBucketItem> NITRIC_OXIDE_BUCKET = ITEMS.register("nitric_oxide_bucket",
         () -> new GasBucketItem(CEOstwaldFluids.NITRIC_OXIDE.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
     public static final DeferredItem<GasBucketItem> NITROGEN_DIOXIDE_BUCKET = ITEMS.register("nitrogen_dioxide_bucket",

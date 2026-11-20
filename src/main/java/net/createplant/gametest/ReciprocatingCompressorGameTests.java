@@ -30,8 +30,12 @@ public class ReciprocatingCompressorGameTests {
 
     /** A cylinder with an engine on top facing north, so the crank shaft runs along X three blocks above the cylinder. */
     private static ReciprocatingCompressorBlockEntity build(GameTestHelper h) {
+        return build(h, BASE);
+    }
+
+    private static ReciprocatingCompressorBlockEntity build(GameTestHelper h, BlockPos pos) {
         var level = h.getLevel();
-        BlockPos cylinder = h.absolutePos(BASE);
+        BlockPos cylinder = h.absolutePos(pos);
         level.setBlock(cylinder, CEReciprocating.CYLINDER.get().defaultBlockState(), 3);
         var state = CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.FACE, AttachFace.FLOOR).setValue(ReciprocatingCompressorBlock.FACING, Direction.NORTH);
         level.setBlock(cylinder.above(), state, 3);
@@ -39,6 +43,10 @@ public class ReciprocatingCompressorGameTests {
         var engine = (ReciprocatingCompressorBlockEntity) level.getBlockEntity(cylinder.above());
         engine.attachShaft();
         return engine;
+    }
+
+    static void poweredCompressor(GameTestHelper h, BlockPos cylinder) {
+        drive(h, build(h, cylinder));
     }
 
     /** A creative motor beside the shaft, so the kinetic network is real and the shaft keeps its speed. */

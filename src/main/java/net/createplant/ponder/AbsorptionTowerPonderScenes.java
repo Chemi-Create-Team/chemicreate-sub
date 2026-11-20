@@ -39,6 +39,9 @@ public final class AbsorptionTowerPonderScenes {
         scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 50).withItem(wash.getFluidType().getBucket(wash));
         caption(scene, util, LARGE, top, "wash");
         caption(scene, util, LARGE, bottom, "recover");
+        scene.overlay().showControls(util.vector().centerOf(bottom), Pointing.RIGHT, 90)
+            .withItem(net.createplant.registry.CEProcessFluids.WATER_GAS.get().getBucket().getDefaultInstance());
+        caption(scene, util, LARGE, top, "syngas");
         scene.markAsFinished();
     }
 

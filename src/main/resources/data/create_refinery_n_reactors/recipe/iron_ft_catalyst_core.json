@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " F ",
+    "BCB",
+    " F "
+  ],
+  "key": {
+    "C": {
+      "item": "create_refinery_n_reactors:iron_catalyst"
+    },
+    "F": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:iron_ft_catalyst_core"
+  }
+}

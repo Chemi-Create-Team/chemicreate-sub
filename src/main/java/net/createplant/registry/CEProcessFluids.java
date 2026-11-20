@@ -57,6 +57,13 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> WARM_SLIME_COOLANT = stream("warm_slime_coolant", 0xFFB7914A);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> METHANOL = stream("methanol", 0xCCD9EAE9);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> AMMONIUM_CHLORIDE_LIQUOR = stream("ammonium_chloride_liquor", 0xD2D8D1B3);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PURIFIED_SYNGAS = stream("purified_syngas", 0xD0AFC9CC);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PRESSURISED_CARBON_MONOXIDE = stream("pressurised_carbon_monoxide", 0xD5B2BEC4);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SYNTHETIC_CRUDE_OIL = stream("synthetic_crude_oil", 0xFF524333);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> FT_OFFGAS = stream("ft_offgas", 0xDDBECAA4);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SYNTHETIC_NAPHTHA = stream("synthetic_naphtha", 0xFFF0D694);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_PARAFFIN = stream("molten_paraffin", 0xFFE6D9B1);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> BTX = stream("btx", 0xFFE0A66C);
     private CEProcessFluids() { }
     public static void register(IEventBus bus) { TYPES.register(bus); FLUIDS.register(bus); }
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name) {

@@ -1,0 +1,225 @@
+[
+  {
+    "id": "purify_water_gas",
+    "machine": "ABSORPTION_TRAYS",
+    "ticks": 100,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:water_gas",
+        "amount": 1000
+      },
+      {
+        "fluid": "create_refinery_n_reactors:caustic_soda_solution",
+        "amount": 250
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:sulfur_scrubber_liquor",
+        "amount": 250
+      },
+      {
+        "fluid": "create_refinery_n_reactors:purified_syngas",
+        "amount": 1000
+      }
+    ]
+  },
+  {
+    "id": "separate_purified_syngas",
+    "machine": "FRACTION_SEPARATOR",
+    "ticks": 80,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:purified_syngas",
+        "amount": 1000
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:carbon_monoxide",
+        "amount": 500
+      },
+      {
+        "fluid": "create_refinery_n_reactors:hydrogen_gas",
+        "amount": 500
+      }
+    ]
+  },
+  {
+    "id": "water_gas_shift",
+    "machine": "REACTION_VESSEL",
+    "ticks": 90,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:carbon_monoxide",
+        "amount": 250
+      },
+      {
+        "fluid": "minecraft:water",
+        "amount": 250
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:carbon_dioxide",
+        "amount": 250
+      },
+      {
+        "fluid": "create_refinery_n_reactors:hydrogen_gas",
+        "amount": 250
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:shift_catalyst_core",
+    "heat": "HEATED"
+  },
+  {
+    "id": "iron_ft_synthesis",
+    "machine": "REACTION_VESSEL",
+    "ticks": 140,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:pressurised_carbon_monoxide",
+        "amount": 250
+      },
+      {
+        "fluid": "create_refinery_n_reactors:pressurised_hydrogen",
+        "amount": 500
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_crude_oil",
+        "amount": 500
+      },
+      {
+        "fluid": "create_refinery_n_reactors:ft_offgas",
+        "amount": 125
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:iron_ft_catalyst_core",
+    "heat": "HEATED"
+  },
+  {
+    "id": "cobalt_ft_synthesis",
+    "machine": "REACTION_VESSEL",
+    "ticks": 110,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:pressurised_carbon_monoxide",
+        "amount": 250
+      },
+      {
+        "fluid": "create_refinery_n_reactors:pressurised_hydrogen",
+        "amount": 750
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_crude_oil",
+        "amount": 750
+      },
+      {
+        "fluid": "create_refinery_n_reactors:ft_offgas",
+        "amount": 125
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:cobalt_ft_catalyst_core",
+    "heat": "HEATED"
+  },
+  {
+    "id": "distill_synthetic_crude",
+    "machine": "FRACTION_SEPARATOR",
+    "ticks": 120,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_crude_oil",
+        "amount": 500
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:ft_offgas",
+        "amount": 100
+      },
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_naphtha",
+        "amount": 150
+      },
+      {
+        "fluid": "create_refinery_n_reactors:low_sulfur_diesel",
+        "amount": 175
+      },
+      {
+        "fluid": "create_refinery_n_reactors:molten_paraffin",
+        "amount": 75
+      }
+    ]
+  },
+  {
+    "id": "separate_ft_offgas",
+    "machine": "FRACTION_SEPARATOR",
+    "ticks": 65,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:ft_offgas",
+        "amount": 100
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:ethylene",
+        "amount": 75
+      },
+      {
+        "fluid": "create_refinery_n_reactors:propylene",
+        "amount": 25
+      }
+    ]
+  },
+  {
+    "id": "reform_synthetic_naphtha",
+    "machine": "REACTION_VESSEL",
+    "ticks": 130,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_naphtha",
+        "amount": 150
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:btx",
+        "amount": 100
+      },
+      {
+        "fluid": "create_refinery_n_reactors:ft_offgas",
+        "amount": 50
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:zsm5_catalyst_core",
+    "heat": "SUPERHEATED"
+  },
+  {
+    "id": "reform_methanol",
+    "machine": "REACTION_VESSEL",
+    "ticks": 120,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:methanol",
+        "amount": 250
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:btx",
+        "amount": 100
+      },
+      {
+        "fluid": "minecraft:water",
+        "amount": 150
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:zsm5_catalyst_core",
+    "heat": "HEATED"
+  }
+]

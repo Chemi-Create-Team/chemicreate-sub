@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " F ",
+    "BCB",
+    " F "
+  ],
+  "key": {
+    "C": {
+      "item": "create_refinery_n_reactors:iron_catalyst"
+    },
+    "F": {
+      "tag": "c:ingots/zinc"
+    },
+    "B": {
+      "item": "minecraft:iron_nugget"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:shift_catalyst_core"
+  }
+}

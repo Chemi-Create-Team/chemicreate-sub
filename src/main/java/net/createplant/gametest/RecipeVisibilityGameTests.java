@@ -113,7 +113,6 @@ public final class RecipeVisibilityGameTests {
 
     @GameTest(template = "test_petrochemical")
     public static void cooledInputsAndAllManufacturingRecipesRemainValid(GameTestHelper h) {
-        int alternatives = 0;
         for (var recipe : ProcessRecipe.all())
             for (var required : recipe.inputs())
                 for (var option : PlantProcess.acceptedFluids(required)) {
@@ -122,14 +121,22 @@ public final class RecipeVisibilityGameTests {
                                     && ThermalStreams.accepts(option, required),
                             "Displayed alternatives are accepted with unchanged quantities: "
                                     + recipe.id());
-                    if (!option.is(required.getFluid())) alternatives++;
                 }
-        h.assertTrue(alternatives >= 5, "All five named cooling streams are included");
+        for (var pair : ThermalStreams.cooledStreams().entrySet()) {
+            var hot = new net.neoforged.neoforge.fluids.FluidStack(pair.getKey(), 100);
+            var cooled = ThermalStreams.cooling(hot).result(hot, 100);
+            var next = ProcessRecipe.all().stream().flatMap(process -> process.inputs().stream())
+                .filter(feed -> feed.is(pair.getValue())).findFirst().orElseThrow();
+            h.assertTrue(PlantProcess.acceptedFluids(next).stream().anyMatch(option -> ThermalStreams.accepts(cooled, option))
+                    && PlantProcess.acceptedFluids(next).stream().noneMatch(option -> ThermalStreams.accepts(hot, option)),
+                "The cooling stage produces the next recipe's listed feed and the hot fluid stays a distinct ingredient");
+        }
         var haber = ManufacturingRecipe.resolve(h.getLevel(), "operation:haber_bosch");
-        h.assertTrue(
-                haber.fluids().getFirst().is(CEProcessFluids.SYNTHESIS_GAS.get())
-                        && haber.catalyst().is(CEItems.IRON_CATALYST.get()),
-                "Ponder shares the same real feed and catalyst as JEI");
+        var ammonia = PlantProcess.ammoniaSynthesis().getFirst();
+        h.assertTrue(haber.fluids().equals(ammonia.fluids())
+                && haber.fluids().getFirst().is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get())
+                && haber.catalyst().is(CEItems.IRON_CATALYST.get()),
+            "Ponder and JEI both show the live compressed feed and iron catalyst");
         h.succeed();
     }
 }

@@ -59,6 +59,7 @@ public final class GasifierPonderScenes {
         scene.world().setKineticSpeed(pumpDrive, 32);
         scene.world().setKineticSpeed(util.select().position(5, 9, 6), -32);
         caption(scene, util, new BlockPos(5, 8, 6), "output");
+        caption(scene, util, new BlockPos(5, 8, 6), "syngas");
         scene.world().setKineticSpeed(fuelSupply, 0);
         scene.world().modifyBlock(heater, state -> state.setValue(BlazeBurnerBlock.HEAT_LEVEL,
             BlazeBurnerBlock.HeatLevel.SMOULDERING), false);

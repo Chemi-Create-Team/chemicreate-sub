@@ -11,6 +11,8 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.IAdvancedRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.createplant.CreatePlant;
 import net.createplant.chemistry.ElectrolysisProcess;
 import net.createplant.block.entity.ElectrolysisFurnaceBlockEntity;
@@ -39,6 +41,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 /** Every conversion the plant's machines make has a category here; Create's own recipe types stay in Create's categories. */
 @JeiPlugin
 public class CreatePlantJeiPlugin implements IModPlugin {
+    private final SynthesisRecipeLinks synthesisLinks = new SynthesisRecipeLinks();
     /** A category, the Ponder storyboard that shows its machine, and the blocks that make the machine. */
     private record Kind(RecipeType<PlantProcess> type, String storyboard, ItemLike icon, ItemLike... catalysts) {
         Kind(String id, String storyboard, ItemLike icon, ItemLike... catalysts) { this(RecipeType.create(CreatePlant.MOD_ID, id, PlantProcess.class), storyboard, icon, catalysts); }
@@ -94,6 +97,10 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         for (Kind kind : kinds()) registration.addRecipeCatalysts(kind.type(), kind.catalysts());
     }
 
+    @Override public void registerAdvanced(IAdvancedRegistration registration) {
+        registration.addRecipeManagerPlugin(synthesisLinks);
+    }
+
     private static ItemStack stack(String name) { return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(CreatePlant.location(name)).getDefaultInstance(); }
     private static PlantProcess service(String input, String output, String key) { return new PlantProcess(List.of(List.of(stack(input))), List.of(), List.of(), List.of(stack(output)), List.of(), note(key)); }
     @Override public void registerRecipes(IRecipeRegistration registration) {
@@ -134,8 +141,15 @@ public class CreatePlantJeiPlugin implements IModPlugin {
                     : module == ProcessModule.GAS_CENTRIFUGE ? note("centrifuge_stages", recipe.ticks(), net.createplant.block.entity.GasCentrifugeBlockEntity.requiredStages(recipe.id())) : module == ProcessModule.ABSORPTION_TRAYS ? note("absorption_tower", recipe.ticks()) : note("reactor", recipe.ticks());
                 if(recipe.requiredHeat()!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE) conditions=conditions.copy().append(" · ").append(Component.translatable("create."+recipe.requiredHeat().getTranslationKey()));
                 if(inputs.stream().anyMatch(input->PlantProcess.acceptedFluids(input).size()>1))conditions=note("cooled_feed").copy().append(" ").append(conditions);
-                list.add(new PlantProcess(List.of(), inputs, recipe.catalyst() == Items.AIR ? List.of() : List.of(new ItemStack(recipe.catalyst())),
-                    List.of(), fractionation ? DistillationProfile.fraction(recipe.id()).outputs() : recipe.outputs(), conditions).withFluidOptions(inputs.stream().map(PlantProcess::acceptedFluids).toList()));
+                var entry = new PlantProcess(List.of(), inputs, recipe.catalyst() == Items.AIR ? List.of() : List.of(new ItemStack(recipe.catalyst())),
+                    List.of(), fractionation ? DistillationProfile.fraction(recipe.id()).outputs() : recipe.outputs(), conditions)
+                    .withFluidOptions(inputs.stream().map(PlantProcess::acceptedFluids).toList());
+                if (module != ProcessModule.GAS_CENTRIFUGE) {
+                    int levels = fractionation ? DistillationProfile.requiredHeight(recipe.id()) : module == ProcessModule.ABSORPTION_TRAYS
+                        ? ReactorModule.TOWER.minSections : net.createplant.block.entity.ReactionTowerBlockEntity.MIN_LAYERS;
+                    entry = entry.withConditions(recipe.ticks(), recipe.requiredHeat(), levels);
+                }
+                list.add(entry);
             }
             if (module == ProcessModule.FRACTION_SEPARATOR) for (var fraction : DistillationProfile.registered())
                 list.add(new PlantProcess(List.of(), List.of(fraction.input()), List.of(), List.of(), DistillationProfile.fraction(fraction.id()).outputs(), note("fractionation", fraction.ticks())));
@@ -342,10 +356,14 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             checkRuntime.getRecipesGui().show(focus);
         } else checkRuntime.getRecipesGui().showTypes(List.of(type(id)));
     }
-    @Override public void onRuntimeUnavailable(){checkRuntime=null;}
+    @Override public void onRuntimeUnavailable() {
+        synthesisLinks.runtime(null);
+        checkRuntime = null;
+    }
 
     @Override
-    public void onRuntimeAvailable(mezz.jei.api.runtime.IJeiRuntime runtime) {
+    public void onRuntimeAvailable(IJeiRuntime runtime) {
+        synthesisLinks.runtime(runtime);
         if (Boolean.getBoolean("createplant.recipeTraceCheck") || Boolean.getBoolean("createplant.recipeScreenCheck")) checkRuntime = runtime;
         if (Boolean.getBoolean("createplant.recipeTraceCheck")) verifyRecipeTrace(runtime);
         if (Boolean.getBoolean("createplant.recipeAvailabilityCheck")) auditAvailability(runtime);

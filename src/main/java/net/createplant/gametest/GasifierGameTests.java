@@ -67,6 +67,15 @@ public final class GasifierGameTests {
         for (int tick = 0; tick < count; tick++) gasifier.tick();
     }
 
+    static FluidStack makeWaterGas(GameTestHelper h, int batches) {
+        var gasifier = build(h);
+        h.assertTrue(gasifier.rebuild(), "The 3x3x6 gasifier forms before feeding the synthesis line");
+        charge(h, batches, new FluidStack(CEFluids.STEAM.get(), 250 * batches));
+        burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
+        ticks(gasifier, 32 + 40 * batches);
+        return fluid(h, OUTLET, Direction.UP).drain(500 * batches + 1, EXECUTE);
+    }
+
     @GameTest(template = "test_petrochemical")
     public static void formationLooksAndPorts(GameTestHelper h) {
         var be = build(h);
