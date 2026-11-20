@@ -1,0 +1,14 @@
+{
+  "type": "create:cutting",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:molded_polymer"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:plastic_sheet"
+    }
+  ],
+  "processing_time": 85
+}

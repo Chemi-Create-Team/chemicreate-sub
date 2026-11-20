@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:platinum_zeolite_core"
+    },
+    {
+      "tag": "create_refinery_n_reactors:cracking_core_metals"
+    },
+    {
+      "item": "minecraft:quartz"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:platinum_zeolite_core",
+    "count": 1
+  }
+}

@@ -33,16 +33,27 @@ public final class CETransmission {
     public static final DeferredItem<Item> CONDUCTOR = ITEMS.registerSimpleItem("high_voltage_conductor");
     public static final DeferredItem<HighVoltageCableItem> SPOOL = ITEMS.register("high_voltage_cable",
         () -> new HighVoltageCableItem(new Item.Properties(), CETransmission::wire));
-    private static final Supplier<WireType> WIRE = WIRES.register("high_voltage_cable", () -> new WireType.Builder(
-        PartialModel.of(CreatePlant.location("block/transmission_tower/cable_segment")))
-        .sag(.20f).maxLength(() -> MAX_SPAN).thickness(.095f)
-        .resistance(() -> .005).insulationResistance(100_000_000).maxInsulationVoltage(() -> 35_000)
-        .maxTemperature(() -> 700).spoolItem(SPOOL::get).droppedItem(CONDUCTOR).build());
+    public static final DeferredItem<Item> FIRE_RESISTANT_CONDUCTOR = ITEMS.registerSimpleItem("fire_resistant_conductor",
+        new Item.Properties().fireResistant());
+    public static final DeferredItem<HighVoltageCableItem> FIRE_RESISTANT_CABLE = ITEMS.register("fire_resistant_cable",
+        () -> new HighVoltageCableItem(new Item.Properties().fireResistant(), CETransmission::fireResistantWire));
+    private static final Supplier<WireType> WIRE = WIRES.register("high_voltage_cable",
+        () -> line(700).spoolItem(SPOOL::get).droppedItem(CONDUCTOR).build());
+    private static final Supplier<WireType> FIRE_RESISTANT_WIRE = WIRES.register("fire_resistant_cable",
+        () -> line(950).spoolItem(FIRE_RESISTANT_CABLE::get).droppedItem(FIRE_RESISTANT_CONDUCTOR).build());
 
     static { ITEMS.registerSimpleBlockItem(TOWER); }
 
     private CETransmission() { }
     public static WireType wire() { return WIRE.get(); }
+    public static WireType fireResistantWire() { return FIRE_RESISTANT_WIRE.get(); }
+
+    private static WireType.Builder line(int maxTemperature) {
+        return new WireType.Builder(PartialModel.of(CreatePlant.location("block/transmission_tower/cable_segment")))
+            .sag(.20f).maxLength(() -> MAX_SPAN).thickness(.095f)
+            .resistance(() -> .005).insulationResistance(100_000_000).maxInsulationVoltage(() -> 35_000)
+            .maxTemperature(() -> maxTemperature);
+    }
 
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);

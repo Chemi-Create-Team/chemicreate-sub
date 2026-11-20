@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " Q ",
+    "MCM",
+    " Q "
+  ],
+  "key": {
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:hydrocracking_catalyst"
+    },
+    "M": {
+      "tag": "create_refinery_n_reactors:cracking_core_metals"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:platinum_zeolite_core",
+    "count": 1
+  }
+}

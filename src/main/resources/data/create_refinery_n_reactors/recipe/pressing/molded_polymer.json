@@ -1,0 +1,14 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:molded_polymer",
+      "count": 1
+    }
+  ]
+}

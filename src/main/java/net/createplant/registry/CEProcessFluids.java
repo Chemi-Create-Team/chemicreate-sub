@@ -64,6 +64,22 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SYNTHETIC_NAPHTHA = stream("synthetic_naphtha", 0xFFF0D694);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_PARAFFIN = stream("molten_paraffin", 0xFFE6D9B1);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> BTX = stream("btx", 0xFFE0A66C);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> BENZENE = stream("benzene", 0xFFE8D5A5);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TOLUENE = stream("toluene", 0xFFC2AB8F);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> XYLENE = stream("xylene", 0xFFCAA28B);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ETHYLBENZENE = stream("ethylbenzene", 0xFFC49B61);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> STYRENE = stream("styrene", 0xFFD2BB82);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> BUTADIENE = stream("butadiene", 0xD8AEC5AE);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CUMENE = stream("cumene", 0xFFBC985A);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CUMENE_PROCESS_LIQUOR = stream("cumene_process_liquor", 0xFFBD986A);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PHENOL = stream("phenol", 0xFFD9A2A4);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ACETONE = stream("acetone", 0xFFE1DCB6);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> FORMALDEHYDE_SOLUTION = stream("formaldehyde_solution", 0xFFD2D7AF);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CHLOROBENZENE = stream("chlorobenzene", 0xFFC1CF9C);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CHLOROTOLUENE = stream("chlorotoluene", 0xFFAABB8D);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HEXANE = stream("hexane", 0xFFDDDFBE);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> RECOVERED_SOLVENT = stream("recovered_solvent", 0xFFC0C1A3);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIQUID_FERTILIZER = stream("liquid_fertilizer", 0xFF8EA660);
     private CEProcessFluids() { }
     public static void register(IEventBus bus) { TYPES.register(bus); FLUIDS.register(bus); }
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name) {

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RRR",
+    "SPS",
+    " A "
+  ],
+  "key": {
+    "R": {
+      "item": "create_refinery_n_reactors:phenolic_board"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "A": {
+      "item": "create:shaft"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:control_valve_actuator",
+    "count": 1
+  }
+}

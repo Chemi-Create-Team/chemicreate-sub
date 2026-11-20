@@ -69,6 +69,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("haber_bosch", "plant/reaction_tower", CETransport.REACTION_TOWER.get(), CETransport.REACTION_TOWER.get(), CEReactor.CATALYST_BASKET.get(), CEItems.IRON_CATALYST.get()),
             new Kind("absorption_tower", "plant/large_absorption_tower", CEReactor.LARGE_ABSORPTION_TOWER.get(), CEReactor.LARGE_ABSORPTION_TOWER.get()),
             new Kind("entrained_gasification", "plant/entrained_gasifier", CEGasifier.GASIFIER.get(), CEGasifier.GASIFIER.get(), AllBlocks.BLAZE_BURNER.get()),
+            new Kind("fertilizer_filling", "plant/liquid_fertilizer", AllBlocks.SPOUT.get(), AllBlocks.SPOUT.get()),
             new Kind("clarifying", "plant/wet_processing", CEWetProcessing.CLARIFIER.get(), CEWetProcessing.CLARIFIER.get()),
             new Kind("converter", "plant/converter", CEConverter.SHELL.get(), CEConverter.SHELL.get()),
             new Kind("solvent_extraction", "plant/fuel_cycle", CEFuelCycle.EXTRACTION_COLUMN.get(), CEFuelCycle.EXTRACTION_COLUMN.get()),
@@ -132,6 +133,13 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             }).toList());
         registration.addRecipes(type("stirred_reactor"), reactions(ReactorModule.STIRRED));
         registration.addRecipes(type("tray_reactor"), reactions(ReactorModule.ABSORBER));
+        var sprayer = CEPortableTools.CHEMICAL_SPRAYER.toStack();
+        var filled = sprayer.copy();
+        var fertilizer = f(CEProcessFluids.LIQUID_FERTILIZER.get(), 1000);
+        new net.createplant.item.PortableToolFluidHandler(filled).fill(fertilizer,
+            net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        registration.addRecipes(type("fertilizer_filling"), List.of(new PlantProcess(
+            List.of(List.of(sprayer)), List.of(fertilizer), List.of(), List.of(filled), List.of(), note("fertilizer_filling"))));
         for (var module : List.of(ProcessModule.REACTION_VESSEL, ProcessModule.FRACTION_SEPARATOR, ProcessModule.GAS_CENTRIFUGE, ProcessModule.ABSORPTION_TRAYS)) {
             List<PlantProcess> list = new ArrayList<>();
             for (ProcessRecipe recipe : ProcessRecipe.all()) if (recipe.module() == module && !recipe.id().equals("wash_raw_process_gas")) {
@@ -237,8 +245,12 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             List<FluidStack> fluids = recipe.getFluidIngredients().stream().map(ingredient -> ingredient.getFluids()[0]).toList();
             int ticks = recipe.getProcessingDuration() > 0 ? recipe.getProcessingDuration() : 100;
             Component conditions=note(module==ReactorModule.ABSORBER ? "tray_reactor" : "stirred_reactor",ticks,Component.translatable("create."+recipe.getRequiredHeat().getTranslationKey()));
-            list.add(new PlantProcess(items, fluids, List.of(), recipe.getRollableResults().stream().map(ProcessingOutput::getStack).toList(), recipe.getFluidResults(),
-                conditions).withFluidOptions(recipe.getFluidIngredients().stream().map(ingredient->Arrays.asList(ingredient.getFluids())).toList()));
+            var products = recipe.getRollableResults().stream().map(ProcessingOutput::getStack).toList();
+            var entry = new PlantProcess(items, fluids, List.of(), products, recipe.getFluidResults(), conditions)
+                .withFluidOptions(recipe.getFluidIngredients().stream().map(ingredient->Arrays.asList(ingredient.getFluids())).toList());
+            if (items.size() + fluids.size() <= 6 && products.size() + recipe.getFluidResults().size() <= 6)
+                entry = entry.withConditions(ticks, recipe.getRequiredHeat(), module.minSections);
+            list.add(entry);
         }
         return list;
     }

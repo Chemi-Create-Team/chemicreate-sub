@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:heat_resistant_coating"
+    },
+    {
+      "item": "create_refinery_n_reactors:zirconia"
+    },
+    {
+      "item": "minecraft:brick"
+    },
+    {
+      "item": "minecraft:brick"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:zirconia_refractory_bricks",
+    "count": 2
+  }
+}

@@ -24,7 +24,9 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
     private ProcessRecipe heat(HeatCondition heat) { return new ProcessRecipe(id,module,ticks,inputs,outputs,catalyst,heat); }
     public boolean heatAllowed(HeatLevel level) { return requiredHeat.testBlazeBurner(level); }
     private static final class Recipes {
-        static final List<ProcessRecipe> ALL = java.util.stream.Stream.concat(legacy().stream(), SynthesisProcesses.load().stream()).toList();
+        static final List<ProcessRecipe> ALL = java.util.stream.Stream.of(
+            legacy(), SynthesisProcesses.load("synthetic_fuels"), SynthesisProcesses.load("downstream_materials"))
+            .flatMap(List::stream).toList();
 
         private static List<ProcessRecipe> legacy() {
             return List.of(

@@ -21,13 +21,12 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Bundled recipes for the existing fixed-batch machines. Both sides read the same table. */
 final class SynthesisProcesses {
-    private static final String RESOURCE = "/data/" + CreatePlant.MOD_ID + "/process/synthetic_fuels.json";
-
     private SynthesisProcesses() { }
 
-    static List<ProcessRecipe> load() {
-        var source = SynthesisProcesses.class.getResourceAsStream(RESOURCE);
-        if (source == null) throw new IllegalStateException("Missing process table " + RESOURCE);
+    static List<ProcessRecipe> load(String file) {
+        String resource = "/data/" + CreatePlant.MOD_ID + "/process/" + file + ".json";
+        var source = SynthesisProcesses.class.getResourceAsStream(resource);
+        if (source == null) throw new IllegalStateException("Missing process table " + resource);
         try (var reader = new InputStreamReader(source, StandardCharsets.UTF_8)) {
             var recipes = new ArrayList<ProcessRecipe>();
             var names = new HashSet<String>();
@@ -39,7 +38,7 @@ final class SynthesisProcesses {
             }
             return List.copyOf(recipes);
         } catch (IOException | RuntimeException ex) {
-            throw new IllegalStateException("Invalid process table " + RESOURCE, ex);
+            throw new IllegalStateException("Invalid process table " + resource, ex);
         }
     }
 

@@ -1,0 +1,18 @@
+{
+  "type": "create:cutting",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:fire_resistant_cable"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:fire_resistant_conductor",
+      "count": 4
+    },
+    {
+      "id": "electroenergetics:empty_spool"
+    }
+  ],
+  "processing_time": 100
+}

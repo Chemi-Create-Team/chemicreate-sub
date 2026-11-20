@@ -1,0 +1,248 @@
+[
+  {
+    "id": "hydrocrack_paraffin",
+    "machine": "REACTION_VESSEL",
+    "ticks": 125,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:molten_paraffin",
+        "amount": 150
+      },
+      {
+        "fluid": "create_refinery_n_reactors:compressed_hydrogen",
+        "amount": 250
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_naphtha",
+        "amount": 100
+      },
+      {
+        "fluid": "create_refinery_n_reactors:ft_offgas",
+        "amount": 50
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:platinum_zeolite_core",
+    "heat": "SUPERHEATED"
+  },
+  {
+    "id": "hydrocrack_residual_fuel",
+    "machine": "REACTION_VESSEL",
+    "ticks": 155,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:heavy_oil",
+        "amount": 500
+      },
+      {
+        "fluid": "create_refinery_n_reactors:compressed_hydrogen",
+        "amount": 500
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_naphtha",
+        "amount": 350
+      },
+      {
+        "fluid": "create_refinery_n_reactors:ft_offgas",
+        "amount": 150
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:platinum_zeolite_core",
+    "heat": "SUPERHEATED"
+  },
+  {
+    "id": "separate_btx",
+    "machine": "FRACTION_SEPARATOR",
+    "ticks": 95,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:btx",
+        "amount": 300
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:benzene",
+        "amount": 140
+      },
+      {
+        "fluid": "create_refinery_n_reactors:toluene",
+        "amount": 100
+      },
+      {
+        "fluid": "create_refinery_n_reactors:xylene",
+        "amount": 60
+      }
+    ]
+  },
+  {
+    "id": "make_ethylbenzene",
+    "machine": "REACTION_VESSEL",
+    "ticks": 110,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:benzene",
+        "amount": 140
+      },
+      {
+        "fluid": "create_refinery_n_reactors:ethylene",
+        "amount": 150
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:ethylbenzene",
+        "amount": 240
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:zsm5_catalyst_core",
+    "heat": "HEATED"
+  },
+  {
+    "id": "make_styrene",
+    "machine": "REACTION_VESSEL",
+    "ticks": 130,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:ethylbenzene",
+        "amount": 240
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:styrene",
+        "amount": 200
+      },
+      {
+        "fluid": "create_refinery_n_reactors:hydrogen_gas",
+        "amount": 40
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:iron_catalyst",
+    "heat": "SUPERHEATED"
+  },
+  {
+    "id": "separate_butadiene",
+    "machine": "FRACTION_SEPARATOR",
+    "ticks": 90,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:synthetic_naphtha",
+        "amount": 150
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:butadiene",
+        "amount": 100
+      },
+      {
+        "fluid": "create_refinery_n_reactors:hexane",
+        "amount": 25
+      },
+      {
+        "fluid": "create_refinery_n_reactors:low_sulfur_diesel",
+        "amount": 25
+      }
+    ]
+  },
+  {
+    "id": "make_cumene",
+    "machine": "REACTION_VESSEL",
+    "ticks": 105,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:benzene",
+        "amount": 140
+      },
+      {
+        "fluid": "create_refinery_n_reactors:propylene",
+        "amount": 100
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:cumene",
+        "amount": 200
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:cumene_catalyst_core",
+    "heat": "HEATED"
+  },
+  {
+    "id": "oxidize_cumene",
+    "machine": "REACTION_VESSEL",
+    "ticks": 100,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:cumene",
+        "amount": 200
+      },
+      {
+        "fluid": "create_refinery_n_reactors:oxygen_gas",
+        "amount": 100
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:cumene_process_liquor",
+        "amount": 250
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:oxidation_catalyst",
+    "heat": "HEATED"
+  },
+  {
+    "id": "split_cumene_liquor",
+    "machine": "REACTION_VESSEL",
+    "ticks": 110,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:cumene_process_liquor",
+        "amount": 250
+      },
+      {
+        "fluid": "create_refinery_n_reactors:sulfuric_acid",
+        "amount": 50
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:phenol",
+        "amount": 150
+      },
+      {
+        "fluid": "create_refinery_n_reactors:acetone",
+        "amount": 100
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:cumene_catalyst_core",
+    "heat": "HEATED"
+  },
+  {
+    "id": "oxidize_methanol",
+    "machine": "REACTION_VESSEL",
+    "ticks": 100,
+    "inputs": [
+      {
+        "fluid": "create_refinery_n_reactors:methanol",
+        "amount": 250
+      },
+      {
+        "fluid": "create_refinery_n_reactors:oxygen_gas",
+        "amount": 100
+      }
+    ],
+    "outputs": [
+      {
+        "fluid": "create_refinery_n_reactors:formaldehyde_solution",
+        "amount": 250
+      }
+    ],
+    "catalyst": "create_refinery_n_reactors:oxidation_catalyst",
+    "heat": "HEATED"
+  }
+]

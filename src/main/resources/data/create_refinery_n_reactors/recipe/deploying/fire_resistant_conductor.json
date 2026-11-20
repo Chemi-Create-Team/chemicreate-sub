@@ -1,0 +1,17 @@
+{
+  "type": "create:deploying",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:high_voltage_conductor"
+    },
+    {
+      "item": "create_refinery_n_reactors:heat_resistant_coating"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:fire_resistant_conductor",
+      "count": 1
+    }
+  ]
+}

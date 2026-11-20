@@ -21,6 +21,8 @@ public final class CEBuildingMaterials {
     public static final DeferredItem<Item> GROUND_CLINKER = ITEMS.registerSimpleItem("ground_clinker");
     public static final DeferredItem<Item> CEMENT = ITEMS.registerSimpleItem("cement_powder");
     public static final DeferredBlock<Block> CONCRETE = BLOCKS.registerSimpleBlock("industrial_concrete", concrete());
+    public static final DeferredBlock<Block> MOLDED_POLYMER = BLOCKS.registerSimpleBlock("molded_polymer",
+        BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CONCRETE).strength(2, 4));
     public static final DeferredBlock<SlabBlock> CONCRETE_SLAB = BLOCKS.registerBlock("industrial_concrete_slab", SlabBlock::new, concrete());
     public static final DeferredBlock<StairBlock> CONCRETE_STAIRS = BLOCKS.registerBlock("industrial_concrete_stairs",
         properties -> new StairBlock(CONCRETE.get().defaultBlockState(), properties), concrete());
@@ -29,7 +31,8 @@ public final class CEBuildingMaterials {
     public static final List<DeferredItem<Item>> MATERIALS = List.of(CLINKER, GROUND_CLINKER, CEMENT);
     public static final List<DeferredItem<BlockItem>> BUILDING_ITEMS = List.of(ITEMS.registerSimpleBlockItem(CONCRETE),
         ITEMS.registerSimpleBlockItem(CONCRETE_SLAB), ITEMS.registerSimpleBlockItem(CONCRETE_STAIRS),
-        ITEMS.registerSimpleBlockItem(COATED_FLOOR), ITEMS.registerSimpleBlockItem(COATED_SLAB));
+        ITEMS.registerSimpleBlockItem(COATED_FLOOR), ITEMS.registerSimpleBlockItem(COATED_SLAB),
+        ITEMS.registerSimpleBlockItem(MOLDED_POLYMER));
 
     private CEBuildingMaterials() { }
 

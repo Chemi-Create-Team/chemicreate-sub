@@ -22,6 +22,7 @@ import net.minecraft.world.level.material.Fluid;
 public final class ReactionTowerPonderScenes {
     private static final String LANG = "ponder.create_refinery_n_reactors.reaction_tower.", SEPARATOR = "ponder.create_refinery_n_reactors.reaction_tower_separator.";
     private static final String SYNTHESIS = "ponder.create_refinery_n_reactors.synthetic_reactions.";
+    private static final String MATERIALS = "ponder.create_refinery_n_reactors.downstream_materials.";
     private static final int LAYERS = 4;
 
     private ReactionTowerPonderScenes() { }
@@ -121,18 +122,44 @@ public final class ReactionTowerPonderScenes {
         PonderText.build(scene, util, 6, 1, 4, 8, 2, 4, Direction.WEST);
         scene.world().showSection(util.select().position(3, 1, 3), Direction.UP);
         PonderText.caption(scene, util.vector().centerOf(centre), SYNTHESIS + "separate", 115);
-        showCore(scene, util, centre, top, CEItems.SHIFT_CATALYST_CORE.toStack(), "shift");
+        showCore(scene, util, centre, top, CEItems.SHIFT_CATALYST_CORE.toStack(), SYNTHESIS + "shift", true);
         PonderText.caption(scene, util.vector().centerOf(centre.west(2)), SYNTHESIS + "compress", 120);
-        showCore(scene, util, centre, top, CEItems.IRON_FT_CATALYST_CORE.toStack(), "ft");
-        showCore(scene, util, centre, top, CEItems.COBALT_FT_CATALYST_CORE.toStack(), "cobalt");
-        showCore(scene, util, centre, top, CEItems.ZSM5_CATALYST_CORE.toStack(), "btx");
+        showCore(scene, util, centre, top, CEItems.IRON_FT_CATALYST_CORE.toStack(), SYNTHESIS + "ft", false);
+        showCore(scene, util, centre, top, CEItems.COBALT_FT_CATALYST_CORE.toStack(), SYNTHESIS + "cobalt", false);
+        showCore(scene, util, centre, top, CEItems.ZSM5_CATALYST_CORE.toStack(), SYNTHESIS + "btx", false);
+        scene.markAsFinished();
+    }
+
+    public static void materials(SceneBuilder builder, SceneBuildingUtil util) {
+        var scene = new CreateSceneBuilder(builder);
+        scene.title("downstream_materials", PonderText.title(MATERIALS + "title", "Downstream materials"));
+        scene.configureBasePlate(0, 0, 9);
+        scene.scaleSceneView(.65f);
+        scene.showBasePlate();
+        BlockPos centre = util.grid().at(4, 2, 4), top = centre.above(LAYERS - 1);
+        form(scene, util);
+        PonderText.build(scene, util, 3, 2, 3, 5, 5, 5, Direction.DOWN);
+        PonderText.build(scene, util, 0, 1, 4, 2, 2, 4, Direction.EAST);
+        PonderText.build(scene, util, 6, 1, 4, 8, 2, 4, Direction.WEST);
+        BlockPos burner = util.grid().at(3, 1, 3);
+        scene.world().showSection(util.select().position(burner), Direction.UP);
+        var heat = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
+        var hot = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING;
+        var warm = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED;
+        scene.world().modifyBlock(burner, state -> state.setValue(heat, hot), false);
+        showCore(scene, util, centre, top, CEItems.PLATINUM_ZEOLITE_CORE.toStack(), MATERIALS + "recycle", true);
+        PonderText.caption(scene, util.vector().centerOf(centre.east(2)), MATERIALS + "outlet", 120);
+        scene.world().modifyBlock(burner, state -> state.setValue(heat, warm), false);
+        showCore(scene, util, centre, top, CEItems.POLYMERIZATION_CATALYST.toStack(), MATERIALS + "polymer", false);
+        showCore(scene, util, centre, top, CEItems.CUMENE_CATALYST_CORE.toStack(), MATERIALS + "phenolic", false);
+        PonderText.caption(scene, util.vector().centerOf(centre.east(2)), MATERIALS + "rubber", 120);
         scene.markAsFinished();
     }
 
     private static void showCore(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos owner, BlockPos top,
-            net.minecraft.world.item.ItemStack stack, String key) {
+            net.minecraft.world.item.ItemStack stack, String key, boolean first) {
         hatch(scene, util, owner, top, true);
-        if (key.equals("shift")) {
+        if (first) {
             scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 32)
                 .rightClick().withItem(CEReactor.CATALYST_BASKET.get().getDefaultInstance());
             scene.idle(15);
@@ -150,7 +177,7 @@ public final class ReactionTowerPonderScenes {
             be.loadWithComponents(data, lookup);
         });
         hatch(scene, util, owner, top, false);
-        PonderText.caption(scene, util.vector().topOf(top), SYNTHESIS + key, 130);
+        PonderText.caption(scene, util.vector().topOf(top), key, 130);
     }
 
     /** An empty hand on the roof swings the hatch open or shut. */

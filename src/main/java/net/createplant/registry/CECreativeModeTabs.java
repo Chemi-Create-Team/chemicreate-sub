@@ -47,10 +47,11 @@ public class CECreativeModeTabs {
             "molybdenum_ingot", "stainless_steel_ingot", "aluminum_sheet", "nickel_sheet", "titanium_sheet", "stainless_steel_sheet",
             "iron_pipe", "unfired_ceramic_pipe", "zircaloy_cladding_tube"),
         List.of("polyethylene", "polypropylene", "synthetic_rubber", "industrial_resin", "plastic_sheet", "rubber_gasket",
-            "flame_retardant_pellet", "heat_resistant_gasket", "paraffin_wax"),
+            "flame_retardant_pellet", "heat_resistant_gasket", "paraffin_wax", "phenolic_resin", "phenolic_board",
+            "phosphate_compound", "heat_resistant_coating", "fire_resistant_conductor", "fire_resistant_cable"),
         List.of("iron_catalyst", "oxidation_catalyst", "cracking_catalyst", "polymerization_catalyst", "hydrotreating_catalyst",
             "hydrocracking_catalyst", "shift_catalyst_core", "iron_ft_catalyst_core", "cobalt_ft_catalyst_core",
-            "zsm5_catalyst_core", "water_filter_medium"),
+            "zsm5_catalyst_core", "cumene_catalyst_core", "platinum_zeolite_core", "water_filter_medium"),
         List.of("nickel_electrode_plate", "asbestos_wrapped_electrode", "high_pressure_turbine_blade", "low_pressure_turbine_blade", "tarbin_end",
             "low_pressure_turbine_end"),
         List.of("yellowcake", "uranium_trioxide", "uranium_dioxide", "uranium_tetrafluoride", "enriched_uranium_dioxide", "green_uranium_pellet",
@@ -67,7 +68,7 @@ public class CECreativeModeTabs {
     /** Equipment and construction groups in display order. */
     private static final List<List<String>> EQUIPMENT_GROUPS = List.of(
         List.of("industrial_concrete", "industrial_concrete_slab", "industrial_concrete_stairs", "corrosion_resistant_floor",
-            "corrosion_resistant_floor_slab", "industrial_glass", "zirconia_refractory_bricks", "stainless_steel_block", "titanium_block",
+            "corrosion_resistant_floor_slab", "molded_polymer", "industrial_glass", "zirconia_refractory_bricks", "stainless_steel_block", "titanium_block",
             "diorite_casing", "tank_casing"),
         List.of("reinforced_pipe", "nickel_alloy_pipe", "zirconium_pipe", "stainless_steel_pipe", "cryogenic_pipe",
             "pvc_pipe", "resin_pipe", "ceramic_pipe", "gas_pipe", "large_gas_pipe"),

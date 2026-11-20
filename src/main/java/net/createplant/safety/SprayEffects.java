@@ -1,6 +1,8 @@
 package net.createplant.safety;
 
 import java.util.HashSet;
+import net.createplant.agriculture.FertilizedCrops;
+import net.createplant.agriculture.FertilizerProfile;
 import net.createplant.block.FlareTipBlock;
 import net.createplant.item.SprayToolItem;
 import net.createplant.registry.CEWorldFluids;
@@ -22,6 +24,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
@@ -35,6 +38,29 @@ public final class SprayEffects {
     private static final float FLAME_DAMAGE=4, ACID_DAMAGE=8;
     private static final int ACID_BURN_TICKS=100;
     private SprayEffects() { }
+
+    public static boolean fertilize(ServerLevel level, Player player, ItemStack held, double range) {
+        var start = player.getEyePosition();
+        var end = LoadedRay.end(level, start, start.add(player.getLookAngle().scale(range)));
+        var hit = level.clip(new ClipContext(start, end, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
+        if (hit.getType() != HitResult.Type.BLOCK) return false;
+        var center = hit.getBlockPos();
+        if (level.getBlockState(center).is(Blocks.FARMLAND)) center = center.above();
+        if (!(level.getBlockState(center).getBlock() instanceof CropBlock)) return false;
+        var profile = FertilizerProfile.NPK;
+        int radius = profile.radius;
+        boolean applied = false;
+        for (var pos : BlockPos.betweenClosed(center.offset(-radius, 0, -radius), center.offset(radius, 0, radius))) {
+            if (!level.hasChunkAt(pos) || !FertilizedCrops.growable(level.getBlockState(pos))
+                || !level.mayInteract(player, pos) || !player.mayUseItemAt(pos, Direction.UP, held)
+                || !visible(level, player, start, pos)) continue;
+            if (FertilizedCrops.apply(level, pos, profile)) {
+                level.levelEvent(1505, pos, 6);
+                applied = true;
+            }
+        }
+        return applied;
+    }
     public static void spray(ServerLevel level,Player player,ItemStack held,FluidStack fluid,SprayToolItem tool) {
         Vec3 start=player.getEyePosition(),direction=player.getLookAngle();
         Vec3 requested=LoadedRay.end(level,start,start.add(direction.scale(tool.range())));

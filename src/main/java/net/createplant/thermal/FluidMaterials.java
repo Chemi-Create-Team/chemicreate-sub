@@ -32,6 +32,7 @@ public final class FluidMaterials {
         entry("water_gas",15.01305,50.959),
         entry("purified_syngas",15.01305,50.959),entry("pressurised_carbon_monoxide",28.0101,81.638),
         entry("ft_offgas",31,185),entry("synthetic_naphtha",110,400),entry("molten_paraffin",350,690),
+        entry("benzene",78,353),entry("toluene",92,384),entry("xylene",106,413),entry("butadiene",54,269),entry("hexane",86,342),
         entry("compressed_synthesis_feed",8.5155,34.5),
         entry("hot_synthesis_mixture",9.79,65.3),entry("cold_synthesis_mixture",9.79,65.3),
         entry("hot_nitric_oxide_mixture",28.9,80),entry("cold_nitric_oxide_mixture",28.9,80),

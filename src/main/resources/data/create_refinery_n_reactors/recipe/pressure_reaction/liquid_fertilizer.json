@@ -1,0 +1,32 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:phosphate_compound"
+    },
+    {
+      "item": "create_refinery_n_reactors:urea"
+    },
+    {
+      "item": "create_refinery_n_reactors:potash"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:liquid_ammonia",
+      "amount": 100
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 400
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:liquid_fertilizer",
+      "amount": 500
+    }
+  ],
+  "processing_time": 120,
+  "heat_requirement": "heated"
+}

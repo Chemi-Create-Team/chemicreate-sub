@@ -5008,5 +5008,60 @@
     "en_us": "Fractionate the light gas for ethylene and propylene. Reform naphtha into BTX, then combine it with ethylene in a sealed vessel for resin.",
     "ja_jp": "軽質ガスからエチレンとプロピレンを分けます。合成ナフサをBTXに改質し、蓋付き容器でエチレンと反応させて樹脂にします。",
     "zh_cn": "用轻质气分离乙烯和丙烯。石脑油改质成 BTX，再在带盖容器中与乙烯反应制树脂。"
+  },
+  "downstream_materials.title": {
+    "en_us": "Recycling refinery streams and making materials",
+    "ja_jp": "製油の副産物を回収して素材を作る",
+    "zh_cn": "回炼副产物与生产材料"
+  },
+  "downstream_materials.recycle": {
+    "en_us": "Load a platinum–zeolite core. Superheat the tower and feed molten wax or heavy oil with compressed hydrogen.",
+    "ja_jp": "白金・ゼオライト触媒コアを入れます。反応塔を超加熱し、溶融ワックスか残渣油を圧縮水素とともに送ります。",
+    "zh_cn": "装入铂–沸石催化剂芯。超加热反应塔，送入熔融石蜡或重油与压缩氢气。"
+  },
+  "downstream_materials.outlet": {
+    "en_us": "Send synthetic naphtha and light gas back to fractionation, using separate outlets or filters.",
+    "ja_jp": "合成ナフサと軽質ガスは別々の出口かフィルターを使い、分留工程に戻します。",
+    "zh_cn": "用独立出料口或过滤器将石脑油和轻质气送回分馏。"
+  },
+  "downstream_materials.polymer": {
+    "en_us": "With the Ziegler–Natta core and normal heat, make polyethylene or polypropylene melt. Cool it in a mixer, then press the material.",
+    "ja_jp": "チーグラー・ナッタ触媒コアと通常の加熱で、ポリエチレンやポリプロピレンの溶融物を作ります。ミキサーで冷却し、プレスで成形します。",
+    "zh_cn": "用齐格勒–纳塔催化剂芯和普通加热制聚乙烯或聚丙烯熔体。用搅拌机冷却后再压制成型。"
+  },
+  "downstream_materials.phenolic": {
+    "en_us": "Use a cumene core and an oxidation core in separate stages. The phenol from this line feeds a sealed stirred vessel for phenolic resin.",
+    "ja_jp": "クメン触媒と酸化触媒を別工程で使います。取り出したフェノールを密閉撹拌容器に送り、フェノール樹脂を作ります。",
+    "zh_cn": "分段使用异丙苯催化剂芯和氧化催化剂芯。将分离的苯酚送到密闭搅拌容器制取酚醛树脂。"
+  },
+  "downstream_materials.rubber": {
+    "en_us": "Fractionate BTX for benzene and naphtha for butadiene. Follow the styrene and rubber recipes with R and U in JEI.",
+    "ja_jp": "BTXからベンゼンを、合成ナフサからブタジエンを分留します。JEIのRとUでスチレンと合成ゴムの工程をたどれます。",
+    "zh_cn": "分馏 BTX 获得苯，分馏石脑油获得丁二烯。用 JEI 的 R 与 U 查看苯乙烯和橡胶工序。"
+  },
+  "liquid_fertilizer.title": {
+    "en_us": "Applying liquid fertilizer",
+    "ja_jp": "液体肥料を散布する",
+    "zh_cn": "施用液体肥料"
+  },
+  "liquid_fertilizer.fill": {
+    "en_us": "Pipe liquid fertilizer into a Create Spout. Put an empty chemical sprayer on the depot under it.",
+    "ja_jp": "パイプでCreateのスポウトに液体肥料を送ります。真下のデポに空の薬剤散布機を置きます。",
+    "zh_cn": "用管道将液体肥料送入 Create 注液器。在下方置物台放置空的化学喷雾器。"
+  },
+  "liquid_fertilizer.refill": {
+    "en_us": "The Spout can top up a sprayer carrying the same fertilizer.",
+    "ja_jp": "同じ液体肥料が入っている散布機には、スポウトで継ぎ足せます。",
+    "zh_cn": "注液器可以补充喷雾器内已有的同种液体肥料。"
+  },
+  "liquid_fertilizer.spray": {
+    "en_us": "Aim at the crop or its farmland and use the sprayer. Each application uses 100 mB on a 3×3 plot.",
+    "ja_jp": "作物かその耕地に向けて散布機を使います。1回に100 mBを消費し、3×3へ散布します。",
+    "zh_cn": "对准作物或其耕地使用喷雾器。每次消耗 100 mB，覆盖 3×3 农田。"
+  },
+  "liquid_fertilizer.harvest": {
+    "en_us": "Harvest treated crops while the fertilizer is active to collect extra produce.",
+    "ja_jp": "肥料の効果が続いている間に成熟した作物を収穫すると、収穫物が増えます。",
+    "zh_cn": "在肥效持续期间收获成熟作物，可额外获得农产品。"
   }
 }

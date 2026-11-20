@@ -1,0 +1,14 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:phenolic_resin"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:phenolic_board",
+      "count": 1
+    }
+  ]
+}

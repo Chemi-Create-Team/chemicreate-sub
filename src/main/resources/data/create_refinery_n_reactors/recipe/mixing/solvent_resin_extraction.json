@@ -1,0 +1,24 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "minecraft:spruce_log"
+    },
+    {
+      "type": "neoforge:tag",
+      "tag": "create_refinery_n_reactors:resin_recovery_solvents",
+      "amount": 200
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:industrial_resin",
+      "count": 1
+    },
+    {
+      "id": "create_refinery_n_reactors:recovered_solvent",
+      "amount": 150
+    }
+  ],
+  "processing_time": 110
+}

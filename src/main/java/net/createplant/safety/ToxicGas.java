@@ -60,7 +60,7 @@ public final class ToxicGas {
         Map.entry("hydrogen_gas", false), Map.entry("pressurised_hydrogen", false), Map.entry("compressed_hydrogen", false),
         Map.entry("deuterium_gas", false), Map.entry("synthesis_gas", false), Map.entry("compressed_synthesis_feed", false),
         Map.entry("ethylene", true), Map.entry("propylene", true), Map.entry("hot_olefins", true),
-        Map.entry("cooled_olefins", true), Map.entry("ft_offgas", true));
+        Map.entry("cooled_olefins", true), Map.entry("ft_offgas", true), Map.entry("butadiene", true));
     private static final Set<String> CAUSTIC_SCRUBBABLE = Set.of("chlorine", "liquid_chlorine", "hydrogen_chloride", "hydrogen_sulfide", "sulfur_dioxide", "liquid_sulfur_dioxide",
         "sulfur_trioxide", "nitrogen_dioxide", "hydrogen_fluoride", "fluorine");
     public static final int EFFECT_TICKS = 60, OUTDOOR_DIVISOR = 3;

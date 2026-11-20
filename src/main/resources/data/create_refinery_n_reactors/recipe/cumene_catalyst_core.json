@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " Q ",
+    "MCM",
+    " Q "
+  ],
+  "key": {
+    "Q": {
+      "item": "minecraft:quartz"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:zsm5_catalyst_core"
+    },
+    "M": {
+      "tag": "c:plates/stainless_steel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cumene_catalyst_core",
+    "count": 1
+  }
+}

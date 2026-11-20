@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:chlorobenzene",
+    "create_refinery_n_reactors:chlorotoluene",
+    "create_refinery_n_reactors:hexane",
+    "create_refinery_n_reactors:acetone",
+    "create_refinery_n_reactors:xylene",
+    "create_refinery_n_reactors:recovered_solvent"
+  ]
+}

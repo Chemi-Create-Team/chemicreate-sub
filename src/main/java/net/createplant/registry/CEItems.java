@@ -56,6 +56,12 @@ public class CEItems {
     public static final DeferredItem<Item> IRON_FT_CATALYST_CORE = ITEMS.registerSimpleItem("iron_ft_catalyst_core", catalyst());
     public static final DeferredItem<Item> COBALT_FT_CATALYST_CORE = ITEMS.registerSimpleItem("cobalt_ft_catalyst_core", catalyst());
     public static final DeferredItem<Item> ZSM5_CATALYST_CORE = ITEMS.registerSimpleItem("zsm5_catalyst_core", catalyst());
+    public static final DeferredItem<Item> CUMENE_CATALYST_CORE = ITEMS.registerSimpleItem("cumene_catalyst_core", catalyst());
+    public static final DeferredItem<Item> PLATINUM_ZEOLITE_CORE = ITEMS.registerSimpleItem("platinum_zeolite_core", catalyst());
+    public static final DeferredItem<Item> PHENOLIC_RESIN = ITEMS.registerSimpleItem("phenolic_resin");
+    public static final DeferredItem<Item> PHENOLIC_BOARD = ITEMS.registerSimpleItem("phenolic_board");
+    public static final DeferredItem<Item> PHOSPHATE_COMPOUND = ITEMS.registerSimpleItem("phosphate_compound");
+    public static final DeferredItem<Item> HEAT_RESISTANT_COATING = ITEMS.registerSimpleItem("heat_resistant_coating");
     public static final DeferredItem<Item> PARAFFIN_WAX = ITEMS.register("paraffin_wax",
         () -> new net.minecraft.world.item.HoneycombItem(new Item.Properties()));
     public static final DeferredItem<GasBucketItem> NITRIC_OXIDE_BUCKET = ITEMS.register("nitric_oxide_bucket",

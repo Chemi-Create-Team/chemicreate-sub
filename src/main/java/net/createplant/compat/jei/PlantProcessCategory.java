@@ -68,10 +68,16 @@ public class PlantProcessCategory implements IRecipeCategory<PlantProcess> {
     }
 
     private static void setDetailedRecipe(IRecipeLayoutBuilder builder, PlantProcess recipe) {
-        for (int i = 0; i < recipe.fluidOptions().size(); i++)
-            fluid(builder.addInputSlot(detailX(3, i), detailY(i)), recipe.fluidOptions().get(i));
-        for (int i = 0; i < recipe.fluidResults().size(); i++)
-            fluid(builder.addOutputSlot(detailX(DETAIL_OUTPUTS, i), detailY(i)), recipe.fluidResults().get(i));
+        int input = 0;
+        for (var options : recipe.items())
+            builder.addInputSlot(detailX(3, input), detailY(input++)).addItemStacks(options).setStandardSlotBackground();
+        for (var options : recipe.fluidOptions())
+            fluid(builder.addInputSlot(detailX(3, input), detailY(input++)), options);
+        int output = 0;
+        for (var result : recipe.results())
+            builder.addOutputSlot(detailX(DETAIL_OUTPUTS, output), detailY(output++)).addItemStack(result).setOutputSlotBackground();
+        for (var result : recipe.fluidResults())
+            fluid(builder.addOutputSlot(detailX(DETAIL_OUTPUTS, output), detailY(output++)), result);
         for (int i = 0; i < recipe.kept().size(); i++) {
             var catalyst = recipe.kept().get(i);
             builder.addSlot(RecipeIngredientRole.CATALYST, 72 + i * STEP, 34)
@@ -115,8 +121,8 @@ public class PlantProcessCategory implements IRecipeCategory<PlantProcess> {
         var conditions = recipe.conditions();
         var font = Minecraft.getInstance().font;
         arrow.draw(graphics, 63, 4);
-        drawAmounts(graphics, recipe.fluids(), 3);
-        drawAmounts(graphics, recipe.fluidResults(), DETAIL_OUTPUTS);
+        drawAmounts(graphics, recipe.fluids(), 3, recipe.items().size());
+        drawAmounts(graphics, recipe.fluidResults(), DETAIL_OUTPUTS, recipe.results().size());
         if (!recipe.kept().isEmpty()) {
             boolean wears = recipe.kept().getFirst().isDamageableItem();
             graphics.drawCenteredString(font, Component.translatable(CONDITION + (wears ? "catalyst_wear" : "catalyst")),
@@ -141,12 +147,12 @@ public class PlantProcessCategory implements IRecipeCategory<PlantProcess> {
         graphics.drawString(font, Component.translatable(CONDITION + "batch", conditions.minimumLevels()), 1, CAPTION, 0xFF4F4F4F, false);
     }
 
-    private static void drawAmounts(GuiGraphics graphics, List<FluidStack> fluids, int left) {
+    private static void drawAmounts(GuiGraphics graphics, List<FluidStack> fluids, int left, int offset) {
         var font = Minecraft.getInstance().font;
         for (int i = 0; i < fluids.size(); i++) {
             String amount = Integer.toString(fluids.get(i).getAmount());
-            graphics.drawString(font, amount, detailX(left, i) + (16 - font.width(amount)) / 2,
-                detailY(i) + 18, 0xFF4F4F4F, false);
+            graphics.drawString(font, amount, detailX(left, i + offset) + (16 - font.width(amount)) / 2,
+                detailY(i + offset) + 18, 0xFF4F4F4F, false);
         }
     }
 

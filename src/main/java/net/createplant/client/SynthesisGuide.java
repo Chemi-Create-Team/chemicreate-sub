@@ -21,9 +21,15 @@ public final class SynthesisGuide {
         "purified_syngas", "carbon_monoxide", "hydrogen_gas", "pressurised_carbon_monoxide", "pressurised_hydrogen",
         "compressed_hydrogen", "carbon_dioxide", "synthetic_crude_oil", "ft_offgas", "synthetic_naphtha",
         "low_sulfur_diesel", "molten_paraffin", "btx", "methanol", "ethylene", "propylene",
-        "molten_polyethylene", "molten_polypropylene", "warm_water", "lubricating_oil");
+        "molten_polyethylene", "molten_polypropylene", "warm_water", "lubricating_oil",
+        "benzene", "toluene", "xylene", "ethylbenzene", "styrene", "butadiene", "cumene", "cumene_process_liquor",
+        "phenol", "acetone", "formaldehyde_solution", "chlorobenzene", "chlorotoluene", "hexane", "recovered_solvent",
+        "liquid_fertilizer", "ethylene_dichloride", "vinyl_chloride", "chlorine", "hydrogen_chloride", "heavy_oil");
     private static final Set<String> ITEMS = Set.of("shift_catalyst_core", "iron_ft_catalyst_core", "cobalt_ft_catalyst_core",
-        "zsm5_catalyst_core", "industrial_resin", "paraffin_wax", "polyethylene", "polypropylene");
+        "zsm5_catalyst_core", "industrial_resin", "paraffin_wax", "polyethylene", "polypropylene",
+        "platinum_zeolite_core", "cumene_catalyst_core", "polymerization_catalyst", "phenolic_resin", "phenolic_board",
+        "molded_polymer", "pvc_resin", "synthetic_rubber", "phosphate_compound", "flame_retardant_pellet",
+        "heat_resistant_coating", "fire_resistant_conductor", "fire_resistant_cable");
 
     private SynthesisGuide() { }
 

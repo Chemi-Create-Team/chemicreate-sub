@@ -23,7 +23,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 public class SprayToolItem extends PortableFluidToolItem {
     public enum Kind { EXTINGUISHER, FLAME, LIQUID }
-    public static final int DOSE=20, INTERVAL=4, SOUND_INTERVAL=2;
+    public static final int DOSE=20, FERTILIZER_DOSE=100, INTERVAL=4, SOUND_INTERVAL=2;
     public static final TagKey<Fluid> FUELS=TagKey.create(Registries.FLUID,net.createplant.CreatePlant.location("spray_fuels"));
     private final Kind kind;
     public SprayToolItem(Kind kind,Properties properties) { super(properties);this.kind=kind; }
@@ -44,7 +44,7 @@ public class SprayToolItem extends PortableFluidToolItem {
 
     @Override protected InteractionResultHolder<ItemStack> beginUse(Level level,Player player,InteractionHand hand,ItemStack stack) {
         var fluid=PortableToolFluidHandler.contents(stack);
-        if(fluid.getAmount()<DOSE || !accepts(fluid)) {
+        if(fluid.getAmount()<dose(fluid) || !accepts(fluid)) {
             if(!level.isClientSide())player.displayClientMessage(Component.translatable("tooltip.create_refinery_n_reactors.spray.empty"),true);
             return InteractionResultHolder.fail(stack);
         }
@@ -60,10 +60,22 @@ public class SprayToolItem extends PortableFluidToolItem {
         if(!(level instanceof ServerLevel server) || !(entity instanceof Player player))return;
         if(elapsed%SOUND_INTERVAL==0)SprayEffects.sound(server,player,this);
         if(elapsed%INTERVAL!=0)return;
-        var handler=new PortableToolFluidHandler(stack);var fluid=handler.drain(DOSE,FluidAction.SIMULATE);
-        if(fluid.getAmount()!=DOSE || !accepts(fluid)){entity.stopUsingItem();return;}
-        if(!player.getAbilities().instabuild)handler.drain(DOSE,FluidAction.EXECUTE);
-        SprayEffects.spray(server,player,stack,fluid,this);
+        var handler=new PortableToolFluidHandler(stack);var fluid=PortableToolFluidHandler.contents(stack);
+        int amount=dose(fluid);
+        if(fluid.getAmount()<amount || !accepts(fluid)){entity.stopUsingItem();return;}
+        if (isFertilizer(fluid)) {
+            if (SprayEffects.fertilize(server,player,stack,range()) && !player.getAbilities().instabuild)
+                handler.drain(amount,FluidAction.EXECUTE);
+            return;
+        }
+        if(!player.getAbilities().instabuild)handler.drain(amount,FluidAction.EXECUTE);
+        SprayEffects.spray(server,player,stack,fluid.copyWithAmount(amount),this);
+    }
+    private int dose(FluidStack fluid) {
+        return isFertilizer(fluid) ? FERTILIZER_DOSE : DOSE;
+    }
+    private boolean isFertilizer(FluidStack fluid) {
+        return kind==Kind.LIQUID && fluid.is(CEProcessFluids.LIQUID_FERTILIZER.get());
     }
     @Override public int getBarColor(ItemStack stack) { return kind==Kind.FLAME ? 0xe78c35 : kind==Kind.EXTINGUISHER ? 0xd8e5df : 0x50aeb8; }
     @Override public void appendHoverText(ItemStack stack,TooltipContext context,List<Component> tooltip,TooltipFlag flag) {

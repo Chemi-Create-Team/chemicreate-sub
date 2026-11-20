@@ -1,0 +1,23 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:phosphate_fertilizer"
+    },
+    {
+      "item": "create_refinery_n_reactors:borax"
+    },
+    {
+      "type": "neoforge:single",
+      "fluid": "minecraft:water",
+      "amount": 250
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:phosphate_compound",
+      "count": 3
+    }
+  ],
+  "processing_time": 100
+}

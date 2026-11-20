@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:cumene_catalyst_core"
+    },
+    {
+      "tag": "c:plates/stainless_steel"
+    },
+    {
+      "item": "minecraft:quartz"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:cumene_catalyst_core",
+    "count": 1
+  }
+}

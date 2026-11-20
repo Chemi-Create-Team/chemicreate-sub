@@ -32,6 +32,8 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         }
         helper.forComponents(CreatePlant.location("fire_extinguisher"),CreatePlant.location("flamethrower"),CreatePlant.location("chemical_sprayer"))
             .addStoryBoard("plant/portable_sprayers",PortableSprayerPonderScenes::tools);
+        helper.forComponents(CreatePlant.location("chemical_sprayer"), CreatePlant.location("liquid_fertilizer_bucket"))
+            .addStoryBoard("plant/liquid_fertilizer", CropSprayerPonderScenes::fertilize);
         helper.forComponents(CreatePlant.location("steam_gun")).addStoryBoard("plant/steam_gun", SteamGunPonderScenes::controls);
         helper.forComponents(CreatePlant.location("steam_hammer")).addStoryBoard("plant/steam_hammer", SteamHammerPonderScenes::controls);
         helper.forComponents(CreatePlant.location("ammonium_nitrate"), CreatePlant.location("ammonium_sulfate"),
@@ -140,6 +142,10 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
                 CreatePlant.location("zsm5_catalyst_core"), CreatePlant.location("purified_syngas_bucket"),
                 CreatePlant.location("btx_bucket"))
             .addStoryBoard("plant/reaction_tower", ReactionTowerPonderScenes::synthesis);
+        helper.forComponents(CreatePlant.location("reaction_tower"), CreatePlant.location("platinum_zeolite_core"),
+                CreatePlant.location("cumene_catalyst_core"), CreatePlant.location("phenolic_board"),
+                CreatePlant.location("molded_polymer"), CreatePlant.location("synthetic_rubber"))
+            .addStoryBoard("plant/reaction_tower", ReactionTowerPonderScenes::materials);
         helper.forComponents(CreatePlant.location("ammonia_separator"))
             .addStoryBoard("chemistry/ammonia_separator", AmmoniaSeparatorPonderScenes::separator);
         helper.forComponents(
