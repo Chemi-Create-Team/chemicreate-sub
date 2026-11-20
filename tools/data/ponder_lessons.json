@@ -4055,9 +4055,9 @@
     "zh_cn": "将设施建造机朝向施工场地。前方缺少的方块会以带纹理的半透明模型显示。"
   },
   "facility_constructor.select": {
-    "en_us": "Right-click and choose a fission reactor, fusion reactor or cooling tower in the right panel. Each facility remembers its selected size.",
-    "ja_jp": "右クリックし、右側の欄で核分裂炉・核融合炉・冷却塔を選びます。設備ごとに選んだサイズを保持します。",
-    "zh_cn": "右键打开右侧面板，选择裂变堆、聚变堆或冷却塔。每种设施会分别记住选择的尺寸。"
+    "en_us": "The right panel also offers a circular casing tank and a clarifier. Both use odd diameters from 7 to 29 and remember their sizes independently.",
+    "ja_jp": "右側で円形タンクと沈殿池も選べます。どちらも直径7〜29の奇数で、寸法を別々に記憶します。",
+    "zh_cn": "右侧也可选择圆形储罐或沉淀池。两者都使用7至29的奇数直径，并各自保存尺寸。"
   },
   "facility_constructor.supply": {
     "en_us": "Put building materials in an adjacent chest and gunpowder in the fuel slot. No schematic item is needed.",
@@ -4520,9 +4520,9 @@
     "zh_cn": "加热搅拌：3份粉碎矿石＋750 mB酸＋250 mB氧化气体生成4000 mB矿浆。"
   },
   "wet_processing.clarifier": {
-    "en_us": "Arrange full blocks along a grid circle. Select every diameter from 7 to 30 blocks, including even sizes, and heights 3 or 4 independently in the facility constructor.",
-    "ja_jp": "通常のブロックを円周に沿って配置。施設建設機で直径7〜30を1ブロック刻み、高さ3・4を独立して選択できます。",
-    "zh_cn": "沿网格圆周摆放完整方块。在设施建造器中以1格步进选择直径7到30（含偶数），独立选择高度3或4。"
+    "en_us": "Build an odd circular tank from tank casings. Place the center drive at rim height and replace the center floor block with a downward-facing inlet.",
+    "ja_jp": "タンク構成ブロックで奇数径の円形タンクを作ります。縁と同じ高さの中央に駆動部を置き、床中央を下向きの流入口に替えます。",
+    "zh_cn": "用储罐外壳建造奇数直径的圆形储罐。在罐沿高度的中心安装驱动器，并把底板中心换成朝下的进料口。"
   },
   "wet_processing.slow": {
     "en_us": "Reduce the center drive to 1–4 RPM. Per 1000 mB slurry, collect 750 mB clear solution at the rim and two tailings mud below. One flocculant inserted at the mud port halves the 200-tick cycle.",

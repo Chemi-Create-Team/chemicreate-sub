@@ -71,7 +71,7 @@ public class FacilityConstructorScreen extends SchematicannonScreen {
         for (int i = 0; i < sizes.size(); i++) {
             var options = AssemblyPlan.sizes(be.kind());
             var button = sizes.get(i);
-            button.visible = be.kind() != AssemblyPlan.Kind.CLARIFIER && i < options.size();
+            button.visible = !be.kind().isCircularTank() && i < options.size();
             if (button.visible) {
                 int spacing = 140 / options.size();
                 button.setX(leftPos + 234 + i * spacing);button.setWidth(spacing - 2);
@@ -81,12 +81,12 @@ public class FacilityConstructorScreen extends SchematicannonScreen {
         }
         for (int i = 0; i < diameterControls.size(); i++) {
             var button = diameterControls.get(i);
-            button.visible = be.kind() == AssemblyPlan.Kind.CLARIFIER;
+            button.visible = be.kind().isCircularTank();
             button.active = be.canConfigure() && (i == 0 ? be.sizeIndex() > 0 : be.sizeIndex() < AssemblyPlan.sizes(be.kind()).size() - 1);
         }
         for (int i = 0; i < heights.size(); i++) {
-            heights.get(i).visible = be.kind() == AssemblyPlan.Kind.RBMK || be.kind() == AssemblyPlan.Kind.CLARIFIER;
-            heights.get(i).setMessage(Component.literal((be.kind() == AssemblyPlan.Kind.CLARIFIER ? net.createplant.block.WetProcessStructure.CLARIFIER_HEIGHTS : AssemblyPlan.CORE_HEIGHTS).get(i).toString()));
+            heights.get(i).visible = be.kind() == AssemblyPlan.Kind.RBMK || be.kind().isCircularTank();
+            heights.get(i).setMessage(Component.literal(be.kind().heights().get(i).toString()));
             heights.get(i).active = be.canConfigure() && i != be.heightIndex();
         }
     }
@@ -109,12 +109,12 @@ public class FacilityConstructorScreen extends SchematicannonScreen {
         graphics.fill(x + 1, y + 1, x + 159, y + 217, 0xFFDBD6C9);
         graphics.fill(x + 3, y + 3, x + 157, y + 215, 0xFFB8B4A8);
         graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor.facility"), x + 10, y + 10, 0x383830, false);
-        String label = be.kind() == AssemblyPlan.Kind.CLARIFIER ? "basin_diameter" : be.kind() == AssemblyPlan.Kind.RBMK ? "diameter" : "width";
+        String label = be.kind().isCircularTank() ? "basin_diameter" : be.kind() == AssemblyPlan.Kind.RBMK ? "diameter" : "width";
         graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor." + label, be.selectedSize()), x + 10, y + 104, 0x383830, false);
-        if (be.kind() == AssemblyPlan.Kind.CLARIFIER)
+        if (be.kind().isCircularTank())
             graphics.drawCenteredString(font, Component.literal(Integer.toString(be.selectedSize())), x + 80, y + 125, 0xFFFFFF);
-        if (be.kind() == AssemblyPlan.Kind.RBMK || be.kind() == AssemblyPlan.Kind.CLARIFIER)
-            graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor." + (be.kind() == AssemblyPlan.Kind.CLARIFIER ? "basin_height" : "core_height"), be.planHeight()), x + 10, y + 145, 0x383830, false);
+        if (be.kind() == AssemblyPlan.Kind.RBMK || be.kind().isCircularTank())
+            graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor." + (be.kind().isCircularTank() ? "basin_height" : "core_height"), be.planHeight()), x + 10, y + 145, 0x383830, false);
         var dimensions = be.dimensions();
         graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor.dimensions", dimensions.width(), dimensions.depth(), dimensions.height()), x + 10, y + 187, 0x383830, false);
         graphics.drawString(font, Component.translatable("menu.create_refinery_n_reactors.facility_constructor." + (be.canConfigure() ? "preview" : "stop_to_configure")), x + 10, y + 202, 0x383830, false);

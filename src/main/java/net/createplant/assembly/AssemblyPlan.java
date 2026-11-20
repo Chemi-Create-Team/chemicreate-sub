@@ -29,11 +29,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  */
 public final class AssemblyPlan {
     public enum Kind {
-        RBMK("rbmk"), FUSION("fusion"), COOLING_TOWER("cooling_tower"), CLARIFIER("clarifier");
+        RBMK("rbmk"), FUSION("fusion"), COOLING_TOWER("cooling_tower"), CLARIFIER("clarifier"), CASING_TANK("casing_tank");
 
         public final String id;
         Kind(String id) { this.id = id; }
         public boolean hasServiceCrane() { return this == RBMK || this == FUSION; }
+        public boolean isCircularTank() { return this == CLARIFIER || this == CASING_TANK; }
+        public List<Integer> heights() { return isCircularTank() ? net.createplant.block.WetProcessStructure.CLARIFIER_HEIGHTS : CORE_HEIGHTS; }
     }
 
     public static final List<Integer> CORE_HEIGHTS = List.of(ReactorPhysics.COMPACT_CORE_HEIGHT, ReactorPhysics.CORE_HEIGHT);
@@ -44,7 +46,7 @@ public final class AssemblyPlan {
             case RBMK -> ReactorCoreVariants.RECOMMENDED_DIAMETERS;
             case FUSION -> FusionStructure.WIDTHS;
             case COOLING_TOWER -> CoolingTowerStructure.WIDTHS;
-            case CLARIFIER -> net.createplant.block.WetProcessStructure.CLARIFIER_WIDTHS;
+            case CLARIFIER, CASING_TANK -> net.createplant.block.WetProcessStructure.CLARIFIER_WIDTHS;
         };
     }
 
@@ -57,18 +59,18 @@ public final class AssemblyPlan {
     private AssemblyPlan() { }
 
     public static List<Target> targets(Kind kind, BlockPos base, Direction facing, int size, int coreHeight) {
-        if (!sizes(kind).contains(size) || !(kind == Kind.CLARIFIER ? net.createplant.block.WetProcessStructure.CLARIFIER_HEIGHTS : CORE_HEIGHTS).contains(coreHeight)) throw new IllegalArgumentException("Unsupported facility dimensions");
+        if (!sizes(kind).contains(size) || !kind.heights().contains(coreHeight)) throw new IllegalArgumentException("Unsupported facility dimensions");
         return switch (kind) {
             case RBMK -> rbmk(base, facing, size, coreHeight);
             case FUSION -> fusion(base, facing, size);
             case COOLING_TOWER -> coolingTower(base, facing, size);
-            case CLARIFIER -> wetProcess(base, facing, size, coreHeight);
+            case CLARIFIER, CASING_TANK -> wetProcess(kind, base, facing, size, coreHeight);
         };
     }
 
     public static String fileName(Kind kind, Direction facing, int size, int coreHeight) {
-        return kind.id + (kind.hasServiceCrane() ? "_crane_" : "_") + size
-            + (kind == Kind.RBMK || kind == Kind.CLARIFIER ? "_h" + coreHeight : "") + "_" + facing.getSerializedName() + ".nbt";
+        return kind.id + (kind.hasServiceCrane() ? "_crane_" : kind == Kind.CLARIFIER ? "_casing_" : "_") + size
+            + (kind == Kind.RBMK || kind.isCircularTank() ? "_h" + coreHeight : "") + "_" + facing.getSerializedName() + ".nbt";
     }
 
     public static Dimensions dimensions(Kind kind, int size, int height) {
@@ -77,7 +79,7 @@ public final class AssemblyPlan {
             case RBMK -> rbmkCraneRailY(height) + 1;
             case FUSION -> FUSION_CRANE_RAIL_Y + 1;
             case COOLING_TOWER -> CoolingTowerStructure.SIZES.get(sizes(kind).indexOf(size)).height();
-            case CLARIFIER -> height;
+            case CLARIFIER, CASING_TANK -> height;
         };
         return kind.hasServiceCrane() ? new Dimensions(width + 2, width + 1, totalHeight) : new Dimensions(width, width, totalHeight);
     }
@@ -107,10 +109,11 @@ public final class AssemblyPlan {
             .setValue(CraneDriveBlock.FACING, facing).setValue(BlockStateProperties.AXIS, facing.getAxis()), settings));
     }
 
-    private static List<Target> wetProcess(BlockPos base, Direction facing, int width, int height) {
-        var drive = base.relative(facing, width / 2 + 1).above(height - 1);
-        return net.createplant.block.WetProcessStructure.cells(drive, facing.getOpposite(), width, height).stream()
-            .map(cell -> new Target(cell.pos(), cell.state())).toList();
+    private static List<Target> wetProcess(Kind kind, BlockPos base, Direction facing, int width, int height) {
+        var floor = base.relative(facing, width / 2 + 1);
+        var cells = kind == Kind.CASING_TANK ? net.createplant.block.WetProcessStructure.tankCells(floor, width, height)
+            : net.createplant.block.WetProcessStructure.cells(floor.above(height - 1), facing.getOpposite(), width, height);
+        return cells.stream().map(cell -> new Target(cell.pos(), cell.state())).toList();
     }
 
     private static List<Target> fusion(BlockPos base, Direction facing, int width) {

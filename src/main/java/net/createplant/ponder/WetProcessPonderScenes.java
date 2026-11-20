@@ -41,7 +41,7 @@ public final class WetProcessPonderScenes {
         caption(scene, util, clarifier.below(), "clarifier");
         scene.world().setKineticSpeed(util.select().fromTo(17, 5, 13, 17, 7, 13), 2);
         preview(scene, clarifier, "clarifying");
-        scene.overlay().showControls(util.vector().centerOf(17, 2, 6), Pointing.DOWN, 60).withItem(CEWetProcessing.FLOCCULANT.toStack());
+        scene.overlay().showControls(util.vector().centerOf(17, 2, 5), Pointing.DOWN, 60).withItem(CEWetProcessing.FLOCCULANT.toStack());
         caption(scene, util, clarifier, "slow");
         scene.world().setKineticSpeed(util.select().fromTo(17, 5, 13, 17, 7, 13), 12);preview(scene, clarifier, "dirty");
         caption(scene, util, clarifier, "fast");
@@ -49,7 +49,7 @@ public final class WetProcessPonderScenes {
         scene.world().setKineticSpeed(util.select().fromTo(17, 5, 13, 17, 7, 13), 0);preview(scene, clarifier, "stagnant");
         caption(scene, util, new BlockPos(17, 2, 7), "stopped");
         scene.world().setKineticSpeed(util.select().fromTo(17, 5, 13, 17, 7, 13), 2);preview(scene, clarifier, "clarifying");
-        scene.overlay().showControls(util.vector().centerOf(17, 2, 6), Pointing.DOWN, 60).withItem(CEWetProcessing.TAILINGS.toStack());
+        scene.overlay().showControls(util.vector().centerOf(17, 2, 5), Pointing.DOWN, 60).withItem(CEWetProcessing.TAILINGS.toStack());
         caption(scene, util, new BlockPos(17, 5, 20), "recycle");scene.markAsFinished();
     }
     private static void preview(CreateSceneBuilder scene, BlockPos pos, String status) {
@@ -57,7 +57,7 @@ public final class WetProcessPonderScenes {
             var slurry = new FluidStack(CEWetProcessing.SLURRIES.get("copper_leach_slurry").get(), 24000);
             var clear = new FluidStack(CEMetals.COPPER_SULFATE_SOLUTION.get(), 16000);
             if (status.equals("dirty")) clear.set(CEThermal.SUSPENDED_IMPURITY.get(), 615);
-            be.preview(14, 4, slurry, status.equals("turbulent") ? slurry : clear, status);
+            be.preview(15, 4, slurry, status.equals("turbulent") ? slurry : clear, status);
         });
     }
     private static void caption(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos pos, String key) { PonderText.caption(scene, util.vector().centerOf(pos), LANG + key, 150); }

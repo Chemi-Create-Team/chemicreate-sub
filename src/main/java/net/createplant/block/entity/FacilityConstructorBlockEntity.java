@@ -27,8 +27,8 @@ import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
 public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
     private AssemblyPlan.Kind kind = AssemblyPlan.Kind.RBMK;
-    private final int[] sizeIndices = {0, 0, 1, 0};
-    private int heightIndex = 1, clarifierHeightIndex;
+    private final int[] sizeIndices = {0, 0, 1, 0, 0};
+    private int heightIndex = 1, clarifierHeightIndex, casingTankHeightIndex;
     private List<AssemblyPlan.Target> plan;
     private String planKey, preparedKey;
     private AABB bounds;
@@ -43,8 +43,8 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
     public int sizeIndex() { return sizeIndex(kind); }
     public int sizeIndex(AssemblyPlan.Kind selection) { return sizeIndices[selection.ordinal()]; }
     public int coreSize() { return ReactorCoreVariants.RECOMMENDED_DIAMETERS.get(sizeIndices[0]); }
-    public int heightIndex() { return kind == AssemblyPlan.Kind.CLARIFIER ? clarifierHeightIndex : heightIndex; }
-    public int planHeight() { return kind == AssemblyPlan.Kind.CLARIFIER ? net.createplant.block.WetProcessStructure.CLARIFIER_HEIGHTS.get(clarifierHeightIndex) : coreHeight(); }
+    public int heightIndex() { return switch (kind) { case CLARIFIER -> clarifierHeightIndex; case CASING_TANK -> casingTankHeightIndex; default -> heightIndex; }; }
+    public int planHeight() { return kind.heights().get(heightIndex()); }
     public int coreHeight() { return AssemblyPlan.CORE_HEIGHTS.get(heightIndex); }
     public int selectedSize() { return AssemblyPlan.sizes(kind).get(sizeIndex()); }
     public AssemblyPlan.Dimensions dimensions() { return AssemblyPlan.dimensions(kind, selectedSize(), planHeight()); }
@@ -73,8 +73,12 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
     }
 
     public boolean configureHeight(int index) {
-        if (!canConfigure() || kind != AssemblyPlan.Kind.RBMK && kind != AssemblyPlan.Kind.CLARIFIER || index < 0 || index >= AssemblyPlan.CORE_HEIGHTS.size()) return false;
-        if (kind == AssemblyPlan.Kind.CLARIFIER) clarifierHeightIndex = index;else heightIndex = index;
+        if (!canConfigure() || kind != AssemblyPlan.Kind.RBMK && !kind.isCircularTank() || index < 0 || index >= kind.heights().size()) return false;
+        switch (kind) {
+            case CLARIFIER -> clarifierHeightIndex = index;
+            case CASING_TANK -> casingTankHeightIndex = index;
+            default -> heightIndex = index;
+        }
         planChanged();
         return true;
     }
@@ -156,7 +160,8 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
     @Override public void write(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.write(tag, lookup, packet);
         tag.putInt("Facility", kind.ordinal());tag.putInt("CoreSize", sizeIndices[0]);tag.putBoolean("Completed", completed);
-        tag.putInt("ClarifierSize", sizeIndices[3]);tag.putInt("ClarifierHeight", clarifierHeightIndex);
+        tag.putInt("ClarifierOddSize", sizeIndices[3]);tag.putInt("ClarifierHeight", clarifierHeightIndex);
+        tag.putInt("CasingTankSize", sizeIndices[4]);tag.putInt("CasingTankHeight", casingTankHeightIndex);
         tag.putInt("FusionSize", sizeIndices[1]);tag.putInt("TowerSize", sizeIndices[2]);tag.putInt("CoreHeight", heightIndex);
     }
 
@@ -166,7 +171,10 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
         sizeIndices[0] = Math.clamp(tag.getInt("CoreSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.RBMK).size() - 1);
         sizeIndices[1] = Math.clamp(tag.getInt("FusionSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.FUSION).size() - 1);
         sizeIndices[2] = tag.contains("TowerSize") ? Math.clamp(tag.getInt("TowerSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.COOLING_TOWER).size() - 1) : 1;
-        sizeIndices[3] = Math.clamp(tag.getInt("ClarifierSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.CLARIFIER).size() - 1);
+        int clarifierIndex = tag.contains("ClarifierOddSize") ? tag.getInt("ClarifierOddSize") : tag.getInt("ClarifierSize") / 2;
+        sizeIndices[3] = Math.clamp(clarifierIndex, 0, AssemblyPlan.sizes(AssemblyPlan.Kind.CLARIFIER).size() - 1);
+        sizeIndices[4] = Math.clamp(tag.getInt("CasingTankSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.CASING_TANK).size() - 1);
+        casingTankHeightIndex = Math.clamp(tag.getInt("CasingTankHeight"), 0, AssemblyPlan.Kind.CASING_TANK.heights().size() - 1);
         heightIndex = tag.contains("CoreHeight") ? Math.clamp(tag.getInt("CoreHeight"), 0, AssemblyPlan.CORE_HEIGHTS.size() - 1) : 1;
         clarifierHeightIndex = Math.clamp(tag.getInt("ClarifierHeight"), 0, 1);
         completed = tag.getBoolean("Completed");

@@ -72,6 +72,9 @@ public final class TankStructure {
 
     /** Checks one candidate whose floor footprint starts at {@code origin}. */
     public static Result inspect(Level level, BlockPos origin, int diameter) {
+        BlockPos center = origin.offset((diameter - 1) / 2, 0, (diameter - 1) / 2);
+        if (!isReadable(level, center)) return Result.failed("unloaded");
+        if (!isCasing(level, center)) return Result.failed("floor");
         for (int x = 0; x < diameter; x++) {
             for (int z = 0; z < diameter; z++) {
                 BlockPos at = origin.offset(x, 0, z);

@@ -6,6 +6,7 @@ import com.simibubi.create.content.fluids.particle.FluidParticleData;
 import net.createplant.CreatePlant;
 import net.createplant.block.ProcessPorts;
 import net.createplant.block.entity.GasifierBlockEntity;
+import net.createplant.block.entity.TankCasingBlockEntity;
 import net.createplant.block.entity.WetProcessPartBlockEntity;
 import net.createplant.chemistry.ChemicalReadout;
 import net.createplant.thermal.FluidMaterials;
@@ -86,6 +87,7 @@ public final class ProcessPortInteraction {
         }
         if (be instanceof GasifierBlockEntity gasifier) return gasifier.takeIdleFeed(face, simulate);
         if (be instanceof WetProcessPartBlockEntity part && part.owner() != null) return part.owner().takeFlocculant(simulate);
+        if (be instanceof TankCasingBlockEntity casing && casing.clarifier() != null) return casing.clarifier().takeFlocculant(simulate);
         return ItemStack.EMPTY;
     }
 

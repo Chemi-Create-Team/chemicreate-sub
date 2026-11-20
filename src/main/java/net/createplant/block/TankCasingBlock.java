@@ -89,6 +89,7 @@ public class TankCasingBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
             BlockHitResult hit) {
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof TankCasingBlockEntity casing) {
+            if (casing.clarifier() != null) return InteractionResult.PASS;
             casing.refresh();
             TankCasingBlockEntity tank = casing.getTank();
             if (tank != null) {

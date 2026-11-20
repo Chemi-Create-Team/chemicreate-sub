@@ -17,7 +17,7 @@
       "item": "create:precision_mechanism"
     },
     "T": {
-      "item": "create_refinery_n_reactors:clarifier_basin_wall"
+      "item": "create_refinery_n_reactors:tank_casing"
     }
   },
   "result": {

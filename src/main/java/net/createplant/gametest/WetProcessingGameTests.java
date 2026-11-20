@@ -32,7 +32,7 @@ public final class WetProcessingGameTests {
     private static FluidStack slurry(int amount) { return new FluidStack(CEWetProcessing.SLURRIES.get("copper_leach_slurry").get(), amount); }
     private static void run(WetProcessBlockEntity be, int ticks) { for (int i = 0; i < ticks; i++) be.process(); }
     @GameTest(template = "test_wet_processing", timeoutTicks = 200)
-    public static void everyIntegerDiameterHeightAndFacingUseTheSameGridCircle(GameTestHelper h) {
+    public static void everyOddDiameterHeightAndFacingUsesTheTankGridCircle(GameTestHelper h) {
         for (int width : WetProcessStructure.CLARIFIER_WIDTHS) for (int height : WetProcessStructure.CLARIFIER_HEIGHTS) for (Direction front : Direction.Plane.HORIZONTAL) {
             var cells = WetProcessStructure.cells(BlockPos.ZERO, front, width, height);
             var states = cells.stream().collect(java.util.stream.Collectors.toMap(WetProcessStructure.Cell::pos, WetProcessStructure.Cell::state));
@@ -40,8 +40,8 @@ public final class WetProcessingGameTests {
             h.assertTrue(positions.size() == cells.size(), "Each cell occurs once");
             var bounds = new net.minecraft.world.phys.AABB(positions.iterator().next());
             for (var pos : positions) bounds = bounds.minmax(new net.minecraft.world.phys.AABB(pos));
-            h.assertTrue(bounds.getXsize() == width && bounds.getZsize() == width && bounds.getYsize() == height, "Exact dimensions include even diameters: " + width + "/" + height + "/" + front);
-            for (var cell : cells) if (cell.state().is(CEWetProcessing.PARTS.get(BASIN).get()))
+            h.assertTrue(bounds.getXsize() == width && bounds.getZsize() == width && bounds.getYsize() == height, "Exact odd dimensions: " + width + "/" + height + "/" + front);
+            for (var cell : cells) if (cell.state().is(CEBlocks.TANK_CASING.get()))
                 h.assertTrue(cell.state().getCollisionShape(h.getLevel(), h.absolutePos(cell.pos())).bounds().equals(new net.minecraft.world.phys.AABB(0,0,0,1,1,1)), "The circle uses whole cubes, without corner cuts");
             var base = new BlockPos(0, -height + 1, 0).relative(front, width / 2 + 1);
             var plan = AssemblyPlan.targets(AssemblyPlan.Kind.CLARIFIER, base, front.getOpposite(), width, height);
@@ -50,9 +50,9 @@ public final class WetProcessingGameTests {
         h.succeed();
     }
     @GameTest(template = "test_wet_processing", timeoutTicks = 200)
-    public static void maximumOddAndEvenTanksFormAndSaveConstructorDimensions(GameTestHelper h) {
+    public static void oddTanksFormAndConstructorRemembersEachPlan(GameTestHelper h) {
         var root = new BlockPos(16, 6, 16);
-        for (int width : new int[]{7,8,29,30}) for (int height : WetProcessStructure.CLARIFIER_HEIGHTS) {
+        for (int width : new int[]{7,9,27,29}) for (int height : WetProcessStructure.CLARIFIER_HEIGHTS) {
             var be = assemble(h, root, width, height, Direction.SOUTH);
             h.assertTrue(be.width() == width && be.height() == height && be.calculateStressApplied() == 8, "Actual circle forms with the exact selected dimensions");
             for (var cell : WetProcessStructure.cells(h.absolutePos(root), Direction.SOUTH, width, height)) h.getLevel().setBlock(cell.pos(), Blocks.AIR.defaultBlockState(), 3);
@@ -65,22 +65,55 @@ public final class WetProcessingGameTests {
             var lookup=h.getLevel().registryAccess();constructor.loadWithComponents(constructor.saveWithoutMetadata(lookup),lookup);
             h.assertTrue(constructor.selectedSize()==size && constructor.totalHeight()==height, "Independent dimensions persist across reload");
         }
-        h.assertTrue(!constructor.configure(AssemblyPlan.Kind.CLARIFIER.ordinal(),24) && !constructor.configureHeight(2), "Out-of-range requests are rejected on the server");h.succeed();
+        h.assertTrue(!constructor.configure(AssemblyPlan.Kind.CLARIFIER.ordinal(),24) && !constructor.configureHeight(2), "Out-of-range requests are rejected on the server");
+        h.assertTrue(constructor.configure(AssemblyPlan.Kind.CASING_TANK.ordinal(), 4) && constructor.configureHeight(0), "The storage layout owns a separate dimension selection");
+        var lookup = h.getLevel().registryAccess();constructor.loadWithComponents(constructor.saveWithoutMetadata(lookup), lookup);
+        h.assertTrue(constructor.selectedSize() == 15 && constructor.totalHeight() == 3 && constructor.sizeIndex(AssemblyPlan.Kind.CLARIFIER) == 11, "Tank settings persist without replacing clarifier settings");
+        h.succeed();
+    }
+    @GameTest(template = "test_wet_processing")
+    public static void constructorTankConvertsWithJustTheTwoCenterParts(GameTestHelper h) {
+        var level = h.getLevel();var base = h.absolutePos(new BlockPos(14, 3, 3));
+        var plan = AssemblyPlan.targets(AssemblyPlan.Kind.CASING_TANK, base, Direction.SOUTH, 9, 4);
+        for (var cell : plan) level.setBlock(cell.pos(), cell.state(), 3);
+        var floor = base.south(5);
+        var tank = (net.createplant.block.entity.TankCasingBlockEntity) level.getBlockEntity(floor);
+        tank.refresh();h.assertTrue(tank.getTank() == tank && tank.getDiameter() == 9 && tank.getHeight() == 3, "The constructor builds a working open storage tank");
+        var oldStorage = level.getCapability(Capabilities.FluidHandler.BLOCK, floor.west(), Direction.WEST);
+        h.assertTrue(oldStorage.fill(new FluidStack(Fluids.WATER, 500), EXECUTE) == 500, "Standard casing stores water before conversion");
+        var drive = floor.above(3);
+        level.setBlock(drive, CEWetProcessing.CLARIFIER.get().defaultBlockState().setValue(WetProcessDriveBlock.FACING, Direction.NORTH), 3);
+        var clarifier = (WetProcessBlockEntity) level.getBlockEntity(drive);clarifier.rebuild();
+        h.assertTrue(!clarifier.formed(), "The bottom feed is required");
+        level.setBlock(floor, CEWetProcessing.PARTS.get(FEED).get().defaultBlockState().setValue(WetProcessPartBlock.FACING, Direction.DOWN), 3);
+        clarifier.rebuild();clarifier.setSpeed(2);
+        h.assertTrue(clarifier.formed() && clarifier.width() == 9, "The shared shell converts with just the two central blocks");
+        h.assertTrue(oldStorage.drain(500, EXECUTE).isEmpty(), "The old storage handler cannot access the clarifier buffers");
+        var intake = level.getCapability(Capabilities.FluidHandler.BLOCK, floor, Direction.DOWN);
+        var overflow = level.getCapability(Capabilities.FluidHandler.BLOCK, drive.north(4), Direction.NORTH);
+        h.assertTrue(intake.fill(slurry(1000), EXECUTE) == 1000, "Bottom feed accepts slurry");
+        run(clarifier, 200);
+        h.assertTrue(overflow.drain(1000, EXECUTE).getAmount() == 750, "The unmodified casing supplies clarified product");
+        level.setBlock(drive, Blocks.AIR.defaultBlockState(), 3);
+        level.setBlock(floor, CEBlocks.TANK_CASING.get().defaultBlockState(), 3);
+        ((net.createplant.block.entity.TankCasingBlockEntity) level.getBlockEntity(floor)).refresh();
+        h.assertTrue(oldStorage.drain(500, EXECUTE).getAmount() == 500 && overflow.drain(1000, EXECUTE).isEmpty(), "Returning to storage preserves its original water without leaving a live process port");
+        h.succeed();
     }
     @GameTest(template = "test_wet_processing")
     public static void handBuiltCubesFormAndAllFacingsHaveValidPorts(GameTestHelper h) {
         for (Direction front : Direction.Plane.HORIZONTAL) {
-            var be=assemble(h,new BlockPos(16,6,16),14,4,front);
-            var cells=WetProcessStructure.cells(be.getBlockPos(),front,14,4);
-            for (var cell:cells) if (cell.state().getBlock() instanceof WetProcessPartBlock part && !part.role.port()) h.getLevel().setBlock(cell.pos(),part.defaultBlockState(),3);
-            be.rebuild();h.assertTrue(be.formed(),"Hand-placed whole blocks form in every direction");
+            var be=assemble(h,new BlockPos(16,6,16),15,4,front);
+            var cells=WetProcessStructure.cells(be.getBlockPos(),front,15,4);
+            for (var cell:cells) if (cell.state().is(CEBlocks.TANK_CASING.get())) h.getLevel().setBlock(cell.pos(), CEWetProcessing.PARTS.get(BASIN).get().defaultBlockState(), 3);
+            be.rebuild();h.assertTrue(be.formed(),"Existing odd-sized linings remain valid in every direction");
             for (var cell:cells) h.getLevel().setBlock(cell.pos(),Blocks.AIR.defaultBlockState(),3);
         }
         h.succeed();
     }
     @GameTest(template = "test_wet_processing")
     public static void partialStructuresWrongPortsInteriorChangesAndOldHandlesCannotProcess(GameTestHelper h) {
-        var be=assemble(h,new BlockPos(16,6,16),30,4,Direction.NORTH);be.setSpeed(2);
+        var be=assemble(h,new BlockPos(16,6,16),29,4,Direction.NORTH);be.setSpeed(2);
         var input=be.fluidPort(FEED);
         h.assertTrue(input.fill(slurry(1000),SIMULATE)==1000 && be.tanks[0].isEmpty(),"Simulation leaves input empty");
         h.assertTrue(input.fill(new FluidStack(CEFluids.NITROGEN_GAS.get(),750),EXECUTE)==0,"The liquid feed refuses gases");
@@ -89,8 +122,8 @@ public final class WetProcessingGameTests {
         be.rebuild();h.assertTrue(!be.formed(),"Blocked airspace prevents formation");
         h.getLevel().setBlock(air,Blocks.AIR.defaultBlockState(),3);be.rebuild();
         h.assertTrue(be.formed() && input.fill(slurry(1000),EXECUTE)==0,"Old handles stay invalid after reconstruction");
-        var port=WetProcessStructure.cells(be.getBlockPos(),Direction.NORTH,30,4).stream().filter(c->c.state().is(CEWetProcessing.PARTS.get(OVERFLOW).get())).findFirst().orElseThrow();
-        h.getLevel().setBlock(port.pos(),port.state().setValue(WetProcessPartBlock.FACING,Direction.SOUTH),3);be.rebuild();
+        var rim = be.getBlockPos().north(14);
+        h.getLevel().setBlock(rim, CEWetProcessing.PARTS.get(OVERFLOW).get().defaultBlockState().setValue(WetProcessPartBlock.FACING,Direction.SOUTH),3);be.rebuild();
         h.assertTrue(!be.formed(),"Wrong port facing prevents formation");h.succeed();
     }
     @GameTest(template = "test_wet_processing")
@@ -123,18 +156,20 @@ public final class WetProcessingGameTests {
     }
     @GameTest(template = "test_wet_processing")
     public static void actualCreatePipeFacesAndFunnelInsertionMatchVisiblePorts(GameTestHelper h) {
-        var be = assemble(h, new BlockPos(5, 6, 5), 8, 4, Direction.SOUTH);
-        for (var cell : WetProcessStructure.cells(be.getBlockPos(), Direction.SOUTH, 8, 4)) if (cell.state().getBlock() instanceof WetProcessPartBlock block && block.role.port()) {
-            var face = cell.state().getValue(WetProcessPartBlock.FACING);
-            var fluid = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, cell.pos(), face);
-            var item = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, cell.pos(), face);
-            h.assertTrue((block.role == UNDERFLOW ? item != null && fluid == null : fluid != null && item == null), "Visible port exposes its actual standard capability: " + block.role);
-            if (block.role != UNDERFLOW) {
-                var at = cell.pos().relative(face);h.getLevel().setBlock(at, AllBlocks.FLUID_PIPE.getDefaultState(), 3);
+        var be = assemble(h, new BlockPos(5, 6, 5), 9, 4, Direction.SOUTH);
+        var center = be.getBlockPos();
+        var ports = java.util.Map.of(center.below(3), Direction.DOWN, center.south(4), Direction.SOUTH, center.north(4).below(3), Direction.NORTH);
+        for (var port : ports.entrySet()) {
+            var pos = port.getKey();var face = port.getValue();boolean mud = face == Direction.NORTH;
+            var fluid = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, pos, face);
+            var item = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, pos, face);
+            h.assertTrue(mud ? item != null && fluid == null : fluid != null && item == null, "Casing and central feed expose the correct standard capability");
+            if (!mud) {
+                var at = pos.relative(face);h.getLevel().setBlock(at, AllBlocks.FLUID_PIPE.getDefaultState(), 3);
                 var pipe = AllBlocks.FLUID_PIPE.get().updateBlockState(h.getLevel().getBlockState(at), face, null, h.getLevel(), at);
-                h.assertTrue(pipe.getValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.PROPERTY_BY_DIRECTION.get(face.getOpposite())), "Create pipe turns toward the real fluid face");
+                h.assertTrue(pipe.getValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.PROPERTY_BY_DIRECTION.get(face.getOpposite())), "Create pipe connects to the feed or casing outlet");
             }
-            h.assertTrue(h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, cell.pos(), face.getOpposite()) == null && h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, cell.pos(), face.getOpposite()) == null, "Opposite face is closed");
+            h.assertTrue(h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, pos, face.getOpposite()) == null && h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, pos, face.getOpposite()) == null, "Opposite face is closed");
         }
         h.succeed();
     }
@@ -150,7 +185,7 @@ public final class WetProcessingGameTests {
     }
     @GameTest(template = "test_wet_processing")
     public static void breakingAndReplacingTheDriveKeepsEachInventoryExactlyOnce(GameTestHelper h) {
-        var be = assemble(h, new BlockPos(5, 6, 5), 8, 4, Direction.NORTH);var pos = be.getBlockPos();
+        var be = assemble(h, new BlockPos(5, 6, 5), 9, 4, Direction.NORTH);var pos = be.getBlockPos();
         be.tanks[0].setFluid(slurry(4000));be.tanks[2].setFluid(new FluidStack(CEMetals.COPPER_SULFATE_SOLUTION.get(),750));
         be.items.setStackInSlot(3, CEWetProcessing.FLOCCULANT.toStack(3));var old = be.fluidPort(OVERFLOW);
         h.getLevel().destroyBlock(pos, true);
@@ -162,7 +197,7 @@ public final class WetProcessingGameTests {
             new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.UP, pos, false)));
         h.assertTrue(((BlockItem) stack.getItem()).place(context).consumesAction(), "The dropped drive can be placed through the standard BlockItem path");
         var restored = (WetProcessBlockEntity) h.getLevel().getBlockEntity(pos);restored.rebuild();
-        h.assertTrue(restored.formed() && restored.width() == 8 && restored.height() == 4 && restored.tanks[0].getFluidAmount() == 4000 && restored.tanks[2].getFluidAmount() == 750 && restored.items.getStackInSlot(3).getCount() == 3,
+        h.assertTrue(restored.formed() && restored.width() == 9 && restored.height() == 4 && restored.tanks[0].getFluidAmount() == 4000 && restored.tanks[2].getFluidAmount() == 750 && restored.items.getStackInSlot(3).getCount() == 3,
             "Both fluid banks and flocculant survive breaking and real placement without duplication");h.succeed();
     }
     @GameTest(template = "test_wet_processing")

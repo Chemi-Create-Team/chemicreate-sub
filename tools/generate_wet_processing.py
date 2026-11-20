@@ -92,10 +92,10 @@ def recipes():
  write(D/'recipe/mixing/tailings_drying.json',{'type':'create:mixing','heat_requirement':'heated','ingredients':[{'item':NS+'tailings_mud'}],'results':[{'id':'minecraft:clay_ball'},{'id':'minecraft:sand','chance':.5},{'id':'minecraft:quartz','chance':.125}]})
  for name in PARTS:
   if name=='clarifier_center_drive':
-   pattern=[' S ','CMC',' T '];key={'S':{'item':'create:shaft'},'C':{'item':NS+'stainless_steel_ingot'},'M':{'item':'create:precision_mechanism'},'T':{'item':NS+'clarifier_basin_wall'}};count=1
+   pattern=[' S ','CMC',' T '];key={'S':{'item':'create:shaft'},'C':{'item':NS+'stainless_steel_ingot'},'M':{'item':'create:precision_mechanism'},'T':{'item':NS+'tank_casing'}};count=1
   elif name=='clarifier_basin_wall':pattern=['SSS','CCC'];key={'S':{'item':'create:iron_sheet'},'C':{'item':NS+'industrial_concrete'}};count=6
   else:
-   pattern=[' C ','CPC',' C '];key={'C':{'item':NS+'clarifier_basin_wall'},'P':{'item':'create:andesite_funnel' if name=='underflow_drain' else 'create:brass_sheet' if name=='overflow_weir' else NS+'stainless_steel_pipe'}};count=1
+   pattern=[' C ','CPC',' C '];key={'C':{'item':NS+'tank_casing'},'P':{'item':'create:andesite_funnel' if name=='underflow_drain' else 'create:brass_sheet' if name=='overflow_weir' else NS+'stainless_steel_pipe'}};count=1
   write(D/f'recipe/{name}.json',{'type':'minecraft:crafting_shaped','category':'misc','pattern':pattern,'key':key,'result':{'id':NS+name,'count':count}})
 
 def translations():
@@ -135,7 +135,7 @@ def translations():
  'ore':('Feed crushed iron, copper, zinc or tin through a funnel into the lidded vessel. Gold has no chemical route.', 'ふた付き槽へファンネルで砕いた鉄・銅・亜鉛・錫を投入。金は対象外です。', '用漏斗向带盖槽投入粉碎铁、铜、锌或锡，金不支持此路线。'),
  'inlets':('Supply dilute sulfuric acid to a lower liquid port and compressed air or oxygen to an upper gas process port.', '下段の液体入口へ希硫酸、上段の気体処理口へ圧搾空気か酸素を供給します。', '下层液体口供给稀硫酸，上层工艺气体口供给压缩空气或氧气。'),
  'stir':('Heat and stir: 3 crushed ores + 750 mB acid + 250 mB oxidant produce 4000 mB slurry in the lidded vessel.', '加熱しながら撹拌すると、砕いた鉱石3個＋希硫酸750 mB＋酸化用気体250 mBからスラリー4000 mBを生成します。', '加热搅拌：3份粉碎矿石＋750 mB酸＋250 mB氧化气体生成4000 mB矿浆。'),
- 'clarifier':('Arrange full blocks along a grid circle. Select every diameter from 7 to 30 blocks, including even sizes, and heights 3 or 4 independently in the facility constructor.', '通常のブロックを円周に沿って配置。施設建設機で直径7〜30を1ブロック刻み、高さ3・4を独立して選択できます。', '沿网格圆周摆放完整方块。在设施建造器中以1格步进选择直径7到30（含偶数），独立选择高度3或4。'),
+ 'clarifier':('Build an odd circular tank from tank casings. Place the center drive at rim height and replace the center floor block with a downward-facing inlet.', 'タンク構成ブロックで奇数径の円形タンクを作ります。縁と同じ高さの中央に駆動部を置き、床中央を下向きの流入口に替えます。', '用储罐外壳建造奇数直径的圆形储罐。在罐沿高度的中心安装驱动器，并把底板中心换成朝下的进料口。'),
  'slow':('Reduce the center drive to 1–4 RPM. Per 1000 mB slurry, collect 750 mB clear solution at the rim and two tailings mud below. One flocculant inserted at the mud port halves the 200-tick cycle.','中央の駆動を1〜4 RPMに落とします。スラリー1000 mBから精製液750 mBと尾鉱泥2個を分離。汚泥口へ凝集剤1個を入れると200 tickの処理が半分になります。','中心驱动降至1–4 RPM。每1000 mB矿浆分离为750 mB清液和2份尾矿泥。从排泥口投入1份絮凝剂可将200 tick周期减半。'),
  'fast':('At 5–16 RPM, suspended dirt carries into the overflow and raises the next electrowinning batch’s work, up to twice normal. At 17 RPM or above, the same slurry simply overflows without separation.','5〜16 RPMでは巻き上げた不純物が上澄みに残り、次の電解採取の電力が最大2倍に増加。17 RPM以上では分離せず、元のスラリーがそのまま越流します。','5–16 RPM使杂质进入溢流，后续电解能耗最高2倍。17 RPM以上无法分离，原矿浆直接溢出。'),
  'stopped':('At zero RPM, settling still works but mud cannot leave. The underflow fills and stops further processing until the scraper runs again.','0 RPMでも沈降しますが、汚泥を搬出できません。汚泥が満杯になると停止するので、低速で駆動を再開してください。','0 RPM仍会沉降，但污泥无法排出。积满后停止处理，需要恢复低速驱动。'),
@@ -148,22 +148,20 @@ def translations():
  write(path,data)
 
 def machine(scene,center,width,height):
- cx,cy,cz=center;low=-(width-1)//2 if width%2 else 1-width//2;r=width//2;offset=1 if width%2==0 else 0
- def inside(x,z):return (2*x-offset)**2+(2*z-offset)**2<=width*width
+ cx,cy,cz=center;r=width//2;low=-r
+ def inside(x,z):return -r<=x<=r and -r<=z<=r and (2*x)**2+(2*z)**2<=width*width
  for x in range(low,r+1):
   for z in range(low,r+1):
    if not inside(x,z):continue
    wall=not all(inside(xx,zz) for xx,zz in ((x+1,z),(x-1,z),(x,z+1),(x,z-1)))
    for y in range(1-height,1):
-    name='clarifier_basin_wall' if y==1-height or wall else None;face='down' if y==1-height else 'up'
+    name='tank_casing' if y==1-height or wall else None;face='down' if y==1-height else 'up'
     if x==z==0 and y==0:name='clarifier_center_drive';face='south'
     if x==z==0 and y==1-height:name='clarifier_feed_port';face='down'
-    if x==0 and z==r and y==0:name='overflow_weir';face='south'
-    if x==0 and z==low and y==1-height:name='underflow_drain';face='north'
-    if name:scene.block(cx+x,cy+y,cz+z,NS+name,facing=face)
+    if name:scene.block(cx+x,cy+y,cz+z,NS+name,**({} if name=='tank_casing' else {'facing':face}))
 
 def ponder():
- s=p.Structure(27,10);s.reactor(5,2,6,'stirred',2,burners=((-1,-1),));machine(s,(17,5,13),14,4)
+ s=p.Structure(27,10);s.reactor(5,2,6,'stirred',2,burners=((-1,-1),));machine(s,(17,5,13),15,4)
  for x in (2,4):s.block(x,2,12,'create:crushing_wheel',axis='z')
  s.block(7,3,6,'create:andesite_funnel',facing='east',extracting='false',powered='false')
  # Bottom liquid ports, upper gas input and finite output storage use normal transport.
@@ -177,7 +175,7 @@ def ponder():
   s.block(x,y,z,NS+'stainless_steel_pipe',waterlogged='false',**{d:str(d in faces).lower()for d in p.DIRECTIONS})
  for z in (4,5):s.block(7,3,z,NS+'gas_pipe',waterlogged='false',**{d:str(d in ('north','south') if z==4 else d in ('north','west')).lower()for d in p.DIRECTIONS})
  for z in (2,3):s.block(7,3,z,NS+'gas_receiver',axis='z',bottom=str(z==2).lower(),top=str(z==3).lower(),shape='plain')
- s.block(17,2,6,'create:andesite_funnel',facing='north',extracting='true',powered='false')
+ s.block(17,2,5,'create:andesite_funnel',facing='north',extracting='true',powered='false')
  for x,y,z in ((5,2,11),(17,5,23)):s.block(x,y,z,NS+'stainless_steel_tank',bottom='true',top='true',shape='window')
  s.block(17,6,13,'create:shaft',axis='y',waterlogged='false');s.block(17,7,13,'create:creative_motor',facing='down')
  p.OUT=A/'ponder/plant';s.save('wet_processing')

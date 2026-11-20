@@ -61,50 +61,63 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
         boolean previouslyFormed = formed;int previousWidth = width, previousHeight = height;String previousStatus = status;
         net.createplant.event.WetProcessChanges.forget(level, worldPosition);
         formed = false;dirty = false;generation++;
-        var linked = new HashSet<BlockPos>();var watched = new HashSet<BlockPos>();
+        Set<BlockPos> linked = Set.of();
+        var watched = new HashSet<BlockPos>();
         var chunkPositions = new HashSet<BlockPos>();
         var facing = getBlockState().getValue(WetProcessDriveBlock.FACING);
         for (int candidateHeight : WetProcessStructure.CLARIFIER_HEIGHTS) for (int candidate : WetProcessStructure.CLARIFIER_WIDTHS) {
             if (formed) break;
             var feed = worldPosition.below(candidateHeight - 1);
-            var overflow = worldPosition.relative(facing, candidate / 2);
-            watched.add(feed);watched.add(overflow);
-            if (!level.hasChunkAt(feed) || !level.hasChunkAt(overflow)
-                || !level.getBlockState(feed).is(CEWetProcessing.PARTS.get(FEED).get())
-                || !level.getBlockState(overflow).is(CEWetProcessing.PARTS.get(OVERFLOW).get())) continue;
-            boolean valid = true;
+            var rim = worldPosition.relative(facing, candidate / 2);
+            watched.add(feed);watched.add(rim);
+            if (!level.hasChunkAt(feed) || !level.hasChunkAt(rim)
+                || !level.getBlockState(feed).is(CEWetProcessing.PARTS.get(FEED).get()) || !rimWall(level.getBlockState(rim))) continue;
             var cells = WetProcessStructure.cells(worldPosition, facing, candidate, candidateHeight);
+            var states = new HashMap<BlockPos, BlockState>();
+            var ports = new HashSet<BlockPos>();
+            boolean valid = true;
             for (var cell : cells) {
-                watched.add(cell.pos());
-                if (!level.hasChunkAt(cell.pos())) { valid = false;continue; }
-                var actual = level.getBlockState(cell.pos());
-                if (cell.state().getBlock() instanceof WetProcessPartBlock part && !part.role.port() && actual.is(part) && actual != cell.state()) {
-                    level.setBlock(cell.pos(), cell.state(), 2);actual = cell.state();
+                var pos = cell.pos();
+                watched.add(pos);
+                if (!level.hasChunkAt(pos)) { valid = false;continue; }
+                var state = level.getBlockState(pos);
+                var role = WetProcessStructure.rimRole(worldPosition, facing, candidate, candidateHeight, pos);
+                if (cell.state().is(CEBlocks.TANK_CASING.get())) {
+                    if (level.getBlockEntity(pos) instanceof TankCasingBlockEntity casing) {
+                        if (role != null && casing.clarifier() != null && casing.clarifier() != this) valid = false;
+                    } else if (state.is(CEWetProcessing.PARTS.get(BASIN).get())) {
+                        // Existing odd-sized basins can retain their original lining.
+                    } else if (role == null || !state.is(CEWetProcessing.PARTS.get(role).get())
+                        || state.getValue(WetProcessPartBlock.FACING) != (role == OVERFLOW ? facing : facing.getOpposite())) valid = false;
+                } else if (state != cell.state()) valid = false;
+                if (role != null || pos.equals(feed)) {
+                    ports.add(pos);
+                    if (level.getBlockEntity(pos) instanceof WetProcessPartBlockEntity part && part.owner() != null && part.owner() != this && part.owner().formed()) valid = false;
                 }
-                if (actual != cell.state()) { valid = false;continue; }
-                if (level.getBlockEntity(cell.pos()) instanceof WetProcessPartBlockEntity part) {
-                    var previous = part.owner();
-                    if (previous != null && previous != this && previous.formed()) { valid = false;continue; }
-                    linked.add(cell.pos());
-                }
+                states.put(pos, state);
             }
             if (!valid) continue;
             width = candidate;height = candidateHeight;
             if (Arrays.stream(tanks).anyMatch(tank -> tank.getFluidAmount() > capacity())) { status = "capacity";break; }
-            formed = true;watched.clear();var states = new HashMap<BlockPos, BlockState>();
-            for (var cell : cells) { watched.add(cell.pos());states.put(cell.pos(), cell.state()); }
-            expected = Map.copyOf(states);break;
+            formed = true;watched.clear();watched.addAll(states.keySet());
+            expected = Map.copyOf(states);linked = Set.copyOf(ports);break;
         }
-        members = Set.copyOf(linked);
-        for (var pos : members) if (level.getBlockEntity(pos) instanceof WetProcessPartBlockEntity part) { part.bind(worldPosition);level.invalidateCapabilities(pos); }
+        members = linked;
         for (var pos : watched) chunkPositions.add(new BlockPos(pos.getX() >> 4 << 4, 0, pos.getZ() >> 4 << 4));
         chunks = List.copyOf(chunkPositions);
         net.createplant.event.WetProcessChanges.watch(level, worldPosition, watched);
         if (!formed && !status.equals("capacity")) status = "structure";
         if (formed) for (var pos : members) {
-            var state = level.getBlockState(pos);
-            if (!(state.getBlock() instanceof WetProcessPartBlock part) || !part.role.port()) continue;
-            var side = state.getValue(WetProcessPartBlock.FACING);var adjacent = pos.relative(side);var pipe = level.getBlockState(adjacent);
+            var entity = level.getBlockEntity(pos);
+            if (entity instanceof WetProcessPartBlockEntity part) part.bind(worldPosition);
+            if (entity instanceof TankCasingBlockEntity casing) casing.bindClarifier(worldPosition);
+            level.invalidateCapabilities(pos);
+            var role = rimRole(pos);
+            if (role == UNDERFLOW) continue;
+            var side = role == OVERFLOW ? facing : Direction.DOWN;
+            var adjacent = pos.relative(side);
+            if (!level.hasChunkAt(adjacent)) continue;
+            var pipe = level.getBlockState(adjacent);
             if (pipe.getBlock() instanceof com.simibubi.create.content.fluids.pipes.FluidPipeBlock block) {
                 var updated = block.updateBlockState(pipe, side, null, level, adjacent);
                 if (updated != pipe) level.setBlock(adjacent, updated, 2);
@@ -114,6 +127,13 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
         }
         contentsChanged = true;nextRebuild = level.getGameTime() + 20;
         if (formed != previouslyFormed || width != previousWidth || height != previousHeight || !status.equals(previousStatus)) { changed();sendData(); }
+    }
+    public WetProcessPartBlock.Role rimRole(BlockPos pos) {
+        return formed ? WetProcessStructure.rimRole(worldPosition, getBlockState().getValue(WetProcessDriveBlock.FACING), width, height, pos) : null;
+    }
+    public Direction front() { return getBlockState().getValue(WetProcessDriveBlock.FACING); }
+    private static boolean rimWall(BlockState state) {
+        return state.is(CEBlocks.TANK_CASING.get()) || state.is(CEWetProcessing.PARTS.get(BASIN).get()) || state.is(CEWetProcessing.PARTS.get(OVERFLOW).get());
     }
     @Override public void initialize() { super.initialize();if (members.isEmpty()) dirty = true; }
     @Override public void onChunkUnloaded() {
@@ -237,8 +257,10 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
     public void preview(int size, int tankHeight, FluidStack feed, FluidStack product, String state) {
         if (!isVirtual()) return;
         width = size;height = tankHeight;formed = true;status = state;
-        for (var cell : WetProcessStructure.cells(worldPosition, getBlockState().getValue(WetProcessDriveBlock.FACING), width, height))
+        for (var cell : WetProcessStructure.cells(worldPosition, front(), width, height)) {
             if (level.getBlockEntity(cell.pos()) instanceof WetProcessPartBlockEntity part) part.bind(worldPosition);
+            if (rimRole(cell.pos()) != null && level.getBlockEntity(cell.pos()) instanceof TankCasingBlockEntity casing) casing.bindClarifier(worldPosition);
+        }
         tanks[0].setFluid(feed.copy());tanks[2].setFluid(product.copy());
     }
     public void release() {

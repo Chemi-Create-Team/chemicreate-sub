@@ -18,6 +18,7 @@ import net.createplant.block.entity.IndustrialDispatchBlockEntity;
 import net.createplant.block.entity.PressurePumpPortBlockEntity;
 import net.createplant.block.entity.ReactionTowerBlockEntity;
 import net.createplant.block.entity.RodCapBlockEntity;
+import net.createplant.block.entity.TankCasingBlockEntity;
 import net.createplant.block.entity.WetProcessPartBlockEntity;
 import net.createplant.transport.HoseSocket;
 import net.minecraft.core.Direction;
@@ -68,6 +69,10 @@ public final class ProcessPorts {
             if (fluid(be, face) == null) return null;
             return part.role == WetProcessPartBlock.Role.FEED ? Kind.INLET : Kind.DRAIN;
         }
+        if (be instanceof TankCasingBlockEntity casing && casing.clarifier() != null) {
+            if (casing.itemPort(face) != null) return Kind.HATCH;
+            return casing.fluidPort(face) != null ? Kind.OUTLET : null;
+        }
         if (be instanceof FusionFluidPortBlockEntity port) {
             if (face != state.getValue(FusionFluidPortBlock.FACING)) return null;
             return switch (port.kind()) {
@@ -95,6 +100,7 @@ public final class ProcessPorts {
     }
 
     public static IItemHandler items(BlockEntity be, Direction face) {
+        if (be instanceof TankCasingBlockEntity casing && casing.clarifier() != null) return casing.itemPort(face);
         if (be instanceof GasifierBlockEntity || be instanceof WetProcessPartBlockEntity || be instanceof FuelCycleMachineBlockEntity
             || be instanceof ElectrolysisFurnacePartBlockEntity || be instanceof CubicPressBlockEntity || be instanceof ConverterShellBlockEntity
             || be instanceof FuelPoolBlockEntity || be instanceof IndustrialDispatchBlockEntity)

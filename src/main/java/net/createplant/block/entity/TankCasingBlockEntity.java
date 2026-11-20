@@ -2,6 +2,7 @@ package net.createplant.block.entity;
 
 import net.createplant.block.TankFootprint;
 import net.createplant.block.TankStructure;
+import net.createplant.block.WetProcessPartBlock.Role;
 import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CEChlorAlkali;
 import net.createplant.thermal.FluidMaterials;
@@ -41,6 +42,8 @@ import net.neoforged.neoforge.items.IItemHandler;
  */
 public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation {
     @Override public boolean addToGoggleTooltip(java.util.List<net.minecraft.network.chat.Component> text,boolean sneaking) {
+        var drive = clarifier();
+        if (drive != null) return drive.addToGoggleTooltip(text, sneaking);
         text.add(getBlockState().getBlock().getName());
         var tank=getTank();
         if (tank!=null && !tank.fluid.isEmpty()) text.add(tank.fluid.getHoverName().copy().append(" · ").append(FluidThermal.readout(tank.fluid)));
@@ -76,6 +79,7 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
     private int evaporated;
     private final net.createplant.thermal.TankHeating heating=new net.createplant.thermal.TankHeating();
     private final IItemHandler saltCapability = new SaltPort();
+    private BlockPos clarifierDrive;
 
     public TankCasingBlockEntity(BlockPos pos, BlockState state) {
         super(CEBlockEntityTypes.TANK_CASING.get(), pos, state);
@@ -83,9 +87,34 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEBlockEntityTypes.TANK_CASING.get(),
-            (be, side) -> be.fluidCapability);
+            TankCasingBlockEntity::fluidPort);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CEBlockEntityTypes.TANK_CASING.get(),
-            (be, side) -> be.saltCapability);
+            TankCasingBlockEntity::itemPort);
+    }
+
+    public WetProcessBlockEntity clarifier() {
+        if (clarifierDrive != null && level != null && level.hasChunkAt(clarifierDrive)
+            && level.getBlockEntity(clarifierDrive) instanceof WetProcessBlockEntity drive && drive.rimRole(worldPosition) != null) return drive;
+        return null;
+    }
+
+    public void bindClarifier(BlockPos drive) {
+        if (drive.equals(clarifierDrive)) return;
+        clarifierDrive = drive.immutable();
+        if (!level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    public IFluidHandler fluidPort(Direction side) {
+        var drive = clarifier();
+        if (drive == null) return fluidCapability;
+        return side == drive.front() && drive.rimRole(worldPosition) == Role.OVERFLOW ? drive.fluidPort(Role.OVERFLOW) : null;
+    }
+
+    public IItemHandler itemPort(Direction side) {
+        var drive = clarifier();
+        if (drive == null) return saltCapability;
+        return (side == Direction.DOWN || side == drive.front().getOpposite()) && drive.rimRole(worldPosition) == Role.UNDERFLOW
+            ? drive.itemPort(Role.UNDERFLOW) : null;
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, TankCasingBlockEntity be) {
@@ -135,7 +164,7 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
 
     /** Rechecks the tank containing this casing, forming a new one when the casings now complete it. */
     public void refresh() {
-        if (level == null || level.isClientSide())
+        if (level == null || level.isClientSide() || clarifier() != null)
             return;
         TankCasingBlockEntity tank = getTank();
         if (tank == null && ownedShape != null)
@@ -328,6 +357,7 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        clarifierDrive = tag.contains("ClarifierDrive") ? BlockPos.of(tag.getLong("ClarifierDrive")) : null;
         heating.read(tag,registries);
         fluid = tag.contains("Fluid") ? FluidStack.parseOptional(registries, tag.getCompound("Fluid")) : FluidStack.EMPTY;
         boolean drawn = ownedShape != null;
@@ -357,6 +387,7 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
         // Only the owner's visible state is sent; residual fluid in member casings is not drawn.
         if (ownedShape != null)
             saveAdditional(tag, registries);
+        if (clarifierDrive != null) tag.putLong("ClarifierDrive", clarifierDrive.asLong());
         tag.putBoolean("Active", formed);
         return tag;
     }

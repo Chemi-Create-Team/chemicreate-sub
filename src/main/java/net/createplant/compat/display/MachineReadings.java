@@ -47,6 +47,7 @@ public final class MachineReadings {
         if (be instanceof GasifierBlockEntity gasifier) return gasifier.owner() == null ? gasifier : gasifier.owner();
         if (be instanceof ReactionTowerBlockEntity tower) return tower.owner();
         if (be instanceof WetProcessPartBlockEntity part) return part.owner();
+        if (be instanceof TankCasingBlockEntity casing && casing.clarifier() != null) return casing.clarifier();
         if (be instanceof GasCentrifugePortBlockEntity port) return port.owner();
         if (be instanceof GasCentrifugeBlockEntity centrifuge) return centrifuge.leader();
         if (be instanceof ElectrodeHeadBlockEntity head) return head.controller();

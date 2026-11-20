@@ -30,7 +30,7 @@ public class FacilityConstructorMenu extends SchematicannonMenu {
     @Override public boolean clickMenuButton(Player player, int button) {
         if (!stillValid(player)) return false;
         if (button >= 0 && button < AssemblyPlan.Kind.values().length) return facility().configure(button, facility().sizeIndex(AssemblyPlan.Kind.values()[button]));
-        if ((button == 30 || button == 31) && facility().kind() == AssemblyPlan.Kind.CLARIFIER)
+        if ((button == 30 || button == 31) && facility().kind().isCircularTank())
             return facility().configure(facility().kind().ordinal(), facility().sizeIndex() + (button == 30 ? -1 : 1));
         if (button >= 20 && button < 22) return facility().configureHeight(button - 20);
         if (button >= 10 && button < 15) return facility().configure(facility().kind().ordinal(), button - 10);

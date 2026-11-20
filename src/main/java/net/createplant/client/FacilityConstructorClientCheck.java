@@ -77,10 +77,10 @@ public final class FacilityConstructorClientCheck {
                 case 6 -> be.kind() == AssemblyPlan.Kind.COOLING_TOWER && be.selectedSize() == 25;
                 case 7, 10 -> be.kind() == AssemblyPlan.Kind.COOLING_TOWER && be.selectedSize() == 33;
                 case 8, 11 -> be.kind() == AssemblyPlan.Kind.RBMK && be.coreSize() == 13 && be.coreHeight() == 3;
-                case 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 -> be.kind() == AssemblyPlan.Kind.CLARIFIER && be.selectedSize() == selectionStep - 5;
-                case 36, 38, 40 -> be.kind() == AssemblyPlan.Kind.CLARIFIER && be.selectedSize() == 30 && be.totalHeight() == 4;
-                case 37 -> be.kind() == AssemblyPlan.Kind.RBMK && be.coreSize() == 13 && be.coreHeight() == 3;
-                case 39 -> be.kind() == AssemblyPlan.Kind.CLARIFIER && be.selectedSize() == 29 && be.totalHeight() == 4;
+                case 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 -> be.kind() == AssemblyPlan.Kind.CLARIFIER && be.selectedSize() == 7 + (selectionStep - 12) * 2;
+                case 24, 27 -> be.kind() == AssemblyPlan.Kind.CLARIFIER && be.selectedSize() == 29 && be.totalHeight() == 4;
+                case 25 -> be.kind() == AssemblyPlan.Kind.CASING_TANK && be.selectedSize() == 7 && be.totalHeight() == 3;
+                case 26, 28 -> be.kind() == AssemblyPlan.Kind.CASING_TANK && be.selectedSize() == 9 && be.totalHeight() == 3;
                 default -> false;
             };
             if (!advance) return;
@@ -93,15 +93,14 @@ public final class FacilityConstructorClientCheck {
                 case 4 -> press(screen, Component.literal("19"));
                 case 5, 9 -> press(screen, Component.translatable("facility.create_refinery_n_reactors.cooling_tower"));
                 case 6 -> press(screen, Component.literal("33"));
-                case 11, 37 -> press(screen, Component.translatable("facility.create_refinery_n_reactors.clarifier"));
-                case 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 39 -> press(screen, Component.literal("+"));
-                case 35 -> press(screen, Component.literal("4"));
-                case 36 -> press(screen, Component.translatable("facility.create_refinery_n_reactors.rbmk"));
-                case 38 -> press(screen, Component.literal("−"));
-                case 40 -> {
+                case 11, 26 -> press(screen, Component.translatable("facility.create_refinery_n_reactors.clarifier"));
+                case 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 25 -> press(screen, Component.literal("+"));
+                case 23 -> press(screen, Component.literal("4"));
+                case 24, 27 -> press(screen, Component.translatable("facility.create_refinery_n_reactors.casing_tank"));
+                case 28 -> {
                     try {
                         java.nio.file.Files.writeString(mc.gameDirectory.toPath().resolve("facility-constructor-client-check.json"),
-                            new com.google.gson.Gson().toJson(java.util.Map.of("passed", true, "coreDiameter", 13, "coreHeight", 3, "fusionDiameter", 19, "towerDiameter", 33, "rememberedDimensions", true, "clarifierWidth", 30, "clarifierHeight", 4, "everyDiameter", true)) + System.lineSeparator());
+                            new com.google.gson.Gson().toJson(java.util.Map.of("passed", true, "coreDiameter", 13, "coreHeight", 3, "fusionDiameter", 19, "towerDiameter", 33, "rememberedDimensions", true, "clarifierWidth", 29, "clarifierHeight", 4, "casingTankWidth", 9, "oddDiameters", true)) + System.lineSeparator());
                     } catch (java.io.IOException exception) { throw new IllegalStateException(exception); }
                     org.slf4j.LoggerFactory.getLogger(FacilityConstructorClientCheck.class).info("FACILITY CONSTRUCTOR CLIENT CHECK PASSED");
                     phase = 4;

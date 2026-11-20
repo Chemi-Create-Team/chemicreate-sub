@@ -79,7 +79,7 @@ public final class SurvivalReachabilityGameTests {
     private static boolean equipmentFor(Recipe<?> recipe, Set<Item> reached) {
         if (recipe instanceof PressureReactionRecipe reaction)
             return has(reached, "lidded_vessel", reaction.module()==net.createplant.chemistry.ReactorModule.ABSORBER ? "reactor_separator_core" : "reactor_impeller");
-        if (recipe instanceof net.createplant.recipe.ClarifyingRecipe) return has(reached, "clarifier_center_drive", "clarifier_basin_wall", "clarifier_feed_port", "overflow_weir", "underflow_drain");
+        if (recipe instanceof net.createplant.recipe.ClarifyingRecipe) return has(reached, "clarifier_center_drive", "tank_casing", "clarifier_feed_port");
         if (recipe instanceof net.createplant.recipe.CubicPressRecipe) return has(reached, "cubic_press");
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe)
             return reached.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
