@@ -1,7 +1,8 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "particle": "create_refinery_n_reactors:block/sprayer_iron",
+    "particle": "create_refinery_n_reactors:block/sprayer_casing",
+    "casing": "create_refinery_n_reactors:block/sprayer_casing",
     "iron": "create_refinery_n_reactors:block/sprayer_iron",
     "brass": "create_refinery_n_reactors:block/sprayer_brass",
     "port": "create_refinery_n_reactors:block/sprayer_port"
@@ -89,21 +90,21 @@
       "faces": {
         "north": {
           "uv": [
-            3,
-            4,
-            13,
-            12
+            0,
+            0,
+            10,
+            8
           ],
-          "texture": "#iron"
+          "texture": "#casing"
         },
         "south": {
           "uv": [
-            3,
-            4,
-            13,
-            12
+            0,
+            0,
+            10,
+            8
           ],
-          "texture": "#iron"
+          "texture": "#casing"
         },
         "up": {
           "uv": [
@@ -125,21 +126,21 @@
         },
         "east": {
           "uv": [
-            3,
-            4,
-            12,
-            12
+            0,
+            0,
+            10,
+            8
           ],
-          "texture": "#iron"
+          "texture": "#casing"
         },
         "west": {
           "uv": [
-            4,
-            4,
-            13,
-            12
+            0,
+            0,
+            10,
+            8
           ],
-          "texture": "#iron"
+          "texture": "#casing"
         }
       }
     },
@@ -175,12 +176,12 @@
         },
         "up": {
           "uv": [
-            2,
-            5,
-            14,
-            14
+            0,
+            7,
+            12,
+            16
           ],
-          "texture": "#iron"
+          "texture": "#casing"
         },
         "down": {
           "uv": [
