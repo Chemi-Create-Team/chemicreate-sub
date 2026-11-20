@@ -52,6 +52,7 @@
     "FluidTankModelInvoker",
     "PipeArmModelMixin",
     "PonderTextWrapMixin",
+    "JeiProductionCategoryMixin",
     "SteamGunThrustMixin",
     "SteamHammerSwingMixin"
   ],

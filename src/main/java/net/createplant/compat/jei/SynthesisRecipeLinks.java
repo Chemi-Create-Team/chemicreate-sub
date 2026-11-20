@@ -7,7 +7,8 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.advanced.IRecipeManagerPlugin;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IJeiRuntime;
-import net.createplant.client.SynthesisGuide;
+import net.createplant.CreatePlant;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BucketItem;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -22,7 +23,8 @@ final class SynthesisRecipeLinks implements IRecipeManagerPlugin {
     private IFocus<FluidStack> fluidFocus(IFocus<?> focus) {
         if (runtime == null) return null;
         var item = focus.getTypedValue().getItemStack();
-        if (item.isEmpty() || !(item.get().getItem() instanceof BucketItem bucket) || !SynthesisGuide.linked(bucket.content))
+        if (item.isEmpty() || !(item.get().getItem() instanceof BucketItem bucket)
+            || !BuiltInRegistries.FLUID.getKey(bucket.content).getNamespace().equals(CreatePlant.MOD_ID))
             return null;
         return runtime.getJeiHelpers().getFocusFactory().createFocus(focus.getRole(), NeoForgeTypes.FLUID_STACK,
             new FluidStack(bucket.content, 1000));

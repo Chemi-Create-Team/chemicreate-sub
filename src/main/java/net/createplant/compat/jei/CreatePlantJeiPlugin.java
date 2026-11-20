@@ -270,7 +270,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         return list.stream().sorted(java.util.Comparator.comparingInt(CreatePlantJeiPlugin::routeCost)).toList();
     }
 
-    private static int routeCost(PlantProcess recipe) {
+    public static int routeCost(PlantProcess recipe) {
         int cost = recipe.conditions() != null && recipe.conditions().minimumLevels() > 0 ? 2 : 0;
         for (var options : recipe.items()) cost += 1 + options.stream().mapToInt(CreatePlantJeiPlugin::itemCost).min().orElse(4);
         for (var stack : recipe.kept()) cost += 1 + itemCost(stack);
@@ -372,7 +372,8 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         }
         var level=Minecraft.getInstance().level;
         for(var module:List.of(ReactorModule.STIRRED,ReactorModule.ABSORBER)) {
-            int expected=(int)level.getRecipeManager().getAllRecipesFor(CERecipeTypes.PRESSURE_REACTION.<net.minecraft.world.item.crafting.RecipeInput,PressureReactionRecipe>getType()).stream().filter(r->r.value().module()==module).count();
+            int expected=(int)level.getRecipeManager().getAllRecipesFor(CERecipeTypes.PRESSURE_REACTION.<net.minecraft.world.item.crafting.RecipeInput,PressureReactionRecipe>getType()).stream()
+                .filter(r->r.value().module()==module || module==ReactorModule.STIRRED && r.value().module()==ReactorModule.NONE).count();
             if(counts.get(module==ReactorModule.STIRRED ? "stirred_reactor" : "tray_reactor")!=expected)throw new IllegalStateException("A pressure reaction is missing from JEI");
         }
         try {java.nio.file.Files.writeString(java.nio.file.Path.of("recipe-trace-audit.json"),new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(counts));}catch(java.io.IOException e){throw new RuntimeException(e);}
