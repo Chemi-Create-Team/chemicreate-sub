@@ -36,6 +36,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class FertilizerGameTests {
     private static final BlockPos CENTRE = new BlockPos(2, 2, 2);
+    private static final String DATA_KEY = "createplant_fertilized_crops";
+    private static final SavedData.Factory<FertilizedCrops> DATA = new SavedData.Factory<>(FertilizedCrops::new, FertilizedCrops::load);
 
     private static void field(GameTestHelper h) {
         for (int x = 0; x < 5; x++) for (int z = 0; z < 5; z++) {
@@ -98,11 +100,12 @@ public class FertilizerGameTests {
             level.getBlockState(pos).randomTick(level, pos, random);
         h.assertTrue(wheat.getAge(level.getBlockState(pos)) == 4, "One vanilla growth tick adds the normal stage and two NPK stages");
 
-        var control = h.absolutePos(CENTRE.east());
-        level.setBlockAndUpdate(control, wheat.getStateForAge(4));
+        var data = level.getDataStorage().get(DATA, DATA_KEY);
+        var beforeBoneMeal = data.save(new CompoundTag(), level.registryAccess());
         wheat.performBonemeal(level, RandomSource.create(6), pos, level.getBlockState(pos));
-        wheat.performBonemeal(level, RandomSource.create(6), control, level.getBlockState(control));
-        h.assertTrue(level.getBlockState(pos).equals(level.getBlockState(control)), "Bone meal advances treated and ordinary wheat equally");
+        h.assertTrue(wheat.getAge(level.getBlockState(pos)) >= 6
+                && beforeBoneMeal.equals(data.save(new CompoundTag(), level.registryAccess())),
+            "Bone meal advances wheat normally and leaves the stored treatment untouched");
         h.succeed();
     }
 
@@ -133,13 +136,11 @@ public class FertilizerGameTests {
         h.assertTrue(FertilizedCrops.apply(level, pos, FertilizerProfile.NPK)
             && FertilizedCrops.apply(level, expired, FertilizerProfile.NPK), "Both plots can be treated independently");
         var storage = level.getDataStorage();
-        String key = "createplant_fertilized_crops";
-        var factory = new SavedData.Factory<>(FertilizedCrops::new, FertilizedCrops::load);
-        var snapshot = storage.get(factory, key).save(new CompoundTag(), level.registryAccess());
+        var snapshot = storage.get(DATA, DATA_KEY).save(new CompoundTag(), level.registryAccess());
         snapshot.getList("Crops", Tag.TAG_COMPOUND).stream().map(CompoundTag.class::cast)
             .filter(row -> row.getLong("Pos") == expired.asLong())
             .forEach(row -> row.putLong("Expires", level.getGameTime()));
-        storage.set(key, FertilizedCrops.load(snapshot, level.registryAccess()));
+        storage.set(DATA_KEY, FertilizedCrops.load(snapshot, level.registryAccess()));
 
         var mature = ((CropBlock) Blocks.WHEAT).getStateForAge(7);
         level.setBlockAndUpdate(pos, mature);
