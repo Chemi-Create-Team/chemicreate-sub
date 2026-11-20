@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "V V",
+    "G G",
+    "B B"
+  ],
+  "key": {
+    "V": {
+      "item": "create_refinery_n_reactors:pvc_resin"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    "B": {
+      "item": "create:brass_ingot"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:hazard_boots",
+    "count": 1
+  }
+}

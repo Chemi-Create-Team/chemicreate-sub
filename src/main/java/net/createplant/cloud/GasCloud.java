@@ -1,5 +1,6 @@
 package net.createplant.cloud;
 
+import net.createplant.safety.ToxicGas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -18,6 +19,7 @@ public final class GasCloud extends Entity {
     private static final EntityDataAccessor<CompoundTag> CELLS = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.COMPOUND_TAG);
     private static final EntityDataAccessor<String> FLUID_ID = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> CHARGE = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> TOXIC = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.BOOLEAN);
 
     private CloudVolume volume = CloudVolume.empty(BlockPos.ZERO);
     private FluidStack fluid = FluidStack.EMPTY;
@@ -56,6 +58,7 @@ public final class GasCloud extends Entity {
 
     public CloudVolume volume() { return volume; }
     public String fluidId() { return entityData.get(FLUID_ID); }
+    public boolean toxic() { return entityData.get(TOXIC); }
     public GasCloudStyles.Style style() { return GasCloudStyles.find(fluidId()); }
     public float topHeight() {
         var style = style();
@@ -152,6 +155,7 @@ public final class GasCloud extends Entity {
 
     private void syncFluidId() {
         entityData.set(FLUID_ID, fluid.isEmpty() ? "" : GasCloudStyles.id(fluid.getFluid()));
+        entityData.set(TOXIC, ToxicGas.strength(fluid) >= 0);
     }
 
     private void syncCharge() {
@@ -164,6 +168,7 @@ public final class GasCloud extends Entity {
         builder.define(CELLS, new CompoundTag());
         builder.define(FLUID_ID, "");
         builder.define(CHARGE, 0);
+        builder.define(TOXIC, false);
     }
 
     @Override public void onSyncedDataUpdated(EntityDataAccessor<?> key) {

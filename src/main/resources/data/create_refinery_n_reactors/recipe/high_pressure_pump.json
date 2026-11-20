@@ -1,0 +1,41 @@
+{
+  "type": "create:mechanical_crafting",
+  "pattern": [
+    " CSC ",
+    "BIPIB",
+    "SRARS",
+    "BIPIB",
+    " GGG "
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "S": {
+      "item": "create:shaft"
+    },
+    "B": {
+      "item": "create:brass_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "create:mechanical_pump"
+    },
+    "R": {
+      "item": "create_refinery_n_reactors:phenolic_board"
+    },
+    "A": {
+      "item": "create:precision_mechanism"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:high_pressure_pump",
+    "count": 1
+  },
+  "accept_mirrored": true
+}

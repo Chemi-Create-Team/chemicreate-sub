@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GVG",
+    "PFP"
+  ],
+  "key": {
+    "G": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    "V": {
+      "item": "create_refinery_n_reactors:pvc_resin"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    },
+    "F": {
+      "item": "create_refinery_n_reactors:gas_mask_filter"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:hazard_helmet",
+    "count": 1
+  }
+}

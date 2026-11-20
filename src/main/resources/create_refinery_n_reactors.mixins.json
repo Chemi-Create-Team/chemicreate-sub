@@ -9,6 +9,8 @@
     "GradeTankMixin",
     "GradeConnectivityMixin",
     "NativeFluidNetworkMixin",
+    "HighPressurePumpRangeMixin",
+    "HazardBootsBeltMixin",
     "FluidBucketWrapperMixin",
     "WorldLiquidManipulationMixin",
     "WorldLiquidDrainingMixin",

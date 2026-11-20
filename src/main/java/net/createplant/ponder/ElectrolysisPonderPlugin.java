@@ -30,6 +30,10 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             helper.forComponents(pump.getId()).addStoryBoard("plant/material_pump",
                 (scene, util) -> MaterialPumpPonderScenes.pump(scene, util, material));
         }
+        helper.forComponents(CreatePlant.location("high_pressure_pump"), CreatePlant.location("hose_connector"),
+                CreatePlant.location("flexible_rubber_hose"), CreatePlant.location("hazard_helmet"), CreatePlant.location("hazard_boots"),
+                CreatePlant.location("hazard_chestplate"), CreatePlant.location("hazard_leggings"))
+            .addStoryBoard("plant/pressure_infrastructure", PressureInfrastructurePonderScenes::pump);
         helper.forComponents(CreatePlant.location("fire_extinguisher"),CreatePlant.location("flamethrower"),CreatePlant.location("chemical_sprayer"))
             .addStoryBoard("plant/portable_sprayers",PortableSprayerPonderScenes::tools);
         helper.forComponents(CreatePlant.location("chemical_sprayer"), CreatePlant.location("liquid_fertilizer_bucket"))

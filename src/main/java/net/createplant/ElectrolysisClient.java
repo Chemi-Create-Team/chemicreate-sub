@@ -26,6 +26,7 @@ public class ElectrolysisClient {
         net.createplant.client.CoolingFanRenderer.init();
         net.createplant.client.WetProcessRenderer.init();
         net.createplant.client.ElectricPumpRenderer.init();
+        net.createplant.client.PressurePumpRenderer.init();
         net.createplant.client.CubicPressRenderer.init();
         net.createplant.client.ReciprocatingCompressorRenderer.init();
         net.createplant.client.ReactorMachineRenderer.init();
@@ -106,6 +107,8 @@ public class ElectrolysisClient {
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.MATERIAL_PUMP_ENTITY.get(), com.simibubi.create.content.fluids.pump.PumpRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEAssembly.CONSTRUCTOR_ENTITY.get(), net.createplant.client.FacilityConstructorRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectricUtilities.PUMP_ENTITY.get(), net.createplant.client.ElectricPumpRenderer::new);
+        event.registerBlockEntityRenderer(net.createplant.registry.CEPressureInfrastructure.PUMP_ENTITY.get(), net.createplant.client.PressurePumpRenderer::new);
+        event.registerBlockEntityRenderer(net.createplant.registry.CEPressureInfrastructure.CONNECTOR_ENTITY.get(), net.createplant.client.HoseConnectorRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectrolysis.CELL_ENTITY.get(), net.createplant.client.ElectrolysisCellRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectrolysis.HEAD_ENTITY.get(), net.createplant.client.ElectrodeHeadRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectrolysis.CONTROLLER_ENTITY.get(), net.createplant.client.ElectrolysisControllerRenderer::new);

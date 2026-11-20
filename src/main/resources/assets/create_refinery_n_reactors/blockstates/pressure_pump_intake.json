@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_intake"
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_intake",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_intake",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_intake",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_intake"
+    },
+    "facing=down": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_intake"
+    }
+  }
+}

@@ -164,6 +164,10 @@
     "create_refinery_n_reactors:gas_detector",
     "create_refinery_n_reactors:gas_recovery_duct",
     "create_refinery_n_reactors:molded_polymer",
-    "create_refinery_n_reactors:agricultural_sprayer"
+    "create_refinery_n_reactors:agricultural_sprayer",
+    "create_refinery_n_reactors:high_pressure_pump",
+    "create_refinery_n_reactors:pressure_pump_intake",
+    "create_refinery_n_reactors:pressure_pump_casing",
+    "create_refinery_n_reactors:hose_connector"
   ]
 }

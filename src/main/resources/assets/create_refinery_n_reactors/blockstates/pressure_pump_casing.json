@@ -1,0 +1,94 @@
+{
+  "variants": {
+    "facing=north,part=receive": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower"
+    },
+    "facing=north,part=lower_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower"
+    },
+    "facing=north,part=lower_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower"
+    },
+    "facing=north,part=feed": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper"
+    },
+    "facing=north,part=upper_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper"
+    },
+    "facing=north,part=upper_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper"
+    },
+    "facing=east,part=receive": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 90
+    },
+    "facing=east,part=lower_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 90
+    },
+    "facing=east,part=lower_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 90
+    },
+    "facing=east,part=feed": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 90
+    },
+    "facing=east,part=upper_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 90
+    },
+    "facing=east,part=upper_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 90
+    },
+    "facing=south,part=receive": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 180
+    },
+    "facing=south,part=lower_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 180
+    },
+    "facing=south,part=lower_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 180
+    },
+    "facing=south,part=feed": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 180
+    },
+    "facing=south,part=upper_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 180
+    },
+    "facing=south,part=upper_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 180
+    },
+    "facing=west,part=receive": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 270
+    },
+    "facing=west,part=lower_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 270
+    },
+    "facing=west,part=lower_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_lower",
+      "y": 270
+    },
+    "facing=west,part=feed": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 270
+    },
+    "facing=west,part=upper_front": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 270
+    },
+    "facing=west,part=upper_back": {
+      "model": "create_refinery_n_reactors:block/pressure_pump_upper",
+      "y": 270
+    }
+  }
+}

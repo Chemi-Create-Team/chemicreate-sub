@@ -43,7 +43,11 @@ public final class CorrosiveContact {
 
     public static void touch(Level level, BlockPos pos, Entity entity, FluidState state) {
         if (level.isClientSide || !(entity instanceof LivingEntity living)
-            || (living.tickCount + living.getId()) % 20 != 0 || !harmful(state)) return;
+            || (living.tickCount + living.getId()) % 20 != 0) return;
+        boolean acid = harmful(state);
+        var type = FluidHazards.of(new FluidStack(state.getType(), 1));
+        boolean hot = type.heat() == net.createplant.thermal.Grade.Heat.VERY_HOT && !type.gas();
+        if (!acid && !hot) return;
         var box = living.getBoundingBox();
         if (box.maxX <= pos.getX() || box.minX >= pos.getX() + 1
             || box.maxZ <= pos.getZ() || box.minZ >= pos.getZ() + 1
@@ -52,6 +56,6 @@ public final class CorrosiveContact {
         long now = level.getGameTime();
         if (data.contains(LAST_HIT) && data.getLong(LAST_HIT) == now) return;
         data.putLong(LAST_HIT, now);
-        living.hurt(living.damageSources().source(DAMAGE), 2);
+        living.hurt(living.damageSources().source(acid ? DAMAGE : HazardSuit.HOT_LIQUID), 2);
     }
 }

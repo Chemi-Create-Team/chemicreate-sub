@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GGG",
+    "WCW",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    "W": {
+      "item": "create_refinery_n_reactors:high_voltage_conductor"
+    },
+    "C": {
+      "item": "create:brass_ingot"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:flexible_rubber_hose",
+    "count": 2
+  }
+}

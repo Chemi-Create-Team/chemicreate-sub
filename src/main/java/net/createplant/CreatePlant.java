@@ -18,6 +18,7 @@ public class CreatePlant {
         net.createplant.registry.CEMachineSounds.register(modEventBus);
         net.createplant.registry.CEParticles.register(modEventBus);
         container.registerConfig(net.neoforged.fml.config.ModConfig.Type.SERVER, net.createplant.transport.TransportConfig.SPEC);
+        container.registerConfig(net.neoforged.fml.config.ModConfig.Type.CLIENT, net.createplant.safety.HazardHudConfig.SPEC);
         net.createplant.registry.CETransport.register(modEventBus);
         net.createplant.registry.CEPressure.register(modEventBus);
         net.createplant.registry.CEFlare.register(modEventBus);
@@ -85,6 +86,7 @@ public class CreatePlant {
         net.createplant.registry.CEGasBuckets.register(modEventBus);
         net.createplant.registry.CEPortableTools.register(modEventBus);
         net.createplant.registry.CEAgriculture.register(modEventBus);
+        net.createplant.registry.CEPressureInfrastructure.register(modEventBus);
         net.createplant.registry.CECarbonization.register(modEventBus);
         net.createplant.registry.CEVault.register(modEventBus);
         net.createplant.registry.CEAssembly.register(modEventBus);

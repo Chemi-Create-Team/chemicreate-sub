@@ -5133,5 +5133,50 @@
     "en_us": "Check the remaining liquid and redstone state with Engineer’s Goggles.",
     "ja_jp": "エンジニアのゴーグルで、液体の残量と信号を確認できます。",
     "zh_cn": "使用工程师护目镜查看余量和红石状态。"
+  },
+  "pressure_infrastructure.title": {
+    "en_us": "Driving a pressure pump and linking a hose",
+    "ja_jp": "高圧ポンプを駆動してホースを接続する",
+    "zh_cn": "驱动高压泵并连接软管"
+  },
+  "pressure_infrastructure.place": {
+    "en_us": "Place the pump kit where all eight blocks fit.",
+    "ja_jp": "2×2×2の空間を空けて、高圧ポンプを設置します。",
+    "zh_cn": "留出 2×2×2 的空间后放置高压泵。"
+  },
+  "pressure_infrastructure.intake": {
+    "en_us": "Connect the source to the lower rear inlet.",
+    "ja_jp": "供給元のパイプを背面下段の吸込口につなぎます。",
+    "zh_cn": "将供料管接到后方下部的吸入口。"
+  },
+  "pressure_infrastructure.drive": {
+    "en_us": "Drive the top port with a vertical shaft. The upper front flange is the outlet.",
+    "ja_jp": "上から縦シャフトで回転を入れます。正面上段のフランジが吐出口です。",
+    "zh_cn": "从上方竖轴输入动力。前方上部法兰是出口。"
+  },
+  "pressure_infrastructure.first": {
+    "en_us": "Right-click the outlet flange with a rubber hose to select the start.",
+    "ja_jp": "ゴムホースで吐出口を右クリックし、始点を選びます。",
+    "zh_cn": "手持橡胶软管右击出口法兰，选定起点。"
+  },
+  "pressure_infrastructure.second": {
+    "en_us": "Right-click a connector within 32 blocks. Its rear connects to the receiving tank.",
+    "ja_jp": "32ブロック以内のコネクタを右クリックします。コネクタの背面はタンクにつなぎます。",
+    "zh_cn": "右击 32 格内的接头。把接头后部接到接收储罐。"
+  },
+  "pressure_infrastructure.goggles": {
+    "en_us": "Goggles show the speed, stress, measured flow and hose connection.",
+    "ja_jp": "ゴーグルで回転速度、応力、実測流量、ホース接続先を確認できます。",
+    "zh_cn": "护目镜显示转速、应力、实测流量和软管连接。"
+  },
+  "pressure_infrastructure.remove": {
+    "en_us": "Right-click a hose end with a wrench or shears to retrieve it.",
+    "ja_jp": "ホースの接続口をレンチかハサミで右クリックすると回収できます。",
+    "zh_cn": "用扳手或剪刀右击软管端口即可回收。"
+  },
+  "pressure_infrastructure.hazard": {
+    "en_us": "Wear all four hazard pieces in contaminated areas. Replace a spent helmet filter at a crafting table.",
+    "ja_jp": "危険区域では防護服を4部位装備します。消耗したフィルターは作業台で交換できます。",
+    "zh_cn": "进入危险区时穿齐四件防护服。用工作台更换耗尽的滤芯。"
   }
 }

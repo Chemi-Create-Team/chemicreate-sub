@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/high_pressure_pump"
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/high_pressure_pump",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/high_pressure_pump",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/high_pressure_pump",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "create_refinery_n_reactors:block/high_pressure_pump"
+    },
+    "facing=down": {
+      "model": "create_refinery_n_reactors:block/high_pressure_pump"
+    }
+  }
+}

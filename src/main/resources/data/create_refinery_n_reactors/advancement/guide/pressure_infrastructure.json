@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:high_pressure_pump"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.pressure_infrastructure.title"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.pressure_infrastructure.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/plastic",
+  "criteria": {
+    "pump": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "create_refinery_n_reactors:high_pressure_pump"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "pump"
+    ]
+  ]
+}

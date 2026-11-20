@@ -70,6 +70,10 @@
     "create_refinery_n_reactors:low_pressure_turbine_end",
     "create_refinery_n_reactors:fusion_viewport",
     "create_refinery_n_reactors:facility_constructor",
-    "create_refinery_n_reactors:electrolysis_electrode_head"
+    "create_refinery_n_reactors:electrolysis_electrode_head",
+    "create_refinery_n_reactors:high_pressure_pump",
+    "create_refinery_n_reactors:pressure_pump_intake",
+    "create_refinery_n_reactors:pressure_pump_casing",
+    "create_refinery_n_reactors:hose_connector"
   ]
 }

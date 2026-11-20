@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:hazard_helmet"
+    },
+    {
+      "item": "create_refinery_n_reactors:gas_mask_filter"
+    }
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:hazard_helmet"
+  }
+}

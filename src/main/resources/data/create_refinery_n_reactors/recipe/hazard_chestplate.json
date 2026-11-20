@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "G G",
+    "PRP",
+    "GFG"
+  ],
+  "key": {
+    "G": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    },
+    "R": {
+      "item": "create_refinery_n_reactors:pvc_resin"
+    },
+    "F": {
+      "item": "create_refinery_n_reactors:phenolic_board"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:hazard_chestplate",
+    "count": 1
+  }
+}

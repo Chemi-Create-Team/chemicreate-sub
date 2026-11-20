@@ -47,7 +47,7 @@ public class CECreativeModeTabs {
             "molybdenum_ingot", "stainless_steel_ingot", "aluminum_sheet", "nickel_sheet", "titanium_sheet", "stainless_steel_sheet",
             "iron_pipe", "unfired_ceramic_pipe", "zircaloy_cladding_tube"),
         List.of("polyethylene", "polypropylene", "synthetic_rubber", "industrial_resin", "plastic_sheet", "rubber_gasket",
-            "flame_retardant_pellet", "heat_resistant_gasket", "paraffin_wax", "phenolic_resin", "phenolic_board",
+            "flame_retardant_pellet", "heat_resistant_gasket", "flexible_rubber_hose", "paraffin_wax", "phenolic_resin", "phenolic_board",
             "phosphate_compound", "heat_resistant_coating", "fire_resistant_conductor", "fire_resistant_cable"),
         List.of("iron_catalyst", "oxidation_catalyst", "cracking_catalyst", "polymerization_catalyst", "hydrotreating_catalyst",
             "hydrocracking_catalyst", "shift_catalyst_core", "iron_ft_catalyst_core", "cobalt_ft_catalyst_core",
@@ -62,7 +62,7 @@ public class CECreativeModeTabs {
         List.of("spent_fuel_rod", "spent_control_rod", "chopped_spent_fuel", "spent_cladding_hulls", "spent_blanket_cartridge",
             "irradiated_cartridge", "spent_divertor_cassette", "empty_waste_canister", "vitrified_waste_canister"),
         List.of("anfo", "blasting_charge"),
-        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "steam_gun", "steam_hammer", "pipe_configurator", "gas_mask", "gas_mask_filter", "inert_gas_cylinder", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers", "soap")
+        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "steam_gun", "steam_hammer", "pipe_configurator", "gas_mask", "gas_mask_filter", "inert_gas_cylinder", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers", "hazard_helmet", "hazard_chestplate", "hazard_leggings", "hazard_boots", "soap")
     );
 
     /** Equipment and construction groups in display order. */
@@ -81,7 +81,7 @@ public class CECreativeModeTabs {
             "gas_holder", "lidded_vessel", "ammonia_separator"),
         List.of("high_pressure_turbine_unit", "low_pressure_turbine_unit", "large_flywheel", "high_pressure_turbine_casing", "low_pressure_turbine_casing", "reciprocating_cylinder",
             "reciprocating_compressor"),
-        List.of("electric_pump", "agricultural_sprayer",
+        List.of("electric_pump", "high_pressure_pump", "hose_connector", "agricultural_sprayer",
             "tube_piped_tank", "jacketed_pipe",
             "cooler_radiator", "cooling_fan", "cooling_fan_shroud", "natural_draft_cooling_tower", "cooling_tower_shell", "cooling_tower_basin",
             "cooling_tower_fill", "cooling_tower_distributor", "cooling_tower_hot_inlet", "cooling_tower_cold_outlet",

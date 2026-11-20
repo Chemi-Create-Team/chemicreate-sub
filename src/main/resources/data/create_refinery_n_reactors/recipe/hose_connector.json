@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "CPC",
+    " G "
+  ],
+  "key": {
+    "B": {
+      "item": "create:brass_ingot"
+    },
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:hose_connector",
+    "count": 2
+  }
+}

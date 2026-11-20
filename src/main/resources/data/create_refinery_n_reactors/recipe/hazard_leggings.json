@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PGP",
+    "G G",
+    "V V"
+  ],
+  "key": {
+    "P": {
+      "item": "create_refinery_n_reactors:plastic_sheet"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:synthetic_rubber"
+    },
+    "V": {
+      "item": "create_refinery_n_reactors:pvc_resin"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:hazard_leggings",
+    "count": 1
+  }
+}
