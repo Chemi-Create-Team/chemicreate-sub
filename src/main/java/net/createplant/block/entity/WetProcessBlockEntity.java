@@ -230,6 +230,10 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
             @Override public ItemStack extractItem(int slot, int count, boolean simulate) { return ready(slot) && slot == 1 && getSpeed() != 0 ? items.extractItem(4, count, simulate) : ItemStack.EMPTY; }
         };
     }
+
+    public ItemStack takeFlocculant(boolean simulate) {
+        return formed && progress == 0 ? items.extractItem(3, 64, simulate) : ItemStack.EMPTY;
+    }
     public void preview(int size, int tankHeight, FluidStack feed, FluidStack product, String state) {
         if (!isVirtual()) return;
         width = size;height = tankHeight;formed = true;status = state;

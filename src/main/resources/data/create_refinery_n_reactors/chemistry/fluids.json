@@ -1,0 +1,737 @@
+{
+  "acetone": {
+    "formula": "C₃H₆O",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "air_gas": {
+    "formula": "N₂ + O₂ + Ar",
+    "hazards": []
+  },
+  "aluminium_sulfate_solution": {
+    "formula": "Al₂(SO₄)₃ + H₂O",
+    "hazards": []
+  },
+  "ammonia_gas": {
+    "formula": "NH₃",
+    "hazards": []
+  },
+  "ammonium_chloride_liquor": {
+    "formula": "NH₄Cl + H₂O",
+    "hazards": []
+  },
+  "antifreeze": {
+    "formula": "C₂H₆O₂ + H₂O",
+    "hazards": [
+      "TOXIC",
+      "REFRIGERANT"
+    ]
+  },
+  "argon_gas": {
+    "formula": "Ar",
+    "hazards": []
+  },
+  "benzene": {
+    "formula": "C₆H₆",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "brine": {
+    "formula": "NaCl + H₂O",
+    "hazards": []
+  },
+  "btx": {
+    "formula": "C₆H₆ + C₇H₈ + C₈H₁₀",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "butadiene": {
+    "formula": "C₄H₆",
+    "hazards": [
+      "TOXIC"
+    ]
+  },
+  "butanol": {
+    "formula": "C₄H₁₀O",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "butyraldehyde": {
+    "formula": "C₄H₈O",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "carbon_dioxide": {
+    "formula": "CO₂",
+    "hazards": []
+  },
+  "carbon_monoxide": {
+    "formula": "CO",
+    "hazards": []
+  },
+  "caustic_soda_solution": {
+    "formula": "NaOH + H₂O",
+    "hazards": []
+  },
+  "chemical_mixture": {
+    "formula": "…",
+    "hazards": []
+  },
+  "chlorine": {
+    "formula": "Cl₂",
+    "hazards": [
+      "OXIDIZER"
+    ]
+  },
+  "chlorobenzene": {
+    "formula": "C₆H₅Cl",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "chlorotoluene": {
+    "formula": "C₇H₇Cl",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "clarified_water": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "cold_nitric_oxide_mixture": {
+    "formula": "NO + H₂O",
+    "hazards": []
+  },
+  "cold_synthesis_mixture": {
+    "formula": "NH₃ + N₂ + H₂",
+    "hazards": []
+  },
+  "compact_enriched_uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "compressed_air": {
+    "formula": "N₂ + O₂ + Ar",
+    "hazards": []
+  },
+  "compressed_hydrogen": {
+    "formula": "H₂",
+    "hazards": []
+  },
+  "compressed_synthesis_feed": {
+    "formula": "N₂ + H₂",
+    "hazards": []
+  },
+  "contaminated_gas": {
+    "formula": "…",
+    "hazards": []
+  },
+  "converter_gas": {
+    "formula": "CO + CO₂ + …",
+    "hazards": []
+  },
+  "cooled_hydrocracker_effluent": {
+    "formula": "CₙHₘ + H₂ + H₂S",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "cooled_hydrotreater_effluent": {
+    "formula": "CₙHₘ + H₂ + H₂S",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "cooled_olefins": {
+    "formula": "C₂H₄ + C₃H₆",
+    "hazards": []
+  },
+  "copper_leach_slurry": {
+    "formula": "H₂SO₄ + CuSO₄ + …",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "copper_sulfate_solution": {
+    "formula": "CuSO₄ + H₂O",
+    "hazards": []
+  },
+  "createdieselgenerators:crude_oil": {
+    "formula": "CₙHₘ",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "createdieselgenerators:diesel": {
+    "formula": "C₁₀H₂₂–C₂₂H₄₆",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "createdieselgenerators:gasoline": {
+    "formula": "C₅H₁₂–C₁₂H₂₆",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "crop_protectant": {
+    "formula": "H₂O + …",
+    "hazards": []
+  },
+  "crude_methylphosphonate": {
+    "formula": "C₃H₉O₃P + …",
+    "hazards": [
+      "TOXIC"
+    ]
+  },
+  "cumene": {
+    "formula": "C₉H₁₂",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "cumene_process_liquor": {
+    "formula": "C₆H₆O + C₃H₆O",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "depleted_uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "deuterium_depleted_water": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "deuterium_gas": {
+    "formula": "D₂",
+    "hazards": []
+  },
+  "dilute_sulfuric_acid": {
+    "formula": "H₂SO₄ + H₂O",
+    "hazards": []
+  },
+  "diluted_pesticide": {
+    "formula": "H₂O + …",
+    "hazards": []
+  },
+  "dimethyl_methylphosphonate": {
+    "formula": "C₃H₉O₃P",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "dissolved_spent_fuel": {
+    "formula": "UO₂²⁺ + Pu⁴⁺ + NO₃⁻ + H₂O",
+    "hazards": []
+  },
+  "enriched_uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "ethylbenzene": {
+    "formula": "C₈H₁₀",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "ethylene": {
+    "formula": "C₂H₄",
+    "hazards": []
+  },
+  "ethylene_dichloride": {
+    "formula": "C₂H₄Cl₂",
+    "hazards": [
+      "TOXIC"
+    ]
+  },
+  "ethylene_glycol": {
+    "formula": "C₂H₆O₂",
+    "hazards": [
+      "TOXIC"
+    ]
+  },
+  "ethylene_oxide": {
+    "formula": "C₂H₄O",
+    "hazards": []
+  },
+  "fluorine": {
+    "formula": "F₂",
+    "hazards": [
+      "OXIDIZER"
+    ]
+  },
+  "formaldehyde_solution": {
+    "formula": "CH₂O + H₂O",
+    "hazards": [
+      "CORROSIVE",
+      "TOXIC"
+    ]
+  },
+  "ft_offgas": {
+    "formula": "C₂H₄ + C₃H₆",
+    "hazards": []
+  },
+  "heavy_oil": {
+    "formula": "CₙHₘ",
+    "hazards": [
+      "FLAMMABLE",
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "heavy_water": {
+    "formula": "D₂O",
+    "hazards": []
+  },
+  "helium_gas": {
+    "formula": "He",
+    "hazards": []
+  },
+  "helium_recovery_feed": {
+    "formula": "He + N₂",
+    "hazards": []
+  },
+  "hexane": {
+    "formula": "C₆H₁₄",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "high_level_raffinate": {
+    "formula": "NO₃⁻ + H₂O + …",
+    "hazards": []
+  },
+  "high_pressure_steam": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "hot_hydrocracker_effluent": {
+    "formula": "CₙHₘ + H₂ + H₂S",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "hot_hydrotreater_effluent": {
+    "formula": "CₙHₘ + H₂ + H₂S",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "hot_nitric_oxide_mixture": {
+    "formula": "NO + H₂O",
+    "hazards": []
+  },
+  "hot_olefins": {
+    "formula": "C₂H₄ + C₃H₆",
+    "hazards": []
+  },
+  "hot_reactor_coolant": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "hot_synthesis_mixture": {
+    "formula": "NH₃ + N₂ + H₂",
+    "hazards": []
+  },
+  "hydrochloric_acid": {
+    "formula": "HCl + H₂O",
+    "hazards": []
+  },
+  "hydrogen_chloride": {
+    "formula": "HCl",
+    "hazards": []
+  },
+  "hydrogen_fluoride": {
+    "formula": "HF",
+    "hazards": []
+  },
+  "hydrogen_gas": {
+    "formula": "H₂",
+    "hazards": []
+  },
+  "hydrogen_sulfide": {
+    "formula": "H₂S",
+    "hazards": []
+  },
+  "iron_leach_slurry": {
+    "formula": "H₂SO₄ + FeSO₄ + …",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "iron_sulfate_solution": {
+    "formula": "FeSO₄ + H₂O",
+    "hazards": []
+  },
+  "liquid_ammonia": {
+    "formula": "NH₃",
+    "hazards": [
+      "REFRIGERANT"
+    ]
+  },
+  "liquid_chlorine": {
+    "formula": "Cl₂",
+    "hazards": [
+      "CORROSIVE",
+      "OXIDIZER"
+    ]
+  },
+  "liquid_fertilizer": {
+    "formula": "H₂O + CO(NH₂)₂ + NH₃ + PO₄³⁻ + K⁺",
+    "hazards": []
+  },
+  "liquid_helium": {
+    "formula": "He",
+    "hazards": [
+      "REFRIGERANT"
+    ]
+  },
+  "liquid_nitrogen": {
+    "formula": "N₂",
+    "hazards": [
+      "REFRIGERANT"
+    ]
+  },
+  "liquid_oxygen": {
+    "formula": "O₂",
+    "hazards": [
+      "OXIDIZER"
+    ]
+  },
+  "liquid_propylene": {
+    "formula": "C₃H₆",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "liquid_sulfur_dioxide": {
+    "formula": "SO₂",
+    "hazards": []
+  },
+  "liquid_vinyl_chloride": {
+    "formula": "C₂H₃Cl",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "low_sulfur_diesel": {
+    "formula": "C₁₀H₂₂–C₂₂H₄₆",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "lubricating_oil": {
+    "formula": "CₙHₘ",
+    "hazards": [
+      "FLAMMABLE",
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "methanol": {
+    "formula": "CH₃OH",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "minecraft:water": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "molten_paraffin": {
+    "formula": "CₙH₂ₙ₊₂",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "molten_polyethylene": {
+    "formula": "(C₂H₄)ₙ",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "molten_polypropylene": {
+    "formula": "(C₃H₆)ₙ",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "naphtha": {
+    "formula": "C₅H₁₂–C₁₂H₂₆",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "neutralized_wastewater": {
+    "formula": "H₂O + …",
+    "hazards": []
+  },
+  "nitric_acid": {
+    "formula": "HNO₃",
+    "hazards": [
+      "OXIDIZER"
+    ]
+  },
+  "nitric_oxide": {
+    "formula": "NO",
+    "hazards": []
+  },
+  "nitrogen_dioxide": {
+    "formula": "NO₂",
+    "hazards": [
+      "OXIDIZER"
+    ]
+  },
+  "nitrogen_gas": {
+    "formula": "N₂",
+    "hazards": []
+  },
+  "oxygen_gas": {
+    "formula": "O₂",
+    "hazards": [
+      "OXIDIZER"
+    ]
+  },
+  "phenol": {
+    "formula": "C₆H₆O",
+    "hazards": [
+      "CORROSIVE",
+      "TOXIC"
+    ]
+  },
+  "phosphoric_acid": {
+    "formula": "H₃PO₄",
+    "hazards": []
+  },
+  "plutonium_nitrate_solution": {
+    "formula": "Pu(NO₃)₄ + H₂O",
+    "hazards": []
+  },
+  "preheated_crude_oil": {
+    "formula": "CₙHₘ",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "pressurised_carbon_monoxide": {
+    "formula": "CO",
+    "hazards": []
+  },
+  "pressurised_hydrogen": {
+    "formula": "H₂",
+    "hazards": []
+  },
+  "pressurised_water": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "propylene": {
+    "formula": "C₃H₆",
+    "hazards": []
+  },
+  "purified_syngas": {
+    "formula": "CO + H₂",
+    "hazards": []
+  },
+  "raw_process_gas": {
+    "formula": "…",
+    "hazards": []
+  },
+  "recovered_solvent": {
+    "formula": "CₙHₘ",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "resin_process_vapor": {
+    "formula": "…",
+    "hazards": []
+  },
+  "slime_coolant": {
+    "formula": "H₂O + …",
+    "hazards": [
+      "REFRIGERANT"
+    ]
+  },
+  "slime_coolant_feed": {
+    "formula": "H₂O + …",
+    "hazards": [
+      "REFRIGERANT"
+    ]
+  },
+  "sodium_aluminate_solution": {
+    "formula": "Na[Al(OH)₄] + H₂O",
+    "hazards": []
+  },
+  "sodium_hypochlorite_solution": {
+    "formula": "NaClO + H₂O",
+    "hazards": [
+      "OXIDIZER"
+    ]
+  },
+  "steam": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "styrene": {
+    "formula": "C₈H₈",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "sulfur_dioxide": {
+    "formula": "SO₂",
+    "hazards": []
+  },
+  "sulfur_scrubber_liquor": {
+    "formula": "H₂O + Na₂SO₃ / NaHS",
+    "hazards": []
+  },
+  "sulfur_trioxide": {
+    "formula": "SO₃",
+    "hazards": []
+  },
+  "sulfuric_acid": {
+    "formula": "H₂SO₄",
+    "hazards": []
+  },
+  "sulfurous_acid": {
+    "formula": "H₂SO₃",
+    "hazards": []
+  },
+  "superheated_steam": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "synthesis_gas": {
+    "formula": "CO + H₂",
+    "hazards": []
+  },
+  "synthetic_crude_oil": {
+    "formula": "CₙHₘ",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "synthetic_naphtha": {
+    "formula": "C₅H₁₂–C₁₂H₂₆",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "tbp_extraction_solvent": {
+    "formula": "C₁₂H₂₇O₄P + CₙHₘ",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "tin_leach_slurry": {
+    "formula": "H₂SO₄ + SnSO₄ + …",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "tin_sulfate_solution": {
+    "formula": "SnSO₄ + H₂O",
+    "hazards": []
+  },
+  "titanyl_sulfate_solution": {
+    "formula": "TiOSO₄ + H₂O",
+    "hazards": []
+  },
+  "toluene": {
+    "formula": "C₇H₈",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "tributyl_phosphate": {
+    "formula": "C₁₂H₂₇O₄P",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "trimethyl_phosphite": {
+    "formula": "C₃H₉O₃P",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "tritium_gas": {
+    "formula": "T₂",
+    "hazards": []
+  },
+  "uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "uranyl_nitrate_solution": {
+    "formula": "UO₂(NO₃)₂ + H₂O",
+    "hazards": []
+  },
+  "vinyl_chloride": {
+    "formula": "C₂H₃Cl",
+    "hazards": []
+  },
+  "warm_slime_coolant": {
+    "formula": "H₂O + …",
+    "hazards": [
+      "REFRIGERANT"
+    ]
+  },
+  "warm_water": {
+    "formula": "H₂O",
+    "hazards": []
+  },
+  "wastewater": {
+    "formula": "H₂O + …",
+    "hazards": []
+  },
+  "wastewater_slurry": {
+    "formula": "H₂O + …",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "water_gas": {
+    "formula": "CO + H₂",
+    "hazards": []
+  },
+  "xylene": {
+    "formula": "C₈H₁₀",
+    "hazards": [
+      "FLAMMABLE",
+      "TOXIC"
+    ]
+  },
+  "zinc_leach_slurry": {
+    "formula": "H₂SO₄ + ZnSO₄ + …",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
+  "zinc_sulfate_solution": {
+    "formula": "ZnSO₄ + H₂O",
+    "hazards": []
+  },
+  "zirconium_sulfate_solution": {
+    "formula": "Zr(SO₄)₂ + H₂O",
+    "hazards": []
+  }
+}

@@ -83,6 +83,9 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
     public boolean formed() { return formed; }
     public Direction front() { return front; }
     public int temperature() { return inventory == null ? 20 : inventory.temperature; }
+    public int heatingStage() {
+        return 1 + Math.clamp((temperature() - 20) * 4 / (REACTION_TEMPERATURE - 20), 0, 4);
+    }
     public double progress() { return inventory == null ? 0 : inventory.progress / 10d; }
     public double duration() { return inventory == null ? 0 : inventory.duration / 10d; }
     public String status() { return status; }
@@ -292,6 +295,16 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         if (root == null || !root.ready(root.generation)) return null;
         if (side == Direction.UP && worldPosition.getY() == root.worldPosition.getY() + 5) return root.itemView(false);
         return root.slagFace(worldPosition, side) && root.hasLegacySlag() ? root.itemView(true) : null;
+    }
+
+    public ItemStack takeIdleFeed(Direction side, boolean simulate) {
+        var root = owner();
+        if (root == null || root.status.equals("running") || side != Direction.UP || itemPort(side) == null) return ItemStack.EMPTY;
+        for (int slot = 0; slot < 2; slot++) {
+            var stack = root.inventory.items.extractItem(slot, 64, simulate);
+            if (!stack.isEmpty()) return stack;
+        }
+        return ItemStack.EMPTY;
     }
 
     private boolean hasLegacySlag() {

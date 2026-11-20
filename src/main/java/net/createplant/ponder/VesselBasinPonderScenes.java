@@ -110,8 +110,10 @@ public final class VesselBasinPonderScenes {
         scene.overlay().showControls(util.vector().blockSurface(OWNER,Direction.DOWN),Pointing.UP,55).rightClick();
         coldContents(scene,0,2000);
         text(scene,util,OWNER.below(),MAINTENANCE,"wash",150);
+        scene.overlay().showControls(util.vector().blockSurface(OWNER,Direction.DOWN),Pointing.UP,45).rightClick().withItem(com.simibubi.create.AllItems.WRENCH.asStack());
+        text(scene,util,OWNER.below(),MAINTENANCE,"purge",115);
         scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,2,5),state->state.setValue(LiddedVesselBlock.OPEN,false),false);
-        coldContents(scene,0,2000,true);
+        coldContents(scene,0,0,true);
         scene.world().hideSection(util.select().position(INPUT).add(util.select().position(4,2,6)),Direction.DOWN);
         text(scene,util,OWNER,MAINTENANCE,"cryo",140);
         scene.idle(120);scene.markAsFinished();

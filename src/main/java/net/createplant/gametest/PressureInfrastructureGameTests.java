@@ -89,6 +89,9 @@ public final class PressureInfrastructureGameTests {
         motor(h, CORE);
         h.succeedWhen(() -> {
             h.assertTrue(target.getTankInventory().getFluidAmount() >= 400, "Water reaches the remote tank over the tall, offset hose");
+            h.assertTrue(pump.hose().measuredFluid().is(Fluids.WATER) && pump.hose().measuredRate() > 0
+                && end.hose().measuredFluid().is(Fluids.WATER) && end.hose().measuredRate() > 0,
+                "Both flange readouts report committed water flow");
             h.assertTrue(pump.hose().disconnect(true) && !end.hose().connected(), "Removal clears both ends");
             h.assertTrue(!end.hose().disconnect(true), "The second removal cannot duplicate the hose");
         });

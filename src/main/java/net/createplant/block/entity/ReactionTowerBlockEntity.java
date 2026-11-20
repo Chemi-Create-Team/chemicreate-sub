@@ -13,6 +13,7 @@ import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidMaterials;
 import net.createplant.thermal.FluidThermal;
+import net.createplant.thermal.Grade;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -126,6 +127,13 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     public void face(Direction front) { this.front = front;setChanged(); }
     public ItemStack catalystStack() { return catalyst; }
     public String status() { return status; }
+    public Grade.Heat heaterGrade() {
+        var level = heat();
+        return level.isAtLeast(BlazeBurnerBlock.HeatLevel.SEETHING) ? Grade.Heat.VERY_HOT
+            : level.isAtLeast(BlazeBurnerBlock.HeatLevel.KINDLED) ? Grade.Heat.HOT : Grade.Heat.AMBIENT;
+    }
+    public FluidStack contents(int bank) { return tanks[bank].copy(); }
+    public int contentsCapacity(int bank) { return capacity(tanks[bank]); }
     public int progress() { return progress; }
     public FluidStack tank(int slot) { return tanks[slot].copy(); }
 
@@ -216,6 +224,18 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     private IItemHandler itemPort(Direction side) {
         var owner = side == Direction.UP ? owner() : null;
         return owner != null && worldPosition.getY() - owner.worldPosition.getY() == layers() - 1 ? owner.catalystPort : null;
+    }
+
+    public boolean hasServiceHatch() {
+        var owner = owner();
+        return owner != null && worldPosition.equals(owner.getBlockPos().above(owner.layers() - 1));
+    }
+    public ItemStack topCatalyst() {
+        for (int layer = layers() - 1; layer >= 0; layer--) {
+            var part = layer(layer);
+            if (part != null && !part.catalyst.isEmpty()) return part.catalyst.copy();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override public void tick() {

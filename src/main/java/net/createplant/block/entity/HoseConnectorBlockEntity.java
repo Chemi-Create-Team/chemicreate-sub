@@ -19,7 +19,8 @@ import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
-public final class HoseConnectorBlockEntity extends SmartBlockEntity implements HoseSocket.Endpoint {
+public final class HoseConnectorBlockEntity extends SmartBlockEntity implements HoseSocket.Endpoint,
+        com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation {
     private final HoseSocket socket = new HoseSocket(this);
     private final FluidTank buffer = new FluidTank(1000) {
         @Override protected void onContentsChanged() { setChanged(); }
@@ -58,15 +59,21 @@ public final class HoseConnectorBlockEntity extends SmartBlockEntity implements 
         }
         @Override public int fill(FluidStack stack, FluidAction action) {
             var to = target();
-            return to == null ? 0 : to.fill(stack, action);
+            int moved = to == null ? 0 : to.fill(stack, action);
+            if (action.execute() && to != buffer) socket.transferred(stack, moved);
+            return moved;
         }
         @Override public FluidStack drain(FluidStack stack, FluidAction action) {
             var from = target();
-            return from == null ? FluidStack.EMPTY : from.drain(stack, action);
+            return measured(from, from == null ? FluidStack.EMPTY : from.drain(stack, action), action);
         }
         @Override public FluidStack drain(int amount, FluidAction action) {
             var from = target();
-            return from == null ? FluidStack.EMPTY : from.drain(amount, action);
+            return measured(from, from == null ? FluidStack.EMPTY : from.drain(amount, action), action);
+        }
+        private FluidStack measured(IFluidHandler from, FluidStack moved, FluidAction action) {
+            if (action.execute() && from != buffer) socket.transferred(moved, moved.getAmount());
+            return moved;
         }
     }
 
@@ -84,15 +91,22 @@ public final class HoseConnectorBlockEntity extends SmartBlockEntity implements 
         if (level != null && !level.isClientSide && !isVirtual()) socket.validate();
     }
 
+    @Override public void tick() {
+        super.tick();
+        if (level != null && !level.isClientSide) socket.tickReadout();
+    }
+
     @Override protected void write(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.write(tag, lookup, packet);
         socket.write(tag);
+        if (packet) socket.writeReadout(tag, lookup);
         if (!buffer.isEmpty()) tag.put("Buffer", buffer.writeToNBT(lookup, new CompoundTag()));
     }
 
     @Override protected void read(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.read(tag, lookup, packet);
         socket.read(tag);
+        if (packet) socket.readReadout(tag, lookup);
         buffer.readFromNBT(lookup, tag.getCompound("Buffer"));
     }
 

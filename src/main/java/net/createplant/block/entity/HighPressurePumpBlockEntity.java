@@ -58,6 +58,10 @@ public final class HighPressurePumpBlockEntity extends PumpBlockEntity implement
     }
 
     public IFluidHandler internalPort(boolean filling) { return filling ? input : output; }
+    public FluidStack contents() {
+        var controller = controller();
+        return controller == null ? FluidStack.EMPTY : controller.reservoir.getFluid().copy();
+    }
 
     @Override public float calculateStressApplied() { return drive() ? 8 : 0; }
 
@@ -67,6 +71,7 @@ public final class HighPressurePumpBlockEntity extends PumpBlockEntity implement
 
     @Override public void tick() {
         if (level != null && !level.isClientSide) {
+            hose.tickReadout();
             boolean due = (level.getGameTime() + worldPosition.asLong()) % 20 == 0;
             if (due) {
                 hose.validate();
@@ -121,7 +126,9 @@ public final class HighPressurePumpBlockEntity extends PumpBlockEntity implement
         if (admitted == 0) return;
         var drained = from.drain(available.copyWithAmount(admitted), EXECUTE);
         if (drained.isEmpty()) return;
-        int remaining = drained.getAmount() - to.fill(drained, EXECUTE);
+        int delivered = to.fill(drained, EXECUTE);
+        hose.transferred(drained, delivered);
+        int remaining = drained.getAmount() - delivered;
         if (remaining > 0) {
             if (from == output) {
                 reservoir.fill(drained.copyWithAmount(remaining), EXECUTE);
@@ -160,14 +167,20 @@ public final class HighPressurePumpBlockEntity extends PumpBlockEntity implement
     @Override protected void write(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.write(tag, lookup, packet);
         hose.write(tag);
-        if (packet) tag.putInt("Flow", displayedFlow);
+        if (packet) {
+            tag.putInt("Flow", displayedFlow);
+            hose.writeReadout(tag, lookup);
+        }
         if (drive() && !reservoir.isEmpty()) tag.put("Reservoir", reservoir.writeToNBT(lookup, new CompoundTag()));
     }
 
     @Override protected void read(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.read(tag, lookup, packet);
         hose.read(tag);
-        if (packet) displayedFlow = tag.getInt("Flow");
+        if (packet) {
+            displayedFlow = tag.getInt("Flow");
+            hose.readReadout(tag, lookup);
+        }
         if (drive()) reservoir.readFromNBT(lookup, tag.getCompound("Reservoir"));
     }
 

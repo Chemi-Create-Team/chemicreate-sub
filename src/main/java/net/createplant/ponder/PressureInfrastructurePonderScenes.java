@@ -38,6 +38,8 @@ public final class PressureInfrastructurePonderScenes {
         scene.world().setKineticSpeed(util.select().fromTo(drive, drive.above(2)), 48);
         text(scene, drive.above(), "drive");
         scene.world().showSection(util.select().fromTo(8, 1, 3, 8, 2, 4), Direction.DOWN);
+        cue(scene, drive, AllItems.WRENCH.asStack());
+        text(scene, drive, "port_colors");
         cue(scene, drive, CEPressureInfrastructure.HOSE.toStack());
         text(scene, drive, "first");
         cue(scene, socket, CEPressureInfrastructure.HOSE.toStack());

@@ -17,6 +17,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public final class HoseSocket {
@@ -36,12 +37,43 @@ public final class HoseSocket {
     private BlockPos remote;
     private Direction remoteFace;
     private UUID id;
+    private FluidStack pendingFluid = FluidStack.EMPTY, measuredFluid = FluidStack.EMPTY;
+    private long pendingAmount;
+    private float measuredRate;
 
     public HoseSocket(BlockEntity owner) { this.owner = owner; }
     public BlockPos position() { return owner.getBlockPos(); }
     public BlockPos remote() { return remote; }
     public Direction remoteFace() { return remoteFace; }
     public boolean connected() { return remote != null; }
+    public FluidStack measuredFluid() { return measuredFluid.copy(); }
+    public float measuredRate() { return measuredRate; }
+
+    public void transferred(FluidStack stack, int amount) {
+        if (amount <= 0 || stack.isEmpty()) return;
+        var endpoint = peer();
+        if (endpoint == null) return;
+        sample(stack, amount);
+        endpoint.hose().sample(stack, amount);
+    }
+
+    private void sample(FluidStack stack, int amount) {
+        if (!FluidStack.isSameFluidSameComponents(pendingFluid, stack)) {
+            pendingFluid = stack.copyWithAmount(1);
+            pendingAmount = 0;
+        }
+        pendingAmount += amount;
+    }
+
+    public void tickReadout() {
+        if (remote == null || (owner.getLevel().getGameTime() + position().asLong()) % 20 != 0) return;
+        float rate = pendingAmount / 20f;
+        pendingAmount = 0;
+        if (rate == measuredRate && FluidStack.isSameFluidSameComponents(measuredFluid, pendingFluid)) return;
+        measuredFluid = pendingFluid;
+        measuredRate = rate;
+        if (owner instanceof com.simibubi.create.foundation.blockEntity.SmartBlockEntity smart) smart.sendData();
+    }
 
     public static Endpoint endpoint(net.minecraft.world.level.Level level, BlockPos pos) {
         return level != null && level.hasChunkAt(pos) && level.getBlockEntity(pos) instanceof Endpoint endpoint ? endpoint : null;
@@ -114,6 +146,9 @@ public final class HoseSocket {
         remote = pos;
         remoteFace = face;
         id = link;
+        pendingFluid = measuredFluid = FluidStack.EMPTY;
+        pendingAmount = 0;
+        measuredRate = 0;
         owner.setChanged();
         if (owner instanceof com.simibubi.create.foundation.blockEntity.SmartBlockEntity smart) smart.sendData();
         owner.getLevel().invalidateCapabilities(position());
@@ -132,6 +167,17 @@ public final class HoseSocket {
         id = tag.hasUUID("HoseId") ? tag.getUUID("HoseId") : null;
         remote = id != null && remoteFace != null && tag.contains("HoseEnd") ? BlockPos.of(tag.getLong("HoseEnd")) : null;
         if (remote != null && (remote.equals(position()) || !remote.closerThan(position(), MAX_DISTANCE + .00001))) remote = null;
+    }
+
+    public void writeReadout(CompoundTag tag, HolderLookup.Provider lookup) {
+        if (remote == null || measuredFluid.isEmpty()) return;
+        tag.put("HoseFluid", measuredFluid.save(lookup));
+        tag.putFloat("HoseRate", measuredRate);
+    }
+
+    public void readReadout(CompoundTag tag, HolderLookup.Provider lookup) {
+        measuredFluid = remote == null ? FluidStack.EMPTY : FluidStack.parseOptional(lookup, tag.getCompound("HoseFluid"));
+        measuredRate = measuredFluid.isEmpty() ? 0 : tag.getFloat("HoseRate");
     }
     private static final class Links extends SavedData {
         private static final Factory<Links> FACTORY = new Factory<>(Links::new, Links::load);

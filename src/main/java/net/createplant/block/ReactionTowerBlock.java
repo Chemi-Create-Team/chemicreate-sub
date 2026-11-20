@@ -87,7 +87,8 @@ public class ReactionTowerBlock extends PlantFluidTankBlock {
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof ReactionTowerBlockEntity part)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var owner = part.owner();
-        if (owner == null || !ReactionTowerBlockEntity.basket(stack) && !ReactionTowerBlockEntity.catalyst(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (owner == null || hit.getDirection() != Direction.UP || !part.hasServiceHatch()
+            || !ReactionTowerBlockEntity.basket(stack) && !ReactionTowerBlockEntity.catalyst(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!owner.hatchOpen() || !owner.canInsert(stack)) return ItemInteractionResult.FAIL;
         if (!level.isClientSide) {
             BlockPos at = owner.insert(stack.copyWithCount(1));
@@ -101,8 +102,14 @@ public class ReactionTowerBlock extends PlantFluidTankBlock {
     @Override protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (hit.getDirection() != Direction.UP || !(level.getBlockEntity(pos) instanceof ReactionTowerBlockEntity part)) return InteractionResult.PASS;
         var owner = part.owner();
-        if (owner == null || pos.getY() != owner.getBlockPos().getY() + owner.layers() - 1) return InteractionResult.PASS;
-        if (!level.isClientSide) owner.toggleHatch();
+        if (owner == null || !part.hasServiceHatch()) return InteractionResult.PASS;
+        if (!level.isClientSide) {
+            if (player.isShiftKeyDown() && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()
+                && owner.hatchOpen() && owner.hasBaskets()) {
+                ItemStack taken = owner.takeTop();
+                if (!taken.isEmpty() && !player.addItem(taken)) player.drop(taken, false);
+            } else owner.toggleHatch();
+        }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

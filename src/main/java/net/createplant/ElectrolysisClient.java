@@ -61,6 +61,9 @@ public class ElectrolysisClient {
         NeoForge.EVENT_BUS.addListener(net.createplant.client.StructureGuideRenderer::tick);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.MachineSounds::tick);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.StructureGuideRenderer::render);
+        NeoForge.EVENT_BUS.addListener(net.createplant.client.ProcessPortOverlay::tick);
+        NeoForge.EVENT_BUS.addListener(net.createplant.client.ProcessPortOverlay::drawPorts);
+        NeoForge.EVENT_BUS.addListener(net.createplant.client.ProcessPortOverlay::drawPrompt);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.PipeQualityOverlay::goggles);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.PipeQualityOverlay::tooltip);
     }

@@ -4365,14 +4365,14 @@
     "zh_cn": "底部下方的烈焰人燃烧室提供反应所需热量。无需转动。"
   },
   "reaction_tower.wear": {
-    "en_us": "Each layer runs one batch at a time and wears its own catalyst. A funnel on top takes spent catalyst out; a wrench on the open hatch takes out the highest catalyst, then the highest basket.",
-    "ja_jp": "各段が1バッチずつ処理し、その段の触媒が減ります。使い切った触媒は上面のファンネルで取り出せます。開いたハッチにレンチを使うと、上の段の触媒、次にバスケットを取り出します。",
-    "zh_cn": "每层一次处理一批并消耗该层催化剂。顶部漏斗可取出耗尽的催化剂；对打开的舱口使用扳手，会先取出最上层的催化剂，再取出最上层的篮。"
+    "en_us": "Recover the top catalyst with a wrench or Shift-right-click the open hatch with empty hands. A funnel takes only spent catalysts.",
+    "ja_jp": "開いたハッチをレンチまたは素手のShift＋右クリックで操作すると、上段の触媒を回収できます。ファンネルでは消耗済みの触媒だけを取り出せます。",
+    "zh_cn": "对打开的舱口使用扳手或空手 Shift 右键，可取出顶部催化剂。漏斗只取出已耗尽的催化剂。"
   },
   "reaction_tower.observe": {
-    "en_us": "Goggles show the state, the working catalysts and the contents.",
-    "ja_jp": "ゴーグルで状態、働いている触媒、内容量を確認できます。",
-    "zh_cn": "使用护目镜可查看状态、有效催化剂和内容量。"
+    "en_us": "Goggles show the stop reason first. A diamond marks the current stage, and filled cells mark the recipe range.",
+    "ja_jp": "停止理由はゴーグルの最上段に表示されます。◆が現在の段階、■がレシピの適正範囲です。",
+    "zh_cn": "护目镜首先显示停机原因。◆标出当前档位，■表示配方允许的范围。"
   },
   "reaction_tower_separator.title": {
     "en_us": "Reaction tower as a separator",
@@ -5165,9 +5165,9 @@
     "zh_cn": "右击 32 格内的接头。把接头后部接到接收储罐。"
   },
   "pressure_infrastructure.goggles": {
-    "en_us": "Goggles show the speed, stress, measured flow and hose connection.",
-    "ja_jp": "ゴーグルで回転速度、応力、実測流量、ホース接続先を確認できます。",
-    "zh_cn": "护目镜显示转速、应力、实测流量和软管连接。"
+    "en_us": "Goggles show speed, stress, and measured output. Aim at a connected hose to see its fluid and measured flow.",
+    "ja_jp": "ゴーグルで回転速度、応力、実測吐出量を確認できます。接続済みのホースに照準を合わせると、流体と実測流量が表示されます。",
+    "zh_cn": "用护目镜查看转速、应力与实测输出。瞄准已连接的软管可读取流体及实测流量。"
   },
   "pressure_infrastructure.remove": {
     "en_us": "Right-click a hose end with a wrench or shears to retrieve it.",
@@ -5178,5 +5178,15 @@
     "en_us": "Wear all four hazard pieces in contaminated areas. Replace a spent helmet filter at a crafting table.",
     "ja_jp": "危険区域では防護服を4部位装備します。消耗したフィルターは作業台で交換できます。",
     "zh_cn": "进入危险区时穿齐四件防护服。用工作台更换耗尽的滤芯。"
+  },
+  "pressure_infrastructure.port_colors": {
+    "en_us": "Hold a wrench or hose to see ports. Blue is intake, orange is outlet, and yellow is shaft drive.",
+    "ja_jp": "レンチかホースを持つと接続口が表示されます。青は吸込、橙は吐出、黄は動力入力です。",
+    "zh_cn": "手持扳手或软管时会标出端口。蓝色是进料，橙色是出口，黄色是转轴输入。"
+  },
+  "vessel_maintenance.purge": {
+    "en_us": "Use a wrench on an exposed drain, or Shift-right-click it with empty hands, to purge leftover liquid.",
+    "ja_jp": "残留液を捨てるには、露出したドレンにレンチを使うか、素手でShift＋右クリックします。",
+    "zh_cn": "对外露的排液口使用扳手或空手 Shift 右键，可排出残液。"
   }
 }

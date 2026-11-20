@@ -47,8 +47,7 @@ final class HoseRenderer {
         Vec3[] previous = null;
         for (int i = 0; i <= segments; i++) {
             double t = (double) i / segments;
-            double height = curvature * (Math.cosh((2*t-1)*half) - Math.cosh(half));
-            Vec3 center = a.lerp(b, t).add(0, height, 0);
+            Vec3 center = point(a, b, curvature, half, t);
             Vec3 tangent = delta.add(0, horizontal*Math.sinh((2*t-1)*half), 0).normalize();
             Vec3 side = tangent.cross(new Vec3(0, 1, 0)).normalize();
             if (side.lengthSqr() < .01) side = new Vec3(1, 0, 0);
@@ -76,6 +75,17 @@ final class HoseRenderer {
             }
             previous = next;
         }
+    }
+
+    static Vec3 point(Vec3 a, Vec3 b, double t) {
+        double horizontal = b.subtract(a).horizontalDistance();
+        double curvature = Math.max(1, horizontal * 1.65);
+        return point(a, b, curvature, horizontal / (2 * curvature), t);
+    }
+
+    private static Vec3 point(Vec3 a, Vec3 b, double curvature, double half, double t) {
+        double height = curvature * (Math.cosh((2 * t - 1) * half) - Math.cosh(half));
+        return a.lerp(b, t).add(0, height, 0);
     }
 
     private static void vertex(VertexConsumer buffer, PoseStack.Pose pose, Vec3 pos, Vec3 normal, int color, float u, float v, int light) {

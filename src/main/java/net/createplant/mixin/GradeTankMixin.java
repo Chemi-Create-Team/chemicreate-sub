@@ -3,7 +3,6 @@ package net.createplant.mixin;
 import java.util.List;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
-import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.ThermalFluidTank;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -79,7 +78,9 @@ public abstract class GradeTankMixin implements net.createplant.block.entity.Tan
             lines.clear();net.createplant.mixture.MixtureGoggleHelper.appendSummary(lines, owner.getTankInventory().getFluid());return;
         }
         var grade=net.createplant.thermal.TankGrade.of(owner);lines.clear();lines.add(createPlant$tankName(owner));
-        lines.add(Component.literal(gasVolume(owner)+" / "+volumeCapacity(owner)+" mB").append(" | ").append(owner.getTankInventory().isEmpty() ? Component.empty() : FluidThermal.readout(owner.getTankInventory().getFluid())));
+        var fluid = owner.getTankInventory().getFluid();
+        lines.add(fluid.isEmpty() ? Component.literal("0 / " + volumeCapacity(owner) + " mB")
+            : net.createplant.chemistry.ChemicalReadout.contents(fluid.copyWithAmount(gasVolume(owner)), volumeCapacity(owner)));
         if(grade!=null){grade.describe(lines);if(owner.getTankInventory() instanceof net.createplant.thermal.GradeFluidTank tank && !tank.refusal().isEmpty())lines.set(3,Component.translatable("grade.create_refinery_n_reactors.tank.reject."+tank.refusal()));}
         if(net.createplant.block.entity.TankBoiler.applies(owner))net.createplant.block.entity.TankBoiler.of(owner).goggle(lines);
         net.createplant.compat.display.MachineReadings.compact(lines);
