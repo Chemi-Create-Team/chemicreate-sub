@@ -1890,9 +1890,9 @@
     "zh_cn": "不锈钢罐"
   },
   "lidded_vessel.place": {
-    "en_us": "Place vessels in a square up to 3×3, then stack up to four layers. Hold a full layer of blocks to extend the top in one click.",
-    "ja_jp": "平面を最大3×3、高さ4段まで組みます。1段分の槽を持って上へ置くと、まとめて増設できます。",
-    "zh_cn": "底面最大3×3，可叠至4层。手持一整层数量的槽块，点击顶部即可整层扩建。"
+    "en_us": "Place vessels in a square up to 3×3, then stack up to four layers. Hold a full layer of blocks to extend the top in one click. The ladder is at the far end of the left wall as you face the tank.",
+    "ja_jp": "平面を最大3×3、高さ4段まで組みます。1段分の槽を持って上へ置くと、まとめて増設できます。正面から見て左の側面、その奥側の端にはしごがあります。",
+    "zh_cn": "底面最大3×3，可叠至4层。手持一整层数量的槽块，点击顶部即可整层扩建。面朝罐体正面时，梯子位于左侧壁的远端。"
   },
   "lidded_vessel.pipes": {
     "en_us": "Connect pipes to the sides or top. Pipes over the hatch work only while it is closed.",
@@ -1920,9 +1920,9 @@
     "zh_cn": "堆叠并驱动2×2带盖槽"
   },
   "lidded_vessel_2x2.base": {
-    "en_us": "Place four vessels in a 2×2 square. They form one storage tank.",
-    "ja_jp": "ふた付き槽4個を2×2に置きます。1つの貯蔵タンクにつながります。",
-    "zh_cn": "将四个带盖槽摆成2×2，形成一个储罐。"
+    "en_us": "Place four vessels in a 2×2 square. They form one storage tank. The ladder is at the far end of the left wall as you face the tank.",
+    "ja_jp": "ふた付き槽4個を2×2に置きます。1つの貯蔵タンクにつながります。正面から見て左の側面、その奥側の端にはしごがあります。",
+    "zh_cn": "将四个带盖槽摆成2×2，形成一个储罐。面朝罐体正面时，梯子位于左侧壁的远端。"
   },
   "lidded_vessel_2x2.stack": {
     "en_us": "Hold at least four vessels and place on top to add a complete layer. Sneak to place one block at a time.",
@@ -4330,14 +4330,14 @@
     "zh_cn": "反应塔"
   },
   "reaction_tower.layers": {
-    "en_us": "Stack reaction towers 3x3 and three to twelve layers high. Like a lidded vessel, the tower is hollow inside its walls.",
-    "ja_jp": "反応塔を3×3で3～12段積みます。ふた付き槽と同じく、壁の内側は空洞です。",
-    "zh_cn": "将反应塔按3×3叠成3～12层。与带盖釜相同，壁内是空的。"
+    "en_us": "Stack reaction towers 3x3 and three to twelve layers high. Like a lidded vessel, the tower is hollow inside its walls. The ladder is at the far end of the left wall as you face the tower.",
+    "ja_jp": "反応塔を3×3で3～12段積みます。ふた付き槽と同じく、壁の内側は空洞です。正面から見て左の側面、その奥側の端にはしごがあります。",
+    "zh_cn": "将反应塔按3×3叠成3～12层。与带盖釜相同，壁内是空的。面朝反应塔正面时，梯子位于左侧壁的远端。"
   },
   "reaction_tower.hatch": {
-    "en_us": "Right-click the middle of the roof with an empty hand to open its hatch. Baskets and catalyst go in only while it is open, and opening it lets out any gas inside.",
-    "ja_jp": "天井の真ん中を素手で右クリックするとハッチが開きます。バスケットと触媒は開いている間だけ入れられます。開けると中の気体は外へ抜けます。",
-    "zh_cn": "空手右键点击顶部中央可打开舱口。只有打开时才能放入篮和催化剂，打开时内部气体会排出。"
+    "en_us": "Right-click the middle of the roof with an empty hand to open its hatch. Baskets and catalyst go in only while it is open, and opening it lets out any gas inside. The hatch lifts away from the front of the tower.",
+    "ja_jp": "天井の真ん中を素手で右クリックするとハッチが開きます。バスケットと触媒は開いている間だけ入れられます。開けると中の気体は外へ抜けます。ハッチは塔の正面から奥へ向かって開きます。",
+    "zh_cn": "空手右键点击顶部中央可打开舱口。只有打开时才能放入篮和催化剂，打开时内部气体会排出。舱盖朝反应塔的背面掀开。"
   },
   "reaction_tower.baskets": {
     "en_us": "Use catalyst baskets on the open hatch. One drops into each layer, from the bottom up.",

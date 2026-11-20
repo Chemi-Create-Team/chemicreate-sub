@@ -61,7 +61,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     public static final BooleanProperty BOTTOM = BlockStateProperties.BOTTOM;
     public static final BooleanProperty DRIVE = BooleanProperty.create("drive");
     public static final EnumProperty<Hatch> HATCH = EnumProperty.create("hatch", Hatch.class);
-    /** The blocks of one column of the side facing away from the hinge carry a ladder, like the distillation column's. */
+    /** The leftmost blocks of the left wall carry the ladder. */
     public static final BooleanProperty LADDER = BooleanProperty.create("ladder");
     /** Half the width of a wide vessel's hatch in pixels: it is 22 px across, centred on the top. */
     public static final int HATCH_HALF = 11;
@@ -118,7 +118,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         return switch (side) { case NORTH -> NORTH; case EAST -> EAST; case SOUTH -> SOUTH; case WEST -> WEST; default -> throw new IllegalArgumentException(side.toString()); };
     }
 
-    /** The hatch lifts away from the player who places it, and the ladder faces that player. */
+    /** The hatch lifts away from the player who places it. */
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(HINGE, context.getHorizontalDirection()); }
 
     @Override protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {

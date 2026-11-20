@@ -207,10 +207,10 @@ public class LiddedVesselPlacementGameTests {
 
     private static BlockPos leftEdge(int width, Direction hinge, int y) {
         return switch (hinge) {
-            case NORTH -> BASE.offset(0, y, width - 1);
-            case SOUTH -> BASE.offset(width - 1, y, 0);
-            case WEST -> BASE.offset(width - 1, y, width - 1);
-            case EAST -> BASE.offset(0, y, 0);
+            case NORTH -> BASE.offset(0, y, 0);
+            case SOUTH -> BASE.offset(width - 1, y, width - 1);
+            case WEST -> BASE.offset(0, y, width - 1);
+            case EAST -> BASE.offset(width - 1, y, 0);
             default -> throw new IllegalArgumentException(hinge.toString());
         };
     }
@@ -226,7 +226,7 @@ public class LiddedVesselPlacementGameTests {
             for (Direction side : Direction.Plane.HORIZONTAL) {
                 if (x + side.getStepX() >= 0 && x + side.getStepX() < width && z + side.getStepZ() >= 0 && z + side.getStepZ() < width) continue;
                 BlockPos beside = at.relative(side);
-                boolean expected = h.getBlockState(at).getValue(LiddedVesselBlock.LADDER) && side == hinge.getOpposite();
+                boolean expected = h.getBlockState(at).getValue(LiddedVesselBlock.LADDER) && side == hinge.getCounterClockWise();
                 h.assertTrue(ColumnLadder.isLadderAt(h.getLevel(), h.absolutePos(beside)) == expected, "Only the ladder-facing exterior cell is climbable: " + width + ", " + hinge + ", " + side);
                 if (expected) {
                     climbable++;
@@ -240,7 +240,7 @@ public class LiddedVesselPlacementGameTests {
     }
 
     @GameTest(template = "test_fractionation")
-    public static void oldCenteredSavedLaddersMoveLeftWithoutMovingInternalsOrStoredMaterials(GameTestHelper h) {
+    public static void oldFrontLaddersMoveToTheLeftSideWithoutMovingStoredMaterials(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         for (int width = 2; width <= 3; width++) for (Direction hinge : Direction.Plane.HORIZONTAL) {
             clearColumn(h);
@@ -260,7 +260,8 @@ public class LiddedVesselPlacementGameTests {
                 BlockPos at = BASE.offset(x, y, z);var part = (LiddedVesselBlockEntity) h.getBlockEntity(at);
                 var saved = part.saveWithoutMetadata(lookup);Direction side = hinge.getOpposite();
                 int across = side.getAxis() == Direction.Axis.Z ? x : z, out = side.getAxis() == Direction.Axis.Z ? z : x;
-                boolean old = across == (width - 1) / 2 && out == (side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? width - 1 : 0);
+                int oldColumn = y % 2 == 0 ? (width - 1) / 2 : side == Direction.NORTH || side == Direction.EAST ? width - 1 : 0;
+                boolean old = across == oldColumn && out == (side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? width - 1 : 0);
                 h.setBlock(at, h.getBlockState(at).setValue(LiddedVesselBlock.LADDER, old));
                 part.loadWithComponents(saved, lookup);part.lazyTick();
             }
@@ -278,7 +279,7 @@ public class LiddedVesselPlacementGameTests {
     @GameTest(template = "test_fractionation")
     public static void ladderMigrationWaitsForTheControllerWithoutLoadingItsChunk(GameTestHelper h) {
         square(h, 3);
-        BlockPos at = BASE.offset(0, 0, 2);var part = (LiddedVesselBlockEntity) h.getBlockEntity(at);
+        BlockPos at = BASE.above();square(h, at, 3, Direction.NORTH);var part = (LiddedVesselBlockEntity) h.getBlockEntity(at);
         var lookup = h.getLevel().registryAccess();var saved = part.saveWithoutMetadata(lookup);
         var detached = saved.copy();BlockPos absent = h.absolutePos(BASE).offset(1_000_000, 0, 1_000_000);
         h.assertTrue(!h.getLevel().hasChunkAt(absent), "The fixture controller chunk starts unloaded");
@@ -288,7 +289,7 @@ public class LiddedVesselPlacementGameTests {
         h.assertTrue(!h.getLevel().hasChunkAt(absent) && !h.getBlockState(at).getValue(LiddedVesselBlock.LADDER),
             "A pending migration neither loads the missing owner chunk nor guesses a ladder position");
         part.loadWithComponents(saved, lookup);part.lazyTick();
-        h.assertTrue(h.getBlockState(at).getValue(LiddedVesselBlock.LADDER) && ColumnLadder.isLadderAt(h.getLevel(), h.absolutePos(at.south())),
+        h.assertTrue(h.getBlockState(at).getValue(LiddedVesselBlock.LADDER) && ColumnLadder.isLadderAt(h.getLevel(), h.absolutePos(at.west())),
             "The deferred migration updates the correct climbable left edge once its owner is available");h.succeed();
     }
 }

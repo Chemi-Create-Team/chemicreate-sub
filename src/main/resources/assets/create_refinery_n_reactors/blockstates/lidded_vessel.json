@@ -387,7 +387,7 @@
     {
       "when": {
         "ladder": "true",
-        "facing": "south"
+        "facing": "east"
       },
       "apply": {
         "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",
@@ -397,7 +397,7 @@
     {
       "when": {
         "ladder": "true",
-        "facing": "west"
+        "facing": "south"
       },
       "apply": {
         "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",
@@ -407,7 +407,7 @@
     {
       "when": {
         "ladder": "true",
-        "facing": "north"
+        "facing": "west"
       },
       "apply": {
         "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",
@@ -417,7 +417,7 @@
     {
       "when": {
         "ladder": "true",
-        "facing": "east"
+        "facing": "north"
       },
       "apply": {
         "model": "create_refinery_n_reactors:block/lidded_vessel/ladder",

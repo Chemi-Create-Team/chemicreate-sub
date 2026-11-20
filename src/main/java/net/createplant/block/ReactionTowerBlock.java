@@ -132,7 +132,7 @@ public class ReactionTowerBlock extends PlantFluidTankBlock {
     /** The side toward the player is the front, where the tower shows its gauges. */
     @Override public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (placer != null && level.getBlockEntity(pos) instanceof ReactionTowerBlockEntity part) part.face(placer.getDirection().getOpposite());
+        if (!level.isClientSide && placer != null && level.getBlockEntity(pos) instanceof ReactionTowerBlockEntity part) part.face(placer.getDirection().getOpposite());
     }
 
     /** A centre block drops its basket and catalyst; the bottom centre also releases the gas it held. */

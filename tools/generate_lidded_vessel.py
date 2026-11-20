@@ -76,9 +76,9 @@ def models():
             write(A / f'models/block/lidded_vessel/{name(outer, bottom)}.json', cell(outer, bottom))
             when = {'bottom': str(bottom).lower(), **{face: str(outer[face]).lower() for face in SIDES}}
             parts.append({'when': when, 'apply': {'model': f'{NS}:block/lidded_vessel/{name(outer, bottom)}'}})
-    # The ladder faces away from the hinge; the model is drawn on the north face.
+    # The north-facing model turns to the wall left of the front (opposite to the hinge).
     write(A / 'models/block/lidded_vessel/ladder.json', ladder())
-    for hinge, turn in (('south', 0), ('west', 90), ('north', 180), ('east', 270)):
+    for hinge, turn in (('east', 0), ('south', 90), ('west', 180), ('north', 270)):
         parts.append({'when': {'ladder': 'true', 'facing': hinge}, 'apply': {'model': f'{NS}:block/lidded_vessel/ladder', 'y': turn}})
     write(A / 'blockstates/lidded_vessel.json', {'multipart': parts})
     item = cell({face: True for face in SIDES})

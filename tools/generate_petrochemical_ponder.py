@@ -86,8 +86,7 @@ class Structure:
                     if (dx, dz) == (-1, -1): nbt.append(named(10, 'Internal', compound([string('id', NS + INTERNALS[kind]), named(3, 'count', integer(1))])))
                     if pos == origin: nbt.append(named(4, 'PowerInput', struct.pack('>q', (x << 38) | (z << 12) | y)))
                     hatch = 'full' if i == sections - 1 and (dx, dz) == (0, 0) else 'none'
-                    # The hinge is north, so the ladder runs up the left end of the south side.
-                    self.block(*pos, NS + 'lidded_vessel', nbt=nbt, drive='true', axis='y', open='false', facing='north', hatch=hatch, ladder=str((dx, dz) == (-1, 1)).lower(), bottom=str(i == 0).lower(),
+                    self.block(*pos, NS + 'lidded_vessel', nbt=nbt, drive='true', axis='y', open='false', facing='north', hatch=hatch, ladder=str((dx, dz) == (-1, -1)).lower(), bottom=str(i == 0).lower(),
                                north=str(dz == -1).lower(), south=str(dz == 1).lower(), west=str(dx == -1).lower(), east=str(dx == 1).lower())
 
     def centrifuge(self, x, y, z, count, columns=4):

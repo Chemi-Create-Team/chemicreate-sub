@@ -22,6 +22,7 @@ import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEReactor;
 import net.minecraft.core.Direction;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -42,7 +43,8 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
     private static final Map<ReactorModule, PartialModel> INTERNALS = new EnumMap<>(ReactorModule.class);
     private final Map<LiddedVesselBlockEntity, Swirl> swirls = new WeakHashMap<>();
     private static final class Swirl { float time, angle; }
-    private static final PartialModel BEARING = PartialModel.of(CreatePlant.location("block/lidded_vessel/shaft_bearing"));
+    private static final PartialModel BEARING = PartialModel.of(CreatePlant.location("block/lidded_vessel/shaft_bearing")),
+        HATCH = PartialModel.of(CreatePlant.location("block/lidded_vessel/hatch"));
 
     static {
         for (var entry : CEReactor.INTERNALS.entrySet()) INTERNALS.put(entry.getKey(), PartialModel.of(CreatePlant.location("block/lidded_vessel/internal/" + entry.getValue().getId().getPath() + "_wide")));
@@ -74,26 +76,22 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         if (be.fouling().drainOpen()) box(vc, ms, middle - 1, -2, span - 8, middle + 1, -1, span - 2, edge, edge, fitting, light, overlay);
         else box(vc, ms, middle - 3, -2, span - 6, middle + 3, -1, span - 4, edge, edge, fitting, light, overlay);
         // Wide vessels keep a 22 px hatch in the middle of their joined top.
-        float h0 = Math.max(WALL, middle - LiddedVesselBlock.HATCH_HALF), h1 = Math.min(span - WALL, middle + LiddedVesselBlock.HATCH_HALF);
+        float h0 = middle - LiddedVesselBlock.HATCH_HALF, h1 = middle + LiddedVesselBlock.HATCH_HALF;
         ms.pushPose();
         // Turn the vessel so that the hatch's hinge runs along its local north edge, on the top layer.
         ms.translate(width / 2f, height - 1, width / 2f);
         ms.mulPose(Axis.YP.rotationDegrees(180 - be.hinge().toYRot()));
         ms.translate(-width / 2f, 0, -width / 2f);
-        if (width > 1) {
-            squarePlate(vc, ms, span, h0, h1, joined, under, light, overlay);
-            hole(vc, ms, h0, h1, edge, light, overlay);
-        }
+        squarePlate(vc, ms, span, h0, h1, joined, under, light, overlay);
+        hole(vc, ms, h0, h1, edge, light, overlay);
         box(vc, ms, middle - 2, 15, h0 - 1, middle + 2, 17, h0 + 1, fitting, fitting, fitting, light, overlay);
         ms.translate(0, 1, h0 / 16);
         ms.mulPose(Axis.XP.rotationDegrees(-MAX_ANGLE * be.lidOpening(partialTicks)));
         ms.translate(0, -1, -h0 / 16);
-        float uv0 = width == 1 ? WALL : 0, uv1 = width == 1 ? 16 - WALL : 16;
-        if (width == 3) capAcross(vc, ms, h0, h0, h1, h1, 16, joined, light, overlay);
-        else up(vc, ms, h0, h0, h1, h1, 16, top, uv0, uv0, uv1, uv1, light, overlay);
-        down(vc, ms, h0, h0, h1, h1, 14, under, uv0, uv0, uv1, uv1, light, overlay);
-        for (int side = 0; side < 4; side++) side(vc, ms, side, h0, h0, h1, h1, edge, light, overlay);
-        box(vc, ms, middle - 3, 16, h1 - 4, middle + 3, 17, h1 - 2, fitting, fitting, fitting, light, overlay);
+        int hatchLight = LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().offset(width / 2, height, width / 2));
+        box(vc, ms, middle - 3, 16, h1 - 4, middle + 3, 17, h1 - 2, fitting, fitting, fitting, hatchLight, overlay);
+        ms.translate(width / 2f - .5f, 0, width / 2f - .5f);
+        CachedBuffers.partial(HATCH, be.getBlockState()).light(hatchLight).renderInto(ms, vc);
         ms.popPose();
         renderContents(be, width, height, ms, buffer, light, overlay);
     }
@@ -109,10 +107,10 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
 
     /** The 2 px rim round the hatch's opening, seen when it is open. */
     private static void hole(VertexConsumer vc, PoseStack ms, float h0, float h1, TextureAtlasSprite edge, int light, int overlay) {
-        quad(vc, ms, edge, h0, 16, h0, h0, 14, h0, h1, 14, h0, h1, 16, h0, 0, 0, h1 - h0, 2, 0, 0, 1, light, overlay);
-        quad(vc, ms, edge, h1, 16, h1, h1, 14, h1, h0, 14, h1, h0, 16, h1, 0, 0, h1 - h0, 2, 0, 0, -1, light, overlay);
-        quad(vc, ms, edge, h0, 16, h1, h0, 14, h1, h0, 14, h0, h0, 16, h0, 0, 0, h1 - h0, 2, 1, 0, 0, light, overlay);
-        quad(vc, ms, edge, h1, 16, h0, h1, 14, h0, h1, 14, h1, h1, 16, h1, 0, 0, h1 - h0, 2, -1, 0, 0, light, overlay);
+        quad(vc, ms, edge, h0, 16, h0, h0, 14, h0, h1, 14, h0, h1, 16, h0, 0, 0, 16, 2, 0, 0, 1, light, overlay);
+        quad(vc, ms, edge, h1, 16, h1, h1, 14, h1, h0, 14, h1, h0, 16, h1, 0, 0, 16, 2, 0, 0, -1, light, overlay);
+        quad(vc, ms, edge, h0, 16, h1, h0, 14, h1, h0, 14, h0, h0, 16, h0, 0, 0, 16, 2, 1, 0, 0, light, overlay);
+        quad(vc, ms, edge, h1, 16, h0, h1, 14, h0, h1, 14, h1, h1, 16, h1, 0, 0, 16, 2, -1, 0, 0, light, overlay);
     }
 
     /** A 2 px plate from y 14 to 16, split at block edges so each part takes its own block's share of the texture. */
@@ -135,19 +133,6 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         var context = new CTContext();
         context.left = x > 0;context.right = x < 2;context.up = z > 0;context.down = z < 2;
         return PlantTankModels.VESSEL_CAP.getType().getTextureIndex(context);
-    }
-
-    /** A 3x3 cap face over several blocks, split at their edges so each part takes its own block's tile of the connected texture. */
-    private static void capAcross(VertexConsumer vc, PoseStack ms, float x0, float z0, float x1, float z1, float y, TextureAtlasSprite sprite, int light, int overlay) {
-        for (float x = x0; x < x1; ) {
-            float xe = Math.min(x1, (float) Math.floor(x / 16 + 1) * 16);
-            for (float z = z0; z < z1; ) {
-                float ze = Math.min(z1, (float) Math.floor(z / 16 + 1) * 16);
-                cap(vc, ms, x, z, xe, ze, y, sprite, light, overlay);
-                z = ze;
-            }
-            x = xe;
-        }
     }
 
     private static void cap(VertexConsumer vc, PoseStack ms, float x0, float z0, float x1, float z1, float y, TextureAtlasSprite sprite, int light, int overlay) {
@@ -269,7 +254,8 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         if (openings.isEmpty()) return;
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         var owner = be.getControllerBE();
-        var glass = atlas.apply(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("create", owner != null && owner.getHeight() == 1 ? "block/fluid_tank_window_single" : "block/fluid_tank_window"));
+        var glass = atlas.apply(CreatePlant.location(owner != null && owner.getHeight() == 1
+            ? "block/tank/stainless_steel_tank_window_single" : "block/tank/stainless_steel_tank_window"));
         var frost = atlas.apply(CreatePlant.location("block/lidded_vessel/window_frost"));
         var trim = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/steel"));
         var metal = buffer.getBuffer(RenderType.solid());
@@ -358,16 +344,6 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         quad(vc, ms, side, x0, y1, z1, x0, y0, z1, x1, y0, z1, x1, y1, z1, 0, 0, x1 - x0, y1 - y0, 0, 0, 1, light, overlay);
         quad(vc, ms, side, x0, y1, z0, x0, y0, z0, x0, y0, z1, x0, y1, z1, 0, 0, z1 - z0, y1 - y0, -1, 0, 0, light, overlay);
         quad(vc, ms, side, x1, y1, z1, x1, y0, z1, x1, y0, z0, x1, y1, z0, 0, 0, z1 - z0, y1 - y0, 1, 0, 0, light, overlay);
-    }
-
-    /** The hatch's 2 px edge on the given side, 0 to 3 for north, south, west and east. */
-    private static void side(VertexConsumer vc, PoseStack ms, int side, float x0, float z0, float x1, float z1, TextureAtlasSprite edge, int light, int overlay) {
-        switch (side) {
-            case 0 -> quad(vc, ms, edge, x1, 16, z0, x1, 14, z0, x0, 14, z0, x0, 16, z0, 0, 0, x1 - x0, 2, 0, 0, -1, light, overlay);
-            case 1 -> quad(vc, ms, edge, x0, 16, z1, x0, 14, z1, x1, 14, z1, x1, 16, z1, 0, 0, x1 - x0, 2, 0, 0, 1, light, overlay);
-            case 2 -> quad(vc, ms, edge, x0, 16, z0, x0, 14, z0, x0, 14, z1, x0, 16, z1, 0, 0, z1 - z0, 2, -1, 0, 0, light, overlay);
-            default -> quad(vc, ms, edge, x1, 16, z1, x1, 14, z1, x1, 14, z0, x1, 16, z0, 0, 0, z1 - z0, 2, 1, 0, 0, light, overlay);
-        }
     }
 
     private static void up(VertexConsumer vc, PoseStack ms, float x0, float z0, float x1, float z1, float y, TextureAtlasSprite sprite, float u0, float v0, float u1, float v1, int light, int overlay) {

@@ -40,8 +40,8 @@ public class ReactionTowerRenderer extends SafeBlockEntityRenderer<ReactionTower
     private static final PartialModel GAUGE = PartialModel.of(CreatePlant.location("block/reaction_tower/gauge")),
         GAUGE_DIAL = PartialModel.of(CreatePlant.location("block/reaction_tower/gauge_dial"));
     private static final int PRESSURE_NEEDLE = 0xFF6A5A;
-    /** The roof hatch's lid, swung up about the north edge of its 22 px opening. */
-    private static final PartialModel HATCH = PartialModel.of(CreatePlant.location("block/reaction_tower/hatch"));
+    private static final PartialModel HATCH = PartialModel.of(CreatePlant.location("block/reaction_tower/hatch")),
+        LADDER = PartialModel.of(CreatePlant.location("block/lidded_vessel/ladder"));
     private static final float HATCH_HINGE = (ReactionTowerBlock.HATCH_MIN - 16) / 16f, HATCH_ANGLE = 105;
 
     public static void init() { }
@@ -52,6 +52,7 @@ public class ReactionTowerRenderer extends SafeBlockEntityRenderer<ReactionTower
         if (be.owner() != be) return;
         renderGauges(be, ms, buffer, light);
         renderHatch(be, partialTicks, ms, buffer);
+        renderLadder(be, ms, buffer);
         // The contents are lit through the sight glasses, not by the shut-in bottom block.
         if (be.glazed()) { renderContents(be, ms, buffer, LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().north(2)));return; }
         VertexConsumer vc = buffer.getBuffer(RenderType.cutoutMipped());
@@ -70,10 +71,28 @@ public class ReactionTowerRenderer extends SafeBlockEntityRenderer<ReactionTower
     private static void renderHatch(ReactionTowerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer) {
         int top = be.layers() - 1;
         ms.pushPose();
-        ms.translate(0, top + 1, HATCH_HINGE);
+        ms.translate(.5f, top + 1, .5f);
+        ms.mulPose(Axis.YP.rotationDegrees(180 - be.front().getOpposite().toYRot()));
+        ms.translate(-.5f, 0, HATCH_HINGE - .5f);
         ms.mulPose(Axis.XP.rotationDegrees(-HATCH_ANGLE * be.lidOpening(partialTicks)));
         ms.translate(0, -1, -HATCH_HINGE);
         CachedBuffers.partial(HATCH, be.getBlockState()).light(LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().above(top + 1))).renderInto(ms, buffer.getBuffer(RenderType.solid()));
+        ms.popPose();
+    }
+
+    private static void renderLadder(ReactionTowerBlockEntity be, PoseStack ms, MultiBufferSource buffer) {
+        Direction side = be.ladderSide();
+        BlockPos base = be.ladderBase();
+        var vc = buffer.getBuffer(RenderType.solid());
+        ms.pushPose();
+        ms.translate(base.getX() - be.getBlockPos().getX() + .5f, 0, base.getZ() - be.getBlockPos().getZ() + .5f);
+        ms.mulPose(Axis.YP.rotationDegrees(180 - side.toYRot()));
+        ms.translate(-.5f, 0, -.5f);
+        for (int y = 0; y < be.layers(); y++) {
+            int light = LevelRenderer.getLightColor(be.getLevel(), base.above(y).relative(side));
+            CachedBuffers.partial(LADDER, be.getBlockState()).light(light).renderInto(ms, vc);
+            ms.translate(0, 1, 0);
+        }
         ms.popPose();
     }
 

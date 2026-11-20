@@ -394,13 +394,13 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         return LiddedVesselBlock.Hatch.quarter(z == 0 ? Direction.SOUTH : Direction.NORTH, x == 0 ? Direction.EAST : Direction.WEST);
     }
 
-    /** The ladder runs up the left edge when the side opposite the hinge is viewed from outside. */
+    /** The left wall's left edge is its corner along the hinge side. */
     private static boolean ladder(int x, int z, int width, Direction hinge) {
-        return switch (hinge.getOpposite()) {
-            case NORTH -> x == width - 1 && z == 0;
-            case SOUTH -> x == 0 && z == width - 1;
-            case WEST -> x == 0 && z == 0;
-            case EAST -> x == width - 1 && z == width - 1;
+        return switch (hinge) {
+            case NORTH -> x == 0 && z == 0;
+            case SOUTH -> x == width - 1 && z == width - 1;
+            case WEST -> x == 0 && z == width - 1;
+            case EAST -> x == width - 1 && z == 0;
             default -> false;
         };
     }

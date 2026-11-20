@@ -1,0 +1,7 @@
+{
+  "parent": "create_refinery_n_reactors:block/reaction_tower/hatch",
+  "textures": {
+    "top": "create_refinery_n_reactors:block/tank/ammonia_separator_top",
+    "inner": "create_refinery_n_reactors:block/tank/ammonia_separator_inner"
+  }
+}

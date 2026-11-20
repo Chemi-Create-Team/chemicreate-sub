@@ -3,6 +3,7 @@ package net.createplant.gametest;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
+import net.createplant.block.ColumnLadder;
 import net.createplant.block.ReactionTowerBlock;
 import net.createplant.block.entity.ReactionTowerBlockEntity;
 import net.createplant.registry.*;
@@ -10,6 +11,7 @@ import net.minecraft.core.*;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -40,6 +42,37 @@ public class ReactionTowerGameTests {
     public static void heat(ReactionTowerBlockEntity owner){owner.getLevel().setBlockAndUpdate(owner.getBlockPos().offset(-1,-1,-1),AllBlocks.BLAZE_BURNER.get().defaultBlockState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED));}
     /** Fits a basket and the given catalyst into each of the first layers. */
     private static void load(ReactionTowerBlockEntity owner,int layers,ItemStack catalyst){for(int i=0;i<layers;i++){owner.insert(basket());if(!catalyst.isEmpty())owner.insert(catalyst.copy());}}
+
+    @GameTest(template="test_fractionation")
+    public static void placementSetsTheTowerFrontAndItsLeftSideLadder(GameTestHelper h) {
+        build(h, 3);
+        h.runAfterDelay(10, () -> {
+            var owner = owner(h);
+            h.assertTrue(owner != null, "The tower formed");
+            var level = h.getLevel();
+            var player = h.makeMockPlayer(GameType.SURVIVAL);
+            for (Direction front : Direction.Plane.HORIZONTAL) {
+                player.setYRot(front.getOpposite().toYRot());
+                var block = CETransport.REACTION_TOWER.get();
+                block.setPlacedBy(level, owner.getBlockPos(), owner.getBlockState(), player, block.asItem().getDefaultInstance());
+                var saved = owner.saveWithoutMetadata(level.registryAccess());
+                owner.loadWithComponents(saved, level.registryAccess());
+                h.assertTrue(owner.front() == front, "The placed front survives saving: " + front);
+                for (int y = 0; y < 3; y++) for (Direction wall : Direction.Plane.HORIZONTAL) {
+                    for (int along = -1; along <= 1; along++) {
+                        var outside = owner.getBlockPos().above(y).relative(wall, 2).relative(wall.getClockWise(), along);
+                        boolean ladder = wall == front.getClockWise() && along == 1;
+                        h.assertTrue(ColumnLadder.isLadderAt(level, outside) == ladder, "Exactly the left edge of the left wall is climbable: " + front);
+                        if (ladder) {
+                            player.setPos(outside.getX() + .5, outside.getY(), outside.getZ() + .5);
+                            h.assertTrue(player.onClimbable(), "The tower ladder is recognized by player movement");
+                        }
+                    }
+                }
+            }
+            h.succeed();
+        });
+    }
 
     @GameTest(template="test_fractionation")
     public static void aThreeByThreeTowerFormsWithAShaftAndPortsOnItsOuterSides(GameTestHelper h){

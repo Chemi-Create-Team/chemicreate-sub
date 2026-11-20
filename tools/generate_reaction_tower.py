@@ -248,12 +248,17 @@ def structures():
 
 
 def hatch():
-    """The hatch's lid: a 22 px plate over the opening in the middle of the roof, hinged on its north edge."""
+    """Both roof hatches share a 22 px plate with each UV held within its sprite."""
     lo, hi = HATCH[0] - 16, HATCH[1] - 16
-    steel = lambda: {'texture': '#side'}
-    write(A / f'models/block/{REACTION}/hatch.json', {'textures': {'top': NS + 'block/tank/reaction_tower_top', 'side': NS + 'block/reactor/steel', 'particle': NS + 'block/reactor/steel'},
-          'elements': [{'from': [lo, 16 - ROOF, lo], 'to': [hi, 16, hi], 'faces': {'up': {'texture': '#top', 'uv': [0, 0, 16, 16]}, 'down': steel(),
-                                                                                   'north': steel(), 'south': steel(), 'east': steel(), 'west': steel()}}]})
+    faces = {'up': {'texture': '#top', 'uv': [0, 0, 16, 16]},
+             'down': {'texture': '#inner', 'uv': [0, 0, 16, 16]},
+             **{side: {'texture': '#top', 'uv': [0, 14, 16, 16]} for side in ('north', 'east', 'south', 'west')}}
+    write(A / f'models/block/{REACTION}/hatch.json', {
+        'textures': {'top': NS + 'block/tank/reaction_tower_top', 'inner': NS + 'block/tank/reaction_tower_inner', 'particle': '#top'},
+        'elements': [{'from': [lo, 16 - ROOF, lo], 'to': [hi, 16, hi], 'faces': faces}]})
+    write(A / 'models/block/lidded_vessel/hatch.json', {
+        'parent': NS + f'block/{REACTION}/hatch',
+        'textures': {'top': NS + 'block/tank/ammonia_separator_top', 'inner': NS + 'block/tank/ammonia_separator_inner'}})
 
 
 if __name__ == '__main__':

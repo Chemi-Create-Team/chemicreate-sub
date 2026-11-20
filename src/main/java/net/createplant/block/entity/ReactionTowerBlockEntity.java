@@ -117,14 +117,21 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     }
     /** The bottom centre draws the baskets of every layer above it and the gauges on the shell round them. */
     @Override protected net.minecraft.world.phys.AABB createRenderBoundingBox() {
-        return worldPosition.equals(base()) ? new net.minecraft.world.phys.AABB(worldPosition).expandTowards(0, Math.max(0, layers() - 1), 0).inflate(1.5, 0, 1.5) : super.createRenderBoundingBox();
+        return worldPosition.equals(base()) ? new net.minecraft.world.phys.AABB(worldPosition).expandTowards(0, layers() + .5, 0).inflate(1.5, 0, 1.5) : super.createRenderBoundingBox();
     }
     public int layers() { return getControllerBE() == null ? 0 : getControllerBE().getHeight(); }
     /** The centre block of a layer, which keeps its basket and catalyst. Called on the owner. */
     public ReactionTowerBlockEntity layer(int y) { return part(worldPosition.above(y)); }
     public boolean hasBasket() { return basket; }
     public Direction front() { return front; }
-    public void face(Direction front) { this.front = front;setChanged(); }
+    public void face(Direction front) {
+        if (this.front == front) return;
+        this.front = front;
+        setChanged();
+        sendData();
+    }
+    public Direction ladderSide() { return front.getClockWise(); }
+    public BlockPos ladderBase() { return worldPosition.relative(front.getOpposite()).relative(ladderSide()); }
     public ItemStack catalystStack() { return catalyst; }
     public String status() { return status; }
     public Grade.Heat heaterGrade() {

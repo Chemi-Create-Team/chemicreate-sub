@@ -211,8 +211,8 @@ final class VesselWorldClientCheck {
             for (int y = 0; y < 2; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) {
                 if (!(mc.level.getBlockEntity(origin.offset(x, y, z)) instanceof LiddedVesselBlockEntity cell) || cell.windowsEnabled() != windowed)
                     throw new IllegalStateException("Client window flags disagree for vessel " + i);
-                if (cell.getBlockState().getValue(LiddedVesselBlock.LADDER) != (x == 0 && z == width - 1))
-                    throw new IllegalStateException("The ladder is not at the left end of the front face: " + i);
+                if (cell.getBlockState().getValue(LiddedVesselBlock.LADDER) != (x == 0 && z == 0))
+                    throw new IllegalStateException("The ladder is not at the left end of the left wall: " + i);
             }
             for (int y = 0; y < 2; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) {
                 var pos = origin.offset(x, y, z);var state = mc.level.getBlockState(pos);

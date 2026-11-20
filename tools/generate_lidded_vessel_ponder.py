@@ -9,7 +9,7 @@ from generate_petrochemical_ponder import Structure, OUT, string, named, integer
 s = Structure(6, 4)
 for x in (1, 2, 3):
     for z in (1, 2, 3):
-        s.block(x, 1, z, NS + 'lidded_vessel', drive='true', axis='y', open='false', facing='north', bottom='true', hatch='full' if (x, z) == (2, 2) else 'none', ladder=str((x, z) == (1, 3)).lower(),
+        s.block(x, 1, z, NS + 'lidded_vessel', drive='true', axis='y', open='false', facing='north', bottom='true', hatch='full' if (x, z) == (2, 2) else 'none', ladder=str((x, z) == (1, 1)).lower(),
             north=str(z == 1).lower(), south=str(z == 3).lower(), west=str(x == 1).lower(), east=str(x == 3).lower())
 s.block(1, 2, 1, 'create:fluid_pipe', up='true', down='true', north='false', south='false', east='false', west='false', waterlogged='false')
 s.block(1, 3, 1, 'create:fluid_pipe', up='false', down='true', north='false', south='false', east='false', west='false', waterlogged='false')
@@ -31,7 +31,7 @@ for y in (1, 2):
             hatch = ('s' if z == 1 else 'n') + ('e' if x == 1 else 'w')
             s.block(x, y, z, NS + 'lidded_vessel', nbt=nbt, drive='false', axis='y',
                 open='false', facing='north', bottom=str(y == 1).lower(), hatch=hatch if y == 2 else 'none',
-                ladder=str((x, z) == (1, 2)).lower(), north=str(z == 1).lower(), south=str(z == 2).lower(), west=str(x == 1).lower(), east=str(x == 2).lower())
+                ladder=str((x, z) == (1, 1)).lower(), north=str(z == 1).lower(), south=str(z == 2).lower(), west=str(x == 1).lower(), east=str(x == 2).lower())
 s.save('lidded_vessel_2x2')
 (A / 'ponder/plant/lidded_vessel_2x2.nbt').write_bytes((OUT / 'lidded_vessel_2x2.nbt').read_bytes())
 (OUT / 'lidded_vessel_2x2.nbt').unlink()
@@ -53,7 +53,7 @@ def basin_structure(identifier, maintenance=False):
             nbt += [named(3, 'Size', integer(3)), named(3, 'Height', integer(1))] if (x, z) == (3, 3) else [named(11, 'Controller', b''.join(integer(v) for v in (3, 3, 2, 3)))]
             scene.block(x, 2, z, NS + 'lidded_vessel', nbt=nbt, drive='true', axis='y',
                 open='false', facing='north', bottom='true', hatch='full' if (x, z) == (4, 4) else 'none',
-                ladder=str((x, z) == (3, 5)).lower(), north=str(z == 3).lower(), south=str(z == 5).lower(), west=str(x == 3).lower(), east=str(x == 5).lower())
+                ladder=str((x, z) == (3, 3)).lower(), north=str(z == 3).lower(), south=str(z == 5).lower(), west=str(x == 3).lower(), east=str(x == 5).lower())
             if (x, z) != (4, 4): scene.block(x, 1, z, 'create:blaze_burner', blaze='smouldering')
     scene.block(4, 1, 4, 'create:creative_motor', facing='up')
     scene.block(2, 2, 3, NS + 'pipe_pressure_gauge', axis='x')
@@ -110,8 +110,8 @@ TEXTS = {
 }
 COMPACT_TEXTS = {
     'title': ('Stacking a storage-only 2x2 vessel', 'タンク専用の2×2槽を積む'),
-    'base': ('Four vessel blocks join into a 2x2 tank. Its hatch is centred across the four inside corners, and the ladder stays on one outside face.',
-        '4個のふた付き槽で2×2のタンクになります。4隅の内側にまたがる中央ハッチと、外側1面のはしごを持ちます。'),
+    'base': ('Four vessel blocks join into a 2x2 tank. The ladder is on the far edge of the wall to the left of the front.',
+        '4個のステンレスタンクが2×2につながります。正面から見て左の側面、その奥側の端にはしごがあります。'),
     'stack': ('Hold at least four vessel blocks and right-click the top: a complete 2x2 layer is placed, while the hatch stays closed. A 3x3 vessel similarly uses nine blocks. Sneak to place just one block.',
         'ふた付き槽を4個以上持って上を右クリックすると、ハッチを開かず2×2を1段まとめて置けます。3×3なら9個です。スニークすると1個ずつ置けます。'),
     'hatch': ('Switch to an empty hand to open the hatch. Holding another lidded vessel gives placement priority, so it does not open the hatch.',

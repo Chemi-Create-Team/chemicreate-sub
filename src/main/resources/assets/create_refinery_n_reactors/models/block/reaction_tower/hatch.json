@@ -1,8 +1,8 @@
 {
   "textures": {
     "top": "create_refinery_n_reactors:block/tank/reaction_tower_top",
-    "side": "create_refinery_n_reactors:block/reactor/steel",
-    "particle": "create_refinery_n_reactors:block/reactor/steel"
+    "inner": "create_refinery_n_reactors:block/tank/reaction_tower_inner",
+    "particle": "#top"
   },
   "elements": [
     {
@@ -27,19 +27,49 @@
           ]
         },
         "down": {
-          "texture": "#side"
+          "texture": "#inner",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
         },
         "north": {
-          "texture": "#side"
-        },
-        "south": {
-          "texture": "#side"
+          "texture": "#top",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ]
         },
         "east": {
-          "texture": "#side"
+          "texture": "#top",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#top",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ]
         },
         "west": {
-          "texture": "#side"
+          "texture": "#top",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ]
         }
       }
     }

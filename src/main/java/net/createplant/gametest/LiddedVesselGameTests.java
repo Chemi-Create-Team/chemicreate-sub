@@ -105,9 +105,9 @@ public class LiddedVesselGameTests {
         stack.useOn(new net.minecraft.world.item.context.UseOnContext(player, net.minecraft.world.InteractionHand.MAIN_HAND, hit));
         var root = root(h, BASE);
         h.assertTrue(root.getWidth() == 3 && root.getHeight() == 2 && stack.getCount() == 55, "One vessel placed on a 3x3 fills the whole layer above: " + root.getWidth() + "x" + root.getHeight() + ", left " + stack.getCount());
-        BlockPos front = BASE.offset(0, 1, 3);
-        h.assertTrue(net.createplant.block.ColumnLadder.isLadderAt(level, h.absolutePos(front)) && !net.createplant.block.ColumnLadder.isLadderAt(level, h.absolutePos(BASE.offset(1, 1, 3))),
-            "The ladder is climbed at the south wall's left edge when viewed from outside");
+        BlockPos beside = BASE.offset(-1, 1, 0);
+        h.assertTrue(net.createplant.block.ColumnLadder.isLadderAt(level, h.absolutePos(beside)) && !net.createplant.block.ColumnLadder.isLadderAt(level, h.absolutePos(beside.south())),
+            "The ladder is climbed at the west wall's left edge when viewed from outside");
         h.succeed();
     }
 
