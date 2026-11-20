@@ -2,6 +2,7 @@ package net.createplant.block.entity;
 
 import net.createplant.block.TankFootprint;
 import net.createplant.block.TankStructure;
+import net.createplant.block.WetProcessStructure.RimPort;
 import net.createplant.block.WetProcessPartBlock.Role;
 import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CEChlorAlkali;
@@ -94,27 +95,35 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
 
     public WetProcessBlockEntity clarifier() {
         if (clarifierDrive != null && level != null && level.hasChunkAt(clarifierDrive)
-            && level.getBlockEntity(clarifierDrive) instanceof WetProcessBlockEntity drive && drive.rimRole(worldPosition) != null) return drive;
+            && level.getBlockEntity(clarifierDrive) instanceof WetProcessBlockEntity drive && drive.rimPort(worldPosition) != null) return drive;
         return null;
     }
 
     public void bindClarifier(BlockPos drive) {
         if (drive.equals(clarifierDrive)) return;
         clarifierDrive = drive.immutable();
+        setChanged();
         if (!level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     public IFluidHandler fluidPort(Direction side) {
         var drive = clarifier();
         if (drive == null) return fluidCapability;
-        return side == drive.front() && drive.rimRole(worldPosition) == Role.OVERFLOW ? drive.fluidPort(Role.OVERFLOW) : null;
+        var port = drive.rimPort(worldPosition);
+        if (side != port.face(drive.front())) return null;
+        return switch (port) {
+            case OVERFLOW -> drive.fluidPort(Role.OVERFLOW);
+            case SLURRY_INLET -> drive.fluidPort(Role.FEED);
+            default -> null;
+        };
     }
 
     public IItemHandler itemPort(Direction side) {
         var drive = clarifier();
         if (drive == null) return saltCapability;
-        return (side == Direction.DOWN || side == drive.front().getOpposite()) && drive.rimRole(worldPosition) == Role.UNDERFLOW
-            ? drive.itemPort(Role.UNDERFLOW) : null;
+        var port = drive.rimPort(worldPosition);
+        if (port == RimPort.FLOCCULANT_INLET && side == port.face(drive.front())) return drive.itemPort(Role.FEED);
+        return port == RimPort.UNDERFLOW && (side == Direction.DOWN || side == port.face(drive.front())) ? drive.itemPort(Role.UNDERFLOW) : null;
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, TankCasingBlockEntity be) {

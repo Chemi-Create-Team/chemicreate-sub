@@ -2200,9 +2200,9 @@
     "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler.step_3": {
-    "en_us": "Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.",
-    "ja_jp": "加熱なら350 °C、超加熱なら650 °C・20 barの蒸気が出ます。",
-    "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
+    "en_us": "Each burner contributes up to 65.536 mB/s. Full normal heat delivers 32,768 SU per burner in the high-pressure turbine. Full superheat doubles that SU.",
+    "ja_jp": "底面の熱源1台あたり最大65.536 mB/sです。高圧タービン段では通常加熱1台分で32,768 SU、超加熱では2倍です。",
+    "zh_cn": "底部每个燃烧室最多提供65.536 mB/s。满载普通加热时，高压涡轮每个燃烧室可提供32,768 SU。充分超热时SU翻倍。"
   },
   "guide.tubular_boiler.step_4": {
     "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
@@ -2225,9 +2225,9 @@
     "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler_2x2.step_3": {
-    "en_us": "Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.",
-    "ja_jp": "加熱なら350 °C、超加熱なら650 °C・20 barの蒸気が出ます。",
-    "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
+    "en_us": "Each burner contributes up to 65.536 mB/s. Full normal heat delivers 32,768 SU per burner in the high-pressure turbine. Full superheat doubles that SU.",
+    "ja_jp": "底面の熱源1台あたり最大65.536 mB/sです。高圧タービン段では通常加熱1台分で32,768 SU、超加熱では2倍です。",
+    "zh_cn": "底部每个燃烧室最多提供65.536 mB/s。满载普通加热时，高压涡轮每个燃烧室可提供32,768 SU。充分超热时SU翻倍。"
   },
   "guide.tubular_boiler_2x2.step_4": {
     "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
@@ -2250,9 +2250,9 @@
     "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler_3x3.step_3": {
-    "en_us": "Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.",
-    "ja_jp": "加熱なら350 °C、超加熱なら650 °C・20 barの蒸気が出ます。",
-    "zh_cn": "加热时产生350 °C蒸汽，超级加热时产生650 °C、20 bar蒸汽。"
+    "en_us": "Each burner contributes up to 65.536 mB/s. Full normal heat delivers 32,768 SU per burner in the high-pressure turbine. Full superheat doubles that SU.",
+    "ja_jp": "底面の熱源1台あたり最大65.536 mB/sです。高圧タービン段では通常加熱1台分で32,768 SU、超加熱では2倍です。",
+    "zh_cn": "底部每个燃烧室最多提供65.536 mB/s。满载普通加热时，高压涡轮每个燃烧室可提供32,768 SU。充分超热时SU翻倍。"
   },
   "guide.tubular_boiler_3x3.step_4": {
     "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
@@ -4525,9 +4525,9 @@
     "zh_cn": "用储罐外壳建造奇数直径的圆形储罐。在罐沿高度的中心安装驱动器，并把底板中心换成朝下的进料口。"
   },
   "wet_processing.slow": {
-    "en_us": "Reduce the center drive to 1–4 RPM. Per 1000 mB slurry, collect 750 mB clear solution at the rim and two tailings mud below. One flocculant inserted at the mud port halves the 200-tick cycle.",
-    "ja_jp": "中央の駆動を1〜4 RPMに落とします。スラリー1000 mBから精製液750 mBと尾鉱泥2個を分離。汚泥口へ凝集剤1個を入れると200 tickの処理が半分になります。",
-    "zh_cn": "中心驱动降至1–4 RPM。每1000 mB矿浆分离为750 mB清液和2份尾矿泥。从排泥口投入1份絮凝剂可将200 tick周期减半。"
+    "en_us": "Reduce the center drive to 1–4 RPM. Per 1000 mB slurry, collect 750 mB clear solution at the rim and two tailings mud below.",
+    "ja_jp": "中央の駆動を1〜4 RPMに落とします。スラリー1000 mBから精製液750 mBと尾鉱泥2個を分離します。",
+    "zh_cn": "中心驱动降至1–4 RPM。每1000 mB矿浆分离为750 mB清液和2份尾矿泥。"
   },
   "wet_processing.fast": {
     "en_us": "At 5–16 RPM, suspended dirt carries into the overflow and raises the next electrowinning batch’s work, up to twice normal. At 17 RPM or above, the same slurry simply overflows without separation.",
@@ -5188,5 +5188,15 @@
     "en_us": "Use a wrench on an exposed drain, or Shift-right-click it with empty hands, to purge leftover liquid.",
     "ja_jp": "残留液を捨てるには、露出したドレンにレンチを使うか、素手でShift＋右クリックします。",
     "zh_cn": "对外露的排液口使用扳手或空手 Shift 右键，可排出残液。"
+  },
+  "wet_processing.slurry_side": {
+    "en_us": "Pump slurry into the left wall or the bottom feed. Use acid-resistant piping for leach slurry.",
+    "ja_jp": "ドライブと同じ向きで左側の壁か、底面流入口へポンプでスラリーを送ります。浸出スラリーには耐食配管を使います。",
+    "zh_cn": "用泵从驱动同向时的左侧壁或底部进料口送入矿浆。浸出矿浆需要耐腐蚀管道。"
+  },
+  "wet_processing.flocculant_side": {
+    "en_us": "Use a funnel at the opposite wall to load flocculant. One item halves a 200-tick batch.",
+    "ja_jp": "反対側の壁からファンネルで凝集剤を投入できます。1個で200 tickの処理時間が半分になります。",
+    "zh_cn": "在对侧壁用漏斗送入絮凝剂。每份可将200 tick的处理时间减半。"
   }
 }

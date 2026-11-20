@@ -100,7 +100,7 @@ for ident,title,ja,steps in [
  ('tubular_boiler','Boil steam in a horizontal tank','横型タンクで蒸気を作る',[
  ('Lay a horizontal tank with a 1×1 to 3×3 section, any length, and put Blaze Burners under it.','横型タンクを断面1×1～3×3、好きな長さで置き、下にブレイズバーナーを並べます。'),
  ('Feed water from the long side. Light a burner below the end of each row.','長辺の側面から給水します。各列の末端の下にあるバーナーに点火します。'),
- ('Lit burners give 350 °C steam; superheated burners give 650 °C steam at 20 bar.','加熱なら350 °C、超加熱なら650 °C・20 barの蒸気が出ます。'),
+ ('Each burner contributes up to 65.536 mB/s. Full normal heat delivers 32,768 SU per burner in the high-pressure turbine. Full superheat doubles that SU.','底面の熱源1台あたり最大65.536 mB/sです。高圧タービン段では通常加熱1台分で32,768 SU、超加熱では2倍です。'),
  ('Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.','加熱した列の上面か両端面から蒸気を送ります。計器の針は蒸気の充填率を示します。')])]:
     texts[f'{MOD}.ponder.shared.guide.{ident}.title']=(title,ja)
     texts[f'{MOD}.ponder.plant_{ident}.header']=(title,ja)

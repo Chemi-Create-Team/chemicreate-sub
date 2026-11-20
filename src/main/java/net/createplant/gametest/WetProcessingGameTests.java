@@ -2,6 +2,11 @@ package net.createplant.gametest;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
+import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
+import com.simibubi.create.content.logistics.funnel.AbstractFunnelBlock;
+import com.simibubi.create.content.logistics.funnel.FunnelBlock;
 import java.util.List;
 import net.createplant.CreatePlant;
 import net.createplant.assembly.AssemblyPlan;
@@ -14,6 +19,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -85,9 +91,9 @@ public final class WetProcessingGameTests {
         level.setBlock(drive, CEWetProcessing.CLARIFIER.get().defaultBlockState().setValue(WetProcessDriveBlock.FACING, Direction.NORTH), 3);
         var clarifier = (WetProcessBlockEntity) level.getBlockEntity(drive);clarifier.rebuild();
         h.assertTrue(!clarifier.formed(), "The bottom feed is required");
-        level.setBlock(floor, CEWetProcessing.PARTS.get(FEED).get().defaultBlockState().setValue(WetProcessPartBlock.FACING, Direction.DOWN), 3);
+        level.setBlock(floor, CEWetProcessing.PARTS.get(FEED).get().defaultBlockState().setValue(WetProcessPartBlock.FACING, Direction.UP), 3);
         clarifier.rebuild();clarifier.setSpeed(2);
-        h.assertTrue(clarifier.formed() && clarifier.width() == 9, "The shared shell converts with just the two central blocks");
+        h.assertTrue(clarifier.formed() && clarifier.width() == 9, "An existing upward-placed central feed still forms and exposes its underside");
         h.assertTrue(oldStorage.drain(500, EXECUTE).isEmpty(), "The old storage handler cannot access the clarifier buffers");
         var intake = level.getCapability(Capabilities.FluidHandler.BLOCK, floor, Direction.DOWN);
         var overflow = level.getCapability(Capabilities.FluidHandler.BLOCK, drive.north(4), Direction.NORTH);
@@ -172,6 +178,52 @@ public final class WetProcessingGameTests {
             h.assertTrue(h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, pos, face.getOpposite()) == null && h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, pos, face.getOpposite()) == null, "Opposite face is closed");
         }
         h.succeed();
+    }
+
+    @GameTest(template = "test_wet_processing", timeoutTicks = 250)
+    public static void realPumpAndFunnelReachTheCasingTankSideInlets(GameTestHelper h) {
+        var center = new BlockPos(12, 6, 12);
+        var be = assemble(h, center, 9, 4, Direction.SOUTH);
+        var wall = center.below(2);
+        var intake = wall.east(4);
+        var solid = wall.west(4);
+        var funnel = solid.west();
+        var pump = intake.east(2);
+        var source = intake.east(4);
+        h.setBlock(funnel, AllBlocks.ANDESITE_FUNNEL.getDefaultState().setValue(FunnelBlock.FACING, Direction.WEST).setValue(FunnelBlock.EXTRACTING, false));
+        h.setBlock(source, CETransport.STAINLESS_STEEL_TANK.get());
+        var sourceTank = ((FluidTankBlockEntity) h.getBlockEntity(source)).getTankInventory();
+        h.assertTrue(sourceTank.fill(slurry(1000), EXECUTE) == 1000, "A compatible source tank holds the slurry charge");
+        var pipe = CETransport.STAINLESS_PIPE.get().defaultBlockState();
+        for (Direction side : Direction.values()) pipe = pipe.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side), side.getAxis() == Direction.Axis.X);
+        h.setBlock(pump.east(), pipe);
+        h.setBlock(pump.west(), pipe);
+        var pumpBlock = BuiltInRegistries.BLOCK.get(CreatePlant.location("stainless_steel_pump"));
+        h.setBlock(pump, pumpBlock.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.WEST));
+        h.setBlock(pump.south(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
+        h.setBlock(pump.south().west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+        ((CreativeMotorBlockEntity) h.getBlockEntity(pump.south().west())).generatedSpeed.setValue(64);
+
+        var level = h.getLevel();
+        var inlet = level.getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(intake), Direction.EAST);
+        var items = level.getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(solid), Direction.WEST);
+        h.assertTrue(inlet != null && inlet.fill(slurry(1000), SIMULATE) == 1000 && inlet.drain(1000, SIMULATE).isEmpty(), "The exterior casing is a one-way liquid input");
+        h.assertTrue(items != null && items.getSlots() == 1 && items.isItemValid(0, CEWetProcessing.FLOCCULANT.toStack()), "The opposite rim exposes the flocculant slot");
+        h.assertTrue(level.getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(intake), Direction.WEST) == null
+            && level.getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(solid), Direction.EAST) == null, "The inner wall faces remain closed");
+        h.runAfterDelay(5, () -> {
+            var catalyst = CEWetProcessing.FLOCCULANT.toStack(2);
+            h.assertTrue(AbstractFunnelBlock.tryInsert(level, h.absolutePos(funnel), catalyst, true).isEmpty() && be.items.getStackInSlot(3).isEmpty(), "A standard Create funnel can preview flocculant insertion");
+            h.assertTrue(AbstractFunnelBlock.tryInsert(level, h.absolutePos(funnel), catalyst, false).isEmpty(), "The funnel moves both items into the clarifier");
+        });
+        h.runAfterDelay(205, () -> {
+            int product = be.tanks[2].getFluidAmount();
+            h.assertTrue(sourceTank.isEmpty() && (be.tanks[0].getFluidAmount() == 1000 || product == 750), "The real pump supplies the finite slurry charge through the side casing without loss");
+            h.assertTrue(be.items.getStackInSlot(3).getCount() >= 1, "Both materials arrive at the same operating clarifier");
+            h.setBlock(center.below(), Blocks.STONE);
+            h.assertTrue(!be.formed() && inlet.fill(slurry(1), EXECUTE) == 0 && !items.insertItem(0, CEWetProcessing.FLOCCULANT.toStack(), false).isEmpty(), "Breaking the structure revokes cached side connections");
+            h.succeed();
+        });
     }
     @GameTest(template = "test_wet_processing")
     public static void qualitySurvivesMixingReloadAndIncreasesRealElectrowinningWork(GameTestHelper h) {

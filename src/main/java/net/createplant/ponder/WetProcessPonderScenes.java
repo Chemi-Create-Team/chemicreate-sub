@@ -39,9 +39,12 @@ public final class WetProcessPonderScenes {
         scene.world().setKineticSpeed(util.select().position(17, 1, 7), 64);
         scene.world().setKineticSpeed(util.select().position(17, 5, 22), 64);
         caption(scene, util, clarifier.below(), "clarifier");
+        scene.overlay().showOutline(net.createmod.ponder.api.PonderPalette.INPUT, "slurry_inlet", util.select().fromTo(24, 3, 13, 25, 3, 13), 150);
+        caption(scene, util, new BlockPos(25, 3, 13), "slurry_side");
+        scene.overlay().showControls(util.vector().centerOf(9, 3, 13), Pointing.DOWN, 100).withItem(CEWetProcessing.FLOCCULANT.toStack());
+        caption(scene, util, new BlockPos(9, 3, 13), "flocculant_side");
         scene.world().setKineticSpeed(util.select().fromTo(17, 5, 13, 17, 7, 13), 2);
         preview(scene, clarifier, "clarifying");
-        scene.overlay().showControls(util.vector().centerOf(17, 2, 5), Pointing.DOWN, 60).withItem(CEWetProcessing.FLOCCULANT.toStack());
         caption(scene, util, clarifier, "slow");
         scene.world().setKineticSpeed(util.select().fromTo(17, 5, 13, 17, 7, 13), 12);preview(scene, clarifier, "dirty");
         caption(scene, util, clarifier, "fast");

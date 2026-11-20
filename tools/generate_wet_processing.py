@@ -136,7 +136,9 @@ def translations():
  'inlets':('Supply dilute sulfuric acid to a lower liquid port and compressed air or oxygen to an upper gas process port.', '下段の液体入口へ希硫酸、上段の気体処理口へ圧搾空気か酸素を供給します。', '下层液体口供给稀硫酸，上层工艺气体口供给压缩空气或氧气。'),
  'stir':('Heat and stir: 3 crushed ores + 750 mB acid + 250 mB oxidant produce 4000 mB slurry in the lidded vessel.', '加熱しながら撹拌すると、砕いた鉱石3個＋希硫酸750 mB＋酸化用気体250 mBからスラリー4000 mBを生成します。', '加热搅拌：3份粉碎矿石＋750 mB酸＋250 mB氧化气体生成4000 mB矿浆。'),
  'clarifier':('Build an odd circular tank from tank casings. Place the center drive at rim height and replace the center floor block with a downward-facing inlet.', 'タンク構成ブロックで奇数径の円形タンクを作ります。縁と同じ高さの中央に駆動部を置き、床中央を下向きの流入口に替えます。', '用储罐外壳建造奇数直径的圆形储罐。在罐沿高度的中心安装驱动器，并把底板中心换成朝下的进料口。'),
- 'slow':('Reduce the center drive to 1–4 RPM. Per 1000 mB slurry, collect 750 mB clear solution at the rim and two tailings mud below. One flocculant inserted at the mud port halves the 200-tick cycle.','中央の駆動を1〜4 RPMに落とします。スラリー1000 mBから精製液750 mBと尾鉱泥2個を分離。汚泥口へ凝集剤1個を入れると200 tickの処理が半分になります。','中心驱动降至1–4 RPM。每1000 mB矿浆分离为750 mB清液和2份尾矿泥。从排泥口投入1份絮凝剂可将200 tick周期减半。'),
+ 'slurry_side':('Pump slurry into the left wall or the bottom feed. Use acid-resistant piping for leach slurry.','ドライブと同じ向きで左側の壁か、底面流入口へポンプでスラリーを送ります。浸出スラリーには耐食配管を使います。','用泵从驱动同向时的左侧壁或底部进料口送入矿浆。浸出矿浆需要耐腐蚀管道。'),
+ 'flocculant_side':('Use a funnel at the opposite wall to load flocculant. One item halves a 200-tick batch.','反対側の壁からファンネルで凝集剤を投入できます。1個で200 tickの処理時間が半分になります。','在对侧壁用漏斗送入絮凝剂。每份可将200 tick的处理时间减半。'),
+ 'slow':('Reduce the center drive to 1–4 RPM. Per 1000 mB slurry, collect 750 mB clear solution at the rim and two tailings mud below.','中央の駆動を1〜4 RPMに落とします。スラリー1000 mBから精製液750 mBと尾鉱泥2個を分離します。','中心驱动降至1–4 RPM。每1000 mB矿浆分离为750 mB清液和2份尾矿泥。'),
  'fast':('At 5–16 RPM, suspended dirt carries into the overflow and raises the next electrowinning batch’s work, up to twice normal. At 17 RPM or above, the same slurry simply overflows without separation.','5〜16 RPMでは巻き上げた不純物が上澄みに残り、次の電解採取の電力が最大2倍に増加。17 RPM以上では分離せず、元のスラリーがそのまま越流します。','5–16 RPM使杂质进入溢流，后续电解能耗最高2倍。17 RPM以上无法分离，原矿浆直接溢出。'),
  'stopped':('At zero RPM, settling still works but mud cannot leave. The underflow fills and stops further processing until the scraper runs again.','0 RPMでも沈降しますが、汚泥を搬出できません。汚泥が満杯になると停止するので、低速で駆動を再開してください。','0 RPM仍会沉降，但污泥无法排出。积满后停止处理，需要恢复低速驱动。'),
  'recycle':('Send clear solution to the electrolysis cells: each 1000 mB returns 3 ingots and 250 mB acid. For 3 ores, this line yields 9 ingots and recycles 750 mB acid. Press tailings mud for clay and sand; heated mixing also recovers occasional quartz.','精製液を電解槽へ送り、1000 mBごとにインゴット3個と希硫酸250 mBを回収。鉱石3個から合計9個・酸750 mBが戻ります。尾鉱泥はプレスで粘土・砂へ、加熱ミキサーで乾燥すると石英も得られます。','清液送入电解槽：每1000 mB产3个锭并回收250 mB酸。3份矿石共得9个锭及750 mB回用酸。尾矿泥压榨得粘土和砂，加热搅拌干燥还能得少量石英。')}
@@ -176,6 +178,9 @@ def ponder():
  for z in (4,5):s.block(7,3,z,NS+'gas_pipe',waterlogged='false',**{d:str(d in ('north','south') if z==4 else d in ('north','west')).lower()for d in p.DIRECTIONS})
  for z in (2,3):s.block(7,3,z,NS+'gas_receiver',axis='z',bottom=str(z==2).lower(),top=str(z==3).lower(),shape='plain')
  s.block(17,2,5,'create:andesite_funnel',facing='north',extracting='true',powered='false')
+ s.block(9,3,13,'create:andesite_funnel',facing='west',extracting='false',powered='false')
+ s.block(25,3,13,NS+'stainless_steel_pump',facing='west',waterlogged='false')
+ s.block(26,3,13,NS+'stainless_steel_tank',bottom='true',top='true',shape='window')
  for x,y,z in ((5,2,11),(17,5,23)):s.block(x,y,z,NS+'stainless_steel_tank',bottom='true',top='true',shape='window')
  s.block(17,6,13,'create:shaft',axis='y',waterlogged='false');s.block(17,7,13,'create:creative_motor',facing='down')
  p.OUT=A/'ponder/plant';s.save('wet_processing')

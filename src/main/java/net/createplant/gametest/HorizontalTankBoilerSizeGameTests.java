@@ -8,7 +8,10 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
 import net.createplant.block.HorizontalFluidTankBlock;
+import net.createplant.block.TurbineUnit;
 import net.createplant.block.entity.HorizontalTankBlockEntity;
+import net.createplant.block.entity.SteamTurbineBlockEntity;
+import net.createplant.compat.display.MachineReadings;
 import net.createplant.registry.CEFluids;
 import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.SteamGrades;
@@ -18,6 +21,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -48,11 +55,13 @@ public final class HorizontalTankBoilerSizeGameTests {
         h.assertTrue(port != null, "A formed boiler exposes its real fluid capability on " + side);return port;
     }
 
-    private static void firedBurner(GameTestHelper h, BlockPos under) {
+    private static void firedBurner(GameTestHelper h, BlockPos under) { firedBurner(h, under, true); }
+
+    private static void firedBurner(GameTestHelper h, BlockPos under, boolean superheated) {
         h.setBlock(under, AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SMOULDERING));
-        var cake = AllItems.BLAZE_CAKE.asStack();
-        var result = BlazeBurnerBlock.tryInsert(h.getBlockState(under), h.getLevel(), h.absolutePos(under), cake, false, false, false);
-        h.assertTrue(result.getResult().consumesAction() && cake.isEmpty(), "One finite Blaze Cake fuels this real burner");
+        var fuel = superheated ? AllItems.BLAZE_CAKE.asStack() : new ItemStack(Items.COAL);
+        var result = BlazeBurnerBlock.tryInsert(h.getBlockState(under), h.getLevel(), h.absolutePos(under), fuel, false, false, false);
+        h.assertTrue(result.getResult().consumesAction() && fuel.isEmpty(), "A finite fuel item fires this real burner");
     }
 
     private static void near(GameTestHelper h, double actual, double expected, String description) {
@@ -121,7 +130,8 @@ public final class HorizontalTankBoilerSizeGameTests {
         }
         h.assertTrue(root.getTankInventory().getFluidAmount() + steamMass == FEED && storedMass(h, axis, width) == FEED,
             "All parallel tube rows share finite water without duplicating or losing mass");
-        h.assertTrue(work > 0 && work <= width * LENGTH * 8_000, "The first production step stays within the finite heat supplied by its individual burners");
+        near(h, work, width * LENGTH * 65.536 * SteamGrades.SUPERHEATED.joulesPerMb() / 20,
+            "The first production step uses the calibrated heat supplied by its individual burners");
         near(h, steamEnergy+credit, work, "Fixed steam cost plus saved rounding credit equals burner heat");
 
         h.assertTrue(output.fill(new FluidStack(Fluids.WATER, 1000), EXECUTE) == 0, "A boiling end outlet gives steam and takes no water");
@@ -185,4 +195,76 @@ public final class HorizontalTankBoilerSizeGameTests {
 
     @GameTest(template = "test_fractionation")
     public static void threeByThreeBoilerAlongZKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.Z, 3); }
+
+    @GameTest(template = "test_fractionation")
+    public static void twentySevenNormalBurnersSupplyAbout884736Su(GameTestHelper h) { verifyTurbine(h, 9, false); }
+
+    @GameTest(template = "test_fractionation")
+    public static void twentySevenSuperheatedBurnersDoubleTurbineSu(GameTestHelper h) { verifyTurbine(h, 9, true); }
+
+    @GameTest(template = "test_fractionation")
+    public static void shorterBoilerScalesTurbineSuWithLength(GameTestHelper h) { verifyTurbine(h, 5, false); }
+
+    private static void verifyTurbine(GameTestHelper h, int length, boolean superheated) {
+        var state = CETransport.HORIZONTAL_FLUID_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
+        for (int along = 0; along < length; along++) for (int across = 0; across < 3; across++) {
+            var bottom = BASE.offset(along, 0, across);
+            for (int y = 0; y < 3; y++) h.setBlock(bottom.above(y), state);
+            firedBurner(h, bottom.below(), superheated);
+        }
+        var root = (HorizontalTankBlockEntity) part(h, BASE).getControllerBE();
+        h.assertTrue(root.getHeight() == length && root.getWidth() == 3, "The heated bottom has exactly three rows of the selected length");
+        int water = 150_000;
+        h.assertTrue(port(h, BASE, Direction.NORTH).fill(new FluidStack(Fluids.WATER, water), EXECUTE) == water, "The formed boiler accepts finite feedwater");
+        var first = new BlockPos(6, 3, 15);
+        for (int i = 0; i < TurbineUnit.Stage.HIGH.sections(); i++) {
+            var unit = new TurbineUnit.Layout(h.absolutePos(first.east(i)), Direction.Axis.X, TurbineUnit.Stage.HIGH);
+            h.assertTrue(TurbineUnit.place(h.getLevel(), unit, null, ItemStack.EMPTY), "Real high-pressure turbine sections form the receiving stage");
+        }
+        var turbine = (SteamTurbineBlockEntity) h.getBlockEntity(first);
+        var turbinePort = turbine.getSteamCapability();
+        var outputs = new IFluidHandler[3];
+        var ends = new HorizontalTankBlockEntity[3];
+        for (int i = 0; i < ends.length; i++) {
+            ends[i] = part(h, BASE.offset(length - 1, 0, i));
+            outputs[i] = port(h, BASE.offset(1, 2, i), Direction.UP);
+        }
+        var grade = superheated ? SteamGrades.SUPERHEATED : SteamGrades.HIGH_PRESSURE;
+        int ticks = 1250, converted = 0;
+        double totalSU = 0;
+        for (int tick = 0; tick < ticks; tick++) {
+            int charge = 0;
+            for (int i = 0; i < ends.length; i++) {
+                ends[i].generateSteam();
+                var steam = outputs[i].drain(Integer.MAX_VALUE, EXECUTE);
+                h.assertTrue(steam.is(grade.fluid()) && turbinePort.fill(steam, EXECUTE) == steam.getAmount(), "A roof outlet carries its row's rated steam into the actual turbine inlet");
+                charge += steam.getAmount();
+            }
+            h.assertTrue(turbine.thermodynamics().step(true, charge) == charge, "The high-pressure rotor expands the whole charge");
+            totalSU += turbine.calculateAddedStressCapacity() * turbine.getGeneratedSpeed();
+            converted += turbine.getSteamCapability().drain(charge, EXECUTE).getAmount();
+        }
+        double target = 32_768d * 3 * length * (superheated ? 2 : 1);
+        h.assertTrue(Math.abs(totalSU / ticks - target) < 50, "Mean Create stress capacity matches the burner count: " + totalSU / ticks + " / " + target);
+        h.assertTrue(root.getTankInventory().getFluidAmount() + converted == water, "Boiling and turbine expansion conserve the finite water charge");
+
+        var header = part(h, BASE.above(2));
+        ends[2].generateSteam();
+        h.setBlock(BASE.offset(length - 1, -1, 2), AllBlocks.BLAZE_BURNER.getDefaultState());
+        ends[2].generateSteam();
+        h.assertTrue(ends[2].status().equals("heat") && !ends[2].steam().isEmpty(), "The stopped last row retains steam while the other rows run");
+        h.assertTrue(statusKey(MachineReadings.status(header)).equals("tubular_boiler.running"), "The display link reads the whole working boiler from the upper wall");
+        h.assertTrue(header.boilerReading().status().equals("running") && header.boilerReading().steamAmount() > 0,
+            "The goggle readout reports active heat and retained steam together when one row is stopped");
+        for (int i = 0; i < 2; i++) {
+            h.setBlock(BASE.offset(length - 1, -1, i), AllBlocks.BLAZE_BURNER.getDefaultState());
+            ends[i].generateSteam();
+        }
+        h.assertTrue(statusKey(MachineReadings.status(header)).equals("tubular_boiler.heat"), "If every row loses heat, the warning still appears");
+        h.succeed();
+    }
+
+    private static String statusKey(Component component) {
+        return component.getContents() instanceof TranslatableContents text ? text.getKey() : "";
+    }
 }

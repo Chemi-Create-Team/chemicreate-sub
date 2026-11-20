@@ -23,7 +23,7 @@ public final class WetProcessPartBlock extends Block implements IBE<WetProcessPa
     public final Role role;
     public WetProcessPartBlock(Role role, Properties properties) { super(properties);this.role = role;registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH)); }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { builder.add(FACING); }
-    @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(FACING, context.getClickedFace()); }
+    @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(FACING, role == Role.FEED ? Direction.DOWN : context.getClickedFace()); }
     @Override public Class<WetProcessPartBlockEntity> getBlockEntityClass() { return WetProcessPartBlockEntity.class; }
     @Override public BlockEntityType<? extends WetProcessPartBlockEntity> getBlockEntityType() { return CEWetProcessing.PART_ENTITY.get(); }
     @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) { return null; }

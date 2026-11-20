@@ -31,9 +31,10 @@ public final class WetProcessPartBlockEntity extends SmartBlockEntity implements
     }
     public IItemHandler itemPort(Direction side) {
         var role = ((WetProcessPartBlock) getBlockState().getBlock()).role;
-        var be = owner();return be != null && face(side, role) ? be.itemPort(role) : null;
+        var be = owner();return be != null && role == WetProcessPartBlock.Role.UNDERFLOW && face(side, role) ? be.itemPort(role) : null;
     }
     private boolean face(Direction side, WetProcessPartBlock.Role role) {
+        if (role == WetProcessPartBlock.Role.FEED) return side == Direction.DOWN;
         return side != null && role.port() && (side == getBlockState().getValue(WetProcessPartBlock.FACING) || role == WetProcessPartBlock.Role.UNDERFLOW && side == Direction.DOWN);
     }
     @Override public boolean addToGoggleTooltip(List<Component> lines, boolean sneaking) {

@@ -14,6 +14,22 @@ public final class WetProcessStructure {
     public static final List<Integer> CLARIFIER_WIDTHS = IntStream.rangeClosed(7, 29).filter(width -> width % 2 == 1).boxed().toList();
     public static final List<Integer> CLARIFIER_HEIGHTS = List.of(3, 4);
     public record Cell(BlockPos pos, BlockState state) { }
+    public enum RimPort {
+        OVERFLOW(WetProcessPartBlock.Role.OVERFLOW), UNDERFLOW(WetProcessPartBlock.Role.UNDERFLOW), SLURRY_INLET(null), FLOCCULANT_INLET(null);
+
+        public final WetProcessPartBlock.Role legacy;
+
+        RimPort(WetProcessPartBlock.Role legacy) { this.legacy = legacy; }
+
+        public Direction face(Direction front) {
+            return switch (this) {
+                case OVERFLOW -> front;
+                case UNDERFLOW -> front.getOpposite();
+                case SLURRY_INLET -> front.getCounterClockWise();
+                case FLOCCULANT_INLET -> front.getClockWise();
+            };
+        }
+    }
     private WetProcessStructure() { }
 
     public static int minimum(int width) { return -width / 2; }
@@ -51,9 +67,13 @@ public final class WetProcessStructure {
         return result;
     }
 
-    public static WetProcessPartBlock.Role rimRole(BlockPos drive, Direction front, int width, int height, BlockPos pos) {
-        if (pos.equals(drive.relative(front, width / 2))) return WetProcessPartBlock.Role.OVERFLOW;
-        if (pos.equals(drive.relative(front.getOpposite(), width / 2).below(height - 1))) return WetProcessPartBlock.Role.UNDERFLOW;
+    public static RimPort rimPort(BlockPos drive, Direction front, int width, int height, BlockPos pos) {
+        int radius = width / 2;
+        if (pos.equals(drive.relative(front, radius))) return RimPort.OVERFLOW;
+        if (pos.equals(drive.relative(front.getOpposite(), radius).below(height - 1))) return RimPort.UNDERFLOW;
+        var lowerWall = drive.below(height - 2);
+        if (pos.equals(lowerWall.relative(front.getCounterClockWise(), radius))) return RimPort.SLURRY_INLET;
+        if (pos.equals(lowerWall.relative(front.getClockWise(), radius))) return RimPort.FLOCCULANT_INLET;
         return null;
     }
 }

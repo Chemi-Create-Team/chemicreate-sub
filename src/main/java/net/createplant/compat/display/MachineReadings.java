@@ -103,7 +103,10 @@ public final class MachineReadings {
         if (original instanceof GasHolderBlockEntity part) {var bell=part.getControllerBE();return Component.translatable("gas_bell.create_refinery_n_reactors."+(bell==null ? "unloaded" : bell.status()));}
         if (original instanceof FlareTipBlockEntity flare) return Component.translatable("flare.create_refinery_n_reactors."+flare.status());
         if (original instanceof CryogenicColdBoxBlockEntity box) return Component.translatable("cold_box.create_refinery_n_reactors.status." + box.status());
-        if (original instanceof HorizontalTankBlockEntity boiler && boiler.boiling()) return Component.translatable("tubular_boiler." + boiler.status());
+        if (original instanceof HorizontalTankBlockEntity boiler) {
+            var reading = boiler.boilerReading();
+            if (reading != null) return Component.translatable("tubular_boiler." + reading.status());
+        }
         if (original instanceof IndustrialDispatchBlockEntity dispatch) return Component.translatable("industrial_dispatch." + dispatch.status());
         var be=owner(original);
         if (be==null || be.isRemoved() || be.getLevel()==null) return Component.literal("--");
@@ -206,9 +209,10 @@ public final class MachineReadings {
                 if (key.equals("fluid_" + i)) return new Reading(tank.getFluidAmount(), tank.getCapacity());
             }
         }
-        if (original instanceof HorizontalTankBlockEntity boiler && boiler.boiling()) {
-            if (key.equals("boiler_heat")) return new Reading(boiler.heatWatts() / 1000, 0);
-            if (key.equals("fluid_1")) return new Reading(boiler.steam().getFluidAmount(), boiler.steam().getCapacity());
+        if (original instanceof HorizontalTankBlockEntity boiler && (key.equals("boiler_heat") || key.equals("fluid_1"))) {
+            var reading = boiler.boilerReading();
+            if (reading != null) return key.equals("boiler_heat") ? new Reading(reading.heatWatts() / 1000, 0)
+                : new Reading(reading.steamAmount(), reading.steamCapacity());
         }
         if (original instanceof IndustrialDispatchBlockEntity dispatch) {
             if (key.equals("dispatch_completed")) return new Reading(dispatch.completed(), 0);

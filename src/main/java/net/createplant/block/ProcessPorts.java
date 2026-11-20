@@ -73,7 +73,8 @@ public final class ProcessPorts {
         }
         if (be instanceof TankCasingBlockEntity casing && casing.clarifier() != null) {
             if (casing.itemPort(face) != null) return Kind.HATCH;
-            return casing.fluidPort(face) != null ? Kind.OUTLET : null;
+            if (casing.fluidPort(face) == null) return null;
+            return casing.clarifier().rimPort(pos) == WetProcessStructure.RimPort.SLURRY_INLET ? Kind.INLET : Kind.OUTLET;
         }
         if (be instanceof FusionFluidPortBlockEntity port) {
             if (face != state.getValue(FusionFluidPortBlock.FACING)) return null;

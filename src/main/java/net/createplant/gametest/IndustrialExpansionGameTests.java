@@ -171,7 +171,8 @@ public final class IndustrialExpansionGameTests {
         h.assertTrue(boiler.steam().getFluid().is(CEProcessFluids.SUPERHEATED_STEAM.get()), "Superheated burner produces the superheated grade");
         double credit=boiler.saveWithoutMetadata(h.getLevel().registryAccess()).getDouble("TubeHeat");
         h.assertTrue(Math.abs(steam*SteamGrades.SUPERHEATED.joulesPerMb()+credit-boiler.heatWatts()/20)<.1,"Fixed steam cost plus rounding credit equals paid heater heat");
-        h.assertTrue(boiler.heatWatts()>0 && boiler.heatWatts()<=480000,"Three burners have bounded input");h.succeed();
+        h.assertTrue(Math.abs(boiler.heatWatts() - 3 * 65.536 * SteamGrades.SUPERHEATED.joulesPerMb()) < .1,
+            "Three superheated burners supply the calibrated heat for their rated steam rate");h.succeed();
     }
 
     @GameTest(template = "test_fractionation")

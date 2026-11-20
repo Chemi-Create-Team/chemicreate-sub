@@ -36,7 +36,11 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * heated by the burners under its row into high-pressure steam, or superheated steam over superheated burners.
  */
 public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
+    public record BoilerReading(String status, int steamAmount, int steamCapacity, double heatWatts, FluidStack steamSample) { }
+
     public static final int STEAM_CAPACITY = 16_000;
+    private static final double SU_PER_BURNER = 32_768;
+    private static final double MAX_STORED_HEAT = 400_000;
     private static final IFluidHandler UNAVAILABLE = new FluidTank(0);
     private final ThermalFluidTank steam = new ThermalFluidTank(STEAM_CAPACITY, stack -> setChanged()) { @Override protected int storageRatio() { return 1; } };
     private final LerpedFloat tubeGauge = LerpedFloat.linear().startWithValue(0);
@@ -109,7 +113,6 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     public ThermalFluidTank steam() { return steam; }
     public double heatWatts() { return heatWatts; }
     public String status() { return status; }
-    public boolean boiling() { return !steam.isEmpty() || status.equals("running") || status.equals("working") || status.equals("output"); }
 
     private HorizontalTankBlockEntity owner() {
         if (isRemoved() || level == null || !level.hasChunkAt(getController())) return null;
@@ -233,11 +236,10 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     }
 
     private void planProduction() {
-        int length = getHeight();
-        double high = (2 * length - 1) * 80_000 / SteamGrades.HIGH_PRESSURE.joulesPerMb();
-        double superheated = length * 160_000 / SteamGrades.SUPERHEATED.joulesPerMb();
-        ProductionMonitor.plan(this, getWidth() * Math.max(high, superheated), 0, 0);
+        ProductionMonitor.plan(this, getWidth() * getHeight() * ratedSteamPerBurner(), 0, 0);
     }
+
+    private static double ratedSteamPerBurner() { return SU_PER_BURNER / SteamGrades.HIGH_PRESSURE.workPerMb(false); }
 
     private void reportProduction() {
         var meter = ProductionMonitor.of(this);
@@ -248,13 +250,11 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         planProduction();
         double maximum = meter.read(ProductionMonitor.Output.FLUID).maximum() / getWidth();
         String limit = !boils(feed) ? "water" : boiler.attachedEngines > 0 ? "engines" : "rated";
-        for (int across = 0; limit.equals("rated") && across < getWidth(); across++) {
-            var end = rowEnd(across);
-            if (!level.hasChunkAt(end) || !(level.getBlockEntity(end) instanceof HorizontalTankBlockEntity cell)) limit = "structure";
-            else if (cell.status.equals("output")) limit = "output";
-            else if (cell.status.equals("water")) limit = "water";
-            else if (cell.status.equals("structure")) limit = "structure";
-            else if (cell.status.equals("heat") || cell.heatWatts / cell.heatedGrade.joulesPerMb() + .001 < maximum) limit = "heat";
+        if (limit.equals("rated")) for (int across = 0; across < getWidth(); across++) {
+            var cell = endCell(rowEnd(across));
+            if (cell == null || cell.status.equals("structure")) { limit = "structure"; break; }
+            if (cell.status.equals("output")) limit = "output";
+            else if (limit.equals("rated") && cell.heatWatts / cell.heatedGrade.joulesPerMb() + .001 < maximum) limit = "heat";
         }
         ProductionMonitor.limitedBy(this, limit);
     }
@@ -274,6 +274,8 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         float heat = heatBelow(worldPosition);
         if (!(heat > 0)) { status = "heat"; return; }
         var grade = heat >= 2 ? SteamGrades.SUPERHEATED : SteamGrades.HIGH_PRESSURE;
+        double fullHeatLevel = grade == SteamGrades.SUPERHEATED ? 2 : 1;
+        double joulesPerBurnerTick = ratedSteamPerBurner() * grade.joulesPerMb() / 20;
         heatedGrade = grade;
         var sample = new FluidStack(grade.fluid(), 1);
         FluidThermal.processComponents(water, sample);
@@ -284,7 +286,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
             if (!level.hasChunkAt(burner)) { status = "structure"; return; }
             float available = BoilerHeater.findHeat(level, burner, level.getBlockState(burner));
             if (available <= 0) continue;
-            provided += Math.min(Math.max(0, 400000 - heatJoules - provided), available * 4000);
+            provided += joulesPerBurnerTick * Math.min(available / fullHeatLevel, 1);
         }
         heatJoules += provided;
         heatWatts = provided * 20;
@@ -298,29 +300,48 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         root.planProduction();
         feed.drain(amount, IFluidHandler.FluidAction.EXECUTE);
         ProductionMonitor.produced(root, steam.fill(sample.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE), 0, 0);
-        heatJoules -= amount * grade.joulesPerMb();
+        heatJoules = Math.min(MAX_STORED_HEAT, heatJoules - amount * grade.joulesPerMb());
         status = "running";
         setChanged();
     }
 
-    /** Create's tank readout, and while any bottom row boils, the steam its end cells hold and the heat they take. */
-    @Override public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
-        boolean shown = super.addToGoggleTooltip(tooltip, sneaking);
-        if (level == null || !(getControllerBE() instanceof HorizontalTankBlockEntity root)) return shown;
+    public BoilerReading boilerReading() {
+        var root = owner();
+        if (root == null || root.boiler.attachedEngines > 0 || !root.tubeBoiler()) return null;
         int held = 0;
         double watts = 0;
-        HorizontalTankBlockEntity sample = null;
+        FluidStack sample = FluidStack.EMPTY;
+        String state = "heat";
         for (int across = 0; across < root.getWidth(); across++) {
             var cell = root.endCell(root.rowEnd(across));
-            if (cell == null || !cell.boiling()) continue;
+            String rowState = cell == null ? "structure" : cell.status;
+            if (statusPriority(rowState) > statusPriority(state)) state = rowState;
+            if (cell == null) continue;
             held += cell.steam.getFluidAmount();
             watts += cell.heatWatts;
-            if (sample == null || !cell.steam.isEmpty()) sample = cell;
+            if (sample.isEmpty() && !cell.steam.isEmpty()) sample = cell.steam.getFluid().copy();
         }
-        if (sample == null) return shown;
-        tooltip.add(Component.translatable("tubular_boiler." + sample.status));
-        if (!sample.steam.isEmpty()) tooltip.add(FluidThermal.readout(sample.steam.getFluid()));
-        tooltip.add(Component.translatable("tubular_boiler.contents", held, watts / 1000));
+        return new BoilerReading(state, held, root.getWidth() * STEAM_CAPACITY, watts, sample);
+    }
+
+    private static int statusPriority(String state) {
+        return switch (state) {
+            case "running" -> 5;
+            case "working" -> 4;
+            case "structure" -> 3;
+            case "output" -> 2;
+            case "water" -> 1;
+            default -> 0;
+        };
+    }
+
+    @Override public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
+        boolean shown = super.addToGoggleTooltip(tooltip, sneaking);
+        var reading = boilerReading();
+        if (reading == null) return shown;
+        tooltip.add(Component.translatable("tubular_boiler." + reading.status()));
+        if (!reading.steamSample().isEmpty()) tooltip.add(FluidThermal.readout(reading.steamSample()));
+        tooltip.add(Component.translatable("tubular_boiler.contents", reading.steamAmount(), reading.heatWatts() / 1000));
         return true;
     }
 
@@ -339,7 +360,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     @Override protected void read(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.read(tag, lookup, packet);
         steam.readFromNBT(lookup, tag.getCompound("TubeSteam"));
-        heatJoules = Double.isFinite(tag.getDouble("TubeHeat")) ? Math.clamp(tag.getDouble("TubeHeat"), 0, 400000) : 0;
+        heatJoules = Double.isFinite(tag.getDouble("TubeHeat")) ? Math.clamp(tag.getDouble("TubeHeat"), 0, MAX_STORED_HEAT) : 0;
         heatWatts = Math.max(0, tag.getDouble("TubeWatts"));
         status = tag.contains("TubeStatus") ? tag.getString("TubeStatus") : "heat";
         if (packet || isVirtual()) {
