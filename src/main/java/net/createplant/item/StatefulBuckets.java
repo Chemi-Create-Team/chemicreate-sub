@@ -19,6 +19,11 @@ public final class StatefulBuckets {
         return saved!=null && FluidIdentity.canonical(nominal).isSame(saved.fluid().value()) ? saved.stack() : new FluidStack(nominal,1000);
     }
 
+    /** A bucket of a retired state entry: any stack of it loads as its substance's bucket, so it is never listed on its own. */
+    public static boolean retired(net.minecraft.world.item.Item item) {
+        return item instanceof net.minecraft.world.item.BucketItem bucket && FluidIdentity.legacy(bucket.content) && new ItemStack(item).getItem()!=item;
+    }
+
     public static boolean defaultState(FluidStack stack) {
         FluidStack nominal=new FluidStack(stack.getFluid(),1);
         return FluidState.temperature(stack)==FluidState.temperature(nominal) && FluidState.pressure(stack)==FluidState.pressure(nominal);

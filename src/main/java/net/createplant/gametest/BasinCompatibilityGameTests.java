@@ -102,7 +102,7 @@ public final class BasinCompatibilityGameTests {
             for (int tank = 0; tank < port.getTanks(); tank++) {
                 var stack = port.getFluidInTank(tank);
                 if (stack.is(net.createplant.registry.CEProcessFluids.WARM_WATER.get())) warm += stack.getAmount();
-                if (stack.is(net.createplant.registry.CEProcessFluids.MOLTEN_POLYETHYLENE.get()) || stack.is(Fluids.WATER)) left += stack.getAmount();
+                else if (stack.is(net.createplant.registry.CEProcessFluids.MOLTEN_POLYETHYLENE.get()) || stack.is(Fluids.WATER)) left += stack.getAmount();
             }
             helper.assertTrue(pellets == 2 && warm == 100 && left == 0, "250 mB melt and 100 mB water give two polyethylene and 100 mB warm water: " + pellets + " / " + warm + " / " + left);
         });

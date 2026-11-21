@@ -575,6 +575,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         }
         return false;
     }
+    /** Whether a recipe here takes this fluid as it is, such as compressed air for leaching, so a mixed feed goes in whole. */
+    public boolean usesWhole(FluidStack stack) { return module()==ReactorModule.STIRRED ? feedFits(stack) : reactionFluid(stack); }
     private boolean reactionFluid(FluidStack stack) {
         if (level==null) return false;
         for (var holder:vesselRecipes()) for (var ingredient:holder.value().getFluidIngredients()) if (ingredient.ingredient().test(stack)) return true;
@@ -711,7 +713,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         Port(int first,int count,boolean input,boolean output,int generation) { this.first=first;this.count=count;this.input=input;this.output=output;this.generation=generation; }
         private boolean live() { return generation==epoch && ready(); }
         @Override public int getTanks() { return count; }
-        @Override public int getTankCapacity(int tank) { return tank>=0 && tank<count ? net.createplant.thermal.FluidMaterials.gas(tanks[first+tank].getFluid()) ? CAPACITY*64 : CAPACITY : 0; }
+        @Override public int getTankCapacity(int tank) { return tank>=0 && tank<count ? net.createplant.thermal.FluidState.gas(tanks[first+tank]) ? CAPACITY*64 : CAPACITY : 0; }
         @Override public FluidStack getFluidInTank(int tank) { return generation==epoch && !isRemoved() && tank>=0 && tank<count ? tanks[first+tank].copy() : FluidStack.EMPTY; }
         @Override public boolean isFluidValid(int tank,FluidStack stack) {
             if (!input || !live() || tank<0 || tank>=count || !inputTank(first+tank) || stack.isEmpty()) return false;

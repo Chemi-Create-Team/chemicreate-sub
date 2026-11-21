@@ -54,7 +54,7 @@ public final class IndustrialFertilizerGameTests {
         var tower = ReactionTowerGameTests.tower(h.getLevel(), h.absolutePos(BASE.east(8)), 3, CEItems.HYDROTREATING_CATALYST.toStack());
         var towerPort = ReactionTowerGameTests.port(tower);
         fill(h, towerPort, co.getFluid(), co.getAmount());
-        fill(h, towerPort, compressed.getFluid(), compressed.getAmount());
+        fill(h, towerPort, compressed);
         tower.process(120);
         h.assertTrue(tower.status().equals("heat") && tower.tank(2).isEmpty(), "The catalytic tower does not synthesize cold methanol");
         ReactionTowerGameTests.heat(tower);
@@ -162,6 +162,11 @@ public final class IndustrialFertilizerGameTests {
 
     private static void fill(GameTestHelper h, IFluidHandler port, Fluid fluid, int amount) {
         h.assertTrue(port != null && port.fill(new FluidStack(fluid, amount), EXECUTE) == amount, "Native inlet accepts " + amount + " mB of " + fluid);
+    }
+
+    /** A stack that carries its temperature and pressure, such as compressed hydrogen. */
+    private static void fill(GameTestHelper h, IFluidHandler port, FluidStack stack) {
+        h.assertTrue(port != null && port.fill(stack, EXECUTE) == stack.getAmount(), "Native inlet accepts " + stack.getAmount() + " mB of " + stack.getFluid());
     }
 
     private static FluidStack drain(GameTestHelper h, IFluidHandler port, Fluid fluid, int amount) {

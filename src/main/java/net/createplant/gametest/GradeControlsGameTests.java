@@ -25,7 +25,7 @@ public final class GradeControlsGameTests {
         var in = valve.port(Direction.WEST);
         var out = valve.port(Direction.EAST);
         var compressed = new FluidStack(CEProcessFluids.COMPRESSED_AIR.get(), 3200);
-        compressed.set(CEThermal.HEAT_GRADE.get(), Grade.Heat.HOT.ordinal());
+        FluidState.setTemperature(compressed, 12);
         h.assertTrue(in.fill(compressed, EXECUTE) == 3200 && Compression.airVolume(compressed) == 200, "Compressed stock occupies 200 mB");
         valve.tick();
         h.assertTrue(in.fill(compressed, EXECUTE) == 3200, "Replace the first input batch");
@@ -34,7 +34,7 @@ public final class GradeControlsGameTests {
             "Only the amount that fits expanded moves");
         var expanded = out.drain(4000, EXECUTE);
         h.assertTrue(expanded.is(CEFluids.AIR_GAS.get()) && Compression.airVolume(expanded) == 4000
-            && expanded.get(CEThermal.HEAT_GRADE.get()) == Grade.Heat.HOT.ordinal(), "Expansion retains the air and its existing heat grade");
+            && FluidState.temperature(expanded) == 12, "Expansion retains the air and its existing temperature");
         valve.tick();
         h.assertTrue(in.getFluidInTank(0).isEmpty() && out.drain(4000, EXECUTE).getAmount() == 2400, "Draining the outlet recovers every remaining unit");
         h.succeed();
@@ -43,8 +43,8 @@ public final class GradeControlsGameTests {
     @GameTest(template="test_petrochemical")
     public static void compressionAndExpansionChangeExactlyOneGradeAndKeepQuantity(GameTestHelper h) {
         var stack=new FluidStack(CEFluids.HYDROGEN_GAS.get(),173);
-        for(int i=0;i<2;i++) {stack=Compression.convert(stack,true);h.assertTrue(net.createplant.transport.FluidHazards.of(stack).pressure().ordinal()==i+1 && stack.getAmount()==173,"One compression stage; no mass creation");}
-        for(int i=1;i>=0;i--) {stack=Compression.convert(stack,false);h.assertTrue(net.createplant.transport.FluidHazards.of(stack).pressure().ordinal()==i && stack.getAmount()==173,"One reducing stage");}
+        for(int i=0;i<2;i++) {stack=Compression.convert(stack,true);h.assertTrue(FluidState.pressure(stack)==FluidState.NORMAL_PRESSURE+4*(i+1) && stack.getAmount()==173,"One compression stage raises one grade; no mass creation");}
+        for(int i=1;i>=0;i--) {stack=Compression.convert(stack,false);h.assertTrue(FluidState.pressure(stack)==FluidState.NORMAL_PRESSURE+4*i && stack.getAmount()==173,"One reducing stage");}
         var unknown=new FluidStack(Fluids.WATER,173);h.assertTrue(FluidStack.matches(unknown,Compression.convert(unknown,false)),"Unlisted fluid passes unchanged");h.succeed();
     }
     @GameTest(template="test_petrochemical")
@@ -72,10 +72,10 @@ public final class GradeControlsGameTests {
     @GameTest(template="test_petrochemical")
     public static void gaugeThresholdAndComparatorUseFluidGradeInsteadOfStoredAmount(GameTestHelper h) {
         var at=new BlockPos(2,2,2);h.setBlock(at,CETransport.PIPE_PRESSURE_GAUGE.get().defaultBlockState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
-        var gauge=(PipeGaugeBlockEntity)h.getBlockEntity(at);gauge.threshold.setValue(0);
+        var gauge=(PipeGaugeBlockEntity)h.getBlockEntity(at);gauge.threshold.setValue(1);
         var fluids=java.util.List.of(CEFluids.HYDROGEN_GAS,CEProcessFluids.PRESSURISED_HYDROGEN,CEProcessFluids.COMPRESSED_HYDROGEN);
-        int[] signals={0,8,15};
-        for(int i=0;i<3;i++){gauge.observe(new FluidStack(fluids.get(i).get(),1));gauge.tick();h.assertTrue(gauge.reading()==i && gauge.analogSignal()==signals[i] && gauge.alarm()==(i>0),"Grade controls needle, comparator and alarm");}
+        int[] signals={4,8,11};
+        for(int i=0;i<3;i++){gauge.observe(new FluidStack(fluids.get(i).get(),1));gauge.tick();h.assertTrue(gauge.reading()==i+1 && gauge.analogSignal()==signals[i] && gauge.alarm()==(i>0),"Grade controls needle, comparator and alarm across the five pressure grades");}
         h.succeed();
     }
     @GameTest(template="test_petrochemical")

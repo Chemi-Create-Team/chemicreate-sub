@@ -34,7 +34,7 @@ public class SprayToolItem extends PortableFluidToolItem {
         if(fluid.isEmpty() || net.createplant.mixture.MixtureHelper.isMixture(fluid) && !net.createplant.mixture.MixtureHelper.isMixableLiquid(fluid))return false;
         var properties=FluidHazards.of(fluid);
         if(properties.heat().compareTo(Grade.Heat.HOT)>0 || properties.heat()==Grade.Heat.CRYOGENIC)return false;
-        boolean gas=properties.gas() || net.createplant.thermal.FluidMaterials.gas(fluid.getFluid());
+        boolean gas=properties.gas() || net.createplant.thermal.FluidState.gas(fluid);
         return switch(kind) {
             case EXTINGUISHER -> fluid.is(Fluids.WATER) || fluid.is(CEProcessFluids.CARBON_DIOXIDE.get());
             case FLAME -> !gas && fluid.is(FUELS);

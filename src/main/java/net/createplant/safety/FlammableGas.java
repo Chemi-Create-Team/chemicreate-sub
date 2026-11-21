@@ -37,7 +37,7 @@ public final class FlammableGas {
     private FlammableGas() { }
 
     public static boolean fuel(FluidStack fluid) {
-        if (fluid.isEmpty() || !FluidMaterials.gas(fluid.getFluid())) return false;
+        if (fluid.isEmpty() || !net.createplant.thermal.FluidState.gas(fluid)) return false;
         if (net.createplant.chemistry.WasteGas.contaminated(fluid)) return (net.createplant.chemistry.WasteGas.of(fluid).hazards()&net.createplant.chemistry.WasteGas.FUEL)!=0;
         var id=BuiltInRegistries.FLUID.getKey(fluid.getFluid());
         return id.getNamespace().equals(CreatePlant.MOD_ID) && FUELS.contains(id.getPath().replace("flowing_",""));

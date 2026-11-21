@@ -209,7 +209,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         if (!catalyst.isEmpty()) Containers.dropItemStack(level, worldPosition.getX() + .5, worldPosition.getY() + .5, worldPosition.getZ() + .5, catalyst);
         basket = false;catalyst = ItemStack.EMPTY;
         for (int i = 0; i < tanks.length; i++) if (!tanks[i].isEmpty()) {
-            if (FluidMaterials.gas(tanks[i].getFluid())) net.createplant.safety.ToxicGas.release(level, worldPosition, tanks[i]);
+            if (net.createplant.thermal.FluidState.gas(tanks[i])) net.createplant.safety.ToxicGas.release(level, worldPosition, tanks[i]);
             tanks[i] = FluidStack.EMPTY;
         }
     }
@@ -264,7 +264,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         return heat;
     }
 
-    private int capacity(FluidStack fluid) { return VOLUME_PER_LAYER * Math.max(1, layers()) * (FluidMaterials.gas(fluid.getFluid()) ? 64 : 1); }
+    private int capacity(FluidStack fluid) { return VOLUME_PER_LAYER * Math.max(1, layers()) * (net.createplant.thermal.FluidState.gas(fluid) ? 64 : 1); }
     /** With baskets, the recipes of the loaded catalyst and the uncatalysed ones; without, the gas-liquid separations. */
     private List<ProcessRecipe> candidates() {
         if (!hasBaskets()) return AmmoniaSeparatorBlockEntity.recipes();
@@ -362,7 +362,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     /** Opens or shuts the hatch in the middle of the top. Opening lets out the gas the tower holds, as a cloud. Called on the owner. */
     public void toggleHatch() {
         hatchOpen = !hatchOpen;
-        if (hatchOpen) for (int i = 0; i < tanks.length; i++) if (!tanks[i].isEmpty() && FluidMaterials.gas(tanks[i].getFluid())) {
+        if (hatchOpen) for (int i = 0; i < tanks.length; i++) if (!tanks[i].isEmpty() && net.createplant.thermal.FluidState.gas(tanks[i])) {
             net.createplant.safety.ToxicGas.release(level, worldPosition.above(layers()), tanks[i]);
             tanks[i] = FluidStack.EMPTY;
         }
@@ -382,7 +382,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
      */
     private void instruments(int ticks, ProcessRecipe running) {
         long gas = 0;
-        for (var tank : tanks) if (!tank.isEmpty() && FluidMaterials.gas(tank.getFluid())) gas += tank.getAmount();
+        for (var tank : tanks) if (!tank.isEmpty() && net.createplant.thermal.FluidState.gas(tank)) gas += tank.getAmount();
         float pressureTarget = Math.min(MAX_PRESSURE, FULL_PRESSURE * gas / (VOLUME_PER_LAYER * 64f * Math.max(1, layers())));
         var heat = heat();
         float inlet = heat.isAtLeast(BlazeBurnerBlock.HeatLevel.SEETHING) ? 450 : heat.isAtLeast(BlazeBurnerBlock.HeatLevel.KINDLED) ? 380 : AMBIENT;
@@ -427,7 +427,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         private boolean gives(int slot) {
             if (!live() || tanks[slot].isEmpty()) return false;
             boolean top = place == TOP_SIDE;
-            return hasBaskets() ? !top : top == FluidMaterials.gas(tanks[slot].getFluid());
+            return hasBaskets() ? !top : top == net.createplant.thermal.FluidState.gas(tanks[slot]);
         }
         @Override public int getTanks() { return 4; }
         /** The feeds this port takes, then the products it gives. */

@@ -210,7 +210,7 @@ public final class ProcessGasRecoveryGameTests {
         GasClouds.release(level, origin, new FluidStack(Fluids.WATER, 1000));
         h.assertTrue(GasClouds.in(level, new AABB(origin)).isEmpty(), "Unregistered water creates no cloud");
         var stack = steam(1000);
-        stack.set(net.createplant.registry.CEThermal.HEAT_GRADE.get(), 3);
+        net.createplant.thermal.FluidState.setTemperature(stack, 12);
         GasClouds.release(level, origin, stack);
         var cloud = onlyCloud(h, origin);
         h.assertTrue(cloud.lifetime() == 100 && cloud.volume().size() == 58, "Open sky shortens 600 ticks to 100 and 1000 mB has 58 cells");

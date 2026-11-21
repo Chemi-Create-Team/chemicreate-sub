@@ -23,6 +23,8 @@ public class ProcessRemovalGameTests {
             if (!id.getNamespace().equals(CreatePlant.MOD_ID) || !(fluid instanceof FlowingFluid flowing) || flowing.getSource() != fluid) continue;
             // Carriers and air's trace gases exist only as parts of a mixture, with no container of their own.
             if (fluid instanceof net.createplant.mixture.MixtureFluid || fluid == net.createplant.registry.CEMixtures.OTHER_GASES.get()) continue;
+            // Retired state entries fill their substance's bucket with the matching state.
+            if (net.createplant.thermal.FluidIdentity.legacy(fluid)) continue;
             var stack = FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
             boolean listed = tab.getDisplayItems().stream().anyMatch(entry -> entry.is(stack.getItem()));
             if (id.equals(CreatePlant.location("raw_process_gas"))) {
@@ -42,7 +44,7 @@ public class ProcessRemovalGameTests {
     public static void gasBucketRoundTripPreservesGradesAndMixtureData(GameTestHelper h) {
         var gas = new FluidStack(net.createplant.registry.CEGasBell.CONTAMINATED_GAS.get(), 1000);
         gas.set(net.createplant.registry.CEGasBell.GAS_CONTENTS.get(), new net.createplant.chemistry.WasteGas(.002, 1400, .04, 5));
-        gas.set(net.createplant.registry.CEThermal.HEAT_GRADE.get(), 3);
+        net.createplant.thermal.FluidState.setTemperature(gas, 12);
         var bucket = FluidUtil.getFilledBucket(gas);
         var loaded = ItemStack.parse(h.getLevel().registryAccess(), bucket.save(h.getLevel().registryAccess())).orElseThrow();
         var handler = FluidUtil.getFluidHandler(loaded).orElseThrow();

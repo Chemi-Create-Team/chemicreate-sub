@@ -19,7 +19,7 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 @GameTestHolder(CreatePlant.MOD_ID)
 @PrefixGameTestTemplate(false)
 public class NativeFluidInventoryGameTests {
-    private static FluidStack water(int n,double t) { return FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),n),t); }
+    private static FluidStack water(int n) { return new FluidStack(net.minecraft.world.level.material.Fluids.WATER,n); }
     private static BlockState straight(Block block) {
         var s=block.defaultBlockState();for (Direction d:Direction.values()) s=s.setValue(net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION.get(d),d.getAxis()==Direction.Axis.X);return s;
     }
@@ -34,7 +34,7 @@ public class NativeFluidInventoryGameTests {
     @GameTest(template="test_petrochemical",timeoutTicks=220)
     public static void partialAcceptanceNeverDrainsTheRemainder(GameTestHelper h) {
         var source=tank(h,new BlockPos(1,2,3),true);var target=tank(h,new BlockPos(4,2,3),true);
-        source.getTankInventory().fill(water(1000,360),EXECUTE);target.getTankInventory().fill(water(target.getTankInventory().getCapacity()-17,360),EXECUTE);
+        source.getTankInventory().fill(water(1000),EXECUTE);target.getTankInventory().fill(water(target.getTankInventory().getCapacity()-17),EXECUTE);
         h.setBlock(new BlockPos(2,2,3),AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
         h.setBlock(new BlockPos(3,2,3),straight(CEBlocks.RESIN_PIPE.get()));
         h.setBlock(new BlockPos(2,2,4),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
@@ -48,7 +48,7 @@ public class NativeFluidInventoryGameTests {
     @GameTest(template="test_petrochemical",timeoutTicks=260)
     public static void twoFacesOfOneNearlyFullTankCannotDuplicateAcceptance(GameTestHelper h) {
         var source=tank(h,new BlockPos(1,2,3),true);var target=tank(h,new BlockPos(5,2,3),true);
-        source.getTankInventory().fill(water(1000,360),EXECUTE);target.getTankInventory().fill(water(target.getTankInventory().getCapacity()-17,360),EXECUTE);
+        source.getTankInventory().fill(water(1000),EXECUTE);target.getTankInventory().fill(water(target.getTankInventory().getCapacity()-17),EXECUTE);
         h.setBlock(new BlockPos(2,2,3),AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
         BlockPos[] positions={new BlockPos(3,2,3),new BlockPos(4,2,3),new BlockPos(3,2,4),new BlockPos(4,2,4),new BlockPos(5,2,4)};
         Direction[][] open={{Direction.WEST,Direction.EAST,Direction.SOUTH},{Direction.WEST,Direction.EAST},{Direction.NORTH,Direction.EAST},{Direction.WEST,Direction.EAST},{Direction.WEST,Direction.NORTH}};
@@ -78,7 +78,7 @@ public class NativeFluidInventoryGameTests {
         }
         h.setBlock(new BlockPos(2,2,4),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
         var motor=new BlockPos(1,2,4);h.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
-        source.getTankInventory().fill(water(8000,360),EXECUTE);
+        source.getTankInventory().fill(water(8000),EXECUTE);
         var cache=new FluidRoutes();
         FluidStack[] maintenance={FluidStack.EMPTY};
         var start=new net.createmod.catnip.math.BlockFace(h.absolutePos(new BlockPos(2,2,3)),Direction.WEST);
@@ -106,7 +106,7 @@ public class NativeFluidInventoryGameTests {
         h.runAfterDelay(220,()->{
             int total=source.getTankInventory().getFluidAmount()+a.getTankInventory().getFluidAmount()+b.getTankInventory().getFluidAmount();
             h.assertTrue(total==8000 && a.getTankInventory().getFluidAmount()>0 && b.getTankInventory().getFluidAmount()>0,"Loop/branch/replacement preserves volume and both destinations: "+total+" states="+h.getBlockState(new BlockPos(4,2,3))+" / "+h.getBlockState(new BlockPos(4,2,4)));
-            h.assertTrue(FluidThermal.kelvin(a.getTankInventory().getFluid())==330,"All routes preserve the fluid type temperature");h.succeed();
+            h.assertTrue(FluidStack.isSameFluidSameComponents(a.getTankInventory().getFluid(),water(1)),"All routes deliver the water unchanged");h.succeed();
         });
     }
     @GameTest(template="test_fractionation")
@@ -117,7 +117,7 @@ public class NativeFluidInventoryGameTests {
             var root=(FluidTankBlockEntity)h.getBlockEntity(base);com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti(root);root=root.getControllerBE();
             h.assertTrue(root.getWidth()==width && root.getHeight()==3,"Cryogenic tank forms width "+width);
             h.assertTrue(root.getTankInventory().getCapacity()==width*width*3*FluidTankBlockEntity.getCapacityMultiplier(),"Native volume formula");
-            root.getTankInventory().fill(water(1000,600),EXECUTE);root.getTankInventory().fill(water(3000,300),EXECUTE);
+            root.getTankInventory().fill(water(1000),EXECUTE);root.getTankInventory().fill(water(3000),EXECUTE);
             h.assertTrue(root.getTankInventory().getFluidAmount()==4000,"All widths preserve combined volume");
             var neighbour=tank(h,base.west(),false);com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti(root);
             h.assertTrue(neighbour.getControllerBE()!=root,"Ordinary and cryogenic tanks cannot accidentally merge");

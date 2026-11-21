@@ -423,10 +423,11 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         FluidStack held = gasInput.getFluid();
         if (held.isEmpty()) return 0;
         int required = recipe.gasIngredient().amount();
-        if (recipe.gasIngredient().ingredient().test(held)) return held.getAmount() >= required ? required : 0;
+        // Liquid oxygen is oxygen too, so its liquid state is checked before the gas ingredient would take it mB for mB.
+        PhaseChange.Pair pair = net.createplant.thermal.FluidState.gas(held) ? null : PhaseChange.ofLiquid(held);
+        if (pair == null) return recipe.gasIngredient().ingredient().test(held) && held.getAmount() >= required ? required : 0;
         boolean wantsOxygen = recipe.gasIngredient().ingredient().test(new FluidStack(CEFluids.OXYGEN_GAS.get(), 1));
-        PhaseChange.Pair pair = PhaseChange.ofLiquid(held);
-        if (!wantsOxygen || pair == null || pair.vapour().get() != CEFluids.OXYGEN_GAS.get()) return 0;
+        if (!wantsOxygen || pair.vapour().get() != CEFluids.OXYGEN_GAS.get()) return 0;
         int liquid = Math.ceilDiv(required, pair.ratio());
         return held.getAmount() >= liquid ? liquid : 0;
     }

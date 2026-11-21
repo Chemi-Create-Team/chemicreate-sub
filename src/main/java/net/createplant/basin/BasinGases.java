@@ -7,5 +7,5 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public final class BasinGases {
     private BasinGases() { }
 
-    public static boolean gas(FluidStack stack) { return !stack.isEmpty() && FluidMaterials.gas(stack.getFluid()); }
+    public static boolean gas(FluidStack stack) { return !stack.isEmpty() && net.createplant.thermal.FluidState.gas(stack); }
 }

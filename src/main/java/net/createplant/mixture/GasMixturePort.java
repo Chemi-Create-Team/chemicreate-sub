@@ -93,6 +93,7 @@ public final class GasMixturePort implements IFluidHandler {
     @Override public int fill(FluidStack resource, FluidAction action) {
         if (!inlet) return outlet ? port.fill(resource, action) : 0;
         if (!MixtureHelper.composite(resource) || !MixtureHelper.isMixableGas(resource)) return port.fill(resource, action);
+        if (reactor != null && reactor.usesWhole(resource) && port.fill(resource, FluidAction.SIMULATE) > 0) return port.fill(resource, action);
         var components = MixtureHelper.components(resource);
         if (reactor == null) return fillComponents(resource, components, action);
         reactor.offer(components);

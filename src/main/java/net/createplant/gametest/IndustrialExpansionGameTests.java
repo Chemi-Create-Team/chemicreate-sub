@@ -13,6 +13,7 @@ import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEIndustrialExpansion;
 import net.createplant.registry.CETransport;
+import net.createplant.thermal.FluidState;
 import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.SteamGrades;
 import net.createplant.registry.CEProcessFluids;
@@ -176,17 +177,17 @@ public final class IndustrialExpansionGameTests {
     }
 
     @GameTest(template = "test_fractionation")
-    public static void tubeBoilerKeepsLegacySteamAndStopsAfterLosingHeat(GameTestHelper h) {
+    public static void tubeBoilerMixesLeftoverSteamAndStopsAfterLosingHeat(GameTestHelper h) {
         var root = boiler(h, BASE, Direction.Axis.X, 3);burner(h, BASE, true);burner(h, BASE.east(), true);burner(h, BASE.east(2), true);
         var boiler = (HorizontalTankBlockEntity) h.getBlockEntity(BASE.east(2));
         port(h, BASE, Direction.NORTH).fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE);
         boiler.steam().fill(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000),FluidAction.EXECUTE);
-        boiler.generateSteam();h.assertTrue(boiler.status().equals("output") && root.getTankInventory().getFluidAmount() == 1000,
-            "A retained legacy steam grade keeps all feed water until it has drained");
-        var old = port(h, BASE.east(2), Direction.UP).drain(Integer.MAX_VALUE, FluidAction.EXECUTE);
-        h.assertTrue(old.is(CEProcessFluids.SUPERHEATED_STEAM.get()) && old.getAmount() == 1000, "The outlet preserves the old steam grade and amount");
         boiler.generateSteam();
-        h.assertTrue(SteamGrades.of(boiler.steam().getFluid()) == SteamGrades.ORDINARY, "Draining the legacy output lets the boiler resume with its current grade");
+        var mixed = boiler.steam().getFluid();
+        // Steam is water in its gas state, so leftover superheated steam and new steam share the buffer at their weighted average.
+        h.assertTrue(mixed.is(Fluids.WATER) && mixed.getAmount() > 1000 && root.getTankInventory().getFluidAmount() < 1000
+            && FluidState.gas(mixed), "Leftover steam mixes with the new steam instead of blocking the boiler: "
+            + mixed.getAmount() + " at " + FluidState.temperature(mixed) + " " + boiler.status());
         int water = root.getTankInventory().getFluidAmount(), steam = boiler.steam().getFluidAmount();
         h.setBlock(BASE.east(2).below(), Blocks.AIR);boiler.generateSteam();
         h.assertTrue(boiler.status().equals("heat") && boiler.heatWatts() == 0 && root.getTankInventory().getFluidAmount() == water

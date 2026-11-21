@@ -252,7 +252,8 @@ public class ToxicGasGameTests {
         int count = 0;
         for (var fluid : net.minecraft.core.registries.BuiltInRegistries.FLUID) {
             var id = net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fluid);
-            if (!id.getNamespace().equals(CreatePlant.MOD_ID) || id.getPath().startsWith("flowing_")) continue;
+            // Retired state entries load as their substance, which this loop checks under its own id.
+            if (!id.getNamespace().equals(CreatePlant.MOD_ID) || id.getPath().startsWith("flowing_") || net.createplant.thermal.FluidIdentity.legacy(fluid)) continue;
             var stack = new FluidStack(fluid, 100);
             boolean harmful = ToxicGas.strength(stack) >= 0 || net.createplant.safety.FlammableGas.fuel(stack);
             boolean gas = net.createplant.thermal.FluidMaterials.gas(fluid);

@@ -65,9 +65,9 @@ public class ReciprocatingCylinderBlockEntity extends SmartBlockEntity implement
             @Override public int getTanks() { return 1; }
             @Override public FluidStack getFluidInTank(int index) { return tank().getFluid(); }
             @Override public int getTankCapacity(int index) { return tank().getCapacity(); }
-            @Override public boolean isFluidValid(int index, FluidStack stack) { return in && FluidMaterials.gas(stack.getFluid()); }
+            @Override public boolean isFluidValid(int index, FluidStack stack) { return in && net.createplant.thermal.FluidState.gas(stack); }
             @Override public int fill(FluidStack stack, FluidAction action) {
-                if (!in || !FluidMaterials.gas(stack.getFluid())) return 0;
+                if (!in || !net.createplant.thermal.FluidState.gas(stack)) return 0;
                 return inlet.fill(stack,action);
             }
             @Override public FluidStack drain(FluidStack stack, FluidAction action) { return in ? FluidStack.EMPTY : outlet.drain(stack, action); }

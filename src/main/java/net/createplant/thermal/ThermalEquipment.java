@@ -154,11 +154,20 @@ public final class ThermalEquipment {
             return;
         }
         FluidStack productA=changeA.output(batches*unitA), productB=changeB.output(batches*unitB);
+        // Steam in a hot gas that cools to or below boiling leaves as water through the hot row's condensate tank.
+        int hotRow=a>b ? 0 : 1;
+        var hotProduct=hotRow==0 ? productA : productB;
+        double hotKelvin=FluidState.kelvin(hotRow==0 ? outA : outB);
+        var split=SteamCondensate.separate(hotProduct,hotKelvin,condensate[hotRow].getSpace());
+        hotProduct=split.gas().isEmpty() ? split.gas() : FluidState.with(split.gas(),hotRow==0 ? outA : outB,FluidState.pressure(split.gas()));
+        if(hotProduct.is(CEProcessFluids.WATER_GAS.get()) && hotKelvin<=SteamCondensate.BOILING_KELVIN)hotProduct.set(CEThermal.CONDENSATE.get(),true);
+        if(hotRow==0)productA=hotProduct;else productB=hotProduct;
         int amount=batches*quantum;
         tanks[0].drain(amount,EXECUTE);
         tanks[2].drain(amount,EXECUTE);
         tanks[1].fill(productA,EXECUTE);
         tanks[3].fill(productB,EXECUTE);
+        if(!split.water().isEmpty())condensate[hotRow].fill(split.water(),EXECUTE);
         credit=credit-amount;
         if(batches<feed)credit=0;
         coolantRow=a<b ? 0 : 1;

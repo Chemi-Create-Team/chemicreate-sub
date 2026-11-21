@@ -13,7 +13,8 @@ public class ThermalFluidTank extends SmartFluidTank {
     /** How many mB of gas at 1 bar fill one mB of volume; a tank holds gas up to its pressure rating. */
     protected int storageRatio(){return Grade.Pressure.PRESSURISED.storageRatio();}
     protected int storageRatio(FluidStack stack) {
-        return storageRatio();
+        int rating = storageRatio();
+        return Compression.isAir(stack) ? Math.min(rating, Compression.airVolumeRatio(stack)) : rating;
     }
     protected boolean storedGas(FluidStack stack){return !stack.isEmpty() && (net.createplant.mixture.MixtureHelper.isMixture(stack) ? net.createplant.mixture.MixtureHelper.gas(stack) : net.createplant.transport.FluidHazards.of(stack).gas());}
     @Override public int getCapacity(){return storedGas(fluid) ? (int)Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio(fluid)) : capacity;}

@@ -4945,14 +4945,14 @@
     "zh_cn": "用分馏塔分离气化炉产生的水煤气。将一氧化碳与压缩氢气送入加热的催化反应塔制取甲醇，再与水混合制成防冻液。"
   },
   "entrained_gasifier.syngas": {
-    "en_us": "Cool the wet output in a heat exchanger, then send it to the absorption tower. Recover drain water at the bottom.",
-    "ja_jp": "蒸気交じりのガスは熱交換器で冷やしてから吸収塔に送ります。凝縮した水は底面から回収できます。",
-    "zh_cn": "含蒸汽的气体先经换热器冷却，再送入吸收塔。凝结的水从底部回收。"
+    "en_us": "Cool the wet output in a counterflow heat exchanger, then send it to the absorption tower. Recover drain water at the bottom.",
+    "ja_jp": "蒸気交じりのガスは熱交換器を対向流にして冷やしてから吸収塔に送ります。凝縮した水は底面から回収できます。",
+    "zh_cn": "含蒸汽的气体先经逆流换热器冷却，再送入吸收塔。凝结的水从底部回收。"
   },
   "large_absorption_tower.syngas": {
-    "en_us": "Send the exchanger output here after the wet gas cools to 100 °C or below. Recover dry syngas at the top and water at the bottom.",
-    "ja_jp": "蒸気交じりのガスを熱交換器で100 ℃以下に冷やしてから搬入します。上から乾いた合成ガス、下からドレン水を回収します。",
-    "zh_cn": "将含蒸汽的气体用换热器冷却到100 °C或更低后送入。顶部排出干合成气，底部回收冷凝水。"
+    "en_us": "Send the exchanger output here after the wet gas cools to 100 °C or below; one pass does this only in counterflow. Recover dry syngas at the top and water at the bottom.",
+    "ja_jp": "蒸気交じりのガスを熱交換器で100 ℃以下に冷やしてから搬入します。1回で冷やせるのは対向流のときです。上から乾いた合成ガス、下からドレン水を回収します。",
+    "zh_cn": "将含蒸汽的气体用换热器冷却到100 °C或更低后送入，单次通过只有逆流能做到。顶部排出干合成气，底部回收冷凝水。"
   },
   "synthetic_reactions.title": {
     "en_us": "From water gas to synthetic crude",

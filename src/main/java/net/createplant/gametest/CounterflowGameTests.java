@@ -5,6 +5,7 @@ import net.createplant.CreatePlant;
 import net.createplant.block.ExchangerStructure;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.registry.CEProcessFluids;
+import net.createplant.thermal.FluidState;
 import net.minecraft.core.*;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.world.level.material.Fluids;
@@ -23,10 +24,14 @@ public class CounterflowGameTests {
             ThermalControlGameTests.shell(be,counter).fill(new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),3000),EXECUTE);
             h.assertTrue(be.thermal().counterflow()==(counter==1),"The actual inlet positions select counterflow in "+face);
             run(be);result[counter]=be.thermal().tank(3).getFluidAmount();
-            h.assertTrue(be.thermal().tank(1).getFluid().is(CEProcessFluids.WARM_WATER.get()) && be.thermal().tank(3).getFluid().is(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get()),"The same conversion table is used in either arrangement");
+            var water=be.thermal().tank(1).getFluid();var mixture=be.thermal().tank(3).getFluid();
+            int waterOut=counter==1 ? 11 : 10, mixtureOut=counter==1 ? 9 : 10;
+            h.assertTrue(water.is(Fluids.WATER) && FluidState.temperature(water)==waterOut && mixture.is(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get())
+                && FluidState.temperature(mixture)==mixtureOut,"Parallel flow meets at the average, counterflow comes within a level of the other inlet: "
+                +FluidState.temperature(water)+"/"+FluidState.temperature(mixture));
             for(int i=0;i<4;i++)be.thermal().tank(i).setFluid(FluidStack.EMPTY);
         }
-        h.assertTrue(result[0]==300 && result[1]==450,"Counterflow gives exactly 1.5 times the parallel throughput: "+result[0]+"/"+result[1]);h.succeed();
+        h.assertTrue(result[0]==300 && result[1]==300,"Both arrangements move the same throughput: "+result[0]+"/"+result[1]);h.succeed();
     }
     @GameTest(template="test_fractionation") public static void northFacingBothArrangements(GameTestHelper h){arrangement(h,Direction.NORTH);}
     @GameTest(template="test_fractionation") public static void eastFacingBothArrangements(GameTestHelper h){arrangement(h,Direction.EAST);}

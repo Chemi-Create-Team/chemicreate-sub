@@ -35,7 +35,6 @@ public class ThermalAssemblyGameTests {
                 ThermalControlGameTests.shell(be,1),ThermalControlGameTests.shell(be,0)};
             for(var port:ports) h.assertTrue(port!=null,"Tube and shell each have a real inlet and outlet: "+kind+" "+along);
             var cold=net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER,100),300);
-            // Hot enough to warm the water without boiling it.
             var hot=net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.createplant.registry.CEProcessFluids.HOT_OLEFINS.get(),100),360);
             var execute=net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
             var tubeSide=index%2==0 ? cold : hot;var shellSide=index%2==0 ? hot : cold;
@@ -43,7 +42,8 @@ public class ThermalAssemblyGameTests {
             h.assertTrue(ports[0].drain(100,execute).isEmpty() && ports[1].fill(cold,execute)==0,"Ports enforce one-way transfer");
             for(int tick=0;tick<5;tick++) be.tickProcess();
             var c=ports[1].drain(100,execute);var t=ports[3].drain(100,execute);
-            h.assertTrue(c.is((index%2==0 ? net.createplant.registry.CEProcessFluids.WARM_WATER : net.createplant.registry.CEProcessFluids.COOLED_OLEFINS).get()) && t.is((index%2==0 ? net.createplant.registry.CEProcessFluids.COOLED_OLEFINS : net.createplant.registry.CEProcessFluids.WARM_WATER).get()) && c.getAmount()==100 && t.getAmount()==100,"The tube and shell sides do not mix or lose fluid: "+kind+" "+along+" "+c+" / "+t);
+            var water=net.minecraft.world.level.material.Fluids.WATER;var olefins=net.createplant.registry.CEProcessFluids.COOLED_OLEFINS.get();
+            h.assertTrue(c.is(index%2==0 ? water : olefins) && t.is(index%2==0 ? olefins : water) && c.getAmount()==100 && t.getAmount()==100,"The tube and shell sides do not mix or lose fluid: "+kind+" "+along+" "+c+" / "+t);
 
         }
         h.succeed();

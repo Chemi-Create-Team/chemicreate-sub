@@ -92,7 +92,7 @@ public class MixtureGameTests {
     public static void mixtureKeepsRadioactiveMaterialAndHeatDataDuringSplitAndReload(GameTestHelper h) {
         var radio = new FluidStack(BuiltInRegistries.FLUID.get(CreatePlant.location("high_level_raffinate")), 667);
         long now = h.getLevel().getGameTime();var isotope = new net.createplant.nuclear.Radionuclides(10, 20, 30, now);
-        radio.set(CERadiation.MATERIAL.get(), isotope);radio.set(CEThermal.HEAT_GRADE.get(), 3);
+        radio.set(CERadiation.MATERIAL.get(), isotope);net.createplant.thermal.FluidState.setTemperature(radio, 12);
         var tank = new MixtureFluidTank(1000, false, () -> {});tank.fill(new FluidStack(Fluids.WATER, 333), EXECUTE);tank.fill(radio, EXECUTE);
         var buffer = new net.minecraft.network.RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(), h.getLevel().registryAccess());
         FluidStack.STREAM_CODEC.encode(buffer, tank.getFluid());var synchronizedStack = FluidStack.STREAM_CODEC.decode(buffer);buffer.release();
@@ -102,7 +102,7 @@ public class MixtureGameTests {
         var a = reloaded.drain(317, EXECUTE);var b = reloaded.getFluid().copy();
         var after = net.createplant.nuclear.RadiationSources.fluid(a, now).plus(net.createplant.nuclear.RadiationSources.fluid(b, now));
         h.assertTrue(Math.abs(before.activity() - after.activity()) < 1e-8, "Splitting and saving do not dilute away isotope inventory");
-        for (var part : MixtureHelper.components(b)) if (part.is(radio.getFluid())) h.assertTrue(part.get(CERadiation.MATERIAL.get()).equals(isotope) && part.get(CEThermal.HEAT_GRADE.get()) == 3, "Constituent metadata survives carrier serialization");h.succeed();
+        for (var part : MixtureHelper.components(b)) if (part.is(radio.getFluid())) h.assertTrue(part.get(CERadiation.MATERIAL.get()).equals(isotope) && net.createplant.thermal.FluidState.temperature(part) == 12, "Constituent metadata survives carrier serialization");h.succeed();
     }
 
     @GameTest(template = "test_fractionation", timeoutTicks = 300)

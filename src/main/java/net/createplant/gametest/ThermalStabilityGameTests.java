@@ -19,7 +19,7 @@ public class ThermalStabilityGameTests {
             incoming+=be.thermal().tank(2).fill(new FluidStack(net.createplant.registry.CEProcessFluids.HOT_OLEFINS.get(),1),EXECUTE);
             if(tick%20==1)incoming+=be.thermal().tank(0).fill(new FluidStack(Fluids.WATER,1),EXECUTE);
             be.tickProcess();
-            for(int slot:new int[]{1,3}){var out=be.thermal().tank(slot).drain(8000,EXECUTE);outgoing+=out.getAmount();h.assertTrue(out.isEmpty() || out.is(slot==1 ? net.createplant.registry.CEProcessFluids.WARM_WATER.get() : net.createplant.registry.CEProcessFluids.COOLED_OLEFINS.get()),"Pulsed conversions keep the correct row products");}
+            for(int slot:new int[]{1,3}){var out=be.thermal().tank(slot).drain(8000,EXECUTE);outgoing+=out.getAmount();h.assertTrue(out.isEmpty() || out.is(slot==1 ? Fluids.WATER : net.createplant.registry.CEProcessFluids.COOLED_OLEFINS.get()),"Pulsed conversions keep the correct row products");}
         }
         int remaining=be.thermal().tank(0).getFluidAmount()+be.thermal().tank(2).getFluidAmount();
         h.assertTrue(outgoing==24 && incoming==outgoing+remaining,"Twelve finite pulsed pairs convert without consuming unmatched feed");h.succeed();

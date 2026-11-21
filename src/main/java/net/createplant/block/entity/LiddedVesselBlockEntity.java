@@ -663,7 +663,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                     if (be.isRemoved() || be.getLevel()==null || !be.getLevel().hasChunkAt(be.getBlockPos()) || !be.getLevel().getBlockState(be.getBlockPos()).is(CETransport.LIDDED_VESSEL.get()) || be.getControllerBE()!=owner || side==Direction.UP && be.underOpenHatch()) return false;
                     return reactor==null ? be.reactor()==null : owner.portGeneration()==lease && owner.formed() && ReactorStructure.loaded(be.getLevel(),owner.getBlockPos());
                 }
-                private boolean gasAllowed(FluidStack stack) { var current=be.getControllerBE();return current!=null && (!current.open() || stack.isEmpty() || !FluidMaterials.gas(stack.getFluid())); }
+                private boolean gasAllowed(FluidStack stack) { var current=be.getControllerBE();return current!=null && (!current.open() || stack.isEmpty() || !net.createplant.thermal.FluidState.gas(stack)); }
                 private boolean wasteOnly() { return side==Direction.DOWN && owner.fouling().drainOpen(); }
                 private boolean stratified() { return !owner.open() && (owner.module() == ReactorModule.NONE || owner.module() == ReactorModule.STIRRED); }
                 private boolean lowGasOutlet() {
@@ -686,7 +686,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                     }
                     if (lowGasOutlet()) return tank == 0 ? owner.previewVesselGas(upperGasOutlet()) : FluidStack.EMPTY;
                     var stack=delegate.getFluidInTank(tank);
-                    return side!=null && !stack.isEmpty() && FluidMaterials.gas(stack.getFluid())!=(side==Direction.UP) ? FluidStack.EMPTY : stack;
+                    return side!=null && !stack.isEmpty() && net.createplant.thermal.FluidState.gas(stack)!=(side==Direction.UP) ? FluidStack.EMPTY : stack;
                 }
                 @Override public int getTankCapacity(int tank) { return !live() ? 0 : wasteOnly() ? owner.fouling().drainPort().getTankCapacity(tank) : delegate.getTankCapacity(tank); }
                 @Override public boolean isFluidValid(int tank,FluidStack stack) { return live() && !wasteOnly() && gasAllowed(stack) && delegate.isFluidValid(tank,stack); }
@@ -702,7 +702,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                     if (side==Direction.UP) return owner.extractVesselGas(FluidStack.EMPTY,amount,action);
                     if (side==null) return delegate.drain(amount,action);
                     var phased=owner.extractVesselLiquid(FluidStack.EMPTY,amount,action);if (!phased.isEmpty()) return phased;
-                    for (int i=0;i<delegate.getTanks();i++) { var stack=getFluidInTank(i);if (!stack.isEmpty() && !FluidMaterials.gas(stack.getFluid())) { var out=delegate.drain(stack.copyWithAmount(Math.min(amount,stack.getAmount())),action);if (!out.isEmpty()) return out; } }
+                    for (int i=0;i<delegate.getTanks();i++) { var stack=getFluidInTank(i);if (!stack.isEmpty() && !net.createplant.thermal.FluidState.gas(stack)) { var out=delegate.drain(stack.copyWithAmount(Math.min(amount,stack.getAmount())),action);if (!out.isEmpty()) return out; } }
                     return FluidStack.EMPTY;
                 }
                 @Override public FluidStack drain(FluidStack stack,FluidAction action) {
@@ -714,7 +714,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                         return owner.extractLayerGas(upperGasOutlet(), stack, stack.getAmount(), action);
                     }
                     if (side==Direction.UP) return owner.extractVesselGas(stack,stack.getAmount(),action);
-                    if (side!=null && FluidMaterials.gas(stack.getFluid())) return FluidStack.EMPTY;
+                    if (side!=null && net.createplant.thermal.FluidState.gas(stack)) return FluidStack.EMPTY;
                     if (side!=null) { var phased=owner.extractVesselLiquid(stack,stack.getAmount(),action);if (!phased.isEmpty()) return phased; }
                     return delegate.drain(stack,action);
                 }
@@ -815,7 +815,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             @Override public int getTankCapacity(int tank) { return tank==0 ? tankInventory.volumeCapacity() : 0; }
             @Override public boolean isFluidValid(int tank,FluidStack stack) {
                 boolean accepts=module()==ReactorModule.NONE || module()==ReactorModule.STIRRED || !initial.isEmpty() && (FluidThermal.compatible(initial,stack));
-                return tank==0 && live() && accepts && !stack.isEmpty() && FluidMaterials.gas(stack.getFluid()) && tankInventory.fill(stack,FluidAction.SIMULATE)>0;
+                return tank==0 && live() && accepts && !stack.isEmpty() && net.createplant.thermal.FluidState.gas(stack) && tankInventory.fill(stack,FluidAction.SIMULATE)>0;
             }
             @Override public int fill(FluidStack stack,FluidAction action) { return isFluidValid(0,stack) ? tankInventory.fill(stack,action) : 0; }
             @Override public FluidStack drain(int amount,FluidAction action) { return !live() ? FluidStack.EMPTY : tankInventory.gasStored() ? tankInventory.drain(amount,action) : FluidStack.EMPTY; }

@@ -49,6 +49,9 @@ public final class TankHeating {
             if(batches*change.consumed()!=fluid.getAmount() || (long)batches*change.produced()>capacity.applyAsInt(change.prototype()))continue;
             fluid.setAmount(batches*change.produced());
             fluid.applyComponents(change.prototype().getComponentsPatch());
+            // A level back at the substance's own state is stored by removing the data, which a patch does not carry.
+            FluidState.setTemperature(fluid,FluidState.temperature(change.prototype()));
+            FluidState.setPressure(fluid,FluidState.pressure(change.prototype()));
             changed=true;
         }
         ticks-=DURATION;

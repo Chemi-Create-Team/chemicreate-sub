@@ -71,8 +71,9 @@ public final class FluidThermal {
         Integer intendedTemperature=product.get(temperature), intendedPressure=product.get(pressure);
         product.applyComponents(source.getComponentsPatch());
         product.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());
-        product.set(temperature,intendedTemperature);
-        product.set(pressure,intendedPressure);
+        product.remove(temperature);product.remove(pressure);
+        if(intendedTemperature!=null)FluidState.setTemperature(product,intendedTemperature);
+        if(intendedPressure!=null)FluidState.setPressure(product,intendedPressure);
         product.remove(net.createplant.registry.CEThermal.EXPANDED_STEAM.get());
         product.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
     }

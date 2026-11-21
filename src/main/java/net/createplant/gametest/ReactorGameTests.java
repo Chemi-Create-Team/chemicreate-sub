@@ -128,13 +128,13 @@ public class ReactorGameTests {
 
         var exchanger = ThermalControlGameTests.build(h.getLevel(), h.absolutePos(BASE.east(12)), Direction.NORTH, 2);
         h.assertTrue(ThermalControlGameTests.tube(exchanger, 0).fill(coolant, EXECUTE) == 750
-            && ThermalControlGameTests.shell(exchanger, 0).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 750), EXECUTE) == 750,
+            && ThermalControlGameTests.shell(exchanger, 0).fill(net.createplant.thermal.FluidState.with(new FluidStack(Fluids.WATER, 750), 10, 8), EXECUTE) == 750,
             "The heat exchanger accepts the refined coolant on its cold side");
         for (int i = 0; i < 25; i++) exchanger.thermal().tick();
         var warmed = ThermalControlGameTests.tube(exchanger, 1).drain(1000, EXECUTE);
-        var recooling = net.createplant.thermal.ThermalStreams.cooling(warmed);
-        h.assertTrue(warmed.is(CEProcessFluids.WARM_SLIME_COOLANT.get()) && warmed.getAmount() == 750 && recooling != null
-            && FluidStack.matches(recooling.result(warmed, 750), coolant), "The radiator's cooling table returns the original coolant and volume");
+        var recooled = net.createplant.thermal.FluidState.with(warmed, net.createplant.thermal.FluidState.AMBIENT, net.createplant.thermal.FluidState.pressure(warmed));
+        h.assertTrue(warmed.is(CEProcessFluids.SLIME_COOLANT.get()) && warmed.getAmount() == 750 && net.createplant.thermal.FluidState.temperature(warmed) == 9
+            && FluidStack.matches(recooled, coolant), "The coolant warms to the parallel-flow average and is the original coolant again at ambient");
         h.succeed();
     }
 
@@ -177,7 +177,7 @@ public class ReactorGameTests {
         var be=build(h,ReactorModule.STIRRED,1);var input=in(be);var output=out(be);
         var feed=new FluidStack(Fluids.WATER,1000);
         h.assertTrue(input.fill(feed,SIMULATE)==1000 && input.getFluidInTank(0).isEmpty(),"Simulating fill never stores feed");
-        h.assertTrue(!input.isFluidValid(0,new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),250)),"Synthesis gas is not an input to a stirred batch");
+        h.assertTrue(!input.isFluidValid(0,new FluidStack(CEFluids.ARGON_GAS.get(),250)),"A gas no stirred recipe uses is not an input to a stirred batch");
         input.fill(feed,EXECUTE);run(be,120);
         h.assertTrue(input.getFluidInTank(0).getAmount()==1000 && output.getFluidInTank(0).isEmpty(),"Heat is required before consuming inputs");
         heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);run(be,100);
@@ -222,7 +222,9 @@ public class ReactorGameTests {
         var heat=build(h,ReactorModule.PREHEATER,1);in(heat).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);run(heat,100);
         h.assertTrue(out(heat).getFluidInTank(0).isEmpty() && in(heat).getFluidInTank(0).getAmount()==1000,"A missing second stream retains the first feed");
         var hot=heat.thermal().port(2,true,false,true);hot.fill(new FluidStack(CEProcessFluids.HOT_OLEFINS.get(),1000),EXECUTE);run(heat,50);
-        h.assertTrue(out(heat).getFluidInTank(0).is(CEProcessFluids.WARM_WATER.get()) && out(heat).getFluidInTank(0).getAmount()==1000 && heat.thermal().tank(3).getFluid().is(CEProcessFluids.COOLED_OLEFINS.get()),"Two finite rows convert together");
+        var warmed=out(heat).getFluidInTank(0);var cooled=heat.thermal().tank(3).getFluid();
+        h.assertTrue(warmed.is(Fluids.WATER) && warmed.getAmount()==1000 && net.createplant.thermal.FluidState.temperature(warmed)==10
+            && cooled.is(CEProcessFluids.COOLED_OLEFINS.get()) && net.createplant.thermal.FluidState.temperature(cooled)==10,"Two finite rows meet at their average temperature together");
         var column=DistillationGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(12,2,4)),2,14);
         h.assertTrue(DistillationGameTests.inlet(column,2).fill(new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),9000),EXECUTE)==0 && DistillationGameTests.inlet(column,2).fill(new FluidStack(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get(),9000),EXECUTE)==0,"Ammonia mixtures belong in the dedicated gas-liquid separator");h.succeed();
     }

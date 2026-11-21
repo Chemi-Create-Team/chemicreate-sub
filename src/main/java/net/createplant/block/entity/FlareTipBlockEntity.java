@@ -82,7 +82,7 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
         @Override public int getTanks() { return 1; }
         @Override public FluidStack getFluidInTank(int tank) { return live() && tank==0 ? gas.getFluid().copy() : FluidStack.EMPTY; }
         @Override public int getTankCapacity(int tank) { return tank==0 ? gas.getCapacity() : 0; }
-        @Override public boolean isFluidValid(int tank,FluidStack stack) { return tank==0 && !stack.isEmpty() && FluidMaterials.gas(stack.getFluid()); }
+        @Override public boolean isFluidValid(int tank,FluidStack stack) { return tank==0 && !stack.isEmpty() && net.createplant.thermal.FluidState.gas(stack); }
         @Override public int fill(FluidStack stack,FluidAction action) { return live() && isFluidValid(0,stack) && chimney() && clearExhaust() ? gas.fill(stack,action) : 0; }
         @Override public FluidStack drain(int amount,FluidAction action) { return FluidStack.EMPTY; }
         @Override public FluidStack drain(FluidStack stack,FluidAction action) { return FluidStack.EMPTY; }

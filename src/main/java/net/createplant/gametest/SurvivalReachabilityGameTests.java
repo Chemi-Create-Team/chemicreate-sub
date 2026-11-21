@@ -118,7 +118,7 @@ public final class SurvivalReachabilityGameTests {
         }
         if (recipe instanceof ProcessingRecipe<?, ?> processing) {
             for (var output : processing.getRollableResults()) if (!output.getStack().isEmpty()) changed |= items.add(output.getStack().getItem());
-            for (FluidStack output : processing.getFluidResults()) if (!output.isEmpty()) changed |= fluids.add(output.getFluid());
+            for (FluidStack output : processing.getFluidResults()) if (!output.isEmpty()) changed |= fluids.addAll(stateEntries(output));
         }
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe gasifier) changed |= fluids.add(gasifier.gasResult().getFluid());
         if (recipe instanceof ConverterRecipe converter && !converter.byproduct().isEmpty()) changed |= fluids.add(converter.byproduct().getFluid());
@@ -137,7 +137,7 @@ public final class SurvivalReachabilityGameTests {
         for (ProcessRecipe process : ProcessRecipe.all()) {
             if (!processEquipment(process.module(), items) || process.catalyst() != Items.AIR && !items.contains(process.catalyst())
                 || process.inputs().stream().anyMatch(stack -> !fluids.contains(stack.getFluid()))) continue;
-            for (FluidStack output : process.outputs()) changed |= fluids.add(output.getFluid());
+            for (FluidStack output : process.outputs()) changed |= fluids.addAll(stateEntries(output));
         }
         if (has(items, "electrolysis_cell", "electrolysis_cell_controller", "electrolysis_electrode_head", "asbestos_wrapped_electrode")) {
             if (fluids.contains(Fluids.WATER)) changed |= fluids.add(CEFluids.HYDROGEN_GAS.get()) | fluids.add(CEFluids.OXYGEN_GAS.get());
@@ -166,8 +166,7 @@ public final class SurvivalReachabilityGameTests {
         if (has(items, "tube_piped_tank") && fluids.contains(CEFluids.STEAM.get()) && fluids.contains(CEProcessFluids.SLIME_COOLANT.get()))
             changed |= fluids.add(CEProcessFluids.WARM_SLIME_COOLANT.get());
         if(has(items,"reciprocating_compressor","reciprocating_cylinder"))for(var fluid:new ArrayList<>(fluids)){
-            var converted=net.createplant.thermal.Compression.convert(new FluidStack(fluid,1),true);
-            if(converted.getFluid()!=fluid)changed|=fluids.add(converted.getFluid());
+            changed|=fluids.addAll(stateEntries(net.createplant.thermal.Compression.convert(new FluidStack(fluid,1),true)));
         }
         if(has(items,"stainless_boiler") && fluids.contains(Fluids.WATER))changed|=fluids.add(CEProcessFluids.HIGH_PRESSURE_STEAM.get());
         if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(CEProcessFluids.PRESSURISED_WATER.get()) && fluids.contains(CEFusion.DEUTERIUM_GAS.get()) && fluids.contains(CEFusion.TRITIUM_GAS.get()) && fluids.contains(CEFusion.LIQUID_HELIUM.get()))changed|=fluids.add(CEProcessFluids.HOT_REACTOR_COOLANT.get());
@@ -202,6 +201,13 @@ public final class SurvivalReachabilityGameTests {
             && fluids.contains(Fluids.WATER) && fluids.contains(CEUranium.SULFURIC_ACID.get()))
             changed |= fluids.add(CEProcessFluids.WASTEWATER.get());
         return changed;
+    }
+    /** The registered entries that name a stack's state, such as compressed air for air at a raised pressure, so this audit can follow them by id. */
+    private static List<Fluid> stateEntries(FluidStack stack) {
+        var entries = new ArrayList<Fluid>(List.of(stack.getFluid()));
+        for (var variant : net.createplant.thermal.FluidIdentity.variants(stack.getFluid()))
+            if (net.createplant.thermal.FluidIdentity.matches(stack, variant)) entries.add(variant);
+        return entries;
     }
     private static boolean addFilledBuckets(Set<Item> items, Set<Fluid> fluids) {
         boolean changed = false;

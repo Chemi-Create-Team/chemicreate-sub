@@ -194,7 +194,12 @@ public final class ReactorCore {
         public int getTankCapacity(int tank){return structure==null || tank<0 || tank>=4 ? 0 : (fuelChannels+controlChannels)*structure.height()*FuelChannelBlockEntity.COOLANT_PER_CHANNEL;}
         public boolean isFluidValid(int tank,FluidStack stack){return false;}
         public int fill(FluidStack stack,FluidAction action){return 0;}
-        public FluidStack drain(FluidStack stack,FluidAction action){return stack.isEmpty() ? FluidStack.EMPTY : takePhase(stack.getFluid(),stack.getAmount(),action.execute());}
+        // A request names the substance and its state, so it is matched against each phase's entry rather than by fluid id alone.
+        public FluidStack drain(FluidStack stack,FluidAction action){
+            if(stack.isEmpty())return FluidStack.EMPTY;
+            for(int slot=0;slot<4;slot++)if(FluidStack.isSameFluidSameComponents(new FluidStack(outletFluid(slot),1),stack))return takePhase(outletFluid(slot),stack.getAmount(),action.execute());
+            return FluidStack.EMPTY;
+        }
         public FluidStack drain(int amount,FluidAction action){for(int slot:new int[]{1,0,2,3}){var result=takePhase(outletFluid(slot),amount,action.execute());if(!result.isEmpty())return result;}return FluidStack.EMPTY;}
     };
     private int outletCursor;

@@ -7,6 +7,9 @@
     },
     {
       "item": "create_refinery_n_reactors:reinforced_pipe"
+    },
+    {
+      "tag": "c:plates/copper"
     }
   ],
   "result": {

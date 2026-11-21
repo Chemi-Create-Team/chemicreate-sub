@@ -130,14 +130,14 @@ public class ReactionTowerRenderer extends SafeBlockEntityRenderer<ReactionTower
         for (int i = 0; i < 4; i++) {
             var fluid = be.tank(i);
             if (fluid.isEmpty()) continue;
-            if (FluidMaterials.gas(fluid.getFluid())) { if (gas < 0) gas = i; }
+            if (net.createplant.thermal.FluidState.gas(fluid)) { if (gas < 0) gas = i; }
             else liquid += fluid.getAmount();
         }
         var builder = FluidRenderHelper.getFluidBuilder(buffer);
         float surface = FLOOR, depth = Math.min(1, (float) liquid / (ReactionTowerBlockEntity.VOLUME_PER_LAYER * be.layers())) * (top - FLOOR);
         for (int i = 0; i < 4 && liquid > 0; i++) {
             var fluid = be.tank(i);
-            if (fluid.isEmpty() || FluidMaterials.gas(fluid.getFluid())) continue;
+            if (fluid.isEmpty() || net.createplant.thermal.FluidState.gas(fluid)) continue;
             float next = surface + depth * fluid.getAmount() / liquid;
             NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluid, x0, surface, x0, x1, next, x1, builder, ms, light, false, true);
             surface = next;
