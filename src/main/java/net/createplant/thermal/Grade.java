@@ -20,6 +20,8 @@ public final class Grade {
         }
 
         public Component label() { return Component.translatable("grade." + CreatePlant.MOD_ID + ".heat." + name().toLowerCase(Locale.ROOT)); }
+        /** The name with the range it stands for, such as "Ambient (10 to 100 °C)". */
+        public Component detail() { return Component.translatable("grade." + CreatePlant.MOD_ID + ".heat." + name().toLowerCase(Locale.ROOT) + ".detail"); }
     }
 
     public enum Pressure {
@@ -30,10 +32,12 @@ public final class Grade {
         public int storageRatio() { return switch(this) { case ATMOSPHERIC -> 1;case PRESSURISED -> 16;case HIGH -> 64; }; }
 
         public Component label() { return Component.translatable("grade." + CreatePlant.MOD_ID + ".pressure." + name().toLowerCase(Locale.ROOT)); }
+        /** The name with the range it stands for, such as "Ambient (10 to 100 °C)". */
+        public Component detail() { return Component.translatable("grade." + CreatePlant.MOD_ID + ".pressure." + name().toLowerCase(Locale.ROOT) + ".detail"); }
     }
 
     /** A fluid's grades as one line, as goggles and gauges show them. */
     public static Component describe(Heat heat, Pressure pressure) {
-        return Component.translatable("grade." + CreatePlant.MOD_ID + ".fluid", heat.label(), pressure.label());
+        return Component.translatable("grade." + CreatePlant.MOD_ID + ".fluid", heat.detail(), pressure.detail());
     }
 }

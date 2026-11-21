@@ -80,7 +80,7 @@ public enum PipeMaterial {
     }
     /** Liquid material ratings, alongside the shared gas behaviour. */
     public void describe(java.util.List<net.minecraft.network.chat.Component> lines) {
-        lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.carries",coldest.label(),hottest.label(),strongest.label()));
+        lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.carries",coldest.detail(),hottest.detail(),strongest.detail()));
         lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.resistance",
             resists(Corrosion.ACID) ? "○" : "×",resists(Corrosion.HOT_ACID) ? "○" : "×",resists(Corrosion.FLUORIDE) ? "○" : "×"));
         if (this!=VALVE) lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.gases"));

@@ -1010,9 +1010,9 @@
     "zh_cn": "管道温度计、压力表和流量计可沿任意轴线装入管道，流体直接从中通过。"
   },
   "pipe_gauges.reading": {
-    "en_us": "Temperature and pressure meters show fluid grades.",
-    "ja_jp": "温度計と圧力計は流体の等級を表示します。",
-    "zh_cn": "温度计与压力计显示流体等级。"
+    "en_us": "Temperature and pressure meters show fluid grades. Goggles show the range in °C and bar that each grade covers.",
+    "ja_jp": "温度計と圧力計は流体の等級を表示します。ゴーグルで各等級の℃とbarの範囲を確認できます。",
+    "zh_cn": "温度计与压力计显示流体等级。护目镜会显示每个等级对应的℃与bar范围。"
   },
   "pipe_gauges.scale": {
     "en_us": "The comparator output rises one step per grade.",
@@ -4180,14 +4180,14 @@
     "zh_cn": "通过相邻齿轮驱动泵。转速决定流量。"
   },
   "material_pump.reverse": {
-    "en_us": "Use a wrench on the pump to reverse the flow. The drive keeps the same rotation.",
-    "ja_jp": "レンチでポンプを操作すると流れる向きが反転します。駆動側の回転はそのままです。",
-    "zh_cn": "用扳手操作泵可反转流向，驱动转向保持不变。"
+    "en_us": "Use a wrench on the pump to reverse the flow. The arrow on the side of each flange points the way the fluid goes.",
+    "ja_jp": "レンチでポンプを操作すると流れる向きが反転します。フランジ側面の矢印が流れる向きを指します。",
+    "zh_cn": "用扳手操作泵可反转流向。法兰侧面的箭头指向流体流动的方向。"
   },
   "material_pump.stop": {
-    "en_us": "Stopping the drive stops transport. Check the pipe material if a fluid cannot pass.",
-    "ja_jp": "駆動を止めると搬送も止まります。流れないときは配管の材質と接続を確認します。",
-    "zh_cn": "停止驱动即停止输送。无法输送时检查管材和连接。"
+    "en_us": "Stopping the drive stops transport. A pump carries the same fluids as its pipe; one it is not rated for cracks it and bursts it in about a minute.",
+    "ja_jp": "駆動を止めると搬送も止まります。ポンプは同じ材質の配管と同じ流体に対応し、合わない流体を通すとひびが入って約1分で壊れます。",
+    "zh_cn": "停止驱动即停止输送。泵与同材质管道适用相同流体，输送不适用的流体会出现裂纹，约1分钟后破裂。"
   },
   "material_pump.intake": {
     "en_us": "Fit a Create Nozzle to the pump inlet or intake pipe with its mouth facing open air.",

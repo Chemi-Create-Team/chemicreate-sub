@@ -56,7 +56,8 @@ def main():
         for part in ('block', 'item'):
             write(A / f'models/block/material_pump/{name}/{part}.json', {
                 'parent': 'create:block/mechanical_pump/block' if part == 'block' else NS + 'block/material_pump/item',
-                'textures': {'4': texture, 'particle': texture}})
+                # The flange with its flow arrow comes from generate_material_pump_textures.py.
+                'textures': {'4': NS + f'block/material_pump/{name}', 'particle': texture}})
         variants = json.loads(json.dumps(state))
         for variant in variants['variants'].values(): variant['model'] = NS + f'block/material_pump/{name}/block'
         write(A / f'blockstates/{name}.json', variants)

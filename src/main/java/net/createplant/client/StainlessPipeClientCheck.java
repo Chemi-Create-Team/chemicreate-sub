@@ -2,6 +2,8 @@ package net.createplant.client;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.GlassFluidPipeBlock;
+import com.simibubi.create.content.fluids.tank.CreativeFluidTankBlockEntity;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createplant.registry.CETransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -10,6 +12,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Opt-in integrated-world check: the same pipe run in Create's copper (back row) and in stainless steel (front row), for side-by-side review. */
 final class StainlessPipeClientCheck {
@@ -50,6 +55,15 @@ final class StainlessPipeClientCheck {
         for (Direction d : Direction.values())
             cased = cased.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(d), d.getAxis() == Direction.Axis.X);
         level.setBlock(at.east(4), cased, 3);
+        // A creative tank and a driven pump at the open end fill the run, so the glass sections show the fluid inside.
+        level.setBlock(at.west(2), AllBlocks.CREATIVE_FLUID_TANK.getDefaultState(), 3);
+        if (level.getBlockEntity(at.west(2)) instanceof CreativeFluidTankBlockEntity tank
+            && tank.getTankInventory() instanceof CreativeFluidTankBlockEntity.CreativeSmartFluidTank source)
+            source.setContainedFluid(new FluidStack(Fluids.WATER, 1000));
+        level.setBlock(at.west(), AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST), 3);
+        level.setBlock(at.west().north(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X), 3);
+        level.setBlock(at.west(2).north(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST), 3);
+        if (level.getBlockEntity(at.west(2).north()) instanceof CreativeMotorBlockEntity motor) motor.generatedSpeed.setValue(64);
     }
 
     /** Returns true once every view is captured. */
@@ -57,7 +71,7 @@ final class StainlessPipeClientCheck {
         ticks++;
         if (mc.screen != null)
             mc.setScreen(null);
-        if (view < 0 && ticks >= 20 || view >= 0 && ticks == 45) {
+        if (view < 0 && ticks >= 120 || view >= 0 && ticks == 45) {
             if (view >= 0)
                 Screenshot.grab(mc.gameDirectory, "quality-stainless-pipe-" + view + ".png", mc.getMainRenderTarget(), message -> { });
             if (++view == VIEWS.length) {

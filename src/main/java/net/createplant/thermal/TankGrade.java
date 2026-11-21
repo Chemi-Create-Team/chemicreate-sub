@@ -53,7 +53,7 @@ public enum TankGrade {
     }
 
     public void describe(List<Component> lines) {
-        lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.range",coldest.label(),hottest.label(),pressure.label()));
+        lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.range",coldest.detail(),hottest.detail(),pressure.detail()));
         lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.kind."+kind.name().toLowerCase(java.util.Locale.ROOT),
             Component.translatable("grade.create_refinery_n_reactors.tank."+(resistance.isEmpty() ? "no_acid" : "acid"))));
     }

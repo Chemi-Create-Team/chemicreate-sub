@@ -1,7 +1,7 @@
 {
   "parent": "create:block/mechanical_pump/block",
   "textures": {
-    "4": "create_refinery_n_reactors:block/transport/zirconium_pipe",
+    "4": "create_refinery_n_reactors:block/material_pump/zirconium_pump",
     "particle": "create_refinery_n_reactors:block/transport/zirconium_pipe"
   }
 }

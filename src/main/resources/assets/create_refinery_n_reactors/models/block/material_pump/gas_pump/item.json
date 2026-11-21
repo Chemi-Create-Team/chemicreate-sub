@@ -1,7 +1,7 @@
 {
   "parent": "create_refinery_n_reactors:block/material_pump/item",
   "textures": {
-    "4": "create_refinery_n_reactors:block/steam/steel",
+    "4": "create_refinery_n_reactors:block/material_pump/gas_pump",
     "particle": "create_refinery_n_reactors:block/steam/steel"
   }
 }

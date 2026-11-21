@@ -10,7 +10,15 @@ NAMES = {
     'heat.cryogenic': ('Cryogenic', '極低温', '极低温'), 'heat.cold': ('Cold', '低温', '低温'), 'heat.ambient': ('Ambient', '常温', '常温'),
     'heat.hot': ('Hot', '高温', '高温'), 'heat.very_hot': ('Very hot', '超高温', '超高温'),
     'pressure.atmospheric': ('Atmospheric', '常圧', '常压'), 'pressure.pressurised': ('Pressurised', '加圧', '加压'), 'pressure.high': ('High pressure', '高圧', '高压'),
-    'fluid': ('%s, %s', '%s・%s', '%s・%s'),
+    'fluid': ('Temperature %s / pressure %s', '温度 %s／圧力 %s', '温度 %s／压力 %s'),
+    'heat.cryogenic.detail': ('Cryogenic (below -123 °C)', '極低温（-123℃未満）', '极低温（低于-123℃）'),
+    'heat.cold.detail': ('Cold (-123 to 10 °C)', '低温（-123～10℃）', '低温（-123～10℃）'),
+    'heat.ambient.detail': ('Ambient (10 to 100 °C)', '常温（10～100℃）', '常温（10～100℃）'),
+    'heat.hot.detail': ('Hot (100 to 500 °C)', '高温（100～500℃）', '高温（100～500℃）'),
+    'heat.very_hot.detail': ('Very hot (500 °C and above)', '超高温（500℃以上）', '超高温（500℃以上）'),
+    'pressure.atmospheric.detail': ('Atmospheric (below 2 bar)', '常圧（2 bar未満）', '常压（低于2 bar）'),
+    'pressure.pressurised.detail': ('Pressurised (2 to 20 bar)', '加圧（2～20 bar）', '加压（2～20 bar）'),
+    'pressure.high.detail': ('High pressure (20 bar and above)', '高圧（20 bar以上）', '高压（20 bar以上）'),
 }
 NAMES.update({
     'exchange.row': ('%s | %s mB/t', '%s｜%s mB/t', '%s｜%s mB/t'),
@@ -19,7 +27,7 @@ NAMES.update({
     'tower': ('Warm water → water | %s mB/t', '温排水 → 水｜%s mB/t', '温排水 → 水｜%s mB/t'),
     'separator': ('Feed %s mB | liquid %s mB | recycle %s mB', '原料 %s mB｜液体 %s mB｜循環ガス %s mB', '原料 %s mB｜液体 %s mB｜循环气 %s mB'),
     'reducer': ('Lowers one pressure grade', '圧力等級を一段下げます', '降低一个压力等级'),
-    'tank.range': ('Accepts %s to %s, up to %s','受入等級：%s～%s・%sまで','接收等级：%s～%s，最高%s'),
+    'tank.range': ('Holds %s to %s; pressure up to %s', '入れられる温度：%s～%s／圧力：%sまで', '可容纳温度：%s～%s／压力：最高%s'),
     'tank.kind.all': ('Liquids and gases | %s','液体・気体｜%s','液体与气体｜%s'),
     'tank.kind.liquid': ('Liquids only | %s','液体専用｜%s','仅液体｜%s'),
     'tank.kind.gas': ('Gases only | %s','気体専用｜%s','仅气体｜%s'),
@@ -28,7 +36,7 @@ NAMES.update({
 })
 TRANSPORT = {
     'grade': ('Grade: %s', '等級：%s', '等级：%s'),
-    'carries': ('Carries %s to %s, up to %s', '運べる流体：%s～%s・%sまで', '可输送：%s～%s，最高%s'),
+    'carries': ('Liquids it carries: %s to %s; pressure up to %s', '運べる液体の温度：%s～%s／圧力：%sまで', '可输送液体温度：%s～%s／压力：最高%s'),
     'wear': ('⚠ %s: wear %s%%. Drain it before it bursts', '⚠ %s：損傷 %s%%。壊れる前に抜いてください', '⚠ %s：损伤 %s%%，破裂前请排空'),
     'wear.gas': ('Not rated for gas', '気体に非対応', '不耐气体'),
     'wear.liquid': ('Not rated for liquid', '液体に非対応', '不耐液体'),

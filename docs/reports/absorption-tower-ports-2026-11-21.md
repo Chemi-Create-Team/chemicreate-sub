@@ -34,4 +34,4 @@
 
 - ユーザー指示の「ガスの搬入も最上段の4つの面から」は、最上段からガスを出す（排ガスの搬出）と解釈した。最上段の面からガスを入れる仕様が必要なら `storeyPort` の最上段分岐を変更する。
 - `create_refinery_n_reactors.ponder.shared.absorption_tower.*`（小型の段・側面からの水など）は Java から参照されていない旧キーで、内容も古い。今回は未変更。
-- 構造の形成・解体時に `invalidateCapabilities` を呼んでいない点は既存のまま（Create配管のキャッシュ更新は隣接更新に依存）。
+- （訂正）構造の形成・解体時の `invalidateCapabilities` は `ReactorMachineBlockEntity.validateStructure` が全部品で呼んでいる。

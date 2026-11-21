@@ -162,8 +162,8 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
         tooltip.add(getBlockState().getBlock().getName());
         if (!measured()) tooltip.add(Component.translatable(KEY+"unmeasured"));
         else tooltip.add(switch (kind()) {
-            case TEMPERATURE -> net.createplant.thermal.Grade.Heat.values()[Math.clamp((int)reading,0,4)].label();
-            case PRESSURE -> net.createplant.thermal.Grade.Pressure.values()[Math.clamp((int)reading,0,2)].label();
+            case TEMPERATURE -> net.createplant.thermal.Grade.Heat.values()[Math.clamp((int)reading,0,4)].detail();
+            case PRESSURE -> net.createplant.thermal.Grade.Pressure.values()[Math.clamp((int)reading,0,2)].detail();
             case FLOW -> Component.translatable(KEY+"flow",String.format(Locale.ROOT,"%.1f",reading));
         });
         tooltip.add(alarmLine());

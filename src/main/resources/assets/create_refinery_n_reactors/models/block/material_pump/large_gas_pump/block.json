@@ -1,7 +1,7 @@
 {
   "parent": "create:block/mechanical_pump/block",
   "textures": {
-    "4": "create_refinery_n_reactors:block/transport/large_gas_pipe_side",
+    "4": "create_refinery_n_reactors:block/material_pump/large_gas_pump",
     "particle": "create_refinery_n_reactors:block/transport/large_gas_pipe_side"
   }
 }
