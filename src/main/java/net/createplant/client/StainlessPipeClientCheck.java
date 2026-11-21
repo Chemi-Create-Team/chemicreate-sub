@@ -55,7 +55,9 @@ final class StainlessPipeClientCheck {
         for (Direction d : Direction.values())
             cased = cased.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(d), d.getAxis() == Direction.Axis.X);
         level.setBlock(at.east(4), cased, 3);
-        // A creative tank and a driven pump at the open end fill the run, so the glass sections show the fluid inside.
+        // A creative tank and a driven pump fill the run into tanks on the two risers, so the glass sections show the fluid inside.
+        level.setBlock(at.east(2).above(2), AllBlocks.FLUID_TANK.getDefaultState(), 3);
+        level.setBlock(at.east(6).above(2), AllBlocks.FLUID_TANK.getDefaultState(), 3);
         level.setBlock(at.west(2), AllBlocks.CREATIVE_FLUID_TANK.getDefaultState(), 3);
         if (level.getBlockEntity(at.west(2)) instanceof CreativeFluidTankBlockEntity tank
             && tank.getTankInventory() instanceof CreativeFluidTankBlockEntity.CreativeSmartFluidTank source)
