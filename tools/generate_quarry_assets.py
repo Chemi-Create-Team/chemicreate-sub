@@ -25,11 +25,14 @@ def box(start, end, texture='#casing', faces=FACES, rotation=None):
 
 def chute():
     """The bin on the drill head, and the alternating hoop and rubber fold the renderer threads along the chute's curve."""
-    write(A / 'models/block/crane/head_bin.json', {'parent': 'minecraft:block/block', 'textures': {'particle': CASING, 'casing': CASING, 'chute': CHUTE},
+    # The spout under the chute's foot, beside the stem along +X; the renderer turns +X towards the near rail.
+    spout = box((14, 11, 4), (23, 16, 12))
+    # It reaches past the block, where the default UVs leave the casing for the next sprite on the atlas.
+    for side, uv in (('north', [0, 0, 9, 5]), ('south', [7, 0, 16, 5]), ('up', [7, 4, 16, 12]), ('down', [7, 4, 16, 12])): spout['faces'][side]['uv'] = uv
+    # Cutout keeps the gaps in the chute texture open where Flywheel draws the bin.
+    write(A / 'models/block/crane/head_bin.json', {'parent': 'minecraft:block/block', 'render_type': 'minecraft:cutout', 'textures': {'particle': CASING, 'casing': CASING, 'chute': CHUTE},
         'elements': [box((2, 5, 2), (14, 16, 14), faces=('north', 'south', 'east', 'west', 'down')),
-                     {'from': [2, 5, 2], 'to': [14, 16, 14], 'faces': {'up': {'texture': '#chute', 'uv': [0, 0, 8, 8]}}},
-                     # The spout under the chute's foot, beside the stem along +X; the renderer turns +X towards the near rail.
-                     box((14, 11, 4), (23, 16, 12))]})
+                     {'from': [2, 5, 2], 'to': [14, 16, 14], 'faces': {'up': {'texture': '#chute', 'uv': [0, 0, 8, 8]}}}, spout]})
     write(A / 'models/block/crane/chute_ring.json', {'parent': 'minecraft:block/block', 'textures': {'particle': CASING, 'casing': CASING},
         'elements': [box((4.5, 7.5, 4.5), (11.5, 8.5, 11.5))]})
     # The moving rubber is separate so scrolling its UVs never moves the steel frame.

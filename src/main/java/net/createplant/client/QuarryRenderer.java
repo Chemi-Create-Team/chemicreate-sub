@@ -6,11 +6,13 @@ import com.mojang.math.Axis;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import dev.engine_room.flywheel.api.visualization.VisualizationManager;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createplant.CreatePlant;
+import net.createplant.block.CraneStructure;
 import net.createplant.block.entity.QuarryDriveBlockEntity;
 import net.createplant.block.entity.QuarryConveyor;
 import net.minecraft.client.Minecraft;
@@ -70,40 +72,20 @@ public class QuarryRenderer extends KineticBlockEntityRenderer<QuarryDriveBlockE
         else Outliner.getInstance().remove(be);
         var quarry = be.visibleStructure();
         if (quarry == null) return;
-        BlockState state = be.getBlockState();
-        VertexConsumer solid = buffer.getBuffer(RenderType.cutout());
-        double u = be.renderedU(partialTicks), v = be.renderedV(partialTicks), depth = be.renderedDepth(partialTicks);
-        Vec3 along = Vec3.atLowerCornerOf(quarry.along().getNormal()), across = Vec3.atLowerCornerOf(quarry.across().getNormal());
-        Vec3 origin = Vec3.atLowerCornerOf(quarry.start().subtract(be.getBlockPos())).add(along.scale(u)).add(0, 1, 0);
-        // The girder and belt models run along X; turn them to lie across the rails.
-        float yaw = quarry.across().getAxis() == Direction.Axis.X ? 0 : 90;
-        for (int i = 0; i <= quarry.span(); i++)
-            CraneRenderer.draw(CachedBuffers.partial(i == 0 || i == quarry.span() ? END_TRUCK : GIRDER, state), origin.add(across.scale(i)), yaw, be, ms, solid);
-        var shift=AllSpriteShifts.BELT;
-        int direction=quarry.across().getAxis()==Direction.Axis.X ? -quarry.across().getStepX() : quarry.across().getStepZ();
-        float scroll=(float)(be.renderedBeltTravel(partialTicks)%1)*direction*.5f*(shift.getTarget().getV1()-shift.getTarget().getV0());
-        for (int i = -1; i <= quarry.span(); i++) {
-            Vec3 at=origin.add(across.scale(i));
-            CraneRenderer.draw(CachedBuffers.partial(BRIDGE_BELT_FRAME,state),at,yaw,be,ms,solid);
-            CraneRenderer.draw(CachedBuffers.partial(BRIDGE_BELT,state).shiftUVScrolling(shift,scroll),at,yaw,be,ms,solid);
-        }
-        Vec3 trolley = origin.add(across.scale(v));
-        CraneRenderer.draw(CachedBuffers.partial(TROLLEY, state), trolley, yaw, be, ms, solid);
-        double hookY = -1 - depth;
-        for (double y = hookY + 1; y < 0; y += 1) if (Math.min(y + 1, 0) - y >= 0.05)
-            CraneRenderer.draw(CachedBuffers.partial(DRILL_STEM, state), trolley.add(0, y, 0), 0, be, ms, solid);
-        Vec3 hook = trolley.add(0, hookY, 0);
-        if (be.drill()) {
-            float spin = be.working() ? AnimationTickHolder.getRenderTime(be.getLevel()) * 20 % 360 : 0;
-            CraneRenderer.draw(CachedBuffers.partialFacing(AllPartialModels.DRILL_HEAD, state, Direction.DOWN), hook, spin, be, ms, solid);
-            CraneRenderer.draw(CachedBuffers.partial(HEAD_BIN, state), hook, spoutYaw(quarry.across().getOpposite()), be, ms, solid);
-        } else CraneRenderer.draw(CachedBuffers.partial(GRAPPLE, state), hook, yaw, be, ms, solid);
-
-        // The chute stands beside the stem, on the side the bridge belt runs to, from the bin's spout up to the belt.
-        Vec3 bottom = hook.add(.5, 1, .5).subtract(across.scale(QuarryConveyor.CHUTE_OFFSET)), top = trolley.add(.5, QuarryConveyor.BELT_HEIGHT + QuarryConveyor.ITEM_CLEARANCE, .5).subtract(across.scale(QuarryConveyor.CHUTE_OFFSET));
-        for (double y = bottom.y; y <= top.y; y += FOLD) {
-            int fold = (int) Math.round((y - bottom.y) / FOLD);
-            CraneRenderer.draw(CachedBuffers.partial(fold % 2 == 0 ? CHUTE_RING : CHUTE_FOLD, state), new Vec3(bottom.x - .5, y - .5, bottom.z - .5), 0, be, ms, solid);
+        double v = be.renderedV(partialTicks), depth = be.renderedDepth(partialTicks);
+        Gantry gantry = Gantry.of(quarry, be.getBlockPos(), be.renderedU(partialTicks), v, depth);
+        Vec3 origin = gantry.origin(), across = gantry.across(), bottom = gantry.chuteBottom(), top = gantry.chuteTop();
+        float yaw = gantry.yaw();
+        // Under a Flywheel backend QuarryVisual draws the gantry as instances; this draws it in Ponder and without a backend.
+        if (!VisualizationManager.supportsVisualization(level)) {
+            BlockState state = be.getBlockState();
+            VertexConsumer solid = buffer.getBuffer(RenderType.cutout());
+            parts(quarry, gantry, depth, be.drill(), (model, at, turn) -> CraneRenderer.draw(CachedBuffers.partial(model, state), at, turn, be, ms, solid));
+            var shift=AllSpriteShifts.BELT;
+            float scroll=(float)(be.renderedBeltTravel(partialTicks)%1)*beltDirection(quarry)*.5f*(shift.getTarget().getV1()-shift.getTarget().getV0());
+            for (int i = -1; i <= quarry.span(); i++)
+                CraneRenderer.draw(CachedBuffers.partial(BRIDGE_BELT,state).shiftUVScrolling(shift,scroll),origin.add(across.scale(i)),yaw,be,ms,solid);
+            if (be.drill()) CraneRenderer.draw(CachedBuffers.partialFacing(AllPartialModels.DRILL_HEAD, state, Direction.DOWN), gantry.hook(), headSpin(be), be, ms, solid);
         }
         long now = be.conveyorTime();
         float conveyorPartial = be.conveyorPartial(partialTicks);
@@ -131,6 +113,45 @@ public class QuarryRenderer extends KineticBlockEntityRenderer<QuarryDriveBlockE
             ms.popPose();
         }
     }
+
+    /** Where the moving parts stand from the drive: the bridge's near end, the trolley, the drill head and both ends of the chute. */
+    record Gantry(Vec3 across, Vec3 origin, Vec3 trolley, Vec3 hook, Vec3 chuteBottom, Vec3 chuteTop, float yaw) {
+        static Gantry of(CraneStructure.Result quarry, BlockPos drive, double u, double v, double depth) {
+            Vec3 along = Vec3.atLowerCornerOf(quarry.along().getNormal()), across = Vec3.atLowerCornerOf(quarry.across().getNormal());
+            Vec3 origin = Vec3.atLowerCornerOf(quarry.start().subtract(drive)).add(along.scale(u)).add(0, 1, 0);
+            Vec3 trolley = origin.add(across.scale(v)), hook = trolley.add(0, -1 - depth, 0), chute = across.scale(QuarryConveyor.CHUTE_OFFSET);
+            // The girder and belt models run along X; turn them to lie across the rails.
+            // The chute stands beside the stem, on the side the bridge belt runs to, from the bin's spout up to the belt.
+            return new Gantry(across, origin, trolley, hook, hook.add(.5, 1, .5).subtract(chute),
+                trolley.add(.5, QuarryConveyor.BELT_HEIGHT + QuarryConveyor.ITEM_CLEARANCE, .5).subtract(chute), quarry.across().getAxis() == Direction.Axis.X ? 0 : 90);
+        }
+    }
+
+    /** Takes one part: {@code model} at {@code at} from the drive, turned {@code yaw} degrees about its centre. */
+    interface Parts { void add(PartialModel model, Vec3 at, float yaw); }
+
+    /** Lists every part that keeps its texture still, for this renderer and {@link QuarryVisual}; each places the scrolling belt and the spinning drill itself. */
+    static void parts(CraneStructure.Result quarry, Gantry gantry, double depth, boolean drill, Parts parts) {
+        for (int i = 0; i <= quarry.span(); i++)
+            parts.add(i == 0 || i == quarry.span() ? END_TRUCK : GIRDER, gantry.origin().add(gantry.across().scale(i)), gantry.yaw());
+        for (int i = -1; i <= quarry.span(); i++) parts.add(BRIDGE_BELT_FRAME, gantry.origin().add(gantry.across().scale(i)), gantry.yaw());
+        parts.add(TROLLEY, gantry.trolley(), gantry.yaw());
+        for (double y = -depth; y < 0; y += 1) if (Math.min(y + 1, 0) - y >= 0.05) parts.add(DRILL_STEM, gantry.trolley().add(0, y, 0), 0);
+        if (drill) parts.add(HEAD_BIN, gantry.hook(), spoutYaw(quarry.across().getOpposite()));
+        else parts.add(GRAPPLE, gantry.hook(), gantry.yaw());
+        Vec3 bottom = gantry.chuteBottom();
+        for (double y = bottom.y; y <= gantry.chuteTop().y; y += FOLD) {
+            int fold = (int) Math.round((y - bottom.y) / FOLD);
+            parts.add(fold % 2 == 0 ? CHUTE_RING : CHUTE_FOLD, new Vec3(bottom.x - .5, y - .5, bottom.z - .5), 0);
+        }
+    }
+
+    /** The way the bridge belt's texture runs for the ore to travel towards the near rail. */
+    static int beltDirection(CraneStructure.Result quarry) {
+        return quarry.across().getAxis() == Direction.Axis.X ? -quarry.across().getStepX() : quarry.across().getStepZ();
+    }
+
+    static float headSpin(QuarryDriveBlockEntity be) { return be.working() ? AnimationTickHolder.getRenderTime(be.getLevel()) * 20 % 360 : 0; }
 
     /** The yaw that turns a model's +X towards {@code side}, for the bin's spout under the chute. */
     private static float spoutYaw(Direction side) {
