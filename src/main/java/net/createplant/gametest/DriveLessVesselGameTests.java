@@ -27,7 +27,7 @@ public class DriveLessVesselGameTests {
     private static final BlockPos BASE = new BlockPos(4, 3, 4);
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
-    public static void closedStainlessTankBurnsSulfurWithOxygenOnAHeatedBurner(GameTestHelper h) {
+    public static void closedStainlessTankBurnsSulfurWithOxygenAtSuperheat(GameTestHelper h) {
         var burnerPos = BASE.below();
         var heat = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
         var idleBurner = AllBlocks.BLAZE_BURNER.getDefaultState().setValue(heat,com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SMOULDERING);
@@ -43,7 +43,8 @@ public class DriveLessVesselGameTests {
         com.simibubi.create.content.processing.burner.BlazeBurnerBlock.tryInsert(h.getBlockState(burnerPos), level, h.absolutePos(burnerPos), coal, false, false, false);
         h.runAfterDelay(25, () -> {
             h.assertTrue(h.getBlockState(burnerPos).getValue(heat) == com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED
-                && !vessel.status().equals("heat"), "A heated burner is enough to burn sulfur in oxygen: " + vessel.status());
+                && vessel.status().equals("heat") && vessel.progress() == 0 && vessel.getTankInventory().getFluidAmount() == 500,
+                "Normal heat keeps the original sulfur and oxygen intact");
             h.setBlock(burnerPos,Blocks.AIR);
             h.setBlock(burnerPos,idleBurner);
             var cake = com.simibubi.create.AllItems.BLAZE_CAKE.asStack();

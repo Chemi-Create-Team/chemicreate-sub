@@ -530,7 +530,14 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         return true;
     }
 
-    /** A feed goes in only beside feeds that a recipe uses together with it, so a gas no recipe needs here passes on instead of taking a feed slot. */
+    /** The components of a mixed gas feed while it is offered, so the feed takes only the components a recipe can use here. */
+    private List<FluidStack> offered=List.of();
+    public void offer(List<FluidStack> components) { offered=components; }
+
+    /**
+     * A feed goes in only beside feeds that a recipe uses together with it, so a gas no recipe needs here passes on instead of taking a feed slot.
+     * From a mixture, a component goes in only for a recipe whose other fluids are held or come with it, such as air's oxygen but not its nitrogen.
+     */
     private boolean feedFits(FluidStack stack) {
         if (level==null) return false;
         for (var holder:vesselRecipes()) {
@@ -542,6 +549,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
                 if (held.isEmpty() || FluidThermal.mixable(held,stack)) continue;
                 if (ingredients.stream().noneMatch(ingredient->ingredient.ingredient().test(held))) { together=false;break; }
             }
+            if (together && !offered.isEmpty()) together=ingredients.stream().allMatch(ingredient->ingredient.ingredient().test(stack)
+                || offered.stream().anyMatch(ingredient.ingredient()) || java.util.stream.IntStream.of(0,1,THIRD_FEED).anyMatch(slot->ingredient.ingredient().test(tanks[slot])));
             if (together) return true;
         }
         return false;

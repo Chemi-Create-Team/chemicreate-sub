@@ -17,7 +17,7 @@ D = ROOT / 'src/main/resources/data/create_refinery_n_reactors'
 NS = 'create_refinery_n_reactors:'
 # One batch: as much acid as the dilute acid mixed from 250 mB of sulfuric acid.
 WATER, SULFUR_DIOXIDE, OXYGEN = 1000, 250, 125
-# Burning one sulfur dust takes 500 mB of oxygen; a heated burner is enough, so air burns it as well.
+# Burning one sulfur dust takes 500 mB of oxygen: a closed tank needs superheat, a heated impeller vessel stirs it in, so air burns it as well.
 BURNT_SULFUR_DIOXIDE, BURNING_OXYGEN = 500, 500
 TEXTS = {
     'fluid.create_refinery_n_reactors.sulfurous_acid': ('Sulfurous Acid', '亜硫酸', '亚硫酸'),
@@ -39,9 +39,13 @@ def recipes():
         'ingredients': [iron, fluid('minecraft:water', WATER), fluid(NS + 'sulfur_dioxide', SULFUR_DIOXIDE), fluid(NS + 'oxygen_gas', OXYGEN)],
         'results': [{'id': NS + 'dilute_sulfuric_acid', 'amount': WATER}]})
     write(D / 'recipe/pressure_reaction/sulfur_dioxide.json', {
-        'type': NS + 'pressure_reaction', 'module': 'none', 'heat_requirement': 'heated',
+        'type': NS + 'pressure_reaction', 'module': 'none', 'heat_requirement': 'superheated',
         'ingredients': [{'tag': 'c:dusts/sulfur'}, fluid(NS + 'oxygen_gas', BURNING_OXYGEN)],
         'results': [{'amount': BURNT_SULFUR_DIOXIDE, 'id': NS + 'sulfur_dioxide'}]})
+    write(D / 'recipe/pressure_reaction/sulfur_dioxide_stirred.json', {
+        'type': NS + 'pressure_reaction', 'heat_requirement': 'heated',
+        'ingredients': [{'tag': 'c:dusts/sulfur'}, fluid(NS + 'oxygen_gas', BURNING_OXYGEN)],
+        'results': [{'id': NS + 'sulfur_dioxide', 'amount': BURNT_SULFUR_DIOXIDE}]})
     for retired in ('dilute_sulfuric_acid_iron_catalysed_air', 'sulfur_dioxide_from_air'):
         (D / f'recipe/pressure_reaction/{retired}.json').unlink(missing_ok=True)
 

@@ -28,7 +28,7 @@ public final class GasPassThrough extends BlockEntityBehaviour {
                 net.createplant.registry.CEConverter.TRUNNION_ENTITY.get(), net.createplant.registry.CEElectrolysis.CONTROLLER_ENTITY.get(),
                 net.createplant.registry.CEFuelCell.FUEL_CELL_ENTITY.get(), net.createplant.registry.CEFusion.CONTROLLER_ENTITY.get(),
                 net.createplant.registry.CEFusionFuel.COLD_BOX_ENTITY.get(), net.createplant.registry.CECompressor.RELIEF_SCRUBBER_ENTITY.get(),
-                net.createplant.registry.CEProcessBlocks.COOLER_RADIATOR_DRIVE.get(), net.createplant.registry.CEReciprocating.CYLINDER_ENTITY.get(),
+                net.createplant.registry.CEProcessBlocks.COOLER_RADIATOR_DRIVE.get(),
                 net.createplant.registry.CEGasifier.PART.get(), net.createplant.registry.CEFuelCycle.MACHINE_ENTITY.get(),
                 net.createplant.registry.CEWetProcessing.DRIVE_ENTITY.get(), net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get()))
             event.forType(type, machine -> event.attach(new GasPassThrough(machine)));

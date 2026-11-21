@@ -15,11 +15,13 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 public final class GasMixturePort implements IFluidHandler {
     private final IFluidHandler port;
     private final GasPassThrough through;
+    private final net.createplant.block.entity.ReactorMachineBlockEntity reactor;
     private final boolean inlet, outlet;
 
-    private GasMixturePort(IFluidHandler port, GasPassThrough through, boolean inlet, boolean outlet) {
+    private GasMixturePort(IFluidHandler port, BlockEntity machine, boolean inlet, boolean outlet) {
         this.port = port;
-        this.through = through;
+        this.through = GasPassThrough.of(machine);
+        this.reactor = machine instanceof net.createplant.block.entity.ReactorMachineBlockEntity reactor ? reactor : null;
         this.inlet = inlet;
         this.outlet = outlet;
     }
@@ -29,7 +31,7 @@ public final class GasMixturePort implements IFluidHandler {
     public static IFluidHandler both(IFluidHandler port, BlockEntity machine) { return wrap(port, machine, true, true); }
 
     private static IFluidHandler wrap(IFluidHandler port, BlockEntity machine, boolean inlet, boolean outlet) {
-        return port == null ? null : new GasMixturePort(port, GasPassThrough.of(machine), inlet, outlet);
+        return port == null ? null : new GasMixturePort(port, machine, inlet, outlet);
     }
 
     /** One stock the outlet draws on: a tank of the port, or the pass-through gas when {@code tank} is negative. */
@@ -85,6 +87,13 @@ public final class GasMixturePort implements IFluidHandler {
         if (!inlet) return outlet ? port.fill(resource, action) : 0;
         if (!MixtureHelper.composite(resource) || !MixtureHelper.isMixableGas(resource)) return port.fill(resource, action);
         var components = MixtureHelper.components(resource);
+        if (reactor == null) return fillComponents(resource, components, action);
+        reactor.offer(components);
+        try { return fillComponents(resource, components, action); }
+        finally { reactor.offer(List.of()); }
+    }
+
+    private int fillComponents(FluidStack resource, List<FluidStack> components, FluidAction action) {
         double share = 1;
         int unused = 0;
         boolean anyUsed = false;

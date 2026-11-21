@@ -414,7 +414,7 @@ route('nitric_fertilizer', ('From ammonia to nitric acid and fertilizers', 'ア�
 route('sulfuric_acid', ('From sulfur and recovered gas to sulfuric acid', '硫黄と回収ガスから硫酸を作る', '从硫与回收气体制取硫酸'),
     ['sulfur_dust', 'sulfuric_acid_bucket', 'charred_wood'], [
     step('crushing', 'create:crushing/netherrack', 'Crush netherrack and collect sulfur dust with the other outputs.', 'ネザーラックを粉砕し、ほかの生成物と一緒に硫黄粉を回収します。', '粉碎下界岩，将硫粉与其他产物一并回收。'),
-    step('vessel', 'pressure_reaction/sulfur_dioxide', 'Feed sulfur and oxygen into a heated impeller vessel.', '硫黄と酸素を、加熱した撹拌翼入り槽へ供給します。', '将硫与氧气送入加热的搅拌槽。'),
+    step('vessel', 'pressure_reaction/sulfur_dioxide_stirred', 'Feed sulfur and oxygen into a heated impeller vessel.', '硫黄と酸素を、加熱した撹拌翼入り槽へ供給します。', '将硫与氧气送入加热的搅拌槽。'),
     step('catalytic', 'process:oxidize_sulfur_dioxide', 'Send the gas to a reaction tower holding an oxidation catalyst. It needs no rotation.', '気体を酸化触媒入りの反応塔へ送ります。回転は要りません。', '把气体送入装有氧化催化剂的反应塔，无需旋转。'),
     step('absorber', 'process:absorb_sulfuric_acid', 'Absorb the sulfur trioxide into water in an absorption tower: gas at the bottom, water at the top. Recover the acid into a corrosion-resistant tank.', '吸収塔で三酸化硫黄を水に吸収させます。気体は下、水は上から入れます。硫酸は耐食タンクへ回収します。', '在吸收塔中用水吸收三氧化硫：气体从下、水从上进入。硫酸收集到耐腐蚀储罐。'),
     step('vessel', 'pressure_reaction/sulfur_dioxide_from_hydrogen_sulfide', 'Hydrogen sulfide recovered from fuel refining can supply this line too. Oxidize one share to sulfur dioxide.', '燃料精製から回収した硫化水素も原料になります。その一部を酸化して二酸化硫黄にします。', '燃料精制回收的硫化氢也可作原料，将其中一部分氧化为二氧化硫。'),

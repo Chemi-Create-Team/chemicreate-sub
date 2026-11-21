@@ -1,15 +1,15 @@
 {
   "type": "create_refinery_n_reactors:pressure_reaction",
   "module": "none",
-  "heat_requirement": "heated",
+  "heat_requirement": "superheated",
   "ingredients": [
     {
       "tag": "c:dusts/sulfur"
     },
     {
       "type": "neoforge:single",
-      "amount": 500,
-      "fluid": "create_refinery_n_reactors:oxygen_gas"
+      "fluid": "create_refinery_n_reactors:oxygen_gas",
+      "amount": 500
     }
   ],
   "results": [

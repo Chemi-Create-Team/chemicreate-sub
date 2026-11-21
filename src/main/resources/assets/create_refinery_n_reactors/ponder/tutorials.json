@@ -4873,7 +4873,7 @@
         ],
         "process": {
           "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/sulfur_dioxide",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sulfur_dioxide_stirred",
           "offset": 32,
           "width": 11,
           "height": 9,

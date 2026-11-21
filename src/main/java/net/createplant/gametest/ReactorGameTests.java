@@ -308,11 +308,12 @@ public class ReactorGameTests {
             in(reactor).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);in(reactor).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),250),EXECUTE);
             h.assertTrue(pipe.fill(new FluidStack(CEFluids.AIR_GAS.get(),600),EXECUTE)==600,"The vessel takes 600 mB air by its gases");
             items.insertItem(0,CEMetals.IRON_OXIDE_RED.toStack(),false);run(reactor,220);
-            var passed=net.createplant.mixture.GasPassThrough.of(reactor).gas();
-            int acid=0;
+            var key=net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(CEFluids.NITROGEN_GAS.get());
+            int nitrogen=0,acid=0;
+            for (var gas:List.of(net.createplant.mixture.GasPassThrough.of(reactor).gas(),((net.createplant.block.entity.LiddedVesselBlockEntity)reactor).getTankInventory().getFluid()))
+                nitrogen+=net.createplant.mixture.MixtureHelper.extractContents(gas).amounts().getOrDefault(key,0);
             for (int i=0;i<out(reactor).getTanks();i++) if (out(reactor).getFluidInTank(i).is(CEMetals.DILUTE_SULFURIC_ACID.get())) acid+=out(reactor).getFluidInTank(i).getAmount();
-            h.assertTrue(acid==1000 && net.createplant.mixture.MixtureHelper.extractContents(passed).amounts().get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(CEFluids.NITROGEN_GAS.get()))==468,
-                "Air's 126 mB oxygen oxidises the sulfur dioxide; its nitrogen waits at the gas outlet: "+acid+" "+passed.getComponentsPatch()+" "+reactor.status());
+            h.assertTrue(acid==1000 && nitrogen==468,"Air's 126 mB oxygen oxidises the sulfur dioxide; its 468 mB nitrogen waits in the vessel's gas space: "+acid+" "+nitrogen);
             h.succeed();
         });
     }
