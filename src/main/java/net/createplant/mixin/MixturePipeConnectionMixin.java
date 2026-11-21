@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 public class MixturePipeConnectionMixin {
     @WrapOperation(method = "manageFlows", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/fluids/FluidStack;isSameFluidSameComponents(Lnet/neoforged/neoforge/fluids/FluidStack;Lnet/neoforged/neoforge/fluids/FluidStack;)Z"))
     private boolean createPlant$carrierFlow(FluidStack a, FluidStack b, Operation<Boolean> original) {
-        return MixtureHelper.isMixture(a) && MixtureHelper.isMixture(b) || original.call(a, b);
+        return MixtureHelper.isMixture(a) && MixtureHelper.isMixture(b) && a.getFluid().isSame(b.getFluid()) || original.call(a, b);
     }
 }

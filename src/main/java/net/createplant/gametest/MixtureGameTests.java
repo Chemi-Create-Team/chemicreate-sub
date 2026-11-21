@@ -169,4 +169,61 @@ public class MixtureGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "test_reactor")
+    public static void tankAirAndDensityOutletsPreserveEveryConstituent(GameTestHelper h) {
+        var at = new BlockPos(3, 3, 3);
+        h.setBlock(at, CETransport.LIDDED_VESSEL.get());
+        var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(at);
+        var level = h.getLevel();
+        var pos = h.absolutePos(at);
+        var top = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.UP);
+        var bottom = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.DOWN);
+        int volume = vessel.getTankInventory().getCapacity();
+        var defaultAir = top.drain(Integer.MAX_VALUE, SIMULATE);
+        h.assertTrue(defaultAir.is(CEFluids.AIR_GAS.get()) && defaultAir.getAmount() == volume && vessel.getTankInventory().isEmpty(),
+            "A new tank has one vessel volume of drainable atmosphere outside its liquid inventory");
+        h.assertTrue(top.drain(Integer.MAX_VALUE, EXECUTE).getAmount() == volume, "The sealed initial air is a finite charge");
+        var lookup = level.registryAccess();
+        vessel.loadWithComponents(vessel.saveWithoutMetadata(lookup), lookup);
+        top = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.UP);
+        bottom = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.DOWN);
+        h.assertTrue(top.drain(1, SIMULATE).isEmpty(), "An evacuated headspace stays empty on reload");
+
+        var gases = List.of(CEFluids.HYDROGEN_GAS.get(), CEFluids.NITROGEN_GAS.get(), CEFluids.OXYGEN_GAS.get(),
+            CEFluids.ARGON_GAS.get(), CEProcessFluids.CARBON_DIOXIDE.get());
+        for (var gas : gases) h.assertTrue(top.fill(new FluidStack(gas, 200), EXECUTE) == 200, "A gas enters the tank without displacing other stored gas");
+        var saved = vessel.saveWithoutMetadata(lookup);
+        vessel.loadWithComponents(saved, lookup);
+        top = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.UP);
+        bottom = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.DOWN);
+        var lines = new ArrayList<net.minecraft.network.chat.Component>();
+        vessel.addToGoggleTooltip(lines, false);
+        h.assertTrue(lines.size() == 6, "An overlay displays all five gases");
+        h.assertTrue(top.drain(1, SIMULATE).is(CEFluids.HYDROGEN_GAS.get()) && bottom.drain(1, SIMULATE).is(CEProcessFluids.CARBON_DIOXIDE.get()),
+            "Upper and lower ports preview lightest and densest gas respectively");
+        h.assertTrue(bottom.drain(new FluidStack(CEFluids.HYDROGEN_GAS.get(), 50), EXECUTE).isEmpty(), "A filter cannot draw the upper layer through the lower port");
+        h.assertTrue(bottom.drain(50, EXECUTE).is(CEProcessFluids.CARBON_DIOXIDE.get())
+            && top.drain(70, EXECUTE).is(CEFluids.HYDROGEN_GAS.get()) && vessel.getTankInventory().getFluidAmount() == 880,
+            "Taking the extreme layers removes precisely the exported component volumes");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void settledLiquidsShowAndDrainTheSameLayerOrder(GameTestHelper h) {
+        var at = new BlockPos(3, 3, 3);
+        h.setBlock(at, CETransport.LIDDED_VESSEL.get());
+        var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(at);
+        var alcohol = BuiltInRegistries.FLUID.get(ETHANOL);
+        vessel.getTankInventory().fill(new FluidStack(alcohol, 400), EXECUTE);
+        vessel.getTankInventory().fill(new FluidStack(Fluids.WATER, 600), EXECUTE);
+        var layers = vessel.liquidLayers();
+        h.assertTrue(layers.size() == 2 && layers.getFirst().is(Fluids.WATER) && layers.getLast().is(alcohol),
+            "The visible layers are ordered by liquid density");
+        var top = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(at), Direction.UP);
+        var bottom = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(at), Direction.DOWN);
+        h.assertTrue(top.getFluidInTank(0).is(alcohol) && top.drain(100, EXECUTE).is(alcohol), "The top exposes the lighter liquid");
+        h.assertTrue(bottom.drain(100, EXECUTE).is(Fluids.WATER), "The bottom exposes the denser liquid");
+        same(h, new MixtureContents(Map.of(WATER, 500, ETHANOL, 300)), vessel.getTankInventory().getFluid());
+        h.succeed();
+    }
 }

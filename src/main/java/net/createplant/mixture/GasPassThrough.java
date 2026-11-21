@@ -41,28 +41,45 @@ public final class GasPassThrough extends BlockEntityBehaviour {
     void add(FluidStack component) {
         if (component.isEmpty()) return;
         gas = gas.isEmpty() ? component.copy() : MixtureHelper.merge(gas, component, true);
-        blockEntity.setChanged();
+        changed();
     }
 
     FluidStack take(int amount, FluidAction action) {
         int taken = Math.min(Math.max(0, amount), gas.getAmount());
         if (taken == 0) return FluidStack.EMPTY;
         var result = MixtureHelper.portion(gas, taken);
-        if (action.execute()) { gas = MixtureHelper.remainder(gas, taken);blockEntity.setChanged(); }
+        if (action.execute()) { gas = MixtureHelper.remainder(gas, taken);changed(); }
         return result;
     }
 
+    public FluidStack takeLayer(FluidStack layer, int amount, FluidAction action) {
+        if (!MixtureHelper.isMixture(gas)) return take(amount, action);
+        var removal = net.createplant.thermal.TankLayers.remove(gas, layer, amount);
+        if (action.execute() && !removal.sample().isEmpty()) { gas = removal.remaining();changed(); }
+        return removal.sample();
+    }
+
+    private boolean sharesLayers() { return blockEntity instanceof net.createplant.block.entity.LiddedVesselBlockEntity; }
+    private void changed() {
+        if (blockEntity instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel) vessel.thermalChanged();
+        else blockEntity.setChanged();
+    }
+
     /** Breaking the machine lets the waiting gas out. */
-    @Override public void destroy() {
+    @Override public void destroy() { vent(); }
+
+    public void vent() {
+        if (gas.isEmpty()) return;
         if (!gas.isEmpty() && getWorld() != null && !getWorld().isClientSide()) net.createplant.safety.ToxicGas.release(getWorld(), getPos(), gas);
         gas = FluidStack.EMPTY;
+        changed();
     }
 
     @Override public void write(CompoundTag tag, HolderLookup.Provider lookup, boolean clientPacket) {
-        if (!clientPacket && !gas.isEmpty()) tag.put("PassThroughGas", gas.save(lookup));
+        if ((!clientPacket || sharesLayers()) && !gas.isEmpty()) tag.put("PassThroughGas", gas.save(lookup));
     }
 
     @Override public void read(CompoundTag tag, HolderLookup.Provider lookup, boolean clientPacket) {
-        if (!clientPacket) gas = tag.contains("PassThroughGas") ? FluidStack.parseOptional(lookup, tag.getCompound("PassThroughGas")) : FluidStack.EMPTY;
+        if (!clientPacket || sharesLayers()) gas = tag.contains("PassThroughGas") ? FluidStack.parseOptional(lookup, tag.getCompound("PassThroughGas")) : FluidStack.EMPTY;
     }
 }

@@ -176,6 +176,14 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         };
     }
     public Object gasBankIdentity(int slot) { return gasBanks[slot]; }
+    protected FluidStack drainProcessGasLayer(int bank, FluidStack layer, int amount, FluidAction action) {
+        var removal = net.createplant.thermal.TankLayers.remove(tanks[bank], layer, amount);
+        if (action.execute() && !removal.sample().isEmpty()) {
+            tanks[bank] = removal.remaining();
+            changed();
+        }
+        return removal.sample();
+    }
     /** A gas network treats the separate process buffers as separate vessels, never as the plain tank's volume. */
     public IFluidHandler processGasPort(int bank) {
         if (bank<0 || bank>=tanks.length || isRemoved() || !tanks[bank].isEmpty() && processGasContent(bank).isEmpty() || tanks[bank].isEmpty() && (!inputTank(bank) || !ready())) return null;

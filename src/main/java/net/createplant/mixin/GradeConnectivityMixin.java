@@ -12,6 +12,7 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.GradeFluidTank;
 import net.createplant.thermal.ThermalFluidTank;
+import net.createplant.mixture.MixtureHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -44,6 +45,11 @@ public class GradeConnectivityMixin {
     }
     @WrapOperation(method="tryToFormNewMultiOfWidth",at=@At(value="INVOKE",target="Lnet/neoforged/neoforge/fluids/FluidStack;isSameFluidSameComponents(Lnet/neoforged/neoforge/fluids/FluidStack;Lnet/neoforged/neoforge/fluids/FluidStack;)Z"))
     private static boolean createPlant$joinMixtures(FluidStack a,FluidStack b,Operation<Boolean> original,BlockEntity be,int width,@Coerce Object cache,boolean simulate){
+        if (MixtureHelper.isMixableGas(a) && MixtureHelper.isMixableGas(b)
+            && (MixtureHelper.isMixture(a) || MixtureHelper.isMixture(b))) {
+            try { MixtureHelper.merge(a, b, false); return true; }
+            catch (IllegalArgumentException error) { return false; }
+        }
         if(net.createplant.mixture.MixtureHelper.isMixableLiquid(a) && net.createplant.mixture.MixtureHelper.isMixableLiquid(b)
             && (net.createplant.mixture.MixtureHelper.isMixture(a) || net.createplant.mixture.MixtureHelper.isMixture(b)
                 || be instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel && !vessel.hasInternals()))return true;
@@ -77,9 +83,12 @@ public class GradeConnectivityMixin {
         // A removed block's share leaves with it, as Create does for liquids.
         for(int i=0;i<n;i++) {
             int share=(int)(total*(i+1)/n-total*i/n);
-            if(share>0 && be.getLevel().getBlockEntity(positions.get(i)) instanceof com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer.Fluid part
+            if (share <= 0) continue;
+            var parcel = MixtureHelper.portion(held, share);
+            held = MixtureHelper.remainder(held, share);
+            if(be.getLevel().getBlockEntity(positions.get(i)) instanceof com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer.Fluid part
                 && part.getControllerBE() instanceof com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer.Fluid root
-                && root.getTank(0) instanceof GradeFluidTank tank) tank.absorbGas(held.copyWithAmount(share));
+                && root.getTank(0) instanceof GradeFluidTank tank) tank.absorbGas(parcel);
         }
     }
 }

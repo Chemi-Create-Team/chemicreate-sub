@@ -1910,9 +1910,9 @@
     "zh_cn": "打开舱口会排放储气，有毒内容物会形成气云。"
   },
   "lidded_vessel.goggles": {
-    "en_us": "Goggles show contents, heat source and lid state. Use a Display Link for details.",
-    "ja_jp": "ゴーグルで内容物・熱源・ふたの状態を確認します。詳細はDisplay Linkへ送ります。",
-    "zh_cn": "护目镜显示内容物、热源及舱盖状态，用显示链接查看详情。"
+    "en_us": "Goggles list all gas constituents. Draw light gas from the top and heavy gas from the bottom of a gas-filled vessel.",
+    "ja_jp": "ゴーグルで気体の全成分を確認できます。気体を入れた槽は、上から軽い気体、下から重い気体を取り出せます。",
+    "zh_cn": "护目镜列出全部气体成分。装有气体的槽顶部抽取轻气体，底部抽取重气体。"
   },
   "lidded_vessel_2x2.title": {
     "en_us": "Stacking a storage-only 2x2 vessel",
@@ -3965,9 +3965,9 @@
     "zh_cn": "红色轮廓标出阻挡框架或侧面传送带施工的方块。移除它即可继续建造。"
   },
   "horizontal_tank.heating": {
-    "en_us": "The Create gauge shows how much steam the boiler is holding.",
-    "ja_jp": "Create標準の計器の針は蒸気の充填率を示します。",
-    "zh_cn": "Create 的仪表指针显示锅炉的蒸汽充填率。"
+    "en_us": "The gauge shows stored steam. Goggles show Create’s boiler panel and the current steam flow in mB/s.",
+    "ja_jp": "計器の針は蒸気の充填率を示します。ゴーグルはCreate標準のボイラー表示に蒸気流量（mB/s）を加えます。",
+    "zh_cn": "仪表显示蒸汽充填率。护目镜显示机械动力标准锅炉面板及当前蒸汽流量（mB/s）。"
   },
   "portable_sprayers.title": {
     "en_us": "Fire extinguishers and fluid sprayers",
@@ -4425,9 +4425,9 @@
     "zh_cn": "搭建不带内部部件的带盖槽，通过普通侧面接口输入不同液体。"
   },
   "chemical_mixtures.blend": {
-    "en_us": "The contents become one mixture, coloured by the amounts of its constituents. Different gases also become one gas mixture, but liquids and gases never mix. Mixing alone performs no chemical reaction.",
-    "ja_jp": "成分量に応じた色の混合液になります。違う気体同士も1つの混合気体になりますが、液体と気体は混ざりません。混ぜるだけでは化学反応は起こりません。",
-    "zh_cn": "内容物会变成按各成分量着色的混合液。不同气体也会变成一种混合气体，但液体与气体不会混合。仅混合不会发生化学反应。"
+    "en_us": "In the tank, heavier liquids settle below lighter ones. The window shows each layer in its own colour.",
+    "ja_jp": "タンクでは重い液体が下層、軽い液体が上層に分かれます。窓から各層の色を確認できます。",
+    "zh_cn": "重液体下沉，轻液体上浮。通过观察窗可以看到各层的颜色。"
   },
   "chemical_mixtures.transport": {
     "en_us": "Use normal Create pipes, pumps and tanks. Splitting a flow keeps each constituent without losing millibuckets, and each constituent still needs suitable pipe and tank materials.",

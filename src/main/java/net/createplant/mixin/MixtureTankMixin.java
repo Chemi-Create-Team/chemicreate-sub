@@ -18,6 +18,8 @@ public class MixtureTankMixin {
     @Inject(method = "drain(Lnet/neoforged/neoforge/fluids/FluidStack;Lnet/neoforged/neoforge/fluids/capability/IFluidHandler$FluidAction;)Lnet/neoforged/neoforge/fluids/FluidStack;", at = @At("HEAD"), cancellable = true)
     private void createPlant$drainCarrier(FluidStack request, FluidAction action, CallbackInfoReturnable<FluidStack> cir) {
         var tank = (FluidTank) (Object) this;
-        if (MixtureHelper.isMixture(request) && MixtureHelper.isMixture(tank.getFluid())) cir.setReturnValue(tank.drain(request.getAmount(), action));
+        var stored = tank.getFluid();
+        if (MixtureHelper.isMixture(request) && MixtureHelper.isMixture(stored))
+            cir.setReturnValue(stored.is(request.getFluid()) ? tank.drain(request.getAmount(), action) : FluidStack.EMPTY);
     }
 }

@@ -402,6 +402,27 @@ public class VesselBasinGameTests {
     }
 
     @GameTest(template = "test_fractionation")
+    public static void stirredGasProductLeavesBelowTheLighterGas(GameTestHelper h) {
+        var vessel = ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 1);
+        ReactorGameTests.heat(vessel, HeatCondition.HEATED);
+        var inlet = vessel.port(vessel.inlet());
+        h.assertTrue(inlet.fill(new FluidStack(CEFluids.AIR_GAS.get(), 3000), EXECUTE) == 3000
+            && vessel.itemPort().insertItem(0, net.createplant.registry.CEItems.SULFUR_DUST.toStack(), false).isEmpty(),
+            "A stirred vessel accepts a finite charge with some gas left over");
+        ReactorGameTests.speed(vessel, 32);
+        for (int i = 0; i < 130; i++) vessel.tickProcess();
+        var center = h.absolutePos(BASE.offset(1, 0, 1));
+        var top = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, center, Direction.UP);
+        var bottom = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, center, Direction.DOWN);
+        var light = top.drain(600, EXECUTE);
+        var heavy = bottom.drain(600, EXECUTE);
+        h.assertTrue(light.is(CEFluids.NITROGEN_GAS.get()) && light.getAmount() == 600
+            && heavy.is(net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get()) && heavy.getAmount() == 500,
+            "The upper outlet exports nitrogen while the lower outlet exports only sulfur dioxide");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation")
     public static void cachedMemberPhasePortsCannotExtractAfterTheProcessReforms(GameTestHelper h) {
         var owner = square(h, BASE, 3, 1);
         owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());owner.validateStructure();

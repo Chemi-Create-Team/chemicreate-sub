@@ -1,6 +1,9 @@
 package net.createplant.mixture;
 
 import java.util.*;
+import net.createplant.chemistry.ChemicalReadout;
+import net.createplant.chemistry.FluidChemicalRegistry;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -21,5 +24,26 @@ public final class MixtureGoggleHelper {
         lines.add(full.getFirst());int components = full.size() - 1, shown = Math.min(components, components > 3 ? 2 : 3);
         for (int i = 1; i <= shown; i++) lines.add(full.get(i));
         if (shown < components) lines.add(Component.translatable("mixture.create_refinery_n_reactors.more", components - shown));
+    }
+
+    public static boolean appendGasLayers(List<Component> lines, List<FluidStack> layers) {
+        var formulas = new ArrayList<List<String>>(layers.size());
+        boolean mixed = layers.size() > 1;
+        for (var layer : layers) {
+            var info = FluidChemicalRegistry.base(layer.getFluid());
+            var components = info == null ? List.<String>of() : List.of(info.formula().split(" \\+ "));
+            formulas.add(components);
+            mixed |= components.size() > 1;
+        }
+        if (!mixed) return false;
+        lines.clear();
+        lines.add(Component.translatable("mixture.create_refinery_n_reactors.gas_layers"));
+        for (int i = layers.size() - 1; i >= 0; i--) {
+            lines.add(ChemicalReadout.contents(layers.get(i), -1));
+            var components = formulas.get(i);
+            if (components.size() > 1) for (var formula : components)
+                lines.add(Component.literal("  " + formula).withStyle(ChatFormatting.AQUA));
+        }
+        return true;
     }
 }

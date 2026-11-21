@@ -9,7 +9,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 public final class MixtureTransfer {
     private MixtureTransfer() { }
     public static boolean matches(FluidStack stored, FluidStack request) {
-        if (MixtureHelper.isMixture(stored) && MixtureHelper.isMixture(request)) return true;
+        if (MixtureHelper.isMixture(stored) && MixtureHelper.isMixture(request)) return stored.getFluid().isSame(request.getFluid());
         return FluidStack.isSameFluidSameComponents(stored, request);
     }
     /** Liquids mix with liquids and gases with gases; the two never share a stack. */

@@ -179,28 +179,31 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
     }
 
     private void renderContents(LiddedVesselBlockEntity be, int width, int height, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        long amount = 0;
-        int gas = -1;
-        for (int i = 0; i < be.displayedFluidSlots(); i++) {
-            amount += be.displayedLiquid(i).getAmount();
-            if (gas < 0 && !be.displayedGas(i).isEmpty()) gas = i;
-        }
+        var liquids = be.liquidLayers();
+        var gases = be.gasLayers();
+        long amount = liquids.stream().mapToLong(net.neoforged.neoforge.fluids.FluidStack::getAmount).sum();
         float inset = WALL / 16, surface = inset;
         float depth = Math.min(1, (float) amount / be.getDisplayedCapacity()) * (height - 2 * inset);
         renderItems(be, inset + depth, ms, buffer, light, overlay);
         var liquidBuffer = FluidRenderHelper.getFluidBuilder(buffer);
-        for (int i = 0; i < be.displayedFluidSlots() && amount > 0; i++) {
-            var fluid = be.displayedLiquid(i);
-            if (fluid.isEmpty()) continue;
+        for (int i = 0; i < liquids.size(); i++) {
+            var fluid = liquids.get(i);
             float top = surface + depth * fluid.getAmount() / amount;
-            NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluid, inset, surface, inset, width - inset, top, width - inset, liquidBuffer, ms, light, false, true);
+            var colored = TankLayerColors.tint(liquidBuffer, fluid, i, liquids.size() > 1);
+            NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluid, inset, surface, inset, width - inset, top, width - inset, colored, ms, light, false, true);
             surface = top;
         }
-        if (gas >= 0 && surface < height - inset) {
-            var vapour = new VertexConsumerWrapper(liquidBuffer) {
-                @Override public VertexConsumer setColor(int r, int g, int b, int a) { parent.setColor(r, g, b, a / 9);return this; }
-            };
-            NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(be.displayedGas(gas), inset, surface, inset, width - inset, height - inset, width - inset, vapour, ms, light, false, true);
+        if (gases.isEmpty() || surface >= height - inset) return;
+        long gasAmount = gases.stream().mapToLong(net.neoforged.neoforge.fluids.FluidStack::getAmount).sum();
+        float gasDepth = height - inset - surface, minSlice = gasDepth / (16 * gases.size());
+        for (int i = 0; i < gases.size(); i++) {
+            var gas = gases.get(i);
+            float top = i == gases.size() - 1 ? height - inset : surface + minSlice + gasDepth * (15f / 16) * gas.getAmount() / gasAmount;
+            if (!gas.is(net.createplant.registry.CEFluids.AIR_GAS.get())) {
+                var vapour = TankLayerColors.tint(liquidBuffer, gas, i, gases.size() > 1);
+                NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(TankLayerColors.surface(gas), inset, surface, inset, width - inset, top, width - inset, vapour, ms, light, false, true);
+            }
+            surface = top;
         }
     }
 

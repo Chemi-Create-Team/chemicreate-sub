@@ -55,6 +55,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     private final IFluidHandler engineFeed;
     private boolean tubeMode;
     private int tubeGaugePercent;
+    private HorizontalBoilerData tubeTooltip;
     private double heatJoules, heatWatts;
     private String status = "heat";
 
@@ -186,12 +187,18 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
                 return root.getTankInventory();
             }
             @Override public int getTanks() { return 1; }
-            @Override public FluidStack getFluidInTank(int tank) { return held(true).getFluidInTank(tank); }
+            @Override public FluidStack getFluidInTank(int tank) { var port = held(true); return tank == 0 && port instanceof net.createplant.thermal.GradeFluidTank storage ? storage.layer(side) : port.getFluidInTank(tank); }
             @Override public int getTankCapacity(int tank) { return held(false).getTankCapacity(tank); }
             @Override public boolean isFluidValid(int tank, FluidStack stack) { return held(false).isFluidValid(tank, stack); }
             @Override public int fill(FluidStack stack, FluidAction action) { return held(false).fill(stack, action); }
-            @Override public FluidStack drain(int amount, FluidAction action) { return held(true).drain(amount, action); }
-            @Override public FluidStack drain(FluidStack request, FluidAction action) { return held(true).drain(request, action); }
+            @Override public FluidStack drain(int amount, FluidAction action) {
+                var port = held(true);
+                return port instanceof net.createplant.thermal.GradeFluidTank storage ? storage.drainLayer(side, FluidStack.EMPTY, amount, action) : port.drain(amount, action);
+            }
+            @Override public FluidStack drain(FluidStack request, FluidAction action) {
+                var port = held(true);
+                return port instanceof net.createplant.thermal.GradeFluidTank storage ? storage.drainLayer(side, request, request.getAmount(), action) : port.drain(request, action);
+            }
         };
     }
 
@@ -337,14 +344,34 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     }
 
     @Override public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
-        boolean shown = super.addToGoggleTooltip(tooltip, sneaking);
-        var reading = boilerReading();
-        if (reading == null) return shown;
-        tooltip.add(Component.translatable("tubular_boiler." + reading.status()));
-        if (!reading.steamSample().isEmpty()) tooltip.add(FluidThermal.readout(reading.steamSample()));
-        tooltip.add(Component.translatable("tubular_boiler.contents", reading.steamAmount(), reading.heatWatts() / 1000));
+        var root = owner();
+        if (root == null || !root.hasBoilerGauge()) return super.addToGoggleTooltip(tooltip, sneaking);
+        var view = root.boiler;
+        Component flow;
+        if (view.isActive()) {
+            flow = Component.translatable("tubular_boiler.water_flow", formatFlow(view.waterSupply * 20));
+        } else {
+            if (root.tubeTooltip == null) root.tubeTooltip = new HorizontalBoilerData() {
+                @Override public boolean isActive() { return true; }
+                @Override public int getMaxHeatLevelForBoilerSize(int size) {
+                    return Math.min(18, root.getWidth() * root.getHeight() * 2);
+                }
+            };
+            view = root.tubeTooltip;
+            view.updateTemperature(root);
+            var meter = ProductionMonitor.of(root);
+            var rate = meter == null ? null : meter.read(ProductionMonitor.Output.FLUID);
+            double currentRate = rate == null ? 0 : rate.current();
+            view.waterSupply = currentRate <= 0 ? 0 : (float) Math.max(10, 10 * currentRate / ratedSteamPerHeatLevel());
+            var current = rate == null || rate.current() < 0 ? Component.translatable("production.create_refinery_n_reactors.measuring") : Component.literal(formatFlow(rate.current()));
+            flow = Component.translatable("tubular_boiler.steam_flow", current, formatFlow(rate == null ? root.width * root.height * ratedSteamPerHeatLevel() * 2 : rate.maximum()));
+        }
+        view.addToGoggleTooltip(tooltip, false, root.getTotalTankSize());
+        if (!tooltip.isEmpty()) tooltip.set(tooltip.size() - 1, tooltip.getLast().copy().append("  ·  ").append(flow));
         return true;
     }
+
+    private static String formatFlow(double amount) { return String.format(java.util.Locale.ROOT, "%,.2f", amount); }
 
     @Override public void write(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.write(tag, lookup, packet);
