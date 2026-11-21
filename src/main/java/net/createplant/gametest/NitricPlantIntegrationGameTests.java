@@ -2,6 +2,7 @@ package net.createplant.gametest;
 
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.kinetics.fan.NozzleBlock;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
@@ -44,9 +45,10 @@ public final class NitricPlantIntegrationGameTests {
         h.assertTrue(hydrogen.getFluidAmount()==HYDROGEN && oxygen.getFluidAmount()==HYDROGEN/2,"Paid water electrolysis gives the finite 2:1 gas feed");
         var airCompressor=compressor(level,h.absolutePos(new BlockPos(9,3,3)));
         BlockPos intake=h.absolutePos(new BlockPos(13,2,2));
-        level.setBlock(intake,CEGasPipes.AIR_FILTER.get().defaultBlockState(),3);
+        level.setBlock(intake.below(),CEGasPipes.GAS_PIPE.get().defaultBlockState(),3);
+        level.setBlock(intake,AllBlocks.NOZZLE.getDefaultState().setValue(NozzleBlock.FACING,Direction.UP),3);
         level.setBlock(intake.above(),Blocks.AIR.defaultBlockState(),3);
-        var atmosphere=capability(level,intake,Direction.DOWN,"atmospheric filter");
+        var atmosphere=capability(level,intake,Direction.DOWN,"atmospheric nozzle");
         var air=FluidStack.EMPTY;
         for(int i=0;i<AIR_BATCHES;i++){var parcel=atmosphere.drain(1000,EXECUTE);if(air.isEmpty())air=parcel;else air.grow(parcel.getAmount());}
         var compressedAir=compress(h,airCompressor,air);

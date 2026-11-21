@@ -47,7 +47,7 @@ def main(resources):
     write(assets / "models/item/asbestos_wrapped_electrode.json", {"parent": "minecraft:item/generated", "textures": {"layer0": f"{MOD}:item/asbestos_wrapped_electrode"}})
     write(resources / f"data/{MOD}/recipe/asbestos_wrapped_electrode.json", {
         "type": "minecraft:crafting_shaped", "pattern": ["WCW", "WIW", "WCW"],
-        "key": {"W": {"item": "minecraft:gray_wool"}, "C": {"item": "create:copper_sheet"}, "I": {"item": "create:iron_sheet"}},
+        "key": {"W": {"item": f"{MOD}:asbestos"}, "C": {"item": "create:copper_sheet"}, "I": {"item": "create:iron_sheet"}},
         "result": {"id": f"{MOD}:asbestos_wrapped_electrode", "count": 4}})
 
 

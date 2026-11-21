@@ -1,8 +1,10 @@
 package net.createplant.ponder;
 
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.pump.PumpBlock;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
+import com.simibubi.create.content.kinetics.fan.NozzleBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.scene.SceneBuilder;
@@ -45,7 +47,7 @@ public final class MaterialPumpPonderScenes {
         scene.world().setKineticSpeed(drive, 0);
         caption(scene, util, PUMP, "stop");
         if (material.equals("gas") || material.equals("large_gas")) {
-            scene.world().setBlock(util.grid().at(1, 1, 3), net.createplant.registry.CEGasPipes.AIR_FILTER.get().defaultBlockState(), false);
+            scene.world().setBlock(util.grid().at(1, 1, 3), AllBlocks.NOZZLE.getDefaultState().setValue(NozzleBlock.FACING, Direction.WEST), false);
             scene.world().modifyBlock(PUMP, state -> state.setValue(PumpBlock.FACING, Direction.EAST), false);
             scene.world().setKineticSpeed(drive, 64);
             scene.world().setKineticSpeed(util.select().position(PUMP), -64);

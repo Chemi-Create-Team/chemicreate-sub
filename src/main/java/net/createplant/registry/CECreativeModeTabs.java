@@ -71,7 +71,7 @@ public class CECreativeModeTabs {
             "corrosion_resistant_floor_slab", "molded_polymer", "industrial_glass", "zirconia_refractory_bricks", "stainless_steel_block", "titanium_block",
             "diorite_casing", "tank_casing"),
         List.of("reinforced_pipe", "nickel_alloy_pipe", "zirconium_pipe", "stainless_steel_pipe", "cryogenic_pipe",
-            "pvc_pipe", "resin_pipe", "ceramic_pipe", "gas_pipe", "large_gas_pipe", "air_filter"),
+            "pvc_pipe", "resin_pipe", "ceramic_pipe", "gas_pipe", "large_gas_pipe"),
         List.of("reinforced_pump", "nickel_alloy_pump", "zirconium_pump", "stainless_steel_pump",
             "cryogenic_pump", "pvc_pump", "resin_pump", "gas_pump", "large_gas_pump"),
         List.of("pressure_reducing_valve", "relief_scrubber", "gas_detector", "gas_recovery_duct", "flow_regulator",

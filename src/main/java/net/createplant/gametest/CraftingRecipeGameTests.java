@@ -267,16 +267,23 @@ public class CraftingRecipeGameTests {
         for (String metal : List.of("aluminum", "nickel", "titanium", "zirconium", "chromium", "molybdenum"))
             BuiltInRegistries.ITEM.getTagOrEmpty(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ingots/" + metal))).forEach(holder -> refined.add(holder.value()));
         h.assertTrue(refined.size() == 6, "Six metal ingots are tagged: " + refined.size());
-        var access = h.getLevel().registryAccess();int checked = 0;
+        var access = h.getLevel().registryAccess();Set<Item> checked = new HashSet<>();
         for (var holder : h.getLevel().getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
             var result = holder.value().getResultItem(access).getItem();
             // A worn catalyst's regeneration is not how the part is first made.
             if (!ours(holder) || holder.id().getPath().endsWith("_regeneration") || REFINING.stream().noneMatch(id -> item(id) == result)) continue;
-            checked++;
+            checked.add(result);
             for (Ingredient ingredient : holder.value().getIngredients())
                 for (ItemStack stack : ingredient.getItems()) h.assertTrue(!refined.contains(stack.getItem()), holder.id() + " needs " + stack.getItem() + ", which the refining makes");
         }
-        h.assertTrue(checked == REFINING.size(), "Every refining part has a crafting recipe: " + checked);
+        h.assertTrue(checked.size() == REFINING.size(), "Every refining part has a crafting recipe: " + checked);
+        var plate = (CraftingRecipe) h.getLevel().getRecipeManager().byKey(CreatePlant.location("asbestos_wrapped_electrode")).orElseThrow().value();
+        var asbestos = item("asbestos");
+        var input = grid(plate);
+        h.assertTrue(input.items().stream().filter(stack -> stack.is(asbestos)).count() == 6
+            && plate.matches(input, h.getLevel()) && plate.assemble(input, access).getCount() == 4, "Six asbestos make four electrode plates");
+        var wool = input.items().stream().map(stack -> stack.is(asbestos) ? new ItemStack(net.minecraft.world.item.Items.GRAY_WOOL) : stack).toList();
+        h.assertTrue(!plate.matches(CraftingInput.of(input.width(), input.height(), wool), h.getLevel()), "Gray wool no longer substitutes for asbestos");
         // The stainless steel the machines are made of comes from Create's basin alone.
         var mixing = h.getLevel().getRecipeManager().getAllRecipesFor(com.simibubi.create.AllRecipeTypes.MIXING.getType()).stream().map(holder -> holder.id().getPath()).toList();
         for (String step : List.of("mixing/nickel_oxide_roasted_in_air", "mixing/nickel_ingot_reduced_with_carbon", "mixing/ferrochrome", "mixing/stainless_steel_from_ferrochrome"))

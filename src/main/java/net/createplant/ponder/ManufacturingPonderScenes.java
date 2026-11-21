@@ -55,8 +55,6 @@ public final class ManufacturingPonderScenes {
             var process = step.process();
             var selection = util.select().fromTo(process.offset(), 0, 0, process.offset() + process.width() - 1, process.height() - 1, process.width() - 1);
             if (current != process.offset()) {
-                if (tutorial.id().equals("manufacturing_air") && process.kind().equals("compressor"))
-                    scene.world().setBlock(new BlockPos(process.offset(),4,3), CEGasPipes.AIR_FILTER.get().defaultBlockState(), false);
                 if (visible != null) { scene.world().hideIndependentSection(visible, Direction.WEST);scene.idle(18); }
                 boolean tall = process.height() > 12;
                 scene.addInstruction(s -> {

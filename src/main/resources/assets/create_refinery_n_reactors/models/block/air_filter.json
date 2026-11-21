@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "create_refinery_n_reactors:block/transport/air_filter"
-  }
-}

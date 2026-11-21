@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import net.createplant.CreatePlant;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -15,6 +16,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  */
 public final class CELegacyIds {
     private static final String PREVIOUS_MOD_ID = "create_heavy_indusstry";
+    private static final ResourceLocation NOZZLE = ResourceLocation.fromNamespaceAndPath("create", "nozzle");
     /** Retired entries merged into another one: saved blocks, items and block entities of the old id load as the new one. */
     private static final Map<String, String> MERGED = Map.of("tubular_boiler", "horizontal_fluid_tank",
         "gasifier_casing", "steam_gasifier", "water_cooled_refractory_wall", "steam_gasifier", "entrained_burner_nozzle", "steam_gasifier",
@@ -24,6 +26,10 @@ public final class CELegacyIds {
 
     public static void register(IEventBus modEventBus) {
         modEventBus.addListener(EventPriority.LOWEST, CELegacyIds::addAliases);
+    }
+
+    public static boolean wasAirFilter(String id) {
+        return id.equals(CreatePlant.MOD_ID + ":air_filter") || id.equals(PREVIOUS_MOD_ID + ":air_filter");
     }
 
     private static void addAliases(RegisterEvent event) {
@@ -39,6 +45,11 @@ public final class CELegacyIds {
                 var retired = ResourceLocation.fromNamespaceAndPath(namespace, merged.getKey());
                 if (!registry.containsKey(retired)) registry.addAlias(retired, target);
             }
+        }
+        var key = registry.key();
+        if ((key.equals(Registries.BLOCK) || key.equals(Registries.ITEM) || key.equals(Registries.BLOCK_ENTITY_TYPE)) && registry.containsKey(NOZZLE)) {
+            for (String namespace : List.of(CreatePlant.MOD_ID, PREVIOUS_MOD_ID))
+                registry.addAlias(ResourceLocation.fromNamespaceAndPath(namespace, "air_filter"), NOZZLE);
         }
     }
 }

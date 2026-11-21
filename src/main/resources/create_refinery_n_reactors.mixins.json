@@ -17,6 +17,8 @@
     "WorldLiquidHoseMixin",
     "WorldLiquidOpenEndAccess",
     "WorldLiquidOpenEndHandlerMixin",
+    "NozzleBlockMixin",
+    "NozzleBlockEntityMixin",
     "FluidTopologyMixin",
     "PipeShapeMixin",
     "GlassPipeShapeMixin",

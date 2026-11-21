@@ -2470,9 +2470,9 @@
     "zh_cn": "小型炉燃料须将浓缩气再离心一次，再按相同流程制粉、冲压、烧结，仅用于三层燃料部。"
   },
   "guide.manufacturing_air.step_1": {
-    "en_us": "Connect an air filter and a driven pump to the compressor inlet.\n%s → %s",
-    "ja_jp": "エアフィルターと回転するポンプを圧縮機上面の吸入管へつなぎます。\n%s → %s",
-    "zh_cn": "将空气过滤器和旋转泵连接到压缩机顶部吸气管。\n%s → %s"
+    "en_us": "Fit a Create Nozzle facing open air and run a pump into the top of the compressor.\n%s → %s",
+    "ja_jp": "Createのノズルを空気に向け、回転するポンプで圧縮機の上面へ空気を送ります。\n%s → %s",
+    "zh_cn": "让 Create 喷嘴的开口朝向空气，再用泵从压缩机顶部送入空气。\n%s → %s"
   },
   "guide.manufacturing_air.step_2": {
     "en_us": "Fit the drive to the cylinder and turn its crank two blocks away. Air enters above and compressed air exits below.",
@@ -4190,9 +4190,9 @@
     "zh_cn": "停止驱动即停止输送。无法输送时检查管材和连接。"
   },
   "material_pump.intake": {
-    "en_us": "Attach an air filter to the pump or its intake pipe. Leave a filter face exposed to air.",
-    "ja_jp": "エアフィルターをポンプの吸い込み口か吸気配管につなぎ、フィルターの一面を空気に触れさせます。",
-    "zh_cn": "将空气过滤器接到泵入口或进气管，并留出过滤器的一面接触空气。"
+    "en_us": "Fit a Create Nozzle to the pump inlet or intake pipe with its mouth facing open air.",
+    "ja_jp": "ポンプの吸い込み側か配管の先にCreateのノズルを取り付け、口を空気に向けます。",
+    "zh_cn": "将 Create 喷嘴装在泵的入口或进气管上，让开口朝向空气。"
   },
   "ore_recovery.title": {
     "en_us": "Ore recovery: three ingots",
