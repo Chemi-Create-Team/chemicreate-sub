@@ -56,6 +56,7 @@ public class ElectrolysisClient {
         if (Boolean.getBoolean("createplant.powerPlantClientCheck")) NeoForge.EVENT_BUS.addListener(net.createplant.client.PowerPlantClientCheck::tick);
         if (System.getProperty("createplant.rbmkVariantsPlaytest")!=null) NeoForge.EVENT_BUS.addListener(net.createplant.client.RbmkVariantsPlaytestWorld::tick);
         if (System.getProperty("createplant.fusionPlaytest")!=null) NeoForge.EVENT_BUS.addListener(net.createplant.client.FusionPlaytestWorld::tick);
+        if (Boolean.getBoolean("createplant.sulfurCyclePlaytest")) NeoForge.EVENT_BUS.addListener(net.createplant.client.SulfurCyclePlaytestWorld::tick);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogColor);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogDistance);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.StructureGuideRenderer::tick);
