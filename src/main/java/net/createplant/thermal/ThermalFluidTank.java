@@ -19,7 +19,7 @@ public class ThermalFluidTank extends SmartFluidTank {
     @Override public int getSpace(){return Math.max(0,getCapacity()-getFluidAmount());}
     @Override public ThermalFluidTank setCapacity(int next){var kept=fluid.copy();super.setCapacity(next);if(storedGas(kept))fluid=kept;return this;}
     @Override public int fill(FluidStack resource,FluidAction action) {
-        if (storedGas(resource) && (fluid.isEmpty() || storedGas(fluid)) && (net.createplant.mixture.MixtureHelper.isMixture(resource)
+        if (mixesGases() && storedGas(resource) && (fluid.isEmpty() || storedGas(fluid)) && (net.createplant.mixture.MixtureHelper.isMixture(resource)
             || net.createplant.mixture.MixtureHelper.isMixture(fluid) || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource)))
             return fillGasMixture(resource,action);
         if (net.createplant.mixture.MixtureHelper.isMixture(resource) || net.createplant.mixture.MixtureHelper.isMixture(fluid))
@@ -38,6 +38,8 @@ public class ThermalFluidTank extends SmartFluidTank {
         }
         return accepted;
     }
+    /** Storage tanks mix gases; a machine's own buffers keep one gas each. */
+    protected boolean mixesGases() { return false; }
     /** Different gases share the tank as one mixture that keeps each component's volume. */
     private int fillGasMixture(FluidStack resource,FluidAction action) {
         if (!isFluidValid(resource) || !net.createplant.mixture.MixtureHelper.isMixableGas(resource)) return 0;
