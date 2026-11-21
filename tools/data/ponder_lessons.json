@@ -755,9 +755,9 @@
     "zh_cn": "回收两路回水。通过加热配方制成加压给水，再送回反应堆。"
   },
   "guide.turbine_cycle.step_5": {
-    "en_us": "Create boilers make ordinary steam. A horizontal tank over burners makes high-pressure or superheated steam.",
-    "ja_jp": "Createボイラーは通常蒸気を作ります。バーナーの上の横型タンクは高圧蒸気か過熱蒸気を作ります。",
-    "zh_cn": "机械动力锅炉生成普通蒸汽。燃烧室上方的卧式储罐生成高压或过热蒸汽。"
+    "en_us": "Standard and horizontal tank boilers supply hot atmospheric steam. Stainless boilers supply high-pressure steam. Both are gaseous water.",
+    "ja_jp": "標準と横型のボイラーは高温常圧、ステンレスボイラーは高温高圧の蒸気を出します。どちらも水の気体状態です。",
+    "zh_cn": "标准和卧式锅炉供应高温常压水蒸气，不锈钢锅炉供应高压水蒸气。两者都是气态的水。"
   },
   "guide.turbine_safety.title": {
     "en_us": "Turbine faults and recovery",
@@ -1700,9 +1700,9 @@
     "zh_cn": "机械泵可同时用于液体和气体。"
   },
   "guide.pressure_basics.step_4": {
-    "en_us": "A compressor raises supported fluids by one pressure grade.",
-    "ja_jp": "圧縮機は対応する流体を一段上の圧力等級へ変えます。",
-    "zh_cn": "压缩机将支持的流体提高一个压力等级。"
+    "en_us": "One compressor stage adds four pressure levels to gas. One reducing valve removes four.",
+    "ja_jp": "圧縮機1段で気体の圧力が4レベル上がります。減圧弁1段で4レベル下がります。",
+    "zh_cn": "压缩机每一级使气体压力升高四档，减压阀每一级降低四档。"
   },
   "guide.pressure_basics.step_5": {
     "en_us": "Heating follows the recipe heat requirement. It does not build an adjustable tank pressure.",
@@ -1965,9 +1965,9 @@
     "zh_cn": "固体用传送带和漏斗送入。流体通过有动力的泵和管道输送。"
   },
   "vessel_basin.heat": {
-    "en_us": "Fuel the Blaze Burners below the vessel. Ten seconds of heating the same contents raises their heat grade by one.",
-    "ja_jp": "下面のブレイズバーナーへ燃料を入れます。同じ中身を10秒加熱すると、温度等級が1段階上がります。",
-    "zh_cn": "给槽下方的烈焰人燃烧室补充燃料。同一批内容物持续加热10秒后，温度等级提升一级。"
+    "en_us": "Fuel a Blaze Burner below the vessel. Every 50 ticks, the fluid rises one temperature level, up to the highest level.",
+    "ja_jp": "槽の下のブレイズバーナーに燃料を入れます。50 tickごとに内容物の温度が1レベル上がり、最高レベルで止まります。",
+    "zh_cn": "给槽下方的烈焰人燃烧室添加燃料。流体每50刻上升一档，直到最高温度。"
   },
   "vessel_basin.rotate": {
     "en_us": "Drive the bottom centre at 32 RPM or more. Place heating burners around the central shaft.",
@@ -4255,9 +4255,9 @@
     "zh_cn": "安装Serene Seasons后，空气冷却效率为春100%、夏80%、秋105%、冬120%。未安装时保持100%。"
   },
   "seasonal_thermal.heating": {
-    "en_us": "Burner-heated tanks warm at 100%, 120%, 95% and 80% in spring, summer, autumn and winter. The same contents reach the next grade sooner in summer; electrical work and recipe quantities stay finite.",
-    "ja_jp": "バーナーでのタンク加熱は春100%、夏120%、秋95%、冬80%です。同じ中身の温度等級が上がるまでの時間に反映し、電力量やレシピの物量は増やしません。",
-    "zh_cn": "燃烧室加热储罐的效率为春100%、夏120%、秋95%、冬80%。改变同批流体升温到下一等级所需时间，不增加电能或配方产量。"
+    "en_us": "Tank burners raise the temperature one level every 50 ticks in every season. Seasons affect how much a radiator or cooling tower processes.",
+    "ja_jp": "タンクのバーナーは季節にかかわらず50 tickごとに温度を1レベル上げます。季節で変わるのはラジエーターや冷却塔の処理量です。",
+    "zh_cn": "储罐燃烧室在任何季节都每50刻升温一档。季节会改变散热器或冷却塔的处理量。"
   },
   "seasonal_thermal.steam": {
     "en_us": "Operating cooling towers release broad white condensate from the top opening. New steam stops when cooling stops; existing clouds rise and dissipate, and particle settings limit the effect.",
