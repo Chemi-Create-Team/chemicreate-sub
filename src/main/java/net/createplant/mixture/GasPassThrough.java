@@ -36,7 +36,10 @@ public final class GasPassThrough extends BlockEntityBehaviour {
 
     @Override public BehaviourType<?> getType() { return TYPE; }
     public FluidStack gas() { return gas; }
-    public int room() { return Math.max(0, CAPACITY - gas.getAmount()); }
+    public int room() {
+        int room = Math.max(0, CAPACITY - gas.getAmount());
+        return blockEntity instanceof net.createplant.block.entity.ReactorMachineBlockEntity machine ? Math.min(room, machine.gasRoom()) : room;
+    }
 
     void add(FluidStack component) {
         if (component.isEmpty()) return;

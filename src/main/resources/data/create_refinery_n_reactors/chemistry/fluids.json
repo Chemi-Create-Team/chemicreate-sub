@@ -94,6 +94,10 @@
     "formula": "…",
     "hazards": []
   },
+  "other_gases": {
+    "formula": "Ar, CO₂ …",
+    "hazards": []
+  },
   "chlorine": {
     "formula": "Cl₂",
     "hazards": [

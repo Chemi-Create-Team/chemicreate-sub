@@ -30,7 +30,7 @@ public final class FluidHazards {
         entry("raw_process_gas",293,1,false,true),
         entry("preheated_crude_oil",620,1,false,false), entry("compressed_air",293,12,false,true), entry("pressurised_hydrogen",293,12,false,true), entry("compressed_hydrogen",293,50,false,true), entry("hydrogen_gas",293,1,false,true), entry("oxygen_gas",293,1,false,true),
         entry("nitrogen_gas",293,1,false,true), entry("ammonia_gas",293,1,false,true),
-        entry("argon_gas",293,1,false,true), entry("air_gas",293,1,false,true), entry("liquid_oxygen",90,1,false,false), entry("liquid_nitrogen",77,1,false,false),
+        entry("argon_gas",293,1,false,true), entry("other_gases",293,1,false,true), entry("air_gas",293,1,false,true), entry("liquid_oxygen",90,1,false,false), entry("liquid_nitrogen",77,1,false,false),
         entry("converter_gas",293,1,false,true), entry("carbon_monoxide",293,1,false,true), entry("carbon_dioxide",293,1,false,true),
         entry("nitric_oxide",293,1,false,true), entry("steam",373,1,false,true), entry("high_pressure_steam",557,70,false,true), entry("superheated_steam",923,70,false,true), entry("hot_reactor_coolant",523,70,false,false), entry("pressurised_water",473,70,false,false),
         entry("ethylene",293,1,false,true), entry("propylene",293,1,false,true),

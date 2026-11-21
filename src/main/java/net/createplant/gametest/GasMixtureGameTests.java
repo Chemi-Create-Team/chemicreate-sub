@@ -85,14 +85,14 @@ public class GasMixtureGameTests {
     }
 
     @GameTest(template = "test_fractionation")
-    public static void airIsAMixtureOfNitrogenOxygenAndArgonInTanksAndMachineInlets(GameTestHelper h) {
+    public static void airIsAMixtureOfNitrogenOxygenAndOtherGasesInTanksAndMachineInlets(GameTestHelper h) {
         h.setBlock(AT, CETransport.GAS_RECEIVER.get());
         var tank = ((FluidTankBlockEntity) h.getBlockEntity(AT)).getTankInventory();
         tank.fill(new FluidStack(CEFluids.AIR_GAS.get(), 1000), EXECUTE);
         tank.fill(new FluidStack(CEFluids.NITROGEN_GAS.get(), 500), EXECUTE);
         var stored = tank.getFluid();
         h.assertTrue(amountOf(stored, CEFluids.NITROGEN_GAS.get()) == 1280 && amountOf(stored, CEFluids.OXYGEN_GAS.get()) == 210
-            && amountOf(stored, CEFluids.ARGON_GAS.get()) == 10, "Air joins nitrogen as its own nitrogen, oxygen and argon: " + stored.getComponentsPatch());
+            && amountOf(stored, CEMixtures.OTHER_GASES.get()) == 10, "Air joins nitrogen as its own nitrogen, oxygen and other gases: " + stored.getComponentsPatch());
         var taken = new java.util.HashMap<Fluid, Integer>();
         IFluidHandler everything = new IFluidHandler() {
             @Override public int getTanks() { return 0; }
@@ -108,8 +108,20 @@ public class GasMixtureGameTests {
             @Override public FluidStack drain(int maxDrain, FluidAction action) { return FluidStack.EMPTY; }
         };
         h.assertTrue(GasMixturePort.inlet(everything, null).fill(new FluidStack(CEFluids.AIR_GAS.get(), 1000), EXECUTE) == 1000
-            && taken.get(CEFluids.NITROGEN_GAS.get()) == 780 && taken.get(CEFluids.OXYGEN_GAS.get()) == 210 && taken.get(CEFluids.ARGON_GAS.get()) == 10,
+            && taken.get(CEFluids.NITROGEN_GAS.get()) == 780 && taken.get(CEFluids.OXYGEN_GAS.get()) == 210 && taken.get(CEMixtures.OTHER_GASES.get()) == 10,
             "A machine that does not take air as such takes its gases one by one: " + taken);
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void aWorkingVesselHoldsNoMoreGasThanItsVolume(GameTestHelper h) {
+        var vessel = (net.createplant.block.entity.LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(new BlockPos(3, 3, 3)),
+            net.createplant.chemistry.ReactorModule.STIRRED, 1);
+        var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, vessel.getBlockPos(), Direction.NORTH);
+        int limit = ((net.createplant.thermal.ThermalFluidTank) vessel.getTankInventory()).gasCapacity();
+        int taken = port.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(), 10_000_000), EXECUTE);
+        h.assertTrue(taken == limit && vessel.gasRoom() == 0 && port.fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 1000), SIMULATE) == 0,
+            "The process takes gas up to the vessel's volume and no further: " + taken + " of " + limit);
         h.succeed();
     }
 

@@ -21,7 +21,7 @@ public final class FluidMaterials {
         entry("tritium_gas",6.032,25.04),entry("helium_gas",4.0026,4.22),
         entry("liquid_helium",4.0026,4.22),entry("oxygen_gas",31.998,90.19),
         entry("nitrogen_gas",28.014,77.36),entry("liquid_nitrogen",28.014,77.36),entry("ammonia_gas",17.031,239.82),
-        entry("air_gas",28.96,78.8),entry("argon_gas",39.948,87.3),entry("liquid_oxygen",31.998,90.19),
+        entry("air_gas",28.96,78.8),entry("argon_gas",39.948,87.3),entry("other_gases",39.948,87.3),entry("liquid_oxygen",31.998,90.19),
         entry("converter_gas",28.01,81.6),entry("carbon_monoxide",28.0101,81.638),
         // CO2 uses its one-atmosphere sublimation point; no solid phase or liquid stream is registered.
         entry("carbon_dioxide",44.0095,194.67),

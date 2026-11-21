@@ -40,6 +40,11 @@ public final class MixtureClient {
             @Override public ResourceLocation getFlowingTexture() { return ResourceLocation.withDefaultNamespace("block/water_flow"); }
             @Override public int getTintColor(FluidStack stack) { return tint(stack); }
         }, CEMixtures.TYPE.get(), CEMixtures.GAS_TYPE.get());
+        event.registerFluidType(new IClientFluidTypeExtensions() {
+            @Override public ResourceLocation getStillTexture() { return ResourceLocation.withDefaultNamespace("block/water_still"); }
+            @Override public ResourceLocation getFlowingTexture() { return ResourceLocation.withDefaultNamespace("block/water_flow"); }
+            @Override public int getTintColor() { return 0x88C8C8D0; }
+        }, CEMixtures.OTHER_GASES_TYPE.get());
     }
     @SubscribeEvent public static void reload(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener((net.minecraft.server.packs.resources.ResourceManagerReloadListener) manager -> { synchronized (COLORS) { COLORS.clear(); } });

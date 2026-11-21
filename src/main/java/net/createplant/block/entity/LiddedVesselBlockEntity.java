@@ -200,6 +200,13 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         gasDraws = List.copyOf(draws);
         gasLayers = TankLayers.ordered(vapour);
     }
+    /** The process gas fits in the vessel's volume beside the stored gas and the gas waiting to pass through. */
+    @Override protected int processGasLimit() {
+        long limit=tankInventory.gasCapacity();
+        if (tankInventory.gasStored()) limit-=tankInventory.getFluidAmount();
+        var pass=GasPassThrough.of(this);if (pass!=null) limit-=pass.gas().getAmount();
+        return (int)Math.max(0,limit);
+    }
     public List<FluidStack> liquidLayers() { ensureDisplay();return liquidLayers; }
     public List<FluidStack> gasLayers() { ensureDisplay();return gasLayers; }
     public boolean showGasComposition() { return hasStoredGas() || liquidLayers().isEmpty(); }

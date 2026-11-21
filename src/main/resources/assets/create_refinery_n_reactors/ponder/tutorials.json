@@ -4873,7 +4873,7 @@
         ],
         "process": {
           "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/sulfur_dioxide_from_air",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sulfur_dioxide",
           "offset": 32,
           "width": 11,
           "height": 9,
@@ -5055,7 +5055,7 @@
         ],
         "process": {
           "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/dilute_sulfuric_acid_iron_catalysed_air",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/dilute_sulfuric_acid_iron_catalysed_oxygen",
           "offset": 32,
           "width": 11,
           "height": 9,

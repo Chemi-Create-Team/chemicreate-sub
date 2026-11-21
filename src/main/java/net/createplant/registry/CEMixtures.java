@@ -30,8 +30,14 @@ public final class CEMixtures {
         .descriptionId("fluid." + CreatePlant.MOD_ID + ".gas_mixture").density(-1).viscosity(200).canConvertToSource(false)) { });
     public static final DeferredHolder<Fluid, MixtureFluid.Source> GAS_MIXTURE = FLUIDS.register("gas_mixture", () -> new MixtureFluid.Source(gasProperties()));
     public static final DeferredHolder<Fluid, MixtureFluid.Flowing> FLOWING_GAS_MIXTURE = FLUIDS.register("flowing_gas_mixture", () -> new MixtureFluid.Flowing(gasProperties()));
+    /** Air's trace gases taken as one: argon, carbon dioxide and the rest, a component of air rather than a product of anything. */
+    public static final DeferredHolder<FluidType, FluidType> OTHER_GASES_TYPE = TYPES.register("other_gases", () -> new FluidType(FluidType.Properties.create()
+        .descriptionId("fluid." + CreatePlant.MOD_ID + ".other_gases").density(-1).viscosity(200).canConvertToSource(false)) { });
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> OTHER_GASES = FLUIDS.register("other_gases", () -> new BaseFlowingFluid.Source(otherProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_OTHER_GASES = FLUIDS.register("flowing_other_gases", () -> new BaseFlowingFluid.Flowing(otherProperties()));
     private CEMixtures() { }
     private static BaseFlowingFluid.Properties properties() { return new BaseFlowingFluid.Properties(TYPE, CHEMICAL_MIXTURE, FLOWING_MIXTURE); }
+    private static BaseFlowingFluid.Properties otherProperties() { return new BaseFlowingFluid.Properties(OTHER_GASES_TYPE, OTHER_GASES, FLOWING_OTHER_GASES); }
     private static BaseFlowingFluid.Properties gasProperties() { return new BaseFlowingFluid.Properties(GAS_TYPE, GAS_MIXTURE, FLOWING_GAS_MIXTURE); }
     public static void register(IEventBus bus) { COMPONENTS.register(bus);TYPES.register(bus);FLUIDS.register(bus); }
 }

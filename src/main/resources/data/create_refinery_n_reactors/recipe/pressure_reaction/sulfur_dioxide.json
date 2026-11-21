@@ -1,7 +1,7 @@
 {
   "type": "create_refinery_n_reactors:pressure_reaction",
   "module": "none",
-  "heat_requirement": "superheated",
+  "heat_requirement": "heated",
   "ingredients": [
     {
       "tag": "c:dusts/sulfur"

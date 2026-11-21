@@ -19,18 +19,14 @@ public final class MixtureHelper {
         if (contents == null || contents.totalAmount() != stack.getAmount()) throw new IllegalArgumentException("Mixture component volume does not match its stack");
         return contents;
     }
-    /** Air is a mixture too: the air separation column's nitrogen, oxygen and argon yields, at the air's volume. */
+    /** Air is a mixture too: 780 nitrogen, 210 oxygen and 10 other gases (argon and the rest) in every 1000 mB. */
     public static boolean composite(FluidStack stack) { return isMixture(stack) || isAir(stack); }
     private static boolean isAir(FluidStack stack) { return !stack.isEmpty() && source(stack.getFluid()).isSame(net.createplant.registry.CEFluids.AIR_GAS.get()); }
     public static MixtureContents airContents(int amount) {
-        var yields = new java.util.TreeMap<net.minecraft.resources.ResourceLocation, Integer>();
-        var products = net.createplant.chemistry.DistillationProfile.PRODUCT;
-        for (int i = 0; i < products.length; i++) {
-            var gas = products[i] == net.createplant.chemistry.DistillationProfile.OXYGEN ? net.createplant.registry.CEFluids.OXYGEN_GAS.get()
-                : net.createplant.chemistry.DistillationProfile.fluid(products[i]);
-            yields.put(BuiltInRegistries.FLUID.getKey(gas), net.createplant.chemistry.DistillationProfile.PRODUCT_AMOUNT[i]);
-        }
-        return amount <= 0 ? MixtureContents.EMPTY : new MixtureContents(yields).resized(amount);
+        if (amount <= 0) return MixtureContents.EMPTY;
+        return new MixtureContents(Map.of(BuiltInRegistries.FLUID.getKey(net.createplant.registry.CEFluids.NITROGEN_GAS.get()), 780,
+            BuiltInRegistries.FLUID.getKey(net.createplant.registry.CEFluids.OXYGEN_GAS.get()), 210,
+            BuiltInRegistries.FLUID.getKey(CEMixtures.OTHER_GASES.get()), 10)).resized(amount);
     }
     private static Fluid source(Fluid fluid) { return fluid instanceof FlowingFluid flowing ? flowing.getSource() : fluid; }
     /** A gas mixture rides the gas carrier and a liquid mixture the liquid one; gases and liquids never share a stack. */
