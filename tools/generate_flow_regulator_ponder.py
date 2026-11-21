@@ -41,10 +41,10 @@ texts = {
     'title': ('Flow regulator', '流量調節器'),
     'step_0': ('Place the regulator in a pipe and use a pump to move the fluid.',
         '流量調節器を配管の途中に置き、ポンプで流します。'),
-    'step_1': ('Hold a wrench to set flow from 0 to 256 mB/t in 16 mB/t steps.',
-        'レンチ長押しで流量を設定します。0～256 mB/tを16 mB/t刻みで選べます。'),
-    'step_2': ('The limit is shared by every pipe branch behind the regulator. Engineer\'s Goggles show the set flow.',
-        '上限は調節器の先の配管すべてで共有されます。ゴーグルで設定した流量を確認できます。'),
+    'step_1': ('Aim at the brass cap and hold the wrench use button to set 0–256 mB/t in steps of 16. The cap is on top for horizontal pipes and on the north face for vertical pipes.',
+        '真鍮のつまみにレンチを合わせて長押しし、0～256 mB/tを16 mB/t刻みで設定します。つまみは横配管なら上面、縦配管なら北面にあります。'),
+    'step_2': ('The limit is shared by the connected branches. The meter needle shows the fraction of the flow range you set.',
+        '先の分岐で流量上限を共有します。針は最大流量に対する設定値の割合を指します。'),
 }
 targets = [[3, 2, 4], [3, 2, 4], [8, 2, 3]]
 extras = [{}, {'wrench': True}, {}]

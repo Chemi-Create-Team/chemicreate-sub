@@ -24,23 +24,9 @@ if __name__=='__main__' and '--steel-only' in sys.argv:
 
 sys.path.insert(0,'tools')
 from generate_reactor_assets import A,D,NS,write,element
-shapes=json.loads((A/'heating_shapes.json').read_text())
-textures={name:NS+'block/heating/'+name for name in ('steel','frame','copper','refractory','mesh')}
-textures['dial']=NS+'block/reactor/dial';textures['particle']=textures['steel']
-def box(bounds,material):return (bounds,material)
+from generate_flow_regulator_assets import generate_flow_regulator
 write(A/'blockstates/process_heater.json',{'variants':{f'facing={face},lit={str(lit).lower()}':{'model':NS+'block/process_heater'+('_active' if lit else ''),'y':angle} for face,angle in [('north',0),('east',90),('south',180),('west',270)] for lit in (False,True)}})
-parts=[box([0,5,5,16,11,11],'steel'),box([0,3,3,3,13,13],'frame'),box([13,3,3,16,13,13],'frame'),box([5,3,3,11,13,13],'copper'),box([7,13,7,9,16,9],'steel'),box([4,14,4,12,16,6],'frame'),box([4,14,10,12,16,12],'frame'),box([4,14,6,6,16,10],'frame'),box([10,14,6,12,16,10],'frame'),box([5,8,2,11,13,3],'dial')]
-write(A/'models/block/thermal_control/flow_regulator.json',{'parent':'minecraft:block/block','textures':textures,'elements':[element(b,t) for b,t in parts]})
-for axis in ('x','y','z'):
- def rotate(b):
-  x,y,z,X,Y,Z=b
-  return b if axis=='x' else [16-Z,y,x,16-z,Y,X] if axis=='z' else [y,16-X,z,Y,16-x,Z]
- shapes['regulator/'+axis]=[rotate(b) for b,t in parts]
-# The fluid heat exchangers are generate_heat_exchangers.py; only the regulator's shapes are kept here.
-shapes={key:value for key,value in shapes.items() if key.startswith(('machine/','regulator/'))}
-write(A/'heating_shapes.json',shapes)
-write(A/'blockstates/flow_regulator.json',{'variants':{'axis=x':{'model':NS+'block/thermal_control/flow_regulator'},'axis=z':{'model':NS+'block/thermal_control/flow_regulator','y':90},'axis=y':{'model':NS+'block/thermal_control/flow_regulator','x':90,'y':90}}})
-write(A/'models/item/flow_regulator.json',{'parent':NS+'block/thermal_control/flow_regulator'})
+generate_flow_regulator(A,NS,write)
 # Structural parts use the plant's steel block.
 steel_unification(A,D,NS,write)
 new=['flow_regulator']

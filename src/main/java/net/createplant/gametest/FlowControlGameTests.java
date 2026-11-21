@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.*;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.gametest.*;
@@ -23,6 +24,36 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 @GameTestHolder(CreatePlant.MOD_ID)
 @PrefixGameTestTemplate(false)
 public class FlowControlGameTests {
+    @GameTest(template="test_petrochemical")
+    public static void regulatorFollowsItsPipeAxisAndPlacesWrenchControlOnTheCap(GameTestHelper h) {
+        var at=new BlockPos(3,2,3);
+        var pos=h.absolutePos(at);
+        var center=Vec3.atCenterOf(pos);
+        for (Direction.Axis axis:Direction.Axis.values()) {
+            var state=CEHeating.REGULATOR.get().defaultBlockState().setValue(BlockStateProperties.AXIS,axis);
+            h.setBlock(at,state);
+            var regulator=(FlowRegulatorBlockEntity)h.getBlockEntity(at);
+            var shape=state.getShape(h.getLevel(),pos);
+            h.assertTrue(shape.equals(state.getCollisionShape(h.getLevel(),pos)),"The outline and collision use the same boxes");
+            var dial=regulator.maximum;
+            var transform=(com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform.Sided)dial.getSlotPositioning();
+            var cap=FlowRegulatorBlockEntity.plate(state);
+            for (Direction face:Direction.values()) {
+                var hit=shape.clip(center.relative(face,.9),center,pos);
+                h.assertTrue(hit!=null,"The center ray hits each surface");
+                if (face.getAxis()==axis || face==cap)
+                    h.assertTrue(Math.abs(hit.getLocation().distanceTo(center)-.5)<.0001,"Pipe flanges and the wrench cap sit at the block face");
+                transform.fromSide(face);
+                h.assertTrue(dial.testHit(hit.getLocation())==(face==cap),"Only the visible wrench cap accepts the value setting");
+            }
+            for (int step:new int[]{0,4,8,16}) {
+                dial.setValueSettings(null,new com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBehaviour.ValueSettings(0,step),false);
+                h.assertTrue(regulator.gaugeProgress()==step/16f,"The dial reports the saved fraction of the flow range");
+            }
+        }
+        h.succeed();
+    }
+
     @GameTest(template="test_petrochemical",timeoutTicks=300)
     public static void regulatorWithCopperAndPartialAcceptance(GameTestHelper h) { regulatedLine(h,AllBlocks.FLUID_PIPE.get()); }
     @GameTest(template="test_petrochemical",timeoutTicks=300)

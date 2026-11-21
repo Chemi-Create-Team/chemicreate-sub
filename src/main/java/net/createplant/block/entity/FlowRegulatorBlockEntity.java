@@ -6,16 +6,18 @@ import com.simibubi.create.foundation.blockEntity.behaviour.*;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import net.createplant.block.ProcessControlBlock;
 import net.createplant.registry.CEHeating;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.*;
 
 public class FlowRegulatorBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    /** The setting moves in sixteen steps, so one step is a sixteenth of a turn of the valve pointer. */
+    /** Each step covers one sixteenth of the manual dial scale. */
     public static final int STEPS=16,STEP_FLOW=16,MAX_FLOW=STEPS*STEP_FLOW;
     public ScrollValueBehaviour maximum;
     private long usedTick=-1;
@@ -26,10 +28,9 @@ public class FlowRegulatorBlockEntity extends SmartBlockEntity implements IHaveG
             @Override public boolean canHaveFlowToward(BlockState state,Direction side) { return side.getAxis()==state.getValue(BlockStateProperties.AXIS); }
         });
         maximum=new ScrollValueBehaviour(Component.translatable("thermal_control.create_refinery_n_reactors.flow"),this,new ValueBoxTransform.Sided() {
-            @Override protected Vec3 getSouthLocation() { return new Vec3(.5,.75,15/16d); }
-            @Override protected boolean isSideActive(BlockState state,Direction side) { return side.getAxis()!=state.getValue(BlockStateProperties.AXIS); }
+            @Override protected Vec3 getSouthLocation() { return new Vec3(.5,.5,1); }
+            @Override protected boolean isSideActive(BlockState state,Direction side) { return side==plate(state); }
         }) {
-            @Override public boolean testHit(Vec3 hit) { return true; }
             @Override public ValueSettingsBoard createBoard(net.minecraft.world.entity.player.Player player,BlockHitResult hit) {
                 return new ValueSettingsBoard(label,STEPS,4,List.of(Component.literal("mB/t")),new ValueSettingsFormatter(v->Component.literal(v.value()*STEP_FLOW+" mB/t")));
             }
@@ -41,13 +42,22 @@ public class FlowRegulatorBlockEntity extends SmartBlockEntity implements IHaveG
     }
     /** The side of the valve that carries the pointer plate. */
     public static Direction plate(BlockState state) { return state.getValue(BlockStateProperties.AXIS)==Direction.Axis.Y ? Direction.NORTH : Direction.UP; }
-    public int effectiveLimit() {
+    private ProcessControlBlockEntity actuator() {
         if (level!=null && level.getBlockEntity(worldPosition.relative(plate(getBlockState()))) instanceof ProcessControlBlockEntity actuator
-            && actuator.kind()==net.createplant.block.ProcessControlBlock.Kind.ACTUATOR && actuator.attachment().equals(worldPosition))
-            return (int)Math.round(actuator.output()/100*ProcessControlBlockEntity.ACTUATED_FLOW);
-        return maximum.getValue();
+            && actuator.kind()==ProcessControlBlock.Kind.ACTUATOR && actuator.attachment().equals(worldPosition))
+            return actuator;
+        return null;
     }
-    public float pointerDegrees() { int limit=effectiveLimit();return limit*360f/(limit>MAX_FLOW ? ProcessControlBlockEntity.ACTUATED_FLOW : MAX_FLOW); }
+    public int effectiveLimit() {
+        var actuator=actuator();
+        return actuator==null ? maximum.getValue() : (int)Math.round(actuator.getBlockState().getValue(ProcessControlBlock.INDICATOR)
+            * ProcessControlBlockEntity.ACTUATED_FLOW / 15d);
+    }
+    public float gaugeProgress() {
+        var actuator=actuator();
+        return actuator==null ? Mth.clamp(maximum.getValue()/(float)MAX_FLOW,0,1)
+            : actuator.getBlockState().getValue(ProcessControlBlock.INDICATOR)/15f;
+    }
     public int remaining() { return Math.max(0,effectiveLimit()-(level!=null && usedTick==level.getGameTime() ? used : 0)); }
     public void consume(int amount) { long now=level.getGameTime();if (usedTick!=now) {usedTick=now;used=0;}used+=amount;setChanged(); }
     @Override protected void write(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) { super.write(tag,lookup,packet);tag.putLong("UsedTick",usedTick);tag.putInt("Used",used); }

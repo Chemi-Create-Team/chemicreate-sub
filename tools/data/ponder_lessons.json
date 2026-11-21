@@ -875,14 +875,14 @@
     "zh_cn": "流量调节器装在管道中，用动力泵输送流体。"
   },
   "guide.flow_regulation.step_1": {
-    "en_us": "Hold a wrench to set flow from 0 to 256 mB/t in 16 mB/t steps.",
-    "ja_jp": "レンチ長押しで流量を設定します。0～256 mB/tを16 mB/t刻みで選べます。",
-    "zh_cn": "长按扳手设置流量，范围0～256 mB/t，每档16 mB/t。"
+    "en_us": "Aim at the brass cap and hold the wrench use button to set 0–256 mB/t in steps of 16. The cap is on top for horizontal pipes and on the north face for vertical pipes.",
+    "ja_jp": "真鍮のつまみにレンチを合わせて長押しし、0～256 mB/tを16 mB/t刻みで設定します。つまみは横配管なら上面、縦配管なら北面にあります。",
+    "zh_cn": "用扳手对准黄铜旋钮并长按，可在0～256 mB/t之间以16 mB/t为步长设置。横管的旋钮在顶面，竖管的旋钮在北面。"
   },
   "guide.flow_regulation.step_2": {
-    "en_us": "The limit is shared by every pipe branch behind the regulator. Engineer's Goggles show the set flow.",
-    "ja_jp": "上限は調節器の先の配管すべてで共有されます。ゴーグルで設定した流量を確認できます。",
-    "zh_cn": "调节器后的所有管道分支共用此流量上限。工程师护目镜显示设定流量。"
+    "en_us": "The limit is shared by the connected branches. The meter needle shows the fraction of the flow range you set.",
+    "ja_jp": "先の分岐で流量上限を共有します。針は最大流量に対する設定値の割合を指します。",
+    "zh_cn": "下游支路共享流量上限。表针指示设置值占最大流量的比例。"
   },
   "guide.reactor_plant_stirred.title": {
     "en_us": "Building a stirred reactor",
