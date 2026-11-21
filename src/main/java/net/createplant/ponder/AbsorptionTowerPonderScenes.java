@@ -10,7 +10,7 @@ import net.createplant.registry.CEChlorAlkali;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
-/** The absorption tower in both sizes: gas in and acid out at the bottom, water in and spent gas out at the top. */
+/** The absorption tower: gas in and liquid out at the bottom storey's flat sides, spent gas out at the top storey's flat sides and water in at the top of its centre. */
 public final class AbsorptionTowerPonderScenes {
     private static final String LARGE = "ponder.create_refinery_n_reactors.large_absorption_tower.";
 

@@ -3490,9 +3490,9 @@
     "zh_cn": "以至少32 RPM驱动3×3搅拌槽的底部中央，在底角点燃烈焰人燃烧室。用漏斗取出颗粒，封闭舱门后从槽的顶部泵出蒸气。\n%s → %s"
   },
   "guide.manufacturing_resin_water_loop.step_2": {
-    "en_us": "Feed vapor into the bottom side of a large absorption tower and water into the top storey. Pump the recovered wash water out of another bottom side.\n%s → %s",
-    "ja_jp": "大型吸収塔の最下段の側面に蒸気を、最上段に水を送ります。中和処理水は最下段の別の面からポンプで回収します。\n%s → %s",
-    "zh_cn": "蒸气从大型吸收塔底层侧面送入，水从顶层送入。从底层另一面泵出中和洗涤水。\n%s → %s"
+    "en_us": "Feed vapor into the bottom side of an absorption tower and water into the top storey. Pump the recovered wash water out of another bottom side.\n%s → %s",
+    "ja_jp": "吸収塔の最下段の側面に蒸気を、最上段に水を送ります。中和処理水は最下段の別の面からポンプで回収します。\n%s → %s",
+    "zh_cn": "蒸气从吸收塔底层侧面送入，水从顶层送入。从底层另一面泵出中和洗涤水。\n%s → %s"
   },
   "guide.manufacturing_resin_water_loop.step_3": {
     "en_us": "Mix the recovered wash water with flocculant in a second impeller vessel. Filter the outlet for clarified water.\n%s → %s",
@@ -4270,9 +4270,9 @@
     "zh_cn": "关盖并从底部中心输入至少32 RPM。催化反应在反应塔中进行。"
   },
   "large_absorption_tower.title": {
-    "en_us": "Large absorption tower",
-    "ja_jp": "大型吸収塔",
-    "zh_cn": "大型吸收塔"
+    "en_us": "Absorption tower",
+    "ja_jp": "吸収塔",
+    "zh_cn": "吸收塔"
   },
   "lidded_vessel.internals": {
     "en_us": "Fit impellers in a 3×3 vessel. Smaller vessels are storage only; use a wrench on top to recover internals.",
@@ -4290,9 +4290,9 @@
     "zh_cn": "每层装入叶轮并关盖，无需外置搅拌器。"
   },
   "large_absorption_tower.storey": {
-    "en_us": "A large storey is placed as a whole 3 by 3 octagon. Click the top of a storey to stack the next one on its centre.",
-    "ja_jp": "大型の段は3×3の八角形がまとめて置かれます。段の天面をクリックすると、次の段が中心の真上に積まれます。",
-    "zh_cn": "大型塔节放置时整体占3×3八角形。点击塔节顶面，下一节会叠在正中央上方。"
+    "en_us": "Each storey is placed as a whole 3 by 3 octagon. Click the top of a storey to stack the next one on its centre.",
+    "ja_jp": "段は3×3の八角形がまとめて置かれます。段の天面をクリックすると、次の段が中心の真上に積まれます。",
+    "zh_cn": "塔节放置时整体占3×3八角形。点击塔节顶面，下一节会叠在正中央上方。"
   },
   "lidded_vessel_2x2.rotation": {
     "en_us": "A 2×2 vessel has no shaft input. For 3×3, supply at least 32 RPM at the bottom centre.",
@@ -4310,14 +4310,14 @@
     "zh_cn": "搅拌叶装在3×3槽中。较小的槽仅用于储存，可用扳手点击顶面取回内部组件。"
   },
   "large_absorption_tower.ring": {
-    "en_us": "Pipes join any block of the octagon. Gas goes in and acid comes out at the bottom storey; water goes in and spent gas comes out at the top.",
-    "ja_jp": "配管は八角形のどのブロックにもつなげます。気体の搬入と酸の搬出は最下段、水の搬入と排ガスの搬出は最上段です。",
-    "zh_cn": "管道可接到八角形的任意一格。气体进、酸出在最下节；水进、尾气出在最上节。"
+    "en_us": "Pipes join only the four flat sides of the octagon, never its diagonal faces. Gas in and liquid out use the bottom storey's flat sides; spent gas leaves the top storey's flat sides, and water enters only through the top of its centre.",
+    "ja_jp": "配管は八角形の平らな4面だけにつながり、斜めの面にはつながりません。気体の搬入とできた液体の搬出は最下段の平らな面、排ガスの搬出は最上段の平らな面、水の搬入は最上段中心の天面だけです。",
+    "zh_cn": "管道只能接八角形的四个平面，斜面不能连接。气体送入和生成液体排出在最下节平面；尾气从最上节平面排出，水只能从最上节中心顶面送入。"
   },
   "large_absorption_tower.same": {
-    "en_us": "It works like the small tower: four to eight storeys, one batch per storey, no rotation or heat.",
-    "ja_jp": "動作は小型と同じです。4～8段で、1段につき1バッチを処理し、回転も熱も不要です。",
-    "zh_cn": "运作与小型塔相同：4～8节，每节1批，无需转动或加热。"
+    "en_us": "Stack four to eight storeys. Each storey runs one batch, with no rotation or heat.",
+    "ja_jp": "4～8段積みます。1段につき1バッチを処理し、回転も熱も不要です。",
+    "zh_cn": "叠放4～8节。每节处理1批，无需转动或加热。"
   },
   "vessel_internals.impeller": {
     "en_us": "Fit an impeller to mix materials inside the vessel. Drive it from below.",

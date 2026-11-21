@@ -81,7 +81,7 @@ public final class WaterTreatmentGameTests {
         var tower = AbsorptionTowerGameTests.tower(h.getLevel(), h.absolutePos(resin.east(7)), 4, true);
         BlockPos bottom = tower.getBlockPos();
         var vaporIn = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, bottom.west(), Direction.WEST);
-        var washIn = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, bottom.above(3).north(), Direction.UP);
+        var washIn = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, bottom.above(3), Direction.UP);
         var washOut = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, bottom.east(), Direction.EAST);
         h.assertTrue(vaporIn != null && washIn != null && washOut != null, "Use the formed tower's Create-compatible gas, water and liquid connections");
 

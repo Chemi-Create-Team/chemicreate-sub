@@ -588,15 +588,20 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
                 }
                 return true;
             }
-            text.add(Component.translatable(KEY+"structure",sections,maxSections(),CAPACITY));
+            structureTooltip(text);
             if (!formed) text.add(Component.translatable(KEY+"fault",fault.getX(),fault.getY(),fault.getZ()));
-            text.add(Component.translatable(KEY+"performance",Math.min(4,Math.abs(rotationSpeed())/32f),sections,formed ? module().stress*sections : 0));
-            text.add(Component.translatable(KEY+"ports"));
             text.add(Component.translatable(KEY+"batch",batchName(),scale,Math.round(progress),cycleTicks()));
-            for (int i=0;i<tanks.length;i++) if (!tanks[i].isEmpty()) text.add(Component.translatable(KEY+(inputTank(i) ? "input" : "output"),tanks[i].getHoverName(),tanks[i].getAmount(),CAPACITY));
+            for (int i=0;i<tanks.length;i++) if (!tanks[i].isEmpty()) text.add(Component.translatable(KEY+(inputTank(i) ? "input" : "output"),tanks[i].getHoverName(),tanks[i].getAmount(),
+                net.createplant.thermal.FluidMaterials.gas(tanks[i].getFluid()) ? CAPACITY*64 : CAPACITY));
             for (int i=0;i<CHARGE_SLOTS;i++) if (!charge.getStackInSlot(i).isEmpty()) text.add(Component.translatable(KEY+(i<FEED_SLOTS ? "item_input" : "item_output"),charge.getStackInSlot(i).getHoverName(),charge.getStackInSlot(i).getCount()));
             return true;
         } finally { net.createplant.compat.display.MachineReadings.compact(text); }
+    }
+    /** The goggle lines on the size, drive and connections of a formed vertical machine. */
+    protected void structureTooltip(List<Component> text) {
+        text.add(Component.translatable(KEY+"structure",sections,maxSections(),CAPACITY));
+        text.add(Component.translatable(KEY+"performance",Math.min(4,Math.abs(rotationSpeed())/32f),sections,formed ? module().stress*sections : 0));
+        text.add(Component.translatable(KEY+"ports"));
     }
     @Override protected void write(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
         super.write(tag,lookup,packet);

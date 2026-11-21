@@ -287,12 +287,12 @@ public final class SteamAcidPlaytestWorld {
     }
 
     private static void sulfur(ServerLevel level, long ticks) {
-        if (sulfurStep == 0 && move(port(level, BURNER_VESSEL, Direction.UP), port(level, SULFUR_ABSORBER, Direction.WEST),
+        if (sulfurStep == 0 && move(port(level, BURNER_VESSEL, Direction.UP), port(level, SULFUR_ABSORBER.west(), Direction.WEST),
             CEUranium.SULFUR_DIOXIDE.get(), 500)) {
             RESULTS.put("sulfur_dioxide_tick", ticks);
             sulfurStep = 1;
         }
-        if (sulfurStep == 1 && move(port(level, SULFUR_ABSORBER, Direction.WEST), port(level, SULFUR_CELL, Direction.DOWN),
+        if (sulfurStep == 1 && move(port(level, SULFUR_ABSORBER.west(), Direction.WEST), port(level, SULFUR_CELL, Direction.DOWN),
             CEUranium.SULFUROUS_ACID.get(), 500)) {
             RESULTS.put("sulfurous_acid_tick", ticks);
             sulfurStep = 2;
@@ -311,7 +311,7 @@ public final class SteamAcidPlaytestWorld {
             RESULTS.put("brine_electrolysis_tick", ticks);
             chlorineStep = 1;
         }
-        if (chlorineStep == 1 && move(port(level, CHLORINE_VESSEL, Direction.UP), port(level, CHLORINE_ABSORBER, Direction.WEST),
+        if (chlorineStep == 1 && move(port(level, CHLORINE_VESSEL, Direction.UP), port(level, CHLORINE_ABSORBER.west(), Direction.WEST),
             CEChlorAlkali.HYDROGEN_CHLORIDE.get(), 500)) {
             RESULTS.put("hydrogen_chloride_tick", ticks);
             chlorineStep = 2;
@@ -338,7 +338,7 @@ public final class SteamAcidPlaytestWorld {
             RESULTS.put("nitric_oxide_separation_tick", ticks);
             nitricStep = 3;
         }
-        if (nitricStep == 3 && move(reaction, port(level, NITRIC_ABSORBER, Direction.WEST), CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300)) {
+        if (nitricStep == 3 && move(reaction, port(level, NITRIC_ABSORBER.west(), Direction.WEST), CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300)) {
             RESULTS.put("nitrogen_dioxide_tick", ticks);
             nitricStep = 4;
         }

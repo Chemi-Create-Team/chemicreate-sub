@@ -43,10 +43,10 @@ public final class SyntheticFuelsGameTests {
         h.assertTrue(raw.is(CEProcessFluids.WATER_GAS.get()) && raw.getAmount() == 1000, "Two gasifier batches produce raw feed");
         var washAt = new BlockPos(11, 2, 5);
         var wash = AbsorptionTowerGameTests.tower(h.getLevel(), h.absolutePos(washAt), 4, true);
-        var washBottom = port(h, washAt, Direction.WEST);
-        var washTop = port(h, washAt.above(3), Direction.UP);
+        var washBottom = port(h, washAt.west(), Direction.WEST);
+        var washTop = port(h, washAt.above(3).west(), Direction.WEST);
         fill(h, washBottom, raw);
-        fill(h, washTop, stack(CEChlorAlkali.CAUSTIC_SODA.get(), 250));
+        fill(h, port(h, washAt.above(3), Direction.UP), stack(CEChlorAlkali.CAUSTIC_SODA.get(), 250));
         for (int i = 0; i < 100; i++) wash.tickProcess();
         var clean = drain(h, washTop, CEProcessFluids.PURIFIED_SYNGAS.get(), 1000);
         drain(h, washBottom, CEWaterTreatment.SULFUR_SCRUBBER_LIQUOR.get(), 250);

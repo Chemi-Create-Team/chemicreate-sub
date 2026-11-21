@@ -250,7 +250,7 @@ public final class ProcessGasRecoveryGameTests {
         var base = h.absolutePos(duct.east(4));
         AbsorptionTowerGameTests.tower(level, base, 4, true);
         h.assertTrue(port(h, base.east(), Direction.EAST).fill(recovered, EXECUTE) == 250
-            && port(h, base.above(3).east(), Direction.UP).fill(new FluidStack(Fluids.WATER, 250), EXECUTE) == 250,
+            && port(h, base.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 250), EXECUTE) == 250,
             "The absorption tower still takes the legacy stream and water");
         h.succeedWhen(() -> {
             var wash = port(h, base.east(), Direction.EAST);

@@ -4,6 +4,8 @@ import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.IRotate;
 import net.createplant.CreatePlant;
+import net.createplant.block.entity.AbsorptionTowerBlockEntity;
+import net.createplant.block.entity.ColumnRingBlockEntity;
 import net.createplant.block.entity.ConverterShellBlockEntity;
 import net.createplant.block.entity.CubicPressBlockEntity;
 import net.createplant.block.entity.ElectrolysisFurnacePartBlockEntity;
@@ -60,6 +62,10 @@ public final class ProcessPorts {
             if (owner == null) return null;
             if (face == Direction.UP && state.getValue(LiddedVesselBlock.HATCH) != LiddedVesselBlock.Hatch.NONE) return Kind.HATCH;
             if (face == Direction.DOWN && state.getValue(LiddedVesselBlock.BOTTOM) && fluid(be, face) != null) return Kind.DRAIN;
+        }
+        if (be instanceof ColumnRingBlockEntity && face.getAxis().isHorizontal() && fluid(be, face) != null) {
+            var centre = ExtractionColumnStructureBlock.centre(level, pos, state);
+            if (centre != null && level.getBlockEntity(centre) instanceof AbsorptionTowerBlockEntity storey && !storey.bottom()) return Kind.OUTLET;
         }
         if (be instanceof FractionatingColumnBlockEntity) {
             if (face == Direction.EAST && state.getValue(FractionatingColumnBlock.INLET) > 0) return Kind.INLET;

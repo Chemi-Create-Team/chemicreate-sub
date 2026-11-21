@@ -22,8 +22,8 @@ public abstract class StackedReactorBlockEntity extends ReactorMachineBlockEntit
     protected abstract int minStoreys();
     /** The blocks of one storey whose centre stands at {@code centre}. */
     protected abstract List<BlockPos> storeyCells(BlockPos centre);
-    /** The port this storey gives at a face, taken from the formed bottom storey. */
-    protected abstract IFluidHandler storeyPort(StackedReactorBlockEntity bottom, Direction side);
+    /** The port a block of this storey gives at a face, taken from the formed bottom storey. */
+    protected abstract IFluidHandler storeyPort(StackedReactorBlockEntity bottom, BlockPos cell, Direction side);
     protected IItemHandler storeyItems(StackedReactorBlockEntity bottom, Direction side) { return null; }
 
     protected boolean storey(BlockPos pos) { return level != null && level.hasChunkAt(pos) && level.getBlockState(pos).is(getBlockState().getBlock()); }
@@ -65,9 +65,9 @@ public abstract class StackedReactorBlockEntity extends ReactorMachineBlockEntit
         return new ReactorStructure.Result(storeys, List.copyOf(members), worldPosition, "ready");
     }
 
-    public IFluidHandler storeyPort(Direction side) {
+    public IFluidHandler storeyPort(BlockPos cell, Direction side) {
         var owner = bottomStorey();
-        return owner == null || !owner.formed() || side == null ? null : storeyPort(owner, side);
+        return owner == null || !owner.formed() || side == null ? null : storeyPort(owner, cell, side);
     }
 
     public IItemHandler items(Direction side) {

@@ -74,24 +74,28 @@ public class AbsorptionTowerGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void gasEntersBelowWaterAboveAndEachOutletGivesOnlyItsProduct(GameTestHelper h) {
         var tower = tower(h, 4, false);var bottom = tower.getBlockPos();var top = bottom.above(3);
-        var gasIn = port(h, bottom, Direction.EAST);var waterIn = port(h, top, Direction.UP);
+        var gasIn = port(h, bottom.east(), Direction.EAST);var waterIn = port(h, top, Direction.UP);
         h.assertTrue(gasIn.fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0 && waterIn.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), SIMULATE) == 0,
             "Water goes in only at the top and gas only at the bottom");
-        h.assertTrue(port(h, bottom.above(), Direction.EAST) == null && port(h, bottom, Direction.DOWN) == null, "The middle storeys and the underside have no port");
+        h.assertTrue(port(h, bottom.above().east(), Direction.EAST) == null && port(h, bottom, Direction.DOWN) == null, "The middle storeys and the underside have no port");
+        h.assertTrue(port(h, bottom.north().east(), Direction.NORTH) == null && port(h, bottom.north().east(), Direction.EAST) == null
+            && port(h, top.south().west(), Direction.WEST) == null, "The diagonal faces of the octagon have no port");
+        h.assertTrue(port(h, bottom, Direction.EAST) == null && port(h, bottom.east(), Direction.NORTH) == null && port(h, top.east(), Direction.UP) == null
+            && port(h, top.east(), Direction.EAST).fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0, "Water enters only at the top of the top storey's centre");
         h.assertTrue(gasIn.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), EXECUTE) == 300 && waterIn.fill(new FluidStack(Fluids.WATER, 100), EXECUTE) == 100,
             "Nitrogen dioxide and water enter their own ends");
         run(tower, 101);
-        var acid = port(h, bottom, Direction.WEST).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 1000), EXECUTE);
-        var monoxide = port(h, top, Direction.NORTH).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), EXECUTE);
+        var acid = port(h, bottom.west(), Direction.WEST).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 1000), EXECUTE);
+        var monoxide = port(h, top.north(), Direction.NORTH).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), EXECUTE);
         h.assertTrue(acid.getAmount() == 200 && monoxide.getAmount() == 100, "Nitric acid leaves at the bottom and the unabsorbed nitric oxide at the top");
-        h.assertTrue(port(h, bottom, Direction.WEST).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), SIMULATE).isEmpty(), "The bottom never gives the top's gas");
+        h.assertTrue(port(h, bottom.west(), Direction.WEST).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), SIMULATE).isEmpty(), "The bottom never gives the top's gas");
         h.succeed();
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void hydrogenChlorideBecomesHydrochloricAcidAndAFullOutletStopsTheTower(GameTestHelper h) {
         var tower = tower(h, 4, false);var bottom = tower.getBlockPos();var top = bottom.above(3);
-        var gasIn = port(h, bottom, Direction.SOUTH);var waterIn = port(h, top, Direction.SOUTH);
+        var gasIn = port(h, bottom.south(), Direction.SOUTH);var waterIn = port(h, top, Direction.UP);
         gasIn.fill(new FluidStack(CEChlorAlkali.HYDROGEN_CHLORIDE.get(), 500), EXECUTE);waterIn.fill(new FluidStack(Fluids.WATER, 500), EXECUTE);run(tower, 101);
         h.assertTrue(gasIn.drain(new FluidStack(CEChlorAlkali.HYDROCHLORIC_ACID.get(), 10000), SIMULATE).getAmount() == 1000, "500 mB hydrogen chloride and 500 mB water give 1000 mB hydrochloric acid");
         for (int i = 0; i < 8; i++) { gasIn.fill(new FluidStack(CEChlorAlkali.HYDROGEN_CHLORIDE.get(), 500), EXECUTE);waterIn.fill(new FluidStack(Fluids.WATER, 500), EXECUTE);run(tower, 101); }
@@ -103,9 +107,9 @@ public class AbsorptionTowerGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void sulfurTrioxideBecomesSulfuricAcid(GameTestHelper h) {
         var tower = tower(h, 4, false);var bottom = tower.getBlockPos();
-        port(h, bottom, Direction.NORTH).fill(new FluidStack(CEUranium.SULFUR_TRIOXIDE.get(), 500), EXECUTE);
+        port(h, bottom.north(), Direction.NORTH).fill(new FluidStack(CEUranium.SULFUR_TRIOXIDE.get(), 500), EXECUTE);
         port(h, bottom.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 500), EXECUTE);run(tower, 101);
-        h.assertTrue(port(h, bottom, Direction.NORTH).drain(new FluidStack(CEUranium.SULFURIC_ACID.get(), 10000), SIMULATE).getAmount() == 500,
+        h.assertTrue(port(h, bottom.north(), Direction.NORTH).drain(new FluidStack(CEUranium.SULFURIC_ACID.get(), 10000), SIMULATE).getAmount() == 500,
             "Two 250 mB batches run in parallel: 500 mB sulfur trioxide and water give 500 mB sulfuric acid");
         h.succeed();
     }
@@ -113,9 +117,9 @@ public class AbsorptionTowerGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void sulfurDioxideBecomesSulfurousAcid(GameTestHelper h) {
         var tower = tower(h, 4, false);var bottom = tower.getBlockPos();
-        port(h, bottom, Direction.NORTH).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 500), EXECUTE);
+        port(h, bottom.north(), Direction.NORTH).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 500), EXECUTE);
         port(h, bottom.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 500), EXECUTE);run(tower, 101);
-        h.assertTrue(port(h, bottom, Direction.NORTH).drain(new FluidStack(CEUranium.SULFUROUS_ACID.get(), 10000), SIMULATE).getAmount() == 500,
+        h.assertTrue(port(h, bottom.north(), Direction.NORTH).drain(new FluidStack(CEUranium.SULFUROUS_ACID.get(), 10000), SIMULATE).getAmount() == 500,
             "Two 250 mB batches run in parallel: 500 mB sulfur dioxide and water give 500 mB sulfurous acid");
         h.succeed();
     }
@@ -129,9 +133,9 @@ public class AbsorptionTowerGameTests {
         var wash = new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 250);
         var inlet = port(h, bottom.east(), Direction.EAST);
         var topPort = port(h, top.west(), Direction.WEST);
-        h.assertTrue(inlet.fill(gas, EXECUTE) == 250 && inlet.fill(wash, SIMULATE) == 0 && topPort.fill(gas, SIMULATE) == 0,
-            "Only the bottom ring takes exhaust, and only the top ring takes wash liquid");
-        h.assertTrue(topPort.fill(wash, EXECUTE) == 250, "A formed tower accepts caustic wash at the top");
+        h.assertTrue(inlet.fill(gas, EXECUTE) == 250 && inlet.fill(wash, SIMULATE) == 0 && topPort.fill(gas, SIMULATE) == 0 && topPort.fill(wash, SIMULATE) == 0,
+            "Only the bottom ring takes exhaust, and the top ring takes no wash liquid");
+        h.assertTrue(port(h, top, Direction.UP).fill(wash, EXECUTE) == 250, "A formed tower accepts caustic wash at the top of its centre");
         run(tower, 101);
         var recovered = inlet.drain(500, EXECUTE);
         h.assertTrue(recovered.is(CEWaterTreatment.SULFUR_SCRUBBER_LIQUOR.get()) && recovered.getAmount() == 500
@@ -154,7 +158,7 @@ public class AbsorptionTowerGameTests {
     public static void theLargeTowerTakesPipesAtItsRingAndRunsLikeTheSmallOne(GameTestHelper h) {
         var tower = tower(h, 4, true);var bottom = tower.getBlockPos();var top = bottom.above(3);
         h.assertTrue(tower.formed() && tower.sections() == 4 && tower.calculateStressApplied() == 0, "Four large storeys form the tower");
-        var gasIn = port(h, bottom.east(), Direction.EAST);var waterIn = port(h, top.north().west(), Direction.UP);
+        var gasIn = port(h, bottom.east(), Direction.EAST);var waterIn = port(h, top, Direction.UP);
         h.assertTrue(gasIn != null && waterIn != null && port(h, bottom.above().east(), Direction.EAST) == null, "The ring hands on its storey's ports, and the middle storeys have none");
         h.assertTrue(gasIn.fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0, "The bottom ring takes no water");
         gasIn.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), EXECUTE);waterIn.fill(new FluidStack(Fluids.WATER, 100), EXECUTE);run(tower, 101);

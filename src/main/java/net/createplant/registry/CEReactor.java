@@ -54,11 +54,11 @@ public final class CEReactor {
     }
     public static void register(IEventBus bus) { BLOCKS.register(bus);ITEMS.register(bus);TYPES.register(bus);bus.addListener(CEReactor::capabilities); }
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,ABSORPTION_ENTITY.get(),(be,side)->be.storeyPort(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,ABSORPTION_ENTITY.get(),(be,side)->be.storeyPort(be.getBlockPos(),side));
         // The ring of a large storey hands pipes on to the storey at its centre.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,RING_ENTITY.get(),(be,side)->{
             BlockPos centre=ExtractionColumnStructureBlock.centre(be.getLevel(),be.getBlockPos(),be.getBlockState());
-            return centre==null ? null : be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,centre,side);
+            return centre!=null && be.getLevel().getBlockEntity(centre) instanceof AbsorptionTowerBlockEntity storey ? storey.storeyPort(be.getBlockPos(),side) : null;
         });
     }
 }
