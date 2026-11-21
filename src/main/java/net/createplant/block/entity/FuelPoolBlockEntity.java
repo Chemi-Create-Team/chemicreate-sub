@@ -38,7 +38,7 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
     private final byte[] fuels = new byte[FuelChannelBlockEntity.RODS];
     private final net.createplant.nuclear.Radionuclides[] activity = new net.createplant.nuclear.Radionuclides[FuelChannelBlockEntity.RODS];
     private final ThermalFluidTank water = new ThermalFluidTank(WATER_PER_CELL, f -> setChanged()) {
-        @Override public boolean isFluidValid(FluidStack stack) { return stack.is(Fluids.WATER) && FluidThermal.valid(stack); }
+        @Override public boolean isFluidValid(FluidStack stack) { return net.createplant.thermal.FluidState.liquidWater(stack) && FluidThermal.valid(stack); }
     };
     private double boilingJoules;
     private long lastHeated = Long.MIN_VALUE;
@@ -335,7 +335,7 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
             }
         }
         water.readFromNBT(registries, tag.getCompound("PoolWater"));
-        if (!water.isEmpty() && (!water.getFluid().is(Fluids.WATER) || !FluidThermal.valid(water.getFluid()))) water.setFluid(FluidStack.EMPTY);
+        if (!water.isEmpty() && (!net.createplant.thermal.FluidState.liquidWater(water.getFluid()) || !FluidThermal.valid(water.getFluid()))) water.setFluid(FluidStack.EMPTY);
         boilingJoules = Double.isFinite(tag.getDouble("PoolBoiling")) ? Math.clamp(tag.getDouble("PoolBoiling"), 0, 2260) : 0;
         if (tag.contains("PoolCells")) {
             cells = tag.getInt("PoolCells"); amount = tag.getInt("PoolAmount"); fresh = tag.getInt("PoolFresh"); spent = tag.getInt("PoolSpent");

@@ -37,7 +37,7 @@ public final class TankGradeGameTests {
         for(var block:List.of(AllBlocks.FLUID_TANK.get(),CETransport.HORIZONTAL_FLUID_TANK.get(),CETransport.GAS_RECEIVER.get(),CETransport.GAS_TANK_CONTAINER.get(),CETransport.PRESSURE_TANK.get(),CETransport.CRYOGENIC_TANK.get())) {
             var be=tank(h,block);var inventory=be.getTankInventory();
             // A gas-only tank holds no liquid at all, so it is worn by a corrosive gas instead.
-            var acid=TankGrade.of(be)==TankGrade.GAS ? new FluidStack(CEChlorAlkali.CHLORINE.get(),1000) : new FluidStack(CEFluids.NITRIC_ACID.get(),1000);var hot=new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000);
+            var acid=TankGrade.of(be)==TankGrade.GAS ? new FluidStack(CEChlorAlkali.CHLORINE.get(),1000) : new FluidStack(CEFluids.NITRIC_ACID.get(),1000);var hot=FluidState.with(new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),16,4);
             h.assertTrue(!TankGrade.of(be).accepts(acid) && inventory.fill(acid,EXECUTE)==1000,"A non-resistant tank still takes a corrosive fluid, which wears it: "+block);
             inventory.setFluid(FluidStack.EMPTY);
             h.assertTrue(!TankGrade.of(be).accepts(hot) && inventory.fill(hot,EXECUTE)==1000,"A tank still takes a very hot gas, which wears it: "+block);
@@ -157,7 +157,7 @@ public final class TankGradeGameTests {
         // Create attaches behaviours when the block entity first ticks.
         h.runAfterDelay(2,()->{
             var wear=com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour.get(be,net.createplant.transport.ContainmentWear.TYPE);
-            var hot=new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000);
+            var hot=FluidState.with(new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),16,4);
             h.assertTrue(be.getTankInventory().fill(hot,EXECUTE)==1000,"The pressure tank takes the very hot gas");
             for(int i=0;i<600;i++)wear.tick();
             h.assertTrue(wear.wear()==600 && wear.reason().equals("gas") && net.createplant.transport.ContainmentWear.warning(be)!=null && h.getBlockState(AT).is(CETransport.PRESSURE_TANK.get()),

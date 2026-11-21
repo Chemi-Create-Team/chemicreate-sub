@@ -48,45 +48,45 @@ public class ThermalControlGameTests {
     @GameTest(template="test_reactor")
     public static void automaticExchangeConvertsBothFiniteStreamsWithoutASetting(GameTestHelper h) {
         var be=build(h.getLevel(),h.absolutePos(new BlockPos(5,2,5)),Direction.NORTH,3);
-        be.thermal().tank(0).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);be.thermal().tank(2).fill(new FluidStack(net.createplant.registry.CEProcessFluids.HOT_OLEFINS.get(),300),EXECUTE);
+        be.thermal().tank(0).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);be.thermal().tank(2).fill(FluidState.with(new FluidStack(CEPetroFluids.HEAVY_OIL.get(),300),11,4),EXECUTE);
         for(int i=0;i<5;i++)be.thermal().tick();
-        h.assertTrue(be.thermal().tank(0).getFluidAmount()==700 && be.thermal().tank(1).getFluid().is(net.createplant.registry.CEProcessFluids.WARM_WATER.get()) && be.thermal().tank(1).getFluidAmount()==300 && be.thermal().tank(2).isEmpty() && be.thermal().tank(3).getFluidAmount()==300,"Both rows convert the same finite batch count");h.succeed();
+        h.assertTrue(be.thermal().tank(0).getFluidAmount()==700 && FluidState.temperature(be.thermal().tank(1).getFluid())==9 && be.thermal().tank(1).getFluidAmount()==300 && be.thermal().tank(2).isEmpty() && be.thermal().tank(3).getFluidAmount()==300,"Both rows convert the same finite batch count");h.succeed();
     }
     @GameTest(template="test_fractionation")
-    public static void lengthDirectionAndCoolantFlowControlCondensation(GameTestHelper h) {
-        var shortUnit=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,2)),Direction.NORTH,2);
-        var faster=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,5)),Direction.NORTH,2);
-        var counter=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,8)),Direction.NORTH,2);
-        var longer=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,11)),Direction.NORTH,5);
-        var wet=net.createplant.mixture.MixtureHelper.merge(new FluidStack(net.createplant.registry.CEProcessFluids.WATER_GAS.get(),500),
-            new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),100),true);
-        wet.set(net.createplant.registry.CEThermal.HEAT_GRADE.get(),net.createplant.thermal.Grade.Heat.HOT.ordinal());
-        int[] flows={5,200,5,5};int[] ends={0,0,1,0};
-        var units=java.util.List.of(shortUnit,faster,counter,longer);
-        for(int i=0;i<units.size();i++) {
-            var unit=units.get(i);
-            h.assertTrue(tube(unit,0).fill(wet,EXECUTE)==600 && shell(unit,ends[i]).fill(new FluidStack(Fluids.WATER,flows[i]),EXECUTE)==flows[i],
-                "Each unit receives the same wet gas and its own coolant");
-            for(int j=0;j<5;j++)unit.tickProcess();
+    public static void parallelAndCounterflowLevelsAndRate(GameTestHelper h) {
+        for(int heat=0;heat<=16;heat++)for(int cold=0;cold<heat;cold++) {
+            h.assertTrue(ThermalEquipment.outletLevel(heat,cold,false)==(heat+cold+1)/2
+                && ThermalEquipment.outletLevel(cold,heat,false)==(heat+cold)/2,"Parallel flow rounds both sides without gaining heat");
+            h.assertTrue(ThermalEquipment.outletLevel(heat,cold,true)==cold+1
+                && ThermalEquipment.outletLevel(cold,heat,true)==heat-1,"Opposing inlets approach the other side within one level");
         }
-        h.assertTrue(net.createplant.thermal.SteamCondensate.vapour(tube(shortUnit,1).drain(600,SIMULATE)),
-            "A short parallel exchanger with a trickle of coolant stays above condensation");
-        for(var unit:java.util.List.of(faster,counter,longer))
-            h.assertTrue(tube(unit,1).drain(600,SIMULATE).is(Fluids.WATER),"More coolant, counterflow or more length can each reach condensation");
-        var lines=new java.util.ArrayList<net.minecraft.network.chat.Component>();
-        counter.addToGoggleTooltip(lines,false);
-        h.assertTrue(lines.size()==4 && outletReading(lines.get(2),"process") && outletReading(lines.get(3),"coolant"),
-            "Goggles display the calculated outlet temperature and grade on both circuits");
+        var be=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,2)),Direction.NORTH,2);
+        var hot=FluidState.with(new FluidStack(CEPetroFluids.HEAVY_OIL.get(),500),11,4);
+        var cold=FluidState.with(new FluidStack(Fluids.WATER,500),5,8);
+        tube(be,0).fill(hot,EXECUTE);
+        shell(be,1).fill(cold,EXECUTE);
+        for(int i=0;i<5;i++)be.tickProcess();
+        var hotResult=tube(be,1).drain(500,EXECUTE);
+        var coldResult=shell(be,0).drain(500,EXECUTE);
+        h.assertTrue(hotResult.getAmount()==200 && coldResult.getAmount()==200 && FluidState.temperature(hotResult)==6
+            && FluidState.temperature(coldResult)==10 && FluidState.pressure(coldResult)==8,"Actual opposing ports move equal batches with no rate bonus");
         h.succeed();
     }
 
-    private static boolean outletReading(net.minecraft.network.chat.Component line,String role) {
-        String key="grade.create_refinery_n_reactors.exchange.";
-        return line.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents outlet && outlet.getKey().equals(key+"outlet")
-            && outlet.getArgs()[0] instanceof net.minecraft.network.chat.Component label
-            && label.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents name && name.getKey().equals(key+role)
-            && outlet.getArgs()[1] instanceof net.minecraft.network.chat.Component value
-            && value.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents reading && reading.getKey().equals(key+"degrees");
+    @GameTest(template="test_fractionation")
+    public static void exchangerCondensesWholeUnitsAndRetainsBothRemainders(GameTestHelper h) {
+        var be=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,2)),Direction.NORTH,2);
+        var gas=new FluidStack(CEChlorAlkali.CHLORINE.get(),1);
+        int ratio=PhaseChange.ratio(gas), amount=2*ratio+17;
+        tube(be,0).fill(gas.copyWithAmount(amount),EXECUTE);
+        shell(be,0).fill(FluidState.with(new FluidStack(Fluids.WATER,amount),0,4),EXECUTE);
+        for(int i=0;i<100;i++)be.tickProcess();
+        var liquid=tube(be,1).drain(amount,EXECUTE);
+        h.assertTrue(liquid.getAmount()==2 && !FluidState.gas(liquid) && FluidState.temperature(liquid)==4
+            && shell(be,1).drain(amount,EXECUTE).getAmount()==2*ratio
+            && be.thermal().tank(0).getFluidAmount()==17 && be.thermal().tank(2).getFluidAmount()==17,
+            "Pairwise phase conversion retains both remainders and consumes only complete batches");
+        h.succeed();
     }
 
     @GameTest(template="test_fractionation")
@@ -112,7 +112,7 @@ public class ThermalControlGameTests {
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());be.loadWithComponents(saved,h.getLevel().registryAccess());be.validateStructure();near=tube(be,0);far=tube(be,1);
         h.assertTrue(near.drain(100,EXECUTE).getAmount()==83,"Reload retains direction and remaining output");shell(be,1).drain(100,EXECUTE);
         h.assertTrue(near.fill(fluid,EXECUTE)==100,"An empty row can reverse");shell(be,0).fill(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),100),EXECUTE);for(int i=0;i<5;i++)be.tickProcess();
-        var reversed=far.drain(100,EXECUTE);h.assertTrue(reversed.getAmount()==100 && reversed.is(net.createplant.registry.CEProcessFluids.WARM_WATER.get()),"Reversal keeps the same recipe and amount");h.succeed();
+        var reversed=far.drain(100,EXECUTE);h.assertTrue(reversed.getAmount()==100 && FluidState.temperature(reversed)==8,"Reversal keeps the same recipe and amount");h.succeed();
     }
     @GameTest(template="test_fractionation",timeoutTicks=600)
     public static void realPumpsOperateAllFourHorizontalExchangerPorts(GameTestHelper h) { rowPumpPlant(h,false,false,true); }
@@ -167,7 +167,7 @@ public class ThermalControlGameTests {
         h.runAfterDelay(400,()->{
             var be=(ReactorMachineBlockEntity)level.getBlockEntity(base);
             var cold=((FluidTankBlockEntity)level.getBlockEntity(coldProduct)).getTankInventory().getFluid();var hot=((FluidTankBlockEntity)level.getBlockEntity(hotProduct)).getTankInventory().getFluid();
-            h.assertTrue(cold.is(net.createplant.registry.CEProcessFluids.WARM_WATER.get())&&cold.getAmount()==1000 && hot.is(Fluids.WATER)&&hot.getAmount()==1000,"Native pump networks use the four real ports without mixing: "+cold+" / "+hot+" status="+be.status());
+            h.assertTrue(FluidState.temperature(cold)==8 && cold.getAmount()==1000 && FluidState.temperature(hot)==9 && hot.getAmount()==1000,"Native pump networks use the four real ports without mixing: "+cold+" / "+hot+" status="+be.status());
             h.succeed();
         });
     }

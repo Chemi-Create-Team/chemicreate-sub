@@ -262,7 +262,10 @@ public final class ClientQualityCheck {
                 if (Boolean.getBoolean("createplant.mineralClientCheck")) { MineralClientCheck.start(mc);ticks=0;phase=92;return; }
                 if (Boolean.getBoolean("createplant.forgingClientCheck")) { ForgingClientCheck.start(mc);ticks=0;phase=91;return; }
                 if (Boolean.getBoolean("createplant.radiationClientCheck")) { RadiationClientCheck.start(mc);ticks=0;phase=90;return; }
-                if (Boolean.getBoolean("createplant.thermalClientCheck")) ThermalClientCheck.verify(mc);
+                if (Boolean.getBoolean("createplant.thermalClientCheck")) {
+                    ThermalClientCheck.verify(mc);
+                    if (Boolean.getBoolean("createplant.fluidStatePreview")) { mc.setScreen(null);phase=95;return; }
+                }
                 if (Boolean.getBoolean("createplant.displayClientCheck")) DisplayClientCheck.verify(mc);
                 if (Boolean.getBoolean("createplant.machineSoundClientCheck")) { SoundClientCheck.start(mc);ticks=0;phase=27;return; }
                 if (Boolean.getBoolean("createplant.powderItemsClientCheck")) { PowderItemsClientCheck.start(mc);ticks=0;phase=26;return; }

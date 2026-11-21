@@ -65,9 +65,13 @@ public class PressureValveBlockEntity extends SmartBlockEntity implements IHaveG
     @Override public void tick() {
         super.tick();
         if (level == null || level.isClientSide || waiting || input.isEmpty()) return;
-        int accepted = output.fill(Compression.convert(input.getFluid(), false), EXECUTE);
-        if (accepted <= 0) { waiting = true; return; }
-        input.drain(accepted, EXECUTE);
+        var change=Compression.change(input.getFluid(),false);
+        if(change==null)change=net.createplant.thermal.PhaseChange.transfer(input.getFluid(),
+            net.createplant.thermal.FluidState.temperature(input.getFluid()),net.createplant.thermal.FluidState.pressure(input.getFluid()));
+        int batches=change.fitting(change.batches(input.getFluidAmount()),output);
+        if(batches<=0){waiting=true;return;}
+        input.drain(batches*change.consumed(),EXECUTE);
+        output.fill(change.output(batches),EXECUTE);
         changed();
     }
 

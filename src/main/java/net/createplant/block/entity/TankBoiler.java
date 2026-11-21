@@ -83,7 +83,7 @@ public final class TankBoiler {
         int amount = steam.getFluidAmount();
         var meter = ProductionMonitor.of(owner);
         var feed = owner.getTankInventory().getFluid();
-        boolean tracked = feed.is(Fluids.WATER) || feed.is(CEProcessFluids.WARM_WATER.get()) || meter != null && meter.read(ProductionMonitor.Output.FLUID) != null;
+        boolean tracked = net.createplant.thermal.FluidState.liquidWater(feed) || meter != null && meter.read(ProductionMonitor.Output.FLUID) != null;
         if (tracked) ProductionMonitor.plan(owner, Math.min(MAX_HEAT, owner.getWidth() * owner.getWidth() * JOULES_PER_HEAT_LEVEL * 2) * 20 / SteamGrades.ORDINARY.joulesPerMb(), 0, 0);
         boil();
         if (tracked) ProductionMonitor.limitedBy(owner, switch (status) {
@@ -99,7 +99,7 @@ public final class TankBoiler {
         if (owner.boiler.isActive()) { status = "engines"; return; }
         var feed = owner.getTankInventory();
         var water = feed.getFluid();
-        if (!water.is(Fluids.WATER) && !water.is(CEProcessFluids.WARM_WATER.get())) { status = "water"; return; }
+        if (!net.createplant.thermal.FluidState.liquidWater(water)) { status = "water"; return; }
         // An unheated tank looks under itself again once a second.
         if (status.equals("heat") && Math.floorMod(level.getGameTime() + owner.getBlockPos().asLong(), 20) != 0) return;
         var sample = new FluidStack(SteamGrades.ORDINARY.fluid(), 1);

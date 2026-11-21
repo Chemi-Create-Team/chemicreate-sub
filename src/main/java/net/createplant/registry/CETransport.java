@@ -112,7 +112,7 @@ public final class CETransport {
     public static final Supplier<BlockEntityType<net.createplant.block.entity.LiddedVesselBlockEntity>> LIDDED_VESSEL_ENTITY=TYPES.register("lidded_vessel",()->
         BlockEntityType.Builder.of(net.createplant.block.entity.LiddedVesselBlockEntity::new,LIDDED_VESSEL.get()).build(null));
     /** Legacy storable gases and every process gas flagged in the transport table. */
-    public static boolean gas(FluidStack stack) { return GasOnlyFluidHandler.isGas(stack) || net.createplant.transport.FluidHazards.of(stack).gas() || !stack.isEmpty() && stack.getFluidType().isLighterThanAir(); }
+    public static boolean gas(FluidStack stack) { return net.createplant.thermal.FluidState.gas(stack); }
     private static DeferredBlock<MaterialPipeBlock> pipe(String id,PipeMaterial material) {
         return pipe(id,material,BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion());
     }

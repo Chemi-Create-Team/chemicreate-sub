@@ -102,6 +102,8 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         if (shaft != null) shaft.setLoad(0);
     }
 
+    private int pressureCredit;
+
     private void step() {
         work = 0;
         flow = 0;
@@ -112,22 +114,29 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         double rpm = Math.abs(shaft.getSpeed());
         var inlet = cylinder.inlet();
         var outlet = cylinder.outlet();
-        if (inlet.isEmpty()) { idle(rpm < MIN_RPM ? "speed" : "feed", shaft);return; }
-        var converted=Compression.convert(inlet.getFluid(),true);
-        double perMb=(net.createplant.transport.FluidHazards.of(converted).pressure().ordinal()+1)/EFFICIENCY;
+        if (inlet.isEmpty()) { pressureCredit=0;idle(rpm < MIN_RPM ? "speed" : "feed", shaft);return; }
+        var change=Compression.change(inlet.getFluid(),true);
+        if(change==null){idle("feed",shaft);return;}
+        var converted=change.prototype();
+        double perMb=Math.max(1,net.createplant.transport.FluidHazards.of(converted).pressure().ordinal())/EFFICIENCY;
         double maxRpm = com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
         int maximum = capacityAt(maxRpm, perMb);
         ProductionMonitor.plan(this, maximum * 20d, 0, 0);
         if (rpm < MIN_RPM) { idle("speed", shaft);return; }
         int capacity = capacityAt(rpm, perMb);
-        int feed = Math.min(inlet.getFluidAmount(), capacity);
-        int n = Math.min(feed, outlet.fill(converted.copyWithAmount(feed),FluidAction.SIMULATE));
+        pressureCredit=(int)Math.min(capacity+(long)change.consumed()-1,pressureCredit+(long)capacity);
+        int feed=Math.min(inlet.getFluidAmount(),pressureCredit);
+        int available=change.batches(feed);
+        if(available==0){idle("feed",shaft);return;}
+        int batches=change.fitting(available,outlet);
+        int n=batches*change.consumed();
         if(n<=0){idle("output",shaft);return;}
         load=n*perMb*20/Math.max(1,rpm);
         shaft.setLoad((float)load);
         if(shaft.isOverStressed()){status="power";ProductionMonitor.limitedBy(this, status);return;}
+        pressureCredit-=n;
         inlet.drain(n,FluidAction.EXECUTE);
-        ProductionMonitor.produced(this, outlet.fill(converted.copyWithAmount(n),FluidAction.EXECUTE), 0, 0);
+        ProductionMonitor.produced(this, outlet.fill(change.output(batches),FluidAction.EXECUTE), 0, 0);
         ProductionMonitor.limitedBy(this, n < feed ? "output" : feed < capacity ? "feed" : capacity < maximum ? "speed" : "rated");
         flow=n;work=n*perMb;
         status = "running";

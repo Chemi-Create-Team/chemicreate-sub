@@ -13,8 +13,7 @@ public class ThermalFluidTank extends SmartFluidTank {
     /** How many mB of gas at 1 bar fill one mB of volume; a tank holds gas up to its pressure rating. */
     protected int storageRatio(){return Grade.Pressure.PRESSURISED.storageRatio();}
     protected int storageRatio(FluidStack stack) {
-        int rating = storageRatio();
-        return Compression.isAir(stack) ? Math.min(rating, Compression.airVolumeRatio(stack)) : rating;
+        return storageRatio();
     }
     protected boolean storedGas(FluidStack stack){return !stack.isEmpty() && (net.createplant.mixture.MixtureHelper.isMixture(stack) ? net.createplant.mixture.MixtureHelper.gas(stack) : net.createplant.transport.FluidHazards.of(stack).gas());}
     @Override public int getCapacity(){return storedGas(fluid) ? (int)Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio(fluid)) : capacity;}
@@ -26,19 +25,71 @@ public class ThermalFluidTank extends SmartFluidTank {
             return fillGasMixture(resource,action);
         if (net.createplant.mixture.MixtureHelper.isMixture(resource) || net.createplant.mixture.MixtureHelper.isMixture(fluid))
             return net.createplant.mixture.MixtureTransfer.fill(this, resource, action, false);
-        if(storedGas(resource)){
-            if(!FluidThermal.valid(resource) || !isFluidValid(resource) || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource))return 0;
-            int n=(int)Math.max(0,Math.min(resource.getAmount(),Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio(resource))-getFluidAmount()-sharedGas()));
-            if(n>0 && action.execute()){var portion=FluidThermal.at(resource.copyWithAmount(n),FluidThermal.kelvin(resource));fluid=fluid.isEmpty() ? portion : FluidThermal.mix(fluid,portion,n);net.createplant.nuclear.RadiationSources.stamp(fluid);onContentsChanged();}return n;
+        if(resource.isEmpty() || !FluidThermal.valid(resource) || !isFluidValid(resource)
+            || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource))return 0;
+        int accepted;
+        FluidStack result;
+        if(fluid.isEmpty()) {
+            accepted=Math.min(resource.getAmount(),capacityFor(resource));
+            if(accepted<=0)return 0;
+            result=resource.copyWithAmount(accepted);
+        } else {
+            accepted=mixAmount(resource);
+            if(accepted<=0)return 0;
+            result=mixed(resource,accepted);
         }
-        if (resource.isEmpty() || !FluidThermal.valid(resource) || !isFluidValid(resource) || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource)) return 0;
-        int accepted=Math.max(0,Math.min(getSpace(),resource.getAmount()));
-        if (accepted>0 && action.execute()) {
-            fluid=fluid.isEmpty() ? resource.copyWithAmount(accepted) : FluidThermal.mix(fluid,resource,accepted);
+        if(action.execute()) {
+            fluid=result;
             net.createplant.nuclear.RadiationSources.stamp(fluid);
             onContentsChanged();
         }
         return accepted;
+    }
+
+    public int capacityFor(FluidStack result) {
+        return !storedGas(result) ? capacity : (int)Math.clamp((long)capacity*storageRatio(result)-sharedGas(),0,Integer.MAX_VALUE);
+    }
+
+    private int mixedState(FluidStack resource,int amount) {
+        int temperature=FluidState.average(FluidState.temperature(fluid),getFluidAmount(),FluidState.temperature(resource),amount);
+        int pressure=FluidState.average(FluidState.pressure(fluid),getFluidAmount(),FluidState.pressure(resource),amount);
+        return temperature*17+pressure;
+    }
+
+    // Over each interval with the same rounded levels, capacity and conversion units are fixed.
+    private int mixAmount(FluidStack resource) {
+        int maximum=Math.min(resource.getAmount(),Integer.MAX_VALUE-getFluidAmount());
+        int ratio=PhaseChange.ratio(fluid);
+        int storedUnit=storedGas(fluid) ? 1 : ratio;
+        int addedUnit=storedGas(resource) ? 1 : ratio;
+        long stored=(long)getFluidAmount()*storedUnit;
+        while(maximum>0) {
+            int state=mixedState(resource,maximum);
+            var result=FluidState.with(fluid,state/17,state%17);
+            int resultUnit=storedGas(result) ? 1 : ratio;
+            int amount=(int)Math.clamp(((long)capacityFor(result)*resultUnit-stored)/addedUnit,0,maximum);
+            long remainder=(stored+(long)amount*addedUnit)%resultUnit;
+            if(remainder!=0)amount=addedUnit==1 ? amount-(int)remainder : 0;
+            if(amount>0 && mixedState(resource,amount)==state)return amount;
+            int low=1,high=maximum;
+            while(low<high) {
+                int middle=(int)((low+(long)high)/2);
+                if(mixedState(resource,middle)==state)high=middle;
+                else low=middle+1;
+            }
+            maximum=low-1;
+        }
+        return 0;
+    }
+
+    private FluidStack mixed(FluidStack resource,int amount) {
+        var combined=FluidThermal.mix(fluid,resource,amount);
+        boolean before=storedGas(fluid), incoming=storedGas(resource), after=storedGas(combined);
+        if(before==incoming && incoming==after)return combined;
+        int ratio=PhaseChange.ratio(fluid);
+        long units=(long)getFluidAmount()*(before ? 1 : ratio)+(long)amount*(incoming ? 1 : ratio);
+        combined.setAmount((int)(units/(after ? 1 : ratio)));
+        return combined;
     }
     /** Gas held elsewhere in the same volume, such as a working vessel's process buffers. */
     protected long sharedGas() { return 0; }

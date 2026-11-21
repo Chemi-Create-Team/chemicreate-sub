@@ -29,10 +29,11 @@ public final class FluidItemTooltips {
 
     @SubscribeEvent
     public static void formulas(ItemTooltipEvent event) {
-        var lines = FluidItemChemistry.formulaLines(event.getItemStack());
+        var lines = new ArrayList<>(FluidItemChemistry.formulaLines(event.getItemStack()));
+        for(var fluid:FluidItemChemistry.contents(event.getItemStack()))lines.add(net.createplant.thermal.FluidState.describe(fluid));
         if (lines.isEmpty()) {
             var model = MoleculeStructures.forItem(event.getItemStack());
-            if (model != null) lines = List.of(Component.translatable(ChemicalReadout.KEY + "item_formula", model.formula()).withStyle(ChatFormatting.AQUA));
+            if (model != null) lines.add(Component.translatable(ChemicalReadout.KEY + "item_formula", model.formula()).withStyle(ChatFormatting.AQUA));
         }
         if (!lines.isEmpty()) event.getToolTip().addAll(Math.min(1, event.getToolTip().size()), lines);
     }
@@ -53,6 +54,7 @@ public final class FluidItemTooltips {
         var fluid = FluidItemChemistry.normalize(stack);
         var lines = new ArrayList<>(FluidItemChemistry.formulaLines(fluid));
         if (fluid.isEmpty()) return lines;
+        lines.add(net.createplant.thermal.FluidState.describe(fluid));
         if (MixtureHelper.isMixture(fluid)) {
             try { lines.addAll(MixtureGoggleHelper.describe(fluid)); }
             catch (IllegalArgumentException ignored) { }

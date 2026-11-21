@@ -9,8 +9,9 @@
   ],
   "results": [
     {
-      "id": "create_refinery_n_reactors:preheated_crude_oil",
-      "amount": 1000
+      "id": "createdieselgenerators:crude_oil",
+      "amount": 1000,
+      "components": {"create_refinery_n_reactors:temperature_level": 12, "create_refinery_n_reactors:pressure_level": 4}
     }
   ],
   "heat_requirement": "heated",

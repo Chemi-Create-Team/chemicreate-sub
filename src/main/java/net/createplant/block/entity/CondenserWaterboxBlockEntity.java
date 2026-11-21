@@ -105,7 +105,7 @@ public class CondenserWaterboxBlockEntity extends SmartBlockEntity implements IH
             @Override public int getTanks() { return 1; }
             @Override public FluidStack getFluidInTank(int index) { return index == 0 ? (input ? cold : hot).getFluid().copy() : FluidStack.EMPTY; }
             @Override public int getTankCapacity(int index) { return index == 0 ? CAPACITY : 0; }
-            @Override public boolean isFluidValid(int index, FluidStack stack) { return index == 0 && input && stack.is(Fluids.WATER) && FluidThermal.valid(stack); }
+            @Override public boolean isFluidValid(int index, FluidStack stack) { return index == 0 && input && net.createplant.thermal.FluidState.liquidWater(stack) && FluidThermal.valid(stack); }
             @Override public int fill(FluidStack stack, FluidAction action) { return formed && !isRemoved() && isFluidValid(0, stack) ? cold.fill(stack, action) : 0; }
             @Override public FluidStack drain(int amount, FluidAction action) { return formed && !isRemoved() && !input ? hot.drain(amount, action) : FluidStack.EMPTY; }
             @Override public FluidStack drain(FluidStack stack, FluidAction action) { return formed && !isRemoved() && !input ? hot.drain(stack, action) : FluidStack.EMPTY; }

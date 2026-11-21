@@ -46,15 +46,18 @@ public class SeasonalPlantGameTests {
 
     @GameTest(template = "test_empty")
     public static void warmingRatePreservesVolumesAndProgressAcrossReload(GameTestHelper h) {
-        var cold = new FluidStack(Fluids.WATER, 1000);var fast = new TankHeating();var slow = new TankHeating();
-        var a = List.of(cold.copy());var b = List.of(cold.copy());
-        fast.tick(a, true, 1.2);slow.tick(b, true, .8);
-        for (int n = 0; n < 9; n++) {fast.tick(a, true, 1.2);slow.tick(b, true, .8);}
-        h.assertTrue(net.createplant.transport.FluidHazards.of(a.getFirst()).heat().ordinal() == net.createplant.transport.FluidHazards.of(b.getFirst()).heat().ordinal() + 1, "Summer-equivalent warming advances sooner than winter without changing the material");
-        var saved = new net.minecraft.nbt.CompoundTag();slow.write(saved, h.getLevel().registryAccess());var restored = new TankHeating();restored.read(saved, h.getLevel().registryAccess());
-        h.assertTrue(restored.progress() == slow.progress(), "Fractional heating work survives save/reload");
-        for (int n = 0; n < 4; n++) restored.tick(b, true, .8);
-        h.assertTrue(net.createplant.transport.FluidHazards.of(a.getFirst()).heat() == net.createplant.transport.FluidHazards.of(b.getFirst()).heat() && a.getFirst().getAmount() == 1000 && b.getFirst().getAmount() == 1000, "The same single grade is reached and both water volumes remain finite");h.succeed();
+        var water = new FluidStack(Fluids.WATER, 1000);
+        var fluids = List.of(water);
+        var heater = new TankHeating();
+        for (int n = 0; n < 4; n++) heater.tick(fluids, true);
+        h.assertTrue(FluidState.temperature(water) == 8 && heater.progress() == 40, "No change before fifty ticks");
+        var saved = new net.minecraft.nbt.CompoundTag();
+        heater.write(saved, h.getLevel().registryAccess());
+        var restored = new TankHeating();
+        restored.read(saved, h.getLevel().registryAccess());
+        restored.tick(fluids, true);
+        h.assertTrue(FluidState.temperature(water) == 9 && water.getAmount() == 1000, "Heating resumes after reload with no volume change");
+        h.succeed();
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 100)

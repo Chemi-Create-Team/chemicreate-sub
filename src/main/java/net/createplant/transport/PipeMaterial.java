@@ -22,7 +22,7 @@ public enum PipeMaterial {
     /** Fired clay stoneware: proof against acids, hot ones included, but too brittle for pressure. */
     CERAMIC(Grade.Heat.HOT,Grade.Heat.COLD,Grade.Pressure.ATMOSPHERIC,Corrosion.ACID,Corrosion.HOT_ACID),
     /** The pressure valves: an alloy body with acid-proof trim. */
-    VALVE(Grade.Heat.VERY_HOT,Grade.Heat.CRYOGENIC,Grade.Pressure.HIGH,Corrosion.ACID);
+    VALVE(Grade.Heat.VERY_HOT,Grade.Heat.CRYOGENIC,Grade.Pressure.ULTRA_HIGH,Corrosion.ACID);
 
     /** The hottest and coldest grades and the highest pressure grade the material carries. */
     public final Grade.Heat hottest, coldest;
@@ -42,7 +42,6 @@ public enum PipeMaterial {
     /** What patches a worn pipe of this material: a plate, an ingot or the resin of it. */
 
     public String incompatibility(FluidHazards.Properties fluid) {
-        if (fluid.gas() && this!=VALVE) return "safe";
         if (!resists(fluid.corrosion())) return "corrosion";
         if (fluid.heat().compareTo(hottest)>0) return this==RESIN || this==PVC?"softening":"overheat";
         if (fluid.heat().compareTo(coldest)<0) return "brittle";
@@ -50,20 +49,15 @@ public enum PipeMaterial {
         return "safe";
     }
     public boolean carries(net.neoforged.neoforge.fluids.FluidStack stack) {
-        if (!net.createplant.mixture.MixtureHelper.isMixture(stack))
-            return this!=VALVE && !stack.isEmpty() && stack.getFluidType().isLighterThanAir() || carries(FluidHazards.of(stack));
-        return (net.createplant.mixture.MixtureHelper.isMixableLiquid(stack) || net.createplant.mixture.MixtureHelper.isMixableGas(stack))
-            && net.createplant.mixture.MixtureHelper.components(stack).stream().allMatch(this::carries);
+        return problem(stack).equals("safe");
     }
     public boolean carries(FluidHazards.Properties fluid) { return incompatibility(fluid).equals("safe"); }
-    /** Why a fluid wears this material, or "safe"; a mixture wears it as its worst constituent does. */
     public String problem(net.neoforged.neoforge.fluids.FluidStack stack) {
-        if (stack.isEmpty()) return "safe";
-        if (net.createplant.mixture.MixtureHelper.isMixture(stack)) {
-            for (var part : net.createplant.mixture.MixtureHelper.components(stack)) { String reason=problem(part);if (!reason.equals("safe")) return reason; }
-            return "safe";
-        }
-        return this!=VALVE && stack.getFluidType().isLighterThanAir() ? "safe" : incompatibility(FluidHazards.of(stack));
+        if(stack.isEmpty())return "safe";
+        if(net.createplant.mixture.MixtureHelper.isMixture(stack)
+            && !net.createplant.mixture.MixtureHelper.isMixableGas(stack)
+            && !net.createplant.mixture.MixtureHelper.isMixableLiquid(stack))return "fluid";
+        return incompatibility(FluidHazards.of(stack));
     }
     /** The material of a pipe block, Create's own or this mod's; null for anything that is not a pipe, such as a pump or a tank. */
     public static PipeMaterial pipe(BlockState state) {
@@ -79,12 +73,10 @@ public enum PipeMaterial {
         if (state.getBlock() instanceof net.createplant.block.MaterialPumpBlock pump) return pump.material();
         return state.is(com.simibubi.create.AllBlocks.MECHANICAL_PUMP.get()) ? COPPER : null;
     }
-    /** Liquid material ratings, alongside the shared gas behaviour. */
     public void describe(java.util.List<net.minecraft.network.chat.Component> lines) {
-        lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.carries",coldest.detail(),hottest.detail(),strongest.detail()));
+        lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.carries",coldest.label(),hottest.label(),strongest.label()));
         lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.resistance",
             resists(Corrosion.ACID) ? "○" : "×",resists(Corrosion.HOT_ACID) ? "○" : "×",resists(Corrosion.FLUORIDE) ? "○" : "×"));
-        if (this!=VALVE) lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.gases"));
     }
     public static PipeMaterial of(BlockState state) {
         if (state.getBlock() instanceof MaterialPipeBlock pipe) return pipe.material;

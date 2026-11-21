@@ -194,7 +194,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             @Override public FluidStack getFluidInTank(int slot) { return slot==0 && live() ? processGasContent(bank) : FluidStack.EMPTY; }
             @Override public int getTankCapacity(int slot) { return slot==0 ? bufferCapacity(tanks[bank]) : 0; }
             @Override public boolean isFluidValid(int slot,FluidStack stack) {
-                if (slot!=0 || !live() || stack.isEmpty() || !FluidMaterials.gas(stack.getFluid()) || !tanks[bank].isEmpty() && !FluidThermal.mixable(tanks[bank],stack)) return false;
+                if (slot!=0 || !live() || stack.isEmpty() || !net.createplant.thermal.FluidState.gas(stack) || !tanks[bank].isEmpty() && !FluidThermal.mixable(tanks[bank],stack)) return false;
                 // A giver must always accept its own rejected gas back, including when it was drained completely.
                 if (!initial.isEmpty() && FluidThermal.mixable(initial,stack)) return true;
                 if (!inputTank(bank) || !new Port(0,tanks.length,true,true,epoch).isFluidValid(bank,stack)) return false;
@@ -608,7 +608,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (r.catalyst()!=Items.AIR) return 0;
         int count=sections;
         for (int i=0;i<r.inputs().size();i++) {
-            if (!ThermalStreams.accepts(tanks[i],r.inputs().get(i))) return 0;
+            if (!r.accepts(i,tanks[i])) return 0;
             count=Math.min(count,tanks[i].getAmount()/requiredAmount(r,i));
         }
         for (int i=0;i<r.outputs().size();i++) {
@@ -617,8 +617,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             count=Math.min(count,(bufferCapacity(out)-stored.getAmount())/out.getAmount());
         }
         long netGas=0;
-        for (int i=0;i<r.outputs().size();i++) if (FluidMaterials.gas(r.outputs().get(i).getFluid())) netGas+=r.outputs().get(i).getAmount();
-        for (int i=0;i<r.inputs().size();i++) if (FluidMaterials.gas(r.inputs().get(i).getFluid())) netGas-=requiredAmount(r,i);
+        for (int i=0;i<r.outputs().size();i++) if (net.createplant.thermal.FluidState.gas(r.outputs().get(i))) netGas+=r.outputs().get(i).getAmount();
+        for (int i=0;i<r.inputs().size();i++) if (net.createplant.thermal.FluidState.gas(r.inputs().get(i))) netGas-=requiredAmount(r,i);
         if (netGas>0 && count>0) {
             int fits=(int)Math.min(count,Math.max(0,gasRoom())/netGas);
             if (fits==0) gasBlocked=true;
@@ -628,12 +628,12 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
     /** How much gas the process may hold in all its buffers together; a lidded vessel bounds it by its volume. */
     protected int processGasLimit() { return Integer.MAX_VALUE; }
-    private static long gasIn(FluidStack[] fluids) { long total=0;for (var fluid:fluids) if (FluidMaterials.gas(fluid.getFluid())) total+=fluid.getAmount();return total; }
+    private static long gasIn(FluidStack[] fluids) { long total=0;for (var fluid:fluids) if (net.createplant.thermal.FluidState.gas(fluid)) total+=fluid.getAmount();return total; }
     /** The gas that still fits beside what the process buffers hold. */
     protected long processGas() { return gasIn(tanks); }
     public int gasRoom() { return (int)Math.max(0,Math.min(Integer.MAX_VALUE,processGasLimit()-gasIn(tanks))); }
-    private int gasRoomFor(FluidStack stack) { return FluidMaterials.gas(stack.getFluid()) ? gasRoom() : Integer.MAX_VALUE; }
-    private static int bufferCapacity(FluidStack fluid) { return FluidMaterials.gas(fluid.getFluid()) ? CAPACITY*64 : CAPACITY; }
+    private int gasRoomFor(FluidStack stack) { return net.createplant.thermal.FluidState.gas(stack) ? gasRoom() : Integer.MAX_VALUE; }
+    private static int bufferCapacity(FluidStack fluid) { return net.createplant.thermal.FluidState.gas(fluid) ? CAPACITY*64 : CAPACITY; }
     private void setStatus(String reason,boolean work) { setStatus(reason,work,false); }
     private void setStatus(String reason,boolean work,boolean measured) {
         if (!work) ProductionMonitor.limitedBy(this, switch (reason) {
@@ -675,7 +675,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             if (!formed) text.add(Component.translatable(KEY+"fault",fault.getX(),fault.getY(),fault.getZ()));
             text.add(Component.translatable(KEY+"batch",batchName(),scale,Math.round(progress),cycleTicks()));
             for (int i=0;i<tanks.length;i++) if (!tanks[i].isEmpty()) text.add(Component.translatable(KEY+(inputTank(i) ? "input" : "output"),tanks[i].getHoverName(),tanks[i].getAmount(),
-                net.createplant.thermal.FluidMaterials.gas(tanks[i].getFluid()) ? CAPACITY*64 : CAPACITY));
+                net.createplant.thermal.FluidState.gas(tanks[i]) ? CAPACITY*64 : CAPACITY));
             for (int i=0;i<CHARGE_SLOTS;i++) if (!charge.getStackInSlot(i).isEmpty()) text.add(Component.translatable(KEY+(i<FEED_SLOTS ? "item_input" : "item_output"),charge.getStackInSlot(i).getHoverName(),charge.getStackInSlot(i).getCount()));
             return true;
         } finally { net.createplant.compat.display.MachineReadings.compact(text); }
@@ -718,13 +718,13 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             if (module()==ReactorModule.STIRRED) return feedFits(stack);
             if (module()==ReactorModule.ABSORBER && reactionFluid(stack)) return true;
             int index=first+tank;
-            for (ProcessRecipe r:ProcessRecipe.all()) if (r.module()==module().process && index<r.inputs().size() && ThermalStreams.accepts(stack,r.inputs().get(index))) return true;
+            for (ProcessRecipe r:ProcessRecipe.all()) if (r.module()==module().process && index<r.inputs().size() && r.accepts(index,stack)) return true;
             return false;
         }
         @Override public int fill(FluidStack stack,FluidAction action) {
             if (!live() || !input || stack.isEmpty()) return 0;
             for (int i=0;i<count;i++) if (isFluidValid(i,stack) && (tanks[first+i].isEmpty() || FluidThermal.mixable(tanks[first+i],stack))) {
-                int amount=Math.min(gasRoomFor(stack),Math.min(stack.getAmount(),Math.max(0,(net.createplant.thermal.FluidMaterials.gas(stack.getFluid()) ? CAPACITY*64 : CAPACITY)-tanks[first+i].getAmount())));
+                int amount=Math.min(gasRoomFor(stack),Math.min(stack.getAmount(),Math.max(0,(net.createplant.thermal.FluidState.gas(stack) ? CAPACITY*64 : CAPACITY)-tanks[first+i].getAmount())));
                 if (amount>0 && action.execute()) { tanks[first+i]=FluidThermal.add(tanks[first+i],stack,amount);changed(); }
                 return amount;
             }

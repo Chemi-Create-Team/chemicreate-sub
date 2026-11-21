@@ -74,6 +74,9 @@ public final class PlantFluid {
                         return CEWetProcessing.slurry(fluid.source.get()) ? CreatePlant.location("block/wet_processing/slurry_flow") : ResourceLocation.withDefaultNamespace("block/water_flow");
                     }
                     @Override public int getTintColor() { return fluid.color; }
+                    @Override public int getTintColor(FluidStack stack) { return net.createplant.client.FluidStateVisuals.tint(stack,fluid.color); }
+                    @Override public ResourceLocation getStillTexture(FluidStack stack) { return net.createplant.client.FluidStateVisuals.texture(stack,getStillTexture()); }
+                    @Override public ResourceLocation getFlowingTexture(FluidStack stack) { return net.createplant.client.FluidStateVisuals.texture(stack,getFlowingTexture()); }
                 }, fluid.type);
             }
         }

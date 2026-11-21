@@ -7,6 +7,8 @@ import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEPetroFluids;
 import net.createplant.registry.CEWorldFluids;
 import net.createplant.thermal.FluidThermal;
+import net.createplant.thermal.FluidIdentity;
+import net.createplant.thermal.FluidState;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,6 +36,7 @@ public class WorldLiquidGameTests {
     public static void everyRegisteredLiquidHasAPlaceableFullBucket(GameTestHelper h) {
         BlockPos pos = h.absolutePos(new BlockPos(2, 3, 2));
         for (var entry : CEWorldFluids.entries()) {
+            if(FluidIdentity.legacy(entry.fluid().get()))continue;
             FluidStack fluid = new FluidStack(entry.fluid().get(), 1000);
             h.assertTrue(!FluidHazards.of(fluid).gas(), entry.name() + " is a liquid");
             ItemStack bucket = FluidUtil.getFilledBucket(fluid);
@@ -69,9 +72,12 @@ public class WorldLiquidGameTests {
     }
 
     @GameTest(template = "test_empty")
-    public static void placingSourcesDiscardsHeatAndPickingUpUsesLocalAmbient(GameTestHelper h) {
+    public static void unrepresentableStateCannotBePlacedAndDefaultStateCanBePickedUp(GameTestHelper h) {
         BlockPos pos = h.absolutePos(new BlockPos(2, 3, 2));
-        FluidStack acid = FluidThermal.at(new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 1000), 353.15);
+        var acid=new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(),1000);
+        var hot=CEWorldFluids.bucket(FluidState.with(acid,9,4));
+        h.assertTrue(!((ProcessBucketItem)hot.getItem()).emptyContents(null,h.getLevel(),pos,null,hot) && h.getLevel().getFluidState(pos).isEmpty(),
+            "A placed source cannot discard a nondefault temperature");
         ItemStack filled = CEWorldFluids.bucket(acid);
         ((ProcessBucketItem) filled.getItem()).emptyContents(null, h.getLevel(), pos, null, filled);
         var block = (WorldLiquidBlock) h.getLevel().getBlockState(pos).getBlock();
@@ -79,7 +85,7 @@ public class WorldLiquidGameTests {
             "A plain bucket cannot recover a corrosive source, including a dispenser");
         ItemStack recovered = block.pickupAlloy(h.getLevel(), pos, h.getLevel().getBlockState(pos));
         FluidStack pickedAcid = FluidUtil.getFluidContained(recovered).orElseThrow();
-        h.assertTrue(Math.abs(FluidThermal.kelvin(pickedAcid) - 293) < .001,
+        h.assertTrue(FluidState.temperature(pickedAcid)==8,
             "An alloy bucket assigns the nominal fluid temperature to a world source");
         FluidStack oil = FluidThermal.at(new FluidStack(CEPetroFluids.NAPHTHA.get(), 1000), 321.15);
         ItemStack oilBucket = CEWorldFluids.bucket(oil);
@@ -87,8 +93,8 @@ public class WorldLiquidGameTests {
         block = (WorldLiquidBlock) h.getLevel().getBlockState(pos).getBlock();
         recovered = block.pickupBlock(null, h.getLevel(), pos, h.getLevel().getBlockState(pos));
         FluidStack pickedOil = FluidUtil.getFluidContained(recovered).orElseThrow();
-        h.assertTrue(Math.abs(FluidThermal.kelvin(pickedOil) - 293) < .001,
-            "Placed oil also discards its previous temperature and is recovered at its nominal temperature");
+        h.assertTrue(FluidState.temperature(pickedOil)==8,
+            "Placed oil is recovered at its default temperature");
         h.succeed();
     }
 
@@ -148,7 +154,7 @@ public class WorldLiquidGameTests {
         activate(h, acidPos);
         FluidStack picked = FluidUtil.getFluidContained(alloy.getItem(0)).orElseThrow();
         h.assertTrue(picked.is(CEChlorAlkali.CAUSTIC_SODA.get())
-            && Math.abs(FluidThermal.kelvin(picked) - 293) < .001,
+            && FluidState.temperature(picked)==8,
             "The alloy dispenser recovers an acid source at the nominal fluid temperature");
 
         BlockPos pourPos = waterPos.south(8);
@@ -160,8 +166,8 @@ public class WorldLiquidGameTests {
         activate(h, pourPos);
         FluidStack recovered = FluidUtil.getFluidContained(poured.getItem(0)).orElseThrow();
         h.assertTrue(h.getLevel().getFluidState(pourPos.east()).isEmpty()
-            && Math.abs(FluidThermal.kelvin(recovered) - 293) < .001,
-            "Dispensing then recovering discards the old temperature and consumes the world source");
+            && FluidState.temperature(recovered)==8,
+            "Dispensing and recovering default-state liquid consumes the world source");
 
         BlockPos wrongPos = waterPos.south(12);
         var iron = dispenser(h, wrongPos, new ItemStack(Items.BUCKET));

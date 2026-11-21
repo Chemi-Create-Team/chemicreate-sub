@@ -25,11 +25,11 @@ public final class Grade {
     }
 
     public enum Pressure {
-        ATMOSPHERIC, PRESSURISED, HIGH;
+        VACUUM, ATMOSPHERIC, PRESSURISED, HIGH, ULTRA_HIGH;
 
         /** The grade a pressure falls in: below 2 bar, below 20 bar, and above. */
-        public static Pressure of(double bar) { return bar < 2 ? ATMOSPHERIC : bar < 20 ? PRESSURISED : HIGH; }
-        public int storageRatio() { return switch(this) { case ATMOSPHERIC -> 1;case PRESSURISED -> 16;case HIGH -> 64; }; }
+        public static Pressure of(double bar) { return bar < .5 ? VACUUM : bar < 2 ? ATMOSPHERIC : bar < 20 ? PRESSURISED : bar < 200 ? HIGH : ULTRA_HIGH; }
+        public int storageRatio() { return switch(this) { case VACUUM, ATMOSPHERIC -> 1;case PRESSURISED -> 16;case HIGH, ULTRA_HIGH -> 64; }; }
 
         public Component label() { return Component.translatable("grade." + CreatePlant.MOD_ID + ".pressure." + name().toLowerCase(Locale.ROOT)); }
         /** The name with the range it stands for, such as "Ambient (10 to 100 °C)". */

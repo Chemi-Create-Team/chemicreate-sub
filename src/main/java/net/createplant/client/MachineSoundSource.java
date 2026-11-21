@@ -199,6 +199,6 @@ record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<Stea
         if (be instanceof IndustrialDispatchBlockEntity dispatch) return dispatch.status().equals("running") ? Kind.DISPATCH : null;
         var flow = gasFlow(be);
         if (flow == null || flow.flowBand() == 0) return null;
-        return flow.pressureBand() == net.createplant.thermal.Grade.Pressure.HIGH.ordinal() ? Kind.HIGH_PRESSURE_GAS : Kind.PRESSURISED_GAS;
+        return flow.pressureBand() >= net.createplant.thermal.Grade.Pressure.HIGH.ordinal() ? Kind.HIGH_PRESSURE_GAS : Kind.PRESSURISED_GAS;
     }
 }

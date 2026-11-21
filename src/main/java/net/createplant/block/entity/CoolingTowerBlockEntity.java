@@ -126,11 +126,19 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
         int maximum = maximumFlow();
         ProductionMonitor.plan(this, maximum * 20d, 0, 0);
         if(tanks[0].isEmpty() && tanks[2].isEmpty()){status="feed";ProductionMonitor.limitedBy(this, status);return;}
-        var recipe=net.createplant.thermal.ThermalStreams.cooling(tanks[0].getFluid());
-        int feed = Math.min(maximum, tanks[0].getFluidAmount());
-        if(recipe!=null && tanks[0].getFluid().is(net.createplant.registry.CEProcessFluids.WARM_WATER.get())){
-            int count=Math.min(feed,tanks[1].fill(recipe.result(tanks[0].getFluid(),feed),IFluidHandler.FluidAction.SIMULATE));
-            if(count>0){var product=recipe.result(tanks[0].getFluid(),count);tanks[0].drain(count,IFluidHandler.FluidAction.EXECUTE);ProductionMonitor.produced(this, tanks[1].fill(product,IFluidHandler.FluidAction.EXECUTE), 0, 0);flow=count;watts=count*400d;setChanged();}
+        FluidStack hot=tanks[0].getFluid();
+        int feed=Math.min(maximum,hot.getAmount());
+        if(net.createplant.thermal.FluidState.liquidWater(hot)) {
+            var change=net.createplant.thermal.PhaseChange.transfer(hot,net.createplant.thermal.FluidState.AMBIENT,
+                net.createplant.thermal.FluidState.pressure(hot));
+            int count=change.fitting(change.batches(feed),tanks[1]);
+            if(count>0) {
+                flow=count*change.consumed();
+                tanks[0].drain(flow,IFluidHandler.FluidAction.EXECUTE);
+                ProductionMonitor.produced(this,tanks[1].fill(change.output(count),IFluidHandler.FluidAction.EXECUTE),0,0);
+                watts=flow*400d;
+                setChanged();
+            }
         }
         ProductionMonitor.limitedBy(this, flow < feed ? "output" : feed < maximum ? "feed" : "rated");
         if(!tanks[2].isEmpty()){
@@ -146,7 +154,7 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
             @Override public int getTanks() { return 1; }
             @Override public FluidStack getFluidInTank(int tank) { return tank == 0 ? tanks[index].getFluid().copy() : FluidStack.EMPTY; }
             @Override public int getTankCapacity(int tank) { return tank == 0 ? CAPACITY : 0; }
-            @Override public boolean isFluidValid(int tank, FluidStack fluid) { return tank == 0 && (index==0 ? fluid.is(net.createplant.registry.CEProcessFluids.WARM_WATER.get()) : index==2 && fluid.is(Fluids.WATER)); }
+            @Override public boolean isFluidValid(int tank, FluidStack fluid) { return tank == 0 && (index==0 ? net.createplant.thermal.FluidState.liquidWater(fluid) && net.createplant.thermal.FluidState.temperature(fluid)>net.createplant.thermal.FluidState.AMBIENT : index==2 && net.createplant.thermal.FluidState.liquidWater(fluid)); }
             @Override public int fill(FluidStack fluid, FluidAction action) { return ready() && isFluidValid(0, fluid) ? tanks[index].fill(fluid, action) : 0; }
             @Override public FluidStack drain(int amount, FluidAction action) { return ready() && index == 1 ? tanks[index].drain(amount, action) : FluidStack.EMPTY; }
             @Override public FluidStack drain(FluidStack fluid, FluidAction action) { return ready() && index == 1 ? tanks[index].drain(fluid, action) : FluidStack.EMPTY; }

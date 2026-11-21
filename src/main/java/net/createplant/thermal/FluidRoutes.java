@@ -65,8 +65,8 @@ public final class FluidRoutes {
         if (path.isEmpty()) return;
         var properties = FluidHazards.of(fluid);
         var pressure = properties.pressure();
-        boolean audible = pressure != Grade.Pressure.ATMOSPHERIC && (properties.gas() || fluid.getFluidType().isLighterThanAir());
-        boolean highPressureSteam = pressure == Grade.Pressure.HIGH && SteamGrades.of(fluid) != null;
+        boolean audible = pressure != Grade.Pressure.ATMOSPHERIC && properties.gas();
+        boolean highPressureSteam = pressure.compareTo(Grade.Pressure.HIGH)>=0 && SteamGrades.of(fluid) != null;
         for (var at : path) {
             if (!level.hasChunkAt(at)) continue;
             var be = level.getBlockEntity(at);

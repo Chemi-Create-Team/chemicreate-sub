@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = CreativeSmartFluidTank.class, remap = false)
 public abstract class CreativeTankMixtureMixin extends SmartFluidTank {
     protected CreativeTankMixtureMixin(int capacity, Consumer<FluidStack> changed) { super(capacity, changed); }
-    @Unique private static boolean createPlant$validSample(FluidStack fluid) { return !MixtureHelper.isMixture(fluid) || MixtureHelper.isMixableLiquid(fluid); }
+    @Unique private static boolean createPlant$validSample(FluidStack fluid) { return !MixtureHelper.isMixture(fluid) || MixtureHelper.isMixableLiquid(fluid) || MixtureHelper.isMixableGas(fluid); }
     @Override public boolean isFluidValid(FluidStack fluid) { return createPlant$validSample(fluid) && super.isFluidValid(fluid); }
     @Inject(method = "fill", at = @At("HEAD"), cancellable = true)
     private void createPlant$rejectInvalidFill(FluidStack fluid, FluidAction action, CallbackInfoReturnable<Integer> cir) { if (!createPlant$validSample(fluid)) cir.setReturnValue(0); }

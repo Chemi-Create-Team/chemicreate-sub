@@ -11,8 +11,12 @@ import java.util.function.Supplier;
 
 public final class CEThermal {
     private static final DeferredRegister<DataComponentType<?>> COMPONENTS=DeferredRegister.create(Registries.DATA_COMPONENT_TYPE,CreatePlant.MOD_ID);
-    public static final Supplier<DataComponentType<Integer>> HEAT_GRADE=COMPONENTS.register("heat_grade",()->DataComponentType.<Integer>builder()
+    public static final net.neoforged.neoforge.registries.DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> HEAT_GRADE=COMPONENTS.register("heat_grade",()->DataComponentType.<Integer>builder()
         .persistent(Codec.intRange(0,4)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
+    public static final Supplier<DataComponentType<Integer>> TEMPERATURE=COMPONENTS.register("temperature_level",()->DataComponentType.<Integer>builder()
+        .persistent(Codec.intRange(0,16)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
+    public static final Supplier<DataComponentType<Integer>> PRESSURE=COMPONENTS.register("pressure_level",()->DataComponentType.<Integer>builder()
+        .persistent(Codec.intRange(0,16)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
     public static final Supplier<DataComponentType<Boolean>> EXPANDED_STEAM=COMPONENTS.register("expanded_steam",()->DataComponentType.<Boolean>builder()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
     public static final Supplier<DataComponentType<Integer>> SUSPENDED_IMPURITY=COMPONENTS.register("suspended_impurity",()->DataComponentType.<Integer>builder()

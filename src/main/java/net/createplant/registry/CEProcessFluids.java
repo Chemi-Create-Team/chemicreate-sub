@@ -95,7 +95,7 @@ public final class CEProcessFluids {
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name, int color) {
         return new PlantFluid(TYPES, FLUIDS, name, color, () -> FluidType.Properties.create()
             .descriptionId("fluid." + CreatePlant.MOD_ID + "." + name).supportsBoating(false)
-            .temperature(net.createplant.transport.FluidHazards.named(name).kelvin())
+            .temperature((int) Math.round(net.createplant.transport.FluidHazards.named(name).kelvin()))
             .density(net.createplant.transport.FluidHazards.named(name).gas()?-1:name.equals("liquid_nitrogen")?808:1000), UnaryOperator.identity()).source;
     }
 }

@@ -860,9 +860,9 @@
     "zh_cn": "输入至少16 RPM，停机时检查传动轴与出口。"
   },
   "reciprocating_compressor.setting": {
-    "en_us": "Compressed air takes up one sixteenth of its starting volume. Two stages make high-pressure hydrogen.",
-    "ja_jp": "加圧空気の体積は、常圧の16分の1になります。高圧水素には2段の圧縮機を使います。",
-    "zh_cn": "加压后，空气体积缩小到常压时的十六分之一。高压氢气需要两级压缩。"
+    "en_us": "One stage raises pressure by four levels. Two stages take atmospheric gas to high pressure. Gas amounts are measured at atmospheric pressure.",
+    "ja_jp": "圧縮機1段で圧力が4レベル上がります。常圧から高圧には2段使います。気体の量は常圧換算です。",
+    "zh_cn": "压缩一级升高四档。常压到高压需要两级。气体流量以常压换算。"
   },
   "guide.flow_regulation.title": {
     "en_us": "Flow regulator",
@@ -1120,9 +1120,9 @@
     "zh_cn": "箭头指向出口。"
   },
   "guide.pressure_valves.step_3": {
-    "en_us": "A supported gas changes down one pressure grade. Its amount stays the same.",
-    "ja_jp": "対応するガスは圧力が一段下がります。量は変わりません。",
-    "zh_cn": "支持的气体降低一个压力等级，数量不变。"
+    "en_us": "The reducer lowers pressure by four levels, down to vacuum. The amount changes only if the phase changes.",
+    "ja_jp": "減圧弁は圧力を4レベル下げ、真空で止まります。相が変わる場合だけ量が換算されます。",
+    "zh_cn": "减压阀将压力降低四档，最低到真空。只有相变时才换算数量。"
   },
   "guide.pressure_valves.step_4": {
     "en_us": "Use a second reducer to go from pressurised to atmospheric.",
@@ -1130,9 +1130,9 @@
     "zh_cn": "再通过一个减压阀，将加压降为常压。"
   },
   "guide.pressure_valves.step_5": {
-    "en_us": "Fluids without a conversion pass through unchanged. Pump the outlet onward.",
-    "ja_jp": "対応表にない流体はそのまま通ります。出口側もポンプで送ります。",
-    "zh_cn": "无对应转换的流体保持原样，出口也用泵输送。"
+    "en_us": "The reducer leaves liquid and gas already at the lowest pressure unchanged. Pump the outlet onward.",
+    "ja_jp": "液体や最低圧力になった気体はそのまま通ります。出口側もポンプで送ります。",
+    "zh_cn": "液体和已处于最低压力的气体直接通过。出口也用泵输送。"
   },
   "horizontal_tank.title": {
     "en_us": "Horizontal fluid tank",
@@ -2865,9 +2865,9 @@
     "zh_cn": "冷媒制造1　制造防冻液"
   },
   "guide.manufacturing_refrigeration.step_1": {
-    "en_us": "A driven radiator condenses ammonia gas into liquid ammonia. Keep both ports clear.\n%s → %s",
-    "ja_jp": "駆動したラジエーターでアンモニアガスを液体アンモニアに変えます。両方の口を接続します。\n%s → %s",
-    "zh_cn": "有动力的散热器将氨气冷凝为液氨，保持两端畅通。\n%s → %s"
+    "en_us": "A driven radiator drops one level per pass until ambient. This pass cools steam to liquid water.\n%s → %s",
+    "ja_jp": "駆動したラジエーターは常温まで1回に1段冷却します。この例では蒸気が水になります。\n%s → %s",
+    "zh_cn": "驱动散热器每次降温一档，最低为常温。这里的蒸汽冷却成水。\n%s → %s"
   },
   "guide.manufacturing_refrigeration.step_2": {
     "en_us": "In the exchanger, liquid ammonia becomes gas while the other stream is cooled. The two streams stay separate.\n%s → %s",
@@ -2875,9 +2875,9 @@
     "zh_cn": "换热器中液氨变为气体，同时冷却另一股流体，两路保持分离。\n%s → %s"
   },
   "guide.manufacturing_refrigeration.step_3": {
-    "en_us": "Return ammonia gas to the radiator to recover liquid coolant. Use a pump on each route.\n%s → %s",
-    "ja_jp": "アンモニアガスをラジエーターへ戻し、液体冷媒を回収します。各経路をポンプで送ります。\n%s → %s",
-    "zh_cn": "将氨气送回散热器，回收液态冷媒，各路使用泵输送。\n%s → %s"
+    "en_us": "Use the radiator to bring warm process water down to ambient. To liquefy ammonia, use an exchanger with a colder stream.\n%s → %s",
+    "ja_jp": "温水はラジエーターで常温まで戻せます。アンモニアを液化するには、さらに冷たい流体を熱交換器に通します。\n%s → %s",
+    "zh_cn": "散热器可以将温水降至常温。需要液化氨时，请使用更冷的流体作为换热介质。\n%s → %s"
   },
   "guide.manufacturing_refrigeration.step_4": {
     "en_us": "The same exchanger can liquefy chlorine with liquid ammonia. Check both input and output types in JEI.\n%s → %s",
@@ -3440,9 +3440,9 @@
     "zh_cn": "面向正面，从左口供水、右口排出温排水。及时排出液化产物和温排水。"
   },
   "helium_cold_box.liquid": {
-    "en_us": "Take the liquid from below into insulated pipes and cryogenic tanks. Shaft work pays for every batch.",
-    "ja_jp": "下面から保冷配管と極低温タンクへ液体を取り出します。各バッチで回転仕事を消費します。",
-    "zh_cn": "从底面将液体送入保温管道和低温储罐。每批都消耗轴功。"
+    "en_us": "The cold box lowers nitrogen, oxygen or helium to the level at which each becomes liquid. Any amount less than one liquid mB remains in the inlet.",
+    "ja_jp": "窒素・酸素・ヘリウムをそれぞれ液体になる温度まで下げます。液体1 mBに満たない分は入口に残ります。",
+    "zh_cn": "将氮、氧或氦冷却至液化温度。不足一毫桶液体的余量留在入口。"
   },
   "helium_cold_box.check": {
     "en_us": "Goggles show grade, output and status. Check gas, shaft capacity, cooling water and both outlets when stopped.",
@@ -3755,14 +3755,14 @@
     "zh_cn": "沿直线延长至2～12格，外壳及两端盖自动连接。"
   },
   "guide.heat_exchanger.step_2": {
-    "en_us": "Connect the tube end faces and shell top ports. Opposite inlet positions give 1.5 times the throughput.",
-    "ja_jp": "管側は両端の端面、胴側は両端の上面へ接続します。入口を逆側にすると処理量が1.5倍になります。",
-    "zh_cn": "连接管侧端面与壳侧顶部接口。两侧入口相反时处理量为1.5倍。"
+    "en_us": "Connect the tube end faces and shell top ports. Equal amounts pass through both circuits, regardless of which fluid enters each side.",
+    "ja_jp": "管側は両端の端面、胴側は両端の上面へ接続します。流体はどちら側でもよく、両系統を同量ずつ処理します。",
+    "zh_cn": "连接管侧端面与壳侧顶部。两路可以注入任意流体，按相同的量处理。"
   },
   "guide.heat_exchanger.step_3": {
-    "en_us": "Longer units, counterflow and a higher coolant flow cool more. Use goggles to check both outlet temperatures.",
-    "ja_jp": "長さと対向流、冷媒の流量で冷却が変わります。ゴーグルで両系統の出口温度を確認できます。",
-    "zh_cn": "换热器长度、逆流和冷却介质流量会影响冷却。戴护目镜可查看两路出口温度。"
+    "en_us": "Parallel flow reaches the average. Counterflow brings both streams to within one level of the opposite inlet. Goggles show both outlets.",
+    "ja_jp": "並行流は平均温度に、対向流は相手の入口温度の1段手前になります。ゴーグルで両方の出口を確認できます。",
+    "zh_cn": "并流取平均温度，逆流达到距另一入口一档的温度。护目镜可查看两路出口。"
   },
   "guide.jacketed_pipe.title": {
     "en_us": "Jacketed pipe",
@@ -3805,14 +3805,14 @@
     "zh_cn": "管程从两端端盖进出，壳程从两端顶面进出，与2×2型相同；反向流动即为逆流。"
   },
   "guide.jacketed_pipe.step_3": {
-    "en_us": "The hot stream and coolant convert as a pair. No shaft or temperature setting is needed.",
-    "ja_jp": "高温の流体と冷媒を一組ずつ変換します。回転動力や温度設定は不要です。",
-    "zh_cn": "高温流体与冷却介质成对转换。不需要传动轴或温度设置。"
+    "en_us": "The two streams move in equal batches. The direction determines whether both are averaged or approach each other’s inlet temperature.",
+    "ja_jp": "両系統を同量ずつ処理します。並行流と対向流では、出口温度の変わり方が異なります。",
+    "zh_cn": "两路等量处理。并流和逆流的出口温度计算方式不同。"
   },
   "guide.large_heat_exchanger.step_3": {
-    "en_us": "Each length unit handles twice as much as the smaller cross section. Counterflow also keeps its 1.5 times bonus.",
-    "ja_jp": "同じ長さの2×2断面の2倍を処理します。対向流の1.5倍補正も付きます。",
-    "zh_cn": "同样长度的处理量为2×2截面的两倍。逆流还可获得1.5倍加成。"
+    "en_us": "Length and cross section set throughput. Counterflow changes outlet temperature without increasing the flow rate.",
+    "ja_jp": "長さと断面で処理量が決まります。対向流にすると出口温度が変わりますが、流量は変わりません。",
+    "zh_cn": "长度和截面决定处理量。逆流改变出口温度，流量不变。"
   },
   "electric_pump.title": {
     "en_us": "A pump driven by electricity",

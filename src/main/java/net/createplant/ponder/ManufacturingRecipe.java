@@ -77,14 +77,25 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
         if (name.equals("cool_ammonia") || name.equals("condense_high_pressure_steam") || name.startsWith("exchange_")) {
             var source = new FluidStack(name.startsWith("exchange_olefins_") ? CEProcessFluids.HOT_OLEFINS.get()
                 : name.equals("exchange_chlorine_ammonia") ? CEChlorAlkali.CHLORINE.get() : name.equals("condense_high_pressure_steam") ? CEProcessFluids.HIGH_PRESSURE_STEAM.get() : CEFluids.AMMONIA_GAS.get(), 1);
-            var conversion = net.createplant.thermal.ThermalStreams.cooling(source);
-            source.setAmount(conversion.inputAmount());
-            if (name.equals("cool_ammonia") || name.equals("condense_high_pressure_steam")) return new ManufacturingRecipe(List.of(), List.of(source), List.of(),
-                List.of(conversion.result(source, 1)), ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
-            var coolant = new FluidStack(name.endsWith("_oxygen") ? CEFluids.LIQUID_OXYGEN.get() : CEProcessFluids.LIQUID_AMMONIA.get(), 1);
-            var evaporation = net.createplant.thermal.ThermalStreams.coolant(coolant);
-            return new ManufacturingRecipe(List.of(), List.of(source, coolant), List.of(),
-                List.of(conversion.result(source, 1), evaporation.result(coolant, 1)), ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
+            if(name.equals("cool_ammonia") || name.equals("condense_high_pressure_steam")) {
+                boolean high=name.equals("condense_high_pressure_steam");
+                source=net.createplant.thermal.FluidState.with(new FluidStack(Fluids.WATER,1000),high ? 12 : 10,high ? 12 : 4);
+                var step=net.createplant.thermal.PhaseChange.transfer(source,high ? 11 : 9,high ? 12 : 4);
+                return new ManufacturingRecipe(List.of(),List.of(source),List.of(),List.of(step.output(step.batches(1000))),
+                    ItemStack.EMPTY,ReactorModule.NONE,HeatCondition.NONE);
+            }
+            var coolant=new FluidStack(name.endsWith("_oxygen") ? CEFluids.LIQUID_OXYGEN.get() : CEProcessFluids.LIQUID_AMMONIA.get(),1);
+            if(name.equals("exchange_chlorine_ammonia"))coolant=net.createplant.thermal.FluidState.with(coolant,1,4);
+            int a=net.createplant.thermal.FluidState.temperature(source), b=net.createplant.thermal.FluidState.temperature(coolant);
+            if(!name.startsWith("exchange_olefins")) {
+                source=net.createplant.thermal.FluidState.with(source,6,4);
+                a=6;
+            }
+            var hot=net.createplant.thermal.PhaseChange.transfer(source,net.createplant.thermal.ThermalEquipment.outletLevel(a,b,false),net.createplant.thermal.FluidState.pressure(source));
+            var cold=net.createplant.thermal.PhaseChange.transfer(coolant,net.createplant.thermal.ThermalEquipment.outletLevel(b,a,false),net.createplant.thermal.FluidState.pressure(coolant));
+            int amount=hot.consumed()*cold.consumed();
+            return new ManufacturingRecipe(List.of(),List.of(source.copyWithAmount(amount),coolant.copyWithAmount(amount)),List.of(),
+                List.of(hot.output(amount/hot.consumed()),cold.output(amount/cold.consumed())), ItemStack.EMPTY,ReactorModule.NONE,HeatCondition.NONE);
         }
         if (name.equals("liquefy_nitrogen")) {
             var source = new FluidStack(CEFluids.NITROGEN_GAS.get(), 1);

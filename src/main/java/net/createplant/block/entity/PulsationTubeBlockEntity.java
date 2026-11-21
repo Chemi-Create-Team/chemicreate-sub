@@ -45,7 +45,7 @@ public class PulsationTubeBlockEntity extends PlantFluidTankBlockEntity {
         var at=root.getBlockPos();int first=axis.choose(at.getX(),at.getY(),at.getZ());
         return side.getAxisDirection()==Direction.AxisDirection.NEGATIVE ? mine==first : mine==first+root.getHeight()-1;
     }
-    public float pressureDial(){var root=getControllerBE();if(root==null || root.getTankInventory().isEmpty())return 0;return (FluidHazards.of(root.getTankInventory().getFluid()).pressure().ordinal()+1)/3f;}
+    public float pressureDial(){var root=getControllerBE();if(root==null || root.getTankInventory().isEmpty())return 0;return net.createplant.thermal.FluidState.pressure(root.getTankInventory().getFluid())/16f;}
     @Override public void tick(){super.tick();if(level!=null && level.isClientSide){previousDial=dial;dial+=(pressureDial()-dial)*.25f;}}
     @Override protected AABB createRenderBoundingBox(){return isController() ? new AABB(worldPosition).minmax(new AABB(TankCells.at(this,height-1,0,0))) : new AABB(worldPosition);}
     public static void registerCapabilities(RegisterCapabilitiesEvent event){event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CETransport.GAS_RECEIVER_ENTITY.get(),(be,side)->be.connects(side) ? GradeFluidTank.port(be,side,be.fluidCapability,()->be.connects(side)) : null);}

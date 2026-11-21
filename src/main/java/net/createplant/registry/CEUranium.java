@@ -67,7 +67,7 @@ public final class CEUranium {
         var hazard = FluidHazards.named(name);
         return new PlantFluid(TYPES, FLUIDS, name, color, () -> FluidType.Properties.create()
             .descriptionId("fluid." + CreatePlant.MOD_ID + "." + name).supportsBoating(false)
-            .temperature(hazard.kelvin()).density(hazard.gas() ? -1 : 1000), UnaryOperator.identity()).source;
+            .temperature((int) Math.round(hazard.kelvin())).density(hazard.gas() ? -1 : 1000), UnaryOperator.identity()).source;
     }
 
     public static void register(IEventBus bus) {

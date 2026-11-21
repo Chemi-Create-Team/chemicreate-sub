@@ -280,7 +280,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         boolean any = false;
         for (int i = 0; i < 2; i++) {
             if (tanks[i].isEmpty()) continue;
-            if (i >= recipe.inputs().size() || !FluidThermal.mixable(tanks[i], recipe.inputs().get(i))) return false;
+            if (i >= recipe.inputs().size() || !recipe.accepts(i,tanks[i])) return false;
             any = true;
         }
         return any;
@@ -442,8 +442,8 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
             if (!tanks[slot].isEmpty()) return FluidThermal.mixable(tanks[slot], stack);
             FluidStack other = tanks[1 - slot];
             for (var recipe : candidates()) {
-                if (slot >= recipe.inputs().size() || !FluidThermal.mixable(stack, recipe.inputs().get(slot))) continue;
-                if (other.isEmpty() || 1 - slot < recipe.inputs().size() && FluidThermal.mixable(other, recipe.inputs().get(1 - slot))) return true;
+                if (slot >= recipe.inputs().size() || !recipe.accepts(slot,stack)) continue;
+                if (other.isEmpty() || 1 - slot < recipe.inputs().size() && recipe.accepts(1-slot,other)) return true;
             }
             return false;
         }

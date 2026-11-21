@@ -11,8 +11,9 @@
       "item": "create_refinery_n_reactors:potash"
     },
     {
-      "type": "neoforge:single",
-      "fluid": "create_refinery_n_reactors:liquid_ammonia",
+      "type": "create_refinery_n_reactors:fluid_state",
+      "fluid": "create_refinery_n_reactors:ammonia_gas",
+      "phase": "liquid",
       "amount": 100
     },
     {

@@ -19,17 +19,14 @@ public final class MixtureGoggleHelper {
     }
     public static void appendSummary(List<Component> lines, FluidStack stack) {
         var full = describe(stack);if (full.isEmpty()) return;
-        lines.add(full.getFirst());int components = full.size() - 1, shown = Math.min(components, components > 3 ? 2 : 3);
+        lines.add(full.getFirst().copy().append(" · ").append(net.createplant.thermal.FluidState.describe(stack)));int components=full.size()-1, shown=Math.min(components,components>3 ? 2 : 3);
         for (int i = 1; i <= shown; i++) lines.add(full.get(i));
         if (shown < components) lines.add(Component.translatable("mixture.create_refinery_n_reactors.more", components - shown));
     }
 
-    /** Below this share of the whole, a gas is gathered with the other traces under "others". */
-    private static final double TRACE = .02;
-
     /**
      * Every gas in a tank, the largest first. Air counts as the mixture it is (MixtureHelper.airContents), so its nitrogen and oxygen
-     * join the same gases held elsewhere; each gas is one line with its share, and traces such as argon share one line.
+     * join the same gases held elsewhere; each gas is one line with its share.
      */
     public static boolean appendGasLayers(List<Component> lines, List<FluidStack> layers, int capacity) {
         var merged = new ArrayList<FluidStack>();
@@ -44,12 +41,9 @@ public final class MixtureGoggleHelper {
         merged.sort(Comparator.comparingInt(FluidStack::getAmount).reversed().thenComparing(gas -> net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(gas.getFluid())));
         lines.clear();
         lines.add(Component.translatable("mixture.create_refinery_n_reactors.gas_layers", String.format(Locale.ROOT, "%,d", total), String.format(Locale.ROOT, "%,d", capacity)));
-        long traces = 0;
-        for (var gas : merged) {
-            if (gas.getAmount() < total * TRACE) { traces += gas.getAmount();continue; }
-            lines.add(share(ChemicalReadout.name(gas), gas.getAmount(), total));
-        }
-        if (traces > 0) lines.add(share(Component.translatable("mixture.create_refinery_n_reactors.others"), traces, total));
+        var state=layers.size()==1 ? layers.getFirst() : null;
+        if(state!=null)lines.add(net.createplant.thermal.FluidState.describe(state));
+        for(var gas:merged)lines.add(share(ChemicalReadout.name(gas),gas.getAmount(),total));
         return true;
     }
 

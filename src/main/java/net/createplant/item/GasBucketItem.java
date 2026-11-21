@@ -3,10 +3,6 @@ package net.createplant.item;
 import com.simibubi.create.AllBlocks;
 import net.createplant.registry.CEProcessFluids;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +29,11 @@ public class GasBucketItem extends BucketItem {
             if (hit.getType() == HitResult.Type.BLOCK && level.getBlockState(hit.getBlockPos()).is(AllBlocks.BLAZE_BURNER.get()))
                 return InteractionResultHolder.fail(stack);
         }
-        releaseGas(level, player.blockPosition());
+        var fluid=StatefulBuckets.contents(stack,content);
+        if(!net.createplant.thermal.FluidState.gas(fluid))return InteractionResultHolder.fail(stack);
+        var surface=getPlayerPOVHitResult(level,player,ClipContext.Fluid.NONE);
+        var position=surface.getType()==HitResult.Type.BLOCK ? surface.getBlockPos().relative(surface.getDirection()) : player.blockPosition().above();
+        if(!level.mayInteract(player,position) || !StatefulBuckets.release(level,position,fluid))return InteractionResultHolder.fail(stack);
         if (player.getAbilities().instabuild) {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
@@ -42,25 +42,12 @@ public class GasBucketItem extends BucketItem {
         return InteractionResultHolder.sidedSuccess(result, level.isClientSide());
     }
 
-    @Override
-    public boolean emptyContents(Player player, Level level, BlockPos pos, BlockHitResult hitResult) {
-        releaseGas(level, pos);
-        return true;
+    @Override public boolean emptyContents(Player player,Level level,BlockPos pos,BlockHitResult hitResult) {
+        return emptyContents(player,level,pos,hitResult,new ItemStack(this));
     }
 
-    public boolean emptyContents(Player player, Level level, BlockPos pos, BlockHitResult hitResult, ItemStack stack) {
-        return emptyContents(player, level, pos, hitResult);
-    }
-
-    private static void releaseGas(Level level, BlockPos pos) {
-        if (level.isClientSide()) {
-            return;
-        }
-
-        level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, .45f, 1.65f);
-        if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.CLOUD, pos.getX() + .5, pos.getY() + 1, pos.getZ() + .5,
-                10, .35, .35, .35, .015);
-        }
+    @Override public boolean emptyContents(Player player,Level level,BlockPos pos,BlockHitResult hitResult,ItemStack stack) {
+        var fluid=StatefulBuckets.contents(stack,content);
+        return net.createplant.thermal.FluidState.gas(fluid) && StatefulBuckets.release(level,pos,fluid);
     }
 }

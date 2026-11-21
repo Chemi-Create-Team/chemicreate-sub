@@ -46,6 +46,10 @@ public class WorldLiquidOpenEndHandlerMixin {
             cir.setReturnValue(accepted);
             return;
         }
+        if(!resource.isEmpty() && !net.createplant.item.StatefulBuckets.defaultState(resource)) {
+            cir.setReturnValue(0);
+            return;
+        }
         if (!CEWorldFluids.isLiquid(resource.getFluid()) && !CEWorldFluids.isLiquid(held.getFluid())) return;
         WorldLiquidOpenEndAccess pipe = (WorldLiquidOpenEndAccess) this$0;
         if (resource.isEmpty() || !FluidThermal.valid(resource) || !held.isEmpty() && !FluidThermal.compatible(held, resource)

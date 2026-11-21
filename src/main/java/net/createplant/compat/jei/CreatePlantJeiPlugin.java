@@ -239,14 +239,31 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         }
         var air=List.of(f(CEProcessFluids.COMPRESSED_AIR.get(),DistillationProfile.AIR_BATCH*airBatches));
         registration.addRecipes(type("fractionating_column"),List.of(PlantProcess.fluids(air,fractions,note("air_separation",DistillationProfile.CYCLE_TICKS,perLiquid))));
-        List<PlantProcess> heating = new ArrayList<>(), cooling = new ArrayList<>();
-        heating.add(PlantProcess.fluids(List.of(f(CEPetroFluids.CRUDE_OIL.get(),1000)),List.of(f(CEProcessFluids.PREHEATED_CRUDE_OIL.get(),1000)),Component.translatable("create."+com.simibubi.create.content.processing.recipe.HeatCondition.HEATED.getTranslationKey())));
-        var exchanges=new ArrayList<PlantProcess>();
-        for(var hot:ThermalStreams.coolingInputs()){
-            var conversion=ThermalStreams.cooling(hot);var hotInput=hot.copyWithAmount(conversion.inputAmount()*100);
-            cooling.add(PlantProcess.fluids(List.of(hotInput),List.of(conversion.result(100)),note("cooling")));
-            for(var coolant:ThermalStreams.coolants()){
-                var cold=ThermalStreams.coolant(f(coolant,1));exchanges.add(PlantProcess.fluids(List.of(hotInput,f(coolant,cold.inputAmount()*100)),List.of(conversion.result(100),cold.result(100)),note("heat_exchange")));
+        List<PlantProcess> heating=new ArrayList<>(), cooling=new ArrayList<>(), exchanges=new ArrayList<>();
+        for(var fluid:List.of(Fluids.WATER,CEPetroFluids.CRUDE_OIL.get(),CEProcessFluids.SLIME_COOLANT.get())) {
+            var sample=f(fluid,1000);
+            var transfer=net.createplant.thermal.PhaseChange.transfer(sample,9,4);
+            int batches=transfer.batches(sample.getAmount());
+            if(batches>0)heating.add(PlantProcess.fluids(List.of(sample.copyWithAmount(batches*transfer.consumed())),
+                List.of(transfer.output(batches)),Component.translatable("fluid_state.create_refinery_n_reactors.jei.heating")));
+        }
+        for(var hot:List.of(f(CEProcessFluids.WARM_WATER.get(),1000),f(CEFluids.STEAM.get(),1000),
+            f(CEProcessFluids.HIGH_PRESSURE_STEAM.get(),1000),f(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),
+            f(CEProcessFluids.WARM_SLIME_COOLANT.get(),1000))) {
+            int temperature=net.createplant.thermal.FluidState.temperature(hot), pressure=net.createplant.thermal.FluidState.pressure(hot);
+            var coolingStep=net.createplant.thermal.PhaseChange.transfer(hot,temperature-1,pressure);
+            int batches=coolingStep.batches(hot.getAmount());
+            if(batches>0)cooling.add(PlantProcess.fluids(List.of(hot.copyWithAmount(batches*coolingStep.consumed())),
+                List.of(coolingStep.output(batches)),Component.translatable("fluid_state.create_refinery_n_reactors.jei.radiator")));
+            for(boolean counterflow:List.of(false,true)) {
+                var cold=net.createplant.thermal.FluidState.with(f(Fluids.WATER,1000),6,8);
+                int outHot=net.createplant.thermal.ThermalEquipment.outletLevel(temperature,6,counterflow);
+                int outCold=net.createplant.thermal.ThermalEquipment.outletLevel(6,temperature,counterflow);
+                var a=net.createplant.thermal.PhaseChange.transfer(hot,outHot,pressure);
+                var b=net.createplant.thermal.PhaseChange.transfer(cold,outCold,8);
+                if(1000%a.consumed()!=0 || 1000%b.consumed()!=0)continue;
+                exchanges.add(PlantProcess.fluids(List.of(hot,cold),List.of(a.output(a.batches(1000)),b.output(b.batches(1000))),
+                    Component.translatable("fluid_state.create_refinery_n_reactors.jei.exchange")));
             }
         }
         registration.addRecipes(type("heat_exchange"),exchanges);

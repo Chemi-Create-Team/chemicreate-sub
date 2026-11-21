@@ -40,7 +40,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public final class ProcessGoggles {
     private static final Set<String> BLOCKED = Set.of("heat", "preheat", "heat_required", "pressure", "catalyst", "mixed", "hatch", "structure",
-        "no_feed", "feed", "input", "output", "products_full", "gas_output", "power", "no_power", "speed", "no_speed", "overstressed", "rpm",
+        "no_feed", "temperature_delta", "feed", "input", "output", "products_full", "gas_output", "power", "no_power", "speed", "no_speed", "overstressed", "rpm",
         "blocked", "fouled", "redstone", "coolant", "no_coolant", "voltage", "incomplete", "unformed", "unloaded");
     private static final Direction[] FACES = Direction.values();
 
@@ -91,7 +91,8 @@ public final class ProcessGoggles {
         }
         var hazards = sneaking && stock != null ? ChemicalReadout.hazards(stock.fluid) : null;
         if (hazards != null && lines.size() < 4) lines.add(hazards);
-        for (var line : prior) if (line != nativeStock && lines.size() < 4 && (stopped == null || !line.getString().equals(stopped.getString()))) lines.add(line);
+        for (var line : prior) if (line != nativeStock && !line.equals(gauges) && lines.size() < 4
+            && (stopped == null || !line.getString().equals(stopped.getString()))) lines.add(line);
         MachineReadings.compact(lines);
     }
 
@@ -166,11 +167,8 @@ public final class ProcessGoggles {
             pressure = ChemicalReadout.pressure(Grade.Pressure.of(tower.pressure()), null, null);
         } else if (owner instanceof GasifierBlockEntity gas && gas.formed()) {
             heat = ChemicalReadout.processHeat(gas.heatingStage());
-        } else if (stock != null && !(source instanceof FluidPipeBlockEntity)) {
-            var grades = FluidHazards.of(stock.fluid);
-            var tank = owner instanceof FluidTankBlockEntity vessel ? TankGrade.of(vessel) : null;
-            heat = ChemicalReadout.heat(grades.heat(), tank == null ? null : tank.coldest, tank == null ? null : tank.hottest);
-            pressure = ChemicalReadout.pressure(grades.pressure(), tank == null ? null : Grade.Pressure.ATMOSPHERIC, tank == null ? null : tank.pressure);
+        } else if (stock != null) {
+            return net.createplant.thermal.FluidState.describe(stock.fluid);
         }
         return heat == null ? pressure : pressure == null ? heat : Component.empty().append(heat).append("   ").append(pressure);
     }

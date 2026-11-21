@@ -21,9 +21,10 @@ public enum SteamGrades {
     public double condenserHeatPerMb() { return joulesPerMb - workPerMb(true); }
     public double wearPerMb(){return wearPerMb;}
     public static SteamGrades of(FluidStack stack) {
-        if (stack.is(CEFluids.STEAM.get())) return stack.getOrDefault(CEThermal.EXPANDED_STEAM.get(), false) ? EXHAUST : ORDINARY;
-        if (stack.is(CEProcessFluids.HIGH_PRESSURE_STEAM.get())) return HIGH_PRESSURE;
-        return stack.is(CEProcessFluids.SUPERHEATED_STEAM.get()) ? SUPERHEATED : null;
+        if(!stack.is(Fluids.WATER) || !FluidState.gas(stack))return null;
+        if(stack.getOrDefault(CEThermal.EXPANDED_STEAM.get(),false))return EXHAUST;
+        if(FluidState.pressure(stack)>=12)return FluidState.temperature(stack)==FluidState.MAX ? SUPERHEATED : HIGH_PRESSURE;
+        return ORDINARY;
     }
     public Fluid fluid(){return switch(this){case ORDINARY,EXHAUST->CEFluids.STEAM.get();case HIGH_PRESSURE->CEProcessFluids.HIGH_PRESSURE_STEAM.get();case SUPERHEATED->CEProcessFluids.SUPERHEATED_STEAM.get();};}
     public FluidStack stack(int amount) {

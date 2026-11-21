@@ -21,7 +21,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public final class FluidChemicalRegistry {
     public enum ChemicalHazard { FLAMMABLE, CORROSIVE, TOXIC, HIGH_VISCOSITY, REFRIGERANT, OXIDIZER }
 
-    public record ChemicalFluidInfo(String formula, List<ChemicalHazard> hazards, boolean aqueous, String compositionKey) {
+    public record ChemicalFluidInfo(String formula, List<ChemicalHazard> hazards, boolean aqueous, String compositionKey, double vaporizationHeat) {
         public ChemicalFluidInfo {
             if (formula.isBlank()) throw new IllegalArgumentException("Empty fluid formula");
             hazards = List.copyOf(hazards);
@@ -54,7 +54,8 @@ public final class FluidChemicalRegistry {
                     .map(value -> ChemicalHazard.valueOf(value.getAsString())).toList();
                 entries.put(id, new ChemicalFluidInfo(data.get("formula").getAsString(), hazards,
                     data.has("aqueous") && data.get("aqueous").getAsBoolean(),
-                    data.has("composition") ? data.get("composition").getAsString() : ""));
+                    data.has("composition") ? data.get("composition").getAsString() : "",
+                    data.has("vaporization_heat_j_per_mol") ? data.get("vaporization_heat_j_per_mol").getAsDouble() : 0));
             }
         } catch (java.io.IOException e) {
             throw new IllegalStateException("Failed to read " + file, e);
@@ -93,6 +94,6 @@ public final class FluidChemicalRegistry {
                 if (components.size() > 3) formula += " + …";
             }
         }
-        return new ChemicalFluidInfo(formula, List.copyOf(hazards), info.aqueous(), info.compositionKey());
+        return new ChemicalFluidInfo(formula, List.copyOf(hazards), info.aqueous(), info.compositionKey(), info.vaporizationHeat());
     }
 }

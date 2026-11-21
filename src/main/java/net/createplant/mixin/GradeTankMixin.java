@@ -26,11 +26,15 @@ public abstract class GradeTankMixin implements net.createplant.block.entity.Tan
     private void createPlant$heatContents(CallbackInfo ci) {
         var owner=(FluidTankBlockEntity)(Object)this;var level=owner.getLevel();
         if(net.createplant.block.entity.TankBoiler.applies(owner) && (owner.isController() || createPlant$boiler!=null))createPlant$boiler().tick();
-        if(level==null || level.isClientSide() || !owner.isController() || Math.floorMod(level.getGameTime()+owner.getBlockPos().asLong(),20)!=0)return;
+        if(level==null || level.isClientSide() || !owner.isController() || owner.boiler.isActive()
+            || (net.createplant.block.entity.TankBoiler.applies(owner) || owner instanceof net.createplant.block.entity.HorizontalTankBlockEntity)
+                && net.createplant.thermal.FluidState.liquidWater(owner.getTankInventory().getFluid()) || Math.floorMod(level.getGameTime()+owner.getBlockPos().asLong(),net.createplant.thermal.TankHeating.INTERVAL)!=0)return;
         var base=new java.util.ArrayList<net.minecraft.core.BlockPos>();
         if(!owner.getTankInventory().isEmpty())net.createplant.block.TankCells.forEachBase(owner,base::add);
         int previous=createPlant$heating.progress();
-        if(createPlant$heating.tick(List.of(owner.getTankInventory().getFluid()),net.createplant.thermal.TankHeating.burnerBelow(level,base),net.createplant.thermal.SeasonalThermal.heating(level)))
+        var inventory=owner.getTankInventory();
+        java.util.function.ToIntFunction<FluidStack> capacity=inventory instanceof ThermalFluidTank thermal ? thermal::capacityFor : ignored->inventory.getCapacity();
+        if(createPlant$heating.tick(List.of(inventory.getFluid()),net.createplant.thermal.TankHeating.burnerBelow(level,base),capacity))
             owner.getTankInventory().setFluid(owner.getTankInventory().getFluid().copy());
         else if(previous!=createPlant$heating.progress())owner.setChanged();
     }
@@ -83,6 +87,7 @@ public abstract class GradeTankMixin implements net.createplant.block.entity.Tan
         var fluid = owner.getTankInventory().getFluid();
         lines.add(fluid.isEmpty() ? Component.literal("0 / " + volumeCapacity(owner) + " mB")
             : net.createplant.chemistry.ChemicalReadout.contents(fluid.copyWithAmount(gasVolume(owner)), volumeCapacity(owner)));
+        if(!fluid.isEmpty())lines.add(net.createplant.thermal.FluidState.describe(fluid));
         if(grade!=null)grade.describe(lines);
         net.createplant.transport.ContainmentWear.addWarning(owner,lines);
         if(net.createplant.block.entity.TankBoiler.applies(owner))net.createplant.block.entity.TankBoiler.of(owner).goggle(lines);

@@ -210,7 +210,7 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
     }
     private boolean validInput(int index, FluidStack fluid) {
         if (fluid.isEmpty()) return false;
-        if (index == 0 && (net.createplant.transport.FluidHazards.of(fluid).gas() || fluid.getFluidType().isLighterThanAir())) return false;
+        if (index == 0 && net.createplant.thermal.FluidState.gas(fluid)) return false;
         for (var holder : recipes()) if (holder.value().getFluidIngredients().size() > index && holder.value().getFluidIngredients().get(index).ingredient().test(fluid)) return true;
         return false;
     }

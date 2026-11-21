@@ -3,8 +3,6 @@ package net.createplant.thermal;
 import java.util.ArrayList;
 import java.util.List;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
-import net.createplant.registry.CEThermal;
-import net.createplant.transport.FluidHazards;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -13,9 +11,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-/** One discrete grade per ten seconds of uninterrupted heating of the same batch. */
+/** One temperature level every fifty ticks of uninterrupted heating of the same batch. */
 public final class TankHeating {
-    public static final int INTERVAL=20, DURATION=200;
+    public static final int INTERVAL=10, DURATION=50;
     private double ticks;
     private List<FluidStack> batch=List.of();
 
@@ -31,20 +29,31 @@ public final class TankHeating {
 
     public int progress() { return (int) ticks; }
 
-    public boolean tick(List<FluidStack> fluids,boolean heated) { return tick(fluids, heated, 1); }
+    public boolean tick(List<FluidStack> fluids,boolean heated) {
+        return tick(fluids,heated,ignored->Integer.MAX_VALUE);
+    }
 
-    public boolean tick(List<FluidStack> fluids,boolean heated,double efficiency) {
-        if(!heated || fluids.stream().noneMatch(f->!f.isEmpty() && FluidHazards.of(f).heat()!=Grade.Heat.VERY_HOT)) {
+    public boolean tick(List<FluidStack> fluids,boolean heated,java.util.function.ToIntFunction<FluidStack> capacity) {
+        if(!heated || fluids.stream().noneMatch(f->!f.isEmpty() && FluidState.temperature(f)<FluidState.MAX)) {
             ticks=0;batch=List.of();return false;
         }
-        if(!sameBatch(fluids)) {ticks=0;remember(fluids);return false;}
-        ticks+=INTERVAL*(Double.isFinite(efficiency) ? Math.clamp(efficiency,.5,1.5) : 1);
+        if(!sameBatch(fluids)) {ticks=0;remember(fluids);}
+        ticks+=INTERVAL;
         if(ticks<DURATION)return false;
+        boolean changed=false;
         for(var fluid:fluids) if(!fluid.isEmpty()) {
-            int heat=FluidHazards.of(fluid).heat().ordinal();
-            if(heat<Grade.Heat.VERY_HOT.ordinal())fluid.set(CEThermal.HEAT_GRADE.get(),heat+1);
+            int temperature=FluidState.temperature(fluid);
+            if(temperature==FluidState.MAX)continue;
+            var change=PhaseChange.transfer(fluid,temperature+1,FluidState.pressure(fluid));
+            int batches=change.batches(fluid.getAmount());
+            if(batches*change.consumed()!=fluid.getAmount() || (long)batches*change.produced()>capacity.applyAsInt(change.prototype()))continue;
+            fluid.setAmount(batches*change.produced());
+            fluid.applyComponents(change.prototype().getComponentsPatch());
+            changed=true;
         }
-        ticks-=DURATION;remember(fluids);return true;
+        ticks-=DURATION;
+        remember(fluids);
+        return changed;
     }
 
     private boolean sameBatch(List<FluidStack> fluids) {

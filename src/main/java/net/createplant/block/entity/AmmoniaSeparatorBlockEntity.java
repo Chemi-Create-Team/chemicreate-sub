@@ -42,7 +42,7 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     public static void register(RegisterCapabilitiesEvent event){event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CETransport.AMMONIA_SEPARATOR_ENTITY.get(),(be,side)->net.createplant.mixture.GasMixturePort.both(be.port(side),be));}
     private static final class Recipes { static final List<ProcessRecipe> ALL=ProcessRecipe.all().stream().filter(r->r.module()==ProcessModule.GAS_LIQUID_SEPARATOR).toList(); }
     public static List<ProcessRecipe> recipes(){return Recipes.ALL;}
-    private static ProcessRecipe recipe(FluidStack input){return recipes().stream().filter(r->input.is(r.inputs().getFirst().getFluid())).findFirst().orElse(null);}
+    private static ProcessRecipe recipe(FluidStack input){return recipes().stream().filter(r->r.accepts(0,input)).findFirst().orElse(null);}
     private void changed(){syncNeeded=true;setChanged();}
     public FluidStack feed(){return feed.getFluid().copy();}
     public FluidStack liquid(){return liquid.getFluid().copy();}
@@ -105,7 +105,7 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
         public int getTankCapacity(int slot){return !live() || slot<0 || slot>=getTanks() ? 0 : (mode==Mode.INLET ? input(slot) : output()).getCapacity();}
         public boolean isFluidValid(int slot,FluidStack stack){
             if(!live() || mode!=Mode.INLET || slot<0 || slot>2 || stack.isEmpty())return false;
-            if(slot!=0)return !root.chemicalContents() && (slot==1 ? stack.is(Fluids.WATER) || stack.is(CEProcessFluids.WARM_WATER.get()) || stack.is(CEProcessFluids.PRESSURISED_WATER.get()) : SteamGrades.of(stack)!=null);
+            if(slot!=0)return !root.chemicalContents() && (slot==1 ? net.createplant.thermal.FluidState.liquidWater(stack) : SteamGrades.of(stack)!=null);
             var recipe=recipe(stack);return recipe!=null && root.water.isEmpty() && root.steam.isEmpty() && (root.liquid.isEmpty() || FluidThermal.compatible(root.liquid.getFluid(),root.product(recipe,0,1,stack))) && (root.recycle.isEmpty() || FluidThermal.compatible(root.recycle.getFluid(),root.product(recipe,1,1,stack)));
         }
         public int fill(FluidStack stack,FluidAction action){for(int slot=0;slot<getTanks();slot++)if(isFluidValid(slot,stack))return input(slot).fill(stack,action);return 0;}

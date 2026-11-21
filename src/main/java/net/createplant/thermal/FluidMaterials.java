@@ -59,8 +59,10 @@ public final class FluidMaterials {
     private FluidMaterials(){ }
     private static String key(Fluid fluid){var id=BuiltInRegistries.FLUID.getKey(fluid);String path=id.getPath().replaceFirst("^flowing_","");return id.getNamespace().equals(CreatePlant.MOD_ID) ? path : id.getNamespace()+":"+path;}
     public static boolean gas(Fluid fluid){var id=BuiltInRegistries.FLUID.getKey(fluid);return id.getNamespace().equals(CreatePlant.MOD_ID) ? FluidHazards.named(key(fluid)).gas() : fluid.getFluidType().isLighterThanAir();}
-    public static double molarMass(FluidStack stack){if(net.createplant.chemistry.WasteGas.contaminated(stack))return net.createplant.chemistry.WasteGas.of(stack).molarMass();return TABLE.getOrDefault(key(stack.getFluid()),new double[]{.028014,373.15})[0];}
+    public static double molarMass(FluidStack stack){if(net.createplant.chemistry.WasteGas.contaminated(stack))return net.createplant.chemistry.WasteGas.of(stack).molarMass();return molarMass(stack.getFluid());}
+    public static double molarMass(Fluid fluid){var values=TABLE.get(key(fluid));return values==null ? .028014 : values[0];}
+    public static boolean known(Fluid fluid){return TABLE.containsKey(key(fluid));}
     public static double boilingOrder(FluidStack stack){return TABLE.getOrDefault(key(stack.getFluid()),new double[]{.028014,373.15})[1];}
-    public static double referenceDensity(Fluid fluid,double kelvin){return FluidHazards.of(new FluidStack(fluid,1)).bar()*1e5*molarMass(new FluidStack(fluid,1))/(R*kelvin)/1000;}
+    public static double referenceDensity(Fluid fluid,double kelvin){return FluidHazards.nominal(fluid).bar()*1e5*molarMass(fluid)/(R*kelvin)/1000;}
     public static double mass(FluidStack stack){return stack.isEmpty() ? 0 : stack.getAmount()/1000d*FluidThermal.properties(stack).kilogramsPerLitre();}
 }

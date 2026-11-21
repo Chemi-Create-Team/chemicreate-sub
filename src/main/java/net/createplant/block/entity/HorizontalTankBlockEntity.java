@@ -202,7 +202,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         };
     }
 
-    private static boolean boils(FluidStack fluid) { return fluid.is(Fluids.WATER) || fluid.is(CEProcessFluids.WARM_WATER.get()); }
+    private static boolean boils(FluidStack fluid) { return net.createplant.thermal.FluidState.liquidWater(fluid); }
 
     @Override public void tick() {
         super.tick();

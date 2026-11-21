@@ -87,28 +87,39 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
         if (!previous.equals(status) || wasFormed != formed || watts > 0) { setChanged();sendData(); }
     }
 
+    private static net.createplant.thermal.PhaseChange.Transfer liquefy(FluidStack input) {
+        if(!net.createplant.thermal.FluidState.gas(input) ||
+            !(input.is(CEFusion.HELIUM_GAS.get()) || input.is(net.createplant.registry.CEFluids.NITROGEN_GAS.get())
+                || input.is(net.createplant.registry.CEFluids.OXYGEN_GAS.get()))) return null;
+        int pressure=net.createplant.thermal.FluidState.pressure(input);
+        for(int level=net.createplant.thermal.FluidState.temperature(input)-1;level>=0;level--) {
+            if(!net.createplant.thermal.FluidState.gas(input,level,pressure))return net.createplant.thermal.PhaseChange.transfer(input,level,pressure);
+        }
+        return null;
+    }
+
     private void runCycle() {
-        var recipe=net.createplant.thermal.ThermalStreams.liquefaction(gas.getFluid());
+        var recipe=liquefy(gas.getFluid());
         int workPerLiquid=gas.getFluid().is(CEFusion.HELIUM_GAS.get()) ? 4000 : 1000;
         int maximum = (int) (256 * WATTS_PER_RPM * .25 / workPerLiquid);
-        if (recipe != null) ProductionMonitor.plan(this, recipe.result(gas.getFluid(), maximum).getAmount() * 4d, 0, 0);
+        if (recipe != null) ProductionMonitor.plan(this, recipe.output(maximum).getAmount() * 4d, 0, 0);
         if(Math.abs(getSpeed())<32 || isOverStressed()){status="speed";return;}
         if(level.hasNeighborSignal(worldPosition)){status="redstone";return;}
         if(recipe==null){status="feed";return;}
-        if(!water.getFluid().is(Fluids.WATER)){status="water";return;}
-        if(gas.getFluidAmount()<recipe.inputAmount()){status="feed";return;}
+        if(!net.createplant.thermal.FluidState.liquidWater(water.getFluid())){status="water";return;}
+        if(gas.getFluidAmount()<recipe.consumed()){status="feed";return;}
         int coolantPerLiquid=workPerLiquid/20;
         int power = (int)(Math.min(256,Math.abs(getSpeed()))*WATTS_PER_RPM*.25/workPerLiquid);
-        int feed = Math.min(gas.getFluidAmount()/recipe.inputAmount(), power);
+        int feed = Math.min(gas.getFluidAmount()/recipe.consumed(), power);
         int cooled = Math.min(feed,water.getFluidAmount()/coolantPerLiquid);
         int count = cooled;
-        count=Math.min(count,liquid.fill(recipe.result(gas.getFluid(),count),SIMULATE));
-        var discharge=net.createplant.thermal.ThermalStreams.coolant(water.getFluid()).result(water.getFluid(),Math.max(1,count*coolantPerLiquid));
+        count=Math.min(count,recipe.fitting(count,liquid));
+        var discharge=net.createplant.thermal.FluidState.with(water.getFluid(),9,net.createplant.thermal.FluidState.pressure(water.getFluid())).copyWithAmount(Math.max(1,count*coolantPerLiquid));
         count=Math.min(count,warm.fill(discharge,SIMULATE)/coolantPerLiquid);
         if(count<=0){status=water.getFluidAmount()<coolantPerLiquid ? "water" : "output";return;}
         lastStressApplied=(float)(count*workPerLiquid*4/Math.abs(getSpeed()));
         if(hasNetwork())getOrCreateNetwork().updateStressFor(this,lastStressApplied);if(isOverStressed()){status="speed";return;}
-        var product=recipe.result(gas.getFluid(),count);gas.drain(count*recipe.inputAmount(),EXECUTE);liquid.fill(product,EXECUTE);water.drain(count*coolantPerLiquid,EXECUTE);warm.fill(discharge.copyWithAmount(count*coolantPerLiquid),EXECUTE);
+        var product=recipe.output(count);gas.drain(count*recipe.consumed(),EXECUTE);liquid.fill(product,EXECUTE);water.drain(count*coolantPerLiquid,EXECUTE);warm.fill(discharge.copyWithAmount(count*coolantPerLiquid),EXECUTE);
         ProductionMonitor.produced(this, product.getAmount(), 0, 0);
         ProductionMonitor.limitedBy(this, count < cooled ? "output" : cooled < feed ? "water" : feed < power ? "feed" : power < maximum ? "speed" : "rated");
         watts=count*workPerLiquid*4;flow=count;status="running";
@@ -136,7 +147,7 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
             @Override public int getTanks() { return 1; }
             @Override public FluidStack getFluidInTank(int index) { return index == 0 && (lease==portEpoch && livePort()) ? tank.getFluid().copy() : FluidStack.EMPTY; }
             @Override public int getTankCapacity(int index) { return index == 0 && (lease==portEpoch && livePort()) ? tank.getCapacity() : 0; }
-            @Override public boolean isFluidValid(int index, FluidStack fluid) { return (lease==portEpoch && livePort()) && index == 0 && input && (helium ? net.createplant.thermal.ThermalStreams.liquefaction(fluid)!=null : fluid.is(Fluids.WATER)); }
+            @Override public boolean isFluidValid(int index, FluidStack fluid) { return (lease==portEpoch && livePort()) && index == 0 && input && (helium ? liquefy(fluid)!=null : net.createplant.thermal.FluidState.liquidWater(fluid)); }
             @Override public int fill(FluidStack fluid, FluidAction action) { return isFluidValid(0, fluid) ? tank.fill(fluid, action) : 0; }
             @Override public FluidStack drain(int amount, FluidAction action) { return input || !(lease==portEpoch && livePort()) ? FluidStack.EMPTY : tank.drain(amount, action); }
             @Override public FluidStack drain(FluidStack fluid, FluidAction action) { return input || !(lease==portEpoch && livePort()) ? FluidStack.EMPTY : tank.drain(fluid, action); }

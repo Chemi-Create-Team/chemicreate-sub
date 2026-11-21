@@ -2,16 +2,17 @@ package net.createplant.thermal;
 
 import net.createplant.block.entity.ProductionMonitor;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
-import net.createplant.mixture.MixtureHelper;
 import net.createplant.registry.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+
+import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
-/** Two finite streams converted together; inlet positions determine the counterflow speed bonus. */
+/** Two finite streams converted together; their inlet positions determine the direction of heat exchange. */
 public final class ThermalEquipment {
     private final ReactorMachineBlockEntity owner;
     private final ThermalFluidTank[] tanks=new ThermalFluidTank[4];
@@ -19,7 +20,7 @@ public final class ThermalEquipment {
     private final int[] rowInlet={-1,-1};
     private final int[] outletKelvin={0,0};
     private int coolantRow=-1;
-    private int clock,lastCold,lastHot;
+    private int clock,lastCold,lastHot,credit;
     public ThermalEquipment(ReactorMachineBlockEntity owner) {
         this.owner=owner;
         for(int i=0;i<4;i++)tanks[i]=new ThermalFluidTank(8000,f->owner.thermalChanged()) {
@@ -29,14 +30,14 @@ public final class ThermalEquipment {
     }
     public int coldFlow(){return lastCold;}
     public int hotFlow(){return lastHot;}
-    public int flowPerStep(){return (int)(owner.sections()*100*(counterflow() ? 1.5 : 1));}
+    public int flowPerStep(){return owner.sections()*100;}
     public void stop(){lastCold=lastHot=0;}
     public Component outletReading(int row) {
         double kelvin=outletKelvin[row]/100d;
         return Component.translatable("grade.create_refinery_n_reactors.exchange.outlet",
             Component.translatable("grade.create_refinery_n_reactors.exchange."+(coolantRow<0 ? "circuit" : coolantRow==row ? "coolant" : "process")),
-            kelvin==0 ? Component.literal("--") : Component.translatable("grade.create_refinery_n_reactors.exchange.degrees",
-                String.format(java.util.Locale.ROOT,"%.1f",kelvin-273.15),Grade.Heat.of(kelvin).label()),(row==0 ? lastCold : lastHot)/5d);
+            kelvin==0 ? Component.literal("--") : FluidState.temperatureName(FluidState.temperatureLevel(kelvin)),
+            (row==0 ? lastCold : lastHot)/5d);
     }
     public boolean counterflow(){return rowInlet[0]>=0 && rowInlet[1]>=0 && rowInlet[0]!=rowInlet[1];}
     public Component exchangeMode(){return Component.translatable("counterflow.create_refinery_n_reactors."+(counterflow() ? "counter" : "parallel"));}
@@ -52,11 +53,8 @@ public final class ThermalEquipment {
         return 0;
     }
     public ThermalFluidTank tank(int index) { return tanks[index]; }
-    private static boolean sensibleGas(FluidStack stack) {
-        return SteamCondensate.vapour(stack) || MixtureHelper.isMixture(stack) && MixtureHelper.gas(stack)
-            && Grade.Heat.of(FluidThermal.kelvin(stack)).compareTo(Grade.Heat.AMBIENT)>0;
-    }
-    private static boolean supported(FluidStack stack){return ThermalStreams.cooling(stack)!=null || ThermalStreams.coolant(stack)!=null || sensibleGas(stack);}
+    private static boolean supported(FluidStack stack){return !stack.isEmpty();}
+
     public IFluidHandler port(int index,boolean input,boolean output,boolean live) {
         long generation=owner.portGeneration();
         return new IFluidHandler() {
@@ -99,80 +97,78 @@ public final class ThermalEquipment {
             }
             @Override public FluidStack drain(FluidStack fluid,FluidAction action) {
                 if (!output()) return FluidStack.EMPTY;
-                return fluid.is(Fluids.WATER) && !condensate[row].isEmpty() ? condensate[row].drain(fluid.getAmount(),action) : tanks[index+1].drain(fluid,action);
+                return fluid.is(Fluids.WATER) && !condensate[row].isEmpty() ? condensate[row].drain(fluid,action) : tanks[index+1].drain(fluid,action);
             }
         };
     }
 
-    private record Exchange(FluidStack process, FluidStack coolant, FluidStack water, double processKelvin, double coolantKelvin) { }
-
-    static double effectiveness(int sections, boolean counterflow, double coolantPerTick) {
-        return 1-Math.exp(-sections*(counterflow ? .72 : .52)*(.60+.40*coolantPerTick/(coolantPerTick+20)));
+    public static int outletLevel(int own,int other,boolean opposing) {
+        if(opposing) return Math.abs(own-other)<=1 ? own : other+Integer.signum(own-other);
+        return (own+other+(own>other ? 1 : 0))/2;
     }
 
-    private Exchange exchange(FluidStack hot, FluidStack cold, ThermalStreams.Conversion process, ThermalStreams.Conversion coolant, int batches) {
-        double hotKelvin=FluidThermal.kelvin(hot), coldKelvin=FluidThermal.kelvin(cold);
-        double cooling=Math.max(0,hotKelvin-coldKelvin)*effectiveness(owner.sections(),counterflow(),coolant.inputAmount()*batches/5d);
-        double processKelvin=hotKelvin-cooling, coolantKelvin=coldKelvin+cooling*.35;
-        FluidStack product, water=FluidStack.EMPTY;
-        if (sensibleGas(hot)) {
-            var portion=MixtureHelper.portion(hot,batches);
-            var split=SteamCondensate.separate(portion,processKelvin,Integer.MAX_VALUE);
-            product=split.gas();water=split.water();
-        } else {
-            product=process.result(hot,batches);
-            if (product.is(CEProcessFluids.WATER_GAS.get()) && processKelvin<=SteamCondensate.BOILING_KELVIN) product.set(CEThermal.CONDENSATE.get(),true);
+    private static int gcd(int a,int b) {
+        while(b!=0) { int next=a%b; a=b; b=next; }
+        return a;
+    }
+
+    public void tick() {
+        if(++clock%5!=0)return;
+        lastCold=lastHot=0;
+        FluidStack first=tanks[0].getFluid(), second=tanks[2].getFluid();
+        if(first.isEmpty() || second.isEmpty()) {
+            credit=0;
+            owner.thermalStatus("two_streams",false);
+            return;
         }
-        return new Exchange(SteamCondensate.withTemperature(product,processKelvin),
-            SteamCondensate.withTemperature(coolant.result(cold,batches),coolantKelvin),water,processKelvin,coolantKelvin);
-    }
-
-    private boolean fits(int hotRow, Exchange result) {
-        return fits(tanks[hotRow*2+1],result.process()) && fits(tanks[(1-hotRow)*2+1],result.coolant()) && fits(condensate[hotRow],result.water());
-    }
-
-    private static boolean fits(ThermalFluidTank tank, FluidStack result) {
-        return result.isEmpty() || tank.fill(result,IFluidHandler.FluidAction.SIMULATE)==result.getAmount();
-    }
-
-    public void tick(){
-        if(++clock%5!=0)return;lastCold=lastHot=0;
-        for(int hot=0;hot<2;hot++){
-            int cold=1-hot;
-            var hotInput=tanks[hot*2].getFluid();var coldInput=tanks[cold*2].getFluid();
-            var process=ThermalStreams.cooling(hotInput);var coolant=ThermalStreams.coolant(coldInput);
-            boolean gas=sensibleGas(hotInput);
-            if((process==null && !gas) || coolant==null)continue;
-            int processInput=gas ? 1 : process.inputAmount();
-            int products=(gas ? 1 : process.outputAmount())+coolant.outputAmount();
-            int maximum=owner.sections()*150;
-            ProductionMonitor.plan(owner,maximum*products*4d,0,0);
-            int capacity=flowPerStep();
-            int feed=Math.min(capacity,Math.min(hotInput.getAmount()/processInput,coldInput.getAmount()/coolant.inputAmount()));
-            if(feed<=0){owner.thermalStatus("materials",false);return;}
-            int batches=feed;
-            var result=exchange(hotInput,coldInput,process,coolant,batches);
-            boolean space=fits(hot,result);
-            while(!space && batches>1) {
-                batches/=2;
-                result=exchange(hotInput,coldInput,process,coolant,batches);
-                space=fits(hot,result);
-            }
-            if(!space){owner.thermalStatus("output",false);return;}
-            ProductionMonitor.limitedBy(owner,batches<feed ? "output" : feed<capacity ? "feed" : capacity<maximum ? "counterflow" : "rated");
-            int hotAmount=processInput*batches,coldAmount=coolant.inputAmount()*batches;
-            tanks[hot*2].drain(hotAmount,IFluidHandler.FluidAction.EXECUTE);
-            tanks[cold*2].drain(coldAmount,IFluidHandler.FluidAction.EXECUTE);
-            if(!result.process().isEmpty())tanks[hot*2+1].fill(result.process(),IFluidHandler.FluidAction.EXECUTE);
-            tanks[cold*2+1].fill(result.coolant(),IFluidHandler.FluidAction.EXECUTE);
-            if(!result.water().isEmpty())condensate[hot].fill(result.water(),IFluidHandler.FluidAction.EXECUTE);
-            coolantRow=cold;
-            outletKelvin[hot]=(int)Math.round(result.processKelvin()*100);outletKelvin[cold]=(int)Math.round(result.coolantKelvin()*100);
-            lastCold=hot==0 ? hotAmount : coldAmount;lastHot=hot==0 ? coldAmount : hotAmount;
-            ProductionMonitor.produced(owner,products*batches,0,0);
-            owner.thermalStatus("exchange",true);owner.thermalChanged();return;
+        int a=FluidState.temperature(first), b=FluidState.temperature(second);
+        if(a==b) {
+            credit=0;
+            owner.thermalStatus("temperature_delta",false);
+            return;
         }
-        owner.thermalStatus(tanks[0].isEmpty() || tanks[2].isEmpty() ? "two_streams" : "materials",false);
+        int outA=outletLevel(a,b,counterflow()), outB=outletLevel(b,a,counterflow());
+        var changeA=PhaseChange.transfer(first,outA,FluidState.pressure(first));
+        var changeB=PhaseChange.transfer(second,outB,FluidState.pressure(second));
+        long common=(long)changeA.consumed()/gcd(changeA.consumed(),changeB.consumed())*changeB.consumed();
+        int rate=flowPerStep();
+        ProductionMonitor.plan(owner,rate*8d,0,0);
+        if(common>Math.min(first.getAmount(),second.getAmount())) {
+            credit=0;
+            owner.thermalStatus("materials",false);
+            return;
+        }
+        int quantum=(int)common;
+        credit=(int)Math.min(Integer.MAX_VALUE,Math.min(quantum+(long)rate-1,credit+(long)rate));
+        int feed=Math.min(credit,Math.min(first.getAmount(),second.getAmount()))/quantum;
+        if(feed==0) {
+            owner.thermalStatus("materials",false);
+            return;
+        }
+        int unitA=quantum/changeA.consumed(), unitB=quantum/changeB.consumed();
+        int limitA=changeA.fitting(Math.min(changeA.batches(first.getAmount()),feed*unitA),tanks[1])/unitA;
+        int limitB=changeB.fitting(Math.min(changeB.batches(second.getAmount()),feed*unitB),tanks[3])/unitB;
+        int batches=Math.min(limitA,limitB);
+        if(batches==0) {
+            owner.thermalStatus("output",false);
+            return;
+        }
+        FluidStack productA=changeA.output(batches*unitA), productB=changeB.output(batches*unitB);
+        int amount=batches*quantum;
+        tanks[0].drain(amount,EXECUTE);
+        tanks[2].drain(amount,EXECUTE);
+        tanks[1].fill(productA,EXECUTE);
+        tanks[3].fill(productB,EXECUTE);
+        credit=credit-amount;
+        if(batches<feed)credit=0;
+        coolantRow=a<b ? 0 : 1;
+        outletKelvin[0]=(int)Math.round(FluidState.kelvin(outA)*100);
+        outletKelvin[1]=(int)Math.round(FluidState.kelvin(outB)*100);
+        lastCold=lastHot=amount;
+        ProductionMonitor.limitedBy(owner,batches<feed ? "output" : amount<rate ? "feed" : "rated");
+        ProductionMonitor.produced(owner,productA.getAmount()+(double)productB.getAmount(),0,0);
+        owner.thermalStatus("exchange",true);
+        owner.thermalChanged();
     }
     public void write(CompoundTag tag, HolderLookup.Provider lookup) {
         tag.putIntArray("RowInlets",rowInlet);

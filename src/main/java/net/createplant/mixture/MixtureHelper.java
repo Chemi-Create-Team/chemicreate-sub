@@ -1,8 +1,14 @@
 package net.createplant.mixture;
 
 import java.util.Map;
+import java.util.TreeMap;
+import net.createplant.thermal.FluidIdentity;
+import net.createplant.thermal.FluidState;
+import net.createplant.thermal.FluidThermal;
+import net.createplant.registry.CEThermal;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.resources.ResourceLocation;
 import net.createplant.registry.CEMixtures;
-import net.createplant.transport.FluidHazards;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
@@ -29,47 +35,82 @@ public final class MixtureHelper {
             BuiltInRegistries.FLUID.getKey(CEMixtures.OTHER_GASES.get()), 10)).resized(amount);
     }
     private static Fluid source(Fluid fluid) { return fluid instanceof FlowingFluid flowing ? flowing.getSource() : fluid; }
-    /** A gas mixture rides the gas carrier and a liquid mixture the liquid one; gases and liquids never share a stack. */
     public static FluidStack createStack(MixtureContents contents, boolean unwrapIfPure) {
-        int total = contents.totalAmount();if (total == 0) return FluidStack.EMPTY;
-        int gases = 0;
-        for (var id : contents.amounts().keySet()) {
-            if (!BuiltInRegistries.FLUID.containsKey(id)) throw new IllegalArgumentException("Unknown mixture component " + id);
-            var fluid = BuiltInRegistries.FLUID.get(id);
-            if (fluid instanceof MixtureFluid || fluid.defaultFluidState().isEmpty()) throw new IllegalArgumentException("Invalid nested or empty mixture component " + id);
-            if (gasFluid(fluid)) gases++;
-        }
-        if (gases != 0 && gases != contents.amounts().size()) throw new IllegalArgumentException("A mixture cannot hold both gases and liquids");
-        if (unwrapIfPure && contents.amounts().size() == 1) return new FluidStack(BuiltInRegistries.FLUID.get(contents.amounts().keySet().iterator().next()), total);
-        var stack = new FluidStack(gases == 0 ? CEMixtures.CHEMICAL_MIXTURE.get() : CEMixtures.GAS_MIXTURE.get(), total);stack.set(CEMixtures.MIXTURE_CONTENTS.get(), contents);return stack;
+        return createStack(contents,MixtureData.EMPTY,unwrapIfPure);
     }
-    private static boolean gasFluid(Fluid fluid) { return FluidHazards.of(new FluidStack(fluid, 1)).gas() || fluid.getFluidType().isLighterThanAir(); }
-    /** A gas, pure or mixed. */
+
     public static boolean gas(FluidStack stack) {
-        if (stack.isEmpty()) return false;
-        return isMixture(stack) ? stack.getFluidType() == CEMixtures.GAS_TYPE.get() : gasFluid(stack.getFluid());
+        if(stack.isEmpty())return false;
+        return isMixture(stack) ? stack.getFluidType()==CEMixtures.GAS_TYPE.get() : FluidState.gas(stack);
     }
-    /** A gas mixture whose every component is a real gas, or a pure gas. */
+
     public static boolean isMixableGas(FluidStack stack) {
-        if (!gas(stack)) return false;
-        if (!isMixture(stack)) return true;
+        return gas(stack) && (!isMixture(stack) || validContents(stack));
+    }
+
+    private static boolean validContents(FluidStack stack) {
         try {
-            return extractContents(stack).amounts().keySet().stream().allMatch(id -> BuiltInRegistries.FLUID.containsKey(id) && !(BuiltInRegistries.FLUID.get(id) instanceof MixtureFluid)
-                && gasFluid(BuiltInRegistries.FLUID.get(id)));
+            return extractContents(stack).amounts().keySet().stream().allMatch(id ->
+                BuiltInRegistries.FLUID.containsKey(id) && !(BuiltInRegistries.FLUID.get(id) instanceof MixtureFluid));
         } catch (IllegalArgumentException error) { return false; }
     }
+
+    public static void migrateContents(FluidStack stack) {
+        if(!isMixture(stack) || stack.isEmpty())return;
+        var contents=stack.get(CEMixtures.MIXTURE_CONTENTS.get());
+        if(contents==null)return;
+        var patches=stack.getOrDefault(CEMixtures.MIXTURE_DATA.get(),MixtureData.EMPTY);
+        boolean oldKey=contents.amounts().keySet().stream().anyMatch(id->FluidIdentity.legacy(BuiltInRegistries.FLUID.get(id)));
+        if(!oldKey)return;
+        var migrated=parts(contents,patches);
+        writeComponents(stack,migrated);
+        applyAverageState(stack,migrated);
+    }
+
+    private static Map<ResourceLocation,FluidStack> parts(MixtureContents contents,MixtureData data) {
+        var parts=new TreeMap<ResourceLocation,FluidStack>();
+        for(var entry:contents.amounts().entrySet()) {
+            var id=entry.getKey();
+            if(!BuiltInRegistries.FLUID.containsKey(id))throw new IllegalArgumentException("Unknown mixture component "+id);
+            var fluid=BuiltInRegistries.FLUID.get(id);
+            if(fluid instanceof MixtureFluid || fluid.defaultFluidState().isEmpty())throw new IllegalArgumentException("Invalid mixture component "+id);
+            var part=new FluidStack(fluid.builtInRegistryHolder(),entry.getValue(),data.components().getOrDefault(id,DataComponentPatch.EMPTY));
+            parts.merge(BuiltInRegistries.FLUID.getKey(source(part.getFluid())),part,(first,second)->{
+                if(FluidThermal.mixable(first,second))return FluidThermal.mix(first,second,second.getAmount());
+                return first.copyWithAmount(Math.addExact(first.getAmount(),second.getAmount()));
+            });
+        }
+        return parts;
+    }
+
+    private static void writeComponents(FluidStack stack,Map<ResourceLocation,FluidStack> parts) {
+        var amounts=new TreeMap<ResourceLocation,Integer>();
+        var patches=new TreeMap<ResourceLocation,DataComponentPatch>();
+        parts.forEach((id,part)->{
+            amounts.put(id,part.getAmount());
+            patches.put(id,part.getComponentsPatch());
+        });
+        stack.set(CEMixtures.MIXTURE_CONTENTS.get(),new MixtureContents(amounts));
+        var data=new MixtureData(patches);
+        if(!data.components().isEmpty())stack.set(CEMixtures.MIXTURE_DATA.get(),data);
+        else stack.remove(CEMixtures.MIXTURE_DATA.get());
+    }
+
+    private static void applyAverageState(FluidStack stack,Map<ResourceLocation,FluidStack> parts) {
+        long temperature=0,pressure=0,amount=0;
+        for(var part:parts.values()) {
+            temperature+=(long)FluidState.temperature(part)*part.getAmount();
+            pressure+=(long)FluidState.pressure(part)*part.getAmount();
+            amount+=part.getAmount();
+        }
+        if(amount==0)return;
+        if(!stack.has(CEThermal.TEMPERATURE.get()))FluidState.setTemperature(stack,(int)((temperature+amount/2)/amount));
+        if(!stack.has(CEThermal.PRESSURE.get()))stack.set(CEThermal.PRESSURE.get(),(int)((pressure+amount/2)/amount));
+    }
+
     public static MixtureData data(FluidStack stack) {
         if (stack.isEmpty()) return MixtureData.EMPTY;
-        if (isMixture(stack)) {
-            var kept = stack.getOrDefault(CEMixtures.MIXTURE_DATA.get(), MixtureData.EMPTY).forContents(extractContents(stack));
-            var heat = stack.get(net.createplant.registry.CEThermal.HEAT_GRADE.get());if (heat == null) return kept;
-            var patches = new java.util.TreeMap<net.minecraft.resources.ResourceLocation, net.minecraft.core.component.DataComponentPatch>();
-            for (var id : extractContents(stack).amounts().keySet()) {
-                var part = new FluidStack(BuiltInRegistries.FLUID.get(id).builtInRegistryHolder(), 1, kept.components().getOrDefault(id, net.minecraft.core.component.DataComponentPatch.EMPTY));
-                part.set(net.createplant.registry.CEThermal.HEAT_GRADE.get(), heat);patches.put(id, part.getComponentsPatch());
-            }
-            return new MixtureData(patches);
-        }
+        if(isMixture(stack))return stack.getOrDefault(CEMixtures.MIXTURE_DATA.get(),MixtureData.EMPTY).forContents(extractContents(stack));
         var copy = stack.copy();net.createplant.nuclear.RadiationSources.stamp(copy);
         if (isAir(stack)) {
             var patches = new java.util.TreeMap<net.minecraft.resources.ResourceLocation, net.minecraft.core.component.DataComponentPatch>();
@@ -83,15 +124,31 @@ public final class MixtureHelper {
         return contents.amounts().entrySet().stream().map(entry -> new FluidStack(BuiltInRegistries.FLUID.get(entry.getKey()).builtInRegistryHolder(), entry.getValue(),
             data.components().getOrDefault(entry.getKey(), net.minecraft.core.component.DataComponentPatch.EMPTY))).toList();
     }
-    public static FluidStack createStack(MixtureContents contents, MixtureData data, boolean unwrap) {
-        var result = createStack(contents, unwrap);if (result.isEmpty()) return result;
-        if (isMixture(result)) {
-            var kept = data.forContents(contents);if (!kept.components().isEmpty()) result.set(CEMixtures.MIXTURE_DATA.get(), kept);
-        } else result.applyComponents(data.components().getOrDefault(contents.amounts().keySet().iterator().next(), net.minecraft.core.component.DataComponentPatch.EMPTY));
+    public static FluidStack createStack(MixtureContents contents,MixtureData data,boolean unwrap) {
+        return createStack(contents,data,unwrap,null);
+    }
+
+    private static FluidStack createStack(MixtureContents contents,MixtureData data,boolean unwrap,Boolean gasCarrier) {
+        int total=contents.totalAmount();
+        if(total==0)return FluidStack.EMPTY;
+        var parts=parts(contents,data);
+        boolean gaseous=gasCarrier!=null ? gasCarrier : gas(parts.values().iterator().next());
+        if(gasCarrier==null && parts.values().stream().anyMatch(part->gas(part)!=gaseous))
+            throw new IllegalArgumentException("A mixture cannot hold both gases and liquids");
+        if(unwrap && parts.size()==1) {
+            var single=parts.values().iterator().next();
+            if(gas(single)==gaseous)return single;
+        }
+        var result=new FluidStack(gaseous ? CEMixtures.GAS_MIXTURE.get() : CEMixtures.CHEMICAL_MIXTURE.get(),total);
+        writeComponents(result,parts);
+        applyAverageState(result,parts);
         return result;
     }
+
     public static FluidStack merge(FluidStack first, FluidStack second, boolean unwrap) {
-        if (first.isEmpty()) return createStack(extractContents(second), data(second), unwrap);
+        if(second.isEmpty())return first.copy();
+        if(first.isEmpty())return isMixture(second) ? second.copy() : createStack(extractContents(second),data(second),unwrap,gas(second));
+        if(gas(first)!=gas(second))throw new IllegalArgumentException("A mixture cannot hold both gases and liquids");
         var a = extractContents(first);var b = extractContents(second);var patches = new java.util.TreeMap<>(data(first).components());
         var incoming = data(second);
         for (var entry : b.amounts().entrySet()) {
@@ -104,25 +161,32 @@ public final class MixtureHelper {
             }
             patches.put(id, patch);
         }
-        return createStack(a.merge(b), new MixtureData(patches), unwrap);
+        var result=createStack(a.merge(b),new MixtureData(patches),unwrap,gas(first));
+        int temperature=FluidState.average(FluidState.temperature(first),first.getAmount(),FluidState.temperature(second),second.getAmount());
+        int pressure=FluidState.average(FluidState.pressure(first),first.getAmount(),FluidState.pressure(second),second.getAmount());
+        if(!isMixture(result) && FluidState.gas(result,temperature,pressure)!=gas(first))
+            result=createStack(a.merge(b),new MixtureData(patches),false,gas(first));
+        return FluidState.with(result,temperature,pressure);
     }
     public static boolean isMixableLiquid(FluidStack stack) {
-        if (stack.isEmpty()) return false;
-        if (!isMixture(stack)) return !FluidHazards.of(stack).gas() && !stack.getFluidType().isLighterThanAir();
-        try {
-            return extractContents(stack).amounts().entrySet().stream().allMatch(entry -> {
-                if (!BuiltInRegistries.FLUID.containsKey(entry.getKey())) return false;
-                var fluid = BuiltInRegistries.FLUID.get(entry.getKey());
-                return !(fluid instanceof MixtureFluid) && !fluid.defaultFluidState().isEmpty() && isMixableLiquid(new FluidStack(fluid, entry.getValue()));
-            });
-        } catch (IllegalArgumentException error) { return false; }
-    }
-    public static FluidStack portion(FluidStack stack, int amount) {
-        return isMixture(stack) ? createStack(extractContents(stack).split(amount).extracted(), data(stack), false) : stack.copyWithAmount(amount);
-    }
-    public static FluidStack remainder(FluidStack stack, int removed) {
-        if (!isMixture(stack)) return stack.copyWithAmount(stack.getAmount() - removed);
-        return createStack(extractContents(stack).split(removed).remaining(), data(stack), false);
+        return !stack.isEmpty() && !gas(stack) && (!isMixture(stack) || validContents(stack));
     }
 
+    public static FluidStack portion(FluidStack stack, int amount) {
+        return isMixture(stack) ? withContents(stack,extractContents(stack).split(amount).extracted()) : stack.copyWithAmount(amount);
+    }
+
+    public static FluidStack remainder(FluidStack stack, int removed) {
+        return isMixture(stack) ? withContents(stack,extractContents(stack).split(removed).remaining()) : stack.copyWithAmount(stack.getAmount()-removed);
+    }
+
+    private static FluidStack withContents(FluidStack original,MixtureContents contents) {
+        int amount=contents.totalAmount();
+        if(amount==0)return FluidStack.EMPTY;
+        var result=original.copyWithAmount(amount);
+        result.set(CEMixtures.MIXTURE_CONTENTS.get(),contents);
+        var patches=data(original).forContents(contents);
+        result.set(CEMixtures.MIXTURE_DATA.get(),patches.components().isEmpty() ? null : patches);
+        return result;
+    }
 }

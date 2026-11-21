@@ -11,7 +11,7 @@ public final class SteamCondensate {
     private SteamCondensate() { }
 
     public static boolean water(FluidStack stack) {
-        return stack.is(Fluids.WATER) && stack.getOrDefault(CEThermal.CONDENSATE.get(), false);
+        return FluidState.liquidWater(stack) && stack.getOrDefault(CEThermal.CONDENSATE.get(), false);
     }
 
     public static boolean vapour(FluidStack stack) {
@@ -40,18 +40,13 @@ public final class SteamCondensate {
         var water = amount == 0 ? FluidStack.EMPTY : new FluidStack(Fluids.WATER, amount);
         if (!water.isEmpty()) {
             water.set(CEThermal.CONDENSATE.get(), true);
-            water = withTemperature(water, Math.min(kelvin, 372.99));
+            water = withTemperature(water, Math.min(kelvin, FluidState.kelvin(9)));
         }
         return new Split(gas, water);
     }
 
     public static FluidStack withTemperature(FluidStack source, double kelvin) {
         if (source.isEmpty()) return source;
-        var result = source.copy();
-        var grade = Grade.Heat.of(kelvin);
-        var component = CEThermal.HEAT_GRADE.get();
-        result.remove(component);
-        if (MixtureHelper.isMixture(result) || Grade.Heat.of(FluidThermal.kelvin(result)) != grade) result.set(component, grade.ordinal());
-        return result;
+        return FluidState.with(source,FluidState.temperatureLevel(kelvin),FluidState.pressure(source));
     }
 }

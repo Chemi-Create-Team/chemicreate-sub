@@ -2,6 +2,7 @@ package net.createplant.transport;
 
 import java.util.Map;
 import net.createplant.CreatePlant;
+import net.createplant.thermal.FluidState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -12,7 +13,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public final class FluidHazards {
     /** How a fluid attacks walls: ordinary acids, hot acid leach liquors (stainless steel gives way; zirconium and resin hold), or fluorides (only nickel alloys hold). */
     public enum Corrosion { NONE, ACID, HOT_ACID, FLUORIDE }
-    public record Properties(int kelvin, int bar, Corrosion corrosion, boolean gas) {
+    public record Properties(double kelvin, double bar, Corrosion corrosion, boolean gas) {
         public boolean corrosive() { return corrosion != Corrosion.NONE; }
         public net.createplant.thermal.Grade.Heat heat() { return net.createplant.thermal.Grade.Heat.of(kelvin); }
         public net.createplant.thermal.Grade.Pressure pressure() { return net.createplant.thermal.Grade.Pressure.of(bar); }
@@ -71,24 +72,34 @@ public final class FluidHazards {
     private static Map.Entry<String, Properties> entry(String id,int k,int bar,boolean acid,boolean gas) {
         return Map.entry(id,new Properties(k,bar,acid ? STRONG.getOrDefault(id,Corrosion.ACID) : Corrosion.NONE,gas));
     }
-    public static Properties of(FluidStack fluid) {
+    public static Properties nominal(FluidStack fluid) {
         if (fluid.isEmpty()) return ORDINARY;
         if (net.createplant.mixture.MixtureHelper.isMixture(fluid)) {
-            int kelvin=0,bar=1;Corrosion corrosion=Corrosion.NONE;
-            for (var part : net.createplant.mixture.MixtureHelper.components(fluid)) {
-                var properties=of(part);kelvin=Math.max(kelvin,properties.kelvin());bar=Math.max(bar,properties.bar());
-                if(properties.corrosion().ordinal()>corrosion.ordinal())corrosion=properties.corrosion();
+            long heat=0,pressure=0,amount=0;
+            Corrosion corrosion=Corrosion.NONE;
+            if(fluid.has(net.createplant.registry.CEMixtures.MIXTURE_CONTENTS.get()))for(var part:net.createplant.mixture.MixtureHelper.components(fluid)) {
+                heat+=(long)FluidState.temperature(part)*part.getAmount();
+                pressure+=(long)FluidState.pressure(part)*part.getAmount();
+                amount+=part.getAmount();
+                var property=nominal(part.getFluid()).corrosion();
+                if(property.ordinal()>corrosion.ordinal())corrosion=property;
             }
-            return new Properties(Math.max(1,kelvin),bar,corrosion,net.createplant.mixture.MixtureHelper.gas(fluid));
+            int temperature=amount==0 ? FluidState.AMBIENT : (int)((heat+amount/2)/amount);
+            int pressureLevel=amount==0 ? FluidState.NORMAL_PRESSURE : (int)((pressure+amount/2)/amount);
+            return new Properties(FluidState.kelvin(temperature),FluidState.bar(pressureLevel),corrosion,net.createplant.mixture.MixtureHelper.gas(fluid));
         }
-        var id=BuiltInRegistries.FLUID.getKey(fluid.getFluid());
+        return nominal(fluid.getFluid());
+    }
+    public static Properties nominal(net.minecraft.world.level.material.Fluid fluid) {
+        var id=BuiltInRegistries.FLUID.getKey(fluid);
         String path=id.getPath();
         if (path.startsWith("flowing_")) path=path.substring(8);
-        var base=id.getNamespace().equals(CreatePlant.MOD_ID) ? named(path) : EXTERNAL.getOrDefault(id.getNamespace()+":"+path,ORDINARY);
-        Integer heat=fluid.get(net.createplant.registry.CEThermal.HEAT_GRADE.get());
-        if(heat==null)return base;
-        int kelvin=switch(Math.clamp(heat,0,4)){case 0->77;case 1->263;case 3->473;case 4->923;default->293;};
-        return new Properties(kelvin,base.bar(),base.corrosion(),base.gas());
+        return id.getNamespace().equals(CreatePlant.MOD_ID) ? named(path) : EXTERNAL.getOrDefault(id.getNamespace()+":"+path,ORDINARY);
+    }
+    public static Properties of(FluidStack fluid) {
+        if(fluid.isEmpty())return ORDINARY;
+        var properties=nominal(fluid);
+        return new Properties(FluidState.kelvin(FluidState.temperature(fluid)),FluidState.bar(FluidState.pressure(fluid)),properties.corrosion(),FluidState.gas(fluid));
     }
     public static Properties named(String path) { return SPECIAL.getOrDefault(path,ORDINARY); }
     private static final Map<String, Properties> EXTERNAL = new java.util.concurrent.ConcurrentHashMap<>();

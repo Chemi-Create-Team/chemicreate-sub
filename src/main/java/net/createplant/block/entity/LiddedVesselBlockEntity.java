@@ -389,7 +389,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (level == null || !isController()) return;
         if (!level.isClientSide && !isRemoved() && module()==ReactorModule.NONE && ReactorStructure.loaded(level,worldPosition))
             tickHeatOnlyReactions(height,!tankInventory.isEmpty());
-        if (!level.isClientSide && Math.floorMod(level.getGameTime()+worldPosition.asLong(),20)==0) heatContents();
+        if (!level.isClientSide && isController() && Math.floorMod(level.getGameTime()+worldPosition.asLong(),net.createplant.thermal.TankHeating.INTERVAL)==0) heatContents();
         if (!level.isClientSide && Math.floorMod(level.getGameTime()+worldPosition.asLong(),5)==0) updateDisplayedHeat();
         if (lastKnownPos == null) lastKnownPos = worldPosition;
         if (!lastKnownPos.equals(worldPosition)) { removeController(true);lastKnownPos = worldPosition; }
@@ -407,7 +407,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         var base=new java.util.ArrayList<BlockPos>();
         for(int x=0;x<width;x++)for(int z=0;z<width;z++)base.add(worldPosition.offset(x,0,z));
         int previous=heating.progress();
-        if(heating.tick(fluids,net.createplant.thermal.TankHeating.burnerBelow(level,base),net.createplant.thermal.SeasonalThermal.heating(level))) {
+        if(heating.tick(fluids,net.createplant.thermal.TankHeating.burnerBelow(level,base))) {
             onFluidStackChanged(tankInventory.getFluid());changed();
         } else if(previous!=heating.progress())setChanged();
     }

@@ -103,7 +103,7 @@ public final class ProcessPortInteraction {
         if (handler == null) return FluidStack.EMPTY;
         for (int slot = 0; slot < handler.getTanks(); slot++) {
             var stack = handler.getFluidInTank(slot);
-            if (stack.isEmpty() || FluidMaterials.gas(stack.getFluid()) || stack.getFluidType().isLighterThanAir()) continue;
+            if (stack.isEmpty() || net.createplant.thermal.FluidState.gas(stack)) continue;
             var drained = handler.drain(stack.copy(), action);
             if (!drained.isEmpty()) return drained;
         }

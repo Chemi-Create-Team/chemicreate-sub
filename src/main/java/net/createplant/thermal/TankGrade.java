@@ -40,10 +40,9 @@ public enum TankGrade {
         if (stack.isEmpty() || !FluidThermal.valid(stack)) return "fluid";
         if (net.createplant.mixture.MixtureHelper.isMixture(stack)) {
             if (!net.createplant.mixture.MixtureHelper.isMixableLiquid(stack) && !net.createplant.mixture.MixtureHelper.isMixableGas(stack)) return "fluid";
-            for (var part : net.createplant.mixture.MixtureHelper.components(stack)) { var reason = incompatibility(part);if (!reason.equals("safe")) return reason; }
-            return "safe";
+
         }
-        var properties=FluidHazards.of(stack);boolean gas=properties.gas() || stack.getFluidType().isLighterThanAir();
+        var properties=FluidHazards.of(stack);boolean gas=properties.gas();
         if (kind==Kind.GAS && !gas) return "liquid";
         if (kind==Kind.LIQUID && gas) return "gas";
         if (properties.corrosion()!=FluidHazards.Corrosion.NONE && !resistance.contains(properties.corrosion())) return "corrosion";
@@ -53,7 +52,7 @@ public enum TankGrade {
     }
 
     public void describe(List<Component> lines) {
-        lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.range",coldest.detail(),hottest.detail(),pressure.detail()));
+        lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.range",coldest.label(),hottest.label(),pressure.label()));
         lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.kind."+kind.name().toLowerCase(java.util.Locale.ROOT),
             Component.translatable("grade.create_refinery_n_reactors.tank."+(resistance.isEmpty() ? "no_acid" : "acid"))));
     }

@@ -9,8 +9,9 @@
         "amount": 150
       },
       {
-        "fluid": "create_refinery_n_reactors:compressed_hydrogen",
-        "amount": 250
+        "fluid": "create_refinery_n_reactors:hydrogen_gas",
+        "amount": 250,
+        "condition": {"phase": "gas", "min_pressure": 12}
       }
     ],
     "outputs": [
@@ -36,8 +37,9 @@
         "amount": 500
       },
       {
-        "fluid": "create_refinery_n_reactors:compressed_hydrogen",
-        "amount": 500
+        "fluid": "create_refinery_n_reactors:hydrogen_gas",
+        "amount": 500,
+        "condition": {"phase": "gas", "min_pressure": 12}
       }
     ],
     "outputs": [

@@ -78,12 +78,14 @@
     "ticks": 140,
     "inputs": [
       {
-        "fluid": "create_refinery_n_reactors:pressurised_carbon_monoxide",
-        "amount": 250
+        "fluid": "create_refinery_n_reactors:carbon_monoxide",
+        "amount": 250,
+        "condition": {"phase": "gas", "min_pressure": 8}
       },
       {
-        "fluid": "create_refinery_n_reactors:pressurised_hydrogen",
-        "amount": 500
+        "fluid": "create_refinery_n_reactors:hydrogen_gas",
+        "amount": 500,
+        "condition": {"phase": "gas", "min_pressure": 8}
       }
     ],
     "outputs": [
@@ -105,12 +107,14 @@
     "ticks": 110,
     "inputs": [
       {
-        "fluid": "create_refinery_n_reactors:pressurised_carbon_monoxide",
-        "amount": 250
+        "fluid": "create_refinery_n_reactors:carbon_monoxide",
+        "amount": 250,
+        "condition": {"phase": "gas", "min_pressure": 8}
       },
       {
-        "fluid": "create_refinery_n_reactors:pressurised_hydrogen",
-        "amount": 750
+        "fluid": "create_refinery_n_reactors:hydrogen_gas",
+        "amount": 750,
+        "condition": {"phase": "gas", "min_pressure": 8}
       }
     ],
     "outputs": [

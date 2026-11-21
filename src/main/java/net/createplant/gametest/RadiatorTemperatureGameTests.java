@@ -20,16 +20,27 @@ public class RadiatorTemperatureGameTests {
     }
     private static void run(RadiatorBlockEntity be){for(int i=0;i<5;i++)be.tick();}
     @GameTest(template="test_fractionation")
-    public static void allHotStreamsUseTheSameFixedCoolingTableAndStoppedFansKeepTheirFeed(GameTestHelper h){
-        var fan=new BlockPos(5,5,5);var be=cell(h,fan);var in=((RadiatorBlockEntity)h.getBlockEntity(fan.below(2).north())).port(Direction.NORTH);var out=((RadiatorBlockEntity)h.getBlockEntity(fan.below(2).south())).port(Direction.SOUTH);
-        h.assertTrue(in.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),100),EXECUTE)==0,"Unmapped gases cannot block the radiator");
-        for(var pair:ThermalStreams.cooledStreams().entrySet()){
-            ((CoolingFanBlockEntity)h.getBlockEntity(fan)).setSpeed(0);var feed=new FluidStack(pair.getKey(),100);var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
-            h.assertTrue(in.fill(feed,SIMULATE)==100 && saved.equals(be.saveWithoutMetadata(h.getLevel().registryAccess())),"Simulating the inlet does not claim a direction or create state");in.fill(feed,EXECUTE);run(be);
-            h.assertTrue(in.getFluidInTank(0).getAmount()==100 && out.drain(100,SIMULATE).isEmpty(),"Stopped fans retain the full hot batch");
-            ((CoolingFanBlockEntity)h.getBlockEntity(fan)).setSpeed(64);run(be);var result=out.drain(100,EXECUTE);
-            h.assertTrue(result.is(pair.getValue()) && result.getAmount()==100 && in.getFluidInTank(0).isEmpty(),"A powered fan converts the exact fixed amount");
-        }h.succeed();
+    public static void radiatorCoolsOneLevelAndStopsAtAmbient(GameTestHelper h) {
+        var fan=new BlockPos(5,5,5);
+        var be=cell(h,fan);
+        var drive=(CoolingFanBlockEntity)h.getBlockEntity(fan);
+        var in=((RadiatorBlockEntity)h.getBlockEntity(fan.below(2).north())).port(Direction.NORTH);
+        var out=((RadiatorBlockEntity)h.getBlockEntity(fan.below(2).south())).port(Direction.SOUTH);
+        for(int temperature=0;temperature<=16;temperature++) {
+            drive.setSpeed(0);
+            var feed=FluidState.with(new FluidStack(Fluids.LAVA,100),temperature,4);
+            var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
+            h.assertTrue(in.fill(feed,SIMULATE)==100 && saved.equals(be.saveWithoutMetadata(h.getLevel().registryAccess())),"Inlet simulation is read-only");
+            in.fill(feed,EXECUTE);
+            run(be);
+            h.assertTrue(in.getFluidInTank(0).getAmount()==100 && out.drain(100,SIMULATE).isEmpty(),"Stopped fan retains the stock");
+            drive.setSpeed(64);
+            run(be);
+            var product=out.drain(100,EXECUTE);
+            h.assertTrue(product.getAmount()==100 && FluidState.temperature(product)==(temperature>8 ? temperature-1 : temperature)
+                && FluidState.pressure(product)==4,"The temperature advances at most one level; pressure and volume stay fixed");
+        }
+        h.succeed();
     }
     @GameTest(template="test_fractionation")
     public static void fanSpeedAndAreaScaleThroughputWhileFullOutputsKeepAllInventory(GameTestHelper h){
@@ -51,7 +62,7 @@ public class RadiatorTemperatureGameTests {
     public static void aFanCondensesOrdinarySteamIntoOrdinaryWater(GameTestHelper h){
         var fan=new BlockPos(5,5,5);var be=cell(h,fan);((CoolingFanBlockEntity)h.getBlockEntity(fan)).setSpeed(128);
         var in=((RadiatorBlockEntity)h.getBlockEntity(fan.below(2).north())).port(Direction.NORTH);var out=((RadiatorBlockEntity)h.getBlockEntity(fan.below(2).south())).port(Direction.SOUTH);
-        in.fill(new FluidStack(CEFluids.STEAM.get(),1000),EXECUTE);run(be);var water=out.drain(1000,EXECUTE);
-        h.assertTrue(water.is(Fluids.WATER) && water.getAmount()==200 && in.getFluidInTank(0).getAmount()==800,"A fixed conversion preserves the remaining steam and completed condensate");h.succeed();
+        in.fill(FluidState.with(new FluidStack(CEFluids.STEAM.get(),1000),10,4),EXECUTE);run(be);var water=out.drain(1000,EXECUTE);
+        h.assertTrue(FluidState.liquidWater(water) && FluidState.temperature(water)==9 && water.getAmount()==200 && in.getFluidInTank(0).getAmount()==800,"A fixed conversion preserves the remaining steam and completed condensate");h.succeed();
     }
 }

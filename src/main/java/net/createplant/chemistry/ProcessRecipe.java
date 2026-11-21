@@ -4,6 +4,8 @@ import java.util.*;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import net.createplant.registry.*;
+import net.createplant.thermal.FluidIdentity;
+import net.createplant.thermal.FluidRequirement;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.material.*;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -11,17 +13,26 @@ import static net.createplant.chemistry.ProcessModule.*;
 
 /** Fixed batches with typed fluid inputs and Create heat-source requirements. */
 public record ProcessRecipe(String id, ProcessModule module, int ticks,
-    List<FluidStack> inputs, List<FluidStack> outputs, Item catalyst, HeatCondition requiredHeat) {
+    List<FluidStack> inputs, List<FluidStack> outputs, Item catalyst, HeatCondition requiredHeat,
+    List<FluidRequirement> conditions) {
+    public ProcessRecipe(String id,ProcessModule module,int ticks,List<FluidStack> inputs,List<FluidStack> outputs,Item catalyst,HeatCondition heat) {
+        this(id,module,ticks,inputs,outputs,catalyst,heat,inputs.stream().map(f->FluidIdentity.requirement(f.getFluid())).toList());
+    }
+    public boolean accepts(int index, FluidStack actual) {
+        return index>=0 && index<inputs.size() && actual.is(inputs.get(index).getFluid()) && conditions.get(index).matches(actual);
+    }
     public static List<ProcessRecipe> all() { return Recipes.ALL; }
-    private static FluidStack f(Fluid fluid, int amount) { return new FluidStack(fluid,amount); }
-    private static ProcessRecipe r(String id, ProcessModule kind, int ticks, List<FluidStack> in, List<FluidStack> out) {
-        return new ProcessRecipe(id,kind,ticks,in,out,Items.AIR,HeatCondition.NONE);
+    private record Charge(FluidStack stack, FluidRequirement condition) { }
+    private static Charge f(Fluid fluid,int amount) { return new Charge(new FluidStack(fluid,amount),FluidIdentity.requirement(fluid)); }
+    private static ProcessRecipe r(String id, ProcessModule kind, int ticks, List<Charge> in, List<Charge> out) {
+        return new ProcessRecipe(id,kind,ticks,in.stream().map(Charge::stack).toList(),out.stream().map(Charge::stack).toList(),
+            Items.AIR,HeatCondition.NONE,in.stream().map(Charge::condition).toList());
     }
     private static ProcessRecipe wash(String id, Fluid gas, Fluid liquor) {
         return r(id, ABSORPTION_TRAYS, 100, List.of(f(gas,250),f(CEChlorAlkali.CAUSTIC_SODA.get(),250)),List.of(f(liquor,500)));
     }
-    private ProcessRecipe catalyst(Item item) { return new ProcessRecipe(id,module,ticks,inputs,outputs,item,requiredHeat); }
-    private ProcessRecipe heat(HeatCondition heat) { return new ProcessRecipe(id,module,ticks,inputs,outputs,catalyst,heat); }
+    private ProcessRecipe catalyst(Item item) { return new ProcessRecipe(id,module,ticks,inputs,outputs,item,requiredHeat,conditions); }
+    private ProcessRecipe heat(HeatCondition heat) { return new ProcessRecipe(id,module,ticks,inputs,outputs,catalyst,heat,conditions); }
     public boolean heatAllowed(HeatLevel level) { return requiredHeat.testBlazeBurner(level); }
     private static final class Recipes {
         static final List<ProcessRecipe> ALL = java.util.stream.Stream.of(

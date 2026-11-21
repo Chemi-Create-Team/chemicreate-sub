@@ -47,8 +47,9 @@ public class TankCasingRenderer implements BlockEntityRenderer<TankCasingBlockEn
 
         IClientFluidTypeExtensions fluidType = IClientFluidTypeExtensions.of(fluid.getFluid());
         TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-            .apply(fluidType.getStillTexture(fluid));
+            .apply(FluidStateVisuals.texture(fluid,fluidType.getStillTexture(fluid)));
         int color = fluidType.getTintColor(fluid);
+        if(!FluidStateVisuals.hasRenderingExtension(fluid))color=FluidStateVisuals.tint(fluid,color);
         VertexConsumer buffer = FluidRenderHelper.getFluidBuilder(buffers);
 
         BlockPos origin = shape.origin();

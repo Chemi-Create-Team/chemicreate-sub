@@ -107,6 +107,8 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
 
 
 
+    private int coolingCredit;
+
     @Override public void tick() {
         super.tick();if(level.isClientSide || ++clock%5!=0 || owner()!=this)return;
         int previousFlow=flow;float previousRpm=fanRpm;fanRpm=0;flow=0;
@@ -115,21 +117,27 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             if(fans.isEmpty() || clock%40==0 && fans.stream().anyMatch(f->!cell(f))){
                 fans=List.of();controller=null;fanRpm=0;ProductionMonitor.limitedBy(this, "structure");return;
             }
-            var recipe=ThermalStreams.cooling(input.getFluid());
-            if (recipe == null) { ProductionMonitor.limitedBy(this, "feed");return; }
-            double season = SeasonalThermal.cooling(level);
-            int maxRpm = com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
-            int maximum = Math.max(1, (int) (100d * fans.size() * maxRpm / 64 * season));
-            ProductionMonitor.plan(this, recipe.outputAmount() * maximum * 4d, 0, 0);
-            if(fanRpm<=0){ProductionMonitor.limitedBy(this, "speed");return;}
-            int capacity = Math.max(1,(int)(100*fanRpm/64*season));
-            int feed = Math.min(input.getFluidAmount()/recipe.inputAmount(),capacity);
-            int batches = Math.min(feed, output.fill(recipe.result(input.getFluid(),feed),IFluidHandler.FluidAction.SIMULATE)/recipe.outputAmount());
-            ProductionMonitor.limitedBy(this, batches < feed ? "output" : feed < capacity ? "feed" : capacity < maximum ? "speed" : "rated");
+            var fluid=input.getFluid();
+            if(fluid.isEmpty()) { coolingCredit=0;ProductionMonitor.limitedBy(this,"feed");return; }
+            int temperature=FluidState.temperature(fluid);
+            int target=temperature>FluidState.AMBIENT ? temperature-1 : temperature;
+            var change=PhaseChange.transfer(fluid,target,FluidState.pressure(fluid));
+            double season=SeasonalThermal.cooling(level);
+            int maxRpm=com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
+            int maximum=Math.max(1,(int)(100d*fans.size()*maxRpm/64*season));
+            ProductionMonitor.plan(this,maximum*4d,0,0);
+            if(fanRpm<=0){coolingCredit=0;ProductionMonitor.limitedBy(this,"speed");return;}
+            int capacity=Math.max(1,(int)(100*fanRpm/64*season));
+            coolingCredit=(int)Math.min((long)capacity+change.consumed()-1,(long)coolingCredit+capacity);
+            int feed=change.batches(Math.min(coolingCredit,input.getFluidAmount()));
+            int batches=change.fitting(feed,output);
+            ProductionMonitor.limitedBy(this,batches<feed ? "output" : input.getFluidAmount()<capacity ? "feed" : capacity<maximum ? "speed" : "rated");
             if(batches<=0)return;
-            var result=recipe.result(input.getFluid(),batches);input.drain(recipe.inputAmount()*batches,IFluidHandler.FluidAction.EXECUTE);
-            ProductionMonitor.produced(this, output.fill(result,IFluidHandler.FluidAction.EXECUTE), 0, 0);
-            flow=recipe.inputAmount()*batches;setChanged();
+            flow=change.consumed()*batches;
+            input.drain(flow,IFluidHandler.FluidAction.EXECUTE);
+            ProductionMonitor.produced(this,output.fill(change.output(batches),IFluidHandler.FluidAction.EXECUTE),0,0);
+            coolingCredit-=flow;
+            setChanged();
         }finally{if(clock%20==0 && flow>0 || previousFlow>0 && flow==0 || previousRpm!=fanRpm)sendData();}
     }
     public IFluidHandler port(Direction side) {
@@ -145,7 +153,7 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             @Override public FluidStack getFluidInTank(int i){return i<0 || i>1 || !live() ? FluidStack.EMPTY : (i==0 ? master.input : master.output).getFluid().copy();}
             @Override public int getTankCapacity(int i){return i<0 || i>1 ? 0 : (i==0 ? master.input : master.output).getCapacity();}
             private boolean accepts(){return side!=null && live() && (master.inletEnd==end || master.input.isEmpty() && master.output.isEmpty() || master.inletEnd<0);}
-            @Override public boolean isFluidValid(int i,FluidStack s){return i==0 && !s.isEmpty() && ThermalStreams.cooling(s)!=null && accepts();}
+            @Override public boolean isFluidValid(int i,FluidStack s){return i==0 && !s.isEmpty() && accepts();}
             @Override public int fill(FluidStack s,FluidAction a){
                 if(!isFluidValid(0,s)) return 0;
                 int n=master.input.fill(s,a);

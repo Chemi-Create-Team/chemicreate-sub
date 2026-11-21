@@ -106,11 +106,11 @@ public final class VesselFouling {
     public boolean flush(FluidAction action) {
         if (!live() || dirt == 0 || WASTE_CAPACITY - waste.getAmount() < WASH_MB) return false;
         var preview = owner.consumeWashWater(WASH_MB, FluidAction.SIMULATE);
-        if (preview.getAmount() != WASH_MB || !preview.is(Fluids.WATER) || !FluidThermal.valid(preview)) return false;
+        if (preview.getAmount() != WASH_MB || !net.createplant.thermal.FluidState.liquidWater(preview) || !FluidThermal.valid(preview)) return false;
         if (!action.execute()) return true;
         var water = owner.consumeWashWater(WASH_MB, FluidAction.EXECUTE);
         if (water.isEmpty()) return false; // The owner guarantees all-or-nothing source removal.
-        if (water.getAmount() != WASH_MB || !water.is(Fluids.WATER)) throw new IllegalStateException("Non-atomic vessel wash-water source");
+        if (water.getAmount() != WASH_MB || !net.createplant.thermal.FluidState.liquidWater(water)) throw new IllegalStateException("Non-atomic vessel wash-water source");
         var parcel = new FluidStack(CEProcessFluids.WASTEWATER.get(), WASH_MB);
         // Whole liquid views may retain sub-mB vapour latent heat; condensing it into non-phase wastewater must retain that energy.
         parcel = FluidThermal.at(parcel, FluidThermal.energy(water) / FluidThermal.heatCapacity(parcel));

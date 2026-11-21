@@ -29,8 +29,7 @@ public final class ProcessBucketItem extends BucketItem {
     @Override public ItemStack getCraftingRemainingItem(ItemStack stack) { return emptyBucket(); }
 
     public FluidStack contents(ItemStack stack) {
-        BucketFluidContents saved = stack.get(CEWorldFluids.BUCKET_CONTENTS.get());
-        return saved != null && saved.fluid().value().isSame(content) ? saved.stack() : new FluidStack(content, 1000);
+        return StatefulBuckets.contents(stack,content);
     }
 
     @Override public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {

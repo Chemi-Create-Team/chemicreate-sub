@@ -18,8 +18,9 @@
       "count": 2
     },
     {
-      "id": "create_refinery_n_reactors:warm_water",
-      "amount": 100
+      "id": "minecraft:water",
+      "amount": 100,
+      "components": {"create_refinery_n_reactors:temperature_level": 9, "create_refinery_n_reactors:pressure_level": 4}
     }
   ],
   "processing_time": 100

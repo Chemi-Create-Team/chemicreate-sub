@@ -96,6 +96,7 @@ public class CreatePlant {
         modEventBus.addListener(CEItems::registerFluidCapabilities);
         modEventBus.addListener(net.createplant.registry.CEWorldFluids::registerCapabilities);
         CERecipeTypes.register(modEventBus);
+        net.createplant.recipe.StateFluidIngredient.register(modEventBus);
         modEventBus.addListener(net.createplant.block.entity.TankCasingBlockEntity::registerCapabilities);
         modEventBus.addListener(net.createplant.block.entity.PlantFluidTankBlockEntity::registerCapabilities);
         modEventBus.addListener(net.createplant.block.entity.SteamTurbineBlockEntity::registerCapabilities);

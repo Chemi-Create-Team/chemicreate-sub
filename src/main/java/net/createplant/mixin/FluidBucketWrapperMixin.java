@@ -21,4 +21,10 @@ public class FluidBucketWrapperMixin {
         if (container.is(Items.BUCKET) && CEWorldFluids.isLiquid(fluid.getFluid()) && FluidHazards.of(fluid).corrosive())
             callback.setReturnValue(false);
     }
+
+    @Inject(method="getFluid",at=@At("RETURN"),cancellable=true)
+    private void createPlant$restoreState(CallbackInfoReturnable<FluidStack> ci) {
+        if(container.getItem() instanceof net.minecraft.world.item.BucketItem bucket)
+            ci.setReturnValue(net.createplant.item.StatefulBuckets.contents(container,bucket.content));
+    }
 }

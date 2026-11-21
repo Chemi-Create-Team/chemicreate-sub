@@ -46,10 +46,10 @@ public record EntrainedGasificationRecipe(Ingredient ingredient, SizedFluidIngre
     @Override public FluidStack gasResult() { return gasResult.copy(); }
     public FluidStack hotGasResult() {
         var product = gasResult();
-        product.set(CEThermal.HEAT_GRADE.get(), Grade.Heat.HOT.ordinal());
+        net.createplant.thermal.FluidState.setTemperature(product,12);
         if (steamCarryover == 0) return product;
         var steam = SteamGrades.ORDINARY.stack(steamCarryover);
-        steam.set(CEThermal.HEAT_GRADE.get(), Grade.Heat.HOT.ordinal());
+        net.createplant.thermal.FluidState.setTemperature(steam,12);
         return MixtureHelper.merge(product, steam, true);
     }
     @Override public NonNullList<Ingredient> getIngredients() { return NonNullList.of(Ingredient.EMPTY, ingredient); }

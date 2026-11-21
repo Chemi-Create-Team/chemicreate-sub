@@ -22,7 +22,7 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
     private static final int STALE=40,SYNC=10;
     private static final String KEY="pipe_gauge.create_refinery_n_reactors.";
     private double reading=Double.NaN,sent=Double.NaN;
-    private static final int TEMPERATURE_STEPS=4,PRESSURE_STEPS=2,FLOW_STEPS=46;
+    private static final int TEMPERATURE_STEPS=4,PRESSURE_STEPS=4,FLOW_STEPS=46;
     private long observed,lastSync=-SYNC;
     /** Ticks a flow observation holds before the meter falls back to zero. */
     private int span;
@@ -54,14 +54,17 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
             }
             @Override public ValueSettings getValueSettings() { return new ValueSettings(value/(steps+1),value%(steps+1)); }
             @Override public void read(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
-                super.read(tag,lookup,packet);value=tag.contains("ScrollValue") ? Math.clamp(value,0,2*steps+1) : defaultThreshold();
+                super.read(tag,lookup,packet);
+                if(kind()==Kind.PRESSURE && tag.contains("ScrollValue") && !tag.getBoolean("FivePressureGrades"))
+                    value=value%3+1+(value>=3 ? 5 : 0);
+                value=tag.contains("ScrollValue") ? Math.clamp(value,0,2*steps+1) : defaultThreshold();
             }
         };
         threshold.between(0,2*steps+1).requiresWrench().withFormatter(v->format(v%(steps+1)));
         threshold.setValue(defaultThreshold());
         behaviours.add(threshold);
     }
-    private int defaultThreshold() { return switch (kind()) { case TEMPERATURE -> 2;case PRESSURE -> 0;case FLOW -> 0; }; }
+    private int defaultThreshold() { return switch (kind()) { case TEMPERATURE -> 2;case PRESSURE -> 1;case FLOW -> 0; }; }
     private int steps() { return switch (kind()) { case TEMPERATURE -> TEMPERATURE_STEPS;case PRESSURE -> PRESSURE_STEPS;case FLOW -> FLOW_STEPS; }; }
     private double limit(int step) {
         return switch (kind()) {
@@ -73,7 +76,7 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
     private String format(int step) {
         return switch (kind()) {
             case TEMPERATURE -> net.createplant.thermal.Grade.Heat.values()[Math.clamp(step,0,4)].label().getString();
-            case PRESSURE -> net.createplant.thermal.Grade.Pressure.values()[Math.clamp(step,0,2)].label().getString();
+            case PRESSURE -> net.createplant.thermal.Grade.Pressure.values()[Math.clamp(step,0,4)].label().getString();
             case FLOW -> String.format(Locale.ROOT,"%.0f mB/t",limit(step));
         };
     }
@@ -163,7 +166,7 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
         if (!measured()) tooltip.add(Component.translatable(KEY+"unmeasured"));
         else tooltip.add(switch (kind()) {
             case TEMPERATURE -> net.createplant.thermal.Grade.Heat.values()[Math.clamp((int)reading,0,4)].detail();
-            case PRESSURE -> net.createplant.thermal.Grade.Pressure.values()[Math.clamp((int)reading,0,2)].detail();
+            case PRESSURE -> net.createplant.thermal.Grade.Pressure.values()[Math.clamp((int)reading,0,4)].detail();
             case FLOW -> Component.translatable(KEY+"flow",String.format(Locale.ROOT,"%.1f",reading));
         });
         tooltip.add(alarmLine());

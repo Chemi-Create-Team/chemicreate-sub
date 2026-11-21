@@ -30,7 +30,7 @@ public final class Compression {
     }
 
     public static int airVolumeRatio(FluidStack stack) {
-        return stack.is(CEProcessFluids.COMPRESSED_AIR.get()) ? Grade.Pressure.PRESSURISED.storageRatio() : 1;
+        return Grade.Pressure.of(FluidState.bar(FluidState.pressure(stack))).storageRatio();
     }
 
     public static double airVolume(FluidStack stack) {
@@ -42,14 +42,15 @@ public final class Compression {
             BigDecimal.valueOf(airVolume(stack)).stripTrailingZeros().toPlainString());
     }
 
+    public static PhaseChange.Transfer change(FluidStack input, boolean compress) {
+        if(input.isEmpty() || !FluidState.gas(input))return null;
+        int current=FluidState.pressure(input);
+        int next=FluidState.clamp(current+(compress ? 4 : -4));
+        return current==next ? null : PhaseChange.transfer(input,FluidState.temperature(input),next);
+    }
+
     public static FluidStack convert(FluidStack input,boolean compress) {
-        if(input.isEmpty()) return FluidStack.EMPTY;
-        for (var pair : PAIRS) {
-            if (!input.is((compress ? pair.low() : pair.high()).get())) continue;
-            var output = new FluidStack((compress ? pair.high() : pair.low()).get(), input.getAmount());
-            if (isAir(input)) output.applyComponents(input.getComponentsPatch());
-            return output;
-        }
-        return input.copy();
+        var transfer=change(input,compress);
+        return transfer==null ? input.copy() : transfer.output(transfer.batches(input.getAmount()));
     }
 }

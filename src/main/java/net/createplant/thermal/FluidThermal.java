@@ -37,7 +37,10 @@ public final class FluidThermal {
     private FluidThermal() { }
     public static synchronized Properties properties(FluidStack stack) {
         if (net.createplant.chemistry.WasteGas.contaminated(stack)) {var gas=net.createplant.chemistry.WasteGas.of(stack);return new Properties(293.15,gas.density(),gas.heatCapacity());}
-        return PROPERTIES.computeIfAbsent(stack.getFluid(),fluid->{
+        return nominalProperties(FluidState.gas(stack) ? stack.getFluid() : FluidIdentity.liquidVariant(stack.getFluid()));
+    }
+    static synchronized Properties nominalProperties(Fluid type) {
+        return PROPERTIES.computeIfAbsent(type,fluid->{
             var id=BuiltInRegistries.FLUID.getKey(fluid);String name=id.getPath();
             double initial=Math.clamp(fluid.getFluidType().getTemperature(),1,10000);
             if (id.getNamespace().equals(net.createplant.CreatePlant.MOD_ID) && initial==293) initial=293.15;
@@ -53,7 +56,7 @@ public final class FluidThermal {
         if (PROPERTIES.containsKey(fluid)) throw new IllegalStateException("Register thermal properties before first use");
         PROPERTIES.put(fluid,java.util.Objects.requireNonNull(properties));
     }
-    public static boolean tracked(FluidStack stack) { return false; }
+    public static boolean tracked(FluidStack stack) { return stack.has(net.createplant.registry.CEThermal.TEMPERATURE.get()) || stack.has(net.createplant.registry.CEThermal.PRESSURE.get()); }
     public static boolean valid(FluidStack stack) { return true; }
     public static double kelvin(FluidStack stack) { return net.createplant.transport.FluidHazards.of(stack).kelvin(); }
     public static double heatCapacity(FluidStack stack) {
@@ -63,8 +66,13 @@ public final class FluidThermal {
     public static double energy(FluidStack stack){return heatCapacity(stack)*kelvin(stack); }
     public static FluidStack at(FluidStack source,double ignoredKelvin) { return source; }
     public static void processComponents(FluidStack source,FluidStack product) {
+        var temperature=net.createplant.registry.CEThermal.TEMPERATURE.get();
+        var pressure=net.createplant.registry.CEThermal.PRESSURE.get();
+        Integer intendedTemperature=product.get(temperature), intendedPressure=product.get(pressure);
         product.applyComponents(source.getComponentsPatch());
         product.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());
+        product.set(temperature,intendedTemperature);
+        product.set(pressure,intendedPressure);
         product.remove(net.createplant.registry.CEThermal.EXPANDED_STEAM.get());
         product.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
     }
@@ -76,14 +84,17 @@ public final class FluidThermal {
         first.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());second.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());
         first.remove(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get());second.remove(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get());
         first.remove(net.createplant.registry.CEThermal.CONDENSATE.get());second.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
+        first.remove(net.createplant.registry.CEThermal.TEMPERATURE.get());second.remove(net.createplant.registry.CEThermal.TEMPERATURE.get());
+        first.remove(net.createplant.registry.CEThermal.PRESSURE.get());second.remove(net.createplant.registry.CEThermal.PRESSURE.get());
         return compatible(first,second);
     }
     public static FluidStack mix(FluidStack stored,FluidStack incoming,int accepted) {
         if (stored.isEmpty() || incoming.isEmpty() || accepted<=0 || accepted>incoming.getAmount() || !mixable(stored,incoming)) throw new IllegalArgumentException("Incompatible fluid mixture");
         var result=stored.copyWithAmount(Math.addExact(stored.getAmount(),accepted));
-        var heat=net.createplant.registry.CEThermal.HEAT_GRADE.get();
-        if(!stored.has(heat) || !incoming.has(heat))result.remove(heat);
-        else result.set(heat,Math.min(stored.get(heat),incoming.get(heat)));
+        int temperature=FluidState.average(FluidState.temperature(stored),stored.getAmount(),FluidState.temperature(incoming),accepted);
+        int pressure=FluidState.average(FluidState.pressure(stored),stored.getAmount(),FluidState.pressure(incoming),accepted);
+        if(temperature!=FluidState.temperature(result) || result.has(net.createplant.registry.CEThermal.HEAT_GRADE.get()))FluidState.setTemperature(result,temperature);
+        if(pressure!=FluidState.pressure(result))result.set(net.createplant.registry.CEThermal.PRESSURE.get(),pressure);
         var condensate=net.createplant.registry.CEThermal.CONDENSATE.get();
         if (!stored.has(condensate) || !incoming.has(condensate)) result.remove(condensate);
         var impurity=net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get();
@@ -96,10 +107,12 @@ public final class FluidThermal {
     /** Adds {@code amount} of a compatible stack to {@code stored}, preserving the stored fluid type and components. */
     public static FluidStack add(FluidStack stored,FluidStack incoming,int amount) {
         if (stored.isEmpty()) return incoming.copyWithAmount(amount);
-        return stored.has(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get()) || incoming.has(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get()) || stored.has(net.createplant.registry.CEThermal.HEAT_GRADE.get()) || incoming.has(net.createplant.registry.CEThermal.HEAT_GRADE.get()) || tracked(stored) || tracked(incoming) || net.createplant.nuclear.RadiationSources.profile(stored) != null ? mix(stored,incoming,amount) : stored.copyWithAmount(stored.getAmount()+amount);
+        return !compatible(stored,incoming) || stored.has(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get())
+            || tracked(stored) || tracked(incoming) || net.createplant.nuclear.RadiationSources.profile(stored)!=null
+            ? mix(stored,incoming,amount) : stored.copyWithAmount(stored.getAmount()+amount);
     }
     public static Component readout(FluidStack stack) {
-        var result=Grade.describe(Grade.Heat.of(kelvin(stack)),net.createplant.transport.FluidHazards.of(stack).pressure());
+        var result=FluidState.describe(stack);
         int impurity=stack.getOrDefault(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get(),0);
         return impurity>0 ? result.copy().append(" · ").append(Component.translatable("wet_process.create_refinery_n_reactors.impurity",impurity/10d)) : result;
     }

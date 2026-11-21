@@ -136,11 +136,11 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
         if (interval) {
             be.dryInTheSun();
         }
-        if(be.formed && Math.floorMod(level.getGameTime()+pos.asLong(),20)==0) {
+        if(be.formed && Math.floorMod(level.getGameTime()+pos.asLong(),net.createplant.thermal.TankHeating.INTERVAL)==0) {
             var base=new java.util.ArrayList<BlockPos>();var shape=be.ownedShape;
             for(int x=0;x<shape.diameter();x++)for(int z=0;z<shape.diameter();z++)if(TankFootprint.contains(x,z,shape.diameter()))base.add(shape.origin().offset(x,0,z));
             int previous=be.heating.progress();
-            if(be.heating.tick(java.util.List.of(be.fluid),net.createplant.thermal.TankHeating.burnerBelow(level,base),net.createplant.thermal.SeasonalThermal.heating(level)))be.markFluidChanged();
+            if(be.heating.tick(java.util.List.of(be.fluid),net.createplant.thermal.TankHeating.burnerBelow(level,base),ignored->be.getCapacity()))be.markFluidChanged();
             else if(previous!=be.heating.progress())be.setChanged();
         }
         // Fluid amounts change every tick while pumping, so the visible level is sent at a limited rate.
