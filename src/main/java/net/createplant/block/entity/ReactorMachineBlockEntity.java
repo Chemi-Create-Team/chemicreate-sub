@@ -530,6 +530,22 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         return true;
     }
 
+    /** A feed goes in only beside feeds that a recipe uses together with it, so a gas no recipe needs here passes on instead of taking a feed slot. */
+    private boolean feedFits(FluidStack stack) {
+        if (level==null) return false;
+        for (var holder:vesselRecipes()) {
+            var ingredients=holder.value().getFluidIngredients();
+            if (ingredients.stream().noneMatch(ingredient->ingredient.ingredient().test(stack))) continue;
+            boolean together=true;
+            for (int slot:new int[]{0,1,THIRD_FEED}) {
+                var held=tanks[slot];
+                if (held.isEmpty() || FluidThermal.mixable(held,stack)) continue;
+                if (ingredients.stream().noneMatch(ingredient->ingredient.ingredient().test(held))) { together=false;break; }
+            }
+            if (together) return true;
+        }
+        return false;
+    }
     private boolean reactionFluid(FluidStack stack) {
         if (level==null) return false;
         for (var holder:vesselRecipes()) for (var ingredient:holder.value().getFluidIngredients()) if (ingredient.ingredient().test(stack)) return true;
@@ -673,7 +689,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         @Override public FluidStack getFluidInTank(int tank) { return generation==epoch && !isRemoved() && tank>=0 && tank<count ? tanks[first+tank].copy() : FluidStack.EMPTY; }
         @Override public boolean isFluidValid(int tank,FluidStack stack) {
             if (!input || !live() || tank<0 || tank>=count || !inputTank(first+tank) || stack.isEmpty()) return false;
-            if (module()==ReactorModule.STIRRED) return reactionFluid(stack);
+            if (module()==ReactorModule.STIRRED) return feedFits(stack);
             if (module()==ReactorModule.ABSORBER && reactionFluid(stack)) return true;
             int index=first+tank;
             for (ProcessRecipe r:ProcessRecipe.all()) if (r.module()==module().process && index<r.inputs().size() && ThermalStreams.accepts(stack,r.inputs().get(index))) return true;
