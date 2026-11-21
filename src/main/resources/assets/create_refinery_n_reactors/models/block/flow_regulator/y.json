@@ -1,0 +1,835 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "gauge": "create:block/gauge",
+    "valve": "create:block/fluid_valve",
+    "particle": "create:block/gauge",
+    "2": "create:block/gauge",
+    "face": "create_refinery_n_reactors:block/pipe_gauge/faces",
+    "adjuster": "create:block/brass_block",
+    "socket": "create:block/zinc_block"
+  },
+  "elements": [
+    {
+      "name": "GaugeBody",
+      "from": [
+        1.95,
+        2,
+        1.95
+      ],
+      "to": [
+        14.05,
+        14,
+        14.05
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "east": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "south": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "west": {
+          "uv": [
+            9,
+            10,
+            16,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "up": {
+          "uv": [
+            0,
+            10,
+            6,
+            16
+          ],
+          "texture": "#gauge"
+        },
+        "down": {
+          "uv": [
+            0,
+            10,
+            6,
+            16
+          ],
+          "texture": "#gauge"
+        }
+      }
+    },
+    {
+      "name": "PipeFlange",
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        2,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            1.5,
+            9.5,
+            6.5,
+            14.5
+          ],
+          "texture": "#valve"
+        }
+      }
+    },
+    {
+      "name": "PipeFlange",
+      "from": [
+        3,
+        14,
+        3
+      ],
+      "to": [
+        13,
+        16,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "east": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "south": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            7.5,
+            1.5,
+            8.5,
+            6.5
+          ],
+          "texture": "#valve",
+          "rotation": 90
+        },
+        "up": {
+          "uv": [
+            1.5,
+            9.5,
+            6.5,
+            14.5
+          ],
+          "texture": "#valve"
+        }
+      }
+    },
+    {
+      "name": "WrenchCollar",
+      "from": [
+        5,
+        5,
+        1
+      ],
+      "to": [
+        11,
+        11,
+        2
+      ],
+      "faces": {
+        "east": {
+          "texture": "#socket",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#socket",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "north": {
+          "texture": "#socket",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#socket",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#socket",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#socket",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "name": "WrenchCap",
+      "from": [
+        6,
+        6,
+        0
+      ],
+      "to": [
+        10,
+        10,
+        1
+      ],
+      "faces": {
+        "east": {
+          "texture": "#adjuster",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#adjuster",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "north": {
+          "texture": "#adjuster",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#adjuster",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#adjuster",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#adjuster",
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "name": "Gauge",
+      "from": [
+        15.575,
+        4,
+        4
+      ],
+      "to": [
+        15.575,
+        12,
+        12
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            8,
+            8,
+            16
+          ],
+          "texture": "#face"
+        }
+      }
+    },
+    {
+      "name": "GaugeButton",
+      "from": [
+        15.0,
+        5.2,
+        5.2
+      ],
+      "to": [
+        16.0,
+        6.3,
+        6.3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "east": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "south": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "west": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "up": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        }
+      }
+    },
+    {
+      "name": "GuageMetalBack",
+      "from": [
+        13.5,
+        3,
+        3
+      ],
+      "to": [
+        15.5,
+        13,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "east": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "south": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "west": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "up": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#2"
+        }
+      }
+    },
+    {
+      "name": "Gauge",
+      "from": [
+        4,
+        4,
+        15.575
+      ],
+      "to": [
+        12,
+        12,
+        15.575
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            8,
+            8,
+            16
+          ],
+          "texture": "#face"
+        }
+      }
+    },
+    {
+      "name": "GaugeButton",
+      "from": [
+        9.7,
+        5.2,
+        15.0
+      ],
+      "to": [
+        10.8,
+        6.3,
+        16.0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "south": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "west": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "north": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "up": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        }
+      }
+    },
+    {
+      "name": "GuageMetalBack",
+      "from": [
+        3,
+        3,
+        13.5
+      ],
+      "to": [
+        13,
+        13,
+        15.5
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "south": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "west": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "north": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "up": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#2"
+        }
+      }
+    },
+    {
+      "name": "Gauge",
+      "from": [
+        0.425,
+        4,
+        4
+      ],
+      "to": [
+        0.425,
+        12,
+        12
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            0,
+            8,
+            8,
+            16
+          ],
+          "texture": "#face"
+        }
+      }
+    },
+    {
+      "name": "GaugeButton",
+      "from": [
+        0.0,
+        5.2,
+        9.7
+      ],
+      "to": [
+        1.0,
+        6.3,
+        10.8
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "west": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "north": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "east": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "up": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            0,
+            9.5,
+            0.5,
+            10
+          ],
+          "texture": "#2"
+        }
+      }
+    },
+    {
+      "name": "GuageMetalBack",
+      "from": [
+        0.5,
+        3,
+        3
+      ],
+      "to": [
+        2.5,
+        13,
+        13
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "west": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "north": {
+          "uv": [
+            13,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "east": {
+          "uv": [
+            9,
+            5,
+            14,
+            10
+          ],
+          "texture": "#2"
+        },
+        "up": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#2"
+        },
+        "down": {
+          "uv": [
+            9,
+            5,
+            10,
+            10
+          ],
+          "texture": "#2"
+        }
+      }
+    }
+  ]
+}

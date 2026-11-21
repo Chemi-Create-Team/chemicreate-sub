@@ -72,4 +72,25 @@ public class GasTankContainerGameTests {
             });
         });
     }
+
+    @GameTest(template = "test_fractionation")
+    public static void wetGasLeavesDrainWaterAtTheBottom(GameTestHelper h) {
+        var first=new BlockPos(2,2,2);
+        run(h,first,1,GasTankContainerBlock.length(1));
+        var world=h.getLevel();
+        var at=h.absolutePos(first);
+        var side=world.getCapability(Capabilities.FluidHandler.BLOCK,at,Direction.NORTH);
+        var drain=world.getCapability(Capabilities.FluidHandler.BLOCK,at,Direction.DOWN);
+        var wet=net.createplant.mixture.MixtureHelper.merge(new FluidStack(CEFluids.NITROGEN_GAS.get(),500),
+            new FluidStack(CEFluids.STEAM.get(),100),true);
+        h.assertTrue(side!=null && drain!=null && side.fill(wet,FluidAction.EXECUTE)==600,"Wet gas enters the tank as one mixture");
+        h.runAfterDelay(24,()-> {
+            var water=new FluidStack(net.minecraft.world.level.material.Fluids.WATER,100);
+            h.assertTrue(drain.drain(water,FluidAction.SIMULATE).getAmount()==100 &&
+                drain.drain(water,FluidAction.EXECUTE).getAmount()==100,"A bottom pump can take the condensed water");
+            h.assertTrue(side.getFluidInTank(0).is(CEFluids.NITROGEN_GAS.get()) && side.getFluidInTank(0).getAmount()==500,
+                "Draining the water keeps the original dry gas volume");
+            h.succeed();
+        });
+    }
 }

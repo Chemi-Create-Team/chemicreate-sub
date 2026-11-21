@@ -11,6 +11,8 @@ import net.createplant.block.entity.AbsorptionTowerBlockEntity;
 import net.createplant.block.entity.ColumnRingBlockEntity;
 import net.createplant.block.entity.FractionatingColumnBlockEntity;
 import net.createplant.block.entity.GasifierBlockEntity;
+import net.createplant.block.entity.GasHolderBlockEntity;
+import net.createplant.block.entity.GasTankContainerBlockEntity;
 import net.createplant.block.entity.HighPressurePumpBlockEntity;
 import net.createplant.block.entity.HoseConnectorBlockEntity;
 import net.createplant.block.entity.HorizontalTankBlockEntity;
@@ -49,11 +51,16 @@ public final class ProcessGoggles {
         var owner = MachineReadings.owner(source);
         if (owner == null) return;
         if (owner instanceof HorizontalTankBlockEntity tank && tank.hasBoilerGauge()) return;
+        if (owner instanceof ReactorMachineBlockEntity reactor && reactor.horizontal()) return;
         if (source instanceof LiddedVesselBlockEntity && owner instanceof LiddedVesselBlockEntity vessel
             && vessel.showGasComposition() && MixtureGoggleHelper.appendGasLayers(lines, vessel.gasLayers(), ((net.createplant.thermal.ThermalFluidTank) vessel.getTankInventory()).gasCapacity())) return;
         if (source instanceof FluidTankBlockEntity && owner instanceof FluidTankBlockEntity tank) {
             var fluid = tank.getTankInventory().getFluid();
-            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(lines, TankLayers.ordered(List.of(fluid)), tank.getTankInventory().getCapacity())) return;
+            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(lines, TankLayers.ordered(List.of(fluid)), tank.getTankInventory().getCapacity())) {
+                if (tank instanceof GasTankContainerBlockEntity container) container.addDrainReadout(lines,true);
+                if (tank instanceof GasHolderBlockEntity holder) holder.addDrainReadout(lines,true);
+                return;
+            }
         }
         var hit = Minecraft.getInstance().hitResult;
         var face = hit instanceof BlockHitResult onBlock && onBlock.getBlockPos().equals(source.getBlockPos()) ? onBlock.getDirection() : null;

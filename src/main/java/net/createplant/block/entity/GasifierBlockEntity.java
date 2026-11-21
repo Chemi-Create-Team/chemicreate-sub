@@ -410,7 +410,8 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         }
         inventory.duration = recipe.duration() * 10;
         var gas = recipe.hotGasResult();
-        if (inventory.tanks[GAS].fill(gas, SIMULATE) != gas.getAmount()) {
+        var stored = inventory.tanks[GAS].getFluid();
+        if (!stored.isEmpty() && !stored.is(gas.getFluid()) || inventory.tanks[GAS].fill(gas, SIMULATE) != gas.getAmount()) {
             status = "gas_output";
             return;
         }

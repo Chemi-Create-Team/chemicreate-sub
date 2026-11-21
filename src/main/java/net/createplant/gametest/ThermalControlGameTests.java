@@ -53,6 +53,43 @@ public class ThermalControlGameTests {
         h.assertTrue(be.thermal().tank(0).getFluidAmount()==700 && be.thermal().tank(1).getFluid().is(net.createplant.registry.CEProcessFluids.WARM_WATER.get()) && be.thermal().tank(1).getFluidAmount()==300 && be.thermal().tank(2).isEmpty() && be.thermal().tank(3).getFluidAmount()==300,"Both rows convert the same finite batch count");h.succeed();
     }
     @GameTest(template="test_fractionation")
+    public static void lengthDirectionAndCoolantFlowControlCondensation(GameTestHelper h) {
+        var shortUnit=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,2)),Direction.NORTH,2);
+        var faster=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,5)),Direction.NORTH,2);
+        var counter=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,8)),Direction.NORTH,2);
+        var longer=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,11)),Direction.NORTH,5);
+        var wet=net.createplant.mixture.MixtureHelper.merge(new FluidStack(net.createplant.registry.CEProcessFluids.WATER_GAS.get(),500),
+            new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),100),true);
+        wet.set(net.createplant.registry.CEThermal.HEAT_GRADE.get(),net.createplant.thermal.Grade.Heat.HOT.ordinal());
+        int[] flows={5,200,5,5};int[] ends={0,0,1,0};
+        var units=java.util.List.of(shortUnit,faster,counter,longer);
+        for(int i=0;i<units.size();i++) {
+            var unit=units.get(i);
+            h.assertTrue(tube(unit,0).fill(wet,EXECUTE)==600 && shell(unit,ends[i]).fill(new FluidStack(Fluids.WATER,flows[i]),EXECUTE)==flows[i],
+                "Each unit receives the same wet gas and its own coolant");
+            for(int j=0;j<5;j++)unit.tickProcess();
+        }
+        h.assertTrue(net.createplant.thermal.SteamCondensate.vapour(tube(shortUnit,1).drain(600,SIMULATE)),
+            "A short parallel exchanger with a trickle of coolant stays above condensation");
+        for(var unit:java.util.List.of(faster,counter,longer))
+            h.assertTrue(tube(unit,1).drain(600,SIMULATE).is(Fluids.WATER),"More coolant, counterflow or more length can each reach condensation");
+        var lines=new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        counter.addToGoggleTooltip(lines,false);
+        h.assertTrue(lines.size()==4 && outletReading(lines.get(2),"process") && outletReading(lines.get(3),"coolant"),
+            "Goggles display the calculated outlet temperature and grade on both circuits");
+        h.succeed();
+    }
+
+    private static boolean outletReading(net.minecraft.network.chat.Component line,String role) {
+        String key="grade.create_refinery_n_reactors.exchange.";
+        return line.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents outlet && outlet.getKey().equals(key+"outlet")
+            && outlet.getArgs()[0] instanceof net.minecraft.network.chat.Component label
+            && label.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents name && name.getKey().equals(key+role)
+            && outlet.getArgs()[1] instanceof net.minecraft.network.chat.Component value
+            && value.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents reading && reading.getKey().equals(key+"degrees");
+    }
+
+    @GameTest(template="test_fractionation")
     public static void exchangerCasingsLieAlongTheWayThePlayerLooks(GameTestHelper h) {
         var player=net.neoforged.neoforge.common.util.FakePlayerFactory.getMinecraft(h.getLevel());
         var pos=h.absolutePos(new BlockPos(3,2,3));

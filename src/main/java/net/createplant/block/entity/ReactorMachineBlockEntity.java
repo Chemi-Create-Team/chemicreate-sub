@@ -228,9 +228,10 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
     public Direction inlet() { if (horizontal()) return getBlockState().getValue(ThermalMachineBlock.FACING).getCounterClockWise();return getBlockState().getValue(ReactorMachineBlock.AXIS)==Direction.Axis.Z ? Direction.WEST : Direction.NORTH; }
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEReactor.ENTITY.get(),(be,side)->be.horizontal() ? net.createplant.mixture.GasMixturePort.both(be.port(side),be) : null);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEReactor.ENTITY.get(),(be,side)->
+            be.horizontal() ? net.createplant.mixture.GasMixturePort.withLegacyOutlet(be.port(side),be) : null);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,net.createplant.registry.CEHeating.PART_ENTITY.get(),(proxy,side)-> {
-            var owner=proxy.owner();return owner==null ? null : net.createplant.mixture.GasMixturePort.both(owner.horizontalPort(proxy.getBlockPos(),side),owner);
+            var owner=proxy.owner();return owner==null ? null : net.createplant.mixture.GasMixturePort.withLegacyOutlet(owner.horizontalPort(proxy.getBlockPos(),side),owner);
         });
     }
     /** Any part of a formed fluid heat exchanger gives out the ice it has frozen; the ice remains owned by its controller. */
@@ -256,6 +257,25 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         return net.createplant.block.ExchangerStructure.port(this,members,sections,exchanger(),pos,side);
     }
     protected IFluidHandler processPort(int first,int count,boolean input,boolean output) { return new Port(first,count,input,output,epoch); }
+
+    protected int storeProcessOutput(int slot, FluidStack incoming, IFluidHandler.FluidAction action) {
+        if (incoming.isEmpty() || !ready() || inputTank(slot)) return 0;
+        var stored=tanks[slot];
+        boolean mixed=net.createplant.mixture.MixtureHelper.isMixture(incoming)
+            && (stored.isEmpty() || net.createplant.mixture.MixtureHelper.isMixture(stored));
+        if (!mixed && !stored.isEmpty() && !FluidThermal.mixable(stored,incoming)) return 0;
+        int accepted=Math.min(incoming.getAmount(),Math.max(0,bufferCapacity(incoming)-tanks[slot].getAmount()));
+        if (accepted<=0) return 0;
+        var portion=net.createplant.mixture.MixtureHelper.portion(incoming,accepted);
+        FluidStack result;
+        try { result=mixed ? net.createplant.mixture.MixtureHelper.merge(stored,portion,true) : FluidThermal.add(stored,portion,accepted); }
+        catch (IllegalArgumentException error) { return 0; }
+        if (action.execute()) {
+            tanks[slot]=result;
+            changed();
+        }
+        return accepted;
+    }
     public IFluidHandler port(Direction side) {
         // The controller is one of its machine's cells and hands out that cell's ports.
         if (module()==ReactorModule.PREHEATER) return horizontalPort(worldPosition,side);
@@ -648,10 +668,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             text.add(Component.translatable(KEY+"status."+status));
             if (horizontal()) {
                 text.add(thermal().exchangeMode());
-                for(int row=0;row<2;row++){
-                    var fluid=thermal().tank(row*2+1).getFluid();if(fluid.isEmpty())fluid=thermal().tank(row*2).getFluid();
-                    text.add(Component.translatable("grade.create_refinery_n_reactors.exchange.row",fluid.isEmpty() ? Component.literal("--") : FluidThermal.readout(fluid),(row==0 ? thermal().coldFlow() : thermal().hotFlow())/5d));
-                }
+                for(int row=0;row<2;row++)text.add(thermal().outletReading(row));
                 return true;
             }
             structureTooltip(text);

@@ -40,16 +40,25 @@ public final class SyntheticFuelsGameTests {
     @GameTest(template = "test_fractionation", timeoutTicks = 150)
     public static void gasificationThroughShiftAndFtSuppliesAllCutsAndResin(GameTestHelper h) {
         var raw = GasifierGameTests.makeWaterGas(h, 2);
-        h.assertTrue(raw.is(CEProcessFluids.WATER_GAS.get()) && raw.getAmount() == 1000, "Two gasifier batches produce raw feed");
+        h.assertTrue(raw.getAmount()==1200 && net.createplant.thermal.SteamCondensate.vapour(raw), "Two gasifier batches deliver wet feed");
+        var exchanger=ThermalControlGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(11,8,5)),Direction.EAST,3);
+        fill(h,ThermalControlGameTests.tube(exchanger,0),raw);
+        fill(h,ThermalControlGameTests.shell(exchanger,1),stack(Fluids.WATER,1200));
+        for(int i=0;i<25;i++)exchanger.tickProcess();
+        var outlet=ThermalControlGameTests.tube(exchanger,1);
+        var water=outlet.drain(1200,EXECUTE);
+        h.assertTrue(water.is(Fluids.WATER) && water.getAmount()==200,"Steam leaves the exchanger as water");
+        var cooled=outlet.drain(1200,EXECUTE);
+        h.assertTrue(cooled.is(CEProcessFluids.WATER_GAS.get()) && cooled.getAmount()==1000,"The gas leaves in a separate phase");
         var washAt = new BlockPos(11, 2, 5);
-        var wash = AbsorptionTowerGameTests.tower(h.getLevel(), h.absolutePos(washAt), 4, true);
+        AbsorptionTowerGameTests.tower(h.getLevel(), h.absolutePos(washAt), 4, true);
         var washBottom = port(h, washAt.west(), Direction.WEST);
         var washTop = port(h, washAt.above(3).west(), Direction.WEST);
-        fill(h, washBottom, raw);
-        fill(h, port(h, washAt.above(3), Direction.UP), stack(CEChlorAlkali.CAUSTIC_SODA.get(), 250));
-        for (int i = 0; i < 100; i++) wash.tickProcess();
+        h.assertTrue(washBottom.fill(raw,SIMULATE)==0,"Uncooled wet gas cannot bypass cooling");
+        fill(h, washBottom, water);
+        fill(h, washBottom, cooled);
         var clean = drain(h, washTop, CEProcessFluids.PURIFIED_SYNGAS.get(), 1000);
-        drain(h, washBottom, CEWaterTreatment.SULFUR_SCRUBBER_LIQUOR.get(), 250);
+        h.assertTrue(washBottom.drain(1000,EXECUTE).getAmount()==200,"The bottom outlet gives the recovered water");
         h.assertTrue(washBottom.drain(clean, SIMULATE).isEmpty(), "Clean gas leaves only from the upper port");
 
         var split = cuts(h, new BlockPos(15, 2, 4), clean, "separate_purified_syngas");

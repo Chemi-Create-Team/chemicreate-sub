@@ -1,17 +1,13 @@
 {
   "variants": {
     "axis=x": {
-      "model": "create_refinery_n_reactors:block/flow_regulator/horizontal",
-      "x": 90
-    },
-    "axis=z": {
-      "model": "create_refinery_n_reactors:block/flow_regulator/horizontal",
-      "x": 90,
-      "y": 90
+      "model": "create_refinery_n_reactors:block/flow_regulator/x"
     },
     "axis=y": {
-      "model": "create_refinery_n_reactors:block/flow_regulator/vertical",
-      "y": 180
+      "model": "create_refinery_n_reactors:block/flow_regulator/y"
+    },
+    "axis=z": {
+      "model": "create_refinery_n_reactors:block/flow_regulator/z"
     }
   }
 }

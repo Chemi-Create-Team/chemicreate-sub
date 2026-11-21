@@ -15,7 +15,8 @@ for name,base in {'steel':(113,122,128),'frame':(61,70,77),'copper':(185,113,73)
    if name=='mesh':v+=-24 if x%4 in (1,2) else 22
    p[x,y]=tuple(max(0,min(255,c+v)) for c in base)+(255,)
  im.save(T/(name+'.png'))
-shapes={}
+shape_path=A/'heating_shapes.json'
+shapes={key: value for key, value in json.loads(shape_path.read_text()).items() if key.startswith('regulator/')} if shape_path.exists() else {}
 def write(p,d):r.write(p,d)
 def model(name,parts,folder=H):
  textures={}

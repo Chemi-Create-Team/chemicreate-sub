@@ -18,6 +18,7 @@ import net.createplant.registry.CEGasBell;
 import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.FluidMaterials;
 import net.createplant.thermal.FluidThermal;
+import net.createplant.thermal.GasTankDrain;
 import net.createplant.thermal.ThermalFluidTank;
 import net.createplant.transport.TransportConfig;
 import net.minecraft.core.BlockPos;
@@ -50,6 +51,7 @@ public class GasHolderBlockEntity extends FluidTankBlockEntity implements IContr
     private int missingTicks;
     private boolean dirty,pending=true,paused,blocked,failed;
     private String reason="";
+    private final GasTankDrain sump = new GasTankDrain(() -> { dirty=true;setChanged(); });
 
     public GasHolderBlockEntity(BlockPos pos,BlockState state) { super(CEGasBell.TANK_ENTITY.get(),pos,state); }
     @Override protected SmartFluidTank createInventory() { return new net.createplant.thermal.GradeFluidTank(getCapacityMultiplier(),this::onFluidStackChanged,this); }
@@ -118,14 +120,15 @@ public class GasHolderBlockEntity extends FluidTankBlockEntity implements IContr
         @Override public boolean isFluidValid(int tank,FluidStack fluid) { return tank==0 && !fluid.isEmpty() && FluidThermal.valid(fluid) && net.createplant.thermal.TankGrade.HOLDER.accepts(fluid); }
         @Override public int fill(FluidStack incoming,FluidAction action) {
             var o=owner();if (o==null || !o.usable() || o.blocked || action.execute() && level.isClientSide || !isFluidValid(0,incoming)) return 0;
-            if(!o.gas().isEmpty() && !FluidThermal.mixable(o.gas().getFluid(),incoming)) return 0;
+            var stored=o.gas().getFluid();
+            if (!stored.isEmpty() && !FluidThermal.mixable(stored,incoming) && !GasTankDrain.sameGasWithSteam(stored,incoming)) return 0;
             return o.gas().fill(incoming,action);
         }
         @Override public FluidStack drain(int amount,FluidAction action) {
             var o=owner();return o==null || !o.usable() || amount<=0 || action.execute() && level.isClientSide ? FluidStack.EMPTY : o.gas().drain(amount,action);
         }
         @Override public FluidStack drain(FluidStack request,FluidAction action) {
-            var o=owner();return o!=null && !request.isEmpty() && FluidThermal.compatible(o.gas().getFluid(),request) ? drain(request.getAmount(),action) : FluidStack.EMPTY;
+            var o=owner();return o==null || !o.usable() || action.execute() && level.isClientSide ? FluidStack.EMPTY : o.gas().drain(request,action);
         }
     };
     private final IFluidHandler upperPort=new IFluidHandler() {
@@ -138,7 +141,18 @@ public class GasHolderBlockEntity extends FluidTankBlockEntity implements IContr
         @Override public FluidStack drain(int amount,FluidAction action) { return allowed() ? port.drain(amount,action) : FluidStack.EMPTY; }
         @Override public FluidStack drain(FluidStack fluid,FluidAction action) { return allowed() ? port.drain(fluid,action) : FluidStack.EMPTY; }
     };
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) { event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEGasBell.TANK_ENTITY.get(),(be,side)->side==Direction.UP ? be.getBlockState().getValue(net.createplant.block.GasHolderBlock.TOP) ? null : be.upperPort : be.port); }
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEGasBell.TANK_ENTITY.get(),(be,side)-> {
+            if (side==Direction.UP && be.getBlockState().getValue(net.createplant.block.GasHolderBlock.TOP)) return null;
+            var root=be.getControllerBE();
+            if (root==null) return null;
+            boolean bottom=side==Direction.DOWN && be.worldPosition.getY()==root.worldPosition.getY();
+            return GasTankDrain.port(side==Direction.UP ? be.upperPort : be.port,bottom,()-> {
+                var owner=be.getControllerBE();
+                return owner!=null && owner.usable() ? owner.sump : null;
+            });
+        });
+    }
     private void configureGeometry() {
         if (geometry!=null && geometry.width()==width && geometry.height()==height) return;
         var next=new GasHolderGeometry(width,height);
@@ -183,6 +197,7 @@ public class GasHolderBlockEntity extends FluidTankBlockEntity implements IContr
             missingTicks=0;dirty=true;level.invalidateCapabilities(worldPosition);level.updateNeighborsAt(worldPosition,getBlockState().getBlock());
         }
         pending=false;
+        if (Math.floorMod(level.getGameTime()+worldPosition.asLong(),20)==0) sump.collect(gas());
         double next=lift+Math.clamp(target()-lift,-SPEED,SPEED);
         if (next!=lift || blocked) {
             boolean obstruction=blockedAt(next==lift ? Math.min(travel(),lift+SPEED) : next);
@@ -218,10 +233,14 @@ public class GasHolderBlockEntity extends FluidTankBlockEntity implements IContr
         var owner=getControllerBE();if (owner==null) return false;
         text.add(Component.translatable(LANG+"state",Component.translatable(LANG+owner.status())));
         text.add(Component.translatable(LANG+"contents",owner.gas().isEmpty() ? Component.translatable(LANG+"empty") : owner.gas().getFluid().getHoverName().copy().append(" · ").append(net.createplant.thermal.FluidThermal.readout(owner.gas().getFluid())),owner.gas().getFluidAmount(),owner.capacity()));
-        net.createplant.thermal.TankGrade.HOLDER.describe(text);return true;
+        net.createplant.thermal.TankGrade.HOLDER.describe(text);addDrainReadout(text,false);return true;
+    }
+    public void addDrainReadout(List<Component> tooltip, boolean composition) {
+        var owner=getControllerBE();
+        if (owner!=null) owner.sump.addReadout(tooltip,composition);
     }
     @Override protected void read(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
-        super.read(tag,lookup,packet);double value=tag.getDouble("Lift");value=Double.isFinite(value) ? Math.clamp(value,0,travel()) : 0;
+        super.read(tag,lookup,packet);sump.read(tag,lookup);double value=tag.getDouble("Lift");value=Double.isFinite(value) ? Math.clamp(value,0,travel()) : 0;
         if (packet && geometry!=null) correction=value-lift;else {lift=value;previousLift=value;}
         for (int i=0;i<3;i++) sleeveIds[i]=tag.hasUUID("Sleeve"+i) ? tag.getUUID("Sleeve"+i) : null;
         paused=tag.getBoolean("Paused");blocked=tag.getBoolean("Blocked");failed=tag.getBoolean("Failed");reason=tag.getString("Reason");pending=!packet;
@@ -230,7 +249,7 @@ public class GasHolderBlockEntity extends FluidTankBlockEntity implements IContr
         if (!packet) collision=java.util.stream.IntStream.range(0,3).mapToObj(geometry::shell).toList();
     }
     @Override public void write(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
-        super.write(tag,lookup,packet);tag.putDouble("Lift",lift);tag.putBoolean("Paused",paused);tag.putBoolean("Blocked",blocked);tag.putBoolean("Failed",failed);tag.putString("Reason",reason);
+        super.write(tag,lookup,packet);sump.write(tag,lookup);tag.putDouble("Lift",lift);tag.putBoolean("Paused",paused);tag.putBoolean("Blocked",blocked);tag.putBoolean("Failed",failed);tag.putString("Reason",reason);
         for (int i=0;i<3;i++) if (sleeveIds[i]!=null) tag.putUUID("Sleeve"+i,sleeveIds[i]);
     }
 }
