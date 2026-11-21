@@ -63,6 +63,7 @@ public final class HorizontalTankPonderScenes {
 
         text(scene, util, util.grid().at(4, 2, 4), 120, "heating");
         scene.world().showSection(pipe, Direction.EAST);
+        text(scene, util, util.grid().at(1, 2, 3), 110, stainless ? "stainless_output" : "atmospheric_output");
         scene.overlay().showControls(util.vector().topOf(util.grid().at(4, 3, 3)), Pointing.DOWN, 100).withItem(AllItems.GOGGLES.asStack());
         text(scene, util, util.grid().at(1, 2, 3), 110, "pipe");
         scene.markAsFinished();

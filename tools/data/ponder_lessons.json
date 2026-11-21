@@ -2200,9 +2200,9 @@
     "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler.step_3": {
-    "en_us": "Each burner contributes up to 65.536 mB/s. Full normal heat delivers 32,768 SU per burner in the high-pressure turbine. Full superheat doubles that SU.",
-    "ja_jp": "底面の熱源1台あたり最大65.536 mB/sです。高圧タービン段では通常加熱1台分で32,768 SU、超加熱では2倍です。",
-    "zh_cn": "底部每个燃烧室最多提供65.536 mB/s。满载普通加热时，高压涡轮每个燃烧室可提供32,768 SU。充分超热时SU翻倍。"
+    "en_us": "A burner supplies about 65.536 mB/s of atmospheric steam, or twice as much when superheated. Stainless boilers give high-pressure steam at the same flow.",
+    "ja_jp": "バーナー1台で高温・常圧の蒸気を約65.536 mB/s作り、超加熱で2倍になります。ステンレスボイラーでは同じ流量で高温・高圧の蒸気が出ます。",
+    "zh_cn": "每个燃烧室约产出65.536 mB/s的高温常压蒸汽，超热时流量翻倍。不锈钢锅炉以相同流量产生高温高压蒸汽。"
   },
   "guide.tubular_boiler.step_4": {
     "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
@@ -2225,9 +2225,9 @@
     "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler_2x2.step_3": {
-    "en_us": "Each burner contributes up to 65.536 mB/s. Full normal heat delivers 32,768 SU per burner in the high-pressure turbine. Full superheat doubles that SU.",
-    "ja_jp": "底面の熱源1台あたり最大65.536 mB/sです。高圧タービン段では通常加熱1台分で32,768 SU、超加熱では2倍です。",
-    "zh_cn": "底部每个燃烧室最多提供65.536 mB/s。满载普通加热时，高压涡轮每个燃烧室可提供32,768 SU。充分超热时SU翻倍。"
+    "en_us": "A burner supplies about 65.536 mB/s of atmospheric steam, or twice as much when superheated. Stainless boilers give high-pressure steam at the same flow.",
+    "ja_jp": "バーナー1台で高温・常圧の蒸気を約65.536 mB/s作り、超加熱で2倍になります。ステンレスボイラーでは同じ流量で高温・高圧の蒸気が出ます。",
+    "zh_cn": "每个燃烧室约产出65.536 mB/s的高温常压蒸汽，超热时流量翻倍。不锈钢锅炉以相同流量产生高温高压蒸汽。"
   },
   "guide.tubular_boiler_2x2.step_4": {
     "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
@@ -2250,9 +2250,9 @@
     "zh_cn": "从长侧面供水，并点燃各列末端下方的燃烧室。"
   },
   "guide.tubular_boiler_3x3.step_3": {
-    "en_us": "Each burner contributes up to 65.536 mB/s. Full normal heat delivers 32,768 SU per burner in the high-pressure turbine. Full superheat doubles that SU.",
-    "ja_jp": "底面の熱源1台あたり最大65.536 mB/sです。高圧タービン段では通常加熱1台分で32,768 SU、超加熱では2倍です。",
-    "zh_cn": "底部每个燃烧室最多提供65.536 mB/s。满载普通加热时，高压涡轮每个燃烧室可提供32,768 SU。充分超热时SU翻倍。"
+    "en_us": "A burner supplies about 65.536 mB/s of atmospheric steam, or twice as much when superheated. Stainless boilers give high-pressure steam at the same flow.",
+    "ja_jp": "バーナー1台で高温・常圧の蒸気を約65.536 mB/s作り、超加熱で2倍になります。ステンレスボイラーでは同じ流量で高温・高圧の蒸気が出ます。",
+    "zh_cn": "每个燃烧室约产出65.536 mB/s的高温常压蒸汽，超热时流量翻倍。不锈钢锅炉以相同流量产生高温高压蒸汽。"
   },
   "guide.tubular_boiler_3x3.step_4": {
     "en_us": "Pump steam from the top of the heated row or either end. The gauge shows how much steam is stored.",
@@ -3885,9 +3885,9 @@
     "zh_cn": "在端面、侧面或顶面使用同类截面，即可保持轴向和高度延长。点击侧面或顶面时会加到离玩家最近的外端，高压需5段、低压需10段才能运行。"
   },
   "turbine_multiblock.pipes": {
-    "en_us": "Align the shafts and pump HP exhaust into LP. The central shaft faces deliver rotation.",
-    "ja_jp": "軸をそろえ、高圧段の排気をポンプで低圧段へ送ります。中心の軸面から回転を取り出します。",
-    "zh_cn": "对齐轴心，用泵把高压排汽送入低压段。中央轴面输出旋转动力。"
+    "en_us": "Align the shafts and pump HP exhaust into LP. At the same flow, fresh atmospheric steam gives half the SU of high-pressure steam.",
+    "ja_jp": "軸をそろえ、高圧段の排気をポンプで低圧段へ送ります。同じ流量で直接供給する場合、常圧蒸気のSUは高圧蒸気の半分です。",
+    "zh_cn": "对齐轴心，用泵把高压排汽送入低压段。相同流量下，直接输入常压蒸汽只产生高压蒸汽一半的 SU。"
   },
   "turbine_multiblock.recover": {
     "en_us": "Pump ordinary water from the LP underside. Drain and stop the stage before wrench maintenance or recovery.",
@@ -5218,5 +5218,15 @@
     "en_us": "Superheat the tank from below. Pump sulfur dioxide out through the roof.",
     "ja_jp": "下から超加熱します。二酸化硫黄は上面からポンプで取り出します。",
     "zh_cn": "从底部超热，从顶面用泵导出二氧化硫。"
+  },
+  "horizontal_tank.atmospheric_output": {
+    "en_us": "This tank makes hot atmospheric steam. Superheating doubles the flow.",
+    "ja_jp": "横型流体タンクは高温・常圧の蒸気を作ります。超加熱すると流量が2倍になります。",
+    "zh_cn": "卧式流体储罐产生高温常压蒸汽。超热时产量翻倍。"
+  },
+  "horizontal_tank.stainless_output": {
+    "en_us": "Stainless boilers make hot high-pressure steam. Superheating doubles the flow.",
+    "ja_jp": "ステンレスボイラーは高温・高圧の蒸気を作ります。超加熱すると流量が2倍になります。",
+    "zh_cn": "不锈钢锅炉产生高温高压蒸汽。超热时产量翻倍。"
   }
 }

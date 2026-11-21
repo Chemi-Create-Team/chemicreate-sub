@@ -85,7 +85,7 @@ public class CondenserWaterboxBlockEntity extends SmartBlockEntity implements IH
         watts = 0;
         var rotor = rotor();
         if (!formed || rotor == null) { ProductionMonitor.limitedBy(this, "structure");return; }
-        int maximum = Math.min(845000, (int) (net.createplant.thermal.TurbineThermal.MAX_FLOW * net.createplant.thermal.SteamGrades.CONDENSER_JOULES_PER_MB / 20));
+        int maximum = Math.min(845000, (int) (net.createplant.thermal.TurbineThermal.MAX_FLOW * net.createplant.thermal.SteamGrades.ORDINARY.condenserHeatPerMb() / 20));
         ProductionMonitor.plan(this, maximum * 20d, 0, 0);
         if (cold.isEmpty() || rotor.thermodynamics().pendingCondenserJoules() <= 0) {
             ProductionMonitor.limitedBy(this, cold.isEmpty() ? "water" : "steam");return;

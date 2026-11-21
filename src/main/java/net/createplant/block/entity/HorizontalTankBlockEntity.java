@@ -32,8 +32,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 /**
  * Create's tank logic for a tank lying along X or Z: the length runs along the block's axis, the section is width x width, and the boiler
  * counts burners under the whole lowest layer. Create's own tank code assumes a vertical column, so every place that walks the cells is replaced.
- * Holding water over burners and with no steam engine attached, it is a fire-tube boiler: the last cell of each bottom row boils the water
- * heated by the burners under its row into high-pressure steam, or superheated steam over superheated burners.
+ * Without a steam engine, the last cell of each bottom row boils its share of water using the burners under that row.
  */
 public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     public record BoilerReading(String status, int steamAmount, int steamCapacity, double heatWatts, FluidStack steamSample) { }
@@ -238,10 +237,14 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     }
 
     private void planProduction() {
-        ProductionMonitor.plan(this, getWidth() * getHeight() * ratedSteamPerBurner(), 0, 0);
+        ProductionMonitor.plan(this, getWidth() * getHeight() * ratedSteamPerHeatLevel() * 2, 0, 0);
     }
 
-    private static double ratedSteamPerBurner() { return SU_PER_BURNER / SteamGrades.HIGH_PRESSURE.workPerMb(false); }
+    private static double ratedSteamPerHeatLevel() { return SU_PER_BURNER / SteamGrades.HIGH_PRESSURE.workPerMb(false); }
+
+    private SteamGrades steamGrade() {
+        return getBlockState().is(CETransport.STAINLESS_BOILER.get()) ? SteamGrades.HIGH_PRESSURE : SteamGrades.ORDINARY;
+    }
 
     private void reportProduction() {
         var meter = ProductionMonitor.of(this);
@@ -252,16 +255,15 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         planProduction();
         double maximum = meter.read(ProductionMonitor.Output.FLUID).maximum() / getWidth();
         String limit = !boils(feed) ? "water" : boiler.attachedEngines > 0 ? "engines" : "rated";
+        double joulesPerMb = steamGrade().joulesPerMb();
         if (limit.equals("rated")) for (int across = 0; across < getWidth(); across++) {
             var cell = endCell(rowEnd(across));
             if (cell == null || cell.status.equals("structure")) { limit = "structure"; break; }
             if (cell.status.equals("output")) limit = "output";
-            else if (limit.equals("rated") && cell.heatWatts / cell.heatedGrade.joulesPerMb() + .001 < maximum) limit = "heat";
+            else if (limit.equals("rated") && cell.heatWatts / joulesPerMb + .001 < maximum) limit = "heat";
         }
         ProductionMonitor.limitedBy(this, limit);
     }
-
-    private SteamGrades heatedGrade = SteamGrades.HIGH_PRESSURE;
 
     public void generateSteam() {
         heatWatts = 0;
@@ -273,12 +275,9 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         var water = feed.getFluid();
         if (!boils(water)) { status = "water"; return; }
         if (root.boiler.attachedEngines > 0) { status = "engines"; return; }
-        float heat = heatBelow(worldPosition);
-        if (!(heat > 0)) { status = "heat"; return; }
-        var grade = heat >= 2 ? SteamGrades.SUPERHEATED : SteamGrades.HIGH_PRESSURE;
-        double fullHeatLevel = grade == SteamGrades.SUPERHEATED ? 2 : 1;
-        double joulesPerBurnerTick = ratedSteamPerBurner() * grade.joulesPerMb() / 20;
-        heatedGrade = grade;
+        if (!(heatBelow(worldPosition) > 0)) { status = "heat"; return; }
+        var grade = steamGrade();
+        double joulesPerBurnerTick = ratedSteamPerHeatLevel() * grade.joulesPerMb() / 20;
         var sample = new FluidStack(grade.fluid(), 1);
         FluidThermal.processComponents(water, sample);
         if (steam.fill(sample, IFluidHandler.FluidAction.SIMULATE) != 1) { status = "output"; return; }
@@ -288,7 +287,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
             if (!level.hasChunkAt(burner)) { status = "structure"; return; }
             float available = BoilerHeater.findHeat(level, burner, level.getBlockState(burner));
             if (available <= 0) continue;
-            provided += joulesPerBurnerTick * Math.min(available / fullHeatLevel, 1);
+            provided += joulesPerBurnerTick * Math.min(available, 2);
         }
         heatJoules += provided;
         heatWatts = provided * 20;

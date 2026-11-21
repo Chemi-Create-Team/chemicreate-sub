@@ -45,7 +45,7 @@ public final class SurvivalReachabilityGameTests {
     private static final Set<String> CREATIVE_ONLY = Set.of("contaminated_gas_bucket", "iodine", "trimethyl_phosphite_bucket",
         "crude_methylphosphonate_bucket", "dimethyl_methylphosphonate_bucket");
     // Keep items recovered from old machines out of the new-world production audit.
-    private static final Set<String> LEGACY_ONLY = Set.of("glassy_slag", "raw_process_gas_bucket");
+    private static final Set<String> LEGACY_ONLY = Set.of("glassy_slag", "raw_process_gas_bucket", "superheated_steam_bucket");
 
     private SurvivalReachabilityGameTests() { }
 
@@ -168,7 +168,7 @@ public final class SurvivalReachabilityGameTests {
             var converted=net.createplant.thermal.Compression.convert(new FluidStack(fluid,1),true);
             if(converted.getFluid()!=fluid)changed|=fluids.add(converted.getFluid());
         }
-        if(has(items,"horizontal_fluid_tank") && fluids.contains(Fluids.WATER))changed|=fluids.add(CEProcessFluids.HIGH_PRESSURE_STEAM.get()) | fluids.add(CEProcessFluids.SUPERHEATED_STEAM.get());
+        if(has(items,"stainless_boiler") && fluids.contains(Fluids.WATER))changed|=fluids.add(CEProcessFluids.HIGH_PRESSURE_STEAM.get());
         if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(CEProcessFluids.PRESSURISED_WATER.get()) && fluids.contains(CEFusion.DEUTERIUM_GAS.get()) && fluids.contains(CEFusion.TRITIUM_GAS.get()) && fluids.contains(CEFusion.LIQUID_HELIUM.get()))changed|=fluids.add(CEProcessFluids.HOT_REACTOR_COOLANT.get());
         if (has(items, "fuel_rod", "reactor_fuel_channel", "reactor_graphite", "biological_shield") && fluids.contains(Fluids.WATER))
             changed |= items.add(CENuclear.SPENT_FUEL_ROD.get());

@@ -56,7 +56,7 @@ public final class TurbineThermal {
         int n=Math.min(limit,input.getFluidAmount());double perMb=grade.workPerMb(lowPressure());
         if(perMb>0)n=Math.min(n,(int)Math.floor(MAX_J/perMb));
         n=Math.min(n,(int)Math.min(Integer.MAX_VALUE,Math.floor((WEAR_LIMIT-wear)/grade.wearPerMb())));
-        if(lowPressure())n=Math.min(n,(int)Math.floor((CONDENSER_HEAT_CAPACITY-pendingCondenserJoules)/SteamGrades.CONDENSER_JOULES_PER_MB));
+        if(lowPressure())n=Math.min(n,(int)Math.floor((CONDENSER_HEAT_CAPACITY-pendingCondenserJoules)/grade.condenserHeatPerMb()));
         return Math.min(n,exhaust.fill(SteamGrades.outlet(input.getFluid(),n,lowPressure()),SIMULATE));
     }
     /** A read-only preview lets loaded generators start before any steam is spent. */
@@ -77,12 +77,13 @@ public final class TurbineThermal {
         if(grade==null){status="fluid";ProductionMonitor.limitedBy(owner, "steam");return 0;}
         int feed = Math.min(maximum, input.getFluidAmount());
         int n=available(limit);
-        boolean limitedCooling = lowPressure() && CONDENSER_HEAT_CAPACITY - pendingCondenserJoules < feed * SteamGrades.CONDENSER_JOULES_PER_MB;
+        double condenserHeat = grade.condenserHeatPerMb();
+        boolean limitedCooling = lowPressure() && CONDENSER_HEAT_CAPACITY - pendingCondenserJoules < feed * condenserHeat;
         ProductionMonitor.limitedBy(owner, limitedCooling ? "condenser" : n < feed ? "output" : feed < maximum ? "steam" : perMb == 0 ? "steam_grade" : "rated");
-        if(n<=0){status=lowPressure() && CONDENSER_HEAT_CAPACITY-pendingCondenserJoules<SteamGrades.CONDENSER_JOULES_PER_MB ? "condenser" : "output";return 0;}
+        if(n<=0){status=lowPressure() && CONDENSER_HEAT_CAPACITY-pendingCondenserJoules<condenserHeat ? "condenser" : "output";return 0;}
         var result=SteamGrades.outlet(input.getFluid(),n,lowPressure());input.drain(n,EXECUTE);exhaust.fill(result,EXECUTE);
         work=n*grade.workPerMb(lowPressure());totalWork+=work;wear+=n*grade.wearPerMb();
-        if(lowPressure()){condenserJoules=n*SteamGrades.CONDENSER_JOULES_PER_MB;pendingCondenserJoules+=condenserJoules;totalCondenserJoules+=condenserJoules;totalCondensate+=n;}
+        if(lowPressure()){condenserJoules=n*condenserHeat;pendingCondenserJoules+=condenserJoules;totalCondenserJoules+=condenserJoules;totalCondensate+=n;}
         ProductionMonitor.produced(owner, result.getAmount(), 0, work);
         status=work>0 ? "running" : "pass";owner.thermalChanged();return n;
     }

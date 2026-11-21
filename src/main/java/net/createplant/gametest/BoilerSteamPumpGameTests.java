@@ -65,16 +65,18 @@ public final class BoilerSteamPumpGameTests {
         return ((FluidTankBlockEntity) h.getBlockEntity(receiver)).getControllerBE().getTankInventory();
     }
 
-    private static void horizontalBoiler(GameTestHelper h, Block pipe) {
+    private static void horizontalBoiler(GameTestHelper h, Block pipe, boolean stainless) {
         BlockPos base = new BlockPos(6, 3, 8), hot = base.east(3);
-        var boilerState = CETransport.HORIZONTAL_FLUID_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
+        var block = stainless ? CETransport.STAINLESS_BOILER.get() : CETransport.HORIZONTAL_FLUID_TANK.get();
+        var steam = stainless ? CEProcessFluids.HIGH_PRESSURE_STEAM.get() : CEFluids.STEAM.get();
+        var boilerState = block.defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
         for (int section = 0; section < 4; section++) { h.setBlock(base.east(section), boilerState);firedBurner(h, base.east(section).below()); }
         var root = (HorizontalTankBlockEntity) ((HorizontalTankBlockEntity) h.getBlockEntity(base)).getControllerBE();
         root.getTankInventory().fill(new FluidStack(Fluids.WATER, 8000), EXECUTE);
         var outlet = (HorizontalTankBlockEntity) h.getBlockEntity(hot);
         var stored = roofLine(h, hot, pipe);
         h.runAfterDelay(200, () -> {
-            h.assertTrue(stored.getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()) && stored.getFluidAmount() > 0,
+            h.assertTrue(stored.getFluid().is(steam) && stored.getFluidAmount() > 0,
                 "The roof pump sends the boiler's steam along a pipe lying on the boiler: received=" + stored.getFluidAmount() + " boiler=" + outlet.status());
             h.assertTrue(root.boiler.attachedEngines == 0 && !outlet.status().equals("engines"), "A pipe on the boiler is not counted as a steam engine");
             h.assertTrue(stored.getFluidAmount() + outlet.steam().getFluidAmount() + root.getTankInventory().getFluidAmount() == 8000, "The steam keeps the mass of the water it came from");
@@ -83,10 +85,10 @@ public final class BoilerSteamPumpGameTests {
     }
 
     @GameTest(template = "test_fractionation", timeoutTicks = 240)
-    public static void copperPipeOnAHorizontalBoilerCarriesItsSteam(GameTestHelper h) { horizontalBoiler(h, AllBlocks.FLUID_PIPE.get()); }
+    public static void copperPipeOnAHorizontalBoilerCarriesItsSteam(GameTestHelper h) { horizontalBoiler(h, AllBlocks.FLUID_PIPE.get(), true); }
 
     @GameTest(template = "test_fractionation", timeoutTicks = 240)
-    public static void gasPipeOnAHorizontalBoilerCarriesItsSteam(GameTestHelper h) { horizontalBoiler(h, CEGasPipes.GAS_PIPE.get()); }
+    public static void gasPipeOnAHorizontalBoilerCarriesItsSteam(GameTestHelper h) { horizontalBoiler(h, CEGasPipes.GAS_PIPE.get(), false); }
 
     /** Create's own tank, {@code width} square and one block high, standing on burners and holding water. */
     private static FluidTankBlockEntity createBoiler(GameTestHelper h, BlockPos corner, int width, boolean burners, int water) {

@@ -12,7 +12,7 @@ import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.compat.display.MachineReadings;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidThermal;
-import net.createplant.registry.CEProcessFluids;
+import net.createplant.registry.CEFluids;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -98,33 +98,33 @@ public final class HorizontalTankBoilerFlowGameTests {
         h.runAfterDelay(175, () -> {
             h.assertTrue(source.getFluidAmount() < charge && outlet.steam().getFluidAmount() > 0 && stored.isEmpty(),
                 "The stock feed pump supplies finite water while the stopped steam pump exports nothing");
-            h.assertTrue(outlet.steam().getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()), "A normally fired burner creates high-pressure steam");
+            h.assertTrue(outlet.steam().getFluid().is(CEFluids.STEAM.get()), "A normally fired burner creates atmospheric steam");
         });
         h.runAfterDelay(180, () -> steamMotor.generatedSpeed.setValue(128));
         h.runAfterDelay(192, () -> steamMotor.generatedSpeed.setValue(0));
         h.runAfterDelay(202, () -> {
             var current = MachineReadings.read(outlet, "production_fluid");
             var rated = MachineReadings.read(outlet, "production_fluid_max");
-            double theoretical = 3 * 65.536;
+            double theoretical = 3 * 131.072;
             h.assertTrue(current != null && current.value() > 0 && rated != null && Math.abs(rated.value() - theoretical) < .001,
                 "A noncontroller boiler section shows the observed output and the full structure's heat-limited rating");
             h.assertTrue(MachineReadings.productionBottleneck(outlet).getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents reason
-                && reason.getKey().endsWith(".rated"),
-                "Three normally heated burners provide the rated mass flow for high-pressure steam");
-            h.assertTrue(stored.getFluidAmount() > 0, "A stock pipe and real Create pump deliver finite high-pressure steam to the receiver");
+                && reason.getKey().endsWith(".heat"),
+                "Normally heated burners have room to increase the steam flow with stronger heating");
+            h.assertTrue(stored.getFluidAmount() > 0, "A stock pipe and real Create pump deliver finite atmospheric steam to the receiver");
             pausedAmount[0] = stored.getFluidAmount();
         });
         h.runAfterDelay(209, () -> h.assertTrue(stored.getFluidAmount() == pausedAmount[0], "Stopping the native pump stops export after its pressure update"));
         h.runAfterDelay(210, () -> steamMotor.generatedSpeed.setValue(128));
         h.runAfterDelay(222, () -> steamMotor.generatedSpeed.setValue(0));
         h.runAfterDelay(240, () -> {
-            h.assertTrue(stored.getFluidAmount() > pausedAmount[0] && stored.getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()),
+            h.assertTrue(stored.getFluidAmount() > pausedAmount[0] && stored.getFluid().is(CEFluids.STEAM.get()),
                 "Restarting the same native pump resumes steam export without replacing the pipe or boiler");
             int converted = charge - source.getFluidAmount() - root.getTankInventory().getFluidAmount();
             h.assertTrue(converted == outlet.steam().getFluidAmount() + stored.getFluidAmount(),
                 "Feedwater reduction equals the boiler's steam plus the complete receiver water/steam mass");
-            h.assertTrue((outlet.steam().isEmpty() || outlet.steam().getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get())) && !outlet.isRemoved() && !receiverOwner.isRemoved(),
-                "The fired boiler maintains its 350 C outlet and the heat-resistant receiver remains intact");
+            h.assertTrue((outlet.steam().isEmpty() || outlet.steam().getFluid().is(CEFluids.STEAM.get())) && !outlet.isRemoved() && !receiverOwner.isRemoved(),
+                "The fired boiler maintains its atmospheric outlet and the heat-resistant receiver remains intact");
             h.succeed();
         });
     }

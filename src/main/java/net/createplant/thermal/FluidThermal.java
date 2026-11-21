@@ -65,6 +65,7 @@ public final class FluidThermal {
     public static void processComponents(FluidStack source,FluidStack product) {
         product.applyComponents(source.getComponentsPatch());
         product.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());
+        product.remove(net.createplant.registry.CEThermal.EXPANDED_STEAM.get());
     }
     public static boolean compatible(FluidStack a,FluidStack b) { return FluidStack.isSameFluidSameComponents(a,b); }
     public static boolean mixable(FluidStack a,FluidStack b) {

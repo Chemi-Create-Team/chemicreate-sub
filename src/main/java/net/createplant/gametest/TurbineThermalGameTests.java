@@ -52,7 +52,7 @@ public final class TurbineThermalGameTests {
         var pair=build(h.getLevel(),h.absolutePos(BlockPos.ZERO));
         for(var grade:SteamGrades.values()){
             var high=pair[0].thermodynamics();var low=pair[1].thermodynamics();high.clear();low.clear();
-            high.input().fill(new FluidStack(grade.fluid(),100),EXECUTE);high.step(true,100);
+            high.input().fill(grade.stack(100),EXECUTE);high.step(true,100);
             near(h,high.work(),100*grade.workPerMb(false),"High stage work is fixed by grade");
             low.input().fill(high.exhaust().drain(100,EXECUTE),EXECUTE);low.step(true,100);
             near(h,high.work()+low.work()+low.condenserJoules(),100*grade.joulesPerMb(),"Both stages and condenser balance");
@@ -299,19 +299,19 @@ public final class TurbineThermalGameTests {
     }
 
     @GameTest(template="test_fractionation",timeoutTicks=200)
-    public static void steamBelowTheHighPressureBackPressureCrossesToTheLowPressureStage(GameTestHelper h){
+    public static void atmosphericSteamPowersTheHighStageAndItsExhaustFeedsTheLowStage(GameTestHelper h){
         var level=h.getLevel();var base=h.absolutePos(BlockPos.ZERO);var pair=build(level,base);var hp=pair[0];var lp=pair[1];
         singleInterstageMain(level,base);
         h.onEachTick(()->h.assertTrue(!hp.thermodynamics().status().equals("wet"),"Dry steam is never reported as wet"));
         h.runAfterDelay(20,()->hp.thermodynamics().input().fill(new FluidStack(CEFluids.STEAM.get(),TurbineThermal.CAPACITY),EXECUTE));
         h.runAfterDelay(80,()->{
-            h.assertTrue(hp.thermodynamics().input().isEmpty() && hp.thermodynamics().totalWork()==0 && lp.thermodynamics().totalWork()>0,
-                "5 bar steam does no work in the HP stage, crosses it and works in the LP stage: "+hp.thermodynamics().status()+" in="+hp.thermodynamics().input().getFluidAmount()+" lp="+lp.thermodynamics().totalWork());
+            h.assertTrue(hp.thermodynamics().input().isEmpty() && hp.thermodynamics().totalWork()==4_000_000 && lp.thermodynamics().totalWork()>0,
+                "Atmospheric steam produces 250 J/mB at the high stage and its exhaust works in the low stage");
             lp.thermodynamics().exhaust().drain(TurbineThermal.CAPACITY,EXECUTE);
             hp.thermodynamics().input().fill(reactorSteam(4000),EXECUTE);
         });
         h.runAfterDelay(120,()->{
-            h.assertTrue(hp.thermodynamics().totalWork()>0,"The same stage works again as soon as the pressure returns");
+            h.assertTrue(hp.thermodynamics().totalWork()==6_000_000,"The same stage produces 500 J/mB with the high-pressure charge");
             h.succeed();
         });
     }
@@ -367,7 +367,30 @@ public final class TurbineThermalGameTests {
     @GameTest(template="test_fractionation")
     public static void lowPressureFacilityUsesSurfaceCondenserVacuumAndThirtyDegreeDischarge(GameTestHelper h){
         var pair=build(h.getLevel(),h.absolutePos(BlockPos.ZERO));var low=pair[1].thermodynamics();
-        low.input().fill(new FluidStack(CEFluids.STEAM.get(),1000),EXECUTE);low.step(true,10);
+        low.input().fill(SteamGrades.EXHAUST.stack(1000),EXECUTE);low.step(true,10);
         h.assertTrue(low.exhaust().getFluid().is(Fluids.WATER) && low.exhaust().getFluidAmount()==10 && low.work()==2500 && low.condenserJoules()==17580,"Terminal stage returns ordinary water and fixed work and rejection");h.succeed();
+    }
+
+    @GameTest(template="test_fractionation")
+    public static void atmosphericSteamMakesHalfTheDirectWorkAndCannotPowerAnotherHighStage(GameTestHelper h) {
+        var pair = build(h.getLevel(), h.absolutePos(BlockPos.ZERO));
+        var high = pair[0].thermodynamics();var low = pair[1].thermodynamics();
+        for (var rotor : java.util.List.of(high, low)) {
+            rotor.input().fill(SteamGrades.HIGH_PRESSURE.stack(100), EXECUTE);
+            rotor.step(true, 100);double fullWork = rotor.work();
+            rotor.clear();
+            rotor.input().fill(SteamGrades.ORDINARY.stack(100), EXECUTE);
+            rotor.step(true, 100);
+            near(h, rotor.work(), fullWork / 2, "The same flow of fresh atmospheric steam gives half the high-pressure work");
+        }
+        near(h, low.work() + low.condenserJoules(), 100 * SteamGrades.ORDINARY.joulesPerMb(), "The low stage rejects the remaining heat");
+        var lookup = h.getLevel().registryAccess();
+        pair[0].loadWithComponents(pair[0].saveWithoutMetadata(lookup), lookup);
+        var expanded = high.exhaust().drain(100, EXECUTE);
+        h.assertTrue(SteamGrades.of(expanded) == SteamGrades.EXHAUST, "Saving the exhaust preserves its expansion state");
+        high.input().fill(expanded, EXECUTE);
+        h.assertTrue(high.input().fill(SteamGrades.ORDINARY.stack(1), SIMULATE) == 0, "Fresh steam does not upgrade spent steam through mixing");
+        h.assertTrue(high.step(true, 100) == 100 && high.work() == 0, "Expanded steam passes through a second high stage without generating work");
+        h.succeed();
     }
 }

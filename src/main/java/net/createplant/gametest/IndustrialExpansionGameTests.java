@@ -156,7 +156,7 @@ public final class IndustrialExpansionGameTests {
         var z = boiler(h, new BlockPos(3, 2, 8), Direction.Axis.Z, 3);burner(h, new BlockPos(3, 2, 10), false);
         port(h, new BlockPos(3, 2, 8), Direction.WEST).fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE);
         var zEnd = (HorizontalTankBlockEntity) h.getBlockEntity(new BlockPos(3, 2, 10));zEnd.generateSteam();
-        h.assertTrue(z.getHeight() == 3 && zEnd.steam().getFluid().is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()), "A tank along Z boils at its south end");h.succeed();
+        h.assertTrue(z.getHeight() == 3 && SteamGrades.of(zEnd.steam().getFluid()) == SteamGrades.ORDINARY, "A tank along Z boils at its south end");h.succeed();
     }
 
     @GameTest(template = "test_fractionation")
@@ -168,23 +168,25 @@ public final class IndustrialExpansionGameTests {
         boiler.generateSteam();
         int water = root.getTankInventory().getFluidAmount(), steam = boiler.steam().getFluidAmount();
         h.assertTrue(steam > 0 && water + steam == 1000, "Tube steam keeps water-equivalent mass: " + water + "+" + steam);
-        h.assertTrue(boiler.steam().getFluid().is(CEProcessFluids.SUPERHEATED_STEAM.get()), "Superheated burner produces the superheated grade");
+        h.assertTrue(SteamGrades.of(boiler.steam().getFluid()) == SteamGrades.ORDINARY, "Superheated burners retain the horizontal tank’s atmospheric steam grade");
         double credit=boiler.saveWithoutMetadata(h.getLevel().registryAccess()).getDouble("TubeHeat");
-        h.assertTrue(Math.abs(steam*SteamGrades.SUPERHEATED.joulesPerMb()+credit-boiler.heatWatts()/20)<.1,"Fixed steam cost plus rounding credit equals paid heater heat");
-        h.assertTrue(Math.abs(boiler.heatWatts() - 3 * 65.536 * SteamGrades.SUPERHEATED.joulesPerMb()) < .1,
+        h.assertTrue(Math.abs(steam*SteamGrades.ORDINARY.joulesPerMb()+credit-boiler.heatWatts()/20)<.1,"Fixed steam cost plus rounding credit equals paid heater heat");
+        h.assertTrue(Math.abs(boiler.heatWatts() - 3 * 131.072 * SteamGrades.ORDINARY.joulesPerMb()) < .1,
             "Three superheated burners supply the calibrated heat for their rated steam rate");h.succeed();
     }
 
     @GameTest(template = "test_fractionation")
-    public static void tubeBoilerStopsAtFullOutputAndAfterLosingHeat(GameTestHelper h) {
+    public static void tubeBoilerKeepsLegacySteamAndStopsAfterLosingHeat(GameTestHelper h) {
         var root = boiler(h, BASE, Direction.Axis.X, 3);burner(h, BASE, true);burner(h, BASE.east(), true);burner(h, BASE.east(2), true);
         var boiler = (HorizontalTankBlockEntity) h.getBlockEntity(BASE.east(2));
         port(h, BASE, Direction.NORTH).fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE);
-        boiler.steam().fill(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),Integer.MAX_VALUE),FluidAction.EXECUTE);
+        boiler.steam().fill(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000),FluidAction.EXECUTE);
         boiler.generateSteam();h.assertTrue(boiler.status().equals("output") && root.getTankInventory().getFluidAmount() == 1000,
-            "A full steam buffer keeps all feed water");
-        boiler.steam().drain(Integer.MAX_VALUE, FluidAction.EXECUTE);boiler.generateSteam();
-        h.assertTrue(boiler.steam().getFluidAmount() > 0, "Draining the outlet lets the boiler resume");
+            "A retained legacy steam grade keeps all feed water until it has drained");
+        var old = port(h, BASE.east(2), Direction.UP).drain(Integer.MAX_VALUE, FluidAction.EXECUTE);
+        h.assertTrue(old.is(CEProcessFluids.SUPERHEATED_STEAM.get()) && old.getAmount() == 1000, "The outlet preserves the old steam grade and amount");
+        boiler.generateSteam();
+        h.assertTrue(SteamGrades.of(boiler.steam().getFluid()) == SteamGrades.ORDINARY, "Draining the legacy output lets the boiler resume with its current grade");
         int water = root.getTankInventory().getFluidAmount(), steam = boiler.steam().getFluidAmount();
         h.setBlock(BASE.east(2).below(), Blocks.AIR);boiler.generateSteam();
         h.assertTrue(boiler.status().equals("heat") && boiler.heatWatts() == 0 && root.getTankInventory().getFluidAmount() == water
@@ -205,7 +207,7 @@ public final class IndustrialExpansionGameTests {
             && feed.fill(new FluidStack(Fluids.LAVA, 1000), FluidAction.EXECUTE) == 0, "The boiling outlet rejects filling and the water keeps lava out");
         int held = boiler.steam().getFluidAmount();var preview = output.drain(held, FluidAction.SIMULATE);
         h.assertTrue(SteamGrades.of(preview)!=null && preview.getAmount() == held && boiler.steam().getFluidAmount() == held
-            && preview.is(CEProcessFluids.HIGH_PRESSURE_STEAM.get()), "Normal burner steam is 350 C and simulated output retains its mass");
+            && SteamGrades.of(preview) == SteamGrades.ORDINARY, "Simulated atmospheric steam output retains its mass");
         h.assertTrue(feed.drain(1, FluidAction.SIMULATE).isEmpty() && port(h, BASE, Direction.DOWN).drain(1, FluidAction.SIMULATE).is(Fluids.WATER),
             "The side is the water inlet and the bottom is the water drain");
         h.assertTrue(output.drain(held, FluidAction.EXECUTE).getAmount() == held && output.drain(held, FluidAction.EXECUTE).isEmpty(),
@@ -226,8 +228,8 @@ public final class IndustrialExpansionGameTests {
         port(h, BASE, Direction.NORTH).fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE);
         var part = (HorizontalTankBlockEntity) h.getBlockEntity(hot);part.generateSteam();
         h.assertTrue(root.steam().isEmpty() && part.steam().getFluidAmount() > 0, "Only the heated section owns this finite steam charge");
-        h.assertTrue(part.steam().getFluid().is(CEProcessFluids.SUPERHEATED_STEAM.get()),
-            "A non-controller steam section reports its own 20 bar pressure");
+        h.assertTrue(SteamGrades.of(part.steam().getFluid()) == SteamGrades.ORDINARY,
+            "A non-controller steam section reports its own atmospheric-grade steam");
         int water = root.getTankInventory().getFluidAmount(), amount = part.steam().getFluidAmount();double energy = FluidThermal.energy(part.steam().getFluid());
         var saved = part.saveWithoutMetadata(h.getLevel().registryAccess());part.loadWithComponents(saved, h.getLevel().registryAccess());
         h.assertTrue(part.steam().getFluidAmount() == amount && Math.abs(FluidThermal.energy(part.steam().getFluid()) - energy) < .1

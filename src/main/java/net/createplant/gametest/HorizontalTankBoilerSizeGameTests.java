@@ -12,10 +12,8 @@ import net.createplant.block.TurbineUnit;
 import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.block.entity.SteamTurbineBlockEntity;
 import net.createplant.compat.display.MachineReadings;
-import net.createplant.registry.CEFluids;
 import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.SteamGrades;
-import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CETransport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -81,8 +79,10 @@ public final class HorizontalTankBoilerSizeGameTests {
         return stored;
     }
 
-    private static void verify(GameTestHelper h, Direction.Axis axis, int width) {
-        var state = CETransport.HORIZONTAL_FLUID_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, axis);
+    private static void verify(GameTestHelper h, Direction.Axis axis, int width, boolean stainless) {
+        var block = stainless ? CETransport.STAINLESS_BOILER.get() : CETransport.HORIZONTAL_FLUID_TANK.get();
+        var grade = stainless ? SteamGrades.HIGH_PRESSURE : SteamGrades.ORDINARY;
+        var state = block.defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, axis);
         for (int along = 0; along < LENGTH; along++) for (int up = 0; up < width; up++) for (int across = 0; across < width; across++)
             h.setBlock(cell(axis, along, up, across), state);
         var root = (HorizontalTankBlockEntity) part(h, BASE).getControllerBE();
@@ -124,19 +124,19 @@ public final class HorizontalTankBoilerSizeGameTests {
         for (int across = 0; across < width; across++) {
             var terminal = part(h, cell(axis, LENGTH - 1, 0, across));terminal.generateSteam();
             h.assertTrue(terminal.steam().getFluidAmount() > 0, "Every independently heated lower-end tube row produces finite steam");
-            h.assertTrue(terminal.steam().getFluid().is(CEProcessFluids.SUPERHEATED_STEAM.get()), "Superheated burner creates the superheated grade");
-            steamMass += terminal.steam().getFluidAmount();steamEnergy += terminal.steam().getFluidAmount()*SteamGrades.SUPERHEATED.joulesPerMb();work += terminal.heatWatts()/20;
+            h.assertTrue(SteamGrades.of(terminal.steam().getFluid()) == grade, "The casing selects the steam grade even with superheated burners");
+            steamMass += terminal.steam().getFluidAmount();steamEnergy += terminal.steam().getFluidAmount()*grade.joulesPerMb();work += terminal.heatWatts()/20;
             credit += terminal.saveWithoutMetadata(level.registryAccess()).getDouble("TubeHeat");
         }
         h.assertTrue(root.getTankInventory().getFluidAmount() + steamMass == FEED && storedMass(h, axis, width) == FEED,
             "All parallel tube rows share finite water without duplicating or losing mass");
-        near(h, work, width * LENGTH * 65.536 * SteamGrades.SUPERHEATED.joulesPerMb() / 20,
+        near(h, work, width * LENGTH * 131.072 * grade.joulesPerMb() / 20,
             "The first production step uses the calibrated heat supplied by its individual burners");
         near(h, steamEnergy+credit, work, "Fixed steam cost plus saved rounding credit equals burner heat");
 
         h.assertTrue(output.fill(new FluidStack(Fluids.WATER, 1000), EXECUTE) == 0, "A boiling end outlet gives steam and takes no water");
         int held = hot.steam().getFluidAmount();var preview = output.drain(held, SIMULATE);
-        h.assertTrue(preview.is(CEProcessFluids.SUPERHEATED_STEAM.get()) && preview.getAmount() == held && hot.steam().getFluidAmount() == held,
+        h.assertTrue(SteamGrades.of(preview) == grade && preview.getAmount() == held && hot.steam().getFluidAmount() == held,
             "An end outlet previews the lower row's retained steam without draining it");
         h.assertTrue(roof.getFluidInTank(0).getAmount() == held && roof.drain(held, SIMULATE).is(preview.getFluid())
             && oppositeEnd.drain(preview, SIMULATE).getAmount() == held,
@@ -158,10 +158,10 @@ public final class HorizontalTankBoilerSizeGameTests {
         h.assertTrue(root.getWidth() == width && root.getHeight() == LENGTH && storedMass(h, axis, width) + exported == FEED,
             "Reload retains all cell owners, dimensions, shared water and separate tube steam");
         double savedEnergy = 0;
-        for (int across = 0; across < width; across++) savedEnergy += part(h, cell(axis, LENGTH - 1, 0, across)).steam().getFluidAmount()*SteamGrades.SUPERHEATED.joulesPerMb();
-        near(h, savedEnergy, steamEnergy - preview.getAmount()*SteamGrades.SUPERHEATED.joulesPerMb(), "Reload also retains the exact unexported steam energy");
+        for (int across = 0; across < width; across++) savedEnergy += part(h, cell(axis, LENGTH - 1, 0, across)).steam().getFluidAmount()*grade.joulesPerMb();
+        near(h, savedEnergy, steamEnergy - preview.getAmount()*grade.joulesPerMb(), "Reload also retains the exact unexported steam energy");
 
-        var fullCharge = new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),Integer.MAX_VALUE);
+        var fullCharge = grade.stack(Integer.MAX_VALUE);
         int extra = hot.steam().fill(fullCharge, EXECUTE);remaining = root.getTankInventory().getFluidAmount();hot.generateSteam();
         h.assertTrue(hot.status().equals("output") && root.getTankInventory().getFluidAmount() == remaining && hot.heatWatts() == 0,
             "A full lower-end steam row retains the entire shared feed and consumes no more burner work");
@@ -185,28 +185,31 @@ public final class HorizontalTankBoilerSizeGameTests {
     }
 
     @GameTest(template = "test_fractionation")
-    public static void twoByTwoBoilerAlongXKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.X, 2); }
+    public static void twoByTwoBoilerAlongXKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.X, 2, false); }
 
     @GameTest(template = "test_fractionation")
-    public static void twoByTwoBoilerAlongZKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.Z, 2); }
+    public static void twoByTwoBoilerAlongZKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.Z, 2, true); }
 
     @GameTest(template = "test_fractionation")
-    public static void threeByThreeBoilerAlongXKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.X, 3); }
+    public static void threeByThreeBoilerAlongXKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.X, 3, true); }
 
     @GameTest(template = "test_fractionation")
-    public static void threeByThreeBoilerAlongZKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.Z, 3); }
+    public static void threeByThreeBoilerAlongZKeepsItsSharedWaterAndSeparateSteam(GameTestHelper h) { verify(h, Direction.Axis.Z, 3, false); }
 
     @GameTest(template = "test_fractionation")
-    public static void twentySevenNormalBurnersSupplyAbout884736Su(GameTestHelper h) { verifyTurbine(h, 9, false); }
+    public static void twentySevenNormalBurnersSupplyAbout884736Su(GameTestHelper h) { verifyTurbine(h, 9, false, true); }
 
     @GameTest(template = "test_fractionation")
-    public static void twentySevenSuperheatedBurnersDoubleTurbineSu(GameTestHelper h) { verifyTurbine(h, 9, true); }
+    public static void twentySevenSuperheatedBurnersDoubleTurbineSu(GameTestHelper h) { verifyTurbine(h, 9, true, true); }
 
     @GameTest(template = "test_fractionation")
-    public static void shorterBoilerScalesTurbineSuWithLength(GameTestHelper h) { verifyTurbine(h, 5, false); }
+    public static void shorterBoilerScalesTurbineSuWithLength(GameTestHelper h) { verifyTurbine(h, 5, false, true); }
 
-    private static void verifyTurbine(GameTestHelper h, int length, boolean superheated) {
-        var block = superheated ? CETransport.STAINLESS_BOILER.get() : CETransport.HORIZONTAL_FLUID_TANK.get();
+    @GameTest(template = "test_fractionation")
+    public static void horizontalTankMakesHalfTheStainlessBoilersSuAtTheSameFlow(GameTestHelper h) { verifyTurbine(h, 9, false, false); }
+
+    private static void verifyTurbine(GameTestHelper h, int length, boolean superheated, boolean stainless) {
+        var block = stainless ? CETransport.STAINLESS_BOILER.get() : CETransport.HORIZONTAL_FLUID_TANK.get();
         var state = block.defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
         for (int along = 0; along < length; along++) for (int across = 0; across < 3; across++) {
             var bottom = BASE.offset(along, 0, across);
@@ -215,7 +218,7 @@ public final class HorizontalTankBoilerSizeGameTests {
         }
         var root = (HorizontalTankBlockEntity) part(h, BASE).getControllerBE();
         h.assertTrue(root.getHeight() == length && root.getWidth() == 3, "The heated bottom has exactly three rows of the selected length");
-        int water = 150_000;
+        int water = 300_000;
         h.assertTrue(port(h, BASE, Direction.NORTH).fill(new FluidStack(Fluids.WATER, water), EXECUTE) == water, "The formed boiler accepts finite feedwater");
         var first = new BlockPos(6, 3, 15);
         for (int i = 0; i < TurbineUnit.Stage.HIGH.sections(); i++) {
@@ -230,7 +233,7 @@ public final class HorizontalTankBoilerSizeGameTests {
             ends[i] = part(h, BASE.offset(length - 1, 0, i));
             outputs[i] = port(h, BASE.offset(1, 2, i), Direction.UP);
         }
-        var grade = superheated ? SteamGrades.SUPERHEATED : SteamGrades.HIGH_PRESSURE;
+        var grade = stainless ? SteamGrades.HIGH_PRESSURE : SteamGrades.ORDINARY;
         int ticks = 1250, converted = 0;
         double totalSU = 0;
         for (int tick = 0; tick < ticks; tick++) {
@@ -238,14 +241,14 @@ public final class HorizontalTankBoilerSizeGameTests {
             for (int i = 0; i < ends.length; i++) {
                 ends[i].generateSteam();
                 var steam = outputs[i].drain(Integer.MAX_VALUE, EXECUTE);
-                h.assertTrue(steam.is(grade.fluid()) && turbinePort.fill(steam, EXECUTE) == steam.getAmount(), "A roof outlet carries its row's rated steam into the actual turbine inlet");
+                h.assertTrue(SteamGrades.of(steam) == grade && turbinePort.fill(steam, EXECUTE) == steam.getAmount(), "A roof outlet carries its row's rated steam into the actual turbine inlet");
                 charge += steam.getAmount();
             }
             h.assertTrue(turbine.thermodynamics().step(true, charge) == charge, "The high-pressure rotor expands the whole charge");
             totalSU += turbine.calculateAddedStressCapacity() * turbine.getGeneratedSpeed();
             converted += turbine.getSteamCapability().drain(charge, EXECUTE).getAmount();
         }
-        double target = 32_768d * 3 * length * (superheated ? 2 : 1);
+        double target = 32_768d * 3 * length * (superheated ? 2 : 1) * (stainless ? 1 : .5);
         h.assertTrue(Math.abs(totalSU / ticks - target) < 50, "Mean Create stress capacity matches the burner count: " + totalSU / ticks + " / " + target);
         h.assertTrue(root.getTankInventory().getFluidAmount() + converted == water, "Boiling and turbine expansion conserve the finite water charge");
 

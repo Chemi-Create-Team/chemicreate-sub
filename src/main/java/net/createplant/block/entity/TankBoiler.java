@@ -25,7 +25,7 @@ public final class TankBoiler {
     public interface Holder { TankBoiler createPlant$boiler(); }
 
     public static final int CAPACITY = 16_000;
-    private static final double MAX_HEAT = 400_000, JOULES_PER_HEAT_LEVEL = 4000;
+    private static final double MAX_HEAT = 400_000, JOULES_PER_HEAT_LEVEL = (4000d / 2008) * SteamGrades.ORDINARY.joulesPerMb();
     private final FluidTankBlockEntity owner;
     private final ThermalFluidTank steam;
     private final IFluidHandler outlet;

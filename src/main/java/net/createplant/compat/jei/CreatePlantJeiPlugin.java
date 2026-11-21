@@ -213,10 +213,20 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         registration.addRecipes(type("helium_refrigeration"),liquefaction);
         registration.addRecipes(type("cell_electrolysis"), List.of(PlantProcess.fluids(List.of(f(CEFusionFuel.HEAVY_WATER.get(), ElectrolysisProcess.WATER_PER_PLATE * ticks)),
             List.of(f(CEFusion.DEUTERIUM_GAS.get(), 2 * ticks), f(CEFluids.OXYGEN_GAS.get(), ticks)), note("electrolysis", ticks, energy))));
-        var generation=new ArrayList<PlantProcess>();var expansion=new ArrayList<PlantProcess>();
-        for(var grade:net.createplant.thermal.SteamGrades.values()){
-            generation.add(new PlantProcess(List.of(),List.of(f(Fluids.WATER,1000)),List.of(new ItemStack(grade==net.createplant.thermal.SteamGrades.ORDINARY ? AllBlocks.FLUID_TANK.get() : CETransport.HORIZONTAL_FLUID_TANK.get()),AllBlocks.BLAZE_BURNER.asStack()),List.of(),List.of(f(grade.fluid(),1000)),note("steam_generation_"+grade.name().toLowerCase(java.util.Locale.ROOT))));
-            for(boolean low:List.of(false,true))expansion.add(PlantProcess.fluids(List.of(f(grade.fluid(),1000)),List.of(net.createplant.thermal.SteamGrades.outlet(f(grade.fluid(),1000),1000,low)),note("steam_turbine_"+(low ? "low" : "high"),Math.round(grade.workPerMb(low)))));
+        var ordinarySteam = net.createplant.thermal.SteamGrades.ORDINARY.stack(1000);
+        var highPressureSteam = net.createplant.thermal.SteamGrades.HIGH_PRESSURE.stack(1000);
+        var water = List.of(f(Fluids.WATER,1000));
+        var burner = AllBlocks.BLAZE_BURNER.asStack();
+        var generation = List.of(
+            new PlantProcess(List.of(), water, List.of(AllBlocks.FLUID_TANK.asStack(), burner), List.of(), List.of(ordinarySteam), note("steam_generation_ordinary")),
+            new PlantProcess(List.of(), water, List.of(CETransport.HORIZONTAL_FLUID_TANK.toStack(), burner), List.of(), List.of(ordinarySteam), note("steam_generation_horizontal")),
+            new PlantProcess(List.of(), water, List.of(CETransport.STAINLESS_BOILER.toStack(), burner), List.of(), List.of(highPressureSteam), note("steam_generation_high_pressure")));
+        var expansion = new ArrayList<PlantProcess>();
+        for (var grade : net.createplant.thermal.SteamGrades.values()) for (boolean low : List.of(false,true)) {
+            var feed = grade.stack(1000);
+            if (!low && grade == net.createplant.thermal.SteamGrades.EXHAUST) continue;
+            String key = grade == net.createplant.thermal.SteamGrades.EXHAUST ? "steam_turbine_low_exhaust" : low ? "steam_turbine_low" : "steam_turbine_high";
+            expansion.add(PlantProcess.fluids(List.of(feed), List.of(net.createplant.thermal.SteamGrades.outlet(feed, 1000, low)), note(key, Math.round(grade.workPerMb(low)))));
         }
         registration.addRecipes(type("steam_generation"),generation);registration.addRecipes(type("steam_turbine"),expansion);
         registration.addRecipes(type("ammonia_separator"),net.createplant.block.entity.AmmoniaSeparatorBlockEntity.recipes().stream().map(recipe->PlantProcess.fluids(recipe.inputs(),recipe.outputs(),note("ammonia_separator"))).toList());
