@@ -84,8 +84,6 @@ public final class GasMixturePort implements IFluidHandler {
     @Override public int fill(FluidStack resource, FluidAction action) {
         if (!inlet) return outlet ? port.fill(resource, action) : 0;
         if (!MixtureHelper.composite(resource) || !MixtureHelper.isMixableGas(resource)) return port.fill(resource, action);
-        // A machine that takes air as such keeps doing so; any other takes the air's gases one by one.
-        if (!MixtureHelper.isMixture(resource) && port.fill(resource, FluidAction.SIMULATE) > 0) return port.fill(resource, action);
         var components = MixtureHelper.components(resource);
         double share = 1;
         int unused = 0;
@@ -95,6 +93,8 @@ public final class GasMixturePort implements IFluidHandler {
             if (taken > 0) { anyUsed = true;share = Math.min(share, taken / (double) component.getAmount()); }
             else unused += component.getAmount();
         }
+        // Air goes in by its gases wherever the machine uses one of them; a machine that uses none, such as a compressor, takes it as air.
+        if ((!anyUsed || unused > 0 && through == null) && !MixtureHelper.isMixture(resource)) return port.fill(resource, action);
         if (!anyUsed || unused > 0 && through == null) return 0;
         if (unused > 0) share = Math.min(share, through.room() / (double) unused);
         int accepted = (int) Math.floor(resource.getAmount() * share);

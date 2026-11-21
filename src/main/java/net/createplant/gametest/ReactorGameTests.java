@@ -312,7 +312,7 @@ public class ReactorGameTests {
             int acid=0;
             for (int i=0;i<out(reactor).getTanks();i++) if (out(reactor).getFluidInTank(i).is(CEMetals.DILUTE_SULFURIC_ACID.get())) acid+=out(reactor).getFluidInTank(i).getAmount();
             h.assertTrue(acid==1000 && net.createplant.mixture.MixtureHelper.extractContents(passed).amounts().get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(CEFluids.NITROGEN_GAS.get()))==468,
-                "Air's 126 mB oxygen oxidises the sulfur dioxide; its nitrogen waits at the gas outlet: "+acid+" "+passed.getComponentsPatch());
+                "Air's 126 mB oxygen oxidises the sulfur dioxide; its nitrogen waits at the gas outlet: "+acid+" "+passed.getComponentsPatch()+" status="+reactor.status()+" storage="+reactor.getTankInventory().getFluid()+" in="+in(reactor).getFluidInTank(0)+"/"+in(reactor).getFluidInTank(1)+"/"+in(reactor).getFluidInTank(2));
             h.succeed();
         });
     }
