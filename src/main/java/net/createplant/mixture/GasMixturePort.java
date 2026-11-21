@@ -30,6 +30,13 @@ public final class GasMixturePort implements IFluidHandler {
     public static IFluidHandler outlet(IFluidHandler port, BlockEntity machine) { return wrap(port, machine, false, true); }
     public static IFluidHandler both(IFluidHandler port, BlockEntity machine) { return wrap(port, machine, true, true); }
 
+    /** Exchangers handle the whole gas stream, but can still discharge gas already buffered by an older version. */
+    public static IFluidHandler withLegacyOutlet(IFluidHandler port, BlockEntity machine) {
+        if (port == null) return null;
+        var through = GasPassThrough.of(machine);
+        return through == null || through.gas().isEmpty() ? port : new GasMixturePort(port, machine, false, true);
+    }
+
     private static IFluidHandler wrap(IFluidHandler port, BlockEntity machine, boolean inlet, boolean outlet) {
         return port == null ? null : new GasMixturePort(port, machine, inlet, outlet);
     }

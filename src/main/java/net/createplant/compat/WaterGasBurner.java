@@ -7,7 +7,9 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
+import net.createplant.mixture.MixtureHelper;
 import net.createplant.registry.CEProcessFluids;
+import net.createplant.thermal.SteamGrades;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
@@ -36,12 +38,23 @@ public final class WaterGasBurner {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, AllBlockEntityTypes.HEATER.get(),
-            (burner, side) -> side != null && side != Direction.UP && available(burner) ? net.createplant.mixture.GasMixturePort.inlet(new Inlet(burner), null) : null);
+            (burner, side) -> side != null && side != Direction.UP && available(burner) ? new Inlet(burner) : null);
     }
 
     private static boolean available(BlazeBurnerBlockEntity burner) {
         return !burner.isRemoved() && burner.getLevel() != null && !burner.stockKeeper
             && burner.getHeatLevelFromBlock() != HeatLevel.NONE;
+    }
+
+    private static int fuelVolume(FluidStack stack) {
+        if (stack.is(CEProcessFluids.WATER_GAS.get())) return stack.getAmount();
+        if (!MixtureHelper.isMixture(stack) || !MixtureHelper.gas(stack)) return 0;
+        int volume=0;
+        for (var part:MixtureHelper.components(stack)) {
+            if (part.is(CEProcessFluids.WATER_GAS.get())) volume+=part.getAmount();
+            else if (SteamGrades.of(part)==null) return 0;
+        }
+        return volume;
     }
 
     private record Inlet(BlazeBurnerBlockEntity burner) implements IFluidHandler {
@@ -55,14 +68,18 @@ public final class WaterGasBurner {
             return getTankCapacity(tank) == 0 ? FluidStack.EMPTY : new FluidStack(CEProcessFluids.WATER_GAS.get(), pending());
         }
         @Override public boolean isFluidValid(int tank, FluidStack stack) {
-            return getTankCapacity(tank) != 0 && stack.is(CEProcessFluids.WATER_GAS.get());
+            return getTankCapacity(tank) != 0 && fuelVolume(stack)>0;
         }
 
         @Override public int fill(FluidStack stack, FluidAction action) {
-            if (stack.isEmpty() || !isFluidValid(0, stack) || burner.getLevel().isClientSide) return 0;
+            if (stack.isEmpty() || !available(burner) || burner.getLevel().isClientSide) return 0;
+            int dry=fuelVolume(stack);
+            if (dry<=0) return 0;
             int held = pending();
-            int accepted = Math.min(stack.getAmount(), CHARGE - held);
-            boolean complete = held + accepted == CHARGE;
+            int accepted = (int)Math.min(stack.getAmount(),(long)(CHARGE-held)*stack.getAmount()/dry);
+            int consumed=fuelVolume(MixtureHelper.portion(stack,accepted));
+            if (consumed<=0) return 0;
+            boolean complete = held + consumed == CHARGE;
 
             // Route each full charge through the same fuel rules and burn time as a right-clicked bucket.
             var fuel = new ItemStack(CEProcessFluids.WATER_GAS.get().getBucket());
@@ -70,7 +87,7 @@ public final class WaterGasBurner {
                 fuel, true, false, action.simulate() || !complete).getResult().consumesAction()) return 0;
             if (action.execute()) {
                 if (complete) burner.removeData(PENDING);
-                else burner.setData(PENDING, held + accepted);
+                else burner.setData(PENDING, held + consumed);
                 burner.setChanged();
             }
             return accepted;

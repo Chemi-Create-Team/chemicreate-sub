@@ -66,6 +66,7 @@ public final class FluidThermal {
         product.applyComponents(source.getComponentsPatch());
         product.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());
         product.remove(net.createplant.registry.CEThermal.EXPANDED_STEAM.get());
+        product.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
     }
     public static boolean compatible(FluidStack a,FluidStack b) { return FluidStack.isSameFluidSameComponents(a,b); }
     public static boolean mixable(FluidStack a,FluidStack b) {
@@ -74,6 +75,7 @@ public final class FluidThermal {
         var first=a.copy();var second=b.copy();
         first.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());second.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());
         first.remove(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get());second.remove(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get());
+        first.remove(net.createplant.registry.CEThermal.CONDENSATE.get());second.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
         return compatible(first,second);
     }
     public static FluidStack mix(FluidStack stored,FluidStack incoming,int accepted) {
@@ -82,6 +84,8 @@ public final class FluidThermal {
         var heat=net.createplant.registry.CEThermal.HEAT_GRADE.get();
         if(!stored.has(heat) || !incoming.has(heat))result.remove(heat);
         else result.set(heat,Math.min(stored.get(heat),incoming.get(heat)));
+        var condensate=net.createplant.registry.CEThermal.CONDENSATE.get();
+        if (!stored.has(condensate) || !incoming.has(condensate)) result.remove(condensate);
         var impurity=net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get();
         int suspended=(int)(((long)stored.getOrDefault(impurity,0)*stored.getAmount()+(long)incoming.getOrDefault(impurity,0)*accepted+result.getAmount()/2)/result.getAmount());
         if(suspended>0)result.set(impurity,suspended);else result.remove(impurity);

@@ -6,6 +6,8 @@ import java.util.List;
 import net.createplant.block.GasTankContainerBlock;
 import net.createplant.block.TankCells;
 import net.createplant.registry.CETransport;
+import net.createplant.thermal.GasTankDrain;
+import net.createplant.thermal.ThermalFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -21,6 +23,10 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * blocks form a tank of a container size. Any other run keeps what it holds until it is completed again.
  */
 public class GasTankContainerBlockEntity extends HorizontalTankBlockEntity {
+    private final GasTankDrain sump = new GasTankDrain(() -> {
+        setChanged();
+        if (level != null && !level.isClientSide) sendData();
+    });
 
     public GasTankContainerBlockEntity(BlockPos pos, BlockState state) { super(CETransport.GAS_TANK_CONTAINER_ENTITY.get(), pos, state); }
 
@@ -69,10 +75,40 @@ public class GasTankContainerBlockEntity extends HorizontalTankBlockEntity {
             int width = controller == null ? 1 : controller.getWidth();
             tooltip.add(Component.translatable("goggles.create_refinery_n_reactors.gas_tank_container.incomplete", width, width, GasTankContainerBlock.length(width)));
         }
-        return super.addToGoggleTooltip(tooltip, sneaking) || !complete();
+        boolean shown=super.addToGoggleTooltip(tooltip,sneaking);
+        addDrainReadout(tooltip,false);
+        return shown || !complete();
+    }
+
+    public void addDrainReadout(List<Component> tooltip, boolean composition) {
+        var owner=drainOwner();
+        if (owner!=null) owner.sump.addReadout(tooltip,composition);
+    }
+
+    private GasTankContainerBlockEntity drainOwner() {
+        return complete() && !isRemoved() && getControllerBE() instanceof GasTankContainerBlockEntity owner ? owner : null;
+    }
+
+    @Override public void tick() {
+        super.tick();
+        if (level!=null && !level.isClientSide && isController() && complete() && Math.floorMod(level.getGameTime()+worldPosition.asLong(),20)==0)
+            sump.collect((ThermalFluidTank)getTankInventory());
+    }
+
+    @Override public void write(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
+        super.write(tag,lookup,packet);sump.write(tag,lookup);
+    }
+
+    @Override protected void read(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
+        super.read(tag,lookup,packet);sump.read(tag,lookup);
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.GAS_TANK_CONTAINER_ENTITY.get(), (be, side) -> be.complete() ? be.fluidCapability : null);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.GAS_TANK_CONTAINER_ENTITY.get(), (be, side) -> {
+            var root=be.drainOwner();
+            if (root==null) return null;
+            boolean bottom=side==Direction.DOWN && be.worldPosition.getY()==root.worldPosition.getY();
+            return GasTankDrain.port(be.fluidCapability,bottom,()->{var owner=be.drainOwner();return owner==null ? null : owner.sump;});
+        });
     }
 }

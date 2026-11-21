@@ -17,6 +17,8 @@ public final class CEThermal {
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
     public static final Supplier<DataComponentType<Integer>> SUSPENDED_IMPURITY=COMPONENTS.register("suspended_impurity",()->DataComponentType.<Integer>builder()
         .persistent(Codec.intRange(0,1000)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
+    public static final Supplier<DataComponentType<Boolean>> CONDENSATE=COMPONENTS.register("condensate",()->DataComponentType.<Boolean>builder()
+        .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
     private CEThermal() { }
     public static void register(IEventBus bus) { COMPONENTS.register(bus); }
 }

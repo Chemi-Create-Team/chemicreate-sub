@@ -3700,9 +3700,9 @@
     "zh_cn": "气量增加时套筒升起，排空后收回外罐。"
   },
   "gas_bell.pipes": {
-    "en_us": "Connect pipes and pumps to the fixed outer shell's sides or bottom, not the top.",
-    "ja_jp": "固定された外槽の側面・下面へパイプとポンプをつなぎます。上面は配管口ではありません。",
-    "zh_cn": "管道和动力泵接固定外罐侧面或底面，顶部不是接口。"
+    "en_us": "Connect the fixed shell's side or bottom. A pump below the base can draw out water that settles from wet gas.",
+    "ja_jp": "固定された外槽の側面・底面へ配管します。蒸気交じりのガスからたまった水は、底面のポンプで回収できます。",
+    "zh_cn": "将管道接在固定外罐的侧面或底面。含蒸汽气体形成的冷凝水可以用底部泵抽出。"
   },
   "gas_bell.first": {
     "en_us": "Filling raises the innermost sleeve first. No rotational power is required.",
@@ -3760,9 +3760,9 @@
     "zh_cn": "连接管侧端面与壳侧顶部接口。两侧入口相反时处理量为1.5倍。"
   },
   "guide.heat_exchanger.step_3": {
-    "en_us": "Supply a hot process stream and coolant. Both convert together; a full outlet stops both inputs.",
-    "ja_jp": "高温の工程流体と冷媒を流すと、両方が同時に変換されます。出口が満杯なら両方の消費が止まります。",
-    "zh_cn": "供应高温工艺流体和冷却介质，两者同时转换。任一出口满时都停止消耗。"
+    "en_us": "Longer units, counterflow and a higher coolant flow cool more. Use goggles to check both outlet temperatures.",
+    "ja_jp": "長さと対向流、冷媒の流量で冷却が変わります。ゴーグルで両系統の出口温度を確認できます。",
+    "zh_cn": "换热器长度、逆流和冷却介质流量会影响冷却。戴护目镜可查看两路出口温度。"
   },
   "guide.jacketed_pipe.title": {
     "en_us": "Jacketed pipe",
@@ -3860,9 +3860,9 @@
     "zh_cn": "1×1截面长度2、2×2长度5、3×3长度7时成型，框架自动连接。"
   },
   "guide.gas_tank_container.step_2": {
-    "en_us": "Containers accept non-corrosive gas through hot and high-pressure grades. Connect pipes to any face and inspect the grade range with goggles.",
-    "ja_jp": "コンテナは高温・高圧までの非腐食性ガスを入れられます。各面へ配管でき、受入等級はゴーグルで確認します。",
-    "zh_cn": "集装罐接收最高高温、高压的无腐蚀性气体。各面可接管，用护目镜查看等级范围。"
+    "en_us": "The tank holds non-corrosive gas through hot and high-pressure grades. Use a pump below the base to draw drain water.",
+    "ja_jp": "高温・高圧までの非腐食性ガスを入れられます。ドレン水は底面につないだポンプで回収できます。",
+    "zh_cn": "罐体可储存最高高温、高压的无腐蚀性气体。把泵接在底面可回收冷凝水。"
   },
   "turbine_multiblock.title": {
     "en_us": "Turbine sections: build the length you need",
@@ -4950,14 +4950,14 @@
     "zh_cn": "用分馏塔分离气化炉产生的水煤气。将一氧化碳与压缩氢气送入加热的催化反应塔制取甲醇，再与水混合制成防冻液。"
   },
   "entrained_gasifier.syngas": {
-    "en_us": "Send water gas to the absorption tower for refining. Press U on the gas in JEI to find this step.",
-    "ja_jp": "水性ガスを吸収塔に送って精製します。JEIで水性ガスにUキーを押すと、その工程を確認できます。",
-    "zh_cn": "将水煤气送入吸收塔净化。在 JEI 中对水煤气按 U 可查看这一步。"
+    "en_us": "Cool the wet output in a heat exchanger, then send it to the absorption tower. Recover drain water at the bottom.",
+    "ja_jp": "蒸気交じりのガスは熱交換器で冷やしてから吸収塔に送ります。凝縮した水は底面から回収できます。",
+    "zh_cn": "含蒸汽的气体先经换热器冷却，再送入吸收塔。凝结的水从底部回收。"
   },
   "large_absorption_tower.syngas": {
-    "en_us": "Feed water gas below and caustic soda above. Purified gas exits above and sulfur scrubber liquor below.",
-    "ja_jp": "下部に水性ガス、上部に苛性ソーダ水溶液を供給します。上部から精製合成ガス、下部から脱硫排液を取り出します。",
-    "zh_cn": "从下部送水煤气、上部送烧碱溶液。上部产出净化合成气，下部排出脱硫洗涤液。"
+    "en_us": "Send the exchanger output here after the wet gas cools to 100 °C or below. Recover dry syngas at the top and water at the bottom.",
+    "ja_jp": "蒸気交じりのガスを熱交換器で100 ℃以下に冷やしてから搬入します。上から乾いた合成ガス、下からドレン水を回収します。",
+    "zh_cn": "将含蒸汽的气体用换热器冷却到100 °C或更低后送入。顶部排出干合成气，底部回收冷凝水。"
   },
   "synthetic_reactions.title": {
     "en_us": "From water gas to synthetic crude",

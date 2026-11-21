@@ -8,7 +8,6 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
 import net.createplant.compat.display.MachineReadings;
 import net.createplant.block.GasifierBlock;
-import net.createplant.block.PulsationTubeBlock;
 import net.createplant.block.entity.GasifierBlockEntity;
 import net.createplant.registry.*;
 import net.createplant.thermal.Grade;
@@ -73,7 +72,7 @@ public final class GasifierGameTests {
         charge(h, batches, new FluidStack(CEFluids.STEAM.get(), 250 * batches));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
         ticks(gasifier, 32 + 40 * batches);
-        return fluid(h, OUTLET, Direction.UP).drain(500 * batches + 1, EXECUTE);
+        return fluid(h, OUTLET, Direction.UP).drain(600 * batches + 1, EXECUTE);
     }
 
     @GameTest(template = "test_petrochemical")
@@ -156,10 +155,11 @@ public final class GasifierGameTests {
         h.assertTrue(be.fluid(2).isEmpty() && h.getBlockState(BASE.above(3).south()).getValue(GasifierBlock.LIT),
             "Thirty-nine hot ticks are insufficient, and the red-hot bed lights the sight glasses");
         ticks(be, 1);
-        var gas = fluid(h, OUTLET, Direction.UP).drain(500, EXECUTE);
-        h.assertTrue(gas.is(CEProcessFluids.WATER_GAS.get()) && gas.getAmount() == 500
-            && gas.get(CEThermal.HEAT_GRADE.get()) == Grade.Heat.HOT.ordinal()
-            && FluidHazards.of(gas).gas() && net.createplant.transport.PipeMaterial.COPPER.carries(gas), "The outlet delivers 500 mB of hot water gas that copper pipes carry");
+        var gas = fluid(h, OUTLET, Direction.UP).drain(600, EXECUTE);
+        var phases=net.createplant.thermal.SteamCondensate.separate(gas,293,Integer.MAX_VALUE);
+        h.assertTrue(phases.gas().is(CEProcessFluids.WATER_GAS.get()) && phases.gas().getAmount()==500 && phases.water().getAmount()==100
+            && FluidHazards.of(gas).heat() == Grade.Heat.HOT
+            && FluidHazards.of(gas).gas() && net.createplant.transport.PipeMaterial.COPPER.carries(gas), "The copper outlet delivers 500 mB of hot water gas with 100 mB of steam");
         h.assertTrue(be.itemCount(0) == 1 && inlet.getFluidInTank(0).getAmount() == 250
             && items(h, BASE, Direction.DOWN) == null, "Each batch consumes one coal and 250 mB of steam with no slag");
         h.succeed();
@@ -181,7 +181,7 @@ public final class GasifierGameTests {
             "A hot chamber still pauses immediately when its external heat stops");
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
         ticks(be, 27);
-        h.assertTrue(be.fluid(2).getAmount() == 500 && be.itemCount(0) == 0 && be.fluid(1).isEmpty(),
+        h.assertTrue(be.fluid(2).getAmount() == 600 && be.itemCount(0) == 0 && be.fluid(1).isEmpty(),
             "Restoring heat completes the same batch exactly once");
         h.succeed();
     }
@@ -195,11 +195,11 @@ public final class GasifierGameTests {
         ticks(be, 1400);
         fluid(h, INLET, Direction.NORTH).fill(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 250), EXECUTE);
         ticks(be, 40);
-        h.assertTrue(be.status().equals("gas_output") && be.fluid(2).getAmount() == 16000
-            && be.itemCount(0) == 1 && be.fluid(1).getAmount() == 250, "A full tank pauses with feed intact");
-        fluid(h, OUTLET, Direction.UP).drain(500, EXECUTE);
+        h.assertTrue(be.status().equals("gas_output") && be.fluid(2).getAmount() == 15600
+            && be.itemCount(0) == 7 && be.fluid(1).getAmount() == 1750, "A full tank pauses with feed intact");
+        fluid(h, OUTLET, Direction.UP).drain(600, EXECUTE);
         ticks(be, 40);
-        h.assertTrue(be.fluid(2).getAmount() == 16000 && be.itemCount(0) == 0 && be.fluid(1).isEmpty(),
+        h.assertTrue(be.fluid(2).getAmount() == 15600 && be.itemCount(0) == 6 && be.fluid(1).getAmount() == 1500,
             "Freeing one batch of space restarts production");
         h.succeed();
     }
@@ -217,8 +217,8 @@ public final class GasifierGameTests {
         var elbow = OUTLET.above();
         var pump = elbow.east();
         var exchanger = ThermalControlGameTests.build(h.getLevel(), h.absolutePos(pump.east(2)), Direction.NORTH, 2);
-        var receivingTube = ThermalControlGameTests.shell(exchanger, 0);
-        h.assertTrue(receivingTube.fill(new FluidStack(Fluids.WATER, 500), EXECUTE) == 500, "The exchanger has finite coolant");
+        var receivingTube = ThermalControlGameTests.shell(exchanger, 1);
+        h.assertTrue(receivingTube.fill(new FluidStack(Fluids.WATER, 600), EXECUTE) == 600, "The exchanger has finite coolant");
 
         h.setBlock(elbow, AllBlocks.FLUID_PIPE.getDefaultState()
             .setValue(FluidPipeBlock.DOWN, true).setValue(FluidPipeBlock.EAST, true));
@@ -230,13 +230,21 @@ public final class GasifierGameTests {
         h.setBlock(cog.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
         ((CreativeMotorBlockEntity) h.getBlockEntity(cog.west())).generatedSpeed.setValue(64);
 
-        var receiver = pump.east(6);
-        h.setBlock(receiver, CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS, Direction.Axis.X));
+        var receiver=pump.east(7);
+        int length=net.createplant.block.GasTankContainerBlock.length(1);
+        var container=CETransport.GAS_TANK_CONTAINER.get().defaultBlockState().setValue(net.createplant.block.GasTankContainerBlock.AXIS,Direction.Axis.X);
+        for(int x=0;x<length;x++)h.setBlock(receiver.east(x),container);
+        for(int x:new int[]{4,6})h.setBlock(pump.east(x),AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.WEST,true).setValue(FluidPipeBlock.EAST,true));
+        var second=pump.east(5);
+        h.setBlock(second,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(PumpBlock.FACING,Direction.EAST));
+        h.setBlock(second.south(),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
+        h.setBlock(second.south().west(),AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
+        ((CreativeMotorBlockEntity)h.getBlockEntity(second.south().west())).generatedSpeed.setValue(64);
         h.runAfterDelay(5, () -> {
             var maximum = MachineReadings.read(gasifier, "production_fluid_max");
-            h.assertTrue(maximum != null && maximum.value() == 250 && MachineReadings.productionBottleneck(gasifier).getContents()
+            h.assertTrue(maximum != null && maximum.value() == 300 && MachineReadings.productionBottleneck(gasifier).getContents()
                 instanceof net.minecraft.network.chat.contents.TranslatableContents reason && reason.getKey().endsWith(".heat"),
-                "A preheating gasifier shows the single recipe's 250 mB/s rating and the heating bottleneck");
+                "A preheating gasifier shows the single recipe's 300 mB/s wet-gas rating and the heating bottleneck");
         });
         h.runAfterDelay(130, () -> {
             var current = MachineReadings.read(gasifier, "production_fluid");
@@ -245,12 +253,11 @@ public final class GasifierGameTests {
         h.runAfterDelay(610, () -> {
             var current = MachineReadings.read(gasifier, "production_fluid");
             h.assertTrue(current != null && current.value() == 0, "The old batch ages out of the rolling window");
-            var gas = ThermalControlGameTests.tube(exchanger, 1).drain(500, EXECUTE);
-            h.assertTrue(gas.is(CEProcessFluids.WATER_GAS.get()) && gas.getAmount() == 500 && gasifier.fluid(2).isEmpty(),
-                "Create's copper pipe and mechanical pump draw the whole batch from the outlet into the exchanger");
-            h.assertTrue(FluidHazards.of(gas).heat() == Grade.Heat.AMBIENT
-                && fluid(h, receiver, Direction.WEST).fill(gas, EXECUTE) == 500,
-                "Cooling keeps the mixture and amount while allowing storage in the gas receiver");
+            var water=fluid(h,receiver,Direction.DOWN).drain(new FluidStack(Fluids.WATER,600),EXECUTE);
+            var gas=fluid(h,receiver,Direction.WEST).getFluidInTank(0);
+            h.assertTrue(water.is(Fluids.WATER) && water.getAmount()==100,"The second Create pump sends the condensed water into the tank sump: "+water);
+            h.assertTrue(gas.is(CEProcessFluids.WATER_GAS.get()) && gas.getAmount()==500 && gasifier.fluid(2).isEmpty()
+                && FluidHazards.of(gas).heat()==Grade.Heat.AMBIENT,"The same pump sends the full dry gas volume without mixing the water back in: "+gas);
             h.succeed();
         });
     }
@@ -340,7 +347,7 @@ public final class GasifierGameTests {
             && items(h, BASE.north(), Direction.NORTH).extractItem(2, 64, false).is(CEGasifier.SLAG.get()),
             "Saved coolants and pending slag are recoverable");
         ticks(restored, 40);
-        h.assertTrue(restored.fluid(2).is(CEProcessFluids.WATER_GAS.get()) && restored.fluid(2).getAmount() == 500,
+        h.assertTrue(net.createplant.thermal.SteamCondensate.vapour(restored.fluid(2)) && restored.fluid(2).getAmount() == 600,
             "The migrated furnace makes the new gas when the old output is cleared");
         h.succeed();
     }
