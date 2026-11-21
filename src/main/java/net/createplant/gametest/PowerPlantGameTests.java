@@ -80,7 +80,8 @@ public final class PowerPlantGameTests {
             h.getLevel().setBlock(centre.offset(cell.offset()), cell.block().defaultBlockState(), 2);
         var tower = (CoolingTowerBlockEntity) h.getLevel().getBlockEntity(control);
         for (int i = 0; i < 200 && !tower.formed(); i++) tower.validateSlice();
-        h.assertTrue(tower.formed(), "The compact 25 x 25 x 36 tower forms: " + tower.status());
+        h.assertTrue(tower.formed(), "The compact 25 x 25 x 36 tower forms: " + tower.status() + " at " + tower.fault().subtract(centre).toShortString()
+            + " " + h.getLevel().getBlockState(tower.fault()) + " loaded=" + h.getLevel().hasChunkAt(tower.fault()));
         for (var cell : CoolingTowerStructure.cells()) {
             if (cell.role() != CoolingTowerStructure.Role.HOT && cell.role() != CoolingTowerStructure.Role.COLD) continue;
             BlockPos at = centre.offset(cell.offset());
