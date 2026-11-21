@@ -60,7 +60,7 @@ def model(entry):
             AllChem.UFFOptimizeMolecule(spatial)
         xyz = spatial.GetConformer().GetPositions()
 
-    # Keep the largest molecular dimensions on the screen and tilt the projection to show depth.
+    # Align the principal dimensions and save the model's complete three-dimensional coordinates.
     xyz -= xyz.mean(axis=0)
     _, _, basis = np.linalg.svd(xyz, full_matrices=True)
     xyz = xyz @ basis.T
@@ -81,7 +81,8 @@ def main():
         if any(info[fluid]["formula"] != formula for fluid in fluids):
             raise ValueError(f"Formula mismatch for {fluids}")
         keys = [fluid if ":" in fluid else f"{MOD}:{fluid}" for fluid in fluids]
-        structures.append([formula, keys, not entry.get("ambiguous_formula", False), *model(entry)])
+        items = [item if ":" in item else f"{MOD}:{item}" for item in entry.get("items", [])]
+        structures.append([formula, keys, items, *model(entry)])
     result = ",\n".join("  " + json.dumps(row, ensure_ascii=False, separators=(",", ":")) for row in structures)
     (DATA / "molecule_structures.json").write_text("[\n" + result + "\n]\n")
     print(f"Generated {len(structures)} molecular structures for {sum(len(row[1]) for row in structures)} fluids")

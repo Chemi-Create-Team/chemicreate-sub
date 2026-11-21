@@ -21,10 +21,19 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public final class FluidChemicalRegistry {
     public enum ChemicalHazard { FLAMMABLE, CORROSIVE, TOXIC, HIGH_VISCOSITY, REFRIGERANT, OXIDIZER }
 
-    public record ChemicalFluidInfo(String formula, List<ChemicalHazard> hazards) {
+    public record ChemicalFluidInfo(String formula, List<ChemicalHazard> hazards, boolean aqueous, String compositionKey) {
         public ChemicalFluidInfo {
             if (formula.isBlank()) throw new IllegalArgumentException("Empty fluid formula");
             hazards = List.copyOf(hazards);
+        }
+
+        public String solutes() {
+            return String.join(" + ", java.util.Arrays.stream(formula.split(" \\+ ")).filter(part -> !part.equals("H₂O")).toList());
+        }
+
+        public boolean mixture() {
+            return aqueous || !compositionKey.isEmpty() || formula.contains(" + ") || formula.contains("…")
+                || formula.contains("–") || formula.contains("ₙ") || formula.contains("ₘ");
         }
     }
 
@@ -43,7 +52,9 @@ public final class FluidChemicalRegistry {
                 var data = row.getValue().getAsJsonObject();
                 var hazards = data.getAsJsonArray("hazards").asList().stream()
                     .map(value -> ChemicalHazard.valueOf(value.getAsString())).toList();
-                entries.put(id, new ChemicalFluidInfo(data.get("formula").getAsString(), hazards));
+                entries.put(id, new ChemicalFluidInfo(data.get("formula").getAsString(), hazards,
+                    data.has("aqueous") && data.get("aqueous").getAsBoolean(),
+                    data.has("composition") ? data.get("composition").getAsString() : ""));
             }
         } catch (java.io.IOException e) {
             throw new IllegalStateException("Failed to read " + file, e);
@@ -82,6 +93,6 @@ public final class FluidChemicalRegistry {
                 if (components.size() > 3) formula += " + …";
             }
         }
-        return new ChemicalFluidInfo(formula, List.copyOf(hazards));
+        return new ChemicalFluidInfo(formula, List.copyOf(hazards), info.aqueous(), info.compositionKey());
     }
 }

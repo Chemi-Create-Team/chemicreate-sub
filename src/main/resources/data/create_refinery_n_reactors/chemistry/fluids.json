@@ -12,7 +12,8 @@
   },
   "aluminium_sulfate_solution": {
     "formula": "Al₂(SO₄)₃ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "ammonia_gas": {
     "formula": "NH₃",
@@ -20,14 +21,16 @@
   },
   "ammonium_chloride_liquor": {
     "formula": "NH₄Cl + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "antifreeze": {
     "formula": "C₂H₆O₂ + H₂O",
     "hazards": [
       "TOXIC",
       "REFRIGERANT"
-    ]
+    ],
+    "aqueous": true
   },
   "argon_gas": {
     "formula": "Ar",
@@ -42,7 +45,8 @@
   },
   "brine": {
     "formula": "NaCl + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "btx": {
     "formula": "C₆H₆ + C₇H₈ + C₈H₁₀",
@@ -79,7 +83,8 @@
   },
   "caustic_soda_solution": {
     "formula": "NaOH + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "chemical_mixture": {
     "formula": "…",
@@ -107,7 +112,8 @@
     "hazards": [
       "FLAMMABLE",
       "TOXIC"
-    ]
+    ],
+    "composition": "chlorotoluene_isomers"
   },
   "clarified_water": {
     "formula": "H₂O",
@@ -169,7 +175,8 @@
   },
   "copper_sulfate_solution": {
     "formula": "CuSO₄ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "create:chocolate": {
     "formula": "…",
@@ -181,15 +188,18 @@
   },
   "create:potion": {
     "formula": "H₂O + …",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "create:tea": {
     "formula": "H₂O + …",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "createdieselgenerators:biodiesel": {
-    "formula": "RCOOCH₃ + …",
-    "hazards": []
+    "formula": "RCOOCH₂CH₃ + …",
+    "hazards": [],
+    "composition": "biodiesel"
   },
   "createdieselgenerators:black_cement": {
     "formula": "…",
@@ -207,7 +217,8 @@
     "formula": "CₙHₘ",
     "hazards": [
       "FLAMMABLE"
-    ]
+    ],
+    "composition": "hydrocarbon_mixture"
   },
   "createdieselgenerators:cyan_cement": {
     "formula": "…",
@@ -217,7 +228,8 @@
     "formula": "C₁₀H₂₂–C₂₂H₄₆",
     "hazards": [
       "FLAMMABLE"
-    ]
+    ],
+    "composition": "hydrocarbon_mixture"
   },
   "createdieselgenerators:ethanol": {
     "formula": "C₂H₆O",
@@ -227,7 +239,8 @@
     "formula": "C₅H₁₂–C₁₂H₂₆",
     "hazards": [
       "FLAMMABLE"
-    ]
+    ],
+    "composition": "hydrocarbon_mixture"
   },
   "createdieselgenerators:gray_cement": {
     "formula": "…",
@@ -262,8 +275,9 @@
     "hazards": []
   },
   "createdieselgenerators:plant_oil": {
-    "formula": "…",
-    "hazards": []
+    "formula": "C₃H₅(OCOR)₃ + …",
+    "hazards": [],
+    "composition": "plant_oil"
   },
   "createdieselgenerators:purple_cement": {
     "formula": "…",
@@ -283,7 +297,8 @@
   },
   "crop_protectant": {
     "formula": "H₂O + …",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "crude_methylphosphonate": {
     "formula": "C₃H₉O₃P + …",
@@ -317,11 +332,13 @@
   },
   "dilute_sulfuric_acid": {
     "formula": "H₂SO₄ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "diluted_pesticide": {
     "formula": "H₂O + …",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "dimethyl_methylphosphonate": {
     "formula": "C₃H₉O₃P",
@@ -331,15 +348,18 @@
   },
   "dissolved_spent_fuel": {
     "formula": "UO₂²⁺ + Pu⁴⁺ + NO₃⁻ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "electroenergetics:plant_oil": {
-    "formula": "…",
-    "hazards": []
+    "formula": "C₃H₅(OCOR)₃ + …",
+    "hazards": [],
+    "composition": "plant_oil"
   },
   "electroenergetics:transformer_oil": {
-    "formula": "…",
-    "hazards": []
+    "formula": "CₙHₘ + …",
+    "hazards": [],
+    "composition": "hydrocarbon_mixture"
   },
   "enriched_uranium_hexafluoride": {
     "formula": "UF₆",
@@ -383,7 +403,8 @@
     "hazards": [
       "CORROSIVE",
       "TOXIC"
-    ]
+    ],
+    "aqueous": true
   },
   "ft_offgas": {
     "formula": "C₂H₄ + C₃H₆",
@@ -417,7 +438,8 @@
   },
   "high_level_raffinate": {
     "formula": "NO₃⁻ + H₂O + …",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "high_pressure_steam": {
     "formula": "H₂O",
@@ -453,7 +475,8 @@
   },
   "hydrochloric_acid": {
     "formula": "HCl + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "hydrogen_chloride": {
     "formula": "HCl",
@@ -479,7 +502,8 @@
   },
   "iron_sulfate_solution": {
     "formula": "FeSO₄ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "liquid_ammonia": {
     "formula": "NH₃",
@@ -496,7 +520,8 @@
   },
   "liquid_fertilizer": {
     "formula": "H₂O + CO(NH₂)₂ + NH₃ + PO₄³⁻ + K⁺",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "liquid_helium": {
     "formula": "He",
@@ -590,7 +615,8 @@
   },
   "neutralized_wastewater": {
     "formula": "H₂O + …",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "nitric_acid": {
     "formula": "HNO₃",
@@ -631,7 +657,8 @@
   },
   "plutonium_nitrate_solution": {
     "formula": "Pu(NO₃)₄ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "preheated_crude_oil": {
     "formula": "CₙHₘ",
@@ -687,13 +714,15 @@
   },
   "sodium_aluminate_solution": {
     "formula": "Na[Al(OH)₄] + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "sodium_hypochlorite_solution": {
     "formula": "NaClO + H₂O",
     "hazards": [
       "OXIDIZER"
-    ]
+    ],
+    "aqueous": true
   },
   "steam": {
     "formula": "H₂O",
@@ -712,7 +741,8 @@
   },
   "sulfur_scrubber_liquor": {
     "formula": "H₂O + Na₂SO₃ / NaHS",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "sulfur_trioxide": {
     "formula": "SO₃",
@@ -760,11 +790,13 @@
   },
   "tin_sulfate_solution": {
     "formula": "SnSO₄ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "titanyl_sulfate_solution": {
     "formula": "TiOSO₄ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "toluene": {
     "formula": "C₇H₈",
@@ -795,7 +827,8 @@
   },
   "uranyl_nitrate_solution": {
     "formula": "UO₂(NO₃)₂ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "vinyl_chloride": {
     "formula": "C₂H₃Cl",
@@ -813,7 +846,8 @@
   },
   "wastewater": {
     "formula": "H₂O + …",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "wastewater_slurry": {
     "formula": "H₂O + …",
@@ -830,7 +864,8 @@
     "hazards": [
       "FLAMMABLE",
       "TOXIC"
-    ]
+    ],
+    "composition": "xylene_isomers"
   },
   "zinc_leach_slurry": {
     "formula": "H₂SO₄ + ZnSO₄ + …",
@@ -840,10 +875,12 @@
   },
   "zinc_sulfate_solution": {
     "formula": "ZnSO₄ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   },
   "zirconium_sulfate_solution": {
     "formula": "Zr(SO₄)₂ + H₂O",
-    "hazards": []
+    "hazards": [],
+    "aqueous": true
   }
 }

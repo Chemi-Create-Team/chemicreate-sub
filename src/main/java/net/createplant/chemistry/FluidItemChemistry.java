@@ -43,29 +43,44 @@ public final class FluidItemChemistry {
         return contents;
     }
 
-    private static List<FluidStack> constituents(FluidStack fluid) {
+    public static FluidStack normalize(FluidStack fluid) {
         if (fluid.getFluid().isSame(AllFluids.POTION.getSource()) && fluid.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY).is(Potions.WATER))
-            return List.of(new FluidStack(Fluids.WATER, fluid.getAmount()));
+            return new FluidStack(Fluids.WATER, fluid.getAmount());
+        return fluid;
+    }
+
+    private static List<FluidStack> constituents(FluidStack fluid) {
         if (MixtureHelper.isMixture(fluid)) {
             try { return MixtureHelper.components(fluid); }
             catch (IllegalArgumentException ignored) { }
         }
-        return List.of(fluid.copy());
+        return List.of(normalize(fluid).copy());
     }
 
     public static List<Component> formulaLines(ItemStack item) {
-        var contents = contents(item);
+        return formulaLines(contents(item));
+    }
+
+    public static List<Component> formulaLines(FluidStack fluid) {
+        return fluid.isEmpty() ? List.of() : formulaLines(constituents(fluid));
+    }
+
+    private static List<Component> formulaLines(List<FluidStack> contents) {
         if (contents.isEmpty()) return List.of();
         var lines = new ArrayList<Component>(contents.size());
         for (var fluid : contents) {
             var info = FluidChemicalRegistry.base(fluid.getFluid());
-            Component formula;
-            if (info == null) formula = Component.translatable(ChemicalReadout.KEY + "unknown_composition");
-            else if (info.formula().equals("…")) formula = Component.translatable(ChemicalReadout.KEY + "variable_composition");
-            else formula = Component.literal(info.formula());
-            lines.add((contents.size() == 1 ? Component.translatable(ChemicalReadout.KEY + "item_formula", formula)
+            var formula = info == null ? Component.translatable(ChemicalReadout.KEY + "unknown_composition")
+                : formulaValue(info.aqueous() ? info.solutes() : info.formula());
+            String key = info == null || info.mixture() ? "composition" : "item_formula";
+            if (info != null && info.aqueous()) key = "solute_formula";
+            lines.add((contents.size() == 1 ? Component.translatable(ChemicalReadout.KEY + key, formula)
                 : Component.translatable(ChemicalReadout.KEY + "item_component_formula", fluid.getHoverName(), formula)).withStyle(ChatFormatting.AQUA));
         }
         return lines;
+    }
+
+    public static Component formulaValue(String formula) {
+        return formula.isEmpty() || formula.equals("…") ? Component.translatable(ChemicalReadout.KEY + "variable_composition") : Component.literal(formula);
     }
 }
