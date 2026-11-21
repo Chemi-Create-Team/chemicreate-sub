@@ -9,6 +9,7 @@ import net.createplant.chemistry.FluidChemicalRegistry.ChemicalHazard;
 import net.createplant.chemistry.FluidItemChemistry;
 import net.createplant.event.ProcessPortInteraction;
 import net.createplant.mixture.MixtureHelper;
+import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEPetroFluids;
 import net.createplant.registry.CEPortableTools;
 import net.createplant.registry.CEProcessFluids;
@@ -89,6 +90,23 @@ public final class ChemicalUiGameTests {
     private static Component displayedFormula(Component line) {
         var arguments = ((TranslatableContents) line.getContents()).getArgs();
         return (Component) arguments[arguments.length - 1];
+    }
+
+    @GameTest(template = "test_fractionation")
+    public static void aqueousSolutesAndDieselGeneratorCompositionUseFluidDefinitions(GameTestHelper h) {
+        var brine = new FluidStack(CEChlorAlkali.BRINE.get(), 1000);
+        var brineBucket = net.neoforged.neoforge.fluids.FluidUtil.getFilledBucket(brine);
+        h.assertTrue(displayedFormula(FluidItemChemistry.formulaLines(brine).getFirst()).getString().equals("NaCl")
+            && displayedFormula(FluidItemChemistry.formulaLines(brineBucket).getFirst()).getString().equals("NaCl"),
+            "Both fluid ingredients and buckets identify the solute in brine");
+        var glycol = new FluidStack(CEProcessFluids.ANTIFREEZE.get(), 1000);
+        h.assertTrue(displayedFormula(FluidItemChemistry.formulaLines(glycol).getFirst()).getString().equals("C₂H₆O₂")
+            && FluidChemicalRegistry.base(glycol.getFluid()).formula().contains("H₂O"), "The full composition still includes the solvent");
+        var biodiesel = BuiltInRegistries.FLUID.get(net.minecraft.resources.ResourceLocation.parse("createdieselgenerators:biodiesel"));
+        var info = FluidChemicalRegistry.base(biodiesel);
+        h.assertTrue(info != null && info.mixture() && info.formula().contains("RCOOCH₂CH₃")
+            && info.compositionKey().equals("biodiesel"), "Diesel Generators biodiesel uses the fatty acid ethyl ester family in its ethanol recipe");
+        h.succeed();
     }
 
     @GameTest(template = "test_fractionation")
