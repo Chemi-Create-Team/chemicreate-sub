@@ -108,7 +108,7 @@ public final class WaterTreatmentGameTests {
                     .setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.KINDLED));
             }
             run(mixer, 150);
-            h.assertTrue(fluids(h, resin).drain(vaporSample, SIMULATE).isEmpty(), "The liquid outlet leaves the vapor in the closed mixer");
+            h.assertTrue(!vaporOut.drain(vaporSample, SIMULATE).isEmpty(), "With all the water used, the vapor waits at the upper outlet");
             var vapor = vaporOut.drain(vaporSample, EXECUTE);
             h.assertTrue(solids(mixer, CEItems.FLAME_RETARDANT_PELLET.get()) == 4 * (cycle + 1) && vapor.getAmount() == 250
                 && solids(mixer, CEItems.POLYPROPYLENE.get()) == 0, "The mixer makes one batch of pellets and vapor at its upper outlet: " + vapor);

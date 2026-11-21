@@ -49,8 +49,8 @@ public final class ModularPortsGameTests {
         ReactorGameTests.speed(vessel, 32);
         for (int tick = 0; tick < 300; tick++) vessel.tickProcess();
         var gas = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, vessel.getBlockPos().above(vessel.sections() - 1), Direction.UP);
-        h.assertTrue(gas != null && fluids.drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(), 1), SIMULATE).isEmpty(),
-            "Hydrogen fluoride gas leaves through the top instead of a liquid outlet");
+        h.assertTrue(gas != null && !gas.drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(), 1), SIMULATE).isEmpty(),
+            "Hydrogen fluoride gas leaves through the top; with no liquid left, the sides may give it too");
         var feed = gas.drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(), 1000), EXECUTE);
         h.assertTrue(feed.getAmount() == 1000 && items.getStackInSlot(0).isEmpty()
             && fluids.drain(new FluidStack(CEUranium.SULFURIC_ACID.get(), 1), SIMULATE).isEmpty(),

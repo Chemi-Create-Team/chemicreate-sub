@@ -84,6 +84,17 @@ public class GasMixtureGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "test_empty")
+    public static void theGasReadoutSplitsAirAndListsTheLargestGasFirstWithTracesTogether(GameTestHelper h) {
+        var lines = new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        boolean shown = net.createplant.mixture.MixtureGoggleHelper.appendGasLayers(lines, java.util.List.of(new FluidStack(CEFluids.NITROGEN_GAS.get(), 45600),
+            new FluidStack(CEFluids.AIR_GAS.get(), 293760), new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 12000)));
+        var text = lines.stream().map(net.minecraft.network.chat.Component::getString).toList();
+        h.assertTrue(shown && text.size() == 5 && text.get(1).contains("274,733") && text.get(2).contains("61,689") && text.get(3).contains("12,000")
+            && text.get(4).contains("2,938"), "Air's nitrogen joins the stored nitrogen, oxygen follows, then sulfur dioxide, and argon is a trace: " + text);
+        h.succeed();
+    }
+
     @GameTest(template = "test_reactor", timeoutTicks = 300)
     public static void theAbsorptionTowerTakesTheSulfurDioxideOutOfAMixtureAndLetsTheNitrogenOutAtTheTop(GameTestHelper h) {
         var tower = AbsorptionTowerGameTests.tower(h.getLevel(), h.absolutePos(new BlockPos(5, 2, 5)), 4, true);
