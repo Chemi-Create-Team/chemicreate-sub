@@ -4395,9 +4395,9 @@
     "zh_cn": "装置只从混合气体中取用所需成分，不用的气体原样从气体出口排出。装置生成的多种气体也会按量的比例作为一种混合气体排出。"
   },
   "chemical_mixtures.readout": {
-    "en_us": "Hover a fluid container or JEI fluid to see its composition. Pure fluids and solutions with one known solute show a rotating model. A Display Link lists mixture amounts.",
-    "ja_jp": "流体入り容器やJEIの流体にカーソルを合わせると組成を確認できます。純物質と溶質が1種類の水溶液は、分子モデルが回転します。混合物の量はDisplay Linkで確認できます。",
-    "zh_cn": "悬停装有流体的容器或JEI流体可查看组成。纯物质和只有一种已知溶质的溶液会显示旋转分子模型。显示链接可查看混合物的成分量。"
+    "en_us": "Hover over a fluid container or JEI fluid to see its formula. Single substances and single-solute solutions show a rotating model. Named polymers show a repeat unit. Use a Display Link to read mixture amounts.",
+    "ja_jp": "流体入り容器やJEIの流体にカーソルを合わせると式が見られます。純物質と溶質が1種類の水溶液は、分子モデルが回転します。高分子は繰り返し単位を表示します。混合物の量はDisplay Linkで確認できます。",
+    "zh_cn": "悬停在流体容器或JEI流体上可查看化学式。纯物质和单一溶质的溶液会显示旋转的模型。聚合物显示重复单元。显示链接可查看混合物的成分量。"
   },
   "guide.manufacturing_sulfuric_acid.step_8": {
     "en_us": "Without a catalyst bed: blow sulfur dioxide and air, or oxygen, into water with an iron nugget or iron oxide in an impeller vessel. The dissolved iron carries the oxygen, and dilute sulfuric acid forms cold.\n%s → %s",

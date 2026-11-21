@@ -29,8 +29,9 @@ public final class FluidItemTooltips {
 
     @SubscribeEvent
     public static void formulas(ItemTooltipEvent event) {
-        var lines = new ArrayList<>(FluidItemChemistry.formulaLines(event.getItemStack()));
-        for(var fluid:FluidItemChemistry.contents(event.getItemStack()))lines.add(net.createplant.thermal.FluidState.describe(fluid));
+        var fluids = FluidItemChemistry.contents(event.getItemStack());
+        var lines = new ArrayList<>(FluidItemChemistry.formulaLines(fluids));
+        for (var fluid : fluids) lines.add(net.createplant.thermal.FluidState.describe(fluid));
         if (lines.isEmpty()) {
             var model = MoleculeStructures.forItem(event.getItemStack());
             if (model != null) lines.add(Component.translatable(ChemicalReadout.KEY + "item_formula", model.formula()).withStyle(ChatFormatting.AQUA));
@@ -40,7 +41,7 @@ public final class FluidItemTooltips {
 
     @SubscribeEvent
     public static void diagram(RenderTooltipEvent.GatherComponents event) {
-        var contents = FluidItemChemistry.contents(event.getItemStack());
+        var contents = FluidItemChemistry.storedFluids(event.getItemStack());
         TooltipComponent preview = null;
         if (contents.size() == 1) preview = fluidDiagram(contents.getFirst());
         else if (contents.isEmpty()) {
@@ -65,7 +66,7 @@ public final class FluidItemTooltips {
         if (info != null && !info.compositionKey().isEmpty())
             lines.add(Component.translatable(ChemicalReadout.KEY + "composition." + info.compositionKey()).withStyle(ChatFormatting.GRAY));
         var model = info != null && !info.aqueous() ? MoleculeStructures.forFluid(fluid) : null;
-        if (model != null) {
+        if (model != null && model.repeatUnit().isEmpty()) {
             var counts = new TreeMap<String, Integer>();
             for (var atom : model.spatial().atoms()) counts.merge(atom.element(), 1, Integer::sum);
             var elements = counts.entrySet().stream().map(entry -> entry.getKey() + " ×" + entry.getValue()).toList();

@@ -23,13 +23,18 @@ public final class FluidItemChemistry {
     private FluidItemChemistry() { }
 
     public static List<FluidStack> contents(ItemStack item) {
+        return storedFluids(item).stream().flatMap(fluid -> constituents(fluid).stream())
+            .sorted(Comparator.comparingInt(FluidStack::getAmount).reversed()).toList();
+    }
+
+    public static List<FluidStack> storedFluids(ItemStack item) {
         if (item.isEmpty()) return List.of();
         var contents = new ArrayList<FluidStack>();
         var handler = item.copyWithCount(1).getCapability(Capabilities.FluidHandler.ITEM);
         if (handler != null) {
             for (int tank = 0; tank < handler.getTanks(); tank++) {
                 var fluid = handler.getFluidInTank(tank);
-                if (!fluid.isEmpty()) contents.addAll(constituents(fluid));
+                if (!fluid.isEmpty()) contents.add(normalize(fluid).copy());
             }
         }
         if (contents.isEmpty() && item.getItem() instanceof BucketItem bucket && bucket.content != Fluids.EMPTY)
@@ -39,7 +44,6 @@ public final class FluidItemChemistry {
             var potion = item.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
             contents.add(new FluidStack(potion.is(Potions.WATER) ? Fluids.WATER : AllFluids.POTION.getSource(), 250));
         }
-        contents.sort(Comparator.comparingInt(FluidStack::getAmount).reversed());
         return contents;
     }
 
@@ -65,7 +69,7 @@ public final class FluidItemChemistry {
         return fluid.isEmpty() ? List.of() : formulaLines(constituents(fluid));
     }
 
-    private static List<Component> formulaLines(List<FluidStack> contents) {
+    public static List<Component> formulaLines(List<FluidStack> contents) {
         if (contents.isEmpty()) return List.of();
         var lines = new ArrayList<Component>(contents.size());
         for (var fluid : contents) {
@@ -74,6 +78,7 @@ public final class FluidItemChemistry {
                 : formulaValue(info.aqueous() ? info.solutes() : info.formula());
             String key = info == null || info.mixture() ? "composition" : "item_formula";
             if (info != null && info.aqueous()) key = "solute_formula";
+            if (info != null && info.repeatFormula()) key = "polymer_formula";
             lines.add((contents.size() == 1 ? Component.translatable(ChemicalReadout.KEY + key, formula)
                 : Component.translatable(ChemicalReadout.KEY + "item_component_formula", fluid.getHoverName(), formula)).withStyle(ChatFormatting.AQUA));
         }
