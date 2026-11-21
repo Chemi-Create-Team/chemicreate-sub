@@ -6,8 +6,12 @@ import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.chemistry.ChemicalReadout;
 import net.createplant.chemistry.FluidChemicalRegistry;
 import net.createplant.chemistry.FluidChemicalRegistry.ChemicalHazard;
+import net.createplant.chemistry.FluidItemChemistry;
 import net.createplant.event.ProcessPortInteraction;
+import net.createplant.mixture.MixtureHelper;
 import net.createplant.registry.CEPetroFluids;
+import net.createplant.registry.CEPortableTools;
+import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CETransport;
 import net.createplant.registry.CEUranium;
 import net.createplant.thermal.Grade;
@@ -16,16 +20,21 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 
 @GameTestHolder(CreatePlant.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -47,6 +56,39 @@ public final class ChemicalUiGameTests {
         var bar = ChemicalReadout.heat(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Heat.VERY_HOT).getString();
         h.assertTrue(bar.contains("□ ◆ □ ■ ■") && bar.contains("-123"), "Current stage markers remain distinct from the valid range, and the current grade is named with its range");
         h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation")
+    public static void fluidContainersExposeActualFormulasWithoutConsumingContents(GameTestHelper h) {
+        h.assertTrue(FluidItemChemistry.formulaLines(Items.BUCKET.getDefaultInstance()).isEmpty()
+            && displayedFormula(FluidItemChemistry.formulaLines(Items.WATER_BUCKET.getDefaultInstance()).getFirst()).getString().equals("H₂O")
+            && displayedFormula(FluidItemChemistry.formulaLines(Items.LAVA_BUCKET.getDefaultInstance()).getFirst()).getContents()
+                instanceof TranslatableContents unknown && unknown.getKey().endsWith(".variable_composition"),
+            "An empty bucket has no formula, water has its formula, and lava has variable composition");
+        var waterBottle = Items.POTION.getDefaultInstance();
+        waterBottle.set(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
+            new net.minecraft.world.item.alchemy.PotionContents(net.minecraft.world.item.alchemy.Potions.WATER));
+        h.assertTrue(displayedFormula(FluidItemChemistry.formulaLines(waterBottle).getFirst()).getString().equals("H₂O")
+            && displayedFormula(FluidItemChemistry.formulaLines(Items.HONEY_BOTTLE.getDefaultInstance()).getFirst()).getString().contains("C₆H₁₂O₆"),
+            "Vanilla bottles also show their contents");
+        var sprayer = CEPortableTools.CHEMICAL_SPRAYER.toStack();
+        var methanol = new FluidStack(CEProcessFluids.METHANOL.get(), 250);
+        var mixture = MixtureHelper.merge(new FluidStack(Fluids.WATER, 750), methanol, false);
+        var handler = sprayer.getCapability(Capabilities.FluidHandler.ITEM);
+        h.assertTrue(handler.fill(mixture, EXECUTE) == 1000, "The sprayer holds both liquids");
+        var before = handler.getFluidInTank(0);
+        var contents = FluidItemChemistry.contents(sprayer);
+        var lines = FluidItemChemistry.formulaLines(sprayer);
+        h.assertTrue(contents.size() == 2 && contents.getFirst().getAmount() == 750 && lines.size() == 2
+            && displayedFormula(lines.getFirst()).getString().equals("H₂O") && displayedFormula(lines.getLast()).getString().equals("CH₃OH"),
+            "The portable container shows every actual mixture constituent by amount");
+        h.assertTrue(FluidStack.matches(handler.getFluidInTank(0), before), "Reading the tooltip preserves the stored mixture");
+        h.succeed();
+    }
+
+    private static Component displayedFormula(Component line) {
+        var arguments = ((TranslatableContents) line.getContents()).getArgs();
+        return (Component) arguments[arguments.length - 1];
     }
 
     @GameTest(template = "test_fractionation")

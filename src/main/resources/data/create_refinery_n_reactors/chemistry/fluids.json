@@ -171,11 +171,47 @@
     "formula": "CuSO₄ + H₂O",
     "hazards": []
   },
+  "create:chocolate": {
+    "formula": "…",
+    "hazards": []
+  },
+  "create:honey": {
+    "formula": "C₆H₁₂O₆ + H₂O + …",
+    "hazards": []
+  },
+  "create:potion": {
+    "formula": "H₂O + …",
+    "hazards": []
+  },
+  "create:tea": {
+    "formula": "H₂O + …",
+    "hazards": []
+  },
+  "createdieselgenerators:biodiesel": {
+    "formula": "RCOOCH₃ + …",
+    "hazards": []
+  },
+  "createdieselgenerators:black_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:blue_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:brown_cement": {
+    "formula": "…",
+    "hazards": []
+  },
   "createdieselgenerators:crude_oil": {
     "formula": "CₙHₘ",
     "hazards": [
       "FLAMMABLE"
     ]
+  },
+  "createdieselgenerators:cyan_cement": {
+    "formula": "…",
+    "hazards": []
   },
   "createdieselgenerators:diesel": {
     "formula": "C₁₀H₂₂–C₂₂H₄₆",
@@ -183,11 +219,67 @@
       "FLAMMABLE"
     ]
   },
+  "createdieselgenerators:ethanol": {
+    "formula": "C₂H₆O",
+    "hazards": []
+  },
   "createdieselgenerators:gasoline": {
     "formula": "C₅H₁₂–C₁₂H₂₆",
     "hazards": [
       "FLAMMABLE"
     ]
+  },
+  "createdieselgenerators:gray_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:green_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:light_blue_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:light_gray_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:lime_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:magenta_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:orange_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:pink_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:plant_oil": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:purple_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:red_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:white_cement": {
+    "formula": "…",
+    "hazards": []
+  },
+  "createdieselgenerators:yellow_cement": {
+    "formula": "…",
+    "hazards": []
   },
   "crop_protectant": {
     "formula": "H₂O + …",
@@ -239,6 +331,14 @@
   },
   "dissolved_spent_fuel": {
     "formula": "UO₂²⁺ + Pu⁴⁺ + NO₃⁻ + H₂O",
+    "hazards": []
+  },
+  "electroenergetics:plant_oil": {
+    "formula": "…",
+    "hazards": []
+  },
+  "electroenergetics:transformer_oil": {
+    "formula": "…",
     "hazards": []
   },
   "enriched_uranium_hexafluoride": {
@@ -451,6 +551,14 @@
       "FLAMMABLE",
       "TOXIC"
     ]
+  },
+  "minecraft:lava": {
+    "formula": "…",
+    "hazards": []
+  },
+  "minecraft:milk": {
+    "formula": "H₂O + C₁₂H₂₂O₁₁ + …",
+    "hazards": []
   },
   "minecraft:water": {
     "formula": "H₂O",

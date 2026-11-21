@@ -4440,9 +4440,9 @@
     "zh_cn": "装置只从混合气体中取用所需成分，不用的气体原样从气体出口排出。装置生成的多种气体也会按量的比例作为一种混合气体排出。"
   },
   "chemical_mixtures.readout": {
-    "en_us": "Goggles show total volume and the largest constituents. Select Mixture composition on a Display Link for every constituent, its amount and its percentage.",
-    "ja_jp": "ゴーグルで総量と主成分を確認できます。Display Linkで「混合液の成分」を選ぶと、全成分の量と割合を表示できます。",
-    "zh_cn": "工程师护目镜显示总量和主要成分，在显示链接中选择混合液成分可查看所有成分的数量和百分比。"
+    "en_us": "Hover a filled container to see its fluid formulas. Use a Display Link for every constituent, its amount and its percentage.",
+    "ja_jp": "中身の入った容器にカーソルを合わせると流体の分子式を確認できます。Display Linkでは全成分の量と割合を表示できます。",
+    "zh_cn": "将鼠标悬停于装有流体的容器可查看分子式。显示链接可显示全部成分的数量和百分比。"
   },
   "guide.manufacturing_sulfuric_acid.step_8": {
     "en_us": "Without a catalyst bed: blow sulfur dioxide and air, or oxygen, into water with an iron nugget or iron oxide in an impeller vessel. The dissolved iron carries the oxygen, and dilute sulfuric acid forms cold.\n%s → %s",
