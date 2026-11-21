@@ -78,17 +78,19 @@ public class AbsorptionTowerGameTests {
         h.assertTrue(gasIn.fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0 && waterIn.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), SIMULATE) == 0,
             "Water goes in only at the top and gas only at the bottom");
         h.assertTrue(port(h, bottom.above().east(), Direction.EAST) == null && port(h, bottom.above(), Direction.DOWN) == null, "The middle storeys have no port");
-        h.assertTrue(port(h, bottom.north().east(), Direction.DOWN).fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), SIMULATE) == 0,
-            "The underside of the bottom storey only gives liquid");
+        h.assertTrue(port(h, bottom.east(), Direction.DOWN).fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), SIMULATE) == 0
+            && port(h, bottom.north().east(), Direction.DOWN) == null && port(h, top.north().east(), Direction.UP) == null,
+            "The underside only gives liquid, and the diagonal corners have no underside or top port");
         h.assertTrue(port(h, bottom.north().east(), Direction.NORTH) == null && port(h, bottom.north().east(), Direction.EAST) == null
             && port(h, top.south().west(), Direction.WEST) == null, "The diagonal faces of the octagon have no port");
-        h.assertTrue(port(h, bottom, Direction.EAST) == null && port(h, bottom.east(), Direction.NORTH) == null && port(h, top.east(), Direction.UP) == null
-            && port(h, top.east(), Direction.EAST).fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0, "Water enters only at the top of the top storey's centre");
+        h.assertTrue(port(h, bottom, Direction.EAST) == null && port(h, bottom.east(), Direction.NORTH) == null
+            && port(h, top.east(), Direction.UP).fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 100
+            && port(h, top.east(), Direction.EAST).fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0, "Water enters through the tops of the top storey, not its sides");
         h.assertTrue(gasIn.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), EXECUTE) == 300 && waterIn.fill(new FluidStack(Fluids.WATER, 100), EXECUTE) == 100,
             "Nitrogen dioxide and water enter their own ends");
         run(tower, 101);
         var acid = port(h, bottom.west(), Direction.WEST).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 150), EXECUTE);
-        acid.grow(port(h, bottom.north().east(), Direction.DOWN).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 1000), EXECUTE).getAmount());
+        acid.grow(port(h, bottom.south(), Direction.DOWN).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 1000), EXECUTE).getAmount());
         var monoxide = port(h, top.north(), Direction.NORTH).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), EXECUTE);
         h.assertTrue(acid.getAmount() == 200 && monoxide.getAmount() == 100, "Nitric acid leaves at the bottom's sides and underside, and the unabsorbed nitric oxide at the top");
         h.assertTrue(port(h, bottom.west(), Direction.WEST).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), SIMULATE).isEmpty(), "The bottom never gives the top's gas");

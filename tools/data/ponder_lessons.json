@@ -4310,9 +4310,9 @@
     "zh_cn": "搅拌叶装在3×3槽中。较小的槽仅用于储存，可用扳手点击顶面取回内部组件。"
   },
   "large_absorption_tower.ring": {
-    "en_us": "Pipes join only the four flat sides of the octagon, never its diagonal faces. Gas in and liquid out use the bottom storey's flat sides, and liquid also leaves its underside. Spent gas leaves the top storey's flat sides, and water enters only through the top of its centre.",
-    "ja_jp": "配管は八角形の平らな4面だけにつながり、斜めの面にはつながりません。気体の搬入と液体の搬出は最下段の平らな面で、液体は最下段の底面からも出せます。排ガスは最上段の平らな面から出て、水は最上段中心の天面からだけ入れます。",
-    "zh_cn": "管道只能接八角形的四个平面，斜面不能连接。气体送入和液体排出在最下节平面，液体也可从最下节底面排出。尾气从最上节平面排出，水只能从最上节中心顶面送入。"
+    "en_us": "Pipes join only the centre and the four straight-side blocks, never the diagonal corners. At the bottom storey, gas goes in through their sides and liquid comes out through their sides or undersides. At the top storey, spent gas leaves through their sides and water enters through their tops.",
+    "ja_jp": "配管は中心と平らな4辺のブロックだけにつながり、斜めの角にはつながりません。最下段では側面から気体を入れ、側面か底面から液体を出します。最上段では側面から排ガスが出て、天面から水を入れます。",
+    "zh_cn": "管道只能接中心和四个平边的方块，斜角不能连接。最下节从侧面送入气体，从侧面或底面排出液体。最上节从侧面排出尾气，从顶面送入水。"
   },
   "large_absorption_tower.same": {
     "en_us": "Stack four to eight storeys. Each storey runs one batch, with no rotation or heat.",

@@ -123,6 +123,11 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     public ItemStack recoverInputItem(int slot,int amount) { return slot>=0 && slot<FEED_SLOTS && !isRemoved() ? charge.extractItem(slot,amount,false) : ItemStack.EMPTY; }
     public ItemStack recoverStoredItem(int slot,int amount) { return slot>=0 && slot<CHARGE_SLOTS && !isRemoved() ? charge.extractItem(slot,amount,false) : ItemStack.EMPTY; }
     FluidStack climateFluid(int slot) { return tanks[slot]; }
+    /** What the process holds and has made, for the goggles: every stocked buffer, then every stocked item slot. */
+    void describeStock(List<Component> lines) {
+        for (var tank:tanks) if (!tank.isEmpty()) lines.add(Component.translatable(KEY+"stock_fluid",tank.getHoverName(),tank.getAmount()));
+        for (int i=0;i<CHARGE_SLOTS;i++) { var item=charge.getStackInSlot(i);if (!item.isEmpty()) lines.add(Component.translatable(KEY+"stock_item",item.getHoverName(),item.getCount())); }
+    }
     void climateFluid(int slot,FluidStack stack) { tanks[slot]=stack;changed(); }
     public FluidStack processGasContent(int slot) { return !tanks[slot].isEmpty() && net.createplant.transport.FluidHazards.of(tanks[slot]).gas() ? tanks[slot].copy() : FluidStack.EMPTY; }
     public FluidStack processLiquidContent(int slot) { return !tanks[slot].isEmpty() && !net.createplant.transport.FluidHazards.of(tanks[slot]).gas() ? tanks[slot].copy() : FluidStack.EMPTY; }
