@@ -2315,9 +2315,9 @@
     "zh_cn": "种火熄灭会泄漏未燃气体，远离火源，有毒气体还需洗涤器。"
   },
   "guide.gas_pipes.title": {
-    "en_us": "Gas pipes and their bore",
-    "ja_jp": "気体パイプと管の太さ",
-    "zh_cn": "气体管道与管径"
+    "en_us": "Moving gases",
+    "ja_jp": "気体の搬送",
+    "zh_cn": "气体输送"
   },
   "guide.gas_pipes.step_1": {
     "en_us": "Use a filled gas bucket on the Creative Fluid Tank to set its supply. Any fluid pipe can carry gas.",
@@ -2328,11 +2328,6 @@
     "en_us": "Gas needs a pump, just like liquid. Connect rotational power to the pump.",
     "ja_jp": "ガスも液体と同じくポンプで送ります。ポンプへ回転動力を入力します。",
     "zh_cn": "气体与液体一样需要泵输送，给泵接入旋转动力。"
-  },
-  "guide.gas_pipes.step_3": {
-    "en_us": "Use large gas pipes for more flow. They connect directly to narrow pipes.",
-    "ja_jp": "流量を増やすなら太い気体パイプを使います。細い管にもそのままつなげられます。",
-    "zh_cn": "需要更大流量时使用粗气管，也可直接连接细管。"
   },
   "guide.gas_pipes.step_4": {
     "en_us": "High-pressure gas hisses while flowing in any pipe. Choose a receiving tank rated for that gas.",

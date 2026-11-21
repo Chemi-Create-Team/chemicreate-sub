@@ -60,7 +60,8 @@ public final class MixtureHelper {
         var contents=stack.get(CEMixtures.MIXTURE_CONTENTS.get());
         if(contents==null)return;
         var patches=stack.getOrDefault(CEMixtures.MIXTURE_DATA.get(),MixtureData.EMPTY);
-        boolean oldKey=contents.amounts().keySet().stream().anyMatch(id->FluidIdentity.legacy(BuiltInRegistries.FLUID.get(id)));
+        boolean oldKey=false;
+        for(var id:contents.amounts().keySet())if(FluidIdentity.legacy(BuiltInRegistries.FLUID.get(id))) { oldKey=true;break; }
         if(!oldKey)return;
         var migrated=parts(contents,patches);
         writeComponents(stack,migrated);
@@ -105,7 +106,7 @@ public final class MixtureHelper {
         }
         if(amount==0)return;
         if(!stack.has(CEThermal.TEMPERATURE.get()))FluidState.setTemperature(stack,(int)((temperature+amount/2)/amount));
-        if(!stack.has(CEThermal.PRESSURE.get()))stack.set(CEThermal.PRESSURE.get(),(int)((pressure+amount/2)/amount));
+        if(!stack.has(CEThermal.PRESSURE.get()))FluidState.setPressure(stack,(int)((pressure+amount/2)/amount));
     }
 
     public static MixtureData data(FluidStack stack) {

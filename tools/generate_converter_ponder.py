@@ -115,7 +115,7 @@ def structure():
         props['west' if x > 5 else 'north'] = 'true'
         props['east' if x < 13 else 'up'] = 'true'
         props['waterlogged'] = 'false'
-        s.block(x, 10, 11, NS + 'gas_pipe', **props)
+        s.block(x, 10, 11, NS + 'reinforced_pipe', **props)
     s.block(13, 11, 11, NS + 'flare_tip', pilot='true', waterlogged='false')
     return s
 

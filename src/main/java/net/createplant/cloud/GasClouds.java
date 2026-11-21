@@ -25,7 +25,7 @@ public final class GasClouds {
     private GasClouds() { }
 
     public static boolean supported(FluidStack stack) {
-        return !stack.isEmpty() && GasCloudStyles.find(GasCloudStyles.id(stack.getFluid())) != null;
+        return !stack.isEmpty() && GasCloudStyles.find(GasCloudStyles.id(stack)) != null;
     }
 
     public static void release(ServerLevel level, BlockPos pos, FluidStack stack) { release(level, pos, stack, false); }

@@ -17,7 +17,6 @@ public final class FluidIdentity {
     private record Alias(ResourceLocation substance,int temperature,int pressure,Condition condition) { }
     private static final Map<ResourceLocation,Alias> ALIASES=new HashMap<>();
     private static final Map<ResourceLocation,List<ResourceLocation>> VARIANTS=new HashMap<>();
-    private static final Map<Fluid,Alias> LOOKUP=new java.util.IdentityHashMap<>();
 
     static {
         water("warm_water",9,4,Condition.LIQUID);
@@ -61,13 +60,11 @@ public final class FluidIdentity {
         ALIASES.put(CreatePlant.location("flowing_"+name),ALIASES.get(key));
         VARIANTS.computeIfAbsent(substance,ignored -> new ArrayList<>()).add(key);
     }
-    private static synchronized Alias lookup(Fluid fluid) {
-        if(!LOOKUP.containsKey(fluid)) {
-            var id=BuiltInRegistries.FLUID.getKey(fluid);
-            if(id==null || BuiltInRegistries.FLUID.get(id)!=fluid)return null;
-            LOOKUP.put(fluid,ALIASES.get(id));
-        }
-        return LOOKUP.get(fluid);
+    /** Every fluid stack constructed passes here, so the lookup reads only the tables fixed when this class loads. */
+    private static Alias lookup(Fluid fluid) {
+        var id=BuiltInRegistries.FLUID.getKey(fluid);
+        var alias=ALIASES.get(id);
+        return alias==null || BuiltInRegistries.FLUID.get(id)!=fluid ? null : alias;
     }
     public static boolean legacy(Fluid fluid) { return lookup(fluid)!=null; }
     public static boolean controlled(Fluid fluid) { return VARIANTS.containsKey(BuiltInRegistries.FLUID.getKey(fluid)); }
@@ -83,9 +80,10 @@ public final class FluidIdentity {
         FluidState.migrateGrade(stack);
         var old=lookup(registered);
         if(old==null || !BuiltInRegistries.FLUID.containsKey(old.substance()))return registered;
-        if(!stack.has(CEThermal.TEMPERATURE.get()))FluidState.setTemperature(stack,old.temperature());
-        if(!stack.has(CEThermal.PRESSURE.get()))stack.set(CEThermal.PRESSURE.get(),old.pressure());
-        return BuiltInRegistries.FLUID.get(old.substance());
+        var substance=BuiltInRegistries.FLUID.get(old.substance());
+        if(!stack.has(CEThermal.TEMPERATURE.get()))FluidState.setTemperature(stack,substance,old.temperature());
+        if(!stack.has(CEThermal.PRESSURE.get()))FluidState.setPressure(stack,substance,old.pressure());
+        return substance;
     }
 
     public static FluidRequirement requirement(Fluid type) {
@@ -121,6 +119,12 @@ public final class FluidIdentity {
             if(candidates.test(variant) && matches(stack,variant))return true;
         }
         return false;
+    }
+
+    /** The retired entries that name states of a substance, such as steam and warm water for water. */
+    public static List<Fluid> variants(Fluid substance) {
+        var list=VARIANTS.get(BuiltInRegistries.FLUID.getKey(substance));
+        return list==null ? List.of() : list.stream().map(BuiltInRegistries.FLUID::get).toList();
     }
 
     public static Fluid liquidVariant(Fluid substance) {

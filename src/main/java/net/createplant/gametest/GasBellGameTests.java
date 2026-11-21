@@ -13,7 +13,6 @@ import net.createplant.chemistry.WasteGas;
 import net.createplant.contraptions.GasHolderSleeveContraption;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEGasBell;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.thermal.FluidMaterials;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;

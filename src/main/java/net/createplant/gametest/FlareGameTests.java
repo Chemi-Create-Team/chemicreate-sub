@@ -11,11 +11,9 @@ import java.util.HashSet;
 import net.createplant.CreatePlant;
 import net.createplant.block.FlareTipBlock;
 import net.createplant.block.entity.FlareTipBlockEntity;
-import net.createplant.block.entity.GasPipeBlockEntity;
 import net.createplant.block.entity.PipeGaugeBlockEntity;
 import net.createplant.registry.CEFlare;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CETransport;
 import net.createplant.cloud.GasClouds;
 import net.createplant.safety.FlammableGas;
@@ -48,7 +46,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public class FlareGameTests {
     private static final BlockPos BASE=new BlockPos(3,3,5);
     private static BlockState pipe(Direction... sides) {
-        var state=CEGasPipes.GAS_PIPE.get().defaultBlockState();
+        var state=CETransport.REINFORCED_PIPE.get().defaultBlockState();
         for (var side:Direction.values()) {
             boolean connected=false;for (var entry:sides) if (entry==side) connected=true;
             state=state.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side),connected);

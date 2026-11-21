@@ -16,7 +16,7 @@
       "tag": "c:plates/iron"
     },
     "P": {
-      "item": "create_refinery_n_reactors:gas_pipe"
+      "item": "create_refinery_n_reactors:reinforced_pipe"
     },
     "C": {
       "item": "minecraft:flint_and_steel"

@@ -99,7 +99,12 @@ public final class FluidHazards {
     public static Properties of(FluidStack fluid) {
         if(fluid.isEmpty())return ORDINARY;
         var properties=nominal(fluid);
-        return new Properties(FluidState.kelvin(FluidState.temperature(fluid)),FluidState.bar(FluidState.pressure(fluid)),properties.corrosion(),FluidState.gas(fluid));
+        boolean mixture=net.createplant.mixture.MixtureHelper.isMixture(fluid);
+        // A fluid without state data keeps its own temperature and pressure instead of the nearest level's.
+        double kelvin=mixture || fluid.has(net.createplant.registry.CEThermal.TEMPERATURE.get()) || fluid.has(net.createplant.registry.CEThermal.HEAT_GRADE.get())
+            ? FluidState.kelvin(FluidState.temperature(fluid)) : properties.kelvin();
+        double bar=mixture || fluid.has(net.createplant.registry.CEThermal.PRESSURE.get()) ? FluidState.bar(FluidState.pressure(fluid)) : properties.bar();
+        return new Properties(kelvin,bar,properties.corrosion(),FluidState.gas(fluid));
     }
     public static Properties named(String path) { return SPECIAL.getOrDefault(path,ORDINARY); }
     private static final Map<String, Properties> EXTERNAL = new java.util.concurrent.ConcurrentHashMap<>();

@@ -27,7 +27,7 @@ public final class Grade {
     public enum Pressure {
         VACUUM, ATMOSPHERIC, PRESSURISED, HIGH, ULTRA_HIGH;
 
-        /** The grade a pressure falls in: below 2 bar, below 20 bar, and above. */
+        /** The grade a pressure falls in: below 0.5, 2, 20 and 200 bar, and above. */
         public static Pressure of(double bar) { return bar < .5 ? VACUUM : bar < 2 ? ATMOSPHERIC : bar < 20 ? PRESSURISED : bar < 200 ? HIGH : ULTRA_HIGH; }
         public int storageRatio() { return switch(this) { case VACUUM, ATMOSPHERIC -> 1;case PRESSURISED -> 16;case HIGH, ULTRA_HIGH -> 64; }; }
 

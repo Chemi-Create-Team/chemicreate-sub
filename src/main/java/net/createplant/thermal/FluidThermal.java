@@ -94,7 +94,7 @@ public final class FluidThermal {
         int temperature=FluidState.average(FluidState.temperature(stored),stored.getAmount(),FluidState.temperature(incoming),accepted);
         int pressure=FluidState.average(FluidState.pressure(stored),stored.getAmount(),FluidState.pressure(incoming),accepted);
         if(temperature!=FluidState.temperature(result) || result.has(net.createplant.registry.CEThermal.HEAT_GRADE.get()))FluidState.setTemperature(result,temperature);
-        if(pressure!=FluidState.pressure(result))result.set(net.createplant.registry.CEThermal.PRESSURE.get(),pressure);
+        if(pressure!=FluidState.pressure(result))FluidState.setPressure(result,pressure);
         var condensate=net.createplant.registry.CEThermal.CONDENSATE.get();
         if (!stored.has(condensate) || !incoming.has(condensate)) result.remove(condensate);
         var impurity=net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get();

@@ -11,7 +11,6 @@ import net.createplant.CreatePlant;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
@@ -253,7 +252,7 @@ final class SurvivalSulfurWorkshop {
 
     private void airLine() {
         var target = vessel.east();
-        var pipe = CEGasPipes.GAS_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.NORTH, true).setValue(FluidPipeBlock.SOUTH, true);
+        var pipe = CETransport.REINFORCED_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.NORTH, true).setValue(FluidPipeBlock.SOUTH, true);
         for (var at = target.north(5); !at.equals(target); at = at.south()) {
             if (at.equals(airPump)) {
                 var pump = BuiltInRegistries.BLOCK.get(CreatePlant.location("gas_pump"));

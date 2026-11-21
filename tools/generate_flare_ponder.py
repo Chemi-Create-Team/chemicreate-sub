@@ -6,7 +6,7 @@ from generate_petrochemical_ponder import Structure, OUT, named, integer, string
 
 s=Structure(11,28)
 def pipe(x,y,z,*sides):
- s.block(x,y,z,NS+'gas_pipe',**{d:str(d in sides).lower() for d in ('east','west','north','south','up','down')},waterlogged='false')
+ s.block(x,y,z,NS+'reinforced_pipe',**{d:str(d in sides).lower() for d in ('east','west','north','south','up','down')},waterlogged='false')
 s.block(1,1,4,'create:fluid_tank',bottom='true',top='true',shape='window')
 s.block(2,1,4,NS+'pipe_pressure_gauge',axis='x',nbt=[named(3,'ScrollValue',integer(0))])
 pipe(3,1,4,'west','east','south')

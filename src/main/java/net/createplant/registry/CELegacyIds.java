@@ -20,7 +20,7 @@ public final class CELegacyIds {
     /** Retired entries merged into another one: saved blocks, items and block entities of the old id load as the new one. */
     private static final Map<String, String> MERGED = Map.of("tubular_boiler", "horizontal_fluid_tank",
         "gasifier_casing", "steam_gasifier", "water_cooled_refractory_wall", "steam_gasifier", "entrained_burner_nozzle", "steam_gasifier",
-        "slag_tap_hearth", "steam_gasifier", "quench_sight_glass", "steam_gasifier");
+        "slag_tap_hearth", "steam_gasifier", "quench_sight_glass", "steam_gasifier", "gas_pipe", "reinforced_pipe", "large_gas_pipe", "reinforced_pipe");
 
     private CELegacyIds() { }
 
@@ -47,6 +47,10 @@ public final class CELegacyIds {
             }
         }
         var key = registry.key();
+        // The retired gas pipes were reinforced pipes with their own block entity type.
+        var materialPipe = CreatePlant.location("material_pipe");
+        if (key.equals(Registries.BLOCK_ENTITY_TYPE) && registry.containsKey(materialPipe))
+            for (String namespace : List.of(CreatePlant.MOD_ID, PREVIOUS_MOD_ID)) registry.addAlias(ResourceLocation.fromNamespaceAndPath(namespace, "gas_pipe"), materialPipe);
         if ((key.equals(Registries.BLOCK) || key.equals(Registries.ITEM) || key.equals(Registries.BLOCK_ENTITY_TYPE)) && registry.containsKey(NOZZLE)) {
             for (String namespace : List.of(CreatePlant.MOD_ID, PREVIOUS_MOD_ID))
                 registry.addAlias(ResourceLocation.fromNamespaceAndPath(namespace, "air_filter"), NOZZLE);

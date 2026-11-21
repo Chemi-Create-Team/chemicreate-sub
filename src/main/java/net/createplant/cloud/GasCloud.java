@@ -154,7 +154,7 @@ public final class GasCloud extends Entity {
     }
 
     private void syncFluidId() {
-        entityData.set(FLUID_ID, fluid.isEmpty() ? "" : GasCloudStyles.id(fluid.getFluid()));
+        entityData.set(FLUID_ID, fluid.isEmpty() ? "" : GasCloudStyles.id(fluid));
         entityData.set(TOXIC, ToxicGas.strength(fluid) >= 0);
     }
 

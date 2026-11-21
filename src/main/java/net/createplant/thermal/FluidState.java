@@ -54,17 +54,31 @@ public final class FluidState {
         return level==null ? pressureLevel(FluidHazards.nominal(stack).bar()) : clamp(level);
     }
 
-    public static void setTemperature(FluidStack stack,int level) {
+    public static int nominalTemperature(net.minecraft.world.level.material.Fluid fluid) { return temperatureLevel(FluidHazards.nominal(fluid).kelvin()); }
+    public static int nominalPressure(net.minecraft.world.level.material.Fluid fluid) { return pressureLevel(FluidHazards.nominal(fluid).bar()); }
+
+    public static void setTemperature(FluidStack stack,int level) { setTemperature(stack,stack.getFluid(),level); }
+    public static void setPressure(FluidStack stack,int level) { setPressure(stack,stack.getFluid(),level); }
+
+    /** A pure fluid at its substance's own state carries no state data, so other mods and plain transport see it unchanged. */
+    static void setTemperature(FluidStack stack,net.minecraft.world.level.material.Fluid substance,int level) {
         if(stack.isEmpty())return;
-        stack.set(CEThermal.TEMPERATURE.get(),clamp(level));
         stack.remove(CEThermal.HEAT_GRADE.get());
+        if(!MixtureHelper.isMixture(stack) && clamp(level)==nominalTemperature(substance))stack.remove(CEThermal.TEMPERATURE.get());
+        else stack.set(CEThermal.TEMPERATURE.get(),clamp(level));
+    }
+
+    static void setPressure(FluidStack stack,net.minecraft.world.level.material.Fluid substance,int level) {
+        if(stack.isEmpty())return;
+        if(!MixtureHelper.isMixture(stack) && clamp(level)==nominalPressure(substance))stack.remove(CEThermal.PRESSURE.get());
+        else stack.set(CEThermal.PRESSURE.get(),clamp(level));
     }
 
     public static FluidStack with(FluidStack stack,int temperature,int pressure) {
         if(stack.isEmpty())return FluidStack.EMPTY;
         var result=stack.copy();
         setTemperature(result,temperature);
-        result.set(CEThermal.PRESSURE.get(),clamp(pressure));
+        setPressure(result,pressure);
         return result;
     }
 

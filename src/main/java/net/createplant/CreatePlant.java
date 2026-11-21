@@ -76,7 +76,6 @@ public class CreatePlant {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.block.ConverterStructure::chunkLoaded);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.block.ConverterStructure::chunkUnloaded);
         net.createplant.registry.CEDistillation.register(modEventBus);
-        net.createplant.registry.CEGasPipes.register(modEventBus);
         modEventBus.addListener(net.createplant.block.entity.FractionatingColumnBlockEntity::registerCapabilities);
         modEventBus.addListener(net.createplant.block.entity.ReactorMachineBlockEntity::registerCapabilities);
         net.createplant.registry.CEOstwaldFluids.register(modEventBus);

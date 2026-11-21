@@ -2993,8 +2993,7 @@
       "nickel_alloy_pipe",
       "zirconium_pipe",
       "reinforced_pipe",
-      "cryogenic_pipe",
-      "gas_pipe"
+      "cryogenic_pipe"
     ],
     "steps": [
       {
@@ -3903,8 +3902,8 @@
     "size": 7,
     "height": 4,
     "components": [
-      "gas_pipe",
-      "large_gas_pipe"
+      "reinforced_pipe",
+      "gas_pump"
     ],
     "steps": [
       {
@@ -3923,14 +3922,6 @@
         ],
         "key": "step_2",
         "speed": 64
-      },
-      {
-        "target": [
-          3,
-          1,
-          4
-        ],
-        "key": "step_3"
       },
       {
         "target": [

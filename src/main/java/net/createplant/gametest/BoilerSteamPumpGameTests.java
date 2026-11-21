@@ -10,7 +10,6 @@ import net.createplant.block.HorizontalFluidTankBlock;
 import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.block.entity.TankBoiler;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CETransport;
 import net.minecraft.core.BlockPos;
@@ -88,7 +87,7 @@ public final class BoilerSteamPumpGameTests {
     public static void copperPipeOnAHorizontalBoilerCarriesItsSteam(GameTestHelper h) { horizontalBoiler(h, AllBlocks.FLUID_PIPE.get(), true); }
 
     @GameTest(template = "test_fractionation", timeoutTicks = 240)
-    public static void gasPipeOnAHorizontalBoilerCarriesItsSteam(GameTestHelper h) { horizontalBoiler(h, CEGasPipes.GAS_PIPE.get(), false); }
+    public static void reinforcedPipeOnAHorizontalBoilerCarriesItsSteam(GameTestHelper h) { horizontalBoiler(h, CETransport.REINFORCED_PIPE.get(), false); }
 
     /** Create's own tank, {@code width} square and one block high, standing on burners and holding water. */
     private static FluidTankBlockEntity createBoiler(GameTestHelper h, BlockPos corner, int width, boolean burners, int water) {
@@ -108,7 +107,7 @@ public final class BoilerSteamPumpGameTests {
         BlockPos corner = new BlockPos(6, 3, 8);
         var controller = createBoiler(h, corner, 2, true, 8000);
         var boiler = TankBoiler.of(controller);
-        var stored = roofLine(h, corner.offset(1, 0, 0), CEGasPipes.GAS_PIPE.get());
+        var stored = roofLine(h, corner.offset(1, 0, 0), CETransport.REINFORCED_PIPE.get());
         h.runAfterDelay(200, () -> {
             h.assertTrue(stored.getFluid().is(CEFluids.STEAM.get()) && stored.getFluidAmount() > 0,
                 "A pump on the roof of Create's tank boiler moves ordinary steam through a gas pipe lying on the roof: received=" + stored.getFluidAmount());

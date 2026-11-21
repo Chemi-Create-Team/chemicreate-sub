@@ -2,7 +2,6 @@ package net.createplant.client;
 
 import com.simibubi.create.AllBlocks;
 import net.createplant.block.entity.PipeGaugeBlockEntity;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CETransport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
@@ -53,7 +52,7 @@ final class PipeGaugeClientCheck {
         level.setBlock(front.east(3), gauge(CETransport.PIPE_THERMOMETER.get(), Direction.Axis.X), 3);
         level.setBlock(front.east(8), gauge(CETransport.PIPE_PRESSURE_GAUGE.get(), Direction.Axis.X), 3);
         BlockPos gas = origin.south(6);
-        for (int x = 0; x <= 6; x++) level.setBlock(gas.east(x), CEGasPipes.GAS_PIPE.get().defaultBlockState(), 3);
+        for (int x = 0; x <= 6; x++) level.setBlock(gas.east(x), CETransport.REINFORCED_PIPE.get().defaultBlockState(), 3);
         level.setBlock(gas.east(3), gauge(CETransport.PIPE_PRESSURE_GAUGE.get(), Direction.Axis.X), 3);
         for (int y = 0; y <= 3; y++) level.setBlock(origin.east(2).above(y), AllBlocks.FLUID_PIPE.getDefaultState(), 3);
         level.setBlock(origin.east(2).above(1), gauge(CETransport.PIPE_THERMOMETER.get(), Direction.Axis.Y), 3);

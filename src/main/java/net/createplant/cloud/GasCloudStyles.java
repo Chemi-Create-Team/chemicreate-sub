@@ -2,9 +2,11 @@ package net.createplant.cloud;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import net.createplant.thermal.FluidIdentity;
 import net.createplant.thermal.SteamGrades;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 public final class GasCloudStyles {
     public record Style(boolean ceiling, Integer color, int outdoorDivisor) {
@@ -36,6 +38,12 @@ public final class GasCloudStyles {
     static String id(Fluid fluid) {
         var key = BuiltInRegistries.FLUID.getKey(fluid);
         return key.getNamespace() + ":" + key.getPath().replace("flowing_", "");
+    }
+    /** A substance in a state it once had its own entry for keeps that entry's style, so gaseous water clouds as steam. */
+    static String id(FluidStack stack) {
+        for (var variant : FluidIdentity.variants(stack.getFluid()))
+            if (find(id(variant)) != null && FluidIdentity.matches(stack, variant)) return id(variant);
+        return id(stack.getFluid());
     }
     static Style find(String fluidId) {
         var style = Styles.BY_ID.get(fluidId);

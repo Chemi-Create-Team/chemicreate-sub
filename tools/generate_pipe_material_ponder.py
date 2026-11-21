@@ -11,7 +11,7 @@ A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
 NS = 'create_refinery_n_reactors:'
 
 ROWS = ('create:fluid_pipe', NS + 'resin_pipe', NS + 'pvc_pipe', NS + 'reinforced_pipe', NS + 'stainless_steel_pipe', NS + 'nickel_alloy_pipe', NS + 'zirconium_pipe',
-        NS + 'ceramic_pipe', NS + 'cryogenic_pipe', NS + 'gas_pipe')
+        NS + 'ceramic_pipe', NS + 'cryogenic_pipe')
 s = Structure(11, 3)
 for z, pipe in enumerate(ROWS, 1):
     for x in range(2, 9):
@@ -130,7 +130,7 @@ raw = path.read_bytes().decode('utf-8'); newline = '\r\n' if '\r\n' in raw else 
 data = json.loads(raw)
 entries = [
     {'id': 'pipe_materials', 'size': 11, 'height': 3,
-     'components': ['stainless_steel_pipe', 'ceramic_pipe', 'resin_pipe', 'pvc_pipe', 'nickel_alloy_pipe', 'zirconium_pipe', 'reinforced_pipe', 'cryogenic_pipe', 'gas_pipe'],
+     'components': ['stainless_steel_pipe', 'ceramic_pipe', 'resin_pipe', 'pvc_pipe', 'nickel_alloy_pipe', 'zirconium_pipe', 'reinforced_pipe', 'cryogenic_pipe'],
      'steps': [{'target': target, 'key': f'step_{i + 1}', **extra} for i, (target, extra) in enumerate(STEPS)]},
     {'id': 'tank_materials', 'size': 11, 'height': 4, 'components': ['stainless_steel_tank', 'cryogenic_tank', 'pressure_tank', 'gas_receiver'],
      'steps': [{'target': target, 'key': f'step_{i + 1}', **extra} for i, (target, extra) in enumerate(TANK_STEPS)]},

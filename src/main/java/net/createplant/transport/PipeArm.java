@@ -3,7 +3,6 @@ package net.createplant.transport;
 import com.simibubi.create.content.fluids.pipes.AxisPipeBlock;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.pipes.GlassFluidPipeBlock;
-import net.createplant.registry.CEGasPipes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -51,7 +50,7 @@ public record PipeArm(BlockPos pipe, Direction side, boolean cut, AABB bounds) {
     public static AABB bounds(BlockAndTintGetter world, BlockPos pos, BlockState state, Direction side) {
         boolean glass = state.getBlock() instanceof GlassFluidPipeBlock;
         if (glass ? state.getValue(AxisPipeBlock.AXIS) != side.getAxis()
-                : !FluidPipeBlock.isPipe(state) || state.is(CEGasPipes.LARGE_GAS_PIPE.get())) return null;
+                : !FluidPipeBlock.isPipe(state)) return null;
         double core = !glass && FluidPipeBlock.shouldDrawCasing(world, pos, state) ? 3 / 16d : 4 / 16d;
         double min = side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 - core : 0;
         double max = side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : core;

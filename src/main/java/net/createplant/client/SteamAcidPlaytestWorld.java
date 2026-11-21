@@ -38,7 +38,6 @@ import net.createplant.gametest.ReactorGameTests;
 import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEElectrolysis;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEOstwaldFluids;
 import net.createplant.registry.CEProcessBlocks;
@@ -209,7 +208,7 @@ public final class SteamAcidPlaytestWorld {
         motor(level, CHLORINE_VESSEL.offset(1,-1,1), Direction.UP, 64);
         burner(level, BURNER_VESSEL.below());
         var air = BURNER_VESSEL.offset(1, 0, 0);
-        line(level, CEGasPipes.GAS_PIPE.get().defaultBlockState(), pump("gas_pump"),
+        line(level, CETransport.REINFORCED_PIPE.get().defaultBlockState(), pump("gas_pump"),
             air.north(5), air, air.north(2), Direction.SOUTH, 64);
 
         for (var at : List.of(SULFUR_ABSORBER, CHLORINE_ABSORBER, NITRIC_ABSORBER)) AbsorptionTowerGameTests.tower(level, at, 4, true);

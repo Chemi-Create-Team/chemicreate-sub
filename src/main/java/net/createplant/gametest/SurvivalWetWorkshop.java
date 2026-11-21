@@ -9,7 +9,6 @@ import java.util.Map;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEMetals;
 import net.createplant.registry.CETransport;
@@ -210,7 +209,7 @@ final class SurvivalWetWorkshop {
     void openAir(BlockPos target, Direction flow, Direction waterSide) {
         var open = target.relative(flow.getOpposite(), 6);
         var middle = target.relative(flow.getOpposite(), 3);
-        pipeLine(CEGasPipes.GAS_PIPE.get(), null, pump("gas_pump"), middle, flow, open, target);
+        pipeLine(CETransport.REINFORCED_PIPE.get(), null, pump("gas_pump"), middle, flow, open, target);
         drive(middle, flow.getOpposite(), waterSide);
     }
 

@@ -144,6 +144,8 @@ public final class CETransport {
     }
     public static void register(IEventBus bus) {
         BLOCKS.register(bus);ITEMS.register(bus);TYPES.register(bus);
+        bus.addListener((net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event)->event.registerBlock(
+            net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,net.createplant.transport.NozzleIntake::port,com.simibubi.create.AllBlocks.NOZZLE.get()));
         bus.addListener((net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event)->event.enqueueWork(()-> {
             com.simibubi.create.content.decoration.encasing.EncasingRegistry.addVariant(STAINLESS_PIPE.get(),STAINLESS_ENCASED_PIPE.get());
             for (var pump:MATERIAL_PUMPS)

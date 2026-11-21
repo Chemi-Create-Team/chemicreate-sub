@@ -175,7 +175,7 @@ def ponder():
   if (x,y,z) in ((5,2,9),(7,2,3),(17,1,7),(17,5,22)):
    s.block(x,y,z,'create:mechanical_pump',facing='north' if x==5 else 'east' if x==7 else 'south',waterlogged='false');continue
   s.block(x,y,z,NS+'stainless_steel_pipe',waterlogged='false',**{d:str(d in faces).lower()for d in p.DIRECTIONS})
- for z in (4,5):s.block(7,3,z,NS+'gas_pipe',waterlogged='false',**{d:str(d in ('north','south') if z==4 else d in ('north','west')).lower()for d in p.DIRECTIONS})
+ for z in (4,5):s.block(7,3,z,NS+'reinforced_pipe',waterlogged='false',**{d:str(d in ('north','south') if z==4 else d in ('north','west')).lower()for d in p.DIRECTIONS})
  for z in (2,3):s.block(7,3,z,NS+'gas_receiver',axis='z',bottom=str(z==2).lower(),top=str(z==3).lower(),shape='plain')
  s.block(17,2,5,'create:andesite_funnel',facing='north',extracting='true',powered='false')
  s.block(9,3,13,'create:andesite_funnel',facing='west',extracting='false',powered='false')

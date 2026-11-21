@@ -154,7 +154,7 @@ public final class SurvivalReachabilityGameTests {
         if (has(items, "electrolysis_furnace_shell", "electrolysis_furnace_anode", "electrolysis_furnace_busbar"))
             for (var reduction : ElectrolysisFurnaceBlockEntity.reductions().entrySet())
                 if (items.contains(reduction.getKey()) && items.contains(Items.COAL)) changed |= items.add(reduction.getValue().metal());
-        if (has(items, "gas_pipe") && items.contains(com.simibubi.create.AllBlocks.NOZZLE.asItem())
+        if (has(items, "reinforced_pipe") && items.contains(com.simibubi.create.AllBlocks.NOZZLE.asItem())
             && items.contains(com.simibubi.create.AllBlocks.MECHANICAL_PUMP.asItem())) changed |= fluids.add(CEFluids.AIR_GAS.get());
         if (has(items, "fractionating_column") && fluids.contains(CEProcessFluids.COMPRESSED_AIR.get())) {
             changed |= fluids.add(CEFluids.LIQUID_OXYGEN.get());

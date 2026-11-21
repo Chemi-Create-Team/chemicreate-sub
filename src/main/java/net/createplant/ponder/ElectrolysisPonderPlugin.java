@@ -118,7 +118,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
 
         helper.forComponents(CreatePlant.location("large_absorption_tower"))
             .addStoryBoard("plant/large_absorption_tower", AbsorptionTowerPonderScenes::large);
-        helper.forComponents(CreatePlant.location("fractionating_column"), CreatePlant.location("gas_pipe"), CreatePlant.location("naphtha_bucket"),
+        helper.forComponents(CreatePlant.location("fractionating_column"), CreatePlant.location("naphtha_bucket"),
                 CreatePlant.location("low_sulfur_diesel_bucket"))
             .addStoryBoard("plant/fractionating_column", FractionationPonderScenes::column);
         helper.forComponents(CreatePlant.location("fractionating_column"))
@@ -127,7 +127,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
                 CreatePlant.location("synthetic_naphtha_bucket"), CreatePlant.location("ft_offgas_bucket"),
                 CreatePlant.location("molten_paraffin_bucket"))
             .addStoryBoard("plant/fractionating_column", FractionationPonderScenes::synthetic);
-        helper.forComponents(CreatePlant.location("fractionating_column"),CreatePlant.location("gas_pipe"))
+        helper.forComponents(CreatePlant.location("fractionating_column"))
             .addStoryBoard("plant/fractionating_column_air", FractionationPonderScenes::air);
         helper.forComponents(
                 CreatePlant.location("electrolysis_cell"),
@@ -224,7 +224,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("nuclear/fuel_pool", FuelPoolPonderScenes::pool);
         helper.forComponents(CreatePlant.location("pipe_thermometer"), CreatePlant.location("pipe_pressure_gauge"), CreatePlant.location("pipe_flow_meter"))
             .addStoryBoard("plant/pipe_gauges", PipeGaugePonderScenes::gauges);
-        helper.forComponents(CreatePlant.location("flare_tip"),CreatePlant.location("pipe_pressure_gauge"),CreatePlant.location("gas_pipe"))
+        helper.forComponents(CreatePlant.location("flare_tip"),CreatePlant.location("pipe_pressure_gauge"),CreatePlant.location("reinforced_pipe"))
             .addStoryBoard("plant/flare_stack",FlarePonderScenes::flare);
         helper.forComponents(CreatePlant.location("horizontal_fluid_tank"))
             .addStoryBoard("plant/horizontal_tank", HorizontalTankPonderScenes::tank);

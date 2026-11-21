@@ -35,7 +35,7 @@ public class NativeFluidNetworkMixin {
         }
         original.call(network,speed*multiplier);
     }
-    @Unique private int createPlant$bores(BlockPos at){if(!world.hasChunkAt(at))return 1;var state=world.getBlockState(at);return net.createplant.transport.PipeMaterial.pipe(state)==net.createplant.transport.PipeMaterial.STAINLESS ? net.createplant.transport.PipeMaterial.MAIN_FLOW : state.is(net.createplant.registry.CEGasPipes.LARGE_GAS_PIPE.get()) ? 4 : 1;}
+    @Unique private int createPlant$bores(BlockPos at){if(!world.hasChunkAt(at))return 1;var state=world.getBlockState(at);return net.createplant.transport.PipeMaterial.pipe(state)==net.createplant.transport.PipeMaterial.STAINLESS ? net.createplant.transport.PipeMaterial.MAIN_FLOW : 1;}
     @Inject(method="reset",at=@At("HEAD"))
     private void createPlant$reset(CallbackInfo ci){createPlant$routes.clear();}
     @Inject(method="tick",at=@At("HEAD"))

@@ -93,7 +93,7 @@ def data():
  for name in ('flare_tip',):
   write(D/f'loot_table/blocks/{name}.json',{'type':'minecraft:block','pools':[{'rolls':1,'entries':[{'type':'minecraft:item','name':NS+name}],'conditions':[{'condition':'minecraft:survives_explosion'}]}]})
  for name,pattern,key in [
-  ('flare_tip',['IBI','SPS',' C '],{'I':{'item':'minecraft:iron_bars'},'B':{'tag':'c:plates/brass'},'S':{'tag':'c:plates/iron'},'P':{'item':NS+'gas_pipe'},'C':{'item':'minecraft:flint_and_steel'}}),
+  ('flare_tip',['IBI','SPS',' C '],{'I':{'item':'minecraft:iron_bars'},'B':{'tag':'c:plates/brass'},'S':{'tag':'c:plates/iron'},'P':{'item':NS+'reinforced_pipe'},'C':{'item':'minecraft:flint_and_steel'}}),
  ]:
   write(D/f'recipe/{name}.json',{'type':'minecraft:crafting_shaped','pattern':pattern,'key':key,'result':{'id':NS+name,'count':1}})
  for tag in ['minecraft/tags/block/mineable/pickaxe.json','minecraft/tags/block/needs_iron_tool.json']:

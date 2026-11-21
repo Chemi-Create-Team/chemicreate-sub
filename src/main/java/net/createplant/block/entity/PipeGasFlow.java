@@ -8,7 +8,6 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CETransport;
 import net.createplant.cloud.GasClouds;
@@ -32,7 +31,7 @@ public final class PipeGasFlow extends BlockEntityBehaviour {
 
     public static void attach(BlockEntityBehaviourEvent event) {
         for (var type : List.of(AllBlockEntityTypes.FLUID_PIPE.get(), AllBlockEntityTypes.GLASS_FLUID_PIPE.get(),
-                AllBlockEntityTypes.ENCASED_FLUID_PIPE.get(), AllBlockEntityTypes.SMART_FLUID_PIPE.get(), CEGasPipes.GAS_PIPE_ENTITY.get(),
+                AllBlockEntityTypes.ENCASED_FLUID_PIPE.get(), AllBlockEntityTypes.SMART_FLUID_PIPE.get(),
                 CEBlockEntityTypes.RESIN_PIPE.get(), CETransport.PIPE.get(), CETransport.STAINLESS_PIPE_ENTITY.get(),
                 CETransport.STAINLESS_ENCASED_PIPE_ENTITY.get(), CETransport.STAINLESS_GLASS_PIPE_ENTITY.get()))
             event.forType(type, pipe -> event.attach(new PipeGasFlow(pipe)));

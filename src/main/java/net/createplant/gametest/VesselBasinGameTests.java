@@ -16,12 +16,10 @@ import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import net.createplant.CreatePlant;
 import net.createplant.block.LiddedVesselBlock;
-import net.createplant.block.entity.GasPipeBlockEntity;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidMaterials;
@@ -466,7 +464,7 @@ public class VesselBasinGameTests {
         var owner=square(h,BASE,3,1);owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());owner.validateStructure();
         owner.port(Direction.WEST).fill(new FluidStack(Fluids.WATER,500),EXECUTE);
         var sourcePos=BASE.west(4);h.setBlock(sourcePos,CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.X));var source=((FluidTankBlockEntity)h.getBlockEntity(sourcePos)).getTankInventory();source.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),40000),EXECUTE);
-        for(int offset:new int[]{1,3}){var state=CEGasPipes.GAS_PIPE.get().defaultBlockState();for(Direction side:Direction.values())state=state.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side),side.getAxis()==Direction.Axis.X);h.setBlock(BASE.west(offset),state);}
+        for(int offset:new int[]{1,3}){var state=CETransport.REINFORCED_PIPE.get().defaultBlockState();for(Direction side:Direction.values())state=state.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side),side.getAxis()==Direction.Axis.X);h.setBlock(BASE.west(offset),state);}
         var pump=BASE.west(2);var cog=pump.above();var motor=cog.west();
         h.setBlock(pump,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(com.simibubi.create.content.fluids.pump.PumpBlock.FACING,Direction.EAST));
         h.setBlock(cog,AllBlocks.COGWHEEL.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,Direction.Axis.X));

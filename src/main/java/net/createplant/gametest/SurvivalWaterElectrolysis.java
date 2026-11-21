@@ -18,7 +18,7 @@ import net.createplant.block.ElectrolysisControllerBlock;
 import net.createplant.block.entity.ElectrolysisControllerBlockEntity;
 import net.createplant.registry.CEElectrolysis;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
+import net.createplant.registry.CETransport;
 import net.createplant.registry.CEItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -144,7 +144,7 @@ final class SurvivalWaterElectrolysis {
             place(level, at, Blocks.WATER.defaultBlockState());
         }
         var discharge = cell.east(3);
-        wet.pipeLine(CEGasPipes.GAS_PIPE.get(), null, SurvivalWetWorkshop.pump("gas_pump"), oxygenPump, Direction.WEST,
+        wet.pipeLine(CETransport.REINFORCED_PIPE.get(), null, SurvivalWetWorkshop.pump("gas_pump"), oxygenPump, Direction.WEST,
             cell, discharge, discharge.south(2), leach.east().south(7), leach.east().south(2));
         wet.drive(oxygenPump, Direction.WEST, Direction.SOUTH);
         built = level.getGameTime();

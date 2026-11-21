@@ -2,9 +2,8 @@ package net.createplant.gametest;
 
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import net.createplant.CreatePlant;
-import net.createplant.block.entity.GasPipeBlockEntity;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEGasPipes;
+import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -22,7 +21,7 @@ public class GasSafetyLoadGameTests {
         var level=h.getLevel();var base=h.absolutePos(new BlockPos(1,2,1));
         for(int row=0;row<8;row++) for(int x=0;x<16;x++) {
             var at=base.offset(x,0,row*2);
-            level.setBlock(at,CEGasPipes.GAS_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true),3);
+            level.setBlock(at,CETransport.REINFORCED_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true),3);
         }
         for(int i=0;i<64;i++) {
             var at=base.offset(i%8*2,5,i/8*2);var cloud=new AreaEffectCloud(level,at.getX()+.5,at.getY(),at.getZ()+.5);
