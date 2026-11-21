@@ -37,7 +37,8 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
  */
 @EventBusSubscriber(modid = CreatePlant.MOD_ID, value = Dist.CLIENT)
 public final class QuarryRenderClientCheck {
-    private static final int RAIL_Y = 60, FLOOR_Y = -60, ORE_TOP_Y = -41, SIZE = 16, SPACING = 24, SETTLE_TICKS = 100, MEASURE_TICKS = 300;
+    private static final int RAIL_Y = 60, FLOOR_Y = -60, ORE_TOP_Y = -41, SIZE = 16, SPACING = 24, SETTLE_TICKS = 100;
+    private static final int MEASURE_TICKS = Integer.getInteger("createplant.quarryRenderMeasureTicks", 300);
     private static final List<BlockPos> DRIVES = List.of(new BlockPos(0, RAIL_Y, 0), new BlockPos(SPACING, RAIL_Y, 0), new BlockPos(0, RAIL_Y, SPACING), new BlockPos(SPACING, RAIL_Y, SPACING));
     private static final String[] BACKENDS = {"flywheel:off", "DEFAULT", "flywheel:off", "DEFAULT"};
     private static final List<Map<String, Object>> RESULTS = new ArrayList<>();
@@ -93,18 +94,22 @@ public final class QuarryRenderClientCheck {
             }
         }
         // Close views of the first quarry's trolley and drill head, each without and with the backend, to compare the parts by eye.
-        if (phase == 7 && ++ticks == 1) {
-            if (!ClientCommandHandler.runCommand("flywheel backend " + BACKENDS[run % 2])) throw new IllegalStateException("Flywheel did not take the backend command");
+        // Switching the backend recompiles the level, which draws the gantry only once the drive is in view: the trolley comes first.
+        if (phase == 7 && ++ticks == 1 && !ClientCommandHandler.runCommand("flywheel backend " + BACKENDS[run]))
+            throw new IllegalStateException("Flywheel did not take the backend command");
+        if (phase == 7 && (ticks == 1 || ticks == 61)) {
             var quarry = shown(mc, DRIVES.getFirst());
             var gantry = QuarryRenderer.Gantry.of(quarry.visibleStructure(), DRIVES.getFirst(), quarry.renderedU(1), quarry.renderedV(1), quarry.renderedDepth(1));
-            Vec3 target = Vec3.atLowerCornerOf(DRIVES.getFirst()).add(run < 2 ? gantry.trolley() : gantry.hook()).add(.5, .5, .5);
+            Vec3 target = Vec3.atLowerCornerOf(DRIVES.getFirst()).add(ticks == 1 ? gantry.trolley() : gantry.hook()).add(.5, .5, .5);
             mc.getSingleplayerServer().execute(() -> mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID()).connection
                 .teleport(target.x - 3, target.y + 2 - mc.player.getEyeHeight(), target.z - 3.5, -40.6f, 23.5f));
         }
-        if (phase == 7 && ticks == 60) {
-            Screenshot.grab(mc.gameDirectory, "quarry-render-" + (run < 2 ? "trolley-" : "head-") + run % 2 + ".png", mc.getMainRenderTarget(), message -> { });
-            ticks = 0;
-            if (++run == 4) { phase = 8;mc.stop(); }
+        if (phase == 7 && (ticks == 60 || ticks == 120)) {
+            Screenshot.grab(mc.gameDirectory, "quarry-render-" + (ticks == 60 ? "trolley-" : "head-") + run + ".png", mc.getMainRenderTarget(), message -> { });
+            if (ticks == 120) {
+                ticks = 0;
+                if (++run == 2) { phase = 8;mc.stop(); }
+            }
         }
     }
 

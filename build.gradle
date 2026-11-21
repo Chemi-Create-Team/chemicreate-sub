@@ -79,6 +79,19 @@ configurations {
         canBeConsumed = false
     }
     implementation.extendsFrom(createDistribution)
+    sodiumDistribution {
+        canBeConsumed = false
+    }
+}
+
+// Sodium ships as a locator around its mod jar, which a development run does not unpack: join the two for -PwithColorwheel=true.
+def sodiumDevJar = tasks.register("sodiumDevJar", Jar) {
+    def distribution = provider { zipTree(configurations.sodiumDistribution.singleFile) }
+    from(provider { zipTree(distribution.get().matching { include "META-INF/jarjar/*-mod.jar" }.singleFile) })
+    from(distribution) { exclude "META-INF/**" }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveFileName = "sodium-dev.jar"
+    destinationDirectory = layout.buildDirectory.dir("colorwheel")
 }
 
 dependencies {
@@ -111,6 +124,14 @@ dependencies {
         runtimeOnly("maven.modrinth:sable:${sable_version_id}") { transitive = false }
         runtimeOnly("maven.modrinth:create-aeronautics:${aeronautics_version_id}") { transitive = false }
         runtimeOnly("maven.modrinth:create-deep-seas:${deepseas_version_id}") { transitive = false }
+    }
+    // Colorwheel runs Flywheel visuals under an Iris shader pack; -PwithColorwheel=true checks them with it, Iris and Sodium.
+    if (providers.gradleProperty("withColorwheel").getOrElse("false").toBoolean()) {
+        sodiumDistribution("maven.modrinth:sodium:${sodium_version_id}") { transitive = false }
+        runtimeOnly files(sodiumDevJar)
+        runtimeOnly(files(provider { zipTree(configurations.sodiumDistribution.singleFile).matching { include "META-INF/jarjar/fabric-*.jar" }.files }))
+        runtimeOnly("maven.modrinth:iris:${iris_version_id}") { transitive = false }
+        runtimeOnly("maven.modrinth:colorwheel:${colorwheel_version_id}") { transitive = false }
     }
 }
 

@@ -1,0 +1,13 @@
+// The quarry render check under an Iris shader pack, drawn through Colorwheel: -PwithColorwheel=true -I <this file> runClient.
+allprojects { afterEvaluate { project ->
+    extensions.getByName('neoForge').runs.named('client') {
+        systemProperty 'createplant.quarryRenderClientCheck', 'true'
+    }
+    tasks.named('runClient') { doFirst {
+        project.copy { from 'docs/quality/quarry-render/shaderpack'; into 'run/shaderpacks/quarry-render-check' }
+        project.mkdir 'run/config'
+        project.file('run/config/iris.properties').text = 'enableShaders=true\nshaderPack=quarry-render-check\n'
+        // The pack has no Colorwheel programs of its own, so Colorwheel patches the pack's programs.
+        project.file('run/config/colorwheel-client.toml').text = 'enableFallbackMode = true\n'
+    } }
+}}

@@ -1,0 +1,82 @@
+[
+  {
+    "state": "working",
+    "backend": "flywheel:off",
+    "quarries": 4,
+    "meanDepth": 100.99999999999999,
+    "seconds": 15.002099,
+    "frames": 1833,
+    "fps": 122.18290253917135,
+    "frameMillis": 8.184451172940534
+  },
+  {
+    "state": "working",
+    "backend": "flywheel:indirect",
+    "quarries": 4,
+    "meanDepth": 100.99999999999999,
+    "seconds": 15.0012087,
+    "frames": 14436,
+    "fps": 962.322456056491,
+    "frameMillis": 1.0391527223607646
+  },
+  {
+    "state": "working",
+    "backend": "flywheel:off",
+    "quarries": 4,
+    "meanDepth": 101.99999999999999,
+    "seconds": 14.9946002,
+    "frames": 1805,
+    "fps": 120.37666732854937,
+    "frameMillis": 8.307257728531857
+  },
+  {
+    "state": "working",
+    "backend": "flywheel:indirect",
+    "quarries": 4,
+    "meanDepth": 101.99999999999999,
+    "seconds": 15.0008466,
+    "frames": 14744,
+    "fps": 982.8778597069315,
+    "frameMillis": 1.017420415084102
+  },
+  {
+    "state": "standing",
+    "backend": "flywheel:off",
+    "quarries": 4,
+    "meanDepth": 101.99999999999999,
+    "seconds": 14.9997825,
+    "frames": 1826,
+    "fps": 121.73509849226147,
+    "frameMillis": 8.214557776560788
+  },
+  {
+    "state": "standing",
+    "backend": "flywheel:indirect",
+    "quarries": 4,
+    "meanDepth": 101.99999999999999,
+    "seconds": 15.0000942,
+    "frames": 17881,
+    "fps": 1192.059180535013,
+    "frameMillis": 0.8388845254739667
+  },
+  {
+    "state": "standing",
+    "backend": "flywheel:off",
+    "quarries": 4,
+    "meanDepth": 101.99999999999999,
+    "seconds": 14.9983541,
+    "frames": 1845,
+    "fps": 123.0134978610753,
+    "frameMillis": 8.129189214092142
+  },
+  {
+    "state": "standing",
+    "backend": "flywheel:indirect",
+    "quarries": 4,
+    "meanDepth": 101.99999999999999,
+    "seconds": 14.9999072,
+    "frames": 17682,
+    "fps": 1178.8072928877853,
+    "frameMillis": 0.8483150774799232
+  }
+]
