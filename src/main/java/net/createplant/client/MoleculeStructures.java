@@ -11,6 +11,7 @@ import java.util.Map;
 import net.createplant.CreatePlant;
 import net.createplant.chemistry.FluidChemicalRegistry;
 import net.createplant.mixture.MixtureHelper;
+import net.createplant.thermal.FluidIdentity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +22,7 @@ final class MoleculeStructures {
     record Atom(String element, float x, float y, float depth, int charge) { }
     record Bond(int start, int end, int order) { }
     record Drawing(List<Atom> atoms, List<Bond> bonds, float radius) { }
-    record Model(String formula, Drawing flat, Drawing spatial) { }
+    record Model(String formula, Drawing flat, Drawing spatial, String repeatUnit) { }
     private record Catalog(Map<ResourceLocation, Model> fluids, Map<ResourceLocation, Model> items) { }
 
     private static final Catalog CATALOG = load();
@@ -30,10 +31,11 @@ final class MoleculeStructures {
 
     static Model forFluid(FluidStack stack) {
         if (stack.isEmpty() || MixtureHelper.isMixture(stack)) return null;
-        var fluid = stack.getFluid() instanceof FlowingFluid flowing ? flowing.getSource() : stack.getFluid();
+        var source = stack.getFluid() instanceof FlowingFluid flowing ? flowing.getSource() : stack.getFluid();
+        var fluid = FluidIdentity.canonical(source);
         var info = FluidChemicalRegistry.base(fluid);
-        if (info == null || info.mixture() && !info.aqueous()) return null;
-        return CATALOG.fluids.get(BuiltInRegistries.FLUID.getKey(fluid));
+        var model = CATALOG.fluids.get(BuiltInRegistries.FLUID.getKey(fluid));
+        return info != null && model != null && info.structureFormula().equals(model.formula()) ? model : null;
     }
 
     static Model forItem(ItemStack stack) {
@@ -51,7 +53,8 @@ final class MoleculeStructures {
                 var row = value.getAsJsonArray();
                 var formula = row.get(0).getAsString();
                 var model = new Model(formula, drawing(row.get(3).getAsJsonArray(), row.get(4).getAsJsonArray(), false),
-                    drawing(row.get(5).getAsJsonArray(), row.get(6).getAsJsonArray(), true));
+                    drawing(row.get(5).getAsJsonArray(), row.get(6).getAsJsonArray(), true),
+                    row.size() > 7 ? row.get(7).getAsString() : "");
                 for (var id : row.get(1).getAsJsonArray()) fluids.put(ResourceLocation.parse(id.getAsString()), model);
                 for (var id : row.get(2).getAsJsonArray()) items.put(ResourceLocation.parse(id.getAsString()), model);
             }

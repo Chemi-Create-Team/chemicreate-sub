@@ -1,5 +1,9 @@
 package net.createplant.gametest;
 
+import com.google.gson.JsonParser;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import net.createplant.CreatePlant;
 import net.createplant.block.ProcessPorts;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
@@ -23,6 +27,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -33,6 +38,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
@@ -60,6 +66,41 @@ public final class ChemicalUiGameTests {
     }
 
     @GameTest(template = "test_fractionation")
+    public static void registeredPlantFluidsAndTheirBucketsHaveMatchingStructureFormulas(GameTestHelper h) throws Exception {
+        var models = new HashMap<ResourceLocation, String>();
+        String file = "/data/" + CreatePlant.MOD_ID + "/chemistry/molecule_structures.json";
+        try (var input = ChemicalUiGameTests.class.getResourceAsStream(file)) {
+            var data = JsonParser.parseReader(new InputStreamReader(input, StandardCharsets.UTF_8)).getAsJsonArray();
+            for (var element : data) {
+                var row = element.getAsJsonArray();
+                for (var id : row.get(1).getAsJsonArray()) {
+                    models.put(ResourceLocation.parse(id.getAsString()), row.get(0).getAsString());
+                }
+            }
+        }
+        for (var entry : BuiltInRegistries.FLUID.entrySet()) {
+            var id = entry.getKey().location();
+            if (!id.getNamespace().equals(CreatePlant.MOD_ID) || id.getPath().startsWith("flowing_")) continue;
+            var fluid = new FluidStack(entry.getValue(), 1000);
+            var info = FluidChemicalRegistry.base(fluid.getFluid());
+            var canonical = BuiltInRegistries.FLUID.getKey(fluid.getFluid());
+            String formula = info.structureFormula();
+            if (formula.isEmpty()) {
+                h.assertTrue(!models.containsKey(canonical), "A variable composition has no single structure: " + id);
+                continue;
+            }
+            h.assertTrue(formula.equals(models.get(canonical)), "Missing or mismatched structure after fluid unification: " + id);
+            h.assertTrue(formula.equals(displayedFormula(FluidItemChemistry.formulaLines(fluid).getFirst()).getString()),
+                "The fluid's tooltip and model use the same formula: " + id);
+            var bucket = FluidUtil.getFilledBucket(fluid);
+            if (bucket.isEmpty()) continue;
+            h.assertTrue(formula.equals(displayedFormula(FluidItemChemistry.formulaLines(bucket).getFirst()).getString()),
+                "The bucket and JEI fluid data use the same formula: " + id);
+        }
+        h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation")
     public static void fluidContainersExposeActualFormulasWithoutConsumingContents(GameTestHelper h) {
         h.assertTrue(FluidItemChemistry.formulaLines(Items.BUCKET.getDefaultInstance()).isEmpty()
             && displayedFormula(FluidItemChemistry.formulaLines(Items.WATER_BUCKET.getDefaultInstance()).getFirst()).getString().equals("H₂O")
@@ -80,6 +121,8 @@ public final class ChemicalUiGameTests {
         var before = handler.getFluidInTank(0);
         var contents = FluidItemChemistry.contents(sprayer);
         var lines = FluidItemChemistry.formulaLines(sprayer);
+        var stored = FluidItemChemistry.storedFluids(sprayer);
+        h.assertTrue(stored.size() == 1 && MixtureHelper.isMixture(stored.getFirst()), "The structure preview receives the original mixture");
         h.assertTrue(contents.size() == 2 && contents.getFirst().getAmount() == 750 && lines.size() == 2
             && displayedFormula(lines.getFirst()).getString().equals("H₂O") && displayedFormula(lines.getLast()).getString().equals("CH₃OH"),
             "The portable container shows every actual mixture constituent by amount");

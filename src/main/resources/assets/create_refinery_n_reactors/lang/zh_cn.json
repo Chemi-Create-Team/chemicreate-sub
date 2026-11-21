@@ -2672,7 +2672,7 @@
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.blend": "重液体下沉，轻液体上浮。通过观察窗可以看到各层的颜色。",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.machines": "装置只从混合气体中取用所需成分，不用的气体原样从气体出口排出。装置生成的多种气体也会按量的比例作为一种混合气体排出。",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.transport": "用机械动力标准管道、水泵和储罐运输，分流保持各成分数量，管罐材质须适合所有成分。",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout": "悬停装有流体的容器或JEI流体可查看组成。纯物质和只有一种已知溶质的溶液会显示旋转分子模型。显示链接可查看混合物的成分量。",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout": "悬停在流体容器或JEI流体上可查看化学式。纯物质和单一溶质的溶液会显示旋转的模型。聚合物显示重复单元。显示链接可查看混合物的成分量。",
   "create_refinery_n_reactors.ponder.chemical_mixtures.header": "混合并输送液体与气体",
   "fluid.create_refinery_n_reactors.chemical_mixture": "混合液",
   "fluid.create_refinery_n_reactors.gas_mixture": "混合气体",
@@ -6200,6 +6200,9 @@
   "chemical_ui.create_refinery_n_reactors.unknown_composition": "暂无组成数据",
   "chemical_ui.create_refinery_n_reactors.model_flat": "结构式",
   "chemical_ui.create_refinery_n_reactors.model_spatial": "分子模型",
+  "chemical_ui.create_refinery_n_reactors.polymer_formula": "聚合物组成式 %s",
+  "chemical_ui.create_refinery_n_reactors.model_repeat_structure": "重复结构",
+  "chemical_ui.create_refinery_n_reactors.model_repeat_spatial": "重复单元模型",
   "chemical_ui.create_refinery_n_reactors.solute_formula": "溶质分子式 %s",
   "chemical_ui.create_refinery_n_reactors.composition": "组成 %s",
   "chemical_ui.create_refinery_n_reactors.composition.biodiesel": "脂肪酸乙酯混合物，比例可变",
@@ -6210,7 +6213,7 @@
   "chemical_ui.create_refinery_n_reactors.model_solute_structure": "溶质结构式",
   "chemical_ui.create_refinery_n_reactors.model_solute_spatial": "分子模型（溶质）",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.count": "2",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.0": "悬停装有流体的容器或JEI流体可查看组成。纯物质和只有一种已知溶质的溶液会显示旋转分子模型。",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "显示链接可查看混合物的成分量。",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.2": "显示链接可查看混合物的成分量。"
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.0": "悬停在流体容器或JEI流体上可查看化学式。纯物质和单一溶质的溶液会显示旋转的模型。",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "聚合物显示重复单元。显示链接可查看混合物的成分量。",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.2": "聚合物显示重复单元。显示链接可查看混合物的成分量。"
 }

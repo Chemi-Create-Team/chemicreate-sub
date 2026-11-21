@@ -25,15 +25,20 @@ final class MoleculeTooltip implements ClientTooltipComponent {
     @Override
     public void renderImage(Font font, int x, int y, GuiGraphics graphics) {
         y += 2;
-        panel(graphics, font, x, y, solute ? "model_solute_structure" : "model_flat");
+        boolean repeats = !model.repeatUnit().isEmpty();
+        panel(graphics, font, x, y, repeats ? "model_repeat_structure" : solute ? "model_solute_structure" : "model_flat");
         var pose = graphics.pose();
         pose.pushPose();
         pose.translate(x + PANEL_WIDTH / 2f, y + 50, 0);
-        drawFlat(graphics, font, model.flat(), solute ? 62 : 47);
+        if (repeats) {
+            float scale = Math.min(1, (PANEL_WIDTH - 8f) / font.width(model.repeatUnit()));
+            pose.scale(scale, scale, 1);
+            graphics.drawCenteredString(font, model.repeatUnit(), 0, -4, INK);
+        } else drawFlat(graphics, font, model.flat(), solute ? 62 : 47);
         pose.popPose();
 
         int right = x + PANEL_WIDTH + GAP;
-        panel(graphics, font, right, y, solute ? "model_solute_spatial" : "model_spatial");
+        panel(graphics, font, right, y, repeats ? "model_repeat_spatial" : solute ? "model_solute_spatial" : "model_spatial");
         MolecularModelRenderer.draw(graphics, right + PANEL_WIDTH / 2f, y + 50, model.spatial());
     }
 

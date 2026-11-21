@@ -35,6 +35,18 @@ public final class FluidChemicalRegistry {
             return aqueous || !compositionKey.isEmpty() || formula.contains(" + ") || formula.contains("…")
                 || formula.contains("–") || formula.contains("ₙ") || formula.contains("ₘ");
         }
+
+        public boolean repeatFormula() {
+            return !aqueous && compositionKey.isEmpty() && formula.startsWith("(") && formula.endsWith(")ₙ")
+                && !formula.contains(" + ");
+        }
+
+        public String structureFormula() {
+            if (!aqueous) return !mixture() || repeatFormula() ? formula : "";
+            String solute = solutes();
+            return compositionKey.isEmpty() && !solute.contains(" + ") && !solute.contains("…") && !solute.contains("/")
+                ? solute : "";
+        }
     }
 
     private static final Map<ResourceLocation, ChemicalFluidInfo> DATA = load();

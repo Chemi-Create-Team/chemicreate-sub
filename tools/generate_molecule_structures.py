@@ -100,25 +100,43 @@ def coordinates(fragment, name):
 
 
 def fluid_formula(info):
+    formula = info["formula"]
+    if info.get("composition"):
+        return ""
     if not info.get("aqueous"):
-        return info["formula"]
-    solutes = [part for part in info["formula"].split(" + ") if part != "H₂O"]
-    if len(solutes) != 1 or "…" in solutes[0] or "/" in solutes[0]:
-        raise ValueError(f"Model requires one defined solute: {info['formula']}")
-    return solutes[0]
+        if " + " in formula or "…" in formula or "–" in formula or "ₘ" in formula:
+            return ""
+        if "ₙ" in formula and not (formula.startswith("(") and formula.endswith(")ₙ")):
+            return ""
+        return formula
+    solutes = [part for part in formula.split(" + ") if part != "H₂O"]
+    return solutes[0] if len(solutes) == 1 and "…" not in solutes[0] and "/" not in solutes[0] else ""
 
 
 def main():
     info = json.loads((DATA / "fluids.json").read_text())
     structures = []
+    covered = set()
     for entry in json.loads(INPUT.read_text()):
         fluids = entry.get("fluids", [])
         formula = entry.get("formula") or fluid_formula(info[fluids[0]])
-        if any(fluid_formula(info[fluid]) != formula for fluid in fluids):
+        if not formula or any(fluid_formula(info[fluid]) != formula for fluid in fluids):
             raise ValueError(f"Formula mismatch for {fluids}")
+        if any(fluid in covered for fluid in fluids) or len(set(fluids)) != len(fluids):
+            raise ValueError(f"Duplicate structure assignment for {fluids}")
+        repeat = entry.get("repeat_unit")
+        if formula.endswith(")ₙ") != bool(repeat):
+            raise ValueError(f"Repeating structure metadata mismatch for {fluids}")
         keys = [fluid if ":" in fluid else f"{MOD}:{fluid}" for fluid in fluids]
         items = [item if ":" in item else f"{MOD}:{item}" for item in entry.get("items", [])]
-        structures.append([formula, keys, items, *model(entry)])
+        structure = [formula, keys, items, *model(entry)]
+        if repeat:
+            structure.append(repeat)
+        structures.append(structure)
+        covered.update(fluids)
+    missing = {fluid for fluid, properties in info.items() if ":" not in fluid and fluid_formula(properties)} - covered
+    if missing:
+        raise ValueError("Missing structures for " + ", ".join(sorted(missing)))
     result = ",\n".join("  " + json.dumps(row, ensure_ascii=False, separators=(",", ":")) for row in structures)
     (DATA / "molecule_structures.json").write_text("[\n" + result + "\n]\n")
     print(f"Generated {len(structures)} molecular structures for {sum(len(row[1]) for row in structures)} fluids")

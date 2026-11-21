@@ -66,5 +66,7 @@
   {"smiles":"[Sn+2].[O-]S(=O)(=O)[O-]","fluids":["tin_sulfate_solution"]},
   {"smiles":"[Zn+2].[O-]S(=O)(=O)[O-]","fluids":["zinc_sulfate_solution"]},
   {"smiles":"O=[Ti+2].[O-]S(=O)(=O)[O-]","fluids":["titanyl_sulfate_solution"]},
-  {"smiles":"[Zr+4].[O-]S(=O)(=O)[O-].[O-]S(=O)(=O)[O-]","fluids":["zirconium_sulfate_solution"]}
+  {"smiles":"[Zr+4].[O-]S(=O)(=O)[O-].[O-]S(=O)(=O)[O-]","fluids":["zirconium_sulfate_solution"]},
+  {"smiles":"[*]CC[*]","fluids":["molten_polyethylene"],"repeat_unit":"[–CH₂–CH₂–]ₙ"},
+  {"smiles":"[*]CC(C)[*]","fluids":["molten_polypropylene"],"repeat_unit":"[–CH₂–CH(CH₃)–]ₙ"}
 ]

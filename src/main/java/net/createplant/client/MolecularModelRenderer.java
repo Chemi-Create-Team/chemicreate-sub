@@ -46,6 +46,7 @@ final class MolecularModelRenderer {
         }
         for (int i = 0; i < atoms.size(); i++) {
             String element = atoms.get(i).element();
+            if (element.equals("*")) continue;
             float half = switch (element) {
                 case "H", "D", "T" -> 2.35f;
                 case "F", "O" -> 3.3f;
