@@ -146,7 +146,7 @@ def translations():
  for suffix,v in captions.items():data['wet_processing.'+suffix]=dict(zip(('en_us','ja_jp','zh_cn'),v))
  for key in list(data):
   if key.startswith('absorption_tower.'):del data[key]
- data['large_absorption_tower.observe']=dict(zip(('en_us','ja_jp','zh_cn'),('Use goggles to check formation and processing. Gas enters below; water enters at the top.','ゴーグルで形成状態と処理を確認。気体は下段、水は最上段へ接続します。','用护目镜查看结构和处理。气体从下方输入，水从顶层输入。')))
+ data['large_absorption_tower.observe']=dict(zip(('en_us','ja_jp','zh_cn'),('Use goggles to check formation and processing. The warning icon shows why the tower has stopped.','ゴーグルで形成状態と処理を確認します。⚠が出たら、その横に停止理由が表示されます。','用护目镜查看结构和处理。⚠ 旁会显示停机原因。')))
  write(path,data)
 
 def machine(scene,center,width,height):

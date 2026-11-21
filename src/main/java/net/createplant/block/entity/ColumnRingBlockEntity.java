@@ -13,8 +13,12 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ColumnRingBlockEntity extends BlockEntity implements IHaveGoggleInformation {
     public ColumnRingBlockEntity(BlockPos pos, BlockState state) { super(CEReactor.RING_ENTITY.get(), pos, state); }
 
-    @Override public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
+    public BlockEntity storey() {
         BlockPos centre = level == null ? null : ExtractionColumnStructureBlock.centre(level, worldPosition, getBlockState());
-        return centre != null && level.getBlockEntity(centre) instanceof IHaveGoggleInformation storey && storey.addToGoggleTooltip(tooltip, sneaking);
+        return centre == null ? null : level.getBlockEntity(centre);
+    }
+
+    @Override public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
+        return storey() instanceof IHaveGoggleInformation goggles && goggles.addToGoggleTooltip(tooltip, sneaking);
     }
 }
