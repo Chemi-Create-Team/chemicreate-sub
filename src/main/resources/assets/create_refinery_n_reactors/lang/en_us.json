@@ -1806,7 +1806,7 @@
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_1": "Bring ethylene from the oil line and chlorine from brine electrolysis to an impeller vessel.\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_2": "Superheat the next batch to produce vinyl chloride. Recover hydrogen chloride through the second product path and send it to acid production.\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_3": "Use the heated polymerization recipe in an impeller vessel and extract the solid PVC resin.\n%s → %s",
-  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.title": "From chlorine and ethylene to PVC",
   "create_refinery_n_reactors.ponder.plant_manufacturing_pvc.header": "From chlorine and ethylene to PVC",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_fuel_refining.step_1": "Hydrotreat diesel with heating, or hydrocrack heavy oil with superheating.",
@@ -2247,7 +2247,7 @@
   "grade.create_refinery_n_reactors.pressure.high.detail": "High pressure (20 to 200 bar)",
   "grade.create_refinery_n_reactors.fluid": "Temperature %s / pressure %s",
   "transport.create_refinery_n_reactors.grade": "Grade: %s",
-  "transport.create_refinery_n_reactors.carries": "Liquids it carries: %s to %s; pressure up to %s",
+  "transport.create_refinery_n_reactors.carries": "Fluids it carries: %s to %s; pressure up to %s",
   "grade.create_refinery_n_reactors.tank.range": "Holds %s to %s; pressure up to %s",
   "grade.create_refinery_n_reactors.tank.kind.all": "Liquids and gases | %s",
   "grade.create_refinery_n_reactors.tank.kind.liquid": "Liquids only | %s",
@@ -6188,8 +6188,12 @@
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "Pure fluids and solutions with one known solute show a rotating model.",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.2": "A Display Link lists mixture amounts.",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.count": "1",
-  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.0": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.0": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.pipe_materials.step_3.lesson_pages.1": "A wrench adds a window; casing encases it.",
   "create_refinery_n_reactors.ponder.shared.guide.pipe_materials.step_6.lesson_pages.1": "A pipe carrying a fluid it is not rated for cracks and then bursts; check its range with goggles.",
-  "grade.create_refinery_n_reactors.scale": "Temperature %s  Pressure %s"
+  "grade.create_refinery_n_reactors.scale": "Temperature %s  Pressure %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action.lesson_pages.0": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.recipe": "Feed: %s\nProduct: %s"
 }

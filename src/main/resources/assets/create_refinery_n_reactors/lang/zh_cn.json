@@ -922,7 +922,7 @@
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_1": "把石油线的乙烯与盐水电解的氯送入搅拌槽。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_2": "超加热下一批以制氯乙烯，另一产物流回收氯化氢并送往盐酸生产。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_3": "在搅拌槽中执行加热聚合配方，取出固体PVC树脂。\n%s → %s",
-  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4": "用回收的树脂制作防腐蚀飞溅的防护服。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4": "用回收的树脂制作防腐蚀飞溅的防护服。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.title": "从氯和乙烯制成PVC",
   "create_refinery_n_reactors.ponder.plant_manufacturing_pvc.header": "从氯和乙烯制成PVC",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_fuel_refining.step_1": "柴油加氢处理需要加热，重油加氢裂化需要超级加热。",
@@ -2247,7 +2247,7 @@
   "grade.create_refinery_n_reactors.pressure.high.detail": "高压（20～200 bar）",
   "grade.create_refinery_n_reactors.fluid": "温度 %s／压力 %s",
   "transport.create_refinery_n_reactors.grade": "等级：%s",
-  "transport.create_refinery_n_reactors.carries": "可输送液体温度：%s～%s／压力：最高%s",
+  "transport.create_refinery_n_reactors.carries": "可输送流体温度：%s～%s／压力：最高%s",
   "grade.create_refinery_n_reactors.tank.range": "可容纳温度：%s～%s／压力：最高%s",
   "grade.create_refinery_n_reactors.tank.kind.all": "液体与气体｜%s",
   "grade.create_refinery_n_reactors.tank.kind.liquid": "仅液体｜%s",
@@ -6188,8 +6188,12 @@
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "显示链接可查看混合物的成分量。",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.2": "显示链接可查看混合物的成分量。",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.count": "1",
-  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.0": "用回收的树脂制作防腐蚀飞溅的防护服。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.0": "用回收的树脂制作防腐蚀飞溅的防护服。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.pipe_materials.step_3.lesson_pages.1": "不锈钢管适用于极低温至超高温、高压，耐酸和碱，但会被氯等卤素腐蚀。可用扳手加窗，也可加外壳。",
   "create_refinery_n_reactors.ponder.shared.guide.pipe_materials.step_6.lesson_pages.1": "额定范围同样适用于气体。输送不符合额定的流体时管道会开裂并最终破裂，可用护目镜查看范围。",
-  "grade.create_refinery_n_reactors.scale": "温度 %s　压力 %s"
+  "grade.create_refinery_n_reactors.scale": "温度 %s　压力 %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action": "用回收的树脂制作防腐蚀飞溅的防护服。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action.lesson_pages.0": "用回收的树脂制作防腐蚀飞溅的防护服。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.recipe": "原料：%s\n产物：%s"
 }

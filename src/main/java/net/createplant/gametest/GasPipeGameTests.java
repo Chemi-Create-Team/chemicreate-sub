@@ -22,7 +22,7 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 public final class GasPipeGameTests {
     private static final BlockPos SOURCE=new BlockPos(1,2,3),DEST=new BlockPos(7,2,3);
     private static FluidTankBlockEntity tank(GameTestHelper h,BlockPos at){h.setBlock(at,CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.X));return (FluidTankBlockEntity)h.getBlockEntity(at);}
-    private static BlockState pipe(boolean high){return (high ? CETransport.STAINLESS_PIPE.get() : CETransport.STAINLESS_PIPE.get()).defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true);}
+    private static BlockState pipe(boolean high){return (high ? CETransport.STAINLESS_PIPE.get() : CETransport.NICKEL_ALLOY_PIPE.get()).defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true);}
     private static CreativeMotorBlockEntity pump(GameTestHelper h,BlockPos at){
         h.setBlock(at,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
         h.setBlock(at.south(),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));

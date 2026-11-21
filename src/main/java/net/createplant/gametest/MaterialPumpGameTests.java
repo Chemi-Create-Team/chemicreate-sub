@@ -148,7 +148,7 @@ public final class MaterialPumpGameTests {
 
     @GameTest(template = "test_reactor", timeoutTicks = 500)
     public static void wrenchReversesAndReconnectingResumesTheSameCharge(GameTestHelper h) {
-        Line line = line(h, 3, CETransport.MATERIAL_PUMPS.get(4).get());
+        Line line = line(h, 3, CETransport.MATERIAL_PUMPS.get(0).get());
         line.source.getTankInventory().fill(new FluidStack(Fluids.WATER, 1000), EXECUTE);
         line.motor.generatedSpeed.setValue(64);
         h.runAfterDelay(180, () -> {
@@ -193,7 +193,7 @@ public final class MaterialPumpGameTests {
 
     @GameTest(template = "test_reactor", timeoutTicks = 250)
     public static void atmosphericAirNeedsAnExposedNozzleAndAWorkingPump(GameTestHelper h) {
-        Line line = line(h, 3, BuiltInRegistries.BLOCK.get(CreatePlant.location("stainless_steel_pump")), true);
+        Line line = line(h, 3, BuiltInRegistries.BLOCK.get(CreatePlant.location("nickel_alloy_pump")), true);
         var nozzlePos = new BlockPos(1, 2, 3);
         h.setBlock(nozzlePos, Blocks.AIR);
         var open = new OpenEndedPipe(new BlockFace(h.absolutePos(nozzlePos.east()), Direction.WEST));

@@ -45,6 +45,23 @@ public final class TransportQualityGameTests {
         h.succeed();
     }
     @GameTest(template="test_petrochemical")
+    public static void theScaleMarksTheRatedRangeAndTheContentsLevel(GameTestHelper h) {
+        var copper=net.createplant.thermal.GradeScale.temperature(PipeMaterial.COPPER.coldest,PipeMaterial.COPPER.hottest,13);
+        String marks=copper.getString();
+        h.assertTrue(marks.length()==17 && marks.charAt(13)=='●' && marks.charAt(0)=='◆' && marks.charAt(1)=='·' && marks.charAt(16)=='◆',"Seventeen marks, a diamond on each grade, with the contents' level filled in: "+marks);
+        var styles=new java.util.ArrayList<net.minecraft.network.chat.TextColor>();
+        copper.visit((style,text)->{styles.add(style.getColor());return java.util.Optional.empty();},net.minecraft.network.chat.Style.EMPTY);
+        var green=net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.GREEN);
+        h.assertTrue(styles.get(8)==green && styles.get(12)==green && styles.get(4)!=green
+            && styles.get(13)==net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.WHITE),
+            "Copper's ambient-to-hot range is green and a level inside it is white");
+        var hot=net.createplant.thermal.GradeScale.temperature(PipeMaterial.COPPER.coldest,PipeMaterial.COPPER.hottest,16);
+        var last=new net.minecraft.network.chat.TextColor[1];
+        hot.visit((style,text)->{if(text.equals("●"))last[0]=style.getColor();return java.util.Optional.empty();},net.minecraft.network.chat.Style.EMPTY);
+        h.assertTrue(last[0]==net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.RED),"A level outside the range is red");
+        h.succeed();
+    }
+    @GameTest(template="test_petrochemical")
     public static void plantTanksAcceptOnlyTheirOwnFluids(GameTestHelper h) {
         h.setBlock(SOURCE,AllBlocks.FLUID_TANK.get());h.setBlock(TARGET,AllBlocks.FLUID_TANK.get());
         var water=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(SOURCE),Direction.UP);

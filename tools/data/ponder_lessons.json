@@ -2750,9 +2750,9 @@
     "zh_cn": "在搅拌槽中执行加热聚合配方，取出固体PVC树脂。\n%s → %s"
   },
   "guide.manufacturing_pvc.step_4": {
-    "en_us": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.",
-    "ja_jp": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。",
-    "zh_cn": "用回收的树脂制作防腐蚀飞溅的防护服。"
+    "en_us": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.\n%s → %s",
+    "ja_jp": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。\n%s → %s",
+    "zh_cn": "用回收的树脂制作防腐蚀飞溅的防护服。\n%s → %s"
   },
   "guide.manufacturing_pvc.title": {
     "en_us": "From chlorine and ethylene to PVC",

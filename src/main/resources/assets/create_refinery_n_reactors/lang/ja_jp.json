@@ -1806,7 +1806,7 @@
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_1": "石油ラインのエチレンと、塩水電解の塩素を撹拌槽へ送ります。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_2": "次のバッチを超加熱して塩化ビニルを作ります。副生する塩化水素も別の生成物経路で回収し、塩酸製造へ送ります。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_3": "撹拌槽で加熱重合のレシピを進め、固形のPVC樹脂を取り出します。\n%s → %s",
-  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.title": "塩素とエチレンからPVCを作る",
   "create_refinery_n_reactors.ponder.plant_manufacturing_pvc.header": "塩素とエチレンからPVCを作る",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_fuel_refining.step_1": "軽油の水素化処理は加熱、重油の水素化分解は超加熱で行います。",
@@ -2247,7 +2247,7 @@
   "grade.create_refinery_n_reactors.pressure.high.detail": "高圧（20～200 bar）",
   "grade.create_refinery_n_reactors.fluid": "温度 %s／圧力 %s",
   "transport.create_refinery_n_reactors.grade": "等級：%s",
-  "transport.create_refinery_n_reactors.carries": "運べる液体の温度：%s～%s／圧力：%sまで",
+  "transport.create_refinery_n_reactors.carries": "運べる流体の温度：%s～%s／圧力：%sまで",
   "grade.create_refinery_n_reactors.tank.range": "入れられる温度：%s～%s／圧力：%sまで",
   "grade.create_refinery_n_reactors.tank.kind.all": "液体・気体｜%s",
   "grade.create_refinery_n_reactors.tank.kind.liquid": "液体専用｜%s",
@@ -6188,8 +6188,12 @@
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "混合物の量はDisplay Linkで確認できます。",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.2": "混合物の量はDisplay Linkで確認できます。",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.count": "1",
-  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.0": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.lesson_pages.0": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。\n%s → %s",
   "create_refinery_n_reactors.ponder.shared.guide.pipe_materials.step_6.lesson_pages.1": "ゴーグルで範囲を確認します。",
   "create_refinery_n_reactors.ponder.shared.guide.pipe_materials.step_3.lesson_pages.1": "ステンレス管は極低温から超高温・高圧まで対応し、酸と塩基に耐えますが、塩素などのハロゲンで傷みます。レンチで窓、ケーシングも付けられます。",
-  "grade.create_refinery_n_reactors.scale": "温度 %s　圧力 %s"
+  "grade.create_refinery_n_reactors.scale": "温度 %s　圧力 %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.action.lesson_pages.0": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_pvc.step_4.recipe": "原料：%s\n製品：%s"
 }
