@@ -18,7 +18,7 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 final class MoleculeStructures {
-    record Atom(String element, float x, float y, float depth) { }
+    record Atom(String element, float x, float y, float depth, int charge) { }
     record Bond(int start, int end, int order) { }
     record Drawing(List<Atom> atoms, List<Bond> bonds, float radius) { }
     record Model(String formula, Drawing flat, Drawing spatial) { }
@@ -32,7 +32,7 @@ final class MoleculeStructures {
         if (stack.isEmpty() || MixtureHelper.isMixture(stack)) return null;
         var fluid = stack.getFluid() instanceof FlowingFluid flowing ? flowing.getSource() : stack.getFluid();
         var info = FluidChemicalRegistry.base(fluid);
-        if (info == null || info.mixture()) return null;
+        if (info == null || info.mixture() && !info.aqueous()) return null;
         return CATALOG.fluids.get(BuiltInRegistries.FLUID.getKey(fluid));
     }
 
@@ -66,8 +66,9 @@ final class MoleculeStructures {
         float radiusSquared = 0;
         for (var value : points) {
             var point = value.getAsJsonArray();
+            int chargeIndex = spatial ? 4 : 3;
             var atom = new Atom(point.get(0).getAsString(), point.get(1).getAsFloat(), point.get(2).getAsFloat(),
-                spatial ? point.get(3).getAsFloat() : 0);
+                spatial ? point.get(3).getAsFloat() : 0, point.size() > chargeIndex ? point.get(chargeIndex).getAsInt() : 0);
             atoms.add(atom);
             radiusSquared = Math.max(radiusSquared, atom.x() * atom.x() + atom.y() * atom.y() + atom.depth() * atom.depth());
         }

@@ -2648,7 +2648,7 @@
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.blend": "In the tank, heavier liquids settle below lighter ones. The window shows each layer in its own colour.",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.machines": "A machine takes only the gases it uses out of a gas mixture and lets the others out of its gas outlet unchanged. The gases a machine makes leave together as one mixture, in proportion to their amounts.",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.transport": "Use normal Create pipes, pumps and tanks. Splitting a flow keeps each constituent without losing millibuckets, and each constituent still needs suitable pipe and tank materials.",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout": "Hover a filled container or JEI fluid to see its composition and the rotating model of a pure substance. A Display Link lists mixture amounts.",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout": "Hover a fluid container or JEI fluid to see its composition. Pure fluids and solutions with one known solute show a rotating model. A Display Link lists mixture amounts.",
   "create_refinery_n_reactors.ponder.chemical_mixtures.header": "Mix and transport liquids and gases",
   "fluid.create_refinery_n_reactors.chemical_mixture": "Chemical Mixture",
   "fluid.create_refinery_n_reactors.gas_mixture": "Gas Mixture",
@@ -6024,9 +6024,6 @@
   "chemical_ui.create_refinery_n_reactors.unknown_composition": "Composition unavailable",
   "chemical_ui.create_refinery_n_reactors.model_flat": "Structural diagram",
   "chemical_ui.create_refinery_n_reactors.model_spatial": "Molecular model",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.count": "2",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.0": "Hover a filled container or JEI fluid to see its composition and the rotating model of a pure substance.",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "A Display Link lists mixture amounts.",
   "block.createdieselgenerators.andesite_girder": "Andesite Girder",
   "block.createdieselgenerators.bulk_fermenter": "Bulk Fermenter",
   "block.createdieselgenerators.burner": "Burner",
@@ -6186,5 +6183,11 @@
   "chemical_ui.create_refinery_n_reactors.composition.plant_oil": "Triglycerides · fatty acid chains vary",
   "chemical_ui.create_refinery_n_reactors.composition.hydrocarbon_mixture": "Hydrocarbon mixture · proportions vary",
   "chemical_ui.create_refinery_n_reactors.composition.xylene_isomers": "Xylene isomers · proportions vary",
-  "chemical_ui.create_refinery_n_reactors.composition.chlorotoluene_isomers": "Chlorotoluene isomers · proportions vary"
+  "chemical_ui.create_refinery_n_reactors.composition.chlorotoluene_isomers": "Chlorotoluene isomers · proportions vary",
+  "chemical_ui.create_refinery_n_reactors.model_solute_structure": "Solute structure",
+  "chemical_ui.create_refinery_n_reactors.model_solute_spatial": "Solute model",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.count": "3",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.0": "Hover a fluid container or JEI fluid to see its composition.",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "Pure fluids and solutions with one known solute show a rotating model.",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.2": "A Display Link lists mixture amounts."
 }

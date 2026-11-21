@@ -2648,7 +2648,7 @@
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.blend": "タンクでは重い液体が下層、軽い液体が上層に分かれます。窓から各層の色を確認できます。",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.machines": "装置は混合気体から使う成分だけを取り込み、使わない気体はそのまま気体の出口から出します。装置が作る複数の気体も、量の比で1つの混合気体として出てきます。",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.transport": "Create標準のパイプ・ポンプ・タンクで運べます。分岐でも各成分の量を保ち、配管とタンクにはすべての成分に適した材質が必要です。",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout": "流体入り容器やJEIの流体にカーソルを合わせると組成を確認できます。純物質は分子モデルが回転します。混合物の量はDisplay Linkで確認できます。",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout": "流体入り容器やJEIの流体にカーソルを合わせると組成を確認できます。純物質と溶質が1種類の水溶液は、分子モデルが回転します。混合物の量はDisplay Linkで確認できます。",
   "create_refinery_n_reactors.ponder.chemical_mixtures.header": "液体・気体を混ぜて運ぶ",
   "fluid.create_refinery_n_reactors.chemical_mixture": "混合液",
   "fluid.create_refinery_n_reactors.gas_mixture": "混合気体",
@@ -6184,7 +6184,10 @@
   "chemical_ui.create_refinery_n_reactors.composition.hydrocarbon_mixture": "炭化水素の混合物・配合比は可変",
   "chemical_ui.create_refinery_n_reactors.composition.xylene_isomers": "キシレン異性体・配合比は未規定",
   "chemical_ui.create_refinery_n_reactors.composition.chlorotoluene_isomers": "クロロトルエン異性体・配合比は未規定",
+  "chemical_ui.create_refinery_n_reactors.model_solute_structure": "溶質の構造式",
+  "chemical_ui.create_refinery_n_reactors.model_solute_spatial": "分子モデル（溶質）",
   "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.count": "2",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.0": "流体入り容器やJEIの流体にカーソルを合わせると組成を確認できます。純物質は分子モデルが回転します。",
-  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "混合物の量はDisplay Linkで確認できます。"
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.0": "流体入り容器やJEIの流体にカーソルを合わせると組成を確認できます。純物質と溶質が1種類の水溶液は、分子モデルが回転します。",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.1": "混合物の量はDisplay Linkで確認できます。",
+  "create_refinery_n_reactors.ponder.shared.chemical_mixtures.readout.lesson_pages.2": "混合物の量はDisplay Linkで確認できます。"
 }

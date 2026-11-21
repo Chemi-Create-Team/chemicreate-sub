@@ -23,7 +23,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 @EventBusSubscriber(modid = CreatePlant.MOD_ID, value = Dist.CLIENT)
 public final class FluidItemTooltips {
-    record Preview(MoleculeStructures.Model model) implements TooltipComponent { }
+    record Preview(MoleculeStructures.Model model, boolean solute) implements TooltipComponent { }
 
     private FluidItemTooltips() { }
 
@@ -40,9 +40,13 @@ public final class FluidItemTooltips {
     @SubscribeEvent
     public static void diagram(RenderTooltipEvent.GatherComponents event) {
         var contents = FluidItemChemistry.contents(event.getItemStack());
-        var model = contents.isEmpty() ? MoleculeStructures.forItem(event.getItemStack())
-            : contents.size() == 1 ? MoleculeStructures.forFluid(contents.getFirst()) : null;
-        if (model != null) event.getTooltipElements().add(Either.right(new Preview(model)));
+        TooltipComponent preview = null;
+        if (contents.size() == 1) preview = fluidDiagram(contents.getFirst());
+        else if (contents.isEmpty()) {
+            var model = MoleculeStructures.forItem(event.getItemStack());
+            if (model != null) preview = new Preview(model, false);
+        }
+        if (preview != null) event.getTooltipElements().add(Either.right(preview));
     }
 
     public static List<Component> describeFluid(FluidStack stack) {
@@ -58,7 +62,7 @@ public final class FluidItemTooltips {
         if (info != null && info.aqueous()) lines.add(Component.translatable(ChemicalReadout.KEY + "composition", info.formula()).withStyle(ChatFormatting.GRAY));
         if (info != null && !info.compositionKey().isEmpty())
             lines.add(Component.translatable(ChemicalReadout.KEY + "composition." + info.compositionKey()).withStyle(ChatFormatting.GRAY));
-        var model = MoleculeStructures.forFluid(fluid);
+        var model = info != null && !info.aqueous() ? MoleculeStructures.forFluid(fluid) : null;
         if (model != null) {
             var counts = new TreeMap<String, Integer>();
             for (var atom : model.spatial().atoms()) counts.merge(atom.element(), 1, Integer::sum);
@@ -69,8 +73,10 @@ public final class FluidItemTooltips {
     }
 
     public static TooltipComponent fluidDiagram(FluidStack stack) {
-        var model = MoleculeStructures.forFluid(FluidItemChemistry.normalize(stack));
-        return model == null ? null : new Preview(model);
+        var fluid = FluidItemChemistry.normalize(stack);
+        var model = MoleculeStructures.forFluid(fluid);
+        if (model == null) return null;
+        return new Preview(model, FluidChemicalRegistry.base(fluid.getFluid()).aqueous());
     }
 
     @EventBusSubscriber(modid = CreatePlant.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
