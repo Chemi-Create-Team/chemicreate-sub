@@ -14,7 +14,7 @@ public class ThermalFluidTank extends SmartFluidTank {
         int rating = storageRatio();
         return Compression.isAir(stack) ? Math.min(rating, Compression.airVolumeRatio(stack)) : rating;
     }
-    protected boolean storedGas(FluidStack stack){return !stack.isEmpty() && net.createplant.transport.FluidHazards.of(stack).gas();}
+    protected boolean storedGas(FluidStack stack){return !stack.isEmpty() && (net.createplant.mixture.MixtureHelper.isMixture(stack) ? net.createplant.mixture.MixtureHelper.gas(stack) : net.createplant.transport.FluidHazards.of(stack).gas());}
     @Override public int getCapacity(){return storedGas(fluid) ? (int)Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio(fluid)) : capacity;}
     @Override public int getSpace(){return Math.max(0,getCapacity()-getFluidAmount());}
     @Override public ThermalFluidTank setCapacity(int next){var kept=fluid.copy();super.setCapacity(next);if(storedGas(kept))fluid=kept;return this;}

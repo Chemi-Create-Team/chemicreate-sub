@@ -9,8 +9,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 /**
  * A machine's fluid port that takes and gives gas mixtures by their composition, so no machine handles mixtures itself.
  * An inlet hands each component of a mixed feed to the machine; the components the machine does not use wait in its
- * {@link GasPassThrough} and leave through its outlets. An outlet shows every gas the port gives, with that waiting gas,
- * as one mixture in proportion to their volumes; a single gas stays a pure fluid.
+ * {@link GasPassThrough} and leave through its outlets. When an outlet gives two different gases at once, or gas waits in the buffer,
+ * it shows them first as one mixture in proportion to their volumes; otherwise it is the machine's port unchanged.
  */
 public final class GasMixturePort implements IFluidHandler {
     private final IFluidHandler port;
@@ -51,31 +51,34 @@ public final class GasMixturePort implements IFluidHandler {
         return view;
     }
 
-    private List<Integer> liquidTanks() {
-        var tanks = new ArrayList<Integer>();
-        for (int tank = 0; tank < port.getTanks(); tank++) if (!MixtureHelper.gas(port.getFluidInTank(tank))) tanks.add(tank);
-        return tanks;
+    /** The port shows its own tanks unchanged unless it gives two different gases at once or gas waits in the pass-through buffer. */
+    private static boolean merging(List<Source> sources) {
+        if (sources.size() < 2) return !sources.isEmpty() && sources.getFirst().tank() < 0;
+        var first = sources.getFirst().stock();
+        return sources.stream().anyMatch(source -> source.tank() < 0 || !FluidStack.isSameFluidSameComponents(source.stock(), first));
     }
 
-    @Override public int getTanks() { return outlet ? 1 + liquidTanks().size() : port.getTanks(); }
+    /** With merging, the combined gas comes first so Create's pipes take it before any single product. */
+    private int offset() { return outlet && merging(gasSources()) ? 1 : 0; }
+
+    @Override public int getTanks() { return port.getTanks() + offset(); }
 
     @Override public FluidStack getFluidInTank(int tank) {
-        if (!outlet) return port.getFluidInTank(tank);
-        if (tank == 0) return combined(gasSources());
-        var liquids = liquidTanks();
-        return tank > 0 && tank <= liquids.size() ? port.getFluidInTank(liquids.get(tank - 1)) : FluidStack.EMPTY;
+        int offset = offset();
+        if (offset == 1 && tank == 0) return combined(gasSources());
+        return port.getFluidInTank(tank - offset);
     }
 
     @Override public int getTankCapacity(int tank) {
-        if (!outlet) return port.getTankCapacity(tank);
-        if (tank == 0) return Math.max(getFluidInTank(0).getAmount(), through == null ? 0 : GasPassThrough.CAPACITY);
-        var liquids = liquidTanks();
-        return tank > 0 && tank <= liquids.size() ? port.getTankCapacity(liquids.get(tank - 1)) : 0;
+        int offset = offset();
+        if (offset == 1 && tank == 0) return Math.max(getFluidInTank(0).getAmount(), through == null ? 0 : GasPassThrough.CAPACITY);
+        return port.getTankCapacity(tank - offset);
     }
 
     @Override public boolean isFluidValid(int tank, FluidStack stack) {
         if (inlet && MixtureHelper.isMixture(stack) && MixtureHelper.gas(stack)) return fill(stack, FluidAction.SIMULATE) > 0;
-        return !outlet && port.isFluidValid(tank, stack);
+        int offset = offset();
+        return (offset == 0 || tank > 0) && port.isFluidValid(tank - offset, stack);
     }
 
     @Override public int fill(FluidStack resource, FluidAction action) {
@@ -108,17 +111,19 @@ public final class GasMixturePort implements IFluidHandler {
     @Override public FluidStack drain(FluidStack request, FluidAction action) {
         if (!outlet || !MixtureHelper.gas(request)) return port.drain(request, action);
         var sources = gasSources();
+        if (!merging(sources)) return port.drain(request, action);
         var view = combined(sources);
-        if (view.isEmpty() || !MixtureTransfer.matches(view, request)) return port.drain(request, action);
+        if (!MixtureTransfer.matches(view, request) && !FluidStack.isSameFluidSameComponents(view, request)) return port.drain(request, action);
         return drainGas(sources, Math.min(request.getAmount(), view.getAmount()), action);
     }
 
     @Override public FluidStack drain(int maxDrain, FluidAction action) {
         if (!outlet) return port.drain(maxDrain, action);
+        var sources = gasSources();
+        if (!merging(sources)) return port.drain(maxDrain, action);
         var direct = port.drain(maxDrain, FluidAction.SIMULATE);
         if (!direct.isEmpty() && !MixtureHelper.gas(direct)) return port.drain(maxDrain, action);
-        var sources = gasSources();
-        return sources.isEmpty() ? FluidStack.EMPTY : drainGas(sources, Math.min(maxDrain, combined(sources).getAmount()), action);
+        return drainGas(sources, Math.min(maxDrain, combined(sources).getAmount()), action);
     }
 
     /** Takes {@code amount} from the sources in proportion to their stocks, the largest remainders rounding up. */

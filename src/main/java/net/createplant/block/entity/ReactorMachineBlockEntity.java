@@ -123,10 +123,19 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     public ItemStack recoverInputItem(int slot,int amount) { return slot>=0 && slot<FEED_SLOTS && !isRemoved() ? charge.extractItem(slot,amount,false) : ItemStack.EMPTY; }
     public ItemStack recoverStoredItem(int slot,int amount) { return slot>=0 && slot<CHARGE_SLOTS && !isRemoved() ? charge.extractItem(slot,amount,false) : ItemStack.EMPTY; }
     FluidStack climateFluid(int slot) { return tanks[slot]; }
-    /** What the process holds and has made, for the goggles: every stocked buffer, then every stocked item slot. */
-    void describeStock(List<Component> lines) {
-        for (var tank:tanks) if (!tank.isEmpty()) lines.add(Component.translatable(KEY+"stock_fluid",tank.getHoverName(),tank.getAmount()));
-        for (int i=0;i<CHARGE_SLOTS;i++) { var item=charge.getStackInSlot(i);if (!item.isEmpty()) lines.add(Component.translatable(KEY+"stock_item",item.getHoverName(),item.getCount())); }
+    /** What the process holds and has made, for the goggles: one line with the two largest stocks and how many more there are. */
+    Component stockLine(FluidStack storage) {
+        var entries=new ArrayList<Component>();var amounts=new ArrayList<Integer>();
+        if (!storage.isEmpty()) { entries.add(Component.translatable(KEY+"stock_fluid",storage.getHoverName(),storage.getAmount()));amounts.add(storage.getAmount()); }
+        for (var tank:tanks) if (!tank.isEmpty()) { entries.add(Component.translatable(KEY+"stock_fluid",tank.getHoverName(),tank.getAmount()));amounts.add(tank.getAmount()); }
+        for (int i=0;i<CHARGE_SLOTS;i++) { var item=charge.getStackInSlot(i);if (!item.isEmpty()) { entries.add(Component.translatable(KEY+"stock_item",item.getHoverName(),item.getCount()));amounts.add(item.getCount()); } }
+        if (entries.isEmpty()) return null;
+        var order=new ArrayList<Integer>();for (int i=0;i<entries.size();i++) order.add(i);
+        order.sort((a,b)->Integer.compare(amounts.get(b),amounts.get(a)));
+        var line=Component.empty();
+        for (int i=0;i<Math.min(2,order.size());i++) { if (i>0) line.append("  ");line.append(entries.get(order.get(i))); }
+        if (order.size()>2) line.append("  ").append(Component.translatable(KEY+"stock_more",order.size()-2));
+        return line;
     }
     void climateFluid(int slot,FluidStack stack) { tanks[slot]=stack;changed(); }
     public FluidStack processGasContent(int slot) { return !tanks[slot].isEmpty() && net.createplant.transport.FluidHazards.of(tanks[slot]).gas() ? tanks[slot].copy() : FluidStack.EMPTY; }
