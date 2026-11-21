@@ -6161,7 +6161,7 @@
   "item.electroenergetics.wire_spool": "线卷",
   "tubular_boiler.steam_flow": "蒸汽流量 %s / %s mB/s",
   "tubular_boiler.water_flow": "供水流量 %s mB/s",
-  "mixture.create_refinery_n_reactors.gas_layers": "气体分层（由上而下）",
+  "mixture.create_refinery_n_reactors.gas_layers": "气体成分（由上而下，共 %s mB）",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.0": "护目镜列出全部气体成分。装有气体的槽顶部抽取轻气体，底部抽取重气体。",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.1": "护目镜列出全部气体成分。装有气体的槽顶部抽取轻气体，底部抽取重气体。",

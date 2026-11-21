@@ -6161,7 +6161,7 @@
   "item.electroenergetics.wire_spool": "電線のスプール",
   "tubular_boiler.steam_flow": "蒸気流量 %s / %s mB/s",
   "tubular_boiler.water_flow": "給水流量 %s mB/s",
-  "mixture.create_refinery_n_reactors.gas_layers": "気体の成分（上層から）",
+  "mixture.create_refinery_n_reactors.gas_layers": "気体の成分（上層から・合計 %s mB）",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.0": "ゴーグルで気体の全成分を確認できます。気体を入れた槽は、上から軽い気体、下から重い気体を取り出せます。",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.1": "ゴーグルで気体の全成分を確認できます。気体を入れた槽は、上から軽い気体、下から重い気体を取り出せます。",

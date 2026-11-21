@@ -3,7 +3,6 @@ package net.createplant.mixture;
 import java.util.*;
 import net.createplant.chemistry.ChemicalReadout;
 import net.createplant.chemistry.FluidChemicalRegistry;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -26,23 +25,32 @@ public final class MixtureGoggleHelper {
         if (shown < components) lines.add(Component.translatable("mixture.create_refinery_n_reactors.more", components - shown));
     }
 
+    /**
+     * Every gas in a tank, the lightest layer first: one line per gas with its share, the same gas held in several buffers counted once,
+     * and its formula only beside its name.
+     */
     public static boolean appendGasLayers(List<Component> lines, List<FluidStack> layers) {
-        var formulas = new ArrayList<List<String>>(layers.size());
-        boolean mixed = layers.size() > 1;
+        var merged = new ArrayList<FluidStack>();
         for (var layer : layers) {
+            if (layer.isEmpty()) continue;
+            var same = merged.stream().filter(seen -> seen.getFluid().isSame(layer.getFluid())).findFirst();
+            if (same.isPresent()) same.get().grow(layer.getAmount());
+            else merged.add(layer.copy());
+        }
+        boolean mixed = merged.size() > 1;
+        for (var layer : merged) {
             var info = FluidChemicalRegistry.base(layer.getFluid());
-            var components = info == null ? List.<String>of() : List.of(info.formula().split(" \\+ "));
-            formulas.add(components);
-            mixed |= components.size() > 1;
+            mixed |= info != null && info.formula().contains(" + ");
         }
         if (!mixed) return false;
+        long total = 0;
+        for (var layer : merged) total += layer.getAmount();
         lines.clear();
-        lines.add(Component.translatable("mixture.create_refinery_n_reactors.gas_layers"));
-        for (int i = layers.size() - 1; i >= 0; i--) {
-            lines.add(ChemicalReadout.contents(layers.get(i), -1));
-            var components = formulas.get(i);
-            if (components.size() > 1) for (var formula : components)
-                lines.add(Component.literal("  " + formula).withStyle(ChatFormatting.AQUA));
+        lines.add(Component.translatable("mixture.create_refinery_n_reactors.gas_layers", String.format(Locale.ROOT, "%,d", total)));
+        for (int i = merged.size() - 1; i >= 0; i--) {
+            var layer = merged.get(i);
+            lines.add(Component.translatable("mixture.create_refinery_n_reactors.component", ChemicalReadout.name(layer),
+                String.format(Locale.ROOT, "%,d", layer.getAmount()), String.format(Locale.ROOT, "%.1f", layer.getAmount() * 100d / total)));
         }
         return true;
     }
