@@ -28,7 +28,7 @@ public class ThermalFluidTank extends SmartFluidTank {
             return net.createplant.mixture.MixtureTransfer.fill(this, resource, action, false);
         if(storedGas(resource)){
             if(!FluidThermal.valid(resource) || !isFluidValid(resource) || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource))return 0;
-            int n=(int)Math.max(0,Math.min(resource.getAmount(),Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio(resource))-getFluidAmount()));
+            int n=(int)Math.max(0,Math.min(resource.getAmount(),Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio(resource))-getFluidAmount()-sharedGas()));
             if(n>0 && action.execute()){var portion=FluidThermal.at(resource.copyWithAmount(n),FluidThermal.kelvin(resource));fluid=fluid.isEmpty() ? portion : FluidThermal.mix(fluid,portion,n);net.createplant.nuclear.RadiationSources.stamp(fluid);onContentsChanged();}return n;
         }
         if (resource.isEmpty() || !FluidThermal.valid(resource) || !isFluidValid(resource) || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource)) return 0;
@@ -40,12 +40,14 @@ public class ThermalFluidTank extends SmartFluidTank {
         }
         return accepted;
     }
+    /** Gas held elsewhere in the same volume, such as a working vessel's process buffers. */
+    protected long sharedGas() { return 0; }
     /** Storage tanks mix gases; a machine's own buffers keep one gas each. */
     protected boolean mixesGases() { return false; }
     /** Different gases share the tank as one mixture that keeps each component's volume. */
     private int fillGasMixture(FluidStack resource,FluidAction action) {
         if (!isFluidValid(resource) || !net.createplant.mixture.MixtureHelper.isMixableGas(resource)) return 0;
-        long room=(long)capacity*storageRatio(fluid.isEmpty() ? resource : fluid)-getFluidAmount();
+        long room=(long)capacity*storageRatio(fluid.isEmpty() ? resource : fluid)-getFluidAmount()-sharedGas();
         int accepted=(int)Math.max(0,Math.min(resource.getAmount(),Math.min(Integer.MAX_VALUE,room)));
         if (accepted==0) return 0;
         FluidStack merged;

@@ -300,15 +300,21 @@ public class ReactorGameTests {
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void ironOxideAndAirWorkTooAndTheNitrogenBubblesOut(GameTestHelper h) {
-        var reactor=ironCatalysed(h,CEMetals.IRON_OXIDE_RED.toStack(),new FluidStack(CEFluids.AIR_GAS.get(),600));
-        int acid=0,nitrogen=0;
-        for (int i=0;i<out(reactor).getTanks();i++) {
-            var fluid=out(reactor).getFluidInTank(i);
-            if (fluid.is(CEMetals.DILUTE_SULFURIC_ACID.get())) acid+=fluid.getAmount();
-            if (fluid.is(CEFluids.NITROGEN_GAS.get())) nitrogen+=fluid.getAmount();
-        }
-        h.assertTrue(acid==1000 && nitrogen==475,"600 mB air carries the oxygen; its 475 mB nitrogen leaves with the acid: "+acid+" "+nitrogen);
-        h.succeed();
+        var reactor=build(h,ReactorModule.STIRRED,1);
+        // Create attaches the pass-through buffer on the first tick.
+        h.runAfterDelay(2,()->{
+            var items=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,reactor.getBlockPos().offset(2,0,1),Direction.EAST);
+            var pipe=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,reactor.getBlockPos(),Direction.NORTH);
+            in(reactor).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);in(reactor).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),250),EXECUTE);
+            h.assertTrue(pipe.fill(new FluidStack(CEFluids.AIR_GAS.get(),600),EXECUTE)==600,"The vessel takes 600 mB air by its gases");
+            items.insertItem(0,CEMetals.IRON_OXIDE_RED.toStack(),false);run(reactor,220);
+            var passed=net.createplant.mixture.GasPassThrough.of(reactor).gas();
+            int acid=0;
+            for (int i=0;i<out(reactor).getTanks();i++) if (out(reactor).getFluidInTank(i).is(CEMetals.DILUTE_SULFURIC_ACID.get())) acid+=out(reactor).getFluidInTank(i).getAmount();
+            h.assertTrue(acid==1000 && net.createplant.mixture.MixtureHelper.extractContents(passed).amounts().get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(CEFluids.NITROGEN_GAS.get()))==468,
+                "Air's 126 mB oxygen oxidises the sulfur dioxide; its nitrogen waits at the gas outlet: "+acid+" "+passed.getComponentsPatch());
+            h.succeed();
+        });
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void theAbsorptionTowerAbsorbsSulfurTrioxideIntoSulfuricAcid(GameTestHelper h) {

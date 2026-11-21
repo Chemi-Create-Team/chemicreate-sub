@@ -405,7 +405,7 @@ public class VesselBasinGameTests {
     public static void stirredGasProductLeavesBelowTheLighterGas(GameTestHelper h) {
         var vessel = ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 1);
         ReactorGameTests.heat(vessel, HeatCondition.HEATED);
-        var inlet = vessel.port(vessel.inlet());
+        var inlet = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, vessel.getBlockPos(), vessel.inlet());
         h.assertTrue(inlet.fill(new FluidStack(CEFluids.AIR_GAS.get(), 3000), EXECUTE) == 3000
             && vessel.itemPort().insertItem(0, net.createplant.registry.CEItems.SULFUR_DUST.toStack(), false).isEmpty(),
             "A stirred vessel accepts a finite charge with some gas left over");

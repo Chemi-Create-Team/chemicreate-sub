@@ -200,6 +200,11 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         gasDraws = List.copyOf(draws);
         gasLayers = TankLayers.ordered(vapour);
     }
+    /** The gas in the process buffers and waiting to pass through, which shares the vessel's volume with its stored gas. */
+    public long gasOutsideStorage() {
+        var pass=GasPassThrough.of(this);
+        return processGas()+(pass==null ? 0 : pass.gas().getAmount());
+    }
     /** The process gas fits in the vessel's volume beside the stored gas and the gas waiting to pass through. */
     @Override protected int processGasLimit() {
         long limit=tankInventory.gasCapacity();

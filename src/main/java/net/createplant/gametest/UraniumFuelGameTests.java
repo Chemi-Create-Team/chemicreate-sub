@@ -134,7 +134,9 @@ public final class UraniumFuelGameTests {
         var be=vessel(h,BASE,ReactorModule.STIRRED,1);var input=pipe(h,be);
         for(var stack:List.of(new FluidStack(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get(),250),new FluidStack(CEFluids.HYDROGEN_GAS.get(),250),new FluidStack(Fluids.WATER,250)))input.fill(stack,EXECUTE);
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
-        for(int tank=2;tank<7;tank++)saved.put("Tank"+tank,new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),8000*64).save(h.getLevel().registryAccess()));
+        // Fill the vessel's volume with hydrogen fluoride beside the gaseous feed, so no further gas fits.
+        int full=((net.createplant.thermal.ThermalFluidTank)be.getTankInventory()).gasCapacity()-500;
+        saved.put("Tank2",new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),full).save(h.getLevel().registryAccess()));
         be.loadWithComponents(saved,h.getLevel().registryAccess());be.validateStructure();run(be,150);
         h.assertTrue(amount(be,CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get())==250 && amount(be,CEFluids.HYDROGEN_GAS.get())==250 && amount(be,Fluids.WATER)==250 && count(funnel(h,be),CEUranium.ENRICHED_URANIUM_DIOXIDE.get())==0,"A full product buffer preserves every input");
         be.port(Direction.NORTH).drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),750),EXECUTE);run(be,105);

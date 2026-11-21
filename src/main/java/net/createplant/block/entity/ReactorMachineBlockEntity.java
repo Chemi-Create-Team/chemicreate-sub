@@ -585,6 +585,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     protected int processGasLimit() { return Integer.MAX_VALUE; }
     private static long gasIn(FluidStack[] fluids) { long total=0;for (var fluid:fluids) if (FluidMaterials.gas(fluid.getFluid())) total+=fluid.getAmount();return total; }
     /** The gas that still fits beside what the process buffers hold. */
+    protected long processGas() { return gasIn(tanks); }
     public int gasRoom() { return (int)Math.max(0,Math.min(Integer.MAX_VALUE,processGasLimit()-gasIn(tanks))); }
     private int gasRoomFor(FluidStack stack) { return FluidMaterials.gas(stack.getFluid()) ? gasRoom() : Integer.MAX_VALUE; }
     private static int bufferCapacity(FluidStack fluid) { return FluidMaterials.gas(fluid.getFluid()) ? CAPACITY*64 : CAPACITY; }

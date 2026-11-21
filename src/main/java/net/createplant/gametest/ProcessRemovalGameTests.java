@@ -21,7 +21,8 @@ public class ProcessRemovalGameTests {
         for (var fluid : BuiltInRegistries.FLUID) {
             var id = BuiltInRegistries.FLUID.getKey(fluid);
             if (!id.getNamespace().equals(CreatePlant.MOD_ID) || !(fluid instanceof FlowingFluid flowing) || flowing.getSource() != fluid) continue;
-            if (fluid instanceof net.createplant.mixture.MixtureFluid) continue;
+            // Carriers and air's trace gases exist only as parts of a mixture, with no container of their own.
+            if (fluid instanceof net.createplant.mixture.MixtureFluid || fluid == net.createplant.registry.CEMixtures.OTHER_GASES.get()) continue;
             var stack = FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
             boolean listed = tab.getDisplayItems().stream().anyMatch(entry -> entry.is(stack.getItem()));
             if (id.equals(CreatePlant.location("raw_process_gas"))) {

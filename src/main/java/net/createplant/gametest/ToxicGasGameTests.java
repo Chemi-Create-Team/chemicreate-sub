@@ -267,7 +267,7 @@ public class ToxicGasGameTests {
     }
 
     /** Gases that neither poison nor burn: the inert and breathing gases and air. */
-    private static final java.util.Set<String> HARMLESS = java.util.Set.of("air_gas", "compressed_air", "oxygen_gas", "nitrogen_gas", "argon_gas",
+    private static final java.util.Set<String> HARMLESS = java.util.Set.of("air_gas", "compressed_air", "oxygen_gas", "nitrogen_gas", "argon_gas", "other_gases",
         "helium_gas", "helium_recovery_feed", "resin_process_vapor");
 
     /** How long a cloud of this much gas lasts indoors. */

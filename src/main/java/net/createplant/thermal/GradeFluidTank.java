@@ -14,6 +14,7 @@ public class GradeFluidTank extends ThermalFluidTank {
     private final SmartBlockEntity owner;
     public GradeFluidTank(int capacity,Consumer<FluidStack> changed,SmartBlockEntity owner){super(capacity,changed);this.owner=owner;}
     @Override protected int storageRatio(){var grade=TankGrade.of(owner);return grade==null ? 16 : grade.gasRatio();}
+    @Override protected long sharedGas(){return owner instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel ? vessel.gasOutsideStorage() : 0;}
     @Override protected boolean mixesGases(){return owner instanceof net.createplant.block.entity.LiddedVesselBlockEntity || TankGrade.of(owner)!=null;}
     @Override public boolean isFluidValid(FluidStack stack){var grade=TankGrade.of(owner);return super.isFluidValid(stack) && (grade==null || grade.storable(stack));}
     public boolean gasStored(){return storedGas(fluid);}
