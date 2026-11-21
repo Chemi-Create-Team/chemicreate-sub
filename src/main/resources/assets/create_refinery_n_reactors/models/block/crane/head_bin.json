@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
   "textures": {
     "particle": "create:block/andesite_casing",
     "casing": "create:block/andesite_casing",
@@ -71,10 +72,22 @@
       ],
       "faces": {
         "north": {
-          "texture": "#casing"
+          "texture": "#casing",
+          "uv": [
+            0,
+            0,
+            9,
+            5
+          ]
         },
         "south": {
-          "texture": "#casing"
+          "texture": "#casing",
+          "uv": [
+            7,
+            0,
+            16,
+            5
+          ]
         },
         "east": {
           "texture": "#casing"
@@ -83,10 +96,22 @@
           "texture": "#casing"
         },
         "up": {
-          "texture": "#casing"
+          "texture": "#casing",
+          "uv": [
+            7,
+            4,
+            16,
+            12
+          ]
         },
         "down": {
-          "texture": "#casing"
+          "texture": "#casing",
+          "uv": [
+            7,
+            4,
+            16,
+            12
+          ]
         }
       }
     }
