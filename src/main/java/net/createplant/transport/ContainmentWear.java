@@ -47,7 +47,7 @@ public final class ContainmentWear extends BlockEntityBehaviour {
                 AllBlockEntityTypes.MECHANICAL_PUMP.get(), CETransport.MATERIAL_PUMP_ENTITY.get(),
                 AllBlockEntityTypes.FLUID_TANK.get(), CETransport.PRESSURE_TANK_ENTITY.get(), CETransport.STAINLESS_STEEL_TANK_ENTITY.get(),
                 CETransport.CRYOGENIC_TANK_ENTITY.get(), CETransport.GAS_RECEIVER_ENTITY.get(), CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(),
-                CETransport.STAINLESS_BOILER_ENTITY.get(), CETransport.GAS_TANK_CONTAINER_ENTITY.get()))
+                CETransport.GAS_TANK_CONTAINER_ENTITY.get()))
             event.forType(type, owner -> event.attach(new ContainmentWear(owner)));
     }
 

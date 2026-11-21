@@ -64,6 +64,21 @@ public final class BoilerSteamPumpGameTests {
         return ((FluidTankBlockEntity) h.getBlockEntity(receiver)).getControllerBE().getTankInventory();
     }
 
+    @GameTest(template = "test_fractionation")
+    public static void onlyTheCopperBoilersWearFromAnUnratedFluid(GameTestHelper h) {
+        var state = CETransport.STAINLESS_BOILER.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
+        h.setBlock(new BlockPos(2, 2, 2), state);
+        h.setBlock(new BlockPos(2, 2, 6), CETransport.HORIZONTAL_FLUID_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X));
+        h.runAfterDelay(2, () -> {
+            var stainless = (HorizontalTankBlockEntity) h.getBlockEntity(new BlockPos(2, 2, 2));
+            var copper = (HorizontalTankBlockEntity) h.getBlockEntity(new BlockPos(2, 2, 6));
+            h.assertTrue(stainless.getBehaviour(net.createplant.transport.ContainmentWear.TYPE) == null
+                && copper.getBehaviour(net.createplant.transport.ContainmentWear.TYPE) != null,
+                "The stainless boiler never wears, even holding its own high-pressure steam; the copper horizontal tank still does");
+            h.succeed();
+        });
+    }
+
     private static void horizontalBoiler(GameTestHelper h, Block pipe, boolean stainless) {
         BlockPos base = new BlockPos(6, 3, 8), hot = base.east(3);
         var block = stainless ? CETransport.STAINLESS_BOILER.get() : CETransport.HORIZONTAL_FLUID_TANK.get();
