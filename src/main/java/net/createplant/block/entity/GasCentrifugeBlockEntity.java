@@ -222,7 +222,7 @@ public final class GasCentrifugeBlockEntity extends KineticBlockEntity {
             var lower = GasCentrifugeBlock.lower(state, pos);var be = at(level, lower);if (be == null) return null;
             boolean upper = state.getValue(GasCentrifugeBlock.HALF) == DoubleBlockHalf.UPPER;
             if (!upper && side == Direction.UP) return null;
-            return be.port(!upper ? 0 : side == Direction.UP ? 1 : 2);
+            return !upper ? net.createplant.mixture.GasMixturePort.inlet(be.port(0), be.leader()) : net.createplant.mixture.GasMixturePort.outlet(be.port(side == Direction.UP ? 1 : 2), be.leader());
         }, CEHighStressMachines.CENTRIFUGE.get());
     }
 }

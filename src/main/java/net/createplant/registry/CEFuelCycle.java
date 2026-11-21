@@ -86,14 +86,14 @@ public final class CEFuelCycle {
         BLOCKS.register(bus);ITEMS.register(bus);TYPES.register(bus);FLUID_TYPES.register(bus);FLUIDS.register(bus);bus.addListener(CEFuelCycle::capabilities);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, MACHINE_ENTITY.get(), (be, side) -> be.fluidPort(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, MACHINE_ENTITY.get(), (be, side) -> net.createplant.mixture.GasMixturePort.both(be.fluidPort(side), be));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACHINE_ENTITY.get(), (be, side) -> be.itemPort(side));
         event.registerBlock(Capabilities.FluidHandler.BLOCK, (level, pos, state, be, side) -> {
             BlockPos centre = ExtractionColumnStructureBlock.centre(level, pos, state);
             return centre == null ? null : level.getCapability(Capabilities.FluidHandler.BLOCK, centre, side);
         }, COLUMN_STRUCTURE.get());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, OUTLET_ENTITY.get(), (be, side) -> {
-            var owner = be.owner();return side == null || owner == null ? null : owner.outlet(be.getBlockState().getValue(FuelCycleOutletBlock.TANK));
+            var owner = be.owner();return side == null || owner == null ? null : net.createplant.mixture.GasMixturePort.outlet(owner.outlet(be.getBlockState().getValue(FuelCycleOutletBlock.TANK)), owner);
         });
     }
 }

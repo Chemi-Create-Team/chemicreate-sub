@@ -36,7 +36,7 @@ public final class WaterGasBurner {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, AllBlockEntityTypes.HEATER.get(),
-            (burner, side) -> side != null && side != Direction.UP && available(burner) ? new Inlet(burner) : null);
+            (burner, side) -> side != null && side != Direction.UP && available(burner) ? net.createplant.mixture.GasMixturePort.inlet(new Inlet(burner), null) : null);
     }
 
     private static boolean available(BlazeBurnerBlockEntity burner) {

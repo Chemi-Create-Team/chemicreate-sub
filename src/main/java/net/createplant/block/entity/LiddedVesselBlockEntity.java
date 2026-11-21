@@ -602,6 +602,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                 var recovery=guarded(owner.processRecoveryPort(),()->be.getControllerBE()==owner && be.reactor()==null);
                 handler=combined(storage,recovery);
             }
+            if (reactor!=null) handler=net.createplant.mixture.GasMixturePort.both(handler,owner);
             if (side==Direction.DOWN) handler=combined(handler,owner.fouling().drainPort());
             if (handler==null) return null;
             var delegate=handler;int lease=owner.portGeneration();

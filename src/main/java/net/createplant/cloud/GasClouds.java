@@ -32,6 +32,10 @@ public final class GasClouds {
 
     /** {@code inert} marks gas that has already burnt in a flare: its cloud keeps the gas but cannot ignite. */
     public static void release(ServerLevel level, BlockPos pos, FluidStack stack, boolean inert) {
+        if (net.createplant.mixture.MixtureHelper.isMixture(stack)) {
+            for (var component : net.createplant.mixture.MixtureHelper.components(stack)) release(level, pos, component, inert);
+            return;
+        }
         if (!supported(stack) || !level.hasChunkAt(pos) || level.isOutsideBuildHeight(pos)) return;
 
         for (var cloud : in(level, new AABB(pos).inflate(1))) {

@@ -19,15 +19,34 @@ public final class MixtureHelper {
         return contents;
     }
     private static Fluid source(Fluid fluid) { return fluid instanceof FlowingFluid flowing ? flowing.getSource() : fluid; }
+    /** A gas mixture rides the gas carrier and a liquid mixture the liquid one; gases and liquids never share a stack. */
     public static FluidStack createStack(MixtureContents contents, boolean unwrapIfPure) {
         int total = contents.totalAmount();if (total == 0) return FluidStack.EMPTY;
+        int gases = 0;
         for (var id : contents.amounts().keySet()) {
             if (!BuiltInRegistries.FLUID.containsKey(id)) throw new IllegalArgumentException("Unknown mixture component " + id);
             var fluid = BuiltInRegistries.FLUID.get(id);
             if (fluid instanceof MixtureFluid || fluid.defaultFluidState().isEmpty()) throw new IllegalArgumentException("Invalid nested or empty mixture component " + id);
+            if (gasFluid(fluid)) gases++;
         }
+        if (gases != 0 && gases != contents.amounts().size()) throw new IllegalArgumentException("A mixture cannot hold both gases and liquids");
         if (unwrapIfPure && contents.amounts().size() == 1) return new FluidStack(BuiltInRegistries.FLUID.get(contents.amounts().keySet().iterator().next()), total);
-        var stack = new FluidStack(CEMixtures.CHEMICAL_MIXTURE.get(), total);stack.set(CEMixtures.MIXTURE_CONTENTS.get(), contents);return stack;
+        var stack = new FluidStack(gases == 0 ? CEMixtures.CHEMICAL_MIXTURE.get() : CEMixtures.GAS_MIXTURE.get(), total);stack.set(CEMixtures.MIXTURE_CONTENTS.get(), contents);return stack;
+    }
+    private static boolean gasFluid(Fluid fluid) { return FluidHazards.of(new FluidStack(fluid, 1)).gas() || fluid.getFluidType().isLighterThanAir(); }
+    /** A gas, pure or mixed. */
+    public static boolean gas(FluidStack stack) {
+        if (stack.isEmpty()) return false;
+        return isMixture(stack) ? stack.getFluidType() == CEMixtures.GAS_TYPE.get() : gasFluid(stack.getFluid());
+    }
+    /** A gas mixture whose every component is a real gas, or a pure gas. */
+    public static boolean isMixableGas(FluidStack stack) {
+        if (!gas(stack)) return false;
+        if (!isMixture(stack)) return true;
+        try {
+            return extractContents(stack).amounts().keySet().stream().allMatch(id -> BuiltInRegistries.FLUID.containsKey(id) && !(BuiltInRegistries.FLUID.get(id) instanceof MixtureFluid)
+                && gasFluid(BuiltInRegistries.FLUID.get(id)));
+        } catch (IllegalArgumentException error) { return false; }
     }
     public static MixtureData data(FluidStack stack) {
         if (stack.isEmpty()) return MixtureData.EMPTY;

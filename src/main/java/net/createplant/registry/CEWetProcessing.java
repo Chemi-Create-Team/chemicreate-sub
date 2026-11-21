@@ -65,7 +65,7 @@ public final class CEWetProcessing {
         }));
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PART_ENTITY.get(), WetProcessPartBlockEntity::fluidPort);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PART_ENTITY.get(), (part, side) -> net.createplant.mixture.GasMixturePort.both(part.fluidPort(side), part.owner()));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PART_ENTITY.get(), WetProcessPartBlockEntity::itemPort);
     }
 }

@@ -226,7 +226,8 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         if (side == Direction.DOWN && owner == this) return bottomCentre;
         if (!outer(side)) return null;
         int y = worldPosition.getY() - owner.worldPosition.getY();
-        return y == 0 ? owner.bottomSide : y == layers() - 1 ? owner.topSide : null;
+        return y == 0 ? net.createplant.mixture.GasMixturePort.inlet(owner.bottomSide, owner)
+            : y == layers() - 1 ? net.createplant.mixture.GasMixturePort.outlet(owner.topSide, owner) : null;
     }
     private IItemHandler itemPort(Direction side) {
         var owner = side == Direction.UP ? owner() : null;

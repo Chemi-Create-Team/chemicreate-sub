@@ -39,7 +39,7 @@ public enum TankGrade {
     public String incompatibility(FluidStack stack) {
         if (stack.isEmpty() || !FluidThermal.valid(stack)) return "fluid";
         if (net.createplant.mixture.MixtureHelper.isMixture(stack)) {
-            if (!net.createplant.mixture.MixtureHelper.isMixableLiquid(stack)) return "fluid";
+            if (!net.createplant.mixture.MixtureHelper.isMixableLiquid(stack) && !net.createplant.mixture.MixtureHelper.isMixableGas(stack)) return "fluid";
             for (var part : net.createplant.mixture.MixtureHelper.components(stack)) { var reason = incompatibility(part);if (!reason.equals("safe")) return reason; }
             return "safe";
         }

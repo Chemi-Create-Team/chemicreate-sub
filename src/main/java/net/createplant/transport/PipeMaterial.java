@@ -52,7 +52,8 @@ public enum PipeMaterial {
     public boolean carries(net.neoforged.neoforge.fluids.FluidStack stack) {
         if (!net.createplant.mixture.MixtureHelper.isMixture(stack))
             return this!=VALVE && !stack.isEmpty() && stack.getFluidType().isLighterThanAir() || carries(FluidHazards.of(stack));
-        return net.createplant.mixture.MixtureHelper.isMixableLiquid(stack) && net.createplant.mixture.MixtureHelper.components(stack).stream().allMatch(this::carries);
+        return (net.createplant.mixture.MixtureHelper.isMixableLiquid(stack) || net.createplant.mixture.MixtureHelper.isMixableGas(stack))
+            && net.createplant.mixture.MixtureHelper.components(stack).stream().allMatch(this::carries);
     }
     public boolean carries(FluidHazards.Properties fluid) { return incompatibility(fluid).equals("safe"); }
     /** Why a fluid wears this material, or "safe"; a mixture wears it as its worst constituent does. */

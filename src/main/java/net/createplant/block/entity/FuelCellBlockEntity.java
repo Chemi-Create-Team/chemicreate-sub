@@ -50,7 +50,7 @@ public class FuelCellBlockEntity extends SmartBlockEntity implements IHaveGoggle
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEFuelCell.FUEL_CELL_ENTITY.get(), (be, side) -> be.ports);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEFuelCell.FUEL_CELL_ENTITY.get(), (be, side) -> net.createplant.mixture.GasMixturePort.both(be.ports, be));
     }
 
     /** Whether the stack can give current this tick: fuel on both electrodes, room for its water, and not backfed. */

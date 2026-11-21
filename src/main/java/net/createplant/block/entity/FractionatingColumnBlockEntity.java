@@ -272,7 +272,7 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
         if (remaining!=0) throw new IllegalStateException("Distillation hold-up accounting mismatch");
     }
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEDistillation.COLUMN_ENTITY.get(),(be,side)->be.port(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEDistillation.COLUMN_ENTITY.get(),(be,side)->net.createplant.mixture.GasMixturePort.both(be.port(side),be.getControllerBE()));
     }
     public IFluidHandler port(Direction side) {
         FractionatingColumnBlockEntity owner=getControllerBE();

@@ -93,6 +93,6 @@ public class ReliefScrubberBlockEntity extends SmartBlockEntity implements IHave
         return true;
     }
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CECompressor.RELIEF_SCRUBBER_ENTITY.get(),(be,side)->be.port(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CECompressor.RELIEF_SCRUBBER_ENTITY.get(),(be,side)->net.createplant.mixture.GasMixturePort.both(be.port(side),be));
     }
 }

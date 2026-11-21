@@ -32,7 +32,7 @@ public class ConverterShellBlockEntity extends SmartBlockEntity implements IHave
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CEConverter.SHELL_ENTITY.get(),
             (part, side) -> part.itemPort(side));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEConverter.SHELL_ENTITY.get(),
-            (part, side) -> part.fluidPort(side));
+            (part, side) -> net.createplant.mixture.GasMixturePort.both(part.fluidPort(side), part.controller()));
     }
 
     public void assign(BlockPos controller) {

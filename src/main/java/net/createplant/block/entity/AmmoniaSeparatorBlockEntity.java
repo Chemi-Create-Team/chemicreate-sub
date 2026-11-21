@@ -39,7 +39,7 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     }
     public float liquidFraction(){return Math.clamp((float)(liquid.getFluidAmount()+water.getFluidAmount())/volume(),0,1);}
     public FluidStack gaugeLiquid(){return liquid.isEmpty() ? water.getFluid().copy() : liquid.getFluid().copy();}
-    public static void register(RegisterCapabilitiesEvent event){event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CETransport.AMMONIA_SEPARATOR_ENTITY.get(),(be,side)->be.port(side));}
+    public static void register(RegisterCapabilitiesEvent event){event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CETransport.AMMONIA_SEPARATOR_ENTITY.get(),(be,side)->net.createplant.mixture.GasMixturePort.both(be.port(side),be));}
     private static final class Recipes { static final List<ProcessRecipe> ALL=ProcessRecipe.all().stream().filter(r->r.module()==ProcessModule.GAS_LIQUID_SEPARATOR).toList(); }
     public static List<ProcessRecipe> recipes(){return Recipes.ALL;}
     private static ProcessRecipe recipe(FluidStack input){return recipes().stream().filter(r->input.is(r.inputs().getFirst().getFluid())).findFirst().orElse(null);}

@@ -4415,9 +4415,9 @@
     "zh_cn": "新催化剂的反应大多在上层进行，上层温度最高。催化剂老化后，上层温度上不去，热量转移到下层。"
   },
   "chemical_mixtures.title": {
-    "en_us": "Mix and transport liquids",
-    "ja_jp": "液体を混ぜて運ぶ",
-    "zh_cn": "混合并运输液体"
+    "en_us": "Mix and transport liquids and gases",
+    "ja_jp": "液体・気体を混ぜて運ぶ",
+    "zh_cn": "混合并输送液体与气体"
   },
   "chemical_mixtures.vessel": {
     "en_us": "Build an ordinary lidded vessel without internal parts. Feed different liquids through its normal side connections.",
@@ -4425,14 +4425,19 @@
     "zh_cn": "搭建不带内部部件的带盖槽，通过普通侧面接口输入不同液体。"
   },
   "chemical_mixtures.blend": {
-    "en_us": "The contents become one mixture, coloured by the amounts of its constituents. Gases remain separate; the liquid mixture does not perform chemical reactions.",
-    "ja_jp": "成分量に応じた色の混合液になります。気体は混ぜず、液体を混ぜるだけでは化学反応は起こりません。",
-    "zh_cn": "液体形成按成分量混色的混合液，气体不混入，混合本身不触发化学反应。"
+    "en_us": "The contents become one mixture, coloured by the amounts of its constituents. Different gases also become one gas mixture, but liquids and gases never mix. Mixing alone performs no chemical reaction.",
+    "ja_jp": "成分量に応じた色の混合液になります。違う気体同士も1つの混合気体になりますが、液体と気体は混ざりません。混ぜるだけでは化学反応は起こりません。",
+    "zh_cn": "内容物会变成按各成分量着色的混合液。不同气体也会变成一种混合气体，但液体与气体不会混合。仅混合不会发生化学反应。"
   },
   "chemical_mixtures.transport": {
     "en_us": "Use normal Create pipes, pumps and tanks. Splitting a flow keeps each constituent without losing millibuckets, and each constituent still needs suitable pipe and tank materials.",
     "ja_jp": "Create標準のパイプ・ポンプ・タンクで運べます。分岐でも各成分の量を保ち、配管とタンクにはすべての成分に適した材質が必要です。",
     "zh_cn": "用机械动力标准管道、水泵和储罐运输，分流保持各成分数量，管罐材质须适合所有成分。"
+  },
+  "chemical_mixtures.machines": {
+    "en_us": "A machine takes only the gases it uses out of a gas mixture and lets the others out of its gas outlet unchanged. The gases a machine makes leave together as one mixture, in proportion to their amounts.",
+    "ja_jp": "装置は混合気体から使う成分だけを取り込み、使わない気体はそのまま気体の出口から出します。装置が作る複数の気体も、量の比で1つの混合気体として出てきます。",
+    "zh_cn": "装置只从混合气体中取用所需成分，不用的气体原样从气体出口排出。装置生成的多种气体也会按量的比例作为一种混合气体排出。"
   },
   "chemical_mixtures.readout": {
     "en_us": "Goggles show total volume and the largest constituents. Select Mixture composition on a Display Link for every constituent, its amount and its percentage.",

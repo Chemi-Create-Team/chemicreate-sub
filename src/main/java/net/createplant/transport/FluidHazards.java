@@ -79,7 +79,7 @@ public final class FluidHazards {
                 var properties=of(part);kelvin=Math.max(kelvin,properties.kelvin());bar=Math.max(bar,properties.bar());
                 if(properties.corrosion().ordinal()>corrosion.ordinal())corrosion=properties.corrosion();
             }
-            return new Properties(Math.max(1,kelvin),bar,corrosion,false);
+            return new Properties(Math.max(1,kelvin),bar,corrosion,net.createplant.mixture.MixtureHelper.gas(fluid));
         }
         var id=BuiltInRegistries.FLUID.getKey(fluid.getFluid());
         String path=id.getPath();

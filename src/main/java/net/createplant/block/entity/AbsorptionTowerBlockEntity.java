@@ -3,6 +3,7 @@ package net.createplant.block.entity;
 import java.util.ArrayList;
 import java.util.List;
 import net.createplant.chemistry.ReactorModule;
+import net.createplant.mixture.GasMixturePort;
 import net.createplant.registry.CEReactor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -53,7 +54,7 @@ public class AbsorptionTowerBlockEntity extends StackedReactorBlockEntity {
         if (side == Direction.DOWN) return this == bottom ? bottom.processPort(2, 1, false, true) : null;
         if (side == Direction.UP) return top() ? bottom.processPort(1, 1, true, false) : null;
         if (x == 0 && z == 0 || side != Direction.fromDelta(x, 0, z)) return null;
-        if (this == bottom) return LiddedVesselBlockEntity.combined(bottom.processPort(0, 1, true, false), bottom.processPort(2, 1, false, true));
-        return top() ? bottom.processPort(3, 1, false, true) : null;
+        if (this == bottom) return GasMixturePort.inlet(LiddedVesselBlockEntity.combined(bottom.processPort(0, 1, true, false), bottom.processPort(2, 1, false, true)), bottom);
+        return top() ? GasMixturePort.outlet(bottom.processPort(3, 1, false, true), bottom) : null;
     }
 }

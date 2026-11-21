@@ -20,7 +20,7 @@ public final class MixtureClient {
     private static final Map<ColorKey, Integer> COLORS = new LinkedHashMap<>();
     private MixtureClient() { }
     public static int tint(FluidStack stack) {
-        if (!MixtureHelper.isMixableLiquid(stack)) return 0xff3f76e4;
+        if (!MixtureHelper.isMixableLiquid(stack) && !MixtureHelper.isMixableGas(stack)) return 0xff3f76e4;
         var key = new ColorKey(MixtureHelper.extractContents(stack), MixtureHelper.data(stack));
         synchronized (COLORS) {
             var known = COLORS.get(key);if (known != null) return known;
@@ -39,7 +39,7 @@ public final class MixtureClient {
             @Override public ResourceLocation getStillTexture() { return ResourceLocation.withDefaultNamespace("block/water_still"); }
             @Override public ResourceLocation getFlowingTexture() { return ResourceLocation.withDefaultNamespace("block/water_flow"); }
             @Override public int getTintColor(FluidStack stack) { return tint(stack); }
-        }, CEMixtures.TYPE.get());
+        }, CEMixtures.TYPE.get(), CEMixtures.GAS_TYPE.get());
     }
     @SubscribeEvent public static void reload(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener((net.minecraft.server.packs.resources.ResourceManagerReloadListener) manager -> { synchronized (COLORS) { COLORS.clear(); } });

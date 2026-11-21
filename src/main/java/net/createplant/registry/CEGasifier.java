@@ -34,7 +34,7 @@ public final class CEGasifier {
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PART.get(), GasifierBlockEntity::fluidPort);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PART.get(), (be, side) -> net.createplant.mixture.GasMixturePort.both(be.fluidPort(side), be.owner() == null ? be : be.owner()));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PART.get(), GasifierBlockEntity::itemPort);
     }
 }

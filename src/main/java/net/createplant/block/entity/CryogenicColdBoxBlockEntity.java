@@ -117,7 +117,7 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
 
     @Override public float calculateStressApplied() { return lastStressApplied = watts <= 0 ? 0 : (float)(watts / Math.max(1, Math.abs(getSpeed()))); }
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEFusionFuel.COLD_BOX_ENTITY.get(), (be, side) -> be.port(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEFusionFuel.COLD_BOX_ENTITY.get(), (be, side) -> net.createplant.mixture.GasMixturePort.both(be.port(side), be));
     }
     public IFluidHandler port(Direction side) {
         if (side == null || side == front() || side == front().getOpposite()) return null;

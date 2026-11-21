@@ -19,6 +19,9 @@ public class ThermalFluidTank extends SmartFluidTank {
     @Override public int getSpace(){return Math.max(0,getCapacity()-getFluidAmount());}
     @Override public ThermalFluidTank setCapacity(int next){var kept=fluid.copy();super.setCapacity(next);if(storedGas(kept))fluid=kept;return this;}
     @Override public int fill(FluidStack resource,FluidAction action) {
+        if (storedGas(resource) && (fluid.isEmpty() || storedGas(fluid)) && (net.createplant.mixture.MixtureHelper.isMixture(resource)
+            || net.createplant.mixture.MixtureHelper.isMixture(fluid) || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource)))
+            return fillGasMixture(resource,action);
         if (net.createplant.mixture.MixtureHelper.isMixture(resource) || net.createplant.mixture.MixtureHelper.isMixture(fluid))
             return net.createplant.mixture.MixtureTransfer.fill(this, resource, action, false);
         if(storedGas(resource)){
@@ -33,6 +36,18 @@ public class ThermalFluidTank extends SmartFluidTank {
             net.createplant.nuclear.RadiationSources.stamp(fluid);
             onContentsChanged();
         }
+        return accepted;
+    }
+    /** Different gases share the tank as one mixture that keeps each component's volume. */
+    private int fillGasMixture(FluidStack resource,FluidAction action) {
+        if (!isFluidValid(resource) || !net.createplant.mixture.MixtureHelper.isMixableGas(resource)) return 0;
+        long room=(long)capacity*storageRatio(fluid.isEmpty() ? resource : fluid)-getFluidAmount();
+        int accepted=(int)Math.max(0,Math.min(resource.getAmount(),Math.min(Integer.MAX_VALUE,room)));
+        if (accepted==0) return 0;
+        FluidStack merged;
+        try { merged=net.createplant.mixture.MixtureHelper.merge(fluid,net.createplant.mixture.MixtureHelper.portion(resource,accepted),true); }
+        catch (IllegalArgumentException error) { return 0; }
+        if (action.execute()) { fluid=merged;onContentsChanged(); }
         return accepted;
     }
     @Override public FluidStack drain(FluidStack request,FluidAction action) {

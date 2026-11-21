@@ -12,9 +12,11 @@ public final class MixtureTransfer {
         if (MixtureHelper.isMixture(stored) && MixtureHelper.isMixture(request)) return true;
         return FluidStack.isSameFluidSameComponents(stored, request);
     }
+    /** Liquids mix with liquids and gases with gases; the two never share a stack. */
     public static int fill(FluidTank tank, FluidStack resource, FluidAction action, boolean unwrap) {
-        if (!MixtureHelper.isMixableLiquid(resource) || !tank.isFluidValid(resource)) return 0;
-        var stored = tank.getFluid();if (!stored.isEmpty() && !MixtureHelper.isMixableLiquid(stored)) return 0;
+        boolean gas = MixtureHelper.isMixableGas(resource);
+        if (!gas && !MixtureHelper.isMixableLiquid(resource) || !tank.isFluidValid(resource)) return 0;
+        var stored = tank.getFluid();if (!stored.isEmpty() && !(gas ? MixtureHelper.isMixableGas(stored) : MixtureHelper.isMixableLiquid(stored))) return 0;
         int accepted = Math.min(Math.max(0, tank.getCapacity() - stored.getAmount()), resource.getAmount());if (accepted == 0) return 0;
         var portion = MixtureHelper.portion(resource, accepted);FluidStack result;
         try { result = MixtureHelper.merge(stored, portion, unwrap); }

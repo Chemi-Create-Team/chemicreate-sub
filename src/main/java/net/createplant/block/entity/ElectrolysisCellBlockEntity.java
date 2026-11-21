@@ -131,7 +131,8 @@ public class ElectrolysisCellBlockEntity extends SmartBlockEntity implements IHa
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEElectrolysis.CELL_ENTITY.get(), (cell, side) ->
-            side != null && cell.getBlockState().getValue(ElectrolysisCellBlock.JOIN.get(side.ordinal())) ? null : cell.port(side));
+            side != null && cell.getBlockState().getValue(ElectrolysisCellBlock.JOIN.get(side.ordinal())) ? null
+                : net.createplant.mixture.GasMixturePort.both(cell.port(side), cell.controller()));
     }
 
     public void writeContents(CompoundTag tag, HolderLookup.Provider lookup) {

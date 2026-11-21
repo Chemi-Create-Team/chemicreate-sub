@@ -25,7 +25,13 @@ public final class CEMixtures {
         .descriptionId("fluid." + CreatePlant.MOD_ID + ".chemical_mixture").density(1000).viscosity(1000).canConvertToSource(false)) { });
     public static final DeferredHolder<Fluid, MixtureFluid.Source> CHEMICAL_MIXTURE = FLUIDS.register("chemical_mixture", () -> new MixtureFluid.Source(properties()));
     public static final DeferredHolder<Fluid, MixtureFluid.Flowing> FLOWING_MIXTURE = FLUIDS.register("flowing_chemical_mixture", () -> new MixtureFluid.Flowing(properties()));
+    /** The gas counterpart: lighter than air, so it is stored and carried as a gas. */
+    public static final DeferredHolder<FluidType, FluidType> GAS_TYPE = TYPES.register("gas_mixture", () -> new FluidType(FluidType.Properties.create()
+        .descriptionId("fluid." + CreatePlant.MOD_ID + ".gas_mixture").density(-1).viscosity(200).canConvertToSource(false)) { });
+    public static final DeferredHolder<Fluid, MixtureFluid.Source> GAS_MIXTURE = FLUIDS.register("gas_mixture", () -> new MixtureFluid.Source(gasProperties()));
+    public static final DeferredHolder<Fluid, MixtureFluid.Flowing> FLOWING_GAS_MIXTURE = FLUIDS.register("flowing_gas_mixture", () -> new MixtureFluid.Flowing(gasProperties()));
     private CEMixtures() { }
     private static BaseFlowingFluid.Properties properties() { return new BaseFlowingFluid.Properties(TYPE, CHEMICAL_MIXTURE, FLOWING_MIXTURE); }
+    private static BaseFlowingFluid.Properties gasProperties() { return new BaseFlowingFluid.Properties(GAS_TYPE, GAS_MIXTURE, FLOWING_GAS_MIXTURE); }
     public static void register(IEventBus bus) { COMPONENTS.register(bus);TYPES.register(bus);FLUIDS.register(bus); }
 }

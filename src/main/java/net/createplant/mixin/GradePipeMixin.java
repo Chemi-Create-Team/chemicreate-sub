@@ -20,7 +20,8 @@ abstract class GradePipeMixin {
 
     @Inject(method = "canPullFluidFrom", at = @At("HEAD"), cancellable = true)
     private void createPlant$refuseUnsuitable(FluidStack fluid, BlockState state, Direction side, CallbackInfoReturnable<Boolean> result) {
-        if (PipeMaterial.pipe(state) != null && net.createplant.mixture.MixtureHelper.isMixture(fluid) && !net.createplant.mixture.MixtureHelper.isMixableLiquid(fluid))
+        if (PipeMaterial.pipe(state) != null && net.createplant.mixture.MixtureHelper.isMixture(fluid) && !net.createplant.mixture.MixtureHelper.isMixableLiquid(fluid)
+            && !net.createplant.mixture.MixtureHelper.isMixableGas(fluid))
             result.setReturnValue(false);
     }
 }

@@ -88,7 +88,7 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
         @Override public FluidStack drain(FluidStack stack,FluidAction action) { return FluidStack.EMPTY; }
     };
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEFlare.TIP_ENTITY.get(),(be,side)->side==Direction.DOWN ? be.port : null);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEFlare.TIP_ENTITY.get(),(be,side)->side==Direction.DOWN ? net.createplant.mixture.GasMixturePort.inlet(be.port,null) : null);
     }
     public void releaseGas() {
         if (level instanceof ServerLevel server && !gas.isEmpty()) releaseExhaust(server, gas.drain(gas.getFluidAmount(), EXECUTE));

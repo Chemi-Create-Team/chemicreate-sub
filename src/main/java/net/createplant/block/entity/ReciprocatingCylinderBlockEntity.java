@@ -35,7 +35,8 @@ public class ReciprocatingCylinderBlockEntity extends SmartBlockEntity implement
     public ReciprocatingCylinderBlockEntity(BlockPos pos, BlockState state) { super(CEReciprocating.CYLINDER_ENTITY.get(), pos, state); }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEReciprocating.CYLINDER_ENTITY.get(), (be, side) -> side == Direction.UP ? be.suction : side == Direction.DOWN || side == null ? be.discharge : null);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEReciprocating.CYLINDER_ENTITY.get(), (be, side) -> side == Direction.UP ? net.createplant.mixture.GasMixturePort.inlet(be.suction, be)
+            : side == Direction.DOWN || side == null ? net.createplant.mixture.GasMixturePort.outlet(be.discharge, be) : null);
     }
 
     private void changed() {

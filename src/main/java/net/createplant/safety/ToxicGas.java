@@ -94,6 +94,10 @@ public final class ToxicGas {
 
     /** Lets a fluid out into the air at a place. A toxic or combustible gas makes one cloud that carries both hazards. */
     public static void release(Level level, BlockPos pos, FluidStack fluid) {
+        if (net.createplant.mixture.MixtureHelper.isMixture(fluid)) {
+            for (var component : net.createplant.mixture.MixtureHelper.components(fluid)) release(level, pos, component);
+            return;
+        }
         net.createplant.nuclear.RadiationContamination.spill(level, pos, fluid);
         if (level instanceof ServerLevel server && (strength(fluid) >= 0 || FlammableGas.fuel(fluid))) GasClouds.release(server, pos, fluid);
     }

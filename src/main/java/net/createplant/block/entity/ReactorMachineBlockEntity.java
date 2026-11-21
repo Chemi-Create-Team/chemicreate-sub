@@ -211,9 +211,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
     public Direction inlet() { if (horizontal()) return getBlockState().getValue(ThermalMachineBlock.FACING).getCounterClockWise();return getBlockState().getValue(ReactorMachineBlock.AXIS)==Direction.Axis.Z ? Direction.WEST : Direction.NORTH; }
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEReactor.ENTITY.get(),(be,side)->be.horizontal() ? be.port(side) : null);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEReactor.ENTITY.get(),(be,side)->be.horizontal() ? net.createplant.mixture.GasMixturePort.both(be.port(side),be) : null);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,net.createplant.registry.CEHeating.PART_ENTITY.get(),(proxy,side)-> {
-            var owner=proxy.owner();return owner==null ? null : owner.horizontalPort(proxy.getBlockPos(),side);
+            var owner=proxy.owner();return owner==null ? null : net.createplant.mixture.GasMixturePort.both(owner.horizontalPort(proxy.getBlockPos(),side),owner);
         });
     }
     /** Any part of a formed fluid heat exchanger gives out the ice it has frozen; the ice remains owned by its controller. */

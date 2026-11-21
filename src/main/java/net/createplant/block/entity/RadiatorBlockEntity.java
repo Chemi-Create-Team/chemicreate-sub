@@ -156,7 +156,7 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             @Override public FluidStack drain(FluidStack s,FluidAction a){return side!=null && live() && master.inletEnd>=0 && end!=master.inletEnd ? master.output.drain(s,a) : FluidStack.EMPTY;}
         };
     }
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEProcessBlocks.COOLER_RADIATOR_DRIVE.get(),(be,side)->be.port(side));}
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,CEProcessBlocks.COOLER_RADIATOR_DRIVE.get(),(be,side)->net.createplant.mixture.GasMixturePort.both(be.port(side),be.owner()));}
     @Override public boolean addToGoggleTooltip(List<Component> lines,boolean shift) {
         var root=owner();if(root==null || root.fanCount()==0){lines.add(Component.translatable("radiator.create_refinery_n_reactors.incomplete"));return true;}
         lines.add(Component.translatable("grade.create_refinery_n_reactors.radiator",root.fanCount(),root.flow/5d));

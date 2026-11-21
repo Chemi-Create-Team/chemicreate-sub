@@ -20,7 +20,7 @@ public class FusionFluidPortBlockEntity extends SmartBlockEntity {
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEFusion.PORT_ENTITY.get(), (port, side) -> {
             FusionReactorControllerBlockEntity controller = FusionReactorControllerBlockEntity.find(port.getLevel(), port.getBlockPos());
-            return controller != null && controller.owns(port.getBlockPos()) ? controller.port(port.kind()) : null;
+            return controller != null && controller.owns(port.getBlockPos()) ? net.createplant.mixture.GasMixturePort.both(controller.port(port.kind()), controller) : null;
         });
     }
 }

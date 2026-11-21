@@ -85,6 +85,10 @@
     "formula": "…",
     "hazards": []
   },
+  "gas_mixture": {
+    "formula": "…",
+    "hazards": []
+  },
   "chlorine": {
     "formula": "Cl₂",
     "hazards": [
