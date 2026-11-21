@@ -34,6 +34,8 @@ public enum TankGrade {
 
     public int gasRatio() { return pressure.storageRatio(); }
     public boolean accepts(FluidStack stack) { return incompatibility(stack).equals("safe"); }
+    /** Whether the tank can hold the fluid at all; a fluid it is not rated for still goes in and wears it (see ContainmentWear). */
+    public boolean storable(FluidStack stack) { return !incompatibility(stack).equals("fluid"); }
     public String incompatibility(FluidStack stack) {
         if (stack.isEmpty() || !FluidThermal.valid(stack)) return "fluid";
         if (net.createplant.mixture.MixtureHelper.isMixture(stack)) {
@@ -42,7 +44,8 @@ public enum TankGrade {
             return "safe";
         }
         var properties=FluidHazards.of(stack);boolean gas=properties.gas() || stack.getFluidType().isLighterThanAir();
-        if (kind==Kind.GAS && !gas || kind==Kind.LIQUID && gas) return "fluid";
+        if (kind==Kind.GAS && !gas) return "liquid";
+        if (kind==Kind.LIQUID && gas) return "gas";
         if (properties.corrosion()!=FluidHazards.Corrosion.NONE && !resistance.contains(properties.corrosion())) return "corrosion";
         if (properties.heat().compareTo(coldest)<0) return "cold";
         if (properties.heat().compareTo(hottest)>0) return "hot";

@@ -13,6 +13,7 @@ abstract class FluidPipeGogglesMixin implements IHaveGoggleInformation {
         var material = PipeMaterial.pipe(((FluidPipeBlockEntity) (Object) this).getBlockState());
         if (material == null) return false;
         material.describe(lines);
+        net.createplant.transport.ContainmentWear.addWarning((FluidPipeBlockEntity) (Object) this, lines);
         return true;
     }
 }

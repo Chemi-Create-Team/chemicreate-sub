@@ -45,9 +45,10 @@ public class AbsorptionTowerBlockEntity extends StackedReactorBlockEntity {
 
     /**
      * Only the four straight sides of the octagon take pipes, never its diagonal faces: gas in and liquid out at the bottom storey, spent gas out
-     * at the top storey. Water enters only through the top of the top storey's centre.
+     * at the top storey. Water enters only through the top of the top storey's centre, and liquid also leaves through the bottom storey's underside.
      */
     @Override protected IFluidHandler storeyPort(StackedReactorBlockEntity bottom, BlockPos cell, Direction side) {
+        if (side == Direction.DOWN) return this == bottom ? bottom.processPort(2, 1, false, true) : null;
         int x = cell.getX() - worldPosition.getX(), z = cell.getZ() - worldPosition.getZ();
         if (x == 0 && z == 0) return side == Direction.UP && top() ? bottom.processPort(1, 1, true, false) : null;
         if (x != 0 && z != 0 || side != Direction.fromDelta(x, 0, z)) return null;

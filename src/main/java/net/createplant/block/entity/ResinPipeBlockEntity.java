@@ -25,6 +25,7 @@ public final class ResinPipeBlockEntity extends FluidPipeBlockEntity implements 
 
     @Override public boolean addToGoggleTooltip(java.util.List<net.minecraft.network.chat.Component> lines, boolean sneaking) {
         net.createplant.transport.PipeMaterial.of(getBlockState()).describe(lines);
+        net.createplant.transport.ContainmentWear.addWarning(this, lines);
         return true;
     }
 }

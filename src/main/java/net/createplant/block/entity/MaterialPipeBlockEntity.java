@@ -18,6 +18,7 @@ public final class MaterialPipeBlockEntity extends FluidPipeBlockEntity implemen
     }
     @Override public boolean addToGoggleTooltip(List<Component> lines,boolean sneaking) {
         net.createplant.transport.PipeMaterial.of(getBlockState()).describe(lines);
+        net.createplant.transport.ContainmentWear.addWarning(this,lines);
         return true;
     }
 }

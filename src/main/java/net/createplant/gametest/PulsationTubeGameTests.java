@@ -59,13 +59,13 @@ public class PulsationTubeGameTests {
     }
 
     @GameTest(template="test_fractionation")
-    public static void standardCreateTanksRefuseEveryRegisteredGasButKeepLiquids(GameTestHelper h){
-        h.setBlock(AT,AllBlocks.FLUID_TANK.get());var be=(FluidTankBlockEntity)h.getBlockEntity(AT);var handler=port(h,AT,Direction.UP);int count=0;
+    public static void standardCreateTanksAreRatedAgainstEveryRegisteredGasButKeepLiquids(GameTestHelper h){
+        h.setBlock(AT,AllBlocks.FLUID_TANK.get());var handler=port(h,AT,Direction.UP);int count=0;
         for(var fluid:BuiltInRegistries.FLUID){
             var stack=new FluidStack(fluid,1000);if(stack.isEmpty() || net.createplant.mixture.MixtureHelper.isMixture(stack) || !CETransport.gas(stack))continue;count++;
-            h.assertTrue(!handler.isFluidValid(0,stack) && handler.fill(stack,SIMULATE)==0 && handler.fill(stack,EXECUTE)==0 && be.getTankInventory().isEmpty(),"Create liquid tanks reject gas through actual ports: "+fluid);
+            h.assertTrue(!net.createplant.thermal.TankGrade.LIQUID.accepts(stack),"Create liquid tanks are not rated for gas: "+fluid);
         }
-        h.assertTrue(count>=10 && handler.fill(new FluidStack(Fluids.WATER,1000),EXECUTE)==1000,"Water remains accepted after all rejected gases");
+        h.assertTrue(count>=10 && handler.fill(new FluidStack(Fluids.WATER,1000),EXECUTE)==1000,"Water is accepted");
         for(String id:List.of("liquid_tank","water_tank")){
             var name=CreatePlant.location(id);h.assertTrue(!BuiltInRegistries.BLOCK.containsKey(name) && !BuiltInRegistries.ITEM.containsKey(name),"Removed tank has no block or item registration: "+id);
             h.assertTrue(h.getLevel().getRecipeManager().byKey(name).isEmpty(),"Removed tank has no recipe: "+id);

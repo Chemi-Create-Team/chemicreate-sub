@@ -33,17 +33,20 @@ public final class TankGradeGameTests {
     }
 
     @GameTest(template="test_fractionation")
-    public static void everyStorageTankRejectsCorrosionAndOutOfRangeGrades(GameTestHelper h) {
+    public static void everyStorageTankTakesAnUnratedFluidAndNamesTheHazard(GameTestHelper h) {
         for(var block:List.of(AllBlocks.FLUID_TANK.get(),CETransport.HORIZONTAL_FLUID_TANK.get(),CETransport.GAS_RECEIVER.get(),CETransport.GAS_TANK_CONTAINER.get(),CETransport.PRESSURE_TANK.get(),CETransport.CRYOGENIC_TANK.get())) {
             var be=tank(h,block);var inventory=be.getTankInventory();
-            h.assertTrue(inventory.fill(new FluidStack(CEFluids.NITRIC_ACID.get(),1000),EXECUTE)==0,"Non-resistant tank refuses acid: "+block);
-            h.assertTrue(inventory.fill(new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),EXECUTE)==0,"Tank refuses very hot gas: "+block);
-            h.assertTrue(inventory.isEmpty(),"Refusal keeps inventory empty without a failure behaviour: "+block);
+            // A gas-only tank holds no liquid at all, so it is worn by a corrosive gas instead.
+            var acid=TankGrade.of(be)==TankGrade.GAS ? new FluidStack(CEChlorAlkali.CHLORINE.get(),1000) : new FluidStack(CEFluids.NITRIC_ACID.get(),1000);var hot=new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000);
+            h.assertTrue(!TankGrade.of(be).accepts(acid) && inventory.fill(acid,EXECUTE)==1000,"A non-resistant tank still takes a corrosive fluid, which wears it: "+block);
+            inventory.setFluid(FluidStack.EMPTY);
+            h.assertTrue(!TankGrade.of(be).accepts(hot) && inventory.fill(hot,EXECUTE)==1000,"A tank still takes a very hot gas, which wears it: "+block);
+            inventory.setFluid(FluidStack.EMPTY);
         }
         var stainless=tank(h,CETransport.STAINLESS_STEEL_TANK.get());
         h.assertTrue(stainless.getTankInventory().fill(new FluidStack(CEFluids.NITRIC_ACID.get(),1000),EXECUTE)==1000,"Stainless accepts acid");
         stainless.getTankInventory().setFluid(FluidStack.EMPTY);
-        h.assertTrue(stainless.getTankInventory().fill(new FluidStack(CEUranium.URANIUM_HEXAFLUORIDE.get(),1000),EXECUTE)==0,"Stainless is not fluoride resistant");
+        h.assertTrue(!TankGrade.STAINLESS.accepts(new FluidStack(CEUranium.URANIUM_HEXAFLUORIDE.get(),1000)),"Stainless is not rated for uranium hexafluoride");
         h.succeed();
     }
 
@@ -51,24 +54,21 @@ public final class TankGradeGameTests {
     public static void waterAndSteamNeverBypassTheMaterialOrFluidFilter(GameTestHelper h) {
         var liquid=tank(h,AllBlocks.FLUID_TANK.get());var port=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(AT),Direction.UP);
         var steam=new FluidStack(CEFluids.STEAM.get(),1000);
-        h.assertTrue(!port.isFluidValid(0,steam) && port.fill(steam,SIMULATE)==0 && port.fill(steam,EXECUTE)==0,"Liquid-only tank refuses steam at its real port");
+        h.assertTrue(port.isFluidValid(0,steam) && port.fill(steam,EXECUTE)==1000 && TankGrade.LIQUID.incompatibility(steam).equals("gas"),"A liquid-only tank takes steam at its real port, and is worn by it");
         var gas=tank(h,CETransport.GAS_RECEIVER.get());
-        h.assertTrue(gas.getTankInventory().fill(new FluidStack(Fluids.WATER,1000),EXECUTE)==0,"Gas receiver refuses water");
+        h.assertTrue(TankGrade.GAS.incompatibility(new FluidStack(Fluids.WATER,1000)).equals("liquid"),"A gas receiver is not rated for water");
         h.assertTrue(gas.getTankInventory().fill(steam,EXECUTE)==1000 && gas.getTankInventory().getFluid().is(CEFluids.STEAM.get()),"Steam stays steam rather than becoming water");
         h.succeed();
     }
 
     @GameTest(template="test_fractionation")
-    public static void allLiquidStorageRejectsEveryKnownGasThroughRealHandlers(GameTestHelper h) {
+    public static void allLiquidStorageTakesGasButIsRatedAgainstIt(GameTestHelper h) {
+        var gas = new FluidStack(CEFluids.HYDROGEN_GAS.get(), 1000);
         for (var block : List.of(AllBlocks.FLUID_TANK.get(), CETransport.HORIZONTAL_FLUID_TANK.get(), CETransport.PRESSURE_TANK.get(), CETransport.STAINLESS_STEEL_TANK.get(), CETransport.CRYOGENIC_TANK.get())) {
             var be = tank(h, block);
             var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(AT), Direction.UP);
-            for (var fluid : net.minecraft.core.registries.BuiltInRegistries.FLUID) {
-                var gas = new FluidStack(fluid, 1000);
-                if (gas.isEmpty() || net.createplant.mixture.MixtureHelper.isMixture(gas)) continue;
-                if (!net.createplant.transport.FluidHazards.of(gas).gas() && !fluid.getFluidType().isLighterThanAir()) continue;
-                h.assertTrue(!port.isFluidValid(0, gas) && port.fill(gas, SIMULATE) == 0 && port.fill(gas, EXECUTE) == 0 && be.getTankInventory().isEmpty(), "Liquid storage rejects gas through validation, simulation and execution: " + block + "/" + fluid);
-            }
+            h.assertTrue(port.fill(gas, SIMULATE) == 1000 && port.fill(gas, EXECUTE) == 1000 && TankGrade.of(be).incompatibility(gas).equals("gas"),
+                "Liquid storage takes gas through its real handler and is worn by it: " + block);
         }
         h.succeed();
     }
@@ -115,11 +115,11 @@ public final class TankGradeGameTests {
     @GameTest(template="test_fractionation")
     public static void cryogenicLiquidsRequireCryogenicStorage(GameTestHelper h) {
         var liquid=new FluidStack(CEFusion.LIQUID_HELIUM.get(),1000);
-        h.assertTrue(tank(h,AllBlocks.FLUID_TANK.get()).getTankInventory().fill(liquid,EXECUTE)==0,"Ordinary tank refuses cryogenic helium");
+        h.assertTrue(TankGrade.LIQUID.incompatibility(liquid).equals("cold"),"An ordinary tank is not rated for cryogenic helium");
         var cold=tank(h,CETransport.CRYOGENIC_TANK.get());
         h.assertTrue(cold.getTankInventory().fill(liquid,EXECUTE)==1000,"Cryogenic tank accepts helium");
         cold.getTankInventory().setFluid(FluidStack.EMPTY);
-        h.assertTrue(cold.getTankInventory().fill(new FluidStack(CEFluids.STEAM.get(),1000),EXECUTE)==0,"Cryogenic tank refuses hot steam");h.succeed();
+        h.assertTrue(TankGrade.CRYOGENIC.incompatibility(new FluidStack(CEFluids.STEAM.get(),1000)).equals("gas"),"A cryogenic tank is not rated for steam");h.succeed();
     }
 
     @GameTest(template="test_fractionation")
@@ -151,10 +151,24 @@ public final class TankGradeGameTests {
         h.assertTrue(total==amount*2,"Split conserves compressed gas");h.succeed();
     }
 
-    @GameTest(template="test_fractionation",timeoutTicks=100)
-    public static void rejectedFluidCannotDamageOrExplodeATank(GameTestHelper h) {
-        var be=tank(h,CETransport.PRESSURE_TANK.get());be.getTankInventory().fill(new FluidStack(Fluids.WATER,1000),EXECUTE);
-        for(int i=0;i<100;i++)be.getTankInventory().fill(new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),EXECUTE);
-        h.runAfterDelay(60,()->{h.assertTrue(h.getBlockState(AT).is(CETransport.PRESSURE_TANK.get()) && be.getTankInventory().getFluidAmount()==1000,"Repeated incompatible inflow leaves the tank and water intact");h.succeed();});
+    @GameTest(template="test_fractionation")
+    public static void anUnratedFluidCracksATankUntilItBurstsAndDrainingLetsItRecover(GameTestHelper h) {
+        var be=tank(h,CETransport.PRESSURE_TANK.get());
+        // Create attaches behaviours when the block entity first ticks.
+        h.runAfterDelay(2,()->{
+            var wear=com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour.get(be,net.createplant.transport.ContainmentWear.TYPE);
+            var hot=new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000);
+            h.assertTrue(be.getTankInventory().fill(hot,EXECUTE)==1000,"The pressure tank takes the very hot gas");
+            for(int i=0;i<600;i++)wear.tick();
+            h.assertTrue(wear.wear()==600 && wear.reason().equals("gas") && net.createplant.transport.ContainmentWear.warning(be)!=null && h.getBlockState(AT).is(CETransport.PRESSURE_TANK.get()),
+                "Half a minute of wear leaves a cracked tank with a warning: "+wear.wear()+" "+wear.reason());
+            be.getTankInventory().setFluid(FluidStack.EMPTY);
+            for(int i=0;i<300;i++)wear.tick();
+            h.assertTrue(wear.wear()==300 && wear.reason().isEmpty(),"Draining the gas lets the cracks close at the same pace");
+            be.getTankInventory().fill(hot,EXECUTE);
+            for(int i=0;i<900;i++)wear.tick();
+            h.assertTrue(h.getBlockState(AT).isAir(),"A full minute of wear bursts the tank");
+            h.succeed();
+        });
     }
 }

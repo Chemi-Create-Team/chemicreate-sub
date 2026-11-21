@@ -25,15 +25,20 @@ NAMES.update({
     'tank.kind.gas': ('Gases only | %s','気体専用｜%s','仅气体｜%s'),
     'tank.kind.water': ('Water and warm water only | %s','水・温排水専用｜%s','仅水与温排水｜%s'),
     'tank.acid': ('Acid resistant','耐酸','耐酸'), 'tank.no_acid': ('No corrosive fluids','腐食性流体不可','不接收腐蚀性流体'),
-    'tank.reject.fluid': ('Rejected: wrong fluid type','搬入不可：流体の種類が不適合','拒收：流体种类不符'),
-    'tank.reject.corrosion': ('Rejected: corrosive fluid','搬入不可：腐食性に非対応','拒收：不耐该腐蚀性流体'),
-    'tank.reject.cold': ('Rejected: temperature grade too low','搬入不可：温度等級が低すぎます','拒收：温度等级过低'),
-    'tank.reject.hot': ('Rejected: temperature grade too high','搬入不可：温度等級が高すぎます','拒收：温度等级过高'),
-    'tank.reject.pressure': ('Rejected: pressure grade too high','搬入不可：圧力等級が高すぎます','拒收：压力等级过高'),
 })
 TRANSPORT = {
     'grade': ('Grade: %s', '等級：%s', '等级：%s'),
     'carries': ('Carries %s to %s, up to %s', '運べる流体：%s～%s・%sまで', '可输送：%s～%s，最高%s'),
+    'wear': ('⚠ %s: wear %s%%. Drain it before it bursts', '⚠ %s：損傷 %s%%。壊れる前に抜いてください', '⚠ %s：损伤 %s%%，破裂前请排空'),
+    'wear.gas': ('Not rated for gas', '気体に非対応', '不耐气体'),
+    'wear.liquid': ('Not rated for liquid', '液体に非対応', '不耐液体'),
+    'wear.corrosion': ('Not resistant to this corrosive fluid', 'この腐食性流体に非対応', '不耐该腐蚀性流体'),
+    'wear.hot': ('Too hot for its rating', '温度が等級より高すぎます', '温度高于额定等级'),
+    'wear.overheat': ('Too hot for its rating', '温度が等級より高すぎます', '温度高于额定等级'),
+    'wear.softening': ('Softening in the heat', '熱で軟化しています', '受热软化'),
+    'wear.cold': ('Too cold for its rating', '温度が等級より低すぎます', '温度低于额定等级'),
+    'wear.brittle': ('Brittle in the cold', '低温で脆くなっています', '低温变脆'),
+    'wear.pressure': ('Pressure above its rating', '圧力が等級より高すぎます', '压力高于额定等级'),
 }
 
 for index, code in enumerate(('en_us', 'ja_jp', 'zh_cn')):

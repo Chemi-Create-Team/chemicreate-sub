@@ -77,7 +77,9 @@ public class AbsorptionTowerGameTests {
         var gasIn = port(h, bottom.east(), Direction.EAST);var waterIn = port(h, top, Direction.UP);
         h.assertTrue(gasIn.fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0 && waterIn.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), SIMULATE) == 0,
             "Water goes in only at the top and gas only at the bottom");
-        h.assertTrue(port(h, bottom.above().east(), Direction.EAST) == null && port(h, bottom, Direction.DOWN) == null, "The middle storeys and the underside have no port");
+        h.assertTrue(port(h, bottom.above().east(), Direction.EAST) == null && port(h, bottom.above(), Direction.DOWN) == null, "The middle storeys have no port");
+        h.assertTrue(port(h, bottom.north().east(), Direction.DOWN).fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), SIMULATE) == 0,
+            "The underside of the bottom storey only gives liquid");
         h.assertTrue(port(h, bottom.north().east(), Direction.NORTH) == null && port(h, bottom.north().east(), Direction.EAST) == null
             && port(h, top.south().west(), Direction.WEST) == null, "The diagonal faces of the octagon have no port");
         h.assertTrue(port(h, bottom, Direction.EAST) == null && port(h, bottom.east(), Direction.NORTH) == null && port(h, top.east(), Direction.UP) == null
@@ -85,9 +87,10 @@ public class AbsorptionTowerGameTests {
         h.assertTrue(gasIn.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 300), EXECUTE) == 300 && waterIn.fill(new FluidStack(Fluids.WATER, 100), EXECUTE) == 100,
             "Nitrogen dioxide and water enter their own ends");
         run(tower, 101);
-        var acid = port(h, bottom.west(), Direction.WEST).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 1000), EXECUTE);
+        var acid = port(h, bottom.west(), Direction.WEST).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 150), EXECUTE);
+        acid.grow(port(h, bottom.north().east(), Direction.DOWN).drain(new FluidStack(CEFluids.NITRIC_ACID.get(), 1000), EXECUTE).getAmount());
         var monoxide = port(h, top.north(), Direction.NORTH).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), EXECUTE);
-        h.assertTrue(acid.getAmount() == 200 && monoxide.getAmount() == 100, "Nitric acid leaves at the bottom and the unabsorbed nitric oxide at the top");
+        h.assertTrue(acid.getAmount() == 200 && monoxide.getAmount() == 100, "Nitric acid leaves at the bottom's sides and underside, and the unabsorbed nitric oxide at the top");
         h.assertTrue(port(h, bottom.west(), Direction.WEST).drain(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(), 1000), SIMULATE).isEmpty(), "The bottom never gives the top's gas");
         h.succeed();
     }
@@ -122,6 +125,15 @@ public class AbsorptionTowerGameTests {
         h.assertTrue(port(h, bottom.north(), Direction.NORTH).drain(new FluidStack(CEUranium.SULFUROUS_ACID.get(), 10000), SIMULATE).getAmount() == 500,
             "Two 250 mB batches run in parallel: 500 mB sulfur dioxide and water give 500 mB sulfurous acid");
         h.succeed();
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 300)
+    public static void aTowerLeftToTickAbsorbsSulfurDioxideIntoSulfurousAcid(GameTestHelper h) {
+        var tower = tower(h, 4, true);var bottom = tower.getBlockPos();
+        h.assertTrue(port(h, bottom.east(), Direction.EAST).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 250), EXECUTE) == 250
+            && port(h, bottom.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 250), EXECUTE) == 250, "The tower takes sulfur dioxide below and water above");
+        h.succeedWhen(() -> h.assertTrue(port(h, bottom, Direction.DOWN).drain(new FluidStack(CEUranium.SULFUROUS_ACID.get(), 1000), SIMULATE).getAmount() == 250,
+            "The tower runs on its own ticks and makes sulfurous acid: " + tower.status()));
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 40)

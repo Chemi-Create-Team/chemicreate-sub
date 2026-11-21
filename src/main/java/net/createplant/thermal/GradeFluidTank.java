@@ -5,39 +5,25 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 /** Rated native tank inventory, including Create's gas merge/split bookkeeping. */
 public class GradeFluidTank extends ThermalFluidTank {
     private final SmartBlockEntity owner;
-    private String refusal="";
     public GradeFluidTank(int capacity,Consumer<FluidStack> changed,SmartBlockEntity owner){super(capacity,changed);this.owner=owner;}
     @Override protected int storageRatio(){var grade=TankGrade.of(owner);return grade==null ? 16 : grade.gasRatio();}
-    @Override public boolean isFluidValid(FluidStack stack){var grade=TankGrade.of(owner);return super.isFluidValid(stack) && (grade==null || grade.accepts(stack));}
-    public String refusal(){return refusal;}
+    @Override public boolean isFluidValid(FluidStack stack){var grade=TankGrade.of(owner);return super.isFluidValid(stack) && (grade==null || grade.storable(stack));}
     public boolean gasStored(){return storedGas(fluid);}
     public int gasVolume(){return gasStored() ? (int)Math.min(volumeCapacity(),((long)getFluidAmount()+storageRatio(fluid)-1)/storageRatio(fluid)) : getFluidAmount();}
     public boolean absorbGas(FluidStack added){if(!storedGas(added) || !isFluidValid(added) || !fluid.isEmpty() && !FluidThermal.compatible(fluid,added))return false;fluid=fluid.isEmpty() ? added.copy() : FluidThermal.mix(fluid,added,added.getAmount());onContentsChanged();return true;}
     @Override public int fill(FluidStack incoming,FluidAction action){
-        var grade=TankGrade.of(owner);
-        if(grade!=null && action.execute()){
-            String next=grade.incompatibility(incoming);if(next.equals("safe"))next="";
-            if(!next.equals(refusal)){
-                refusal=next;owner.setChanged();
-                if(owner.getLevel()!=null && !owner.getLevel().isClientSide())owner.sendData();
-            }
-        }
         if (owner instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel && !vessel.hasInternals()
             && net.createplant.mixture.MixtureHelper.isMixableLiquid(incoming) && !fluid.isEmpty()
             && net.createplant.mixture.MixtureHelper.isMixableLiquid(fluid) && !FluidThermal.mixable(fluid, incoming))
             return net.createplant.mixture.MixtureTransfer.fill(this, incoming, action, true);
         return super.fill(incoming,action);
     }
-    @Override public CompoundTag writeToNBT(HolderLookup.Provider lookup,CompoundTag tag){super.writeToNBT(lookup,tag);tag.putString("GradeRefusal",refusal);return tag;}
-    @Override public ThermalFluidTank readFromNBT(HolderLookup.Provider lookup,CompoundTag tag){super.readFromNBT(lookup,tag);refusal=tag.getString("GradeRefusal");return this;}
     public static IFluidHandler port(SmartBlockEntity part,Direction side,IFluidHandler fallback){return port(part,side,fallback,()->true,()->true);}
     public static IFluidHandler port(SmartBlockEntity part,Direction side,IFluidHandler fallback,BooleanSupplier available){return port(part,side,fallback,available,()->true);}
     public static IFluidHandler port(SmartBlockEntity part,Direction side,IFluidHandler fallback,BooleanSupplier available,BooleanSupplier filling){

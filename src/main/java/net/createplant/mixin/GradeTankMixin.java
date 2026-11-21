@@ -74,6 +74,8 @@ public abstract class GradeTankMixin implements net.createplant.block.entity.Tan
     @Inject(method="addToGoggleTooltip",at=@At("RETURN"))
     private void createPlant$temperature(List<Component> lines,boolean sneaking,CallbackInfoReturnable<Boolean> cir) {
         var owner=((FluidTankBlockEntity)(Object)this).getControllerBE();if(owner==null)return;
+        // With steam engines attached, Create's own boiler readout is the tank's tooltip.
+        if(owner.boiler.isActive()){net.createplant.transport.ContainmentWear.addWarning(owner,lines);return;}
         if (net.createplant.mixture.MixtureHelper.isMixture(owner.getTankInventory().getFluid())) {
             lines.clear();net.createplant.mixture.MixtureGoggleHelper.appendSummary(lines, owner.getTankInventory().getFluid());return;
         }
@@ -81,7 +83,8 @@ public abstract class GradeTankMixin implements net.createplant.block.entity.Tan
         var fluid = owner.getTankInventory().getFluid();
         lines.add(fluid.isEmpty() ? Component.literal("0 / " + volumeCapacity(owner) + " mB")
             : net.createplant.chemistry.ChemicalReadout.contents(fluid.copyWithAmount(gasVolume(owner)), volumeCapacity(owner)));
-        if(grade!=null){grade.describe(lines);if(owner.getTankInventory() instanceof net.createplant.thermal.GradeFluidTank tank && !tank.refusal().isEmpty())lines.set(3,Component.translatable("grade.create_refinery_n_reactors.tank.reject."+tank.refusal()));}
+        if(grade!=null)grade.describe(lines);
+        net.createplant.transport.ContainmentWear.addWarning(owner,lines);
         if(net.createplant.block.entity.TankBoiler.applies(owner))net.createplant.block.entity.TankBoiler.of(owner).goggle(lines);
         net.createplant.compat.display.MachineReadings.compact(lines);
     }

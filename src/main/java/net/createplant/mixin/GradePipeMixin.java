@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Applies material ratings to liquids while retaining Create's routing and filters for every fluid. */
+/** Keeps Create's routing and filters for every fluid. A fluid the pipe is not rated for still flows and wears the pipe (see ContainmentWear). */
 @Mixin(value = FluidTransportBehaviour.class, remap = false)
 abstract class GradePipeMixin {
     @com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/fluids/FluidStack;isSameFluidSameComponents(Lnet/neoforged/neoforge/fluids/FluidStack;Lnet/neoforged/neoforge/fluids/FluidStack;)Z"))
@@ -20,7 +20,7 @@ abstract class GradePipeMixin {
 
     @Inject(method = "canPullFluidFrom", at = @At("HEAD"), cancellable = true)
     private void createPlant$refuseUnsuitable(FluidStack fluid, BlockState state, Direction side, CallbackInfoReturnable<Boolean> result) {
-        var material = PipeMaterial.pipe(state);
-        if (material != null && !fluid.isEmpty() && !material.carries(fluid)) result.setReturnValue(false);
+        if (PipeMaterial.pipe(state) != null && net.createplant.mixture.MixtureHelper.isMixture(fluid) && !net.createplant.mixture.MixtureHelper.isMixableLiquid(fluid))
+            result.setReturnValue(false);
     }
 }

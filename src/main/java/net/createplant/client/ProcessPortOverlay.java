@@ -15,6 +15,7 @@ import net.createplant.block.entity.RodCapBlockEntity;
 import net.createplant.chemistry.ChemicalReadout;
 import net.createplant.event.ProcessPortInteraction;
 import net.createplant.registry.CEPressureInfrastructure;
+import net.createplant.transport.ContainmentWear;
 import net.createplant.transport.HoseSocket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -151,6 +152,8 @@ public final class ProcessPortOverlay {
         var key = ChemicalReadout.KEY;
         if (mc.hitResult instanceof BlockHitResult hit && hit.getType() == HitResult.Type.BLOCK) {
             var be = mc.level.getBlockEntity(hit.getBlockPos());
+            var warning = ContainmentWear.warning(be);
+            if (warning != null) return warning;
             if (be instanceof HoseSocket.Endpoint hose && hose.hoseFace() == hit.getDirection()) return hose(hose);
             var kind = be == null ? null : ProcessPorts.at(be, hit.getDirection());
             if (kind == Kind.HATCH) {

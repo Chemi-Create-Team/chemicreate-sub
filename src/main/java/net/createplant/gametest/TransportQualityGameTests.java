@@ -46,14 +46,14 @@ public final class TransportQualityGameTests {
         h.setBlock(SOURCE,AllBlocks.FLUID_TANK.get());h.setBlock(TARGET,AllBlocks.FLUID_TANK.get());
         var water=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(SOURCE),Direction.UP);
         var liquid=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(TARGET),Direction.UP);
-        h.assertTrue(water.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1000),IFluidHandler.FluidAction.EXECUTE)==0
-            && water.fill(new FluidStack(Fluids.WATER,1000),IFluidHandler.FluidAction.EXECUTE)==1000,"The standard Create liquid tank accepts water and refuses gas");
-        h.assertTrue(liquid.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1000),IFluidHandler.FluidAction.EXECUTE)==0
-            && liquid.fill(new FluidStack(CEPetroFluids.CRUDE_OIL.get(),1000),IFluidHandler.FluidAction.EXECUTE)==1000,"The liquid tank leaves process gases to gas tanks");
+        h.assertTrue(water.fill(new FluidStack(Fluids.WATER,1000),IFluidHandler.FluidAction.EXECUTE)==1000
+            && water.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1000),IFluidHandler.FluidAction.EXECUTE)==0,"A tank holding water takes no gas on top of it");
+        h.assertTrue(liquid.fill(new FluidStack(CEPetroFluids.CRUDE_OIL.get(),1000),IFluidHandler.FluidAction.EXECUTE)==1000
+            && !net.createplant.thermal.TankGrade.LIQUID.accepts(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1000)),"The liquid tank holds oil and is not rated for process gases");
         h.succeed();
     }
     @GameTest(template="test_petrochemical",timeoutTicks=300)
-    public static void aPipeRefusesAFluidItsMaterialCannotCarry(GameTestHelper h) {
+    public static void aPipeAndPumpCarryAFluidTheyAreNotRatedForAndWear(GameTestHelper h) {
         h.setBlock(SOURCE,CETransport.STAINLESS_STEEL_TANK.get());h.setBlock(TARGET,CETransport.STAINLESS_STEEL_TANK.get());
         h.setBlock(PIPE,straight(AllBlocks.FLUID_PIPE.getDefaultState()));
         h.setBlock(PUMP,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
@@ -61,10 +61,10 @@ public final class TransportQualityGameTests {
         drive(h,new BlockPos(1,2,4),Direction.EAST);
         IFluidHandler source=fluids(h,SOURCE),dest=fluids(h,TARGET);
         h.assertTrue(source.fill(new FluidStack(CEFluids.NITRIC_ACID.get(),1000),IFluidHandler.FluidAction.EXECUTE)==1000,"The acid-proof source takes nitric acid");
-        h.runAfterDelay(80,()->{
-            h.assertTrue(dest.getFluidInTank(0).isEmpty() && source.getFluidInTank(0).getAmount()==1000,"Create's copper pipe does not take in the acid, and nothing is lost");
-            h.setBlock(PIPE,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()));
-            h.succeedWhen(()->h.assertTrue(dest.getFluidInTank(0).getAmount()==1000 && source.getFluidInTank(0).isEmpty(),"A stainless pipe carries all of it: "+dest.getFluidInTank(0)));
+        h.succeedWhen(()->{
+            var pipe=BlockEntityBehaviour.get(h.getBlockEntity(PIPE),ContainmentWear.TYPE);var pump=BlockEntityBehaviour.get(h.getBlockEntity(PUMP),ContainmentWear.TYPE);
+            h.assertTrue(pipe!=null && pump!=null && !dest.getFluidInTank(0).isEmpty() && pipe.wear()>0 && pump.wear()>0,
+                "Create's copper pipe and pump carry the acid and are worn by it: "+dest.getFluidInTank(0));
         });
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
