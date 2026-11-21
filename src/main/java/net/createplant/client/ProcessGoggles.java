@@ -17,7 +17,6 @@ import net.createplant.block.entity.ReactionTowerBlockEntity;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.chemistry.ChemicalReadout;
 import net.createplant.mixture.MixtureGoggleHelper;
-import net.createplant.registry.CEFluids;
 import net.createplant.compat.display.MachineReadings;
 import net.createplant.thermal.Grade;
 import net.createplant.thermal.TankGrade;
@@ -49,12 +48,10 @@ public final class ProcessGoggles {
         if (owner == null) return;
         if (owner instanceof HorizontalTankBlockEntity tank && tank.hasBoilerGauge()) return;
         if (source instanceof LiddedVesselBlockEntity && owner instanceof LiddedVesselBlockEntity vessel
-            && vessel.showGasComposition() && MixtureGoggleHelper.appendGasLayers(lines, vessel.gasLayers())) return;
+            && vessel.showGasComposition() && MixtureGoggleHelper.appendGasLayers(lines, vessel.gasLayers(), ((net.createplant.thermal.ThermalFluidTank) vessel.getTankInventory()).gasCapacity())) return;
         if (source instanceof FluidTankBlockEntity && owner instanceof FluidTankBlockEntity tank) {
             var fluid = tank.getTankInventory().getFluid();
-            if (fluid.isEmpty() && !tank.boiler.isActive())
-                fluid = new FluidStack(CEFluids.AIR_GAS.get(), tank.getTankInventory().getCapacity());
-            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(lines, TankLayers.ordered(List.of(fluid)))) return;
+            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(lines, TankLayers.ordered(List.of(fluid)), tank.getTankInventory().getCapacity())) return;
         }
         var hit = Minecraft.getInstance().hitResult;
         var face = hit instanceof BlockHitResult onBlock && onBlock.getBlockPos().equals(source.getBlockPos()) ? onBlock.getDirection() : null;

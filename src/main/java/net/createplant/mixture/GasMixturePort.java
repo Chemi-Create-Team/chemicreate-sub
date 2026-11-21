@@ -76,14 +76,16 @@ public final class GasMixturePort implements IFluidHandler {
     }
 
     @Override public boolean isFluidValid(int tank, FluidStack stack) {
-        if (inlet && MixtureHelper.isMixture(stack) && MixtureHelper.gas(stack)) return fill(stack, FluidAction.SIMULATE) > 0;
+        if (inlet && MixtureHelper.composite(stack) && MixtureHelper.gas(stack)) return fill(stack, FluidAction.SIMULATE) > 0;
         int offset = offset();
         return (offset == 0 || tank > 0) && port.isFluidValid(tank - offset, stack);
     }
 
     @Override public int fill(FluidStack resource, FluidAction action) {
         if (!inlet) return outlet ? port.fill(resource, action) : 0;
-        if (!MixtureHelper.isMixture(resource) || !MixtureHelper.isMixableGas(resource)) return port.fill(resource, action);
+        if (!MixtureHelper.composite(resource) || !MixtureHelper.isMixableGas(resource)) return port.fill(resource, action);
+        // A machine that takes air as such keeps doing so; any other takes the air's gases one by one.
+        if (!MixtureHelper.isMixture(resource) && port.fill(resource, FluidAction.SIMULATE) > 0) return port.fill(resource, action);
         var components = MixtureHelper.components(resource);
         double share = 1;
         int unused = 0;

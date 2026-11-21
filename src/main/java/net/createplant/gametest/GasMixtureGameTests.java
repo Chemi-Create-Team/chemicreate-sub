@@ -84,13 +84,42 @@ public class GasMixtureGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "test_fractionation")
+    public static void airIsAMixtureOfNitrogenOxygenAndArgonInTanksAndMachineInlets(GameTestHelper h) {
+        h.setBlock(AT, CETransport.GAS_RECEIVER.get());
+        var tank = ((FluidTankBlockEntity) h.getBlockEntity(AT)).getTankInventory();
+        tank.fill(new FluidStack(CEFluids.AIR_GAS.get(), 1000), EXECUTE);
+        tank.fill(new FluidStack(CEFluids.NITROGEN_GAS.get(), 500), EXECUTE);
+        var stored = tank.getFluid();
+        h.assertTrue(amountOf(stored, CEFluids.NITROGEN_GAS.get()) == 1280 && amountOf(stored, CEFluids.OXYGEN_GAS.get()) == 210
+            && amountOf(stored, CEFluids.ARGON_GAS.get()) == 10, "Air joins nitrogen as its own nitrogen, oxygen and argon: " + stored.getComponentsPatch());
+        var taken = new java.util.HashMap<Fluid, Integer>();
+        IFluidHandler everything = new IFluidHandler() {
+            @Override public int getTanks() { return 0; }
+            @Override public FluidStack getFluidInTank(int tank) { return FluidStack.EMPTY; }
+            @Override public int getTankCapacity(int tank) { return 0; }
+            @Override public boolean isFluidValid(int tank, FluidStack stack) { return true; }
+            @Override public int fill(FluidStack resource, FluidAction action) {
+                if (resource.is(CEFluids.AIR_GAS.get())) return 0;
+                if (action.execute()) taken.merge(resource.getFluid(), resource.getAmount(), Integer::sum);
+                return resource.getAmount();
+            }
+            @Override public FluidStack drain(FluidStack resource, FluidAction action) { return FluidStack.EMPTY; }
+            @Override public FluidStack drain(int maxDrain, FluidAction action) { return FluidStack.EMPTY; }
+        };
+        h.assertTrue(GasMixturePort.inlet(everything, null).fill(new FluidStack(CEFluids.AIR_GAS.get(), 1000), EXECUTE) == 1000
+            && taken.get(CEFluids.NITROGEN_GAS.get()) == 780 && taken.get(CEFluids.OXYGEN_GAS.get()) == 210 && taken.get(CEFluids.ARGON_GAS.get()) == 10,
+            "A machine that does not take air as such takes its gases one by one: " + taken);
+        h.succeed();
+    }
+
     @GameTest(template = "test_empty")
     public static void theGasReadoutSplitsAirAndListsTheLargestGasFirstWithTracesTogether(GameTestHelper h) {
         var lines = new java.util.ArrayList<net.minecraft.network.chat.Component>();
         boolean shown = net.createplant.mixture.MixtureGoggleHelper.appendGasLayers(lines, java.util.List.of(new FluidStack(CEFluids.NITROGEN_GAS.get(), 45600),
-            new FluidStack(CEFluids.AIR_GAS.get(), 293760), new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 12000)));
+            new FluidStack(CEFluids.AIR_GAS.get(), 293760), new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 12000)), 512000);
         var text = lines.stream().map(net.minecraft.network.chat.Component::getString).toList();
-        h.assertTrue(shown && text.size() == 5 && text.get(1).contains("274,733") && text.get(2).contains("61,689") && text.get(3).contains("12,000")
+        h.assertTrue(shown && text.size() == 5 && text.getFirst().contains("351,360 / 512,000") && text.get(1).contains("274,733") && text.get(2).contains("61,689") && text.get(3).contains("12,000")
             && text.get(4).contains("2,938"), "Air's nitrogen joins the stored nitrogen, oxygen follows, then sulfur dioxide, and argon is a trace: " + text);
         h.succeed();
     }

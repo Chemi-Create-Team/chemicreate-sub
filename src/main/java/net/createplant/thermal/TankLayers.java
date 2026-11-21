@@ -24,7 +24,7 @@ public final class TankLayers {
         var layers = new ArrayList<FluidStack>();
         for (var fluid : fluids) {
             if (fluid == null || fluid.isEmpty()) continue;
-            if (MixtureHelper.isMixture(fluid)) layers.addAll(MixtureHelper.components(fluid));
+            if (MixtureHelper.composite(fluid)) layers.addAll(MixtureHelper.components(fluid));
             else layers.add(fluid);
         }
         layers.sort(Comparator.comparingDouble(TankLayers::density).reversed()
@@ -33,7 +33,7 @@ public final class TankLayers {
     }
 
     public static Removal remove(FluidStack mixture, FluidStack layer, int amount) {
-        if (amount <= 0 || layer.isEmpty() || !MixtureHelper.isMixture(mixture)) return new Removal(FluidStack.EMPTY, mixture);
+        if (amount <= 0 || layer.isEmpty() || !MixtureHelper.composite(mixture)) return new Removal(FluidStack.EMPTY, mixture);
         var id = BuiltInRegistries.FLUID.getKey(layer.getFluid());
         var contents = MixtureHelper.extractContents(mixture);
         int extracted = Math.min(amount, contents.amounts().getOrDefault(id, 0));

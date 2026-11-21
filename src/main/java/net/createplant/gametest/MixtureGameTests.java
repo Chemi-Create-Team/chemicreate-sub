@@ -170,7 +170,7 @@ public class MixtureGameTests {
     }
 
     @GameTest(template = "test_reactor")
-    public static void tankAirAndDensityOutletsPreserveEveryConstituent(GameTestHelper h) {
+    public static void anEmptyTankAndDensityOutletsPreserveEveryConstituent(GameTestHelper h) {
         var at = new BlockPos(3, 3, 3);
         h.setBlock(at, CETransport.LIDDED_VESSEL.get());
         var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(at);
@@ -178,16 +178,8 @@ public class MixtureGameTests {
         var pos = h.absolutePos(at);
         var top = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.UP);
         var bottom = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.DOWN);
-        int volume = vessel.getTankInventory().getCapacity();
-        var defaultAir = top.drain(Integer.MAX_VALUE, SIMULATE);
-        h.assertTrue(defaultAir.is(CEFluids.AIR_GAS.get()) && defaultAir.getAmount() == volume && vessel.getTankInventory().isEmpty(),
-            "A new tank has one vessel volume of drainable atmosphere outside its liquid inventory");
-        h.assertTrue(top.drain(Integer.MAX_VALUE, EXECUTE).getAmount() == volume, "The sealed initial air is a finite charge");
+        h.assertTrue(top.drain(Integer.MAX_VALUE, SIMULATE).isEmpty() && vessel.getTankInventory().isEmpty(), "A new tank holds nothing, not even air");
         var lookup = level.registryAccess();
-        vessel.loadWithComponents(vessel.saveWithoutMetadata(lookup), lookup);
-        top = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.UP);
-        bottom = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.DOWN);
-        h.assertTrue(top.drain(1, SIMULATE).isEmpty(), "An evacuated headspace stays empty on reload");
 
         var gases = List.of(CEFluids.HYDROGEN_GAS.get(), CEFluids.NITROGEN_GAS.get(), CEFluids.OXYGEN_GAS.get(),
             CEFluids.ARGON_GAS.get(), CEProcessFluids.CARBON_DIOXIDE.get());

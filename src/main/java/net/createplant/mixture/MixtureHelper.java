@@ -13,10 +13,24 @@ public final class MixtureHelper {
     public static boolean isMixture(FluidStack stack) { return stack.getFluid() instanceof MixtureFluid; }
     public static MixtureContents extractContents(FluidStack stack) {
         if (stack.isEmpty()) return MixtureContents.EMPTY;
+        if (isAir(stack)) return airContents(stack.getAmount());
         if (!isMixture(stack)) return new MixtureContents(Map.of(BuiltInRegistries.FLUID.getKey(source(stack.getFluid())), stack.getAmount()));
         var contents = stack.get(CEMixtures.MIXTURE_CONTENTS.get());
         if (contents == null || contents.totalAmount() != stack.getAmount()) throw new IllegalArgumentException("Mixture component volume does not match its stack");
         return contents;
+    }
+    /** Air is a mixture too: the air separation column's nitrogen, oxygen and argon yields, at the air's volume. */
+    public static boolean composite(FluidStack stack) { return isMixture(stack) || isAir(stack); }
+    private static boolean isAir(FluidStack stack) { return !stack.isEmpty() && source(stack.getFluid()).isSame(net.createplant.registry.CEFluids.AIR_GAS.get()); }
+    public static MixtureContents airContents(int amount) {
+        var yields = new java.util.TreeMap<net.minecraft.resources.ResourceLocation, Integer>();
+        var products = net.createplant.chemistry.DistillationProfile.PRODUCT;
+        for (int i = 0; i < products.length; i++) {
+            var gas = products[i] == net.createplant.chemistry.DistillationProfile.OXYGEN ? net.createplant.registry.CEFluids.OXYGEN_GAS.get()
+                : net.createplant.chemistry.DistillationProfile.fluid(products[i]);
+            yields.put(BuiltInRegistries.FLUID.getKey(gas), net.createplant.chemistry.DistillationProfile.PRODUCT_AMOUNT[i]);
+        }
+        return amount <= 0 ? MixtureContents.EMPTY : new MixtureContents(yields).resized(amount);
     }
     private static Fluid source(Fluid fluid) { return fluid instanceof FlowingFluid flowing ? flowing.getSource() : fluid; }
     /** A gas mixture rides the gas carrier and a liquid mixture the liquid one; gases and liquids never share a stack. */
@@ -61,6 +75,11 @@ public final class MixtureHelper {
             return new MixtureData(patches);
         }
         var copy = stack.copy();net.createplant.nuclear.RadiationSources.stamp(copy);
+        if (isAir(stack)) {
+            var patches = new java.util.TreeMap<net.minecraft.resources.ResourceLocation, net.minecraft.core.component.DataComponentPatch>();
+            for (var id : extractContents(stack).amounts().keySet()) patches.put(id, copy.getComponentsPatch());
+            return new MixtureData(patches);
+        }
         return new MixtureData(Map.of(BuiltInRegistries.FLUID.getKey(source(copy.getFluid())), copy.getComponentsPatch()));
     }
     public static java.util.List<FluidStack> components(FluidStack stack) {

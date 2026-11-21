@@ -2,8 +2,6 @@ package net.createplant.mixture;
 
 import java.util.*;
 import net.createplant.chemistry.ChemicalReadout;
-import net.createplant.chemistry.DistillationProfile;
-import net.createplant.registry.CEFluids;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -30,10 +28,10 @@ public final class MixtureGoggleHelper {
     private static final double TRACE = .02;
 
     /**
-     * Every gas in a tank, the largest first. Air counts as the mixture it is, split by the air separation column's yields, so its
-     * nitrogen and oxygen join the same gases held elsewhere; each gas is one line with its share, and traces such as argon share one line.
+     * Every gas in a tank, the largest first. Air counts as the mixture it is (MixtureHelper.airContents), so its nitrogen and oxygen
+     * join the same gases held elsewhere; each gas is one line with its share, and traces such as argon share one line.
      */
-    public static boolean appendGasLayers(List<Component> lines, List<FluidStack> layers) {
+    public static boolean appendGasLayers(List<Component> lines, List<FluidStack> layers, int capacity) {
         var merged = new ArrayList<FluidStack>();
         for (var layer : layers) for (var gas : constituents(layer)) {
             var same = merged.stream().filter(seen -> seen.getFluid().isSame(gas.getFluid())).findFirst();
@@ -45,7 +43,7 @@ public final class MixtureGoggleHelper {
         for (var gas : merged) total += gas.getAmount();
         merged.sort(Comparator.comparingInt(FluidStack::getAmount).reversed().thenComparing(gas -> net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(gas.getFluid())));
         lines.clear();
-        lines.add(Component.translatable("mixture.create_refinery_n_reactors.gas_layers", String.format(Locale.ROOT, "%,d", total)));
+        lines.add(Component.translatable("mixture.create_refinery_n_reactors.gas_layers", String.format(Locale.ROOT, "%,d", total), String.format(Locale.ROOT, "%,d", capacity)));
         long traces = 0;
         for (var gas : merged) {
             if (gas.getAmount() < total * TRACE) { traces += gas.getAmount();continue; }
@@ -60,18 +58,9 @@ public final class MixtureGoggleHelper {
             String.format(Locale.ROOT, "%.1f", amount * 100d / total));
     }
 
-    /** The gases a layer is made of: air by the column's nitrogen, oxygen and argon yields, any other fluid as itself. */
+    /** The gases a layer is made of; air and other mixtures by their components. */
     private static List<FluidStack> constituents(FluidStack layer) {
         if (layer.isEmpty()) return List.of();
-        if (!layer.is(CEFluids.AIR_GAS.get())) return List.of(layer);
-        var yields = new java.util.LinkedHashMap<net.minecraft.resources.ResourceLocation, Integer>();
-        var products = DistillationProfile.PRODUCT;
-        for (int i = 0; i < products.length; i++) {
-            var gas = products[i] == DistillationProfile.OXYGEN ? CEFluids.OXYGEN_GAS.get() : DistillationProfile.fluid(products[i]);
-            yields.put(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(gas), DistillationProfile.PRODUCT_AMOUNT[i]);
-        }
-        var split = new MixtureContents(yields).resized(layer.getAmount());
-        return split.amounts().entrySet().stream()
-            .map(entry -> new FluidStack(net.minecraft.core.registries.BuiltInRegistries.FLUID.get(entry.getKey()), entry.getValue())).toList();
+        return MixtureHelper.composite(layer) ? MixtureHelper.components(layer) : List.of(layer);
     }
 }

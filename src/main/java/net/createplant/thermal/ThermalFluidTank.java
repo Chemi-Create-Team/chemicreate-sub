@@ -8,6 +8,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public class ThermalFluidTank extends SmartFluidTank {
     public ThermalFluidTank(int capacity,Consumer<FluidStack> changed) { super(capacity,changed); }
     public int volumeCapacity(){return capacity;}
+    /** How much gas at 1 bar the tank holds when it holds gas. */
+    public int gasCapacity(){return (int)Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio());}
     /** How many mB of gas at 1 bar fill one mB of volume; a tank holds gas up to its pressure rating. */
     protected int storageRatio(){return Grade.Pressure.PRESSURISED.storageRatio();}
     protected int storageRatio(FluidStack stack) {

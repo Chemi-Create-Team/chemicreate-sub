@@ -37,7 +37,7 @@ public class GradeFluidTank extends ThermalFluidTank {
             return net.createplant.mixture.MixtureTransfer.fill(this, incoming, action, true);
         return super.fill(incoming,action);
     }
-    private boolean layered(Direction side) { return side != null && side.getAxis().isVertical() && MixtureHelper.isMixture(fluid); }
+    private boolean layered(Direction side) { return side != null && side.getAxis().isVertical() && MixtureHelper.composite(fluid); }
     public FluidStack layer(Direction side) {
         if (!layered(side)) return fluid.copy();
         var layers = TankLayers.ordered(java.util.List.of(fluid));

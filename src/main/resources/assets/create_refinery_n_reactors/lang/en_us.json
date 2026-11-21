@@ -6008,7 +6008,7 @@
   "create_refinery_n_reactors.ponder.shared.horizontal_tank.stainless_output.lesson_pages.0": "Stainless boilers make hot high-pressure steam. Superheating doubles the flow.",
   "tubular_boiler.steam_flow": "Steam flow %s / %s mB/s",
   "tubular_boiler.water_flow": "Water flow %s mB/s",
-  "mixture.create_refinery_n_reactors.gas_layers": "Gases, largest first (%s mB in all)",
+  "mixture.create_refinery_n_reactors.gas_layers": "Gases, largest first: %s / %s mB",
   "mixture.create_refinery_n_reactors.others": "Others",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.count": "2",
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.goggles.lesson_pages.0": "Goggles list all gas constituents.",
