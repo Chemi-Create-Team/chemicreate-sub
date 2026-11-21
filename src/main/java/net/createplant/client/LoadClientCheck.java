@@ -165,7 +165,7 @@ final class LoadClientCheck {
             BlockPos start = origin.offset(0, 0, line * 4);
             level.setBlock(start, AllBlocks.FLUID_TANK.getDefaultState(), 3);
             level.setBlock(start.east(121), AllBlocks.FLUID_TANK.getDefaultState(), 3);
-            for (int x = 1; x <= 120; x++) level.setBlock(start.east(x), pipe(CETransport.REINFORCED_PIPE.get().defaultBlockState(), Direction.Axis.X), 3);
+            for (int x = 1; x <= 120; x++) level.setBlock(start.east(x), pipe(CETransport.STAINLESS_PIPE.get().defaultBlockState(), Direction.Axis.X), 3);
             later(() -> fill(level, start, Direction.UP, FluidThermal.at(new FluidStack(CEFluids.NITROGEN_GAS.get(), 40000), 293.15)));
         }
     }

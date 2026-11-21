@@ -35,7 +35,7 @@ def pipe_pressure():
     s.block(1, 1, 4, 'create:blaze_burner', blaze='kindled')
     s.block(1, 2, 4, NS + 'lidded_vessel')
     pipe(s, 2, 2, 4, 'create:fluid_pipe', 'east', 'west')
-    for x in (3, 4): pipe(s, x, 2, 4, NS + 'reinforced_pipe', 'east', 'west')
+    for x in (3, 4): pipe(s, x, 2, 4, NS + 'stainless_steel_pipe', 'east', 'west')
     for y in (1, 2): s.block(5, y, 4, 'create:fluid_tank', bottom=str(y == 1).lower(), top=str(y == 2).lower(), shape='window')
     for x in range(2, 7): pipe(s, x, 2, 7, 'create:fluid_pipe', 'east', 'west')
     s.block(4, 1, 7, 'minecraft:magma_block')
@@ -46,7 +46,7 @@ def pipe_pressure():
 
 
 SCENES = {
-    'pipe_pressure': (pipe_pressure, 9, 5, ['reinforced_pipe', 'pipe_pressure_gauge'], ('Pressure and freezing in pipes', '配管の圧力と凍結'), [
+    'pipe_pressure': (pipe_pressure, 9, 5, ['stainless_steel_pipe', 'pipe_pressure_gauge'], ('Pressure and freezing in pipes', '配管の圧力と凍結'), [
         ([1, 1, 4], {'item': 'create:blaze_burner'},
          'Feed a fluid with the required pressure grade and check the pipe pressure gauge.',
          '必要な圧力等級の流体を送り、配管の圧力計で確認します。'),

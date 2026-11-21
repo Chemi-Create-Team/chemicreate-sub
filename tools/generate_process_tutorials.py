@@ -1,8 +1,8 @@
-"""Shared structure helpers for the plant Ponder generators: reinforced pipe, formed radiator cell and fan shroud orientation."""
+"""Shared structure helpers for the plant Ponder generators: stainless steel pipe, formed radiator cell and fan shroud orientation."""
 NS='create_refinery_n_reactors:'
 
 def pipe(s,x,y,z,*sides):
- s.block(x,y,z,NS+'reinforced_pipe',**{side:str(side in sides).lower() for side in ('north','south','east','west','up','down')},waterlogged='false')
+ s.block(x,y,z,NS+'stainless_steel_pipe',**{side:str(side in sides).lower() for side in ('north','south','east','west','up','down')},waterlogged='false')
 
 def radiator_cell(put,x0,y0,z0,along):
  """One formed 3x3x4 cell, as RadiatorBlockEntity sets it: radiators from the low corner (x0, y0, z0), fan and shrouds on top.

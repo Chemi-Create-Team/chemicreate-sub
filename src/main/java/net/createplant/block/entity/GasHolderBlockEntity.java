@@ -233,7 +233,7 @@ public class GasHolderBlockEntity extends FluidTankBlockEntity implements IContr
         var owner=getControllerBE();if (owner==null) return false;
         text.add(Component.translatable(LANG+"state",Component.translatable(LANG+owner.status())));
         text.add(Component.translatable(LANG+"contents",owner.gas().isEmpty() ? Component.translatable(LANG+"empty") : owner.gas().getFluid().getHoverName().copy().append(" · ").append(net.createplant.thermal.FluidThermal.readout(owner.gas().getFluid())),owner.gas().getFluidAmount(),owner.capacity()));
-        net.createplant.thermal.TankGrade.HOLDER.describe(text);addDrainReadout(text,false);return true;
+        net.createplant.thermal.TankGrade.HOLDER.describe(text,owner.gas().getFluid(),sneaking);addDrainReadout(text,false);return true;
     }
     public void addDrainReadout(List<Component> tooltip, boolean composition) {
         var owner=getControllerBE();

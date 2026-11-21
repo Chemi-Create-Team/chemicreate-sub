@@ -17,9 +17,6 @@ public class CEBlockEntityTypes {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
         DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePlant.MOD_ID);
 
-    public static final Supplier<BlockEntityType<net.createplant.block.entity.ResinPipeBlockEntity>> RESIN_PIPE =
-        BLOCK_ENTITIES.register("resin_pipe", () -> BlockEntityType.Builder.of(
-            net.createplant.block.entity.ResinPipeBlockEntity::new, CEBlocks.RESIN_PIPE.get()).build(null));
 
     public static final Supplier<BlockEntityType<TankCasingBlockEntity>> TANK_CASING =
         BLOCK_ENTITIES.register("tank_casing", () -> BlockEntityType.Builder.of(

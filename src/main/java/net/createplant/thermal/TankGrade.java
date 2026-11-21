@@ -17,7 +17,7 @@ public enum TankGrade {
     LIQUID(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.PRESSURISED, Kind.LIQUID),
     GAS(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.HIGH, Kind.GAS),
     PRESSURE(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.HIGH, Kind.LIQUID),
-    STAINLESS(Grade.Heat.COLD, Grade.Heat.VERY_HOT, Grade.Pressure.PRESSURISED, Kind.LIQUID, FluidHazards.Corrosion.ACID),
+    STAINLESS(Grade.Heat.COLD, Grade.Heat.VERY_HOT, Grade.Pressure.PRESSURISED, Kind.LIQUID, FluidHazards.Corrosion.ACID, FluidHazards.Corrosion.HALOGEN, FluidHazards.Corrosion.BASE),
     CRYOGENIC(Grade.Heat.CRYOGENIC, Grade.Heat.AMBIENT, Grade.Pressure.PRESSURISED, Kind.LIQUID),
     OPEN(Grade.Heat.COLD, Grade.Heat.AMBIENT, Grade.Pressure.ATMOSPHERIC, Kind.LIQUID),
     HOLDER(Grade.Heat.COLD, Grade.Heat.AMBIENT, Grade.Pressure.ATMOSPHERIC, Kind.GAS);
@@ -51,8 +51,12 @@ public enum TankGrade {
         return properties.pressure().compareTo(pressure)>0 ? "pressure" : "safe";
     }
 
-    public void describe(List<Component> lines) {
-        lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.range",coldest.label(),hottest.label(),pressure.label()));
+    public void describe(List<Component> lines) { describe(lines, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false); }
+
+    /** The rated range as a scale with the contents' level on it, or with Shift as the grade names. */
+    public void describe(List<Component> lines, net.neoforged.neoforge.fluids.FluidStack contents, boolean sneaking) {
+        if (sneaking) lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.range",coldest.label(),hottest.label(),pressure.label()));
+        else lines.add(GradeScale.line(coldest, hottest, pressure, contents.isEmpty() ? -1 : FluidState.temperature(contents), contents.isEmpty() ? -1 : FluidState.pressure(contents)));
         lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.kind."+kind.name().toLowerCase(java.util.Locale.ROOT),
             Component.translatable("grade.create_refinery_n_reactors.tank."+(resistance.isEmpty() ? "no_acid" : "acid"))));
     }

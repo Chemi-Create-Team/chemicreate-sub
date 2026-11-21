@@ -20,7 +20,6 @@ FLUIDS = {
 NAMES = {
     'block.create_refinery_n_reactors.halite_ore': ('Halite Ore', '岩塩鉱石', '岩盐矿石'),
     'block.create_refinery_n_reactors.deepslate_halite_ore': ('Deepslate Halite Ore', '深層岩塩鉱石', '深板岩岩盐矿石'),
-    'block.create_refinery_n_reactors.pvc_pipe': ('PVC Pipe', '塩ビ管', 'PVC管'),
     'item.create_refinery_n_reactors.salt': ('Salt', '塩', '盐'),
     'item.create_refinery_n_reactors.pvc_resin': ('PVC Resin', '塩化ビニル樹脂', '聚氯乙烯树脂'),
     'message.create_refinery_n_reactors.tank_casing.salt': ('Salt dried from sea water: %s', '海水から取れた塩：%s個', '海水晒出的盐：%s'),

@@ -17,7 +17,7 @@ public final class MaterialPipeBlockEntity extends FluidPipeBlockEntity implemen
         list.removeIf(BracketedBlockEntityBehaviour.class::isInstance);
     }
     @Override public boolean addToGoggleTooltip(List<Component> lines,boolean sneaking) {
-        net.createplant.transport.PipeMaterial.of(getBlockState()).describe(lines);
+        net.createplant.transport.PipeMaterial.of(getBlockState()).describe(lines, net.createplant.transport.PipeMaterial.contents(this), sneaking);
         net.createplant.transport.ContainmentWear.addWarning(this,lines);
         return true;
     }

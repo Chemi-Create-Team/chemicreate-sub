@@ -124,7 +124,7 @@ if __name__ == '__main__':
     for diameter in range(4, 33):
         assert f'open_tank_size_{diameter}' in {t['id'] for t in catalogue}
     for required in ('gas_receiver', 'lidded_vessel',
-                     'reactor_impeller', 'gas_centrifuge', 'resin_pipe',
+                     'reactor_impeller', 'gas_centrifuge', 'ceramic_pipe',
                      'large_flywheel', 'tank_casing'):
         assert required in components, f'Critical equipment is missing Ponder coverage: {required}'
     print(f'Validated {len(catalogue)} additional Ponder scenes, {len(captions)} paired captions, '

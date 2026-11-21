@@ -48,7 +48,7 @@ public class TankCasingBlockEntity extends BlockEntity implements com.simibubi.c
         text.add(getBlockState().getBlock().getName());
         var tank=getTank();
         if (tank!=null && !tank.fluid.isEmpty()) text.add(tank.fluid.getHoverName().copy().append(" · ").append(FluidThermal.readout(tank.fluid)));
-        net.createplant.thermal.TankGrade.OPEN.describe(text);
+        net.createplant.thermal.TankGrade.OPEN.describe(text,tank==null ? net.neoforged.neoforge.fluids.FluidStack.EMPTY : tank.fluid,sneaking);
         net.createplant.compat.display.MachineReadings.compact(text);return true;
     }
     public static final int MB_PER_BLOCK = 8_000;

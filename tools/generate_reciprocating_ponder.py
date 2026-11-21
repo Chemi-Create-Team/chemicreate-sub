@@ -14,7 +14,7 @@ for z in (1, 2, 4, 5):
 
 
 def pipe(x, y, z, *sides):
-    s.block(x, y, z, NS+'reinforced_pipe', **{d: str(d in sides).lower() for d in ('north', 'south', 'east', 'west', 'up', 'down')}, waterlogged='false')
+    s.block(x, y, z, NS+'stainless_steel_pipe', **{d: str(d in sides).lower() for d in ('north', 'south', 'east', 'west', 'up', 'down')}, waterlogged='false')
 
 
 pipe(2, 3, 3, 'up', 'down')

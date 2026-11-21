@@ -46,7 +46,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public class FlareGameTests {
     private static final BlockPos BASE=new BlockPos(3,3,5);
     private static BlockState pipe(Direction... sides) {
-        var state=CETransport.REINFORCED_PIPE.get().defaultBlockState();
+        var state=CETransport.STAINLESS_PIPE.get().defaultBlockState();
         for (var side:Direction.values()) {
             boolean connected=false;for (var entry:sides) if (entry==side) connected=true;
             state=state.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side),connected);

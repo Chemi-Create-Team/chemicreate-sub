@@ -193,7 +193,7 @@ public final class MaterialPumpGameTests {
 
     @GameTest(template = "test_reactor", timeoutTicks = 250)
     public static void atmosphericAirNeedsAnExposedNozzleAndAWorkingPump(GameTestHelper h) {
-        Line line = line(h, 3, BuiltInRegistries.BLOCK.get(CreatePlant.location("gas_pump")), true);
+        Line line = line(h, 3, BuiltInRegistries.BLOCK.get(CreatePlant.location("stainless_steel_pump")), true);
         var nozzlePos = new BlockPos(1, 2, 3);
         h.setBlock(nozzlePos, Blocks.AIR);
         var open = new OpenEndedPipe(new BlockFace(h.absolutePos(nozzlePos.east()), Direction.WEST));

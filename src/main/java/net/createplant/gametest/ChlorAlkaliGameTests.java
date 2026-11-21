@@ -100,13 +100,13 @@ public class ChlorAlkaliGameTests {
     }
 
     @GameTest(template = "test_reactor")
-    public static void pvcPipeTakesAcidButSoftensWhenHot(GameTestHelper h) {
+    public static void chloridesAndCausticLiquorsNeedTheirOwnPipes(GameTestHelper h) {
         var acid = FluidHazards.named("hydrochloric_acid");var liquor = FluidHazards.named("sodium_aluminate_solution");
-        h.assertTrue(PipeMaterial.of(CETransport.PVC_PIPE.get().defaultBlockState()) == PipeMaterial.PVC, "The PVC pipe is PVC");
-        h.assertTrue(PipeMaterial.PVC.incompatibility(acid).equals("safe") && PipeMaterial.REINFORCED.incompatibility(acid).equals("corrosion"),
-            "PVC takes hydrochloric acid, carbon steel does not");
-        h.assertTrue(PipeMaterial.PVC.incompatibility(liquor).equals("softening") && PipeMaterial.STAINLESS.incompatibility(liquor).equals("safe"),
-            "The hot Bayer liquor softens PVC");
+        h.assertTrue(PipeMaterial.of(CETransport.CERAMIC_PIPE.get().defaultBlockState()) == PipeMaterial.CERAMIC, "The stoneware pipe is ceramic");
+        h.assertTrue(PipeMaterial.CERAMIC.incompatibility(acid).equals("safe") && PipeMaterial.STAINLESS.incompatibility(acid).equals("corrosion"),
+            "Stoneware takes hydrochloric acid, stainless steel does not");
+        h.assertTrue(PipeMaterial.CERAMIC.incompatibility(liquor).equals("corrosion") && PipeMaterial.STAINLESS.incompatibility(liquor).equals("safe"),
+            "The hot Bayer liquor etches stoneware but not stainless steel");
         var recipes = h.getLevel().getRecipeManager();
         for (String id : new String[]{"mixing/brine", "mixing/copper_block_from_oxidized_copper"})
             h.assertTrue(recipes.byKey(ResourceLocation.fromNamespaceAndPath(CreatePlant.MOD_ID, id)).isPresent(), "Recipe loads: " + id);

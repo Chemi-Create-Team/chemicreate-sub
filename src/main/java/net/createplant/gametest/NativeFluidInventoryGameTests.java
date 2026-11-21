@@ -36,7 +36,7 @@ public class NativeFluidInventoryGameTests {
         var source=tank(h,new BlockPos(1,2,3),true);var target=tank(h,new BlockPos(4,2,3),true);
         source.getTankInventory().fill(water(1000),EXECUTE);target.getTankInventory().fill(water(target.getTankInventory().getCapacity()-17),EXECUTE);
         h.setBlock(new BlockPos(2,2,3),AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
-        h.setBlock(new BlockPos(3,2,3),straight(CEBlocks.RESIN_PIPE.get()));
+        h.setBlock(new BlockPos(3,2,3),straight(CETransport.CERAMIC_PIPE.get()));
         h.setBlock(new BlockPos(2,2,4),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
         var motor=new BlockPos(1,2,4);h.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
         h.runAfterDelay(5,()->((CreativeMotorBlockEntity)h.getBlockEntity(motor)).generatedSpeed.setValue(128));
@@ -69,7 +69,7 @@ public class NativeFluidInventoryGameTests {
         var source=tank(h,new BlockPos(1,2,3),true);var a=tank(h,new BlockPos(5,2,3),true);var b=tank(h,new BlockPos(4,2,5),true);
         h.setBlock(new BlockPos(2,2,3),AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
         for (var pos:new BlockPos[]{new BlockPos(3,2,3),new BlockPos(4,2,3),new BlockPos(4,2,4),new BlockPos(3,2,4)}) {
-            var state=CETransport.REINFORCED_PIPE.get().defaultBlockState();
+            var state=CETransport.STAINLESS_PIPE.get().defaultBlockState();
             for (Direction side:Direction.values()) {
                 var next=pos.relative(side);boolean open=next.equals(new BlockPos(2,2,3)) || next.equals(new BlockPos(5,2,3)) || next.equals(new BlockPos(4,2,5)) || next.getY()==2 && next.getX()>=3 && next.getX()<=4 && next.getZ()>=3 && next.getZ()<=4;
                 state=state.setValue(net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION.get(side),open);
@@ -94,7 +94,7 @@ public class NativeFluidInventoryGameTests {
         });
         h.runAfterDelay(110,()->{
             long count=cache.rebuilds;
-            var changed=new BlockPos(4,2,3);var old=h.getBlockState(changed);var next=CETransport.CRYOGENIC_PIPE.get().defaultBlockState();
+            var changed=new BlockPos(4,2,3);var old=h.getBlockState(changed);var next=CETransport.STAINLESS_PIPE.get().defaultBlockState();
             for (Direction d:Direction.values()) next=next.setValue(net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION.get(d),old.getValue(net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION.get(d)));
             h.setBlock(changed,next);
             cache.path(h.getLevel(),start,end);h.assertTrue(cache.rebuilds>count,"Material replacement invalidates cached coefficient");

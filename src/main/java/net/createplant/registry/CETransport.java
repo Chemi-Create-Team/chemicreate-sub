@@ -27,22 +27,18 @@ public final class CETransport {
     private static final DeferredRegister.Blocks BLOCKS=DeferredRegister.createBlocks(CreatePlant.MOD_ID);
     private static final DeferredRegister.Items ITEMS=DeferredRegister.createItems(CreatePlant.MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> TYPES=DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE,CreatePlant.MOD_ID);
-    public static final DeferredBlock<MaterialPipeBlock> REINFORCED_PIPE=pipe("reinforced_pipe",PipeMaterial.REINFORCED);
     public static final DeferredBlock<MaterialPipeBlock> NICKEL_ALLOY_PIPE=pipe("nickel_alloy_pipe",PipeMaterial.NICKEL_ALLOY);
     public static final DeferredBlock<MaterialPipeBlock> ZIRCONIUM_PIPE=pipe("zirconium_pipe",PipeMaterial.ZIRCONIUM);
-    public static final DeferredBlock<MaterialPipeBlock> CRYOGENIC_PIPE=pipe("cryogenic_pipe",PipeMaterial.CRYOGENIC);
-    public static final DeferredBlock<MaterialPipeBlock> PVC_PIPE=pipe("pvc_pipe",PipeMaterial.PVC);
     public static final DeferredBlock<MaterialPipeBlock> CERAMIC_PIPE=pipe("ceramic_pipe",PipeMaterial.CERAMIC,BlockBehaviour.Properties.ofFullCopy(Blocks.TERRACOTTA).noOcclusion());
     static { ITEMS.registerSimpleItem("unfired_ceramic_pipe"); }
     public static final java.util.List<DeferredBlock<net.createplant.block.MaterialPumpBlock>> MATERIAL_PUMPS=
-        java.util.List.of(pump("reinforced", .92f, PipeMaterial.REINFORCED), pump("nickel_alloy", 1.11f, PipeMaterial.NICKEL_ALLOY), pump("zirconium", 1.18f, PipeMaterial.ZIRCONIUM),
-            pump("stainless_steel", 1.04f, PipeMaterial.STAINLESS), pump("cryogenic", .82f, PipeMaterial.CRYOGENIC), pump("pvc", 1.27f, PipeMaterial.PVC),
-            pump("resin", 1.01f, PipeMaterial.RESIN), pump("gas", 1.14f, PipeMaterial.REINFORCED), pump("large_gas", .73f, PipeMaterial.REINFORCED));
+        java.util.List.of(pump("nickel_alloy", 1.11f, PipeMaterial.NICKEL_ALLOY), pump("zirconium", 1.18f, PipeMaterial.ZIRCONIUM),
+            pump("stainless_steel", 1.04f, PipeMaterial.STAINLESS));
     public static final Supplier<BlockEntityType<com.simibubi.create.content.fluids.pump.PumpBlockEntity>> MATERIAL_PUMP_ENTITY=TYPES.register("material_pump",()->
         BlockEntityType.Builder.of((pos,state)->new com.simibubi.create.content.fluids.pump.PumpBlockEntity(CETransport.MATERIAL_PUMP_ENTITY.get(),pos,state),
             MATERIAL_PUMPS.stream().map(DeferredBlock::get).toArray(net.minecraft.world.level.block.Block[]::new)).build(null));
     public static final Supplier<BlockEntityType<MaterialPipeBlockEntity>> PIPE=TYPES.register("material_pipe",()->
-        BlockEntityType.Builder.of(MaterialPipeBlockEntity::new,REINFORCED_PIPE.get(),NICKEL_ALLOY_PIPE.get(),ZIRCONIUM_PIPE.get(),CRYOGENIC_PIPE.get(),PVC_PIPE.get(),CERAMIC_PIPE.get()).build(null));
+        BlockEntityType.Builder.of(MaterialPipeBlockEntity::new,NICKEL_ALLOY_PIPE.get(),ZIRCONIUM_PIPE.get(),CERAMIC_PIPE.get()).build(null));
     // Create's fluid pipe, encased pipe and glass pipe in stainless steel: Create's shapes and behaviour with their own material.
     public static final DeferredBlock<StainlessPipeBlock> STAINLESS_PIPE=BLOCKS.registerBlock("stainless_steel_pipe",StainlessPipeBlock::new,stainlessPipe().forceSolidOff());
     public static final DeferredBlock<StainlessEncasedPipeBlock> STAINLESS_ENCASED_PIPE=BLOCKS.registerBlock("stainless_steel_encased_pipe",StainlessEncasedPipeBlock::new,

@@ -10,8 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
 NS = 'create_refinery_n_reactors:'
 
-ROWS = ('create:fluid_pipe', NS + 'resin_pipe', NS + 'pvc_pipe', NS + 'reinforced_pipe', NS + 'stainless_steel_pipe', NS + 'nickel_alloy_pipe', NS + 'zirconium_pipe',
-        NS + 'ceramic_pipe', NS + 'cryogenic_pipe')
+ROWS = ('create:fluid_pipe', NS + 'ceramic_pipe', NS + 'stainless_steel_pipe', NS + 'nickel_alloy_pipe', NS + 'zirconium_pipe')
 s = Structure(11, 3)
 for z, pipe in enumerate(ROWS, 1):
     for x in range(2, 9):
@@ -32,7 +31,7 @@ for y in (1, 2):
     for x, tank in ((1, 'create:fluid_tank'), (6, NS + 'stainless_steel_tank'), (8, NS + 'cryogenic_tank')):
         b.block(x, y, 4, tank, bottom=str(y == 1).lower(), top=str(y == 2).lower(), shape='plain' if tank == NS + 'gas_receiver' else 'window', **({'axis': 'y'} if tank == NS + 'gas_receiver' else {}))
 b.block(2, 1, 4, 'create:mechanical_pump', facing='east', waterlogged='false')
-for x in (3, 5): b.block(x, 1, 4, NS + 'reinforced_pipe', east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
+for x in (3, 5): b.block(x, 1, 4, NS + 'stainless_steel_pipe', east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
 b.block(4, 1, 4, NS + 'pipe_pressure_gauge', axis='x')
 b.save('pressure_basics')
 (A / 'ponder/plant/pressure_basics.nbt').write_bytes((OUT / 'pressure_basics.nbt').read_bytes())
@@ -40,32 +39,14 @@ b.save('pressure_basics')
 
 TEXTS = {
     'title': ('Choosing a pipe for the fluid', '流体に合う配管を選ぶ', '根据流体选择管道'),
-    'step_1': ('Limits: copper 450 K/2 bar, resin 400 K/2 bar, PVC 333 K/10 bar. Choose a pipe suited to the fluid.',
-        '銅管は450 K・2 bar、樹脂管は400 K・2 bar、塩ビ管は333 K・10 barまでです。流体に合う管を選びます。',
-        '上限：铜管450 K、2 bar；树脂管400 K、2 bar；PVC管333 K、10 bar。按流体选择管材。'),
-    'step_2': ('For acids early on, use ceramic pipe fired from clay. It also takes hot acids, but only at atmospheric pressure and not fluorides.',
-        '序盤の酸には、粘土を焼いたセラミック管を使います。熱い酸にも耐えますが、常圧だけで、フッ化物には使えません。',
-        '前期输送酸液使用由黏土烧制的陶瓷管。它也耐热酸，但只能用于常压，不能用于氟化物。'),
-    'step_3': ('Reinforced steel pipe supports 800 K and 16 bar. Do not use it for acids.',
-        '耐圧鋼管は800 K・16 barまで使えます。酸には使いません。',
-        '增强钢管上限800 K、16 bar，不用于酸液。'),
-    'step_4': ('Stainless steel pipe resists acids up to 1000 K and 25 bar. Like Create\'s pipe, a wrench gives the glass pipe and casing the encased one.',
-        'ステンレス鋼管は酸に耐え、1000 K・25 barまで使えます。Createの配管と同じく、レンチでガラス付き、ケーシングでケース入りになります。',
-        '不锈钢管耐酸，可承受1000 K和25 bar。与Create管道相同，可用扳手变成玻璃管，也可加外壳。'),
-    'step_5': ('Fluorine, hydrogen fluoride and uranium hexafluoride eat even stainless steel. Only the nickel alloy (Monel) pipe holds them.',
-        'フッ素・フッ化水素・六フッ化ウランは、ステンレス鋼も腐食します。耐えられるのはニッケル合金（モネル）管だけです。',
-        '氟气、氟化氢和六氟化铀连不锈钢也会腐蚀，只有镍合金（蒙乃尔）管能够承受。'),
-    'step_6': ('Use zirconium pipe for hot sulfate solutions, up to 900 K and 25 bar.',
-        '高温の硫酸塩液はジルコニウム管で運びます。上限は900 K・25 barです。',
-        '高温硫酸盐溶液用锆管，上限900 K、25 bar。'),
-    'step_7': ('Use cryogenic pipes for fluids such as liquid oxygen that must stay cold.',
-        '液化酸素など、冷たさを保って運ぶ流体には保冷配管を使います。',
-        '液氧等需要保持低温的流体使用低温管线。'),
-    'step_8': ('Check pipe material when warned. Right-click worn pipes with a matching plate or ingot to repair them.',
-        '警告が出たら配管の材質を確認します。傷んだ管は同じ材料の板かインゴットで右クリックして修理します。',
-        '出现警告时检查管材，手持同材质板或锭右键修理磨损管道。'),
+    'step_1': ('Copper pipe: ambient to hot, atmospheric, no corrosive fluids.', '銅管：常温〜高温・常圧。腐食性の流体は不可。', '铜管：常温至高温、常压，不可用于腐蚀性流体。'),
+    'step_2': ('Ceramic pipe: acids, hot acids and halogens at atmospheric pressure.', 'セラミック管：常圧で酸・熱い酸・ハロゲン。', '陶瓷管：常压下耐酸、热酸和卤素。'),
+    'step_3': ('Stainless steel pipe: cryogenic to very hot, high pressure, acids and alkalis.', 'ステンレス管：極低温〜超高温・高圧、酸と塩基。', '不锈钢管：极低温至超高温、高压，耐酸和碱。'),
+    'step_4': ('Nickel alloy pipe: acids, fluorides, halogens and alkalis.', 'ニッケル合金管：酸・フッ化物・ハロゲン・塩基。', '镍合金管：耐酸、氟化物、卤素和碱。'),
+    'step_5': ('Zirconium pipe: hot acids and alkalis.', 'ジルコニウム管：熱い酸と塩基。', '锆管：耐热酸和碱。'),
+    'step_6': ('Ratings apply to liquids and gases alike.', '対応範囲は液体にも気体にも適用されます。', '额定范围同样适用于气体。'),
 }
-STEPS = [([5, 1, z], {}) for z in (2, 8, 4, 5, 6, 7, 9, 10)]
+STEPS = [([5, 1, z], {}) for z in (1, 2, 3, 4, 5, 3)]
 TANK_TEXTS = {
     'title': ('Choosing a tank for the fluid', '流体に合うタンクを選ぶ', '根据流体选择储罐'),
     'step_1': ('Create tanks support 16 bar. Use a compatible tank material for corrosive fluids.',
@@ -130,12 +111,12 @@ raw = path.read_bytes().decode('utf-8'); newline = '\r\n' if '\r\n' in raw else 
 data = json.loads(raw)
 entries = [
     {'id': 'pipe_materials', 'size': 11, 'height': 3,
-     'components': ['stainless_steel_pipe', 'ceramic_pipe', 'resin_pipe', 'pvc_pipe', 'nickel_alloy_pipe', 'zirconium_pipe', 'reinforced_pipe', 'cryogenic_pipe'],
+     'components': ['stainless_steel_pipe', 'ceramic_pipe', 'nickel_alloy_pipe', 'zirconium_pipe'],
      'steps': [{'target': target, 'key': f'step_{i + 1}', **extra} for i, (target, extra) in enumerate(STEPS)]},
     {'id': 'tank_materials', 'size': 11, 'height': 4, 'components': ['stainless_steel_tank', 'cryogenic_tank', 'pressure_tank', 'gas_receiver'],
      'steps': [{'target': target, 'key': f'step_{i + 1}', **extra} for i, (target, extra) in enumerate(TANK_STEPS)]},
     {'id': 'pressure_basics', 'size': 10, 'height': 4,
-     'components': ['reinforced_pipe', 'stainless_steel_pipe', 'pipe_pressure_gauge', 'stainless_steel_tank', 'cryogenic_tank', 'gas_receiver'],
+     'components': ['stainless_steel_pipe', 'pipe_pressure_gauge', 'stainless_steel_tank', 'cryogenic_tank', 'gas_receiver'],
      'steps': [{'target': target, 'key': f'step_{i + 1}', **extra} for i, (target, extra) in enumerate(BASICS_STEPS)]},
 ]
 for entry in entries:

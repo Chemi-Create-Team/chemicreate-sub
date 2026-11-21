@@ -144,7 +144,7 @@ final class SurvivalWaterElectrolysis {
             place(level, at, Blocks.WATER.defaultBlockState());
         }
         var discharge = cell.east(3);
-        wet.pipeLine(CETransport.REINFORCED_PIPE.get(), null, SurvivalWetWorkshop.pump("gas_pump"), oxygenPump, Direction.WEST,
+        wet.pipeLine(CETransport.STAINLESS_PIPE.get(), null, SurvivalWetWorkshop.pump("stainless_steel_pump"), oxygenPump, Direction.WEST,
             cell, discharge, discharge.south(2), leach.east().south(7), leach.east().south(2));
         wet.drive(oxygenPump, Direction.WEST, Direction.SOUTH);
         built = level.getGameTime();

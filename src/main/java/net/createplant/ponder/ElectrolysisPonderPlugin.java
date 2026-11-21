@@ -224,14 +224,14 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("nuclear/fuel_pool", FuelPoolPonderScenes::pool);
         helper.forComponents(CreatePlant.location("pipe_thermometer"), CreatePlant.location("pipe_pressure_gauge"), CreatePlant.location("pipe_flow_meter"))
             .addStoryBoard("plant/pipe_gauges", PipeGaugePonderScenes::gauges);
-        helper.forComponents(CreatePlant.location("flare_tip"),CreatePlant.location("pipe_pressure_gauge"),CreatePlant.location("reinforced_pipe"))
+        helper.forComponents(CreatePlant.location("flare_tip"),CreatePlant.location("pipe_pressure_gauge"),CreatePlant.location("stainless_steel_pipe"))
             .addStoryBoard("plant/flare_stack",FlarePonderScenes::flare);
         helper.forComponents(CreatePlant.location("horizontal_fluid_tank"))
             .addStoryBoard("plant/horizontal_tank", HorizontalTankPonderScenes::tank);
         helper.forComponents(CreatePlant.location("stainless_boiler"))
             .addStoryBoard("plant/horizontal_tank", HorizontalTankPonderScenes::stainless);
         helper.forComponents(ResourceLocation.fromNamespaceAndPath("create", "nozzle"))
-            .addStoryBoard("plant/material_pump", (scene,util)->MaterialPumpPonderScenes.pump(scene,util,"gas"));
+            .addStoryBoard("plant/material_pump", (scene,util)->MaterialPumpPonderScenes.pump(scene,util,"stainless_steel",true));
         helper.forComponents(CreatePlant.location("lidded_vessel"))
             .addStoryBoard("plant/lidded_vessel", LiddedVesselPonderScenes::vessel);
         helper.forComponents(CreatePlant.location("lidded_vessel"), CreatePlant.location("sulfur_dioxide_bucket"))

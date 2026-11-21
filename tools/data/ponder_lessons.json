@@ -1550,9 +1550,9 @@
     "zh_cn": "用工程师护目镜或管线仪表查看流体等级。"
   },
   "guide.pipe_pressure.step_2": {
-    "en_us": "Match the pipe material to the liquid. Gases can pass through any pipe regardless of grade.",
-    "ja_jp": "液体は等級と耐食性に合う配管で運びます。気体は等級を問わず、どの配管でも送れます。",
-    "zh_cn": "液体需要匹配管道的等级与耐腐蚀性。气体可通过任意管道，不受等级限制。"
+    "en_us": "Carry liquids and gases alike in pipes whose grades and corrosion resistance suit them.",
+    "ja_jp": "液体も気体も、等級と耐食性に合う配管で運びます。",
+    "zh_cn": "液体和气体都要用等级与耐腐蚀性相符的管道输送。"
   },
   "guide.pipe_pressure.step_3": {
     "en_us": "Use a Create pump for gas as well as liquid. Storage amount does not change the pressure grade.",
@@ -1565,9 +1565,9 @@
     "zh_cn": "管内流体不会因天气冻结。需要另一种状态时使用转换配方。"
   },
   "guide.pipe_pressure.step_5": {
-    "en_us": "Carry liquid helium or nitrogen in insulated pipes. Incompatible pipes reject the flow.",
-    "ja_jp": "液体ヘリウムや液体窒素には保冷管を使います。適合しない配管には流れません。",
-    "zh_cn": "液氦和液氮使用保冷管。不匹配的管道拒绝流入。"
+    "en_us": "Stainless steel pipe carries liquid helium and liquid nitrogen. A pipe that is not rated for a fluid wears out.",
+    "ja_jp": "液体ヘリウムや液体窒素はステンレス管で運べます。合わない配管に流すと傷みます。",
+    "zh_cn": "液氦和液氮可用不锈钢管输送。不符合额定的管道会磨损。"
   },
   "fusion_motor_generator.title": {
     "en_us": "Powering a tokamak from its turbine shaft",
@@ -1598,46 +1598,6 @@
     "en_us": "Choosing a pipe for the fluid",
     "ja_jp": "流体に合う配管を選ぶ",
     "zh_cn": "根据流体选择管道"
-  },
-  "guide.pipe_materials.step_1": {
-    "en_us": "Standard copper pipes carry liquids at atmospheric pressure, from ambient to hot. Gases can use any pipe material.",
-    "ja_jp": "Create標準の銅管は常温〜高温・常圧の液体に対応します。気体はどの材質の配管でも送れます。",
-    "zh_cn": "Create普通铜管可输送常温至高温的常压液体。任何材质的管道都能输送气体。"
-  },
-  "guide.pipe_materials.step_2": {
-    "en_us": "Start with fired ceramic pipe for acidic liquids. It handles hot acid at atmospheric pressure.",
-    "ja_jp": "序盤の酸性液体には、粘土を焼いたセラミック管を使います。常圧なら熱い酸にも対応します。",
-    "zh_cn": "前期输送酸液可以使用烧制陶瓷管。它能输送常压的高温酸液。"
-  },
-  "guide.pipe_materials.step_3": {
-    "en_us": "Reinforced pipe carries very-hot pressurised liquids. It is not acid resistant.",
-    "ja_jp": "強化管は超高温・加圧の液体まで運べます。酸には対応しません。",
-    "zh_cn": "强化管可输送超高温加压液体，但不耐酸。"
-  },
-  "guide.pipe_materials.step_4": {
-    "en_us": "Stainless pipe carries hot, high-pressure and acidic liquids. Wrench it for a window or add casing.",
-    "ja_jp": "ステンレス管は高温・高圧の液体や酸に対応します。レンチで窓にし、ケーシングも付けられます。",
-    "zh_cn": "不锈钢管支持高温、高压液体及酸液。可用扳手加观察窗或安装机壳。"
-  },
-  "guide.pipe_materials.step_5": {
-    "en_us": "Nickel-alloy pipe resists fluorides. Look at a pipe with goggles to see its liquid ratings.",
-    "ja_jp": "ニッケル合金管はフッ化物に耐えます。液体の対応等級はゴーグルで確認できます。",
-    "zh_cn": "镍合金管耐氟化物腐蚀。用护目镜查看管道支持的液体等级。"
-  },
-  "guide.pipe_materials.step_6": {
-    "en_us": "Zirconium pipe carries hot acids as well as high-grade heat and pressure.",
-    "ja_jp": "ジルコニウム管は熱い酸にも、高い温度・圧力等級にも対応します。",
-    "zh_cn": "锆管支持热酸及较高温度、压力等级。"
-  },
-  "guide.pipe_materials.step_7": {
-    "en_us": "Use insulated pipe for cryogenic liquids, such as liquid helium.",
-    "ja_jp": "液体ヘリウムなどの極低温液体は、保冷管で運びます。",
-    "zh_cn": "用保温管输送液氦等低温液体。"
-  },
-  "guide.pipe_materials.step_8": {
-    "en_us": "Liquids outside the pipe ratings stay at the source. Gas retains its grade in transit.",
-    "ja_jp": "配管の等級に合わない液体は供給元に残ります。気体は等級を保ったまま流れます。",
-    "zh_cn": "超出管道等级的液体会留在源头。气体在输送时保持原有等级。"
   },
   "guide.tank_materials.title": {
     "en_us": "Choosing a tank for the fluid",
@@ -2320,9 +2280,9 @@
     "zh_cn": "气体输送"
   },
   "guide.gas_pipes.step_1": {
-    "en_us": "Use a filled gas bucket on the Creative Fluid Tank to set its supply. Any fluid pipe can carry gas.",
-    "ja_jp": "ガス入りバケツでクリエイティブタンクが供給する気体を設定します。気体はどの流体パイプでも送れます。",
-    "zh_cn": "用装有气体的桶设定创造模式流体储罐的气源。所有流体管道都能输送气体。"
+    "en_us": "Use a filled gas bucket on the Creative Fluid Tank to set its supply. Gases need pipes rated for their grade and corrosion, like liquids.",
+    "ja_jp": "ガス入りバケツでクリエイティブタンクが供給する気体を設定します。気体も液体と同じく、等級と耐食性に合う配管で送ります。",
+    "zh_cn": "用装有气体的桶设定创造模式流体储罐的气源。气体和液体一样，需要等级与耐腐蚀性相符的管道。"
   },
   "guide.gas_pipes.step_2": {
     "en_us": "Gas needs a pump, just like liquid. Connect rotational power to the pump.",
@@ -2740,9 +2700,9 @@
     "zh_cn": "将两种固体树脂与润滑油混合制成工业树脂。\n%s → %s"
   },
   "guide.manufacturing_polymers.step_8": {
-    "en_us": "Use industrial resin with glass to make industrial glass. Plastic sheets from this family also supply resin pipes and coated floors.\n%s → %s",
-    "ja_jp": "工業用樹脂とガラスから工業用ガラスを作ります。この系列のプラスチック板は樹脂パイプや防食床にも使います。\n%s → %s",
-    "zh_cn": "用工业树脂和玻璃制造工业玻璃，本系列的塑料板也用于树脂管与防腐地板。\n%s → %s"
+    "en_us": "Use industrial resin with glass to make industrial glass. Plastic sheets from this family also supply coated floors.\n%s → %s",
+    "ja_jp": "工業用樹脂とガラスから工業用ガラスを作ります。この系列のプラスチック板は防食床にも使います。\n%s → %s",
+    "zh_cn": "用工业树脂和玻璃制造工业玻璃，本系列的塑料板也用于防腐地板。\n%s → %s"
   },
   "guide.manufacturing_polymers.title": {
     "en_us": "Polymers 2 — pellets, resin and finished products",
@@ -2790,14 +2750,14 @@
     "zh_cn": "在搅拌槽中执行加热聚合配方，取出固体PVC树脂。\n%s → %s"
   },
   "guide.manufacturing_pvc.step_4": {
-    "en_us": "Craft the recovered resin into PVC pipe. Choose the pipe material for the fluid temperature and corrosion shown by the equipment.\n%s → %s",
-    "ja_jp": "回収した樹脂からPVCパイプを製作します。設備に表示される流体温度と腐食性に合う材質を選びます。\n%s → %s",
-    "zh_cn": "将回收树脂制作成PVC管，按设备显示的温度和腐蚀性选择管材。\n%s → %s"
+    "en_us": "Craft the recovered resin into hazard suit parts that keep corrosive splashes off.",
+    "ja_jp": "回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。",
+    "zh_cn": "用回收的树脂制作防腐蚀飞溅的防护服。"
   },
   "guide.manufacturing_pvc.title": {
-    "en_us": "From chlorine and ethylene to PVC pipe",
-    "ja_jp": "塩素とエチレンからPVCパイプを作る",
-    "zh_cn": "从氯和乙烯制成PVC管"
+    "en_us": "From chlorine and ethylene to PVC",
+    "ja_jp": "塩素とエチレンからPVCを作る",
+    "zh_cn": "从氯和乙烯制成PVC"
   },
   "guide.manufacturing_fuel_refining.step_1": {
     "en_us": "Hydrotreat diesel with heating, or hydrocrack heavy oil with superheating.",
@@ -5228,5 +5188,35 @@
     "en_us": "Stainless boilers make hot high-pressure steam. Superheating doubles the flow.",
     "ja_jp": "ステンレスボイラーは高温・高圧の蒸気を作ります。超加熱すると流量が2倍になります。",
     "zh_cn": "不锈钢锅炉产生高温高压蒸汽。超热时产量翻倍。"
+  },
+  "guide.pipe_materials.step_1": {
+    "en_us": "Create's copper pipe carries ambient to hot liquids and gases at atmospheric pressure. It takes no corrosive fluid.",
+    "ja_jp": "Create標準の銅管は、常温〜高温・常圧の液体と気体に対応します。腐食性の流体には使えません。",
+    "zh_cn": "Create铜管可输送常温至高温、常压的液体和气体，不能用于腐蚀性流体。"
+  },
+  "guide.pipe_materials.step_2": {
+    "en_us": "Fired-clay ceramic pipe takes acids, hot acids and halogens such as chlorine, but only at atmospheric pressure, and not alkalis or fluorides.",
+    "ja_jp": "粘土を焼いたセラミック管は、酸・熱い酸と、塩素などのハロゲンに耐えます。常圧だけで、塩基とフッ化物には使えません。",
+    "zh_cn": "黏土烧制的陶瓷管耐酸、热酸以及氯等卤素，但仅限常压，不能用于碱和氟化物。"
+  },
+  "guide.pipe_materials.step_3": {
+    "en_us": "Stainless steel pipe carries cryogenic to very hot fluids at high pressure and resists acids and alkalis, but chlorine pits it. A wrench adds a window; casing encases it.",
+    "ja_jp": "ステンレス管は極低温から超高温・高圧まで対応し、酸と塩基に耐えますが、塩素などのハロゲンで傷みます。レンチで窓、ケーシングも付けられます。",
+    "zh_cn": "不锈钢管适用于极低温至超高温、高压，耐酸和碱，但会被氯等卤素腐蚀。可用扳手加窗，也可加外壳。"
+  },
+  "guide.pipe_materials.step_4": {
+    "en_us": "Nickel alloy pipe holds acids, fluorides, halogens and alkalis. It does not take hot acids.",
+    "ja_jp": "ニッケル合金管は酸・フッ化物・ハロゲン・塩基に耐えます。熱い酸には使えません。",
+    "zh_cn": "镍合金管耐酸、氟化物、卤素和碱，不能用于热酸。"
+  },
+  "guide.pipe_materials.step_5": {
+    "en_us": "Zirconium pipe holds hot acids and alkalis at high temperature and pressure.",
+    "ja_jp": "ジルコニウム管は熱い酸と塩基に耐え、高温・高圧にも対応します。",
+    "zh_cn": "锆管耐热酸和碱，并适用于高温高压。"
+  },
+  "guide.pipe_materials.step_6": {
+    "en_us": "The ratings apply to gases as well as liquids. A pipe carrying a fluid it is not rated for cracks and then bursts; check its range with goggles.",
+    "ja_jp": "対応範囲は液体にも気体にも適用されます。合わない流体を流すと配管にひびが入り、やがて壊れます。ゴーグルで範囲を確認します。",
+    "zh_cn": "额定范围同样适用于气体。输送不符合额定的流体时管道会开裂并最终破裂，可用护目镜查看范围。"
   }
 }

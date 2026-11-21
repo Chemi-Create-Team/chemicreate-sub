@@ -12,17 +12,22 @@ import net.neoforged.neoforge.fluids.FluidStack;
  */
 public final class FluidHazards {
     /** How a fluid attacks walls: ordinary acids, hot acid leach liquors (stainless steel gives way; zirconium and resin hold), or fluorides (only nickel alloys hold). */
-    public enum Corrosion { NONE, ACID, HOT_ACID, FLUORIDE }
+    public enum Corrosion { NONE, ACID, HOT_ACID, FLUORIDE, HALOGEN, BASE }
     public record Properties(double kelvin, double bar, Corrosion corrosion, boolean gas) {
         public boolean corrosive() { return corrosion != Corrosion.NONE; }
         public net.createplant.thermal.Grade.Heat heat() { return net.createplant.thermal.Grade.Heat.of(kelvin); }
         public net.createplant.thermal.Grade.Pressure pressure() { return net.createplant.thermal.Grade.Pressure.of(bar); }
     }
     public static final Properties ORDINARY = new Properties(293, 1, Corrosion.NONE, false);
-    private static final Map<String, Corrosion> STRONG = Map.of("aluminium_sulfate_solution", Corrosion.HOT_ACID, "titanyl_sulfate_solution", Corrosion.HOT_ACID,
-        "zirconium_sulfate_solution", Corrosion.HOT_ACID, "hydrogen_fluoride", Corrosion.FLUORIDE, "fluorine", Corrosion.FLUORIDE,
-        "uranium_hexafluoride", Corrosion.FLUORIDE, "enriched_uranium_hexafluoride", Corrosion.FLUORIDE,
-        "compact_enriched_uranium_hexafluoride", Corrosion.FLUORIDE, "depleted_uranium_hexafluoride", Corrosion.FLUORIDE);
+    private static final Map<String, Corrosion> STRONG = Map.ofEntries(Map.entry("aluminium_sulfate_solution", Corrosion.HOT_ACID),
+        Map.entry("titanyl_sulfate_solution", Corrosion.HOT_ACID), Map.entry("zirconium_sulfate_solution", Corrosion.HOT_ACID),
+        Map.entry("hydrogen_fluoride", Corrosion.FLUORIDE), Map.entry("fluorine", Corrosion.FLUORIDE), Map.entry("uranium_hexafluoride", Corrosion.FLUORIDE),
+        Map.entry("enriched_uranium_hexafluoride", Corrosion.FLUORIDE), Map.entry("compact_enriched_uranium_hexafluoride", Corrosion.FLUORIDE),
+        Map.entry("depleted_uranium_hexafluoride", Corrosion.FLUORIDE),
+        // Chlorine and the chlorides that carry it pit stainless steel; caustic solutions etch stoneware.
+        Map.entry("chlorine", Corrosion.HALOGEN), Map.entry("hydrogen_chloride", Corrosion.HALOGEN), Map.entry("hydrochloric_acid", Corrosion.HALOGEN),
+        Map.entry("sodium_hypochlorite_solution", Corrosion.HALOGEN),
+        Map.entry("caustic_soda_solution", Corrosion.BASE), Map.entry("sodium_aluminate_solution", Corrosion.BASE));
     private static final Map<String, Properties> SPECIAL = Map.ofEntries(
         entry("nitric_acid",293,1,true,false), entry("nitrogen_dioxide",293,1,true,true),
         entry("dissolved_spent_fuel",293,1,true,false), entry("plutonium_nitrate_solution",293,1,true,false), entry("high_level_raffinate",293,1,true,false),

@@ -12,9 +12,8 @@ A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
 TEXTURES = A / 'textures/block'
 # The pipe texture each pump takes its colours from.
 SOURCES = {
-    'reinforced': 'transport/reinforced_pipe', 'nickel_alloy': 'transport/nickel_alloy_pipe', 'zirconium': 'transport/zirconium_pipe',
-    'stainless_steel': 'transport/stainless_steel_pipes', 'cryogenic': 'transport/cryogenic_pipe', 'pvc': 'transport/pvc_pipe',
-    'resin': 'petrochemical/resin_pipe', 'gas': 'steam/steel', 'large_gas': 'transport/large_gas_pipe_side',
+    'nickel_alloy': 'transport/nickel_alloy_pipe', 'zirconium': 'transport/zirconium_pipe',
+    'stainless_steel': 'transport/stainless_steel_pipes',
 }
 
 

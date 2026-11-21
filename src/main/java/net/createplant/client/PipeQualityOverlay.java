@@ -28,7 +28,7 @@ public final class PipeQualityOverlay {
             if (chemical.gas()) event.getToolTip().add(Component.translatable(PREFIX + "gas"));
         }
         if (item instanceof BlockItem block && PipeMaterial.pipe(block.getBlock().defaultBlockState()) instanceof PipeMaterial material)
-            material.describe(event.getToolTip());
+            material.describe(event.getToolTip(), net.neoforged.neoforge.fluids.FluidStack.EMPTY, net.minecraft.client.gui.screens.Screen.hasShiftDown());
     }
 
     /** Create's own pipes have no goggle readout of their own; this mod's pipes show the same lines through Create's goggle interface. */
@@ -40,7 +40,7 @@ public final class PipeQualityOverlay {
         var material = PipeMaterial.pipe(state);
         if (material == null || !material.createPipe() || mc.level.getBlockEntity(hit.getBlockPos()) instanceof com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation) return;
         List<Component> lines = new ArrayList<>();
-        material.describe(lines);
+        material.describe(lines, PipeMaterial.contents(mc.level.getBlockEntity(hit.getBlockPos())), mc.player.isShiftKeyDown());
         int x = mc.getWindow().getGuiScaledWidth() / 2 + 20, y = mc.getWindow().getGuiScaledHeight() / 2 + 8;
         for (var line : lines) { event.getGuiGraphics().drawString(mc.font, line, x, y, 0xE9E6CF, true); y += 10; }
     }

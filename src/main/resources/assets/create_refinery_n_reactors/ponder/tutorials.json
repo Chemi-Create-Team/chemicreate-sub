@@ -66,7 +66,7 @@
       "cooling_fan",
       "cooling_fan_shroud",
       "create:fluid_tank",
-      "reinforced_pipe"
+      "stainless_steel_pipe"
     ],
     "steps": [
       {
@@ -132,7 +132,7 @@
       "cooling_fan",
       "cooling_fan_shroud",
       "create:fluid_tank",
-      "reinforced_pipe"
+      "stainless_steel_pipe"
     ],
     "steps": [
       {
@@ -197,7 +197,7 @@
       "cooling_fan",
       "cooling_fan_shroud",
       "create:fluid_tank",
-      "reinforced_pipe"
+      "stainless_steel_pipe"
     ],
     "steps": [
       {
@@ -2988,19 +2988,15 @@
     "components": [
       "stainless_steel_pipe",
       "ceramic_pipe",
-      "resin_pipe",
-      "pvc_pipe",
       "nickel_alloy_pipe",
-      "zirconium_pipe",
-      "reinforced_pipe",
-      "cryogenic_pipe"
+      "zirconium_pipe"
     ],
     "steps": [
       {
         "target": [
           5,
           1,
-          2
+          1
         ],
         "key": "step_1"
       },
@@ -3008,7 +3004,7 @@
         "target": [
           5,
           1,
-          8
+          2
         ],
         "key": "step_2"
       },
@@ -3016,7 +3012,7 @@
         "target": [
           5,
           1,
-          4
+          3
         ],
         "key": "step_3"
       },
@@ -3024,7 +3020,7 @@
         "target": [
           5,
           1,
-          5
+          4
         ],
         "key": "step_4"
       },
@@ -3032,7 +3028,7 @@
         "target": [
           5,
           1,
-          6
+          5
         ],
         "key": "step_5"
       },
@@ -3040,25 +3036,9 @@
         "target": [
           5,
           1,
-          7
+          3
         ],
         "key": "step_6"
-      },
-      {
-        "target": [
-          5,
-          1,
-          9
-        ],
-        "key": "step_7"
-      },
-      {
-        "target": [
-          5,
-          1,
-          10
-        ],
-        "key": "step_8"
       }
     ]
   },
@@ -3324,7 +3304,7 @@
     "height": 5,
     "scale": 0.5,
     "components": [
-      "reinforced_pipe",
+      "stainless_steel_pipe",
       "pipe_pressure_gauge"
     ],
     "steps": [
@@ -3376,7 +3356,6 @@
     "size": 10,
     "height": 4,
     "components": [
-      "reinforced_pipe",
       "stainless_steel_pipe",
       "pipe_pressure_gauge",
       "stainless_steel_tank",
@@ -3902,8 +3881,8 @@
     "size": 7,
     "height": 4,
     "components": [
-      "reinforced_pipe",
-      "gas_pump"
+      "stainless_steel_pipe",
+      "stainless_steel_pump"
     ],
     "steps": [
       {
@@ -4128,7 +4107,7 @@
     "components": [
       "air_gas_bucket",
       "argon_gas_bucket",
-      "gas_pump",
+      "stainless_steel_pump",
       "liquid_nitrogen_bucket",
       "liquid_oxygen_bucket",
       "nitrogen_gas_bucket",
@@ -4144,7 +4123,7 @@
         ],
         "process": {
           "kind": "crafting",
-          "recipe": "create_refinery_n_reactors:gas_pump",
+          "recipe": "create_refinery_n_reactors:stainless_steel_pump",
           "offset": 0,
           "width": 11,
           "height": 4,
@@ -5407,8 +5386,7 @@
       "plastic_sheet",
       "polyethylene",
       "polypropylene",
-      "propylene_bucket",
-      "resin_pipe"
+      "propylene_bucket"
     ],
     "steps": [
       {
@@ -5615,8 +5593,7 @@
       "plastic_sheet",
       "polyethylene",
       "polypropylene",
-      "propylene_bucket",
-      "resin_pipe"
+      "propylene_bucket"
     ],
     "steps": [
       {
@@ -6000,8 +5977,8 @@
     "height": 9,
     "components": [
       "ethylene_dichloride_bucket",
-      "pvc_pipe",
-      "pvc_resin"
+      "pvc_resin",
+      "hazard_chestplate"
     ],
     "steps": [
       {
@@ -6103,7 +6080,7 @@
         ],
         "process": {
           "kind": "crafting",
-          "recipe": "create_refinery_n_reactors:pvc_pipe",
+          "recipe": "create_refinery_n_reactors:hazard_chestplate",
           "offset": 32,
           "width": 11,
           "height": 4,

@@ -11,15 +11,9 @@ A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
 D = ROOT / 'src/main/resources/data/create_refinery_n_reactors'
 NS = 'create_refinery_n_reactors:'
 MATERIALS = {
-    'reinforced': ('Reinforced', '耐圧鋼', '增强钢'),
     'nickel_alloy': ('Nickel Alloy', 'ニッケル合金', '镍合金'),
     'zirconium': ('Zirconium', 'ジルコニウム', '锆'),
     'stainless_steel': ('Stainless Steel', 'ステンレス鋼', '不锈钢'),
-    'cryogenic': ('Cryogenic', '保冷', '低温'),
-    'pvc': ('PVC', '塩ビ', 'PVC'),
-    'resin': ('Resin', '樹脂', '树脂'),
-    'gas': ('Gas', '気体', '气体'),
-    'large_gas': ('Large Gas', '大型気体', '大型气体'),
 }
 
 
@@ -47,8 +41,6 @@ def main():
         pipe = material + '_pipe'
         path = pipe
         if material == 'stainless_steel': texture = NS + 'block/transport/stainless_steel_pipes'
-        elif material == 'resin': texture = NS + 'block/petrochemical/resin_pipe'
-        elif material == 'large_gas': texture = NS + 'block/transport/large_gas_pipe_side'
         else:
             textures = json.loads((A / 'models/block' / path / 'inventory.json').read_text())['textures']
             texture = textures.get('pipe', textures.get('body', textures.get('particle')))
@@ -72,8 +64,8 @@ def main():
     write(pickaxe, data)
     scene = Structure(7, 5)
     for x in (1, 5): scene.block(x, 1, 3, NS + 'pressure_tank', bottom='true', top='true', shape='plain')
-    for x in (2, 4): scene.block(x, 1, 3, NS + 'reinforced_pipe', east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
-    scene.block(3, 1, 3, NS + 'reinforced_pump', facing='east', waterlogged='false')
+    for x in (2, 4): scene.block(x, 1, 3, NS + 'stainless_steel_pipe', east='true', west='true', north='false', south='false', up='false', down='false', waterlogged='false')
+    scene.block(3, 1, 3, NS + 'stainless_steel_pump', facing='east', waterlogged='false')
     scene.block(3, 1, 4, 'create:cogwheel', axis='x', waterlogged='false')
     scene.block(2, 1, 4, 'create:creative_motor', facing='east')
     scene.save('material_pump')

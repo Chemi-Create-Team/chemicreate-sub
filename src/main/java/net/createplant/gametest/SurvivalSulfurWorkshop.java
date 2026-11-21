@@ -252,10 +252,10 @@ final class SurvivalSulfurWorkshop {
 
     private void airLine() {
         var target = vessel.east();
-        var pipe = CETransport.REINFORCED_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.NORTH, true).setValue(FluidPipeBlock.SOUTH, true);
+        var pipe = CETransport.STAINLESS_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.NORTH, true).setValue(FluidPipeBlock.SOUTH, true);
         for (var at = target.north(5); !at.equals(target); at = at.south()) {
             if (at.equals(airPump)) {
-                var pump = BuiltInRegistries.BLOCK.get(CreatePlant.location("gas_pump"));
+                var pump = BuiltInRegistries.BLOCK.get(CreatePlant.location("stainless_steel_pump"));
                 place(level, at, pump.defaultBlockState().setValue(BlockStateProperties.FACING, Direction.SOUTH));
             } else level.setBlock(at, pipe, 2);
         }

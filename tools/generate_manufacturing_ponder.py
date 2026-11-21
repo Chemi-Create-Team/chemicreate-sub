@@ -210,7 +210,7 @@ def simple_units():
     # The tube side through the end faces at the bottom, the shell side down into the top of each end.
     pipe(scene, 3, 1, 5, 'east', 'west');pipe(scene, 7, 1, 5, 'east', 'west')
     for x, sides in ((4, ('down', 'west')), (3, ('east', 'west')), (6, ('down', 'east')), (7, ('east', 'west'))):
-        scene.block(x, 3, 5, NS + 'cryogenic_pipe', waterlogged='false', **{side: str(side in sides).lower() for side in ponder.DIRECTIONS})
+        scene.block(x, 3, 5, NS + 'stainless_steel_pipe', waterlogged='false', **{side: str(side in sides).lower() for side in ponder.DIRECTIONS})
     for y in (1, 3):
         for x in (2, 8): motor_pump(scene, x, y, 5, 'east')
         for x in (1, 9): scene.block(x, y, 5, NS + ('cryogenic_tank' if y == 3 else 'stainless_steel_tank'), bottom='true', top='true', shape='window')
@@ -376,8 +376,8 @@ def generate(selected=None):
     print('Generated', len(entries), 'manufacturing storyboards in', len({entry['family'] for entry in entries}), 'families')
 # Shared utilities and bulk chemicals.
 route('air', ('Separating industrial gases from air', '空気から工業用ガスを分離する', '从空气分离工业气体'),
-    ['gas_pump', 'air_gas_bucket', 'nitrogen_gas_bucket', 'oxygen_gas_bucket', 'liquid_oxygen_bucket', 'argon_gas_bucket', 'liquid_nitrogen_bucket'], [
-    step('crafting', 'gas_pump', 'Fit a Create Nozzle facing open air and run a pump into the top of the compressor.', 'Createのノズルを空気に向け、回転するポンプで圧縮機の上面へ空気を送ります。', '让 Create 喷嘴的开口朝向空气，再用泵从压缩机顶部送入空气。'),
+    ['stainless_steel_pump', 'air_gas_bucket', 'nitrogen_gas_bucket', 'oxygen_gas_bucket', 'liquid_oxygen_bucket', 'argon_gas_bucket', 'liquid_nitrogen_bucket'], [
+    step('crafting', 'stainless_steel_pump', 'Fit a Create Nozzle facing open air and run a pump into the top of the compressor.', 'Createのノズルを空気に向け、回転するポンプで圧縮機の上面へ空気を送ります。', '让 Create 喷嘴的开口朝向空气，再用泵从压缩机顶部送入空气。'),
     step('compressor', None, 'Mount the engine on the cylinder and drive its crank shaft two blocks out. Air enters the cylinder top and compressed gas leaves the bottom. Set pressure with a wrench.', 'シリンダーに駆動部を付け、2マス先のクランク軸へ回転を入力します。空気はシリンダー上面から入り、圧縮後は下面へ出ます。レンチで圧力を設定します。', '把驱动部装在气缸上，驱动两格外的曲轴。空气从气缸顶面进入，压缩后从底面排出，用扳手设定压力。', 'air_gas_bucket'),
     step('compressor', None, 'Cool the hot compressor discharge in a driven radiator. The fractionation feed must remain at least 6 bar and no warmer than 40 °C.', '圧縮後の熱い空気を駆動したラジエーターで冷やします。分留塔へ6 bar以上・40℃以下で送ります。', '用有动力的散热器冷却压缩后的空气，以至少6 bar、最高40℃送入分馏塔。', 'air_gas_bucket'),
     step('column', 'operation:air_separation', 'Build 2×2×14 and feed the east side of layer three. North outlets: liquid oxygen at 1, Ar at 10, N2 at 14. Amounts are gas-equivalent.', '2×2・14段に組み、東面3段目から給気します。北面出口は1段目が液体酸素、10段目がAr、14段目がN2です。量は気体換算です。', '搭建2×2×14塔，第三层东面进气，北面第一层出液氧、第十层Ar、第十四层N2，数量为气体当量。'),
@@ -448,7 +448,7 @@ route('petrochemical_feedstocks', ('Polymers 1 — oil to separated feedstocks',
 ], family='polymers')
 
 route('polymers', ('Polymers 2 — pellets, resin and finished products', '樹脂の製造2　樹脂粒から成形品まで', '树脂制造2　树脂粒到成品'),
-    ['molten_polyethylene_bucket', 'molten_polypropylene_bucket', 'polyethylene', 'polypropylene', 'plastic_sheet', 'industrial_resin', 'industrial_glass', 'resin_pipe'], [
+    ['molten_polyethylene_bucket', 'molten_polypropylene_bucket', 'polyethylene', 'polypropylene', 'plastic_sheet', 'industrial_resin', 'industrial_glass'], [
     step('heating', None, 'Heat ordinary ethylene or propylene in a lidded vessel to 480 K before polymerization.', '通常のエチレンかプロピレンをふた付き槽で480 Kまで加熱して重合します。', '在带盖槽内将普通乙烯或丙烯加热至480 K后聚合。', None),
     step('catalytic', 'process:polymerize_ethylene', "Load a polymerization catalyst into a reaction tower's baskets and collect molten polyethylene from the bottom layer.", '反応塔のバスケットに重合触媒を入れ、溶融ポリエチレンを最下段から回収します。', '向反应塔的篮中装入聚合催化剂，从底层回收熔融聚乙烯。'),
     step('catalytic', 'process:polymerize_propylene', 'The matching propylene feed gives molten polypropylene in the same type of equipment. Keep the two production batches separate.', '対応するプロピレン原料では、同じ形式の設備で溶融ポリプロピレンを作れます。2種類の製造バッチを分けて扱います。', '丙烯原料可在同类设备中制得熔融聚丙烯，两种批次分别处理。'),
@@ -456,7 +456,7 @@ route('polymers', ('Polymers 2 — pellets, resin and finished products', '樹�
     step('mixing', 'mixing/polypropylene_from_melt', 'Process polypropylene melt through its matching quench recipe.', 'ポリプロピレンの溶融物も、対応する冷却レシピで樹脂粒にします。', '聚丙烯熔体也用相应冷却配方制成树脂粒。'),
     step('pressing', 'pressing/plastic_sheet_from_polyethylene', 'Place the solid polymer on a depot under a powered Mechanical Press. Either polymer has its own plastic-sheet recipe.', '樹脂粒を駆動したメカニカルプレスの下のデポへ載せます。どちらの樹脂からも、対応レシピでプラスチック板を作れます。', '把树脂粒放在有动力的机械压力机下方置物台，两种树脂各有塑料板配方。'),
     step('mixing', 'mixing/industrial_resin', 'Combine both solid polymers with lubricating oil to make industrial resin.', '2種類の固形樹脂と潤滑油を混ぜ、工業用樹脂にします。', '将两种固体树脂与润滑油混合制成工业树脂。'),
-    step('crafting', 'industrial_glass', 'Use industrial resin with glass to make industrial glass. Plastic sheets from this family also supply resin pipes and coated floors.', '工業用樹脂とガラスから工業用ガラスを作ります。この系列のプラスチック板は樹脂パイプや防食床にも使います。', '用工业树脂和玻璃制造工业玻璃，本系列的塑料板也用于树脂管与防腐地板。'),
+    step('crafting', 'industrial_glass', 'Use industrial resin with glass to make industrial glass. Plastic sheets from this family also supply coated floors.', '工業用樹脂とガラスから工業用ガラスを作ります。この系列のプラスチック板は防食床にも使います。', '用工业树脂和玻璃制造工业玻璃，本系列的塑料板也用于防腐地板。'),
 ], family='polymers')
 
 route('rubber', ('Making rubber and flexible products', '合成ゴムから柔らかい製品を作る', '合成橡胶与柔性制品'),
@@ -467,12 +467,12 @@ route('rubber', ('Making rubber and flexible products', '合成ゴムから柔�
     step('crafting', 'leather_from_polymers', 'Combine the plastic sheet, rubber and string through the existing leather recipe. This finishes the shared plastic/rubber material chain.', '既存の革レシピで、プラスチック板・ゴム・糸を組み合わせます。樹脂とゴムの製造ラインが革につながります。', '按已有皮革配方组合塑料板、橡胶与线，完成塑料和橡胶到皮革的制造链。'),
 ])
 
-route('pvc', ('From chlorine and ethylene to PVC pipe', '塩素とエチレンからPVCパイプを作る', '从氯和乙烯制成PVC管'),
-    ['ethylene_dichloride_bucket', 'pvc_resin', 'pvc_pipe'], [
+route('pvc', ('From chlorine and ethylene to PVC', '塩素とエチレンからPVCを作る', '从氯和乙烯制成PVC'),
+    ['ethylene_dichloride_bucket', 'pvc_resin', 'hazard_chestplate'], [
     step('vessel', 'pressure_reaction/ethylene_dichloride', 'Bring ethylene from the oil line and chlorine from brine electrolysis to an impeller vessel.', '石油ラインのエチレンと、塩水電解の塩素を撹拌槽へ送ります。', '把石油线的乙烯与盐水电解的氯送入搅拌槽。'),
     step('vessel', 'pressure_reaction/vinyl_chloride', 'Superheat the next batch to produce vinyl chloride. Recover hydrogen chloride through the second product path and send it to acid production.', '次のバッチを超加熱して塩化ビニルを作ります。副生する塩化水素も別の生成物経路で回収し、塩酸製造へ送ります。', '超加热下一批以制氯乙烯，另一产物流回收氯化氢并送往盐酸生产。'),
     step('vessel', 'pressure_reaction/pvc_resin', 'Use the heated polymerization recipe in an impeller vessel and extract the solid PVC resin.', '撹拌槽で加熱重合のレシピを進め、固形のPVC樹脂を取り出します。', '在搅拌槽中执行加热聚合配方，取出固体PVC树脂。'),
-    step('crafting', 'pvc_pipe', 'Craft the recovered resin into PVC pipe. Choose the pipe material for the fluid temperature and corrosion shown by the equipment.', '回収した樹脂からPVCパイプを製作します。設備に表示される流体温度と腐食性に合う材質を選びます。', '将回收树脂制作成PVC管，按设备显示的温度和腐蚀性选择管材。'),
+    step('crafting', 'hazard_chestplate', 'Craft the recovered resin into hazard suit parts that keep corrosive splashes off.', '回収した樹脂から、腐食性の飛沫を防ぐ防護服を作ります。', '用回收的树脂制作防腐蚀飞溅的防护服。'),
 ])
 
 route('fuel_refining', ('Refining diesel and cracking heavy oil', '軽油を脱硫し重油から燃料を回収する', '柴油脱硫与重油加氢裂化'),

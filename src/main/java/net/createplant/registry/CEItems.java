@@ -23,7 +23,6 @@ public class CEItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePlant.MOD_ID);
 
     public static final DeferredItem<BlockItem> DIORITE_CASING = ITEMS.registerSimpleBlockItem(CEBlocks.DIORITE_CASING);
-    public static final DeferredItem<BlockItem> RESIN_PIPE = ITEMS.registerSimpleBlockItem(CEBlocks.RESIN_PIPE);
     public static final DeferredItem<BlockItem> TRIIRON_TETROXIDE_PILE = ITEMS.registerSimpleBlockItem(CEBlocks.TRIIRON_TETROXIDE_PILE);
     public static final DeferredItem<BlockItem> INDUSTRIAL_GLASS = ITEMS.registerSimpleBlockItem(CEBlocks.INDUSTRIAL_GLASS);
     public static final DeferredItem<Item> ASBESTOS = ITEMS.registerSimpleItem("asbestos");

@@ -57,9 +57,9 @@ public class FlowControlGameTests {
     @GameTest(template="test_petrochemical",timeoutTicks=300)
     public static void regulatorWithCopperAndPartialAcceptance(GameTestHelper h) { regulatedLine(h,AllBlocks.FLUID_PIPE.get()); }
     @GameTest(template="test_petrochemical",timeoutTicks=300)
-    public static void regulatorWithResinAndPartialAcceptance(GameTestHelper h) { regulatedLine(h,CEBlocks.RESIN_PIPE.get()); }
+    public static void regulatorWithResinAndPartialAcceptance(GameTestHelper h) { regulatedLine(h,CETransport.CERAMIC_PIPE.get()); }
     @GameTest(template="test_petrochemical",timeoutTicks=300)
-    public static void regulatorWithReinforcedAndPartialAcceptance(GameTestHelper h) { regulatedLine(h,CETransport.REINFORCED_PIPE.get()); }
+    public static void regulatorWithReinforcedAndPartialAcceptance(GameTestHelper h) { regulatedLine(h,CETransport.STAINLESS_PIPE.get()); }
     @GameTest(template="test_petrochemical",timeoutTicks=300)
     public static void regulatorWithNickelAlloyAndPartialAcceptance(GameTestHelper h) { regulatedLine(h,CETransport.NICKEL_ALLOY_PIPE.get()); }
     private static void regulatedLine(GameTestHelper h,Block pipe) {

@@ -45,7 +45,7 @@ public final class NitricPlantIntegrationGameTests {
         h.assertTrue(hydrogen.getFluidAmount()==HYDROGEN && oxygen.getFluidAmount()==HYDROGEN/2,"Paid water electrolysis gives the finite 2:1 gas feed");
         var airCompressor=compressor(level,h.absolutePos(new BlockPos(9,3,3)));
         BlockPos intake=h.absolutePos(new BlockPos(13,2,2));
-        level.setBlock(intake.below(),CETransport.REINFORCED_PIPE.get().defaultBlockState(),3);
+        level.setBlock(intake.below(),CETransport.STAINLESS_PIPE.get().defaultBlockState(),3);
         level.setBlock(intake,AllBlocks.NOZZLE.getDefaultState().setValue(NozzleBlock.FACING,Direction.UP),3);
         level.setBlock(intake.above(),Blocks.AIR.defaultBlockState(),3);
         var atmosphere=capability(level,intake,Direction.DOWN,"atmospheric nozzle");

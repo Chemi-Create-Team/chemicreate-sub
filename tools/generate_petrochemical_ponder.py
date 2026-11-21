@@ -56,7 +56,7 @@ class Structure:
         self.block(x, y, z, 'create:mechanical_pump', facing=facing, waterlogged='false')
 
     def pipe(self, x, y, z, *sides):
-        self.block(x, y, z, NS + 'resin_pipe', **{side: str(side in sides).lower() for side in DIRECTIONS}, waterlogged='false')
+        self.block(x, y, z, NS + 'ceramic_pipe', **{side: str(side in sides).lower() for side in DIRECTIONS}, waterlogged='false')
 
     def filter(self, x, y, z, facing):
         self.block(x, y, z, 'create:smart_fluid_pipe', face='floor', facing=facing, waterlogged='false')

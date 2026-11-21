@@ -208,7 +208,7 @@ public final class SteamAcidPlaytestWorld {
         motor(level, CHLORINE_VESSEL.offset(1,-1,1), Direction.UP, 64);
         burner(level, BURNER_VESSEL.below());
         var air = BURNER_VESSEL.offset(1, 0, 0);
-        line(level, CETransport.REINFORCED_PIPE.get().defaultBlockState(), pump("gas_pump"),
+        line(level, CETransport.STAINLESS_PIPE.get().defaultBlockState(), pump("stainless_steel_pump"),
             air.north(5), air, air.north(2), Direction.SOUTH, 64);
 
         for (var at : List.of(SULFUR_ABSORBER, CHLORINE_ABSORBER, NITRIC_ABSORBER)) AbsorptionTowerGameTests.tower(level, at, 4, true);

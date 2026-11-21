@@ -21,7 +21,7 @@ public final class ClientQualityCheck {
     // cached bitmap glyphs; that is unrelated to the asset/translation check.
     private static final String[] LANGUAGES={System.getProperty("createplant.clientQualityLanguage","ja_jp")};
     private static int language,target;
-    private static String[] TARGETS=System.getProperty("createplant.clientQualityTargets","reciprocating_compressor,fractionating_column,high_pressure_turbine_blade,reactor_catalyst_basket,reinforced_pipe,resin_pipe,cooling_fan").split(",");
+    private static String[] TARGETS=System.getProperty("createplant.clientQualityTargets","reciprocating_compressor,fractionating_column,high_pressure_turbine_blade,reactor_catalyst_basket,cooling_fan").split(",");
     private static final Set<String> scenes=new TreeSet<>();
     private ClientQualityCheck() { }
     public static void tick(ClientTickEvent.Post event) {

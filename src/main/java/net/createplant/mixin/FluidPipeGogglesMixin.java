@@ -12,7 +12,7 @@ abstract class FluidPipeGogglesMixin implements IHaveGoggleInformation {
     @Override public boolean addToGoggleTooltip(List<Component> lines, boolean sneaking) {
         var material = PipeMaterial.pipe(((FluidPipeBlockEntity) (Object) this).getBlockState());
         if (material == null) return false;
-        material.describe(lines);
+        material.describe(lines, PipeMaterial.contents((FluidPipeBlockEntity) (Object) this), sneaking);
         net.createplant.transport.ContainmentWear.addWarning((FluidPipeBlockEntity) (Object) this, lines);
         return true;
     }

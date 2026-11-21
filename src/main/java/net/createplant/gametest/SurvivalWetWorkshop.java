@@ -209,7 +209,7 @@ final class SurvivalWetWorkshop {
     void openAir(BlockPos target, Direction flow, Direction waterSide) {
         var open = target.relative(flow.getOpposite(), 6);
         var middle = target.relative(flow.getOpposite(), 3);
-        pipeLine(CETransport.REINFORCED_PIPE.get(), null, pump("gas_pump"), middle, flow, open, target);
+        pipeLine(CETransport.STAINLESS_PIPE.get(), null, pump("stainless_steel_pump"), middle, flow, open, target);
         drive(middle, flow.getOpposite(), waterSide);
     }
 

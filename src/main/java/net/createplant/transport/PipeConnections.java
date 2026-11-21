@@ -12,7 +12,6 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
-import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CETransport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -152,7 +151,7 @@ public final class PipeConnections extends SavedData {
         for (var type : List.of(AllBlockEntityTypes.FLUID_PIPE.get(), AllBlockEntityTypes.ENCASED_FLUID_PIPE.get(),
                 AllBlockEntityTypes.GLASS_FLUID_PIPE.get(), CETransport.STAINLESS_PIPE_ENTITY.get(),
                 CETransport.STAINLESS_ENCASED_PIPE_ENTITY.get(), CETransport.STAINLESS_GLASS_PIPE_ENTITY.get(),
-                CETransport.PIPE.get(), CEBlockEntityTypes.RESIN_PIPE.get()))
+                CETransport.PIPE.get()))
             event.forType(type, pipe -> event.attach(new Sync(pipe)));
     }
 

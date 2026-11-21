@@ -33,12 +33,15 @@ public final class TransportQualityGameTests {
         for (var m:PipeMaterial.values()) for (var f:new Fluid[]{Fluids.WATER,Fluids.LAVA,CEPetroFluids.CRUDE_OIL.get(),CEPetroFluids.GASOLINE.get()})
             h.assertTrue(m.carries(new FluidStack(f,1000)),"Unclassified liquids have no invented hazard: "+m+" / "+f);
         var acid=FluidHazards.of(new FluidStack(CEFluids.NITRIC_ACID.get(),1000));
-        h.assertTrue(PipeMaterial.COPPER.incompatibility(acid).equals("corrosion") && PipeMaterial.RESIN.incompatibility(acid).equals("safe"),"Cool nitric acid requires a corrosion-resistant material");
+        h.assertTrue(PipeMaterial.COPPER.incompatibility(acid).equals("corrosion") && PipeMaterial.CERAMIC.incompatibility(acid).equals("safe"),"Cool nitric acid requires a corrosion-resistant material");
         h.assertTrue(PipeMaterial.COPPER.incompatibility(FluidHazards.named("pressurised_water")).equals("pressure"),"Liquid pressure still matters for copper");
-        h.assertTrue(PipeMaterial.RESIN.incompatibility(FluidHazards.named("preheated_crude_oil")).equals("softening"),"Hot liquid still exceeds resin's thermal rating");
-        for (var m:PipeMaterial.values()) if (m!=PipeMaterial.VALVE)
-            for (var f:new Fluid[]{CEFluids.STEAM.get(),CEProcessFluids.SUPERHEATED_STEAM.get(),CEProcessFluids.COMPRESSED_HYDROGEN.get(),CEUranium.HYDROGEN_FLUORIDE.get()})
-                h.assertTrue(m.carries(new FluidStack(f,1000)),"All pipe materials carry gases independently of temperature, pressure and corrosion: "+m+" / "+f);
+        // Gases obey the same temperature, pressure and corrosion ratings as liquids.
+        h.assertTrue(PipeMaterial.COPPER.carries(new FluidStack(CEFluids.STEAM.get(),1000)),"Ordinary steam fits copper's hot, atmospheric rating");
+        h.assertTrue(PipeMaterial.COPPER.problem(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000)).equals("overheat")
+            && PipeMaterial.STAINLESS.carries(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000)),"Superheated steam needs stainless steel");
+        h.assertTrue(PipeMaterial.COPPER.problem(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),1000)).equals("pressure"),"High-pressure hydrogen exceeds copper");
+        h.assertTrue(PipeMaterial.STAINLESS.problem(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),1000)).equals("corrosion")
+            && PipeMaterial.NICKEL_ALLOY.carries(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),1000)),"Hydrogen fluoride gas needs nickel alloy");
         h.succeed();
     }
     @GameTest(template="test_petrochemical")
@@ -133,7 +136,7 @@ public final class TransportQualityGameTests {
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void reinforcedPipeCarriesCompressedGasIntoCreateStorage(GameTestHelper h) {
-        transfer(h,straight(CETransport.REINFORCED_PIPE.get().defaultBlockState()),CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),false,false);
+        transfer(h,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()),CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),false,false);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void stainlessMainCarriesHighPressureGasWithoutWear(GameTestHelper h) {
@@ -141,7 +144,7 @@ public final class TransportQualityGameTests {
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void resinPipeCarriesNitricAcidWithNoUnnecessaryDamage(GameTestHelper h) {
-        transfer(h,straight(CEBlocks.RESIN_PIPE.get().defaultBlockState()),CEFluids.NITRIC_ACID.get(),false,false);
+        transfer(h,straight(CETransport.CERAMIC_PIPE.get().defaultBlockState()),CEFluids.NITRIC_ACID.get(),false,false);
     }
     private static BlockState straight(BlockState state) {
         for(var p:PipeBlock.PROPERTY_BY_DIRECTION.values())state=state.setValue(p,false);

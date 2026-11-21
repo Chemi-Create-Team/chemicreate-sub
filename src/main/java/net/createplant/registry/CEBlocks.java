@@ -28,9 +28,6 @@ public class CEBlocks {
         BlockBehaviour.Properties.ofFullCopy(Blocks.DIORITE).sound(SoundType.METAL)
     );
 
-    public static final DeferredBlock<net.createplant.block.ResinPipeBlock> RESIN_PIPE =
-        BLOCKS.registerBlock("resin_pipe", net.createplant.block.ResinPipeBlock::new,
-            BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion());
 
     public static final DeferredBlock<net.minecraft.world.level.block.TransparentBlock> INDUSTRIAL_GLASS =
         BLOCKS.registerBlock("industrial_glass", net.minecraft.world.level.block.TransparentBlock::new,

@@ -30,10 +30,8 @@ PALETTES = {
 PIPES = {
     'nickel_alloy_pipe': ((150, 146, 128), (60, 58, 50), (106, 103, 90), (124, 120, 106), 'block/chemical/cast_iron', 4),
     'zirconium_pipe': ((132, 142, 150), (46, 52, 58), (88, 97, 105), (104, 114, 122), 'block/tank/stainless_steel_tank', 4),
-    # The vacuum jacket is wider than the line it carries.
-    'cryogenic_pipe': ((236, 242, 246), (150, 160, 170), (206, 214, 220), (222, 228, 234), 'block/tank/cryogenic_tank_top', 5),
-    # Dark grey rigid PVC with solvent-welded rubber-lined flanges.
-    'pvc_pipe': ((112, 116, 122), (40, 42, 46), (82, 86, 92), (98, 102, 108), 'block/chemical/rubber', 4),
+    # The vacuum jacket is wider than the line it carries. (206, 214, 220), (222, 228, 234), 'block/tank/cryogenic_tank_top', 5),
+    # Dark grey rigid PVC with solvent-welded rubber-lined flanges. (82, 86, 92), (98, 102, 108), 'block/chemical/rubber', 4),
     # Salt-glazed stoneware fired from clay, with terracotta sockets.
     'ceramic_pipe': ((178, 118, 76), (80, 46, 28), (138, 86, 54), (156, 100, 64), 'minecraft:block/terracotta', 4),
 }
@@ -162,9 +160,9 @@ def pipe(name, light, dark, face, band, collar, r):
         write(A / f'models/block/{name}/{side}.json', {'parent': 'minecraft:block/block', 'textures': textures, 'elements': arms[side]})
     write(A / f'models/block/{name}/inventory.json', {'parent': 'minecraft:block/block', 'textures': textures,
           'elements': [box([a, a, a], [b, b, b], 'body')] + arms['north'] + arms['south']})
-    states = json.loads((A / 'blockstates/reinforced_pipe.json').read_text(encoding='utf-8'))
+    states = json.loads((A / 'blockstates/nickel_alloy_pipe.json').read_text(encoding='utf-8'))
     for part in states['multipart']:
-        part['apply']['model'] = part['apply']['model'].replace('reinforced_pipe', name)
+        part['apply']['model'] = part['apply']['model'].replace('nickel_alloy_pipe', name)
     write(A / f'blockstates/{name}.json', states)
     write(A / f'models/item/{name}.json', {'parent': NS + f'block/{name}/inventory'})
 
@@ -172,13 +170,11 @@ def pipe(name, light, dark, face, band, collar, r):
 def survival():
     recipes = {
         'gas_receiver': (['IBI', 'I I', 'IBI'], {'I': {'tag': 'c:plates/iron'}, 'B': {'tag': 'c:plates/brass'}}, 1),
-        'pressure_tank': (['SBS', 'P P', 'SBS'], {'S': {'tag': 'c:plates/stainless_steel'}, 'B': {'tag': 'c:plates/brass'}, 'P': {'item': NS + 'reinforced_pipe'}}, 1),
+        'pressure_tank': (['SBS', 'P P', 'SBS'], {'S': {'tag': 'c:plates/stainless_steel'}, 'B': {'tag': 'c:plates/brass'}, 'P': {'item': NS + 'stainless_steel_pipe'}}, 1),
         # Monel: nickel with copper.
         'nickel_alloy_pipe': ([' N ', 'CPC', ' N '], {'N': {'tag': 'c:ingots/nickel'}, 'C': {'tag': 'c:plates/copper'}, 'P': {'item': 'create:fluid_pipe'}}, 4),
         'zirconium_pipe': ([' Z ', 'SPS', ' Z '], {'Z': {'tag': 'c:ingots/zirconium'}, 'S': {'tag': 'c:plates/stainless_steel'}, 'P': {'item': 'create:fluid_pipe'}}, 4),
         # A stainless line in a stainless vacuum jacket lined with aluminium foil.
-        'cryogenic_pipe': (['SAS', 'PPP', 'SAS'], {'S': {'tag': 'c:plates/stainless_steel'}, 'A': {'tag': 'c:ingots/aluminum'}, 'P': {'item': NS + 'stainless_steel_pipe'}}, 3),
-        'pvc_pipe': ([' R ', 'RPR', ' R '], {'R': {'item': NS + 'pvc_resin'}, 'P': {'item': 'create:fluid_pipe'}}, 4),
         # Create's fluid tank recipe in stainless steel.
         'stainless_steel_tank': ([' S ', ' B ', ' S '], {'S': {'tag': 'c:plates/stainless_steel'}, 'B': {'item': 'minecraft:barrel'}}, 1),
         'cryogenic_tank': (['SAS', 'ABA', 'SAS'], {'S': {'tag': 'c:plates/stainless_steel'}, 'A': {'tag': 'c:plates/aluminum'}, 'B': {'item': 'minecraft:barrel'}}, 1),

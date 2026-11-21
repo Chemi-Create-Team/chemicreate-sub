@@ -20,7 +20,10 @@ public final class MaterialPumpPonderScenes {
 
     private MaterialPumpPonderScenes() { }
 
-    public static void pump(SceneBuilder builder, SceneBuildingUtil util, String material) {
+    public static void pump(SceneBuilder builder, SceneBuildingUtil util, String material) { pump(builder, util, material, false); }
+
+    /** {@code intake} ends the scene by drawing air through a Create nozzle on the pump's suction side. */
+    public static void pump(SceneBuilder builder, SceneBuildingUtil util, String material, boolean intake) {
         var scene = new CreateSceneBuilder(builder);
         scene.title("material_pump", PonderText.title(LANG + "title", "Pumps matching the pipe material"));
         scene.configureBasePlate(0, 0, 7);
@@ -46,7 +49,7 @@ public final class MaterialPumpPonderScenes {
         caption(scene, util, PUMP, "reverse");
         scene.world().setKineticSpeed(drive, 0);
         caption(scene, util, PUMP, "stop");
-        if (material.equals("gas") || material.equals("large_gas")) {
+        if (intake) {
             scene.world().setBlock(util.grid().at(1, 1, 3), AllBlocks.NOZZLE.getDefaultState().setValue(NozzleBlock.FACING, Direction.WEST), false);
             scene.world().modifyBlock(PUMP, state -> state.setValue(PumpBlock.FACING, Direction.EAST), false);
             scene.world().setKineticSpeed(drive, 64);

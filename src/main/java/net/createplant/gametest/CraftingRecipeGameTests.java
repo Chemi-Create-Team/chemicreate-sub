@@ -37,7 +37,7 @@ public class CraftingRecipeGameTests {
     /** Everything the metal refining needs: stirred reactor, reaction vessel with the oxidation catalyst, absorption tower, electrolyzer and electrolysis furnace. */
     private static final List<String> REFINING = List.of("reactor_impeller", "reactor_catalyst_basket", "lidded_vessel", "large_absorption_tower",
         "oxidation_catalyst", "iron_catalyst", "electrolysis_cell", "electrolysis_cell_controller", "electrolysis_electrode_head", "asbestos_wrapped_electrode", "electrolysis_furnace_shell", "electrolysis_furnace_anode", "electrolysis_furnace_busbar",
-        "sulfur_dust", "reinforced_pipe");
+        "sulfur_dust", "stainless_steel_pipe");
 
     private static boolean ours(RecipeHolder<?> holder) { return holder.id().getNamespace().equals(CreatePlant.MOD_ID); }
     private static Item item(String id) { return BuiltInRegistries.ITEM.get(CreatePlant.location(id)); }

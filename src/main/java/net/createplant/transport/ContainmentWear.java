@@ -10,7 +10,6 @@ import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CETransport;
 import net.createplant.safety.ToxicGas;
 import net.createplant.thermal.TankGrade;
@@ -42,7 +41,7 @@ public final class ContainmentWear extends BlockEntityBehaviour {
 
     public static void attach(BlockEntityBehaviourEvent event) {
         for (var type : List.of(AllBlockEntityTypes.FLUID_PIPE.get(), AllBlockEntityTypes.GLASS_FLUID_PIPE.get(), AllBlockEntityTypes.ENCASED_FLUID_PIPE.get(),
-                AllBlockEntityTypes.SMART_FLUID_PIPE.get(), CEBlockEntityTypes.RESIN_PIPE.get(), CETransport.PIPE.get(),
+                AllBlockEntityTypes.SMART_FLUID_PIPE.get(), CETransport.PIPE.get(),
                 CETransport.STAINLESS_PIPE_ENTITY.get(), CETransport.STAINLESS_ENCASED_PIPE_ENTITY.get(), CETransport.STAINLESS_GLASS_PIPE_ENTITY.get(),
                 AllBlockEntityTypes.MECHANICAL_PUMP.get(), CETransport.MATERIAL_PUMP_ENTITY.get(),
                 AllBlockEntityTypes.FLUID_TANK.get(), CETransport.PRESSURE_TANK_ENTITY.get(), CETransport.STAINLESS_STEEL_TANK_ENTITY.get(),

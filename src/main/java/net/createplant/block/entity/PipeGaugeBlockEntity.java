@@ -22,6 +22,8 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
     private static final int STALE=40,SYNC=10;
     private static final String KEY="pipe_gauge.create_refinery_n_reactors.";
     private double reading=Double.NaN,sent=Double.NaN;
+    /** The seventeen-step temperature or pressure level behind the grade reading, or -1 when none is known; it moves the needle between the marks. */
+    private int stateLevel=-1,sentLevel=-1;
     private static final int TEMPERATURE_STEPS=4,PRESSURE_STEPS=4,FLOW_STEPS=46;
     private long observed,lastSync=-SYNC;
     /** Ticks a flow observation holds before the meter falls back to zero. */
@@ -95,7 +97,7 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
     public double reading() { return reading; }
     public void observe(double value) {
         if (level==null || level.isClientSide || !Double.isFinite(value)) return;
-        reading=grade(value);observed=level.getGameTime();
+        reading=grade(value);stateLevel=stateLevel(value);observed=level.getGameTime();
     }
     /** Adds mB/t passing a flow meter; transfers in the same tick add up, and the sum holds for the given ticks. */
     public void observeFlow(double perTick,int ticks) {
@@ -104,12 +106,14 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
         reading=observed==now && measured() ? reading+perTick : perTick;observed=now;span=ticks;
     }
     /** Sets the shown reading without a flow, for Ponder scenes; NaN shows nothing. */
-    public void preview(double value) { reading=grade(value); }
+    public void preview(double value) { reading=grade(value);stateLevel=Double.isFinite(value) ? stateLevel(value) : -1; }
+    private int stateLevel(double value) {return switch(kind()){case TEMPERATURE -> net.createplant.thermal.FluidState.temperatureLevel(value);case PRESSURE -> net.createplant.thermal.FluidState.pressureLevel(value/1e5);case FLOW -> -1;};}
     private double grade(double value) {return switch(kind()){case TEMPERATURE -> net.createplant.thermal.Grade.Heat.of(value).ordinal();case PRESSURE -> net.createplant.thermal.Grade.Pressure.of(value/1e5).ordinal();case FLOW -> value;};}
-    public void observe(net.neoforged.neoforge.fluids.FluidStack fluid) {if(fluid.isEmpty() || kind()==Kind.FLOW)return;var properties=net.createplant.transport.FluidHazards.of(fluid);reading=kind()==Kind.TEMPERATURE ? properties.heat().ordinal() : properties.pressure().ordinal();observed=level.getGameTime();}
+    public void observe(net.neoforged.neoforge.fluids.FluidStack fluid) {if(fluid.isEmpty() || kind()==Kind.FLOW)return;var properties=net.createplant.transport.FluidHazards.of(fluid);reading=kind()==Kind.TEMPERATURE ? properties.heat().ordinal() : properties.pressure().ordinal();
+        stateLevel=kind()==Kind.TEMPERATURE ? net.createplant.thermal.FluidState.temperature(fluid) : net.createplant.thermal.FluidState.pressure(fluid);observed=level.getGameTime();}
     public float dialTarget() {
         if (!measured()) return 0;
-        double fraction=kind()==Kind.FLOW ? Math.log10(1+reading)/Math.log10(1001) : reading/steps();
+        double fraction=kind()==Kind.FLOW ? Math.log10(1+reading)/Math.log10(1001) : stateLevel>=0 ? stateLevel/(double)net.createplant.thermal.FluidState.MAX : reading/steps();
         return (float)Math.clamp(fraction,0,1.1);
     }
     @Override public void tick() {
@@ -139,34 +143,36 @@ public class PipeGaugeBlockEntity extends SmartBlockEntity implements IHaveGoggl
                 if(port!=null) for(int i=0;i<port.getTanks();i++) if(!port.getFluidInTank(i).isEmpty()){observe(port.getFluidInTank(i));sampled=true;break;}
                 if(sampled)break;
             }
-            if(!sampled && measured() && now-observed>STALE) reading=Double.NaN;
+            if(!sampled && measured() && now-observed>STALE) { reading=Double.NaN;stateLevel=-1; }
         } else if(now-observed>span) reading=0;
         int nextAnalog=analogSignal();
         if (nextAnalog!=analogSignal) { analogSignal=nextAnalog;level.updateNeighbourForOutputSignal(worldPosition,getBlockState().getBlock()); }
         if (attachmentChanged) lastSync=-SYNC;
-        boolean changed=attachmentChanged || measured()!=!Double.isNaN(sent) || measured() && Math.abs(reading-sent)>switch (kind()) { case TEMPERATURE, PRESSURE -> 0;case FLOW -> .5; };
+        boolean changed=attachmentChanged || stateLevel!=sentLevel || measured()!=!Double.isNaN(sent) || measured() && Math.abs(reading-sent)>switch (kind()) { case TEMPERATURE, PRESSURE -> 0;case FLOW -> .5; };
         double limit=limit(threshold.getValue()%(steps()+1));
         boolean next=measured() && (below() ? reading<limit : reading>limit);
         if (next!=alarm) { alarm=next;level.updateNeighborsAt(worldPosition,getBlockState().getBlock());changed=true;lastSync=-SYNC; }
-        if (changed && now-lastSync>=SYNC) { sent=reading;lastSync=now;sendData(); }
+        if (changed && now-lastSync>=SYNC) { sent=reading;sentLevel=stateLevel;lastSync=now;sendData(); }
     }
     @Override protected void write(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
         super.write(tag,lookup,packet);
-        if (packet && measured()) tag.putDouble("Reading",reading);
+        if (packet && measured()) { tag.putDouble("Reading",reading);tag.putInt("Level",stateLevel); }
         if (packet) { tag.putBoolean("Alarm",alarm);tag.putBoolean("VesselMounted",vesselMounted); }
     }
     @Override protected void read(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
         super.read(tag,lookup,packet);
         if (packet) {
-            reading=tag.contains("Reading") ? tag.getDouble("Reading") : Double.NaN;alarm=tag.getBoolean("Alarm");vesselMounted=tag.getBoolean("VesselMounted");
+            reading=tag.contains("Reading") ? tag.getDouble("Reading") : Double.NaN;stateLevel=tag.contains("Level") ? tag.getInt("Level") : -1;alarm=tag.getBoolean("Alarm");vesselMounted=tag.getBoolean("VesselMounted");
         }
     }
     @Override public boolean addToGoggleTooltip(List<Component> tooltip,boolean sneaking) {
         tooltip.add(getBlockState().getBlock().getName());
         if (!measured()) tooltip.add(Component.translatable(KEY+"unmeasured"));
         else tooltip.add(switch (kind()) {
-            case TEMPERATURE -> net.createplant.thermal.Grade.Heat.values()[Math.clamp((int)reading,0,4)].detail();
-            case PRESSURE -> net.createplant.thermal.Grade.Pressure.values()[Math.clamp((int)reading,0,4)].detail();
+            case TEMPERATURE -> stateLevel<0 ? net.createplant.thermal.Grade.Heat.values()[Math.clamp((int)reading,0,4)].detail()
+                : Component.empty().append(net.createplant.thermal.GradeScale.reading(stateLevel)).append(" ").append(net.createplant.thermal.FluidState.temperatureName(stateLevel));
+            case PRESSURE -> stateLevel<0 ? net.createplant.thermal.Grade.Pressure.values()[Math.clamp((int)reading,0,4)].detail()
+                : Component.empty().append(net.createplant.thermal.GradeScale.reading(stateLevel)).append(" ").append(net.createplant.thermal.FluidState.pressureName(stateLevel));
             case FLOW -> Component.translatable(KEY+"flow",String.format(Locale.ROOT,"%.1f",reading));
         });
         tooltip.add(alarmLine());

@@ -14,7 +14,7 @@
       "tag": "c:plates/brass"
     },
     "P": {
-      "item": "create_refinery_n_reactors:reinforced_pipe"
+      "item": "create_refinery_n_reactors:stainless_steel_pipe"
     }
   },
   "result": {
