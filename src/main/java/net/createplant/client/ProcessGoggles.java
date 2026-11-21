@@ -7,6 +7,8 @@ import com.simibubi.create.content.processing.recipe.HeatCondition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import net.createplant.block.entity.AbsorptionTowerBlockEntity;
+import net.createplant.block.entity.ColumnRingBlockEntity;
 import net.createplant.block.entity.FractionatingColumnBlockEntity;
 import net.createplant.block.entity.GasifierBlockEntity;
 import net.createplant.block.entity.HighPressurePumpBlockEntity;
@@ -171,6 +173,8 @@ public final class ProcessGoggles {
     }
 
     private static Component stopped(BlockEntity machine) {
+        if (machine instanceof ColumnRingBlockEntity ring && ring.storey() instanceof AbsorptionTowerBlockEntity storey) machine = storey.bottomStorey();
+        if (machine instanceof AbsorptionTowerBlockEntity tower) return tower.running() ? null : MachineReadings.status(tower);
         var key = ChemicalReadout.KEY;
         if (machine instanceof HighPressurePumpBlockEntity pump) {
             if (!pump.formed()) return Component.translatable(HighPressurePumpBlockEntity.KEY + "unformed");

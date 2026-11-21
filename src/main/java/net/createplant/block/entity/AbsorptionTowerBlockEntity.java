@@ -35,7 +35,6 @@ public class AbsorptionTowerBlockEntity extends StackedReactorBlockEntity {
 
     @Override protected void structureTooltip(List<Component> text) {
         text.add(Component.translatable("reactor.create_refinery_n_reactors.tower_structure", sections(), MAX_STOREYS, CAPACITY, CAPACITY * 64));
-        text.add(Component.translatable("reactor.create_refinery_n_reactors.tower_ports"));
     }
 
     @Override protected List<BlockPos> storeyCells(BlockPos centre) {

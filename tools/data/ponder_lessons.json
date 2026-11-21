@@ -4550,9 +4550,9 @@
     "zh_cn": "清液送入电解槽：每1000 mB产3个锭并回收250 mB酸。3份矿石共得9个锭及750 mB回用酸。尾矿泥压榨得粘土和砂，加热搅拌干燥还能得少量石英。"
   },
   "large_absorption_tower.observe": {
-    "en_us": "Use goggles to check formation and processing. Gas enters below; water enters at the top.",
-    "ja_jp": "ゴーグルで形成状態と処理を確認。気体は下段、水は最上段へ接続します。",
-    "zh_cn": "用护目镜查看结构和处理。气体从下方输入，水从顶层输入。"
+    "en_us": "Use goggles to check formation and processing. The warning icon shows why the tower has stopped.",
+    "ja_jp": "ゴーグルで形成状態と処理を確認します。⚠が出たら、その横に停止理由が表示されます。",
+    "zh_cn": "用护目镜查看结构和处理。⚠ 旁会显示停机原因。"
   },
   "guide.manufacturing_nickel.step_1": {
     "en_us": "Crush the ore to obtain the mineral.\n%s → %s",
