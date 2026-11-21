@@ -43,8 +43,6 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
 
 
     public String status() { return status; }
-    /** The first cell the last scan found missing. */
-    public BlockPos fault() { return fault; }
     public ThermalFluidTank tank(int index) { return tanks[index]; }
     public int sizeIndex() { return sizeIndex; }
     public CoolingTowerStructure.Size size() { return CoolingTowerStructure.SIZES.get(sizeIndex); }

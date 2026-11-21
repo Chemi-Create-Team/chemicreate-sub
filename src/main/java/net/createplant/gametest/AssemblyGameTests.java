@@ -274,7 +274,8 @@ public class AssemblyGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "test_fusion", timeoutTicks = 100)
+    // The three towers stand beyond the template, so they run in their own batch where they cannot reach another test's area.
+    @GameTest(template = "test_fusion", batch = "assembly_cooling_towers", timeoutTicks = 100)
     public static void allTowerSizesDetectConnectCoolAndRevalidateAfterReload(GameTestHelper h) {
         for (int size = 0; size < 3; size++) {
             var be = constructor(h, AssemblyPlan.Kind.COOLING_TOWER, new BlockPos(40 + size * 70, 2, 160), Direction.WEST);
