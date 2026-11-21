@@ -45,7 +45,7 @@ public final class ChemicalUiGameTests {
         var info = FluidChemicalRegistry.of(acid);
         h.assertTrue(info.formula().equals("H₂SO₄") && info.hazards().contains(ChemicalHazard.CORROSIVE), "Formula and in-game hazard are separate registered data");
         var bar = ChemicalReadout.heat(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Heat.VERY_HOT).getString();
-        h.assertTrue(bar.contains("□ ◆ □ ■ ■") && bar.contains("2"), "Current stage markers remain distinct from the valid range");
+        h.assertTrue(bar.contains("□ ◆ □ ■ ■") && bar.contains("-123"), "Current stage markers remain distinct from the valid range, and the current grade is named with its range");
         h.succeed();
     }
 

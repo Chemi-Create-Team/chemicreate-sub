@@ -37,27 +37,30 @@ public final class ChemicalReadout {
             : Component.translatable(KEY + "amount", name(fluid), number(fluid.getAmount()));
     }
 
+    /** A row of boxes, one per grade: green where the equipment is rated, a diamond at the current grade, then the current grade with its range. */
     public static Component heat(Grade.Heat current, Grade.Heat minimum, Grade.Heat maximum) {
-        return stage("heat", current.ordinal(), minimum == null ? -1 : minimum.ordinal(), maximum == null ? -1 : maximum.ordinal(), false);
+        return stage("heat", current.ordinal(), minimum == null ? -1 : minimum.ordinal(), maximum == null ? -1 : maximum.ordinal(), Grade.Heat.values().length, current.detail());
     }
 
     public static Component pressure(Grade.Pressure current, Grade.Pressure minimum, Grade.Pressure maximum) {
-        return stage("pressure", current.ordinal() * 2, minimum == null ? -1 : minimum.ordinal() * 2,
-            maximum == null ? -1 : maximum.ordinal() * 2, true);
+        return stage("pressure", current.ordinal(), minimum == null ? -1 : minimum.ordinal(), maximum == null ? -1 : maximum.ordinal(), Grade.Pressure.values().length, current.detail());
     }
 
-    public static Component processHeat(int stage) { return stage("heat", stage - 1, 4, 4, false); }
+    public static Component processHeat(int stage) {
+        var current = Grade.Heat.values()[Math.clamp(stage - 1, 0, Grade.Heat.values().length - 1)];
+        return heat(current, Grade.Heat.VERY_HOT, Grade.Heat.VERY_HOT);
+    }
 
-    private static Component stage(String kind, int current, int minimum, int maximum, boolean alternate) {
+    private static Component stage(String kind, int current, int minimum, int maximum, int steps, Component label) {
         MutableComponent bar = Component.empty();
-        for (int i = 0; i < 5; i++) {
-            boolean admissible = minimum >= 0 && i >= minimum && i <= maximum && (!alternate || i % 2 == 0);
+        for (int i = 0; i < steps; i++) {
+            boolean admissible = minimum >= 0 && i >= minimum && i <= maximum;
             boolean marker = current == i;
             var color = admissible ? ChatFormatting.GREEN : marker ? ChatFormatting.GOLD : ChatFormatting.DARK_GRAY;
             if (i > 0) bar.append(" ");
             bar.append(Component.literal(marker ? "◆" : admissible ? "■" : "□").withStyle(color));
         }
-        return Component.translatable(KEY + kind + "_bar", bar, current + 1);
+        return Component.translatable(KEY + kind + "_bar", bar, label);
     }
 
     public static Component warning(Component reason) {

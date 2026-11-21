@@ -392,10 +392,11 @@ public class CreatePlantJeiPlugin implements IModPlugin {
 
     private static mezz.jei.api.runtime.IJeiRuntime checkRuntime;
     private static void auditAvailability(mezz.jei.api.runtime.IJeiRuntime runtime) {
-        var missing = new java.util.TreeSet<String>();var names = new java.util.TreeMap<String, String>();var keys = new java.util.TreeMap<String, String>();
+        var missing = new java.util.TreeSet<String>();var names = new java.util.TreeMap<String, String>();var keys = new java.util.TreeMap<String, String>();var itemNames = new java.util.TreeMap<String, String>();
         for (var item : net.minecraft.core.registries.BuiltInRegistries.ITEM) {
             var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item);
             if (!id.getNamespace().equals(CreatePlant.MOD_ID) || item instanceof com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem) continue;
+            itemNames.put(id.toString(), item.getDefaultInstance().getHoverName().getString());
             var focus = runtime.getJeiHelpers().getFocusFactory().createFocus(mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT, mezz.jei.api.constants.VanillaTypes.ITEM_STACK, item.getDefaultInstance());
             if (runtime.getRecipeManager().createRecipeCategoryLookup().limitFocus(List.of(focus)).get().findAny().isEmpty()) missing.add(id.getPath());
         }
@@ -404,7 +405,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             if ((!id.getNamespace().equals(CreatePlant.MOD_ID) && !id.getNamespace().equals("createdieselgenerators")) || id.getPath().startsWith("flowing_")) continue;
             names.put(id.toString(), fluid.getFluidType().getDescription().getString());keys.put(id.toString(), fluid.getFluidType().getDescriptionId());
         }
-        try {java.nio.file.Files.writeString(Minecraft.getInstance().gameDirectory.toPath().resolve("recipe-availability.json"), new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(java.util.Map.of("withoutRecipe", missing, "fluidNames", names, "fluidKeys", keys)));} catch (java.io.IOException error) {throw new RuntimeException(error);}
+        try {java.nio.file.Files.writeString(Minecraft.getInstance().gameDirectory.toPath().resolve("recipe-availability.json"), new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(java.util.Map.of("withoutRecipe", missing, "fluidNames", names, "fluidKeys", keys, "itemNames", itemNames)));} catch (java.io.IOException error) {throw new RuntimeException(error);}
     }
 
     public static void showCheckCategory(String id) {
