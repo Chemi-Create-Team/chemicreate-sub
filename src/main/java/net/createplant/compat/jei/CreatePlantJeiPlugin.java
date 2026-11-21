@@ -405,7 +405,13 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             if ((!id.getNamespace().equals(CreatePlant.MOD_ID) && !id.getNamespace().equals("createdieselgenerators")) || id.getPath().startsWith("flowing_")) continue;
             names.put(id.toString(), fluid.getFluidType().getDescription().getString());keys.put(id.toString(), fluid.getFluidType().getDescriptionId());
         }
-        try {java.nio.file.Files.writeString(Minecraft.getInstance().gameDirectory.toPath().resolve("recipe-availability.json"), new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(java.util.Map.of("withoutRecipe", missing, "fluidNames", names, "fluidKeys", keys, "itemNames", itemNames)));} catch (java.io.IOException error) {throw new RuntimeException(error);}
+        var jeiTooltips = new java.util.TreeMap<String, List<String>>();
+        var fluidRenderer = runtime.getIngredientManager().getIngredientRenderer(mezz.jei.api.neoforge.NeoForgeTypes.FLUID_STACK);
+        for (var fluid : List.of(CEUranium.SULFUROUS_ACID.get(), CEUranium.SULFUR_DIOXIDE.get())) {
+            @SuppressWarnings("removal") var lines = fluidRenderer.getTooltip(new FluidStack(fluid, 200), net.minecraft.world.item.TooltipFlag.Default.NORMAL);
+            jeiTooltips.put(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fluid).toString(), lines.stream().map(Component::getString).toList());
+        }
+        try {java.nio.file.Files.writeString(Minecraft.getInstance().gameDirectory.toPath().resolve("recipe-availability.json"), new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(java.util.Map.of("withoutRecipe", missing, "fluidNames", names, "fluidKeys", keys, "itemNames", itemNames, "jeiTooltips", jeiTooltips)));} catch (java.io.IOException error) {throw new RuntimeException(error);}
     }
 
     public static void showCheckCategory(String id) {
