@@ -24,16 +24,24 @@ float hash(vec3 p) {
     return fract((p.x + p.y) * p.z);
 }
 
-float noise(vec3 p) {
+float noise(vec3 p, vec2 period) {
     vec3 i = floor(p);
     vec3 f = fract(p);
     f *= f * (3.0 - 2.0 * f);
-    vec2 a = mix(vec2(hash(i), hash(i + vec3(0, 1, 0))),
-        vec2(hash(i + vec3(1, 0, 0)), hash(i + vec3(1, 1, 0))), f.x);
-    vec2 b = mix(vec2(hash(i + vec3(0, 0, 1)), hash(i + vec3(0, 1, 1))),
-        vec2(hash(i + vec3(1, 0, 1)), hash(i + vec3(1, 1, 1))), f.x);
+    vec2 low = mod(i.xz, period);
+    vec2 high = mod(i.xz + vec2(1.0), period);
+    vec2 a = mix(vec2(hash(vec3(low.x, i.y, low.y)), hash(vec3(low.x, i.y + 1.0, low.y))),
+        vec2(hash(vec3(high.x, i.y, low.y)), hash(vec3(high.x, i.y + 1.0, low.y))), f.x);
+    vec2 b = mix(vec2(hash(vec3(low.x, i.y, high.y)), hash(vec3(low.x, i.y + 1.0, high.y))),
+        vec2(hash(vec3(high.x, i.y, high.y)), hash(vec3(high.x, i.y + 1.0, high.y))), f.x);
     vec2 n = mix(a, b, f.z);
     return mix(n.x, n.y, f.y);
+}
+
+float driftingNoise(vec3 position, vec2 period) {
+    // Travel one lattice period per GameTime cycle so the day boundary is continuous.
+    position.xz -= period * GameTime;
+    return noise(position, period);
 }
 
 bool openTo(int side) {
@@ -58,12 +66,11 @@ void main() {
     float floorY = float((cellData >> 6) & 31) / 16.0;
     float ceilingY = float((cellData >> 11) & 31) / 16.0;
     float height = max(0.0, local.y - floorY);
-    float phase = GameTime * 527.7876;
     vec3 p = samplePosition * vec3(0.67, 1.9, 0.67);
-    float drift = noise(p * 0.52 + vec3(0.22 * cos(phase), 0.0, 0.22 * sin(phase)));
-    p += vec3(0.32 * drift + 0.28 * sin(phase), 0.13 * cos(phase + p.x * 0.41), 0.25 * drift + 0.34 * cos(phase));
-    float broad = noise(p);
-    float fine = noise(p * 2.35 + vec3(4.0 + 0.12 * cos(phase), 2.0, 7.0));
+    float drift = driftingNoise(p * 0.52, vec2(64.0));
+    p += (drift - 0.5) * vec3(0.64, 0.24, 0.50);
+    float broad = driftingNoise(p, vec2(128.0, 64.0));
+    float fine = driftingNoise(p * 2.35 + vec3(4.0, 2.0, 7.0), vec2(256.0, 128.0));
     float folds = broad * 0.67 + fine * 0.33;
     float edgeWidth = mix(0.28, 0.66, folds);
     float edge = fadeEdge(local.z, edgeWidth, 1) * fadeEdge(1.0 - local.z, edgeWidth, 2)
@@ -71,7 +78,7 @@ void main() {
         * fadeEdge(ceilingY - local.y, min(0.55, (ceilingY - floorY) * 0.85), 32);
 
     float veil = 0.20 + 0.19 * folds;
-    float profile = openTo(16) ? veil * (0.46 + 0.10 * sin(samplePosition.y * 3.4 + phase + 3.0 * drift))
+    float profile = openTo(16) ? veil * mix(0.36, 0.56, drift)
         : veil + 1.15 * exp2(-height * mix(9.0, 4.5, broad));
     float density = edge * profile * mix(0.12, 1.92, smoothstep(0.20, 0.78, folds));
     float opacity = 1.0 - exp(-density * opticalDepth);
