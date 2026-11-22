@@ -7,6 +7,9 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.ponder.api.level.PonderLevel;
@@ -14,7 +17,9 @@ import net.createplant.CreatePlant;
 import net.createplant.cloud.CloudVolume;
 import net.createplant.cloud.GasCloud;
 import net.createplant.cloud.GasClouds;
+import net.createplant.cloud.GroundGasField;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -42,27 +47,38 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     private static final RenderType GROUND_LAYER = MistRenderType.groundLayer();
     private static ShaderInstance groundShader;
     private static final WeakHashMap<GasCloud, Mist> MISTS = new WeakHashMap<>();
+    private static final WeakHashMap<ClientLevel, Map<UUID, GroundDraw>> GROUND = new WeakHashMap<>();
+
+    private static final class GroundDraw {
+        final GroundGasField field;
+        final FallingGasMist mist;
+        final int color;
+        int lastTick = Integer.MIN_VALUE;
+
+        GroundDraw(GasCloud source, int color) {
+            field = new GroundGasField(source.volume().origin(), source.level().getGameTime());
+            mist = new FallingGasMist(field);
+            this.color = color;
+        }
+    }
 
     private static final class Mist {
         private CloudVolume volume;
         private FallingGasMist falling;
         private RisingGasMist plume;
         private float previousCharge, targetCharge, chargeChangedAt;
-        private float refreshAt = Float.POSITIVE_INFINITY;
-        private final long groundStartedAt;
 
         private Mist(GasCloud cloud) {
             previousCharge = targetCharge = (float) cloud.charge();
-            groundStartedAt = cloud.level().getGameTime() - cloud.tickCount;
         }
 
-        private FallingGasMist ground(GasCloud cloud, float time) {
-            if (volume != cloud.volume() || time >= refreshAt) {
-                refreshAt = falling == null && !(cloud.level() instanceof PonderLevel) ? time + 25 : Float.POSITIVE_INFINITY;
-                volume = cloud.volume();
-                falling = new FallingGasMist(cloud.level(), volume, falling, time);
-            }
-            return falling;
+        private FallingGasMist preview(GasCloud cloud, PonderLevel level) {
+            if (volume == cloud.volume()) return falling;
+            volume = cloud.volume();
+            var field = new GroundGasField(volume.origin(), 0);
+            var bounds = level.getBounds();
+            field.preview(level, volume, pos -> bounds == null || bounds.isInside(pos));
+            return falling = new FallingGasMist(field);
         }
 
         private float charge(float syncedCharge, float time) {
@@ -155,7 +171,7 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
             mist.plume.render(cloud.level(), preview, buffer, matrix, billboard, time, charge, distanceFade, color);
         } else {
             var view = new Vector3f(billboard.right()).cross(billboard.up());
-            mist.ground(cloud, time).render(buffer, matrix, null, null, view, time, charge, color);
+            mist.preview(cloud, (PonderLevel) cloud.level()).render(buffer, matrix, null, null, view, time, charge, color);
         }
         if (preview && buffers instanceof SuperRenderTypeBuffer ponderBuffers) ponderBuffers.draw(layer);
     }
@@ -169,24 +185,35 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         var frustum = event.getFrustum();
         var pose = event.getPoseStack();
         var buffers = minecraft.renderBuffers().bufferSource();
+        var ground = GROUND.computeIfAbsent(level, ignored -> new HashMap<>());
+        long gameTime = level.getGameTime();
         VertexConsumer buffer = null;
         // Entity rendering checks whether the source's chunk section was drawn. A mist can be far outside that section.
         for (var entity : level.entitiesForRendering()) {
-            if (!(entity instanceof GasCloud cloud) || cloud.volume().size() == 0) continue;
+            if (!(entity instanceof GasCloud cloud) || cloud.volume().size() == 0 || cloud.charge() <= 0) continue;
             var style = cloud.style();
             if (style == null || style.ceiling() || style.color() == null) continue;
-            var mist = MISTS.computeIfAbsent(cloud, Mist::new);
-            float time = (level.getGameTime() - mist.groundStartedAt) + event.getPartialTick().getGameTimeDeltaPartialTick(false);
-            float charge = mist.charge((float) cloud.charge(), time);
-            if (charge <= 0) continue;
-            var ground = mist.ground(cloud, time);
-            ground.spread(level, time);
-            if (ground.bounds().distanceToSqr(camera) >= 48 * 48 || !frustum.isVisible(ground.bounds())) continue;
+            ground.computeIfAbsent(cloud.getUUID(), ignored -> new GroundDraw(cloud, style.color())).field.observeRelease(level, cloud);
+        }
+        var iterator = ground.values().iterator();
+        while (iterator.hasNext()) {
+            var draw = iterator.next();
+            int tick = draw.field.time(gameTime);
+            if (draw.lastTick != tick) {
+                draw.lastTick = tick;
+                draw.field.spread(level, tick, 160);
+            }
+            if (draw.field.isEmpty()) {
+                iterator.remove();
+                continue;
+            }
+            if (draw.field.sections().isEmpty()) continue;
             if (buffer == null) buffer = buffers.getBuffer(GROUND_LAYER);
-            var anchor = Vec3.atCenterOf(cloud.volume().origin());
+            var anchor = Vec3.atCenterOf(draw.field.origin());
             pose.pushPose();
             pose.translate(anchor.x - camera.x, anchor.y - camera.y, anchor.z - camera.z);
-            ground.render(buffer, pose.last(), camera, frustum, null, time, charge, style.color());
+            float time = tick + event.getPartialTick().getGameTimeDeltaPartialTick(false);
+            draw.mist.render(buffer, pose.last(), camera, frustum, null, time, 0, draw.color);
             pose.popPose();
         }
         if (buffer != null) buffers.endBatch(GROUND_LAYER);

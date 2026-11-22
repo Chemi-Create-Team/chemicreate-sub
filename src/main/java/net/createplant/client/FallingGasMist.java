@@ -2,221 +2,44 @@ package net.createplant.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
-import net.createmod.ponder.api.level.PonderLevel;
-import net.createplant.cloud.CloudVolume;
+import net.createplant.cloud.GroundGasField;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3fc;
 
 final class FallingGasMist {
-    private static final Direction[] SIDES = {
-        Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.DOWN, Direction.UP
-    };
-    private static final int DOWN = 16, UP = 32, SAMPLES = 6, SPREAD_PER_TICK = 160;
-    private static final float MIN_CONCENTRATION = .026f, AXIS_BLEND = .78f, FADE_TICKS = 24;
-    private final Map<BlockPos, Cell> cells = new HashMap<>();
-    private final Map<BlockPos, Cell> receding = new HashMap<>();
-    private final Map<BlockPos, Spread> leading = new HashMap<>();
-    private final PriorityQueue<Spread> pending = new PriorityQueue<>(Comparator.comparingDouble(Spread::concentration).reversed()
-        .thenComparingDouble(Spread::arrival).thenComparingInt(next -> next.pos().getY()));
-    private Map<BlockPos, Cell> previousCells = Map.of();
+    private static final int DOWN = 16, SAMPLES = 6;
+    private static final float AXIS_BLEND = .78f;
+    private final GroundGasField field;
     private final BlockPos origin;
-    private AABB bounds;
-    private final int top, sampleX, sampleZ;
-    private final float changedAt;
-    private int spreadTick = Integer.MIN_VALUE;
+    private final int sampleX, sampleZ;
 
-    private static final class Cell {
-        final BlockPos pos;
-        final AABB bounds;
-        final float concentration;
-        final int floor;
-        final boolean canFall;
-        int openings;
-        float previousConcentration;
-        float arrival = Float.POSITIVE_INFINITY;
-        float recedesAt = Float.POSITIVE_INFINITY;
-
-        Cell(Level level, BlockPos pos, float concentration) {
-            this.pos = pos;
-            bounds = new AABB(pos);
-            previousConcentration = this.concentration = concentration;
-            canFall = CloudVolume.canFlow(level, pos, Direction.DOWN);
-            int floor = 0;
-            var state = level.getBlockState(pos);
-            if (!state.isAir()) {
-                for (var box : state.getCollisionShape(level, pos).toAabbs())
-                    if (box.minY == 0 && box.minX == 0 && box.maxX == 1 && box.minZ == 0 && box.maxZ == 1)
-                        floor = Math.max(floor, Mth.floor(box.maxY * 16));
-            }
-            this.floor = floor;
-        }
-    }
-
-    private record Spread(BlockPos pos, Direction direction, float concentration, float arrival) { }
-    private record Arrival(Cell cell, float time) { }
-
-    FallingGasMist(Level level, CloudVolume volume, FallingGasMist previous, float time) {
-        changedAt = time;
-        origin = volume.origin();
-        bounds = volume.bounds();
-        top = (int) bounds.maxY - 1;
+    FallingGasMist(GroundGasField field) {
+        this.field = field;
+        origin = field.origin();
         sampleX = Math.floorMod(origin.getX(), 256);
         sampleZ = Math.floorMod(origin.getZ(), 256);
-        var previewBounds = level instanceof PonderLevel preview ? preview.getBounds() : null;
-        for (var pos : volume.positions())
-            if (previewBounds == null || previewBounds.isInside(pos)) cells.put(pos, new Cell(level, pos, 1));
-        connect(level, previous, time);
-        if (previous != null) {
-            for (var cell : previous.cells.values()) {
-                if (cells.containsKey(cell.pos) || cell.arrival >= time) continue;
-                cell.previousConcentration = previous.concentration(cell, time);
-                cell.recedesAt = time;
-                receding.put(cell.pos, cell);
-                bounds = bounds.minmax(cell.bounds);
-            }
-        }
-        if (!(level instanceof PonderLevel)) {
-            if (previous != null) previousCells = previous.cells;
-            for (var cell : cells.values()) extend(level, cell);
-        }
-    }
-
-    void spread(Level level, float time) {
-        int tick = Mth.floor(time);
-        if (tick == spreadTick) return;
-        spreadTick = tick;
-        if (time - changedAt >= FADE_TICKS) receding.clear();
-        for (int work = 0; work < SPREAD_PER_TICK && !pending.isEmpty(); work++) {
-            var next = pending.remove();
-            if (!leading.remove(next.pos(), next)) continue;
-            if (!CloudVolume.canFlow(level, next.pos().relative(next.direction().getOpposite()), next.direction())) continue;
-            var cell = new Cell(level, next.pos(), next.concentration());
-            cell.arrival = next.arrival();
-            var old = previousCells.get(cell.pos);
-            if (old != null) {
-                cell.arrival = Math.min(cell.arrival, old.arrival);
-                cell.previousConcentration = receding.remove(cell.pos) == null ? old.concentration : old.previousConcentration;
-            }
-            cells.put(next.pos(), cell);
-            bounds = bounds.minmax(cell.bounds);
-            for (int i = 0; i < SIDES.length; i++) {
-                var side = SIDES[i];
-                var neighbor = cells.get(cell.pos.relative(side));
-                if (neighbor == null || !CloudVolume.canFlow(level, cell.pos, side)) continue;
-                cell.openings |= 1 << i;
-                neighbor.openings |= 1 << (i ^ 1);
-            }
-            extend(level, cell);
-        }
-        if (pending.isEmpty()) previousCells = Map.of();
-    }
-
-    private void extend(Level level, Cell cell) {
-        for (int i = cell.canFall ? 4 : 0; i < 5; i++) {
-            var side = SIDES[i];
-            var next = cell.pos.relative(side);
-            float remaining = cell.concentration * (side == Direction.DOWN ? .985f : .82f);
-            if (remaining <= MIN_CONCENTRATION || cells.containsKey(next)) continue;
-            var old = leading.get(next);
-            float arrival = Math.max(changedAt, cell.arrival) + travelTime(side);
-            if (old != null && (old.concentration() > remaining || old.concentration() == remaining && old.arrival() <= arrival)) continue;
-            if (side != Direction.DOWN && !CloudVolume.canFlow(level, cell.pos, side)) continue;
-            var candidate = new Spread(next, side, remaining, arrival);
-            leading.put(next, candidate);
-            pending.add(candidate);
-        }
-    }
-
-    private void connect(Level level, FallingGasMist previous, float time) {
-        var pending = new PriorityQueue<Arrival>(Comparator.comparingDouble(Arrival::time));
-        for (var cell : cells.values()) {
-            for (int i = 0; i < SIDES.length; i++) {
-                var side = SIDES[i];
-                if (cells.containsKey(cell.pos.relative(side)) && CloudVolume.canFlow(level, cell.pos, side))
-                    cell.openings |= 1 << i;
-            }
-            var old = previous == null ? null : previous.cells.get(cell.pos);
-            if (old != null) {
-                cell.previousConcentration = previous.concentration(old, time);
-                schedule(pending, cell, old.arrival);
-            }
-            else if (cell.pos.equals(origin) || !cells.containsKey(origin) && cell.pos.distManhattan(origin) == 1)
-                schedule(pending, cell, previous == null ? 0 : time);
-        }
-        advance(pending, previous, time);
-        // A packet can arrive before the adjacent chunk or door state. The synced core remains a valid source.
-        for (var cell : cells.values()) {
-            if (cell.concentration < 1 || Float.isFinite(cell.arrival)) continue;
-            schedule(pending, cell, (previous == null ? 0 : time) + cell.pos.distManhattan(origin) * 10);
-        }
-        advance(pending, previous, time);
-    }
-
-    private void advance(PriorityQueue<Arrival> pending, FallingGasMist previous, float time) {
-        while (!pending.isEmpty()) {
-            var next = pending.remove();
-            var cell = next.cell();
-            if (next.time() != cell.arrival) continue;
-            for (int i = 0; i < SIDES.length; i++) {
-                if ((cell.openings & 1 << i) == 0) continue;
-                var neighbor = cells.get(cell.pos.relative(SIDES[i]));
-                float start = previous == null || previous.cells.containsKey(neighbor.pos) ? next.time() : Math.max(next.time(), time);
-                schedule(pending, neighbor, start + travelTime(SIDES[i]));
-            }
-        }
-    }
-
-    private static int travelTime(Direction side) {
-        return switch (side) {
-            case DOWN -> 5;
-            case UP -> 23;
-            default -> 10;
-        };
-    }
-
-    private static void schedule(PriorityQueue<Arrival> pending, Cell cell, float time) {
-        if (time >= cell.arrival) return;
-        cell.arrival = time;
-        pending.add(new Arrival(cell, time));
-    }
-
-    AABB bounds() { return bounds; }
-
-    private float concentration(Cell cell, float time) {
-        return Mth.lerp(fade((time - changedAt) / FADE_TICKS), cell.previousConcentration, cell.concentration);
     }
 
     void render(VertexConsumer buffer, PoseStack.Pose pose, Vec3 camera, Frustum frustum, Vector3fc previewView,
-        float time, float charge, int color) {
-        int cap = Math.max(1, Math.round((.25f + .75f * charge) * 16));
-        float visibility = Mth.sqrt(charge);
-        for (var cell : cells.values())
-            renderCell(buffer, pose, camera, frustum, previewView, time, cap, color, visibility, cell);
-        for (var cell : receding.values())
-            renderCell(buffer, pose, camera, frustum, previewView, time, cap, color, visibility, cell);
+        float time, float previewCharge, int color) {
+        for (var section : field.sections()) {
+            if (previewView == null && (section.bounds().distanceToSqr(camera) >= 48 * 48 || !frustum.isVisible(section.bounds()))) continue;
+            for (var cell : section.cells()) {
+                float opacity = previewView == null ? cell.opacity(time) : Mth.sqrt(previewCharge) * fade((time - cell.arrivedAt()) / 32);
+                renderCell(buffer, pose, camera, frustum, previewView, color, cell, opacity);
+            }
+        }
     }
 
     private void renderCell(VertexConsumer buffer, PoseStack.Pose pose, Vec3 camera, Frustum frustum, Vector3fc previewView,
-        float time, int cap, int color, float visibility, Cell cell) {
-        float age = fade((time - cell.arrival) / 32);
-        float departure = fade((cell.recedesAt + FADE_TICKS - time) / FADE_TICKS);
-        float density = Float.isFinite(cell.recedesAt) ? cell.previousConcentration : concentration(cell, time);
-        float concentration = (density - MIN_CONCENTRATION) / (1 - MIN_CONCENTRATION);
-        float opacity = visibility * age * departure * concentration;
-        if (cell.canFall) opacity *= Mth.lerp(fade((time - cell.arrival - 12) / 38), .65f, .30f);
-        if (opacity < .004f) return;
-        var pos = cell.pos;
+        int color, GroundGasField.Cell cell, float opacity) {
+        if (cell.inFreeFall()) opacity *= .42f;
+        if (opacity < GroundGasField.MIN_CONCENTRATION) return;
+        int cap = cell.ceiling(opacity);
+        var pos = cell.pos();
         boolean preview = previewView != null;
         float vx, vy, vz;
         if (preview) {
@@ -229,16 +52,16 @@ final class FallingGasMist {
             vz = (float) Math.abs(pos.getZ() + .5 - camera.z);
             float distance = Mth.sqrt(vx * vx + vy * vy + vz * vz);
             opacity *= fade((48 - distance) / 16);
-            if (opacity < .004f || !frustum.isVisible(cell.bounds)) return;
+            if (opacity < .004f || !frustum.isVisible(cell.bounds())) return;
         }
         float x = pos.getX() - origin.getX() - .5f;
         float y = pos.getY() - origin.getY() - .5f;
         float z = pos.getZ() - origin.getZ() - .5f;
-        int ceiling = pos.getY() == top && (cell.openings & UP) == 0 ? cap : 16;
-        float height = (ceiling - cell.floor) / 16f;
+        int ceiling = cap;
+        float height = (ceiling - cell.floor()) / 16f;
         if (height <= 0) return;
-        int data = cell.openings | (cell.canFall ? DOWN : 0) | cell.floor << 6 | ceiling << 11;
-        float bottom = y + cell.floor / 16f;
+        int data = cell.openings() & ~DOWN | (cell.inFreeFall() ? DOWN : 0) | cell.floor() << 6 | ceiling << 11;
+        float bottom = y + cell.floor() / 16f;
         float upper = bottom + height;
         float threshold = Math.max(vx, Math.max(vy, vz)) * AXIS_BLEND;
         float xWeight = Math.max(0, vx - threshold);
