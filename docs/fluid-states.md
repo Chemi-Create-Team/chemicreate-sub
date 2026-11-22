@@ -243,3 +243,11 @@
 Createの処理レシピでは、流体材料に `type: "create_refinery_n_reactors:fluid_state"` と `fluid`、`amount` を指定できる。`min_temperature`、`max_temperature`、`min_pressure`、`max_pressure` は端を含む0～16の範囲で、`phase` は `liquid` または `gas`。省略するとその条件を問わない。生成物の `components` に `create_refinery_n_reactors:temperature_level` と `create_refinery_n_reactors:pressure_level` を使える。
 
 `process` の工程表では、流体材料の `condition` オブジェクトに同じ範囲を指定する。生成物では `temperature` と `pressure` を指定する。
+
+## 未実装のメモ：耐食性の表示
+
+2026-11-22のユーザー指定。まだ実装しない。
+
+- 配管・ポンプ・タンクの耐食性の行は、耐えられる種類（○のもの）だけを並べる。例：「耐食性：酸・塩基」。×の種類は表示しない。
+- 中に流れている（入っている）流体の腐食に耐えられない場合だけ、その種類を「×ハロゲン」のように赤文字で追加し、強調する。
+- 耐えられる種類が1つもない材質（銅管など）は、中身に腐食性がなければ耐食性の行を出さない。
