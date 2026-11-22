@@ -72,6 +72,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/gas_bell",GasBellPonderScenes::bell);
         var liquidContainers = new java.util.ArrayList<ResourceLocation>();
         liquidContainers.add(CreatePlant.location("corrosion_resistant_bucket"));
+        liquidContainers.add(CreatePlant.location("stainless_steel_bucket"));
         for (var liquid : net.createplant.registry.CEWorldFluids.entries())
             liquidContainers.add(CreatePlant.location(liquid.name() + "_bucket"));
         helper.forComponents(liquidContainers.toArray(ResourceLocation[]::new))

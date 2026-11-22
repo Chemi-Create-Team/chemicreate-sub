@@ -3,6 +3,7 @@ package net.createplant.gametest;
 import net.createplant.CreatePlant;
 import net.createplant.block.WorldLiquidBlock;
 import net.createplant.item.ProcessBucketItem;
+import net.createplant.item.StainlessBuckets;
 import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEPetroFluids;
 import net.createplant.registry.CEWorldFluids;
@@ -68,6 +69,33 @@ public class WorldLiquidGameTests {
             && filled.getContainer().is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get()), "Emptying returns the alloy and preserves heat");
         h.assertTrue(alloy.getContainer().getCraftingRemainingItem().is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get()),
             "Crafting also returns the alloy container");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_empty")
+    public static void stainlessBucketsHoldWhatAStainlessTankHoldsAndStayStainless(GameTestHelper h) {
+        var empty = FluidUtil.getFluidHandler(CEWorldFluids.STAINLESS_BUCKET.toStack()).orElseThrow();
+        var hotAcid = new FluidStack(net.minecraft.core.registries.BuiltInRegistries.FLUID.get(CreatePlant.location("titanyl_sulfate_solution")), 1000);
+        var steam = FluidState.with(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), 14, 4);
+        h.assertTrue(empty.fill(hotAcid, SIMULATE) == 0 && empty.fill(steam, SIMULATE) == 0,
+            "Hot acids and gases that a stainless tank is not rated for do not go in");
+        FluidStack base = FluidThermal.at(new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 1000), 343.15);
+        h.assertTrue(empty.fill(base, SIMULATE) == 1000 && empty.getContainer().is(CEWorldFluids.STAINLESS_BUCKET.get()), "Simulation leaves the bucket empty");
+        h.assertTrue(empty.fill(base, EXECUTE) == 1000 && StainlessBuckets.marked(empty.getContainer()), "A base fills it as the liquid's bucket, marked stainless");
+        h.assertTrue(empty.getContainer().getCraftingRemainingItem().is(CEWorldFluids.STAINLESS_BUCKET.get()), "Crafting returns the stainless bucket");
+        var filled = FluidUtil.getFluidHandler(empty.getContainer()).orElseThrow();
+        h.assertTrue(FluidStack.isSameFluidSameComponents(filled.drain(1000, EXECUTE), base)
+            && filled.getContainer().is(CEWorldFluids.STAINLESS_BUCKET.get()), "Emptying gives back the stainless bucket and the liquid's heat");
+
+        var water = FluidUtil.getFluidHandler(CEWorldFluids.STAINLESS_BUCKET.toStack()).orElseThrow();
+        h.assertTrue(water.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE) == 1000
+            && water.getContainer().is(Items.WATER_BUCKET) && StainlessBuckets.marked(water.getContainer()), "Water fills it as a marked water bucket");
+        h.assertTrue(water.getContainer().getCraftingRemainingItem().is(CEWorldFluids.STAINLESS_BUCKET.get()), "A vanilla bucket crafts back to stainless");
+        var vanilla = FluidUtil.getFluidHandler(water.getContainer()).orElseThrow();
+        h.assertTrue(vanilla.drain(1000, EXECUTE).getAmount() == 1000 && vanilla.getContainer().is(CEWorldFluids.STAINLESS_BUCKET.get()),
+            "Vanilla's own bucket handler empties it back into stainless");
+        h.assertTrue(net.minecraft.world.item.BucketItem.getEmptySuccessItem(water.getContainer(), h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL)).is(CEWorldFluids.STAINLESS_BUCKET.get()),
+            "Pouring it into the world leaves the stainless bucket");
         h.succeed();
     }
 
@@ -177,6 +205,21 @@ public class WorldLiquidGameTests {
             .filter(item -> item.getItem().is(Items.BUCKET)).mapToInt(item -> item.getItem().getCount()).sum();
         h.assertTrue(iron.isEmpty() && dropped == 1 && h.getLevel().getFluidState(wrongPos.east()).isSource(),
             "A wrong iron bucket is ejected once without extracting acid or creating alloy");
+
+        BlockPos stainlessPos = waterPos.south(16);
+        var stainless = dispenser(h, stainlessPos, CEWorldFluids.STAINLESS_BUCKET.toStack());
+        h.getLevel().setBlockAndUpdate(stainlessPos.east(), CEChlorAlkali.CAUSTIC_SODA.get().defaultFluidState().createLegacyBlock());
+        activate(h, stainlessPos);
+        h.assertTrue(StainlessBuckets.marked(stainless.getItem(0)) && FluidUtil.getFluidContained(stainless.getItem(0)).orElseThrow().is(CEChlorAlkali.CAUSTIC_SODA.get())
+            && h.getLevel().getFluidState(stainlessPos.east()).isEmpty(), "A stainless bucket in a dispenser takes up a base it holds");
+        activate(h, stainlessPos);
+        h.assertTrue(stainless.getItem(0).is(CEWorldFluids.STAINLESS_BUCKET.get()) && h.getLevel().getFluidState(stainlessPos.east()).isSource(),
+            "Pouring it again leaves the stainless bucket");
+        h.getLevel().setBlockAndUpdate(stainlessPos.east(), Blocks.AIR.defaultBlockState());
+        stainless.setItem(0, StainlessBuckets.mark(new ItemStack(Items.WATER_BUCKET)));
+        activate(h, stainlessPos);
+        h.assertTrue(stainless.getItem(0).is(CEWorldFluids.STAINLESS_BUCKET.get()) && h.getLevel().getFluidState(stainlessPos.east()).isSource(),
+            "Vanilla's water bucket dispensed from stainless leaves the stainless bucket");
         h.succeed();
     }
 

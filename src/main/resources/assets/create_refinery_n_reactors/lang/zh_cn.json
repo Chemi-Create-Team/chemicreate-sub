@@ -6239,5 +6239,12 @@
   "create_refinery_n_reactors.ponder.shared.lidded_vessel.window.lesson_pages.1": "用扳手点击侧面切换整个罐的观察窗，无需打开舱口即可查看流体、物品和叶轮。",
   "create_refinery_n_reactors.ponder.shared.reaction_tower.baskets.lesson_pages.1": "对打开的舱口使用反应塔板，会从下往上每层放入一个。",
   "create_refinery_n_reactors.ponder.shared.reaction_tower_separator.mode.lesson_pages.1": "不装反应塔板的反应塔是高压气液分离罐，每层同时处理1批。",
-  "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.1": "催化剂与固体不能同时使用：塔板上有固体时不能放入催化剂，有催化剂时不能投入固体。"
+  "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.1": "催化剂与固体不能同时使用：塔板上有固体时不能放入催化剂，有催化剂时不能投入固体。",
+  "item.create_refinery_n_reactors.stainless_steel_bucket": "不锈钢桶",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless": "不锈钢桶的做法与桶相同，只是把铁锭换成不锈钢锭。它能装不锈钢储罐可装的液体。",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless.lesson_pages.0": "不锈钢桶的做法与桶相同，只是把铁锭换成不锈钢锭。它能装不锈钢储罐可装的液体。",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill": "可装高温以下的酸、卤素和碱，但不能装气体。倒空后仍是不锈钢桶。",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill.lesson_pages.0": "可装高温以下的酸、卤素和碱，但不能装气体。倒空后仍是不锈钢桶。"
 }

@@ -49,6 +49,16 @@ public final class WorldLiquidsPonderScenes {
         });
         text(scene, util, tank, lesson, "fill");
 
+        scene.world().createItemEntity(new Vec3(3.6, 1.2, 1.8), Vec3.ZERO, item("stainless_steel_ingot", 3));
+        text(scene, util, new BlockPos(3, 1, 2), lesson, "stainless");
+        scene.overlay().showControls(util.vector().topOf(tank), Pointing.DOWN, 100)
+            .rightClick().withItem(item("stainless_steel_bucket", 1));
+        scene.world().modifyBlockEntity(tank, FluidTankBlockEntity.class, be -> {
+            be.getTankInventory().drain(1000, FluidAction.EXECUTE);
+            be.setFluidLevel(LerpedFloat.linear().startWithValue(be.getFillState()));
+        });
+        text(scene, util, tank, lesson, "stainless_fill");
+
         scene.overlay().showControls(util.vector().topOf(source), Pointing.DOWN, 100)
             .rightClick().withItem(item("sulfuric_acid_bucket", 1));
         scene.world().showSection(pool, Direction.DOWN);

@@ -1,6 +1,7 @@
 package net.createplant.mixin;
 
 import net.createplant.client.FluidStateVisuals;
+import net.createplant.item.StainlessBuckets;
 import net.createplant.item.StatefulBuckets;
 import net.createplant.thermal.FluidIdentity;
 import net.createplant.thermal.FluidState;
@@ -20,7 +21,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class StatefulBucketModelMixin {
     @Inject(method="getModel",at=@At("RETURN"),cancellable=true)
     private void createPlant$fillBucket(ItemStack item,Level level,LivingEntity entity,int seed,CallbackInfoReturnable<BakedModel> ci) {
-        if(!(item.getItem() instanceof BucketItem bucket) || !FluidIdentity.controlled(bucket.content))return;
+        if(!(item.getItem() instanceof BucketItem bucket))return;
+        if(StainlessBuckets.marked(item)) {
+            ci.setReturnValue(Minecraft.getInstance().getModelManager().getModel(FluidStateVisuals.STAINLESS_BUCKET));
+            return;
+        }
+        if(!FluidIdentity.controlled(bucket.content))return;
         var fluid=StatefulBuckets.contents(item,bucket.content);
         if(fluid.isEmpty() || StatefulBuckets.defaultState(fluid) && !FluidState.gas(fluid))return;
         var id=FluidState.gas(fluid) ? FluidStateVisuals.GAS_BUCKET : FluidStateVisuals.LIQUID_BUCKET;

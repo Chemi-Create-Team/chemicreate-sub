@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Stainless steel ingot and sheet textures (the shapes of this mod's aluminium ingot and plastic sheet, in a darker neutral grey with brushed
-lines), and the zircaloy fuel cladding tube."""
+"""Stainless steel ingot and sheet textures (the shapes of this mod's aluminium ingot and Create's iron sheet, in a darker neutral grey with
+brushed lines), and the zircaloy fuel cladding tube. Run after a Gradle build, which resolves the Create jar the sheet is taken from."""
+import io
+import zipfile
 from pathlib import Path
 from PIL import Image
 
@@ -13,8 +15,16 @@ def steel(value, y):
     return tuple(max(0, min(255, round(c))) for c in (v, v + 3, v + 9)) + (255,)
 
 
+def create_item(name):
+    path = f'assets/create/textures/item/{name}.png'
+    for jar in sorted(Path.home().glob('.gradle/caches/modules-2/files-2.1/maven.modrinth/create/*/*/*.jar')):
+        with zipfile.ZipFile(jar) as source:
+            if path in source.namelist(): return io.BytesIO(source.read(path))
+    raise SystemExit('Create jar not found; run a Gradle build first')
+
+
 def recolour(source, target, outline):
-    im = Image.open(T / source).convert('RGBA')
+    im = Image.open(source if isinstance(source, io.BytesIO) else T / source).convert('RGBA')
     out = Image.new('RGBA', im.size)
     for y in range(im.height):
         for x in range(im.width):
@@ -27,7 +37,7 @@ def recolour(source, target, outline):
 
 
 recolour('aluminum_ingot.png', 'stainless_steel_ingot.png', (52, 55, 60, 255))
-recolour('plastic_sheet.png', 'stainless_steel_sheet.png', (38, 41, 46, 255))
+recolour(create_item('iron_sheet'), 'stainless_steel_sheet.png', (38, 41, 46, 255))
 
 
 def cladding():

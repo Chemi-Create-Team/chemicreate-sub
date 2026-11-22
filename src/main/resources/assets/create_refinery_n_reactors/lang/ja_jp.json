@@ -6239,5 +6239,12 @@
   "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.0": "触媒と固体は同時に使えません。",
   "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.1": "棚段に固体があるうちは触媒を入れられず、触媒があるうちは固体を入れられません。",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_nitric_fertilizer.step_6.action.lesson_pages.1": "回収した硝酸を撹拌槽でアンモニアと反応させ、硝酸アンモニウムをファンネルで取り出します。",
-  "create_refinery_n_reactors.ponder.shared.reaction_tower.baskets.lesson_pages.1": "開いたハッチに反応棚段を使うと、下の段から1段に1個ずつ入ります。"
+  "create_refinery_n_reactors.ponder.shared.reaction_tower.baskets.lesson_pages.1": "開いたハッチに反応棚段を使うと、下の段から1段に1個ずつ入ります。",
+  "item.create_refinery_n_reactors.stainless_steel_bucket": "ステンレスバケツ",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless": "ステンレスバケツは、鉄の代わりにステンレス鋼インゴットでバケツと同じように作ります。ステンレスタンクに入る液体を入れられます。",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless.lesson_pages.0": "ステンレスバケツは、鉄の代わりにステンレス鋼インゴットでバケツと同じように作ります。ステンレスタンクに入る液体を入れられます。",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill": "酸・ハロゲン・塩基を高温まで入れられますが、気体は入りません。空にしてもステンレスバケツに戻ります。",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill.lesson_pages.0": "酸・ハロゲン・塩基を高温まで入れられますが、気体は入りません。空にしてもステンレスバケツに戻ります。"
 }

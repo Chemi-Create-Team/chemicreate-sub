@@ -43,21 +43,25 @@ public final class WorldLiquidBlock extends LiquidBlock {
     }
 
     @Override public ItemStack pickupBlock(Player player, LevelAccessor accessor, BlockPos pos, BlockState state) {
-        return pickup(accessor, pos, state, false);
+        return pickup(accessor, pos, state, fluid -> !FluidHazards.of(fluid).corrosive());
     }
 
     public ItemStack pickupAlloy(LevelAccessor accessor, BlockPos pos, BlockState state) {
-        return pickup(accessor, pos, state, true);
+        return pickup(accessor, pos, state, fluid -> FluidHazards.of(fluid).corrosive());
     }
 
-    private ItemStack pickup(LevelAccessor accessor, BlockPos pos, BlockState state, boolean alloy) {
+    public ItemStack pickupStainless(LevelAccessor accessor, BlockPos pos, BlockState state) {
+        return net.createplant.item.StainlessBuckets.mark(pickup(accessor, pos, state, net.createplant.item.StainlessBuckets::holds));
+    }
+
+    private ItemStack pickup(LevelAccessor accessor, BlockPos pos, BlockState state, java.util.function.Predicate<FluidStack> holds) {
         if (!state.getFluidState().isSource()) return ItemStack.EMPTY;
         FluidStack fluid = new FluidStack(state.getFluidState().getType(), 1000);
         if (accessor instanceof net.minecraft.server.level.ServerLevel level) {
             var material = net.createplant.nuclear.RadiationWorldData.get(level).blockActivity.get(pos);
             if (material != null) fluid.set(net.createplant.registry.CERadiation.MATERIAL.get(), material);
         }
-        if (FluidHazards.of(fluid).corrosive() != alloy) return ItemStack.EMPTY;
+        if (!holds.test(fluid)) return ItemStack.EMPTY;
         ItemStack bucket = CEWorldFluids.bucket(fluid);
         if (bucket.isEmpty()) return ItemStack.EMPTY;
         return accessor.setBlock(pos, Blocks.AIR.defaultBlockState(), 11) ? bucket : ItemStack.EMPTY;

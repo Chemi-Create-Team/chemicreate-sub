@@ -51,15 +51,15 @@ def write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n')
 
 
-def bucket_pixels(color=None, alloy=False, name=''):
+def bucket_pixels(color=None, alloy=False, name='', stainless=False):
     """The vanilla bucket; a liquid takes the shading of vanilla water, below the inner rim, in its own colour."""
     template = json.loads((ROOT / 'tools/vanilla_bucket_template.json').read_text())
     mask = set(template['content_mask'])
     pixels = [tuple(value) for value in template['pixels']]
-    if alloy:
+    if alloy or stainless:
         for i, pixel in enumerate(pixels):
             if pixel[3] and i not in mask:
-                pixels[i] = tinted(pixel[0])
+                pixels[i] = steel(pixel[0], i // 16) if stainless else tinted(pixel[0])
     if color is not None:
         luma = lambda pixel: .299 * pixel[0] + .587 * pixel[1] + .114 * pixel[2]
         water = [tuple(pixel) for pixel in template['water']]
@@ -81,9 +81,15 @@ def tinted(value):
     return (max(0, value - 12), min(255, value + 1), min(255, value + 7), 255)
 
 
-def bucket_image(name, color=None, alloy=False):
+def steel(value, y):
+    """Stainless steel for a vanilla bucket grey, as the stainless ingot and sheet: neutral grey, a faint cool cast and brushed rows."""
+    v = 40 + value * 0.58 - (8 if y % 2 else 0)
+    return tuple(max(0, min(255, round(c))) for c in (v, v + 3, v + 9)) + (255,)
+
+
+def bucket_image(name, color=None, alloy=False, stainless=False):
     path = ASSETS / 'textures/item' / f'{name}.png'
-    png(path, bucket_pixels(color, alloy, name))
+    png(path, bucket_pixels(color, alloy, name, stainless))
     write(ASSETS / 'models/item' / f'{name}.json',
           {'parent': 'minecraft:item/generated', 'textures': {'layer0': NS + 'item/' + name}})
 
@@ -196,6 +202,12 @@ LESSONS = {
         'fill': ('Use an alloy bucket for corrosive fluids. Create spouts and item drains can fill and empty it.',
             '腐食性流体には合金バケツを使います。Createの注液口・アイテム排液口でも出し入れできます。',
             '腐蚀性流体使用合金桶。也可通过Create注液器和分液池装卸。'),
+        'stainless': ('A stainless steel bucket is made like a bucket, from stainless steel ingots. It holds the liquids a stainless tank holds.',
+            'ステンレスバケツは、鉄の代わりにステンレス鋼インゴットでバケツと同じように作ります。ステンレスタンクに入る液体を入れられます。',
+            '不锈钢桶的做法与桶相同，只是把铁锭换成不锈钢锭。它能装不锈钢储罐可装的液体。'),
+        'stainless_fill': ('Acids, halogens and bases up to very hot fit it, but no gas. Emptied, it stays a stainless bucket.',
+            '酸・ハロゲン・塩基を高温まで入れられますが、気体は入りません。空にしてもステンレスバケツに戻ります。',
+            '可装高温以下的酸、卤素和碱，但不能装气体。倒空后仍是不锈钢桶。'),
         'pour': ('Use a liquid bucket on the ground to pour it. Gas buckets release a cloud instead.',
             '液体のバケツは地面へ注げます。気体は放出されます。',
             '液体桶可向地面倾倒，气体桶则释放气体。'),
@@ -227,6 +239,7 @@ def translations(entries):
             strings['item.' + NS.replace(':', '.') + name + '_bucket'] = fluid_name + suffix
         for key, values in {
             'item.create_refinery_n_reactors.corrosion_resistant_bucket': ('Corrosion-Resistant Alloy Bucket', '耐食合金バケツ', '耐蚀合金桶'),
+            'item.create_refinery_n_reactors.stainless_steel_bucket': ('Stainless Steel Bucket', 'ステンレスバケツ', '不锈钢桶'),
             'block.create_refinery_n_reactors.charred_wood': ('Carbonized Wood', '炭化木材', '炭化木材'),
             'death.attack.create_refinery_n_reactors.corrosive_contact': ('%1$s was dissolved by corrosive chemicals', '%1$sは腐食性の薬液に溶かされた', '%1$s被腐蚀性化学液体侵蚀致死'),
             'death.attack.create_refinery_n_reactors.corrosive_contact.player': ('%1$s was dissolved by corrosive chemicals while escaping %2$s', '%1$sは%2$sから逃れようとして腐食性の薬液に溶かされた', '%1$s在逃离%2$s时被腐蚀性化学液体侵蚀致死'),
@@ -259,6 +272,9 @@ def ponder_structures():
 def generate():
     entries = liquid_entries()
     bucket_image('corrosion_resistant_bucket', alloy=True)
+    bucket_image('stainless_steel_bucket', stainless=True)
+    write(ASSETS / 'models/item/state_stainless_bucket.json', {'parent': 'minecraft:item/generated',
+          'textures': {'layer0': NS + 'item/stainless_steel_bucket', 'layer1': NS + 'item/state_liquid_fill'}})
     bucket_image('water_gas_bucket', 0xBBD3DFDB)
     for entry in entries:
         name = entry['name']
@@ -271,6 +287,10 @@ def generate():
         'type': 'minecraft:crafting_shapeless', 'category': 'misc',
         'ingredients': [{'tag': 'c:ingots/nickel'}] * 3 + [{'tag': 'c:ingots/chromium'}, {'tag': 'c:ingots/molybdenum'}],
         'result': {'id': NS + 'corrosion_resistant_bucket', 'count': 1}})
+    write(DATA / 'create_refinery_n_reactors/recipe/stainless_steel_bucket.json', {
+        'type': 'minecraft:crafting_shaped', 'category': 'misc', 'pattern': ['# #', ' # '],
+        'key': {'#': {'tag': 'c:ingots/stainless_steel'}},
+        'result': {'id': NS + 'stainless_steel_bucket', 'count': 1}})
     carbonized_wood()
     translations(entries)
     ponder_structures()

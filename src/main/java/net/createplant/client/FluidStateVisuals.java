@@ -19,6 +19,7 @@ public final class FluidStateVisuals {
     public static final ResourceLocation VAPOUR=CreatePlant.location("block/fluid_state/vapour");
     public static final ModelResourceLocation LIQUID_BUCKET=ModelResourceLocation.standalone(CreatePlant.location("item/state_liquid_bucket"));
     public static final ModelResourceLocation GAS_BUCKET=ModelResourceLocation.standalone(CreatePlant.location("item/state_gas_bucket"));
+    public static final ModelResourceLocation STAINLESS_BUCKET=ModelResourceLocation.standalone(CreatePlant.location("item/state_stainless_bucket"));
 
     private FluidStateVisuals() { }
 
@@ -60,18 +61,30 @@ public final class FluidStateVisuals {
     public static void models(ModelEvent.RegisterAdditional event) {
         event.register(LIQUID_BUCKET);
         event.register(GAS_BUCKET);
+        event.register(STAINLESS_BUCKET);
     }
 
     @SubscribeEvent
     public static void colors(RegisterColorHandlersEvent.Item event) {
         var buckets=net.minecraft.core.registries.BuiltInRegistries.ITEM.stream().filter(item->item instanceof BucketItem bucket
             && (item==net.minecraft.world.item.Items.WATER_BUCKET || net.createplant.thermal.FluidIdentity.controlled(bucket.content))).toArray(net.minecraft.world.item.Item[]::new);
-        event.register((item,index)->{
-            if(index!=1 || !(item.getItem() instanceof BucketItem bucket))return -1;
-            var fluid=StatefulBuckets.contents(item,bucket.content);
-            var extensions=IClientFluidTypeExtensions.of(fluid.getFluid());
-            int base=extensions.getTintColor(fluid);
-            return (hasRenderingExtension(fluid) ? base : tint(fluid,base))|0xFF000000;
-        },buckets);
+        event.register((item,index)->index==1 ? bucketTint(item) : -1,buckets);
+    }
+
+    /** The fill layer's colour of a filled bucket. */
+    public static int bucketTint(net.minecraft.world.item.ItemStack item) {
+        if(!(item.getItem() instanceof BucketItem bucket))return -1;
+        var fluid=StatefulBuckets.contents(item,bucket.content);
+        var extensions=IClientFluidTypeExtensions.of(fluid.getFluid());
+        int base=extensions.getTintColor(fluid);
+        return (hasRenderingExtension(fluid) ? base : tint(fluid,base))|0xFF000000;
+    }
+
+    /** A stainless bucket's fill; a liquid drawn by its texture alone, such as lava, has no tint and takes its block's map colour. */
+    public static int stainlessBucketTint(net.minecraft.world.item.ItemStack item) {
+        int tint=bucketTint(item);
+        if((tint&0xFFFFFF)!=0xFFFFFF || !(item.getItem() instanceof BucketItem bucket))return tint;
+        var color=bucket.content.defaultFluidState().createLegacyBlock().getMapColor(net.minecraft.world.level.EmptyBlockGetter.INSTANCE,net.minecraft.core.BlockPos.ZERO);
+        return color==net.minecraft.world.level.material.MapColor.NONE ? tint : color.col|0xFF000000;
     }
 }

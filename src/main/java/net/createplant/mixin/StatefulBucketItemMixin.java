@@ -1,5 +1,6 @@
 package net.createplant.mixin;
 
+import net.createplant.item.StainlessBuckets;
 import net.createplant.item.StatefulBuckets;
 import net.createplant.thermal.FluidState;
 import net.minecraft.core.BlockPos;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -32,6 +34,15 @@ public abstract class StatefulBucketItemMixin extends Item {
         if(StatefulBuckets.defaultState(fluid) && !FluidState.gas(fluid))return name;
         return Component.translatable("fluid_state.create_refinery_n_reactors.bucket",name,
             FluidState.phaseName(fluid),FluidState.temperatureName(FluidState.temperature(fluid)),FluidState.pressureName(FluidState.pressure(fluid)));
+    }
+
+    @Override public ItemStack getCraftingRemainingItem(ItemStack stack) {
+        return StainlessBuckets.marked(stack) ? StainlessBuckets.empty() : super.getCraftingRemainingItem(stack);
+    }
+
+    @Inject(method="getEmptySuccessItem",at=@At("RETURN"),cancellable=true)
+    private static void createPlant$stainlessShell(ItemStack bucket,Player player,CallbackInfoReturnable<ItemStack> ci) {
+        if(ci.getReturnValue().is(Items.BUCKET) && StainlessBuckets.marked(bucket))ci.setReturnValue(StainlessBuckets.empty());
     }
 
     @Inject(method="emptyContents(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/item/ItemStack;)Z",

@@ -170,7 +170,7 @@ public class MixtureGameTests {
     }
 
     @GameTest(template = "test_reactor")
-    public static void anEmptyTankAndDensityOutletsPreserveEveryConstituent(GameTestHelper h) {
+    public static void anEmptyTankAndItsOutletsGiveTheWholeGasMixture(GameTestHelper h) {
         var at = new BlockPos(3, 3, 3);
         h.setBlock(at, CETransport.LIDDED_VESSEL.get());
         var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(at);
@@ -190,13 +190,14 @@ public class MixtureGameTests {
         bottom = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, Direction.DOWN);
         var lines = new ArrayList<net.minecraft.network.chat.Component>();
         vessel.addToGoggleTooltip(lines, false);
-        h.assertTrue(lines.size() == 6, "An overlay displays all five gases");
-        h.assertTrue(top.drain(1, SIMULATE).is(CEFluids.HYDROGEN_GAS.get()) && bottom.drain(1, SIMULATE).is(CEProcessFluids.CARBON_DIOXIDE.get()),
-            "Upper and lower ports preview lightest and densest gas respectively");
-        h.assertTrue(bottom.drain(new FluidStack(CEFluids.HYDROGEN_GAS.get(), 50), EXECUTE).isEmpty(), "A filter cannot draw the upper layer through the lower port");
-        h.assertTrue(bottom.drain(50, EXECUTE).is(CEProcessFluids.CARBON_DIOXIDE.get())
-            && top.drain(70, EXECUTE).is(CEFluids.HYDROGEN_GAS.get()) && vessel.getTankInventory().getFluidAmount() == 880,
-            "Taking the extreme layers removes precisely the exported component volumes");
+        h.assertTrue(lines.size() >= 6, "An overlay displays all five gases: " + lines);
+        h.assertTrue(MixtureHelper.isMixture(top.drain(1, SIMULATE)) && MixtureHelper.isMixture(bottom.drain(1, SIMULATE)),
+            "Gases mix, so the upper and lower ports both give the whole mixture");
+        var lower = bottom.drain(50, EXECUTE);var upper = top.drain(70, EXECUTE);
+        var left = MixtureHelper.extractContents(vessel.getTankInventory().getFluid()).amounts();
+        h.assertTrue(lower.getAmount() == 50 && upper.getAmount() == 70 && vessel.getTankInventory().getFluidAmount() == 880
+            && left.size() == 5 && left.values().stream().allMatch(amount -> amount == 176),
+            "Taking gas from either port removes every component in proportion: " + left);
         h.succeed();
     }
 

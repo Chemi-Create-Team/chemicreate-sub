@@ -2019,6 +2019,16 @@
     "ja_jp": "腐食性流体には合金バケツを使います。Createの注液口・アイテム排液口でも出し入れできます。",
     "zh_cn": "腐蚀性流体使用合金桶。也可通过Create注液器和分液池装卸。"
   },
+  "world_liquids.stainless": {
+    "en_us": "A stainless steel bucket is made like a bucket, from stainless steel ingots. It holds the liquids a stainless tank holds.",
+    "ja_jp": "ステンレスバケツは、鉄の代わりにステンレス鋼インゴットでバケツと同じように作ります。ステンレスタンクに入る液体を入れられます。",
+    "zh_cn": "不锈钢桶的做法与桶相同，只是把铁锭换成不锈钢锭。它能装不锈钢储罐可装的液体。"
+  },
+  "world_liquids.stainless_fill": {
+    "en_us": "Acids, halogens and bases up to very hot fit it, but no gas. Emptied, it stays a stainless bucket.",
+    "ja_jp": "酸・ハロゲン・塩基を高温まで入れられますが、気体は入りません。空にしてもステンレスバケツに戻ります。",
+    "zh_cn": "可装高温以下的酸、卤素和碱，但不能装气体。倒空后仍是不锈钢桶。"
+  },
   "world_liquids.pour": {
     "en_us": "Use a liquid bucket on the ground to pour it. Gas buckets release a cloud instead.",
     "ja_jp": "液体のバケツは地面へ注げます。気体は放出されます。",

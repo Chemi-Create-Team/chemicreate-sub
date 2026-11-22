@@ -23,10 +23,12 @@ public final class ProcessBucketItem extends BucketItem {
 
     public boolean alloy() { return FluidHazards.of(new FluidStack(content, 1000)).corrosive(); }
 
-    public ItemStack emptyBucket() { return new ItemStack(alloy() ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET); }
+    public ItemStack emptyBucket(ItemStack filled) {
+        return StainlessBuckets.emptied(filled, new ItemStack(alloy() ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET));
+    }
 
     @Override public boolean hasCraftingRemainingItem(ItemStack stack) { return true; }
-    @Override public ItemStack getCraftingRemainingItem(ItemStack stack) { return emptyBucket(); }
+    @Override public ItemStack getCraftingRemainingItem(ItemStack stack) { return emptyBucket(stack); }
 
     public FluidStack contents(ItemStack stack) {
         return StatefulBuckets.contents(stack,content);
@@ -43,14 +45,14 @@ public final class ProcessBucketItem extends BucketItem {
                 if (WoodCarbonization.tryStart(level, hit.getBlockPos())) {
                     level.updateNeighborsAt(hit.getBlockPos(), CECarbonization.CHARRED_WOOD.get());
                     playEmptySound(player, level, hit.getBlockPos());
-                    return InteractionResultHolder.success(player.hasInfiniteMaterials() ? held : emptyBucket());
+                    return InteractionResultHolder.success(player.hasInfiniteMaterials() ? held : emptyBucket(held));
                 }
                 return InteractionResultHolder.fail(held);
             }
         }
         InteractionResultHolder<ItemStack> result = super.use(level, player, hand);
         if (alloy() && result.getResult().consumesAction() && result.getObject().is(Items.BUCKET))
-            return new InteractionResultHolder<>(result.getResult(), emptyBucket());
+            return new InteractionResultHolder<>(result.getResult(), emptyBucket(held));
         return result;
     }
 

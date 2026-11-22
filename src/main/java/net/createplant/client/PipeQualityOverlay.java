@@ -20,6 +20,14 @@ public final class PipeQualityOverlay {
 
     public static void tooltip(ItemTooltipEvent event) {
         var item = event.getItemStack().getItem();
+        boolean shift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+        if (item == net.createplant.registry.CEWorldFluids.STAINLESS_BUCKET.get()) {
+            net.createplant.thermal.TankGrade.STAINLESS.tooltip(event.getToolTip(), shift);
+            if (!shift) event.getToolTip().add(Component.translatable(PREFIX + "shift").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
+            return;
+        }
+        if (net.createplant.item.StainlessBuckets.marked(event.getItemStack()))
+            event.getToolTip().add(Component.translatable("item.create_refinery_n_reactors.stainless_steel_bucket").withStyle(net.minecraft.ChatFormatting.GRAY));
         if (item instanceof net.minecraft.world.item.BucketItem bucket
             && net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID)) {
             var chemical = FluidHazards.of(new net.neoforged.neoforge.fluids.FluidStack(bucket.content, 1));
@@ -28,7 +36,6 @@ public final class PipeQualityOverlay {
             if (chemical.gas()) event.getToolTip().add(Component.translatable(PREFIX + "gas"));
         }
         if (!(item instanceof BlockItem block)) return;
-        boolean shift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
         if (PipeMaterial.carrier(block.getBlock().defaultBlockState()) instanceof PipeMaterial material) material.tooltip(event.getToolTip(), shift);
         else if (net.createplant.thermal.TankGrade.of(block.getBlock()) instanceof net.createplant.thermal.TankGrade grade) grade.tooltip(event.getToolTip(), shift);
         else return;

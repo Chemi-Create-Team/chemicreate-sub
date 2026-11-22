@@ -28,7 +28,7 @@ public final class ProcessBucketWrapper extends FluidBucketWrapper {
     @Override public boolean isFluidValid(int tank, FluidStack fluid) { return tank == 0 && canFillFluidType(fluid); }
 
     @Override protected void setFluid(FluidStack fluid) {
-        if (fluid.isEmpty()) container = new ItemStack(alloy() ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET);
+        if (fluid.isEmpty()) container = StainlessBuckets.emptied(container, new ItemStack(alloy() ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET));
         else container = CEWorldFluids.bucket(fluid);
     }
 }

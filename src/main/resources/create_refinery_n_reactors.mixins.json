@@ -56,6 +56,7 @@
     "FluidStateRenderMixin",
     "FluidStateStreamRenderMixin",
     "FluidStateGlassPipeMixin",
+    "StainlessBucketColorMixin",
     "StatefulBucketModelMixin",
     "CreativeInventorySectionsMixin",
     "GoggleOverlayMixin",

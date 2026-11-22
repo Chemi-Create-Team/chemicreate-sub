@@ -6239,5 +6239,12 @@
   "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.products.lesson_pages.0": "Pull the products out through a funnel on a side of the bottom layer, and gases through a pump there.",
   "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.0": "A tower runs either catalysts or solids: no catalyst goes in while a tray holds solids, and no solid while a tray holds a catalyst.",
-  "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.1": "A tower runs either catalysts or solids: no catalyst goes in while a tray holds solids, and no solid while a tray holds a catalyst."
+  "create_refinery_n_reactors.ponder.shared.reaction_tower_trays.catalyst.lesson_pages.1": "A tower runs either catalysts or solids: no catalyst goes in while a tray holds solids, and no solid while a tray holds a catalyst.",
+  "item.create_refinery_n_reactors.stainless_steel_bucket": "Stainless Steel Bucket",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless": "A stainless steel bucket is made like a bucket, from stainless steel ingots. It holds the liquids a stainless tank holds.",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless.lesson_pages.0": "A stainless steel bucket is made like a bucket, from stainless steel ingots. It holds the liquids a stainless tank holds.",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill": "Acids, halogens and bases up to very hot fit it, but no gas. Emptied, it stays a stainless bucket.",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.world_liquids.stainless_fill.lesson_pages.0": "Acids, halogens and bases up to very hot fit it, but no gas. Emptied, it stays a stainless bucket."
 }

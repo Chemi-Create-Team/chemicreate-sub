@@ -115,6 +115,7 @@ public class CECreativeModeTabs {
         for (var paths : MATERIAL_GROUPS) for (var path : paths) listed.add(item(path));
         for (var paths : EQUIPMENT_GROUPS) for (var path : paths) listed.add(item(path));
         listed.add(CEWorldFluids.EMPTY_ALLOY_BUCKET.get());
+        listed.add(CEWorldFluids.STAINLESS_BUCKET.get());
         listed.add(CESafety.RAW_PROCESS_GAS.get().getBucket());
         // Dyed flywheels are made by dyeing the placed yellow one.
         CEItems.LARGE_FLYWHEELS.forEach(item -> listed.add(item.get()));
@@ -131,6 +132,7 @@ public class CECreativeModeTabs {
             });
         if (materials) {
             output.accept(CEWorldFluids.EMPTY_ALLOY_BUCKET.get());
+            output.accept(CEWorldFluids.STAINLESS_BUCKET.get());
             liquids.forEach(output::accept);
             output.accept(com.jesz.createdieselgenerators.CDGFluids.CRUDE_OIL.getBucket().get());
             gases.forEach(output::accept);
@@ -145,7 +147,7 @@ public class CECreativeModeTabs {
 
     static String section(Item item) {
         if (item == CERadiation.DOSIMETER.get() || item == CERadiation.SURVEY_METER.get()) return "equipment";
-        if (item == CEWorldFluids.EMPTY_ALLOY_BUCKET.get() || item instanceof GasBucketItem
+        if (item == CEWorldFluids.EMPTY_ALLOY_BUCKET.get() || item == CEWorldFluids.STAINLESS_BUCKET.get() || item instanceof GasBucketItem
             || item instanceof BucketItem bucket && bucket.content != Fluids.EMPTY) return "materials";
         String path = BuiltInRegistries.ITEM.getKey(item).getPath();
         if (EQUIPMENT_GROUPS.getFirst().contains(path) || path.equals("steel_block")) return "construction";
