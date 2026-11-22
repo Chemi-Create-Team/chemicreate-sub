@@ -6296,5 +6296,6 @@
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.0": "回路の電圧が高いと充電され、満充電になると充電回路から切れます。止まったときは直方体・電解液・配線を確認します。",
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.1": "回路の電圧が高いと充電され、満充電になると充電回路から切れます。止まったときは直方体・電解液・配線を確認します。",
-  "create_refinery_n_reactors.ponder.plant_battery_bank.header": "鉛蓄電池とリチウムイオン電池を作る"
+  "create_refinery_n_reactors.ponder.plant_battery_bank.header": "鉛蓄電池とリチウムイオン電池を作る",
+  "item.create_refinery_n_reactors.lead_sinter": "鉛の焼結鉱"
 }

@@ -6296,5 +6296,6 @@
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.count": "1",
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.0": "电路电压更高时会充电，充满后会断开充电电路。若停止工作，请检查长方体、电解液和接线。",
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.1": "电路电压更高时会充电，充满后会断开充电电路。若停止工作，请检查长方体、电解液和接线。",
-  "create_refinery_n_reactors.ponder.plant_battery_bank.header": "搭建铅酸与锂离子蓄电池组"
+  "create_refinery_n_reactors.ponder.plant_battery_bank.header": "搭建铅酸与锂离子蓄电池组",
+  "item.create_refinery_n_reactors.lead_sinter": "铅烧结矿"
 }

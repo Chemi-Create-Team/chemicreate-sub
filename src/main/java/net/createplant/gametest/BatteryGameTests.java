@@ -74,4 +74,16 @@ public class BatteryGameTests {
         h.assertTrue(mob.hasEffect(CESafety.ACID_BURN), "Milk does not cure it");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty", timeoutTicks = 20)
+    public static void leadComesOnlyFromTheDryProcesses(GameTestHelper h) {
+        var manager = h.getLevel().getRecipeManager();
+        for (String id : new String[] {"galena_roasting", "lead_sinter_reduction", "galena_direct_smelting"})
+            h.assertTrue(manager.byKey(net.minecraft.resources.ResourceLocation.parse(CreatePlant.MOD_ID + ":pressure_reaction/" + id)).isPresent(), "Missing recipe " + id);
+        var galena = CreatePlant.location("galena");
+        h.assertTrue(manager.getRecipes().stream().noneMatch(holder -> holder.value() instanceof net.minecraft.world.item.crafting.AbstractCookingRecipe cooking
+            && cooking.getIngredients().stream().anyMatch(ingredient -> java.util.Arrays.stream(ingredient.getItems()).anyMatch(stack -> galena.equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()))))),
+            "Galena has no furnace shortcut to lead");
+        h.succeed();
+    }
 }

@@ -6296,5 +6296,6 @@
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.count": "2",
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.0": "A higher circuit voltage charges the bank; a full bank leaves the charging circuit.",
   "create_refinery_n_reactors.ponder.shared.guide.battery_bank.step_5.lesson_pages.1": "If it stops, check the box, the electrolyte and the wiring.",
-  "create_refinery_n_reactors.ponder.plant_battery_bank.header": "Lead-acid and lithium-ion battery banks"
+  "create_refinery_n_reactors.ponder.plant_battery_bank.header": "Lead-acid and lithium-ion battery banks",
+  "item.create_refinery_n_reactors.lead_sinter": "Lead Sinter"
 }

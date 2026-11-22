@@ -1,0 +1,27 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:galena"
+    },
+    {
+      "item": "create_refinery_n_reactors:galena"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1500,
+      "fluid": "create_refinery_n_reactors:oxygen_gas"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:lead_sinter",
+      "count": 2
+    },
+    {
+      "amount": 1000,
+      "id": "create_refinery_n_reactors:sulfur_dioxide"
+    }
+  ]
+}

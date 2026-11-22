@@ -1,0 +1,27 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:lead_sinter"
+    },
+    {
+      "item": "create_refinery_n_reactors:lead_sinter"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "create_refinery_n_reactors:carbon_monoxide"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:lead_ingot",
+      "count": 2
+    },
+    {
+      "amount": 1000,
+      "id": "create_refinery_n_reactors:carbon_dioxide"
+    }
+  ]
+}
