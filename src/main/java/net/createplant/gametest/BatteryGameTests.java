@@ -86,4 +86,17 @@ public class BatteryGameTests {
             "Galena has no furnace shortcut to lead");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty", timeoutTicks = 20)
+    public static void leadAlsoComesFromLeachingClarifyingAndElectrowinning(GameTestHelper h) {
+        var manager = h.getLevel().getRecipeManager();
+        for (String id : new String[] {"pressure_reaction/lead_leaching", "clarifying/lead"})
+            h.assertTrue(manager.byKey(net.minecraft.resources.ResourceLocation.parse(CreatePlant.MOD_ID + ":" + id)).isPresent(), "Missing recipe " + id);
+        var process = net.createplant.chemistry.ElectrolysisProcess.of(new FluidStack(net.createplant.registry.CEMetals.LEAD_CHLORIDE_SOLUTION.get(), 1000));
+        h.assertTrue(process != null && process.metal() == net.createplant.registry.CEMetals.LEAD_INGOT.get() && process.metalAmount() == 3
+            && process.recovered() == net.createplant.registry.CEChlorAlkali.HYDROCHLORIC_ACID.get() && process.recoveredAmount() == 250,
+            "The cell turns the lead solution into three ingots and gives the hydrochloric acid back");
+        h.assertTrue(net.createplant.registry.CEWetProcessing.slurry(net.createplant.registry.CEWetProcessing.SLURRIES.get("lead_leach_slurry").get()), "The lead slurry is a clarifier slurry");
+        h.succeed();
+    }
 }

@@ -4180,9 +4180,9 @@
     "zh_cn": "用管道将精制液直接送入电解槽，并用漏斗取出矿渣。电积得到3锭及250 mB稀硫酸，将酸返回浸出槽循环。"
   },
   "ore_recovery.metals": {
-    "en_us": "Process iron, copper, zinc or tin; gold is excluded. Find tin in cassiterite ore in new overworld chunks. Mix 250 mB sulfuric acid and 750 mB water for 1000 mB dilute acid.",
-    "ja_jp": "鉄・銅・亜鉛・錫が対象です。錫は新しく生成したオーバーワールドの錫石鉱石から取れます。金は対象外です。ミキサーで硫酸250 mBと水750 mBから希硫酸1000 mBを作れます。",
-    "zh_cn": "本线支持铁、铜、锌、锡。锡石生成于主世界新加载区块。金不支持此化学路线。搅拌250 mB硫酸与750 mB水得到1000 mB稀硫酸。"
+    "en_us": "Process iron, copper, zinc, tin or lead; gold is excluded. Find tin in cassiterite ore in new overworld chunks. Mix 250 mB sulfuric acid and 750 mB water for 1000 mB dilute acid.",
+    "ja_jp": "鉄・銅・亜鉛・錫・鉛が対象です。錫は新しく生成したオーバーワールドの錫石鉱石から取れます。金は対象外です。ミキサーで硫酸250 mBと水750 mBから希硫酸1000 mBを作れます。",
+    "zh_cn": "本线支持铁、铜、锌、锡、铅。锡石生成于主世界新加载区块。金不支持此化学路线。搅拌250 mB硫酸与750 mB水得到1000 mB稀硫酸。"
   },
   "electrowinning.title": {
     "en_us": "Electrowinning: three ingots and recycled acid",
@@ -4475,9 +4475,9 @@
     "zh_cn": "在带盖槽中安装搅拌叶片并从下方加热，无需专用浸出槽。"
   },
   "wet_processing.ore": {
-    "en_us": "Feed crushed iron, copper, zinc or tin through a funnel into the lidded vessel. Gold has no chemical route.",
-    "ja_jp": "ふた付き槽へファンネルで砕いた鉄・銅・亜鉛・錫を投入。金は対象外です。",
-    "zh_cn": "用漏斗向带盖槽投入粉碎铁、铜、锌或锡，金不支持此路线。"
+    "en_us": "Feed crushed iron, copper, zinc or tin, or galena for lead, through a funnel into the lidded vessel. Gold has no chemical route.",
+    "ja_jp": "ふた付き槽へファンネルで砕いた鉄・銅・亜鉛・錫（鉛は方鉛鉱）を投入。金は対象外です。",
+    "zh_cn": "用漏斗向带盖槽投入粉碎铁、铜、锌或锡（铅用方铅矿），金不支持此路线。"
   },
   "wet_processing.inlets": {
     "en_us": "Supply dilute sulfuric acid to a lower liquid port and compressed air or oxygen to an upper gas process port.",

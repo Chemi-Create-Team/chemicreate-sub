@@ -40,6 +40,7 @@ public final class CEWetProcessing {
         slurry("iron_leach_slurry", 0xFF884A35);
         slurry("zinc_leach_slurry", 0xFF73867A);
         slurry("tin_leach_slurry", 0xFF7A817F);
+        slurry("lead_leach_slurry", 0xFF8B8F96);
         slurry("wastewater_slurry", 0xFF716557);
     }
     public static final DeferredBlock<WetProcessDriveBlock> CLARIFIER = BLOCKS.registerBlock("clarifier_center_drive", p -> new WetProcessDriveBlock(p), properties());

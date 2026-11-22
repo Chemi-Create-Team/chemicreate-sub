@@ -19,10 +19,10 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
     @Override
     public void registerScenes(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         var preparation = new java.util.ArrayList<ResourceLocation>();
-        for (String name : java.util.List.of("cassiterite", "cassiterite_ore", "deepslate_cassiterite_ore", "crushed_raw_tin", "tin_ingot", "tailings_mud", "dilute_sulfuric_acid_bucket")) preparation.add(CreatePlant.location(name));
+        for (String name : java.util.List.of("cassiterite", "cassiterite_ore", "deepslate_cassiterite_ore", "crushed_raw_tin", "tin_ingot", "galena", "lead_ingot", "tailings_mud", "dilute_sulfuric_acid_bucket")) preparation.add(CreatePlant.location(name));
         helper.forComponents(preparation.toArray(ResourceLocation[]::new)).addStoryBoard("plant/ore_recovery", MetalRecoveryPonderScenes::preparation);
         helper.forComponents(CreatePlant.location("electrolysis_cell"), CreatePlant.location("electrolysis_cell_controller"), CreatePlant.location("electrolysis_electrode_head"),
-            CreatePlant.location("iron_sulfate_solution_bucket"), CreatePlant.location("copper_sulfate_solution_bucket"), CreatePlant.location("zinc_sulfate_solution_bucket"), CreatePlant.location("tin_sulfate_solution_bucket"))
+            CreatePlant.location("iron_sulfate_solution_bucket"), CreatePlant.location("copper_sulfate_solution_bucket"), CreatePlant.location("zinc_sulfate_solution_bucket"), CreatePlant.location("tin_sulfate_solution_bucket"), CreatePlant.location("lead_chloride_solution_bucket"))
             .addStoryBoard("plant/electrowinning", MetalRecoveryPonderScenes::electrowinning);
         for (var pump : net.createplant.registry.CETransport.MATERIAL_PUMPS) {
             String id = pump.getId().getPath();
