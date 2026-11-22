@@ -3635,9 +3635,9 @@
     "zh_cn": "用风扇或搅拌制取萤石"
   },
   "fluorite_sources.haunt": {
-    "en_us": "Blow a fan through soul fire or a soul campfire onto diorite: one diorite becomes one fluorite.",
-    "ja_jp": "魂の炎か魂の焚き火を通した風を閃緑岩に当てます。閃緑岩1個から蛍石1個になります。",
-    "zh_cn": "将风扇气流穿过灵魂火或灵魂营火吹向闪长岩，1个闪长岩变成1个萤石。"
+    "en_us": "Blow a fan through soul fire or a soul campfire onto diorite: one diorite becomes one calcite. Crush the calcite to get fluorite at 50%.",
+    "ja_jp": "魂の炎か魂の焚き火を通した風を閃緑岩に当てます。閃緑岩1個から方解石1個になり、方解石を粉砕すると50%で蛍石が出ます。",
+    "zh_cn": "将风扇气流穿过灵魂火或灵魂营火吹向闪长岩，1个闪长岩变成1个方解石。粉碎方解石有50%的概率得到萤石。"
   },
   "fluorite_sources.mix": {
     "en_us": "Alternatively, put one bone meal and one gravel into a Basin under a mechanical mixer.",
@@ -5263,5 +5263,35 @@
     "en_us": "A tower runs either catalysts or solids: no catalyst goes in while a tray holds solids, and no solid while a tray holds a catalyst.",
     "ja_jp": "触媒と固体は同時に使えません。棚段に固体があるうちは触媒を入れられず、触媒があるうちは固体を入れられません。",
     "zh_cn": "催化剂与固体不能同时使用：塔板上有固体时不能放入催化剂，有催化剂时不能投入固体。"
+  },
+  "guide.battery_bank.title": {
+    "en_us": "Lead-acid and lithium-ion battery banks",
+    "ja_jp": "鉛蓄電池とリチウムイオン電池を作る",
+    "zh_cn": "搭建铅酸与锂离子蓄电池组"
+  },
+  "guide.battery_bank.step_1": {
+    "en_us": "Stack casings of one battery type into a solid box, at least 2 blocks on every side. Each casing stores charge.",
+    "ja_jp": "同じ種類のケーシングを、各辺2ブロック以上の中身の詰まった直方体に積みます。ケーシング1個ごとに電気を蓄えます。",
+    "zh_cn": "把同一类型的外壳堆成每边至少2格的实心长方体。每个外壳都能储存电量。"
+  },
+  "guide.battery_bank.step_2": {
+    "en_us": "Put the terminal on the top face of the box. Its two posts are the positive and negative poles.",
+    "ja_jp": "直方体の上面に端子を置きます。2本の端子が正極と負極です。",
+    "zh_cn": "把端子放在长方体的顶面。两个端子柱分别是正极和负极。"
+  },
+  "guide.battery_bank.step_3": {
+    "en_us": "Pipe in electrolyte until it is full: 250 mB per casing. Lead-acid takes dilute sulfuric acid, lithium-ion takes acetone.",
+    "ja_jp": "電解液を配管で満たします。ケーシング1個につき250 mBで、鉛蓄電池は希硫酸、リチウムイオン電池はアセトンです。",
+    "zh_cn": "用管道注满电解液，每个外壳250 mB。铅酸电池用稀硫酸，锂离子电池用丙酮。"
+  },
+  "guide.battery_bank.step_4": {
+    "en_us": "Wire the terminals to CEE. Lead-acid gives 200 V and lithium-ion 300 V when full. More casings mean more capacity and less resistance.",
+    "ja_jp": "端子をCEEへ配線します。満充電で鉛蓄電池は200 V、リチウムイオン電池は300 Vです。ケーシングが多いほど容量が増え、抵抗が下がります。",
+    "zh_cn": "把端子接入CEE电路。充满时铅酸为200 V，锂离子为300 V。外壳越多，容量越大、电阻越小。"
+  },
+  "guide.battery_bank.step_5": {
+    "en_us": "A higher circuit voltage charges the bank; a full bank leaves the charging circuit. If it stops, check the box, the electrolyte and the wiring.",
+    "ja_jp": "回路の電圧が高いと充電され、満充電になると充電回路から切れます。止まったときは直方体・電解液・配線を確認します。",
+    "zh_cn": "电路电压更高时会充电，充满后会断开充电电路。若停止工作，请检查长方体、电解液和接线。"
   }
 }

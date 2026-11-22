@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SCS",
+    "CGC",
+    "SCS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:lithium_carbonate"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:carbon_powder"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:lithium_ion_battery_casing",
+    "count": 2
+  }
+}

@@ -160,6 +160,14 @@
     "create_refinery_n_reactors:pressure_pump_intake",
     "create_refinery_n_reactors:pressure_pump_casing",
     "create_refinery_n_reactors:hose_connector",
-    "create_refinery_n_reactors:vessel_stirrer"
+    "create_refinery_n_reactors:vessel_stirrer",
+    "create_refinery_n_reactors:spodumene_ore",
+    "create_refinery_n_reactors:galena_ore",
+    "create_refinery_n_reactors:deepslate_spodumene_ore",
+    "create_refinery_n_reactors:deepslate_galena_ore",
+    "create_refinery_n_reactors:lead_acid_battery_casing",
+    "create_refinery_n_reactors:lead_acid_battery_terminal",
+    "create_refinery_n_reactors:lithium_ion_battery_casing",
+    "create_refinery_n_reactors:lithium_ion_battery_terminal"
   ]
 }

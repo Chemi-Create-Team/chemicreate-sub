@@ -2,12 +2,14 @@ package net.createplant.safety;
 
 import net.createplant.CreatePlant;
 import net.createplant.registry.CENuclear;
+import net.createplant.registry.CESafety;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -57,5 +59,15 @@ public final class CorrosiveContact {
         if (data.contains(LAST_HIT) && data.getLong(LAST_HIT) == now) return;
         data.putLong(LAST_HIT, now);
         living.hurt(living.damageSources().source(acid ? DAMAGE : HazardSuit.HOT_LIQUID), 2);
+    }
+
+    /** A body in an acid or alkali vessel is burnt until it dies: the effect never expires and milk does not cure it. */
+    public static void soak(LivingEntity living, FluidStack fluid) {
+        if (fluid.isEmpty() || !harmful(fluid.getFluid().defaultFluidState())) return;
+        var burn = living.getEffect(CESafety.ACID_BURN);
+        if (burn != null && burn.isInfiniteDuration()) return;
+        var infinite = new MobEffectInstance(CESafety.ACID_BURN, MobEffectInstance.INFINITE_DURATION, 0);
+        infinite.getCures().clear();
+        living.addEffect(infinite);
     }
 }

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "C C",
+    "NBN"
+  ],
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "N": {
+      "item": "create_refinery_n_reactors:nickel_ingot"
+    },
+    "B": {
+      "item": "create_refinery_n_reactors:lithium_ion_battery_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:lithium_ion_battery_terminal"
+  }
+}

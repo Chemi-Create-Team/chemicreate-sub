@@ -126,6 +126,14 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         return QUARTERS.get(hatch)[state.getValue(BOTTOM) ? 1 : 0];
     }
 
+    /** Entering the open hatch puts the body in the contents; a vessel of acid or alkali burns it until death. */
+    @Override protected void entityInside(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.Entity entity) {
+        if (level.isClientSide || !(entity instanceof net.minecraft.world.entity.LivingEntity living)
+            || !state.getValue(OPEN) || state.getValue(HATCH) == Hatch.NONE) return;
+        if (level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity vessel && vessel.getControllerBE() != null)
+            net.createplant.safety.CorrosiveContact.soak(living, vessel.getControllerBE().getTankInventory().getFluid());
+    }
+
     private static int mask(BlockState state) {
         return (state.getValue(NORTH) ? 1 : 0) | (state.getValue(EAST) ? 2 : 0) | (state.getValue(SOUTH) ? 4 : 0) | (state.getValue(WEST) ? 8 : 0);
     }

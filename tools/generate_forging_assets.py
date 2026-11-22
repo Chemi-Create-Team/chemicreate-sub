@@ -19,9 +19,9 @@ def recipes():
     write(R / 'mixing/pig_iron.json', {
         'type': 'create:mixing', 'ingredients': [{'item': 'minecraft:iron_ingot'}, {'item': 'minecraft:charcoal'}],
         'results': [{'id': NS + 'pig_iron'}], 'heat_requirement': 'heated'})
-    write(R / 'haunting/fluorite_from_diorite.json', {
+    write(R / 'haunting/calcite_from_diorite.json', {
         'type': 'create:haunting', 'ingredients': [{'item': 'minecraft:diorite'}],
-        'results': [{'id': NS + 'fluorite'}]})
+        'results': [{'id': 'minecraft:calcite'}]})
     write(R / 'mixing/fluorite_from_bone_meal.json', {
         'type': 'create:mixing', 'ingredients': [{'item': 'minecraft:bone_meal'}, {'item': 'minecraft:gravel'},
             {'type': 'neoforge:single', 'fluid': 'minecraft:water', 'amount': 250}],
@@ -114,7 +114,7 @@ def languages():
         },
         'fluorite_sources': {
             'title': ('Make fluorite with fans or mixing', '送風か混合で蛍石を作る', '用风扇或搅拌制取萤石'),
-            'haunt': ('Blow a fan through soul fire or a soul campfire onto diorite: one diorite becomes one fluorite.', '魂の炎か魂の焚き火を通した風を閃緑岩に当てます。閃緑岩1個から蛍石1個になります。', '将风扇气流穿过灵魂火或灵魂营火吹向闪长岩，1个闪长岩变成1个萤石。'),
+            'haunt': ('Blow a fan through soul fire or a soul campfire onto diorite: one diorite becomes one calcite. Crush the calcite to get fluorite at 50%.', '魂の炎か魂の焚き火を通した風を閃緑岩に当てます。閃緑岩1個から方解石1個になり、方解石を粉砕すると50%で蛍石が出ます。', '将风扇气流穿过灵魂火或灵魂营火吹向闪长岩，1个闪长岩变成1个方解石。粉碎方解石有50%的概率得到萤石。'),
             'mix': ('Alternatively, put one bone meal and one gravel into a Basin under a mechanical mixer.', '別の製法では、メカニカルミキサーの下の鉢へ骨粉1個と砂利1個を入れます。', '另一种方法是在机械搅拌器下的工作盆中加入1个骨粉和1个砂砾。'),
             'water': ('Pipe in 250 mB of water and mix without heating to obtain one fluorite.', '水250 mBを配管で入れ、加熱せずに混ぜると蛍石1個ができます。', '用管道输入250 mB水，无需加热，搅拌即可获得1个萤石。'),
         },

@@ -19,6 +19,8 @@ public final class ElectroDevices {
         () -> new SimulatedDeviceType<>(CreatePlant.location("electrolysis_electrode_head"), (type, level, pos, data) -> new ElectrolysisCellDevice(level, pos, data, type)));
     public static final DeferredHolder<SimulatedDeviceType<?>, SimulatedDeviceType<FuelCellDevice>> FUEL_CELL = DEVICES.register("fuel_cell",
         () -> new SimulatedDeviceType<>(CreatePlant.location("fuel_cell"), (type, level, pos, data) -> new FuelCellDevice(level, pos, data, type)));
+    public static final DeferredHolder<SimulatedDeviceType<?>, SimulatedDeviceType<BatteryDevice>> BATTERY = DEVICES.register("battery",
+        () -> new SimulatedDeviceType<>(CreatePlant.location("battery"), (type, level, pos, data) -> new BatteryDevice(level, pos, data, type)));
     public static final DeferredHolder<SimulatedDeviceType<?>, SimulatedDeviceType<FusionMagnetDevice>> FUSION_MAGNET = DEVICES.register("fusion_magnet_feeder",
         () -> new SimulatedDeviceType<>(CreatePlant.location("fusion_magnet_feeder"), (type, level, pos, data) -> new FusionMagnetDevice(level, pos, data, type)));
     public static final DeferredHolder<SimulatedDeviceType<?>, SimulatedDeviceType<ElectricUtilityDevice>> PUMP = DEVICES.register("electric_pump",

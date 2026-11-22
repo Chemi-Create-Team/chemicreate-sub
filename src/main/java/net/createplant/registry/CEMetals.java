@@ -36,7 +36,7 @@ public final class CEMetals {
     public static final Map<String, DeferredItem<Item>> MINERALS = new LinkedHashMap<>();
     public static final Map<String, DeferredItem<BlockItem>> ORES = new LinkedHashMap<>();
     static {
-        for (String ore : new String[] { "bauxite", "pentlandite", "ilmenite", "zircon", "chromite", "molybdenite", "cassiterite" }) {
+        for (String ore : new String[] { "bauxite", "pentlandite", "ilmenite", "zircon", "chromite", "molybdenite", "cassiterite", "spodumene", "galena" }) {
             MINERALS.put(ore, ITEMS.registerSimpleItem(ore));
             ORES.put(ore + "_ore", ore(ore + "_ore", Blocks.IRON_ORE));
             ORES.put("deepslate_" + ore + "_ore", ore("deepslate_" + ore + "_ore", Blocks.DEEPSLATE_IRON_ORE));
@@ -67,6 +67,8 @@ public final class CEMetals {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> COPPER_SULFATE_SOLUTION = stream("copper_sulfate_solution", 0xEE3D86D2);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ZINC_SULFATE_SOLUTION = stream("zinc_sulfate_solution", 0xEED6E2DE);
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("tin_ingot");
+    public static final DeferredItem<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
+    public static final DeferredItem<Item> LITHIUM_CARBONATE = ITEMS.registerSimpleItem("lithium_carbonate");
     public static final DeferredItem<Item> CRUSHED_TIN = ITEMS.registerSimpleItem("crushed_raw_tin");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TIN_SULFATE_SOLUTION = stream("tin_sulfate_solution", 0xEEC9D9DB);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DILUTE_SULFURIC_ACID = stream("dilute_sulfuric_acid", 0xEED4DB96);

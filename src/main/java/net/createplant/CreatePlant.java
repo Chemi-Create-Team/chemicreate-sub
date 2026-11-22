@@ -51,6 +51,7 @@ public class CreatePlant {
         net.createplant.compat.WaterGasBurner.register(modEventBus);
         net.createplant.registry.CEChlorAlkali.register(modEventBus);
         net.createplant.registry.CEFuelCell.register(modEventBus);
+        net.createplant.registry.CEBattery.register(modEventBus);
         net.createplant.registry.CEBlasting.register(modEventBus);
         net.createplant.registry.CESafety.register(modEventBus);
         net.createplant.registry.CEFurnace.register(modEventBus);
