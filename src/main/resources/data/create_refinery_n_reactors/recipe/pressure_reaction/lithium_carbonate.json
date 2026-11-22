@@ -1,0 +1,29 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "superheated",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:spodumene"
+    },
+    {
+      "item": "create_refinery_n_reactors:spodumene"
+    },
+    {
+      "item": "create_refinery_n_reactors:sodium_carbonate"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "create_refinery_n_reactors:sulfuric_acid"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:lithium_carbonate",
+      "count": 2
+    },
+    {
+      "id": "minecraft:sand"
+    }
+  ]
+}

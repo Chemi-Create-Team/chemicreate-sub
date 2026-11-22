@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/lithium_ion_battery_terminal"
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/lithium_ion_battery_terminal",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/lithium_ion_battery_terminal",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/lithium_ion_battery_terminal",
+      "y": 270
+    }
+  }
+}

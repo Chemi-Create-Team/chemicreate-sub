@@ -321,6 +321,10 @@
     "heated_unfinished_steel": "Shared Create assembly workpiece; retain the heated metal sprite.",
     "reaction_tower": "Manufactured component, machine, membrane, equipment or container.",
     "tailings_mud": "Wet ore-tailings sludge; retain its brown sludge sprite.",
-    "flocculant": "Polymer granules with their own pale granule sprite"
+    "flocculant": "Polymer granules with their own pale granule sprite",
+    "spodumene": "Mined mineral lump/crystal, not a powder process product.",
+    "galena": "Mined mineral lump/crystal, not a powder process product.",
+    "lead_ingot": "Metal ingot; retain its ingot sprite.",
+    "lithium_carbonate": "Refined lithium salt; retain its own sprite."
   }
 }

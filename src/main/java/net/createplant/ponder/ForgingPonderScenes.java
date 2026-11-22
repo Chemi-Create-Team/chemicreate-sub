@@ -8,7 +8,6 @@ import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createplant.registry.CEItems;
-import net.createplant.registry.CEUranium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -106,7 +105,7 @@ public final class ForgingPonderScenes {
                 .modifyBlockEntity(
                         new BlockPos(4, 1, 2),
                         com.simibubi.create.content.logistics.depot.DepotBlockEntity.class,
-                        depot -> depot.setHeldItem(CEUranium.FLUORITE.toStack()));
+                        depot -> depot.setHeldItem(new ItemStack(Items.CALCITE)));
         scene.world().showSection(util.select().fromTo(5, 2, 5, 8, 5, 7), Direction.DOWN);
         scene.world()
                 .setKineticSpeed(

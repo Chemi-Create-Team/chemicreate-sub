@@ -9,6 +9,8 @@
     "#c:ores/chromite",
     "#c:ores/molybdenite",
     "#c:ores/salt",
-    "#c:ores/cassiterite"
+    "#c:ores/cassiterite",
+    "#c:ores/spodumene",
+    "#c:ores/galena"
   ]
 }

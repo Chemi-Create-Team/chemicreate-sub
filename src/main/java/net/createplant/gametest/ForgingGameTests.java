@@ -126,7 +126,7 @@ public class ForgingGameTests {
     }
 
     @GameTest(template = "test_reactor")
-    public static void soulFanProducesFluoriteFromDiorite(GameTestHelper h) {
+    public static void soulFanProducesCalciteFromDiorite(GameTestHelper h) {
         var pos = new BlockPos(4, 1, 4);
         h.setBlock(pos, net.minecraft.world.level.block.Blocks.SOUL_CAMPFIRE.defaultBlockState());
         h.assertTrue(
@@ -137,9 +137,9 @@ public class ForgingGameTests {
         h.assertTrue(
                 outputs != null
                         && outputs.size() == 1
-                        && outputs.getFirst().is(net.createplant.registry.CEUranium.FLUORITE.get())
+                        && outputs.getFirst().is(Items.CALCITE)
                         && outputs.getFirst().getCount() == 1,
-                "One diorite produces one fluorite through the native fan processor");
+                "One diorite produces one calcite through the native fan processor");
         h.setBlock(pos, net.minecraft.world.level.block.Blocks.CAMPFIRE.defaultBlockState());
         h.assertTrue(
                 !AllFanProcessingTypes.HAUNTING.isValidAt(h.getLevel(), h.absolutePos(pos)),

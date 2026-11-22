@@ -9,6 +9,8 @@
     "create_refinery_n_reactors:chromite_ore",
     "create_refinery_n_reactors:molybdenite_ore",
     "create_refinery_n_reactors:halite_ore",
-    "create_refinery_n_reactors:cassiterite_ore"
+    "create_refinery_n_reactors:cassiterite_ore",
+    "create_refinery_n_reactors:spodumene_ore",
+    "create_refinery_n_reactors:galena_ore"
   ]
 }
