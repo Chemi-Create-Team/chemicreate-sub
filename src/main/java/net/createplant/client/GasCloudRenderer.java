@@ -4,6 +4,12 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.ponder.api.level.PonderLevel;
@@ -11,11 +17,14 @@ import net.createplant.CreatePlant;
 import net.createplant.cloud.CloudVolume;
 import net.createplant.cloud.GasCloud;
 import net.createplant.cloud.GasClouds;
+import net.createplant.cloud.GroundGasField;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -24,12 +33,34 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.event.RegisterShadersEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
+import org.joml.Vector3f;
 
 public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     private static final ResourceLocation PLUME_TEXTURE = CreatePlant.location("textures/entity/gas_plume.png");
     private static final RenderType PLUME_LAYER = MistRenderType.layer("gas_plume", PLUME_TEXTURE);
-    private final WeakHashMap<GasCloud, Mist> mists = new WeakHashMap<>();
+    private static final VertexFormat GROUND_FORMAT = VertexFormat.builder().add("Position", VertexFormatElement.POSITION)
+        .add("Color", VertexFormatElement.COLOR).add("UV0", VertexFormatElement.UV0)
+        .add("UV1", VertexFormatElement.UV1).add("UV2", VertexFormatElement.UV2).build();
+    private static final RenderType GROUND_LAYER = MistRenderType.groundLayer();
+    private static ShaderInstance groundShader;
+    private static final WeakHashMap<GasCloud, Mist> MISTS = new WeakHashMap<>();
+    private static final WeakHashMap<ClientLevel, Map<UUID, GroundDraw>> GROUND = new WeakHashMap<>();
+
+    private static final class GroundDraw {
+        final GroundGasField field;
+        final FallingGasMist mist;
+        final int color;
+        int lastTick = Integer.MIN_VALUE;
+
+        GroundDraw(GasCloud source, int color) {
+            field = new GroundGasField(source.volume().origin(), source.level().getGameTime());
+            mist = new FallingGasMist(field);
+            this.color = color;
+        }
+    }
 
     private static final class Mist {
         private CloudVolume volume;
@@ -39,6 +70,15 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
 
         private Mist(GasCloud cloud) {
             previousCharge = targetCharge = (float) cloud.charge();
+        }
+
+        private FallingGasMist preview(GasCloud cloud, PonderLevel level) {
+            if (volume == cloud.volume()) return falling;
+            volume = cloud.volume();
+            var field = new GroundGasField(volume.origin(), 0);
+            var bounds = level.getBounds();
+            field.preview(level, volume, pos -> bounds == null || bounds.isInside(pos));
+            return falling = new FallingGasMist(field);
         }
 
         private float charge(float syncedCharge, float time) {
@@ -53,6 +93,16 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     }
 
     private static final class MistRenderType extends RenderType {
+        private static RenderType groundLayer() {
+            return create(CreatePlant.MOD_ID + "_ground_gas", GROUND_FORMAT,
+                VertexFormat.Mode.QUADS, 1536, false, true, CompositeState.builder()
+                .setShaderState(new ShaderStateShard(() -> groundShader))
+                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                .setCullState(NO_CULL)
+                .setWriteMaskState(COLOR_WRITE)
+                .createCompositeState(false));
+        }
+
         private static RenderType layer(String name, ResourceLocation texture) {
             return create(CreatePlant.MOD_ID + "_" + name, DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, false, true,
                 CompositeState.builder()
@@ -72,6 +122,15 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         }
     }
 
+    public static void registerShaders(RegisterShadersEvent event) {
+        try {
+            event.registerShader(new ShaderInstance(event.getResourceProvider(), CreatePlant.location("ground_gas"),
+                GROUND_FORMAT), shader -> groundShader = shader);
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+    }
+
     public GasCloudRenderer(EntityRendererProvider.Context context) { super(context); }
 
     @Override public ResourceLocation getTextureLocation(GasCloud cloud) {
@@ -79,9 +138,10 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     }
 
     @Override public boolean shouldRender(GasCloud cloud, Frustum frustum, double x, double y, double z) {
-        if (super.shouldRender(cloud, frustum, x, y, z)) return true;
         var style = cloud.style();
-        return style != null && style.ceiling() && style.color() != null && cloud.shouldRender(x, y, z)
+        if (style == null || !style.ceiling() || style.color() == null) return false;
+        if (super.shouldRender(cloud, frustum, x, y, z)) return true;
+        return cloud.shouldRender(x, y, z)
             && frustum.isVisible(cloud.getBoundingBoxForCulling().inflate(RisingGasMist.SKY_SPREAD, 0, RisingGasMist.SKY_SPREAD)
                 .expandTowards(0, RisingGasMist.SKY_RISE, 0));
     }
@@ -90,30 +150,73 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         boolean preview = cloud.level() instanceof PonderLevel;
         double distance = preview ? 0 : cloud.distanceToSqr(entityRenderDispatcher.camera.getPosition());
         var style = cloud.style();
-        if (style == null || style.color() == null) return;
+        if (style == null || style.color() == null || !preview && !style.ceiling()) return;
         float distanceFade = (float) Mth.clamp((48 - Math.sqrt(distance)) / 16, 0, 1);
         if (distanceFade == 0) return;
-        var mist = mists.computeIfAbsent(cloud, Mist::new);
+        var mist = MISTS.computeIfAbsent(cloud, Mist::new);
         float time = cloud.tickCount + partialTick;
         float charge = mist.charge((float) cloud.charge(), time);
         var volume = cloud.volume();
         if (volume.size() == 0 || charge <= 0) return;
-        if (mist.volume != volume) {
-            mist.volume = volume;
-            if (style.ceiling()) mist.plume = new RisingGasMist(volume);
-            else mist.falling = new FallingGasMist(cloud.level(), volume);
-        }
         int color = style.color();
-        var buffer = buffers.getBuffer(PLUME_LAYER);
+        var layer = style.ceiling() ? PLUME_LAYER : GROUND_LAYER;
+        var buffer = buffers.getBuffer(layer);
         var matrix = pose.last();
         var billboard = GasBillboard.facing(matrix, entityRenderDispatcher.cameraOrientation(), preview);
         if (style.ceiling()) {
+            if (mist.volume != volume) {
+                mist.volume = volume;
+                mist.plume = new RisingGasMist(volume);
+            }
             mist.plume.render(cloud.level(), preview, buffer, matrix, billboard, time, charge, distanceFade, color);
         } else {
-            int top = (int) volume.bounds().maxY - 1 - volume.origin().getY();
-            mist.falling.render(buffer, matrix, billboard, time, charge, distanceFade, top, cloud.topHeight(), color);
+            var view = new Vector3f(billboard.right()).cross(billboard.up());
+            mist.preview(cloud, (PonderLevel) cloud.level()).render(buffer, matrix, null, null, view, time, charge, color);
         }
-        if (preview && buffers instanceof SuperRenderTypeBuffer ponderBuffers) ponderBuffers.draw(PLUME_LAYER);
+        if (preview && buffers instanceof SuperRenderTypeBuffer ponderBuffers) ponderBuffers.draw(layer);
+    }
+
+    public static void renderGroundMist(RenderLevelStageEvent event) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
+        var minecraft = Minecraft.getInstance();
+        var level = minecraft.level;
+        if (level == null) return;
+        var camera = event.getCamera().getPosition();
+        var frustum = event.getFrustum();
+        var pose = event.getPoseStack();
+        var buffers = minecraft.renderBuffers().bufferSource();
+        var ground = GROUND.computeIfAbsent(level, ignored -> new HashMap<>());
+        long gameTime = level.getGameTime();
+        VertexConsumer buffer = null;
+        // Entity rendering checks whether the source's chunk section was drawn. A mist can be far outside that section.
+        for (var entity : level.entitiesForRendering()) {
+            if (!(entity instanceof GasCloud cloud) || cloud.volume().size() == 0 || cloud.charge() <= 0) continue;
+            var style = cloud.style();
+            if (style == null || style.ceiling() || style.color() == null) continue;
+            ground.computeIfAbsent(cloud.getUUID(), ignored -> new GroundDraw(cloud, style.color())).field.observeRelease(level, cloud);
+        }
+        var iterator = ground.values().iterator();
+        while (iterator.hasNext()) {
+            var draw = iterator.next();
+            int tick = draw.field.time(gameTime);
+            if (draw.lastTick != tick) {
+                draw.lastTick = tick;
+                draw.field.spread(level, tick, 160);
+            }
+            if (draw.field.isEmpty()) {
+                iterator.remove();
+                continue;
+            }
+            if (draw.field.sections().isEmpty()) continue;
+            if (buffer == null) buffer = buffers.getBuffer(GROUND_LAYER);
+            var anchor = Vec3.atCenterOf(draw.field.origin());
+            pose.pushPose();
+            pose.translate(anchor.x - camera.x, anchor.y - camera.y, anchor.z - camera.z);
+            float time = tick + event.getPartialTick().getGameTimeDeltaPartialTick(false);
+            draw.mist.render(buffer, pose.last(), camera, frustum, null, time, 0, draw.color);
+            pose.popPose();
+        }
+        if (buffer != null) buffers.endBatch(GROUND_LAYER);
     }
 
     static void vertex(VertexConsumer buffer, PoseStack.Pose matrix, float x, float y, float z, float u, float v, int color, int alpha) {
@@ -128,7 +231,7 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         GasCloud strongest = null;
         for (var cloud : GasClouds.in(level, box)) {
             var style = cloud.style();
-            if (style != null && style.color() != null && cloud.contains(position)
+            if (style != null && style.ceiling() && style.color() != null && cloud.contains(position)
                 && (strongest == null || strongest.charge() < cloud.charge())) strongest = cloud;
         }
         return strongest;

@@ -174,8 +174,11 @@ public final class CloudVolume {
     }
 
     public boolean flowsThrough(Level level, BlockPos pos, Direction side) {
-        var next = pos.relative(side);
-        return contains(next) && connected(level, pos, next, side);
+        return contains(pos.relative(side)) && canFlow(level, pos, side);
+    }
+
+    public static boolean canFlow(Level level, BlockPos pos, Direction side) {
+        return connected(level, pos, pos.relative(side), side);
     }
 
     public boolean contains(Vec3 point, float topHeight) {

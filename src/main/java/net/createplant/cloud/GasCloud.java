@@ -20,11 +20,13 @@ public final class GasCloud extends Entity {
     private static final EntityDataAccessor<String> FLUID_ID = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<Integer> CHARGE = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> TOXIC = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Long> RELEASED_AT = SynchedEntityData.defineId(GasCloud.class, EntityDataSerializers.LONG);
 
     private CloudVolume volume = CloudVolume.empty(BlockPos.ZERO);
     private FluidStack fluid = FluidStack.EMPTY;
     private int age, sampleAge, expires, peak, nextRebuild;
     private boolean outdoors, inert;
+    private long releasedAt;
 
     public GasCloud(EntityType<? extends GasCloud> type, Level level) {
         super(type, level);
@@ -36,6 +38,7 @@ public final class GasCloud extends Entity {
         setPos(Vec3.atCenterOf(origin));
         volume = CloudVolume.empty(origin);
         fluid = stack.copy();
+        releasedAt = level().getGameTime();
         syncFluidId();
         refreshDuration();
         syncCharge();
@@ -60,6 +63,7 @@ public final class GasCloud extends Entity {
     public String fluidId() { return entityData.get(FLUID_ID); }
     public boolean toxic() { return entityData.get(TOXIC); }
     public GasCloudStyles.Style style() { return GasCloudStyles.find(fluidId()); }
+    public long releasedAt() { return entityData.get(RELEASED_AT); }
     public float topHeight() {
         var style = style();
         return style == null || style.ceiling() ? 1 : .25f + .75f * (float) charge();
@@ -95,6 +99,7 @@ public final class GasCloud extends Entity {
     void merge(FluidStack extra) {
         int held = amount();
         fluid.setAmount(held + Math.min(Integer.MAX_VALUE - held, extra.getAmount()));
+        releasedAt = level().getGameTime();
         refreshDuration();
     }
 
@@ -135,6 +140,7 @@ public final class GasCloud extends Entity {
             entityData.set(CELLS, next.save());
         }
         nextRebuild = age + REBUILD_INTERVAL;
+        GroundGasAtmosphere.release(this);
         if (level() instanceof ServerLevel) NeoForge.EVENT_BUS.post(new GasCloudEvent.Rebuilt(this));
     }
 
@@ -162,6 +168,9 @@ public final class GasCloud extends Entity {
         int charge = (int) Math.ceil(100 * charge());
         if (level().isClientSide) charge = Math.min(100, (int) Math.ceil(fluid.getAmount() / 10d));
         entityData.set(CHARGE, charge);
+        var style = style();
+        if (style != null && !style.ceiling()) entityData.set(RELEASED_AT, releasedAt);
+        GroundGasAtmosphere.release(this);
     }
 
     @Override protected void defineSynchedData(SynchedEntityData.Builder builder) {
@@ -169,6 +178,7 @@ public final class GasCloud extends Entity {
         builder.define(FLUID_ID, "");
         builder.define(CHARGE, 0);
         builder.define(TOXIC, false);
+        builder.define(RELEASED_AT, Long.MIN_VALUE);
     }
 
     @Override public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
@@ -188,6 +198,7 @@ public final class GasCloud extends Entity {
         tag.putInt("NextRebuild", nextRebuild);
         tag.putBoolean("Outdoors", outdoors);
         tag.putBoolean("Inert", inert);
+        tag.putLong("ReleasedAt", releasedAt);
         tag.put("Volume", volume.save());
     }
 
@@ -202,6 +213,7 @@ public final class GasCloud extends Entity {
         nextRebuild = Math.clamp(tag.getInt("NextRebuild"), age, age + REBUILD_INTERVAL);
         outdoors = tag.getBoolean("Outdoors");
         inert = tag.getBoolean("Inert");
+        releasedAt = tag.contains("ReleasedAt") ? tag.getLong("ReleasedAt") : level().getGameTime();
         volume = CloudVolume.load(tag.getCompound("Volume"));
         if (volume.size() > 0 && volume.origin().equals(blockPosition())) {
             setBoundingBox(volume.bounds());
