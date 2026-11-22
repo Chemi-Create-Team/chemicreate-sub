@@ -237,7 +237,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     /** Any part of a formed fluid heat exchanger gives out the ice it has frozen; the ice remains owned by its controller. */
 
     /** Every face of a vertical vessel takes feed and gives products; the reaction charge is reached the same way. */
-    public IItemHandler itemPort() { return module()==ReactorModule.STIRRED || module()==ReactorModule.ABSORBER || module()==ReactorModule.NONE && this instanceof LiddedVesselBlockEntity ? chargePort : null; }
+    public IItemHandler itemPort() { return module()==ReactorModule.STIRRED || module()==ReactorModule.NONE && this instanceof LiddedVesselBlockEntity ? chargePort : null; }
     /** A vertical process vessel must be closed to run. */
     protected boolean vesselOpen() { return false; }
     protected boolean processController() { return true; }
@@ -351,7 +351,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (module()==ReactorModule.PREHEATER) { thermal().tick();return; }
         float rpm=module().stress==0 ? 32 : Math.abs(rotationSpeed());
         if (rpm<32) { setStatus("speed",false);return; }
-        if ((module()==ReactorModule.STIRRED || module()==ReactorModule.ABSORBER) && react(rpm,sections)) {
+        if (module()==ReactorModule.STIRRED && react(rpm,sections)) {
             if (clock%10==0) syncNeeded=true;return;
         }
         if (recipeDirty) {
@@ -420,7 +420,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if(running)setStatus("materials",false);
     }
 
-    /** Shared item/fluid batches; heated and tray vessels do not need mechanical stirring. */
+    /** Shared item/fluid batches; heated vessels do not need mechanical stirring. */
     private boolean react(float rpm,int parallel) {
         var heat=burnerHeat();
         if (heat!=burnerHeat) { burnerHeat=heat;recipeDirty=true; }
@@ -432,7 +432,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
                 if(blocked==null)blocked=holder;
             }
             if(reaction==null)reaction=blocked;
-            if(reaction!=null || module()!=ReactorModule.ABSORBER)recipeDirty=false;
+            recipeDirty=false;
         }
         if (reaction==null) {
             if(module()==ReactorModule.STIRRED)setStatus("materials",false);
@@ -718,7 +718,6 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         @Override public boolean isFluidValid(int tank,FluidStack stack) {
             if (!input || !live() || tank<0 || tank>=count || !inputTank(first+tank) || stack.isEmpty()) return false;
             if (module()==ReactorModule.STIRRED) return feedFits(stack);
-            if (module()==ReactorModule.ABSORBER && reactionFluid(stack)) return true;
             int index=first+tank;
             for (ProcessRecipe r:ProcessRecipe.all()) if (r.module()==module().process && index<r.inputs().size() && r.accepts(index,stack)) return true;
             return false;

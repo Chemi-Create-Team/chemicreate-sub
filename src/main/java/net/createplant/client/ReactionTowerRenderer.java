@@ -1,5 +1,6 @@
 package net.createplant.client;
 
+import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -12,24 +13,35 @@ import net.createplant.CreatePlant;
 import net.createplant.block.ReactionTowerBlock;
 import net.createplant.block.entity.ReactionTowerBlockEntity;
 import net.createplant.thermal.FluidMaterials;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.model.pipeline.VertexConsumerWrapper;
 
 /**
- * Drawn once from a reaction tower's bottom centre: the catalyst baskets inside it, or, behind the open sight glasses, a separator's liquid and vapour;
- * and, on the front of the shell, Create's boiler gauge in the tower's steel: a half-size thermometer on the left of every layer that holds a basket, and on
+ * Drawn once from a reaction tower's bottom centre, seen through its sight glasses: the reaction trays inside it with the catalyst, solid feed and
+ * products lying on them, or a separator's liquid and vapour; and, on the front of the shell, Create's boiler gauge in the tower's steel: a half-size
+ * thermometer on the left of every layer that holds a tray, and on
  * the second layer from the bottom, on the right, the loop pressure gauge with a red needle. As on a boiler, a gauge is left off where a block stands
  * in front of it.
  */
 public class ReactionTowerRenderer extends SafeBlockEntityRenderer<ReactionTowerBlockEntity> {
-    /** The basket that fills a 3x3 lidded vessel, narrowed to the tower's thicker walls. */
-    private static final PartialModel BASKET = PartialModel.of(CreatePlant.location("block/lidded_vessel/internal/reactor_catalyst_basket_wide"));
-    private static final float INSET = ReactionTowerBlock.WALL / 16f, FLOOR = ReactionTowerBlock.FLOOR / 16f, ROOF = ReactionTowerBlock.ROOF / 16f, BASKET_SCALE = (48 - 2 * ReactionTowerBlock.WALL) / 44f;
+    /** The reaction tray drawn for a 3x3 stainless tank, narrowed to the tower's thicker walls. */
+    private static final PartialModel TRAY = PartialModel.of(CreatePlant.location("block/lidded_vessel/internal/reactor_separator_core_wide"));
+    private static final float INSET = ReactionTowerBlock.WALL / 16f, FLOOR = ReactionTowerBlock.FLOOR / 16f, ROOF = ReactionTowerBlock.ROOF / 16f, TRAY_SCALE = (48 - 2 * ReactionTowerBlock.WALL) / 44f;
+    /**
+     * Where items lie on a tray: the top of its lower plate in the layer, how thick each item in a heap lies, and the places across it, the middle one
+     * kept for the catalyst, then the four in line with the sight glasses before the corners.
+     */
+    private static final float TRAY_TOP = 4 / 16f, PILE = 1 / 32f, ITEM_SCALE = .9f;
+    private static final float[][] PLACES = {{0, 0}, {0, -.62f}, {0, .62f}, {-.62f, 0}, {.62f, 0}, {-.62f, -.62f}, {.62f, .62f}, {.62f, -.62f}, {-.62f, .62f}};
 
     /** Where Create pivots the boiler gauge's dial, and how far it swings over the full scale. */
     private static final float DIAL_PIVOT_Y = 6 / 16f, DIAL_PIVOT_Z = 8 / 16f, DIAL_SWEEP = 145;
@@ -53,19 +65,47 @@ public class ReactionTowerRenderer extends SafeBlockEntityRenderer<ReactionTower
         renderGauges(be, ms, buffer, light);
         renderHatch(be, partialTicks, ms, buffer);
         renderLadder(be, ms, buffer);
-        // The contents are lit through the sight glasses, not by the shut-in bottom block.
-        if (be.glazed()) { renderContents(be, ms, buffer, LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().north(2)));return; }
+        // The inside is lit through the sight glasses, not by the shut-in bottom block.
+        if (!be.hasTrays()) { renderContents(be, ms, buffer, LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().north(2)));return; }
         VertexConsumer vc = buffer.getBuffer(RenderType.cutoutMipped());
         for (int y = 0; y < be.layers(); y++) {
             var layer = be.layer(y);
-            if (layer == null || !layer.hasBasket()) continue;
+            if (layer == null || !layer.hasTray()) continue;
+            int inside = LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().above(y).relative(be.front(), 2));
             ms.pushPose();
             ms.translate(.5f, y, .5f);
-            ms.scale(BASKET_SCALE, 1, BASKET_SCALE);
+            ms.scale(TRAY_SCALE, 1, TRAY_SCALE);
             ms.translate(-.5f, 0, -.5f);
-            CachedBuffers.partial(BASKET, be.getBlockState()).light(light).renderInto(ms, vc);
+            CachedBuffers.partial(TRAY, be.getBlockState()).light(inside).renderInto(ms, vc);
             ms.popPose();
+            renderItems(layer, y, ms, buffer, inside, overlay);
         }
+    }
+
+    /**
+     * The catalyst in the middle of a tray, and the solid feed and products lying round it in small heaps: one item laid flat for every two held,
+     * at most eight of each, piled on the places in turn.
+     */
+    private static void renderItems(ReactionTowerBlockEntity layer, int y, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+        var items = Minecraft.getInstance().getItemRenderer();
+        if (!layer.catalystStack().isEmpty()) lay(items, layer, layer.catalystStack(), PLACES[0], y, 0, 0, ms, buffer, light, overlay);
+        int first = 1;
+        for (var stack : List.of(layer.load(), layer.made())) {
+            if (stack.isEmpty()) continue;
+            int shown = Math.min(8, (stack.getCount() + 1) / 2);
+            for (int i = 0; i < shown; i++) lay(items, layer, stack, PLACES[first + i % 4], y, i / 4, first + i, ms, buffer, light, overlay);
+            first += 4;
+        }
+    }
+
+    private static void lay(ItemRenderer items, ReactionTowerBlockEntity layer, ItemStack stack, float[] at, int y, int level, int seed, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+        ms.pushPose();
+        ms.translate(.5f + at[0], y + TRAY_TOP + PILE * (level + .5f), .5f + at[1]);
+        ms.mulPose(Axis.YP.rotationDegrees(seed * 47));
+        ms.mulPose(Axis.XP.rotationDegrees(90));
+        ms.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
+        items.renderStatic(stack, ItemDisplayContext.FIXED, light, overlay, ms, buffer, layer.getLevel(), seed);
+        ms.popPose();
     }
 
     private static void renderHatch(ReactionTowerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer) {
@@ -101,7 +141,7 @@ public class ReactionTowerRenderer extends SafeBlockEntityRenderer<ReactionTower
         int layers = be.layers();
         for (int y = 0; y < layers; y++) {
             var layer = be.layer(y);
-            if (layer != null && layer.hasBasket()) gauge(be, ms, vc, y, LEFT, THERMOMETER_SCALE, be.layerTemperature(y) / ReactionTowerBlockEntity.MAX_TEMPERATURE, -1, light);
+            if (layer != null && layer.hasTray()) gauge(be, ms, vc, y, LEFT, THERMOMETER_SCALE, be.layerTemperature(y) / ReactionTowerBlockEntity.MAX_TEMPERATURE, -1, light);
         }
         if (layers >= 2) gauge(be, ms, vc, 1, RIGHT, 1, be.pressure() / ReactionTowerBlockEntity.MAX_PRESSURE, PRESSURE_NEEDLE, light);
     }

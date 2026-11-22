@@ -1,0 +1,9 @@
+{
+  "parent": "create:block/mechanical_mixer/block",
+  "textures": {
+    "2": "create_refinery_n_reactors:block/reactor/steel",
+    "4": "create_refinery_n_reactors:block/vessel_stirrer/mixer_base_side",
+    "11": "create_refinery_n_reactors:block/vessel_stirrer/mechanical_press_top",
+    "particle": "create_refinery_n_reactors:block/vessel_stirrer/mixer_base_side"
+  }
+}

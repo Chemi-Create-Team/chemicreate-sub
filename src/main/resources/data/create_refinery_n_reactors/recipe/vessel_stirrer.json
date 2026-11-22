@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "PIP",
+    " A "
+  ],
+  "key": {
+    "C": {
+      "item": "create:cogwheel"
+    },
+    "P": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "I": {
+      "item": "create_refinery_n_reactors:reactor_impeller"
+    },
+    "A": {
+      "item": "create:andesite_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:vessel_stirrer",
+    "count": 1
+  }
+}

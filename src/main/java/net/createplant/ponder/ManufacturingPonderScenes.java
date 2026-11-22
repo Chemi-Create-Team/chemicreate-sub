@@ -22,7 +22,6 @@ import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.ReactionTowerBlockEntity;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.chemistry.ElectrolysisProcess;
-import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -242,24 +241,26 @@ public final class ManufacturingPonderScenes {
             if (fixed != null) scene.world().modifyBlockEntity(owner, net.createplant.block.entity.GasCentrifugeBlockEntity.class, be -> be.preview(fixed, complete));
             return;
         }
-        var module = recipe == null || recipe.module() == ReactorModule.NONE ? ReactorModule.STIRRED : recipe.module();
         int layers = 3;
         {
+            // The stirrer under the bottom centre, turned by a cogwheel beside it on a motor; burners under the rest of the tank.
+            BlockPos stirrer = owner.offset(1, -1, 1), cog = stirrer.north();
             var floor = util.select().fromTo(owner.below(), owner.offset(2, -1, 2));
-            var centre = util.select().position(owner.offset(1, -1, 1));
-            scene.world().setBlocks(floor.substract(centre), com.simibubi.create.AllBlocks.BLAZE_BURNER.getDefaultState(), false);
-            scene.world().setBlock(owner.offset(1, -1, 1), module.stress == 0 ? Blocks.AIR.defaultBlockState()
-                : com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, Direction.UP), false);
+            scene.world().setBlocks(floor.substract(util.select().position(stirrer)).substract(util.select().position(cog)), com.simibubi.create.AllBlocks.BLAZE_BURNER.getDefaultState(), false);
+            scene.world().setBlock(stirrer, CEReactor.STIRRER.get().defaultBlockState(), false);
+            scene.world().setBlock(cog, com.simibubi.create.AllBlocks.COGWHEEL.getDefaultState(), false);
+            scene.world().setBlock(cog.below(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, Direction.UP), false);
+            scene.world().setKineticSpeed(util.select().position(stirrer).add(util.select().position(cog.below())), 64);
+            scene.world().setKineticSpeed(util.select().position(cog), -64);
             heat(scene, owner.below(), recipe);
         }
         for (int layer = 0; layer < layers; layer++) {
             var part = owner.above(layer);
             scene.world().modifyBlockEntity(part, LiddedVesselBlockEntity.class, be -> {
                 var lookup = be.getLevel().registryAccess();var tag = be.writeClient(new CompoundTag(), lookup);
-                tag.put("Internal", CEReactor.INTERNALS.get(module).get().getDefaultInstance().save(lookup));
-                tag.putBoolean("Windows", true);tag.putBoolean("Formed", true);tag.putBoolean("Running", !complete);tag.putInt("Sections", layers);
+                tag.remove("Internal");tag.putBoolean("Stirrer", true);
+                tag.putBoolean("Windows", true);tag.putBoolean("Formed", true);tag.putBoolean("Running", !complete);tag.putInt("Sections", LiddedVesselBlockEntity.IMPELLER_LAYERS);
                 tag.putFloat("Progress", complete ? 0 : 40);tag.putInt("CycleTicks", 100);tag.putInt("Scale", 1);tag.putString("Status", complete ? "idle" : "running");
-                tag.putFloat("InputSpeed", module.stress == 0 ? 0 : 64);tag.putLong("PowerInput", owner.offset(1, 0, 1).asLong());
                 if (part.equals(owner)) {
                     for (int bank = 0; bank < ReactorMachineBlockEntity.PROCESS_TANKS; bank++) tag.remove("Tank" + bank);
                     var charge = new ItemStackHandler(13);
@@ -279,7 +280,7 @@ public final class ManufacturingPonderScenes {
         heat(scene, owner.below(), recipe);
     }
 
-    /** A four-layer reaction tower with a basket and the recipe's catalyst in every layer, one batch of feed waiting or of products made, over four corner burners. */
+    /** A four-layer reaction tower with a tray and the recipe's catalyst in every layer, one batch of feed waiting or of products made, over four corner burners. */
     private static void reactionTower(CreateSceneBuilder scene, SceneBuildingUtil util, ManufacturingRecipe recipe, BlockPos owner, boolean complete) {
         BlockPos controller = owner.offset(-1, 0, -1);
         int layers = 4;

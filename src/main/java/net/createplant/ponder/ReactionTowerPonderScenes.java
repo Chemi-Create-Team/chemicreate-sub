@@ -18,11 +18,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.material.Fluid;
 
-/** A four-layer reaction tower: with a basket, catalyst and gauges per layer, loaded through its roof hatch, as a reactor, and without baskets as a gas-liquid separator behind its sight glasses. */
+/** A four-layer reaction tower: with a tray, catalyst and gauges per layer, loaded through its roof hatch, as a reactor; with trays of solid feed; and without trays as a gas-liquid separator behind its sight glasses. */
 public final class ReactionTowerPonderScenes {
     private static final String LANG = "ponder.create_refinery_n_reactors.reaction_tower.", SEPARATOR = "ponder.create_refinery_n_reactors.reaction_tower_separator.";
     private static final String SYNTHESIS = "ponder.create_refinery_n_reactors.synthetic_reactions.";
     private static final String MATERIALS = "ponder.create_refinery_n_reactors.downstream_materials.";
+    private static final String TRAYS = "ponder.create_refinery_n_reactors.reaction_tower_trays.";
     private static final int LAYERS = 4;
 
     private ReactionTowerPonderScenes() { }
@@ -43,7 +44,7 @@ public final class ReactionTowerPonderScenes {
         caption(scene, util, top, "hatch");
 
         for (int y = 0; y < LAYERS; y++) {
-            scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 20).rightClick().withItem(CEReactor.CATALYST_BASKET.get().getDefaultInstance());
+            scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 20).rightClick().withItem(CEReactor.TRAY.get().getDefaultInstance());
             scene.world().modifyBlockEntityNBT(util.select().position(centre.above(y)), ReactionTowerBlockEntity.class, tag -> tag.putBoolean("Basket", true));
             scene.idle(12);
         }
@@ -81,6 +82,49 @@ public final class ReactionTowerPonderScenes {
         scene.markAsFinished();
     }
 
+    /** Trays without catalyst: solid feed through a funnel on the bottom layer's side lies on the trays, reacts with the gas over the burners' heat, and the product comes back out the side. */
+    public static void trays(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("reaction_tower_trays", PonderText.title(TRAYS + "title", "Solid feed on the reaction tower's trays"));
+        scene.configureBasePlate(0, 0, 9);
+        scene.scaleSceneView(.65f);
+        scene.showBasePlate();
+        BlockPos centre = util.grid().at(4, 2, 4), top = centre.above(LAYERS - 1), side = util.grid().at(4, 2, 2);
+        form(scene, util);
+        PonderText.build(scene, util, 3, 2, 3, 5, 5, 5, Direction.DOWN);
+        for (int y = 0; y < LAYERS; y++) scene.world().modifyBlockEntityNBT(util.select().position(centre.above(y)), ReactionTowerBlockEntity.class, tag -> tag.putBoolean("Basket", true));
+        caption(scene, util, TRAYS, top, "trays");
+        scene.world().setBlock(side, com.simibubi.create.AllBlocks.ANDESITE_FUNNEL.getDefaultState()
+            .setValue(com.simibubi.create.content.logistics.funnel.FunnelBlock.FACING, Direction.NORTH), false);
+        scene.world().showSection(util.select().position(side), Direction.SOUTH);
+        var feed = new net.minecraft.world.item.ItemStack(BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("yellowcake")), 16);
+        scene.overlay().showControls(util.vector().topOf(side), Pointing.DOWN, 60).withItem(feed);
+        load(scene, util, centre, 0, "TrayLoad", feed);
+        load(scene, util, centre, 1, "TrayLoad", feed.copyWithCount(8));
+        caption(scene, util, TRAYS, side, "feed");
+        PonderText.build(scene, util, 0, 1, 4, 2, 2, 4, Direction.EAST);
+        var burners = util.select().position(3, 1, 3).add(util.select().position(5, 1, 3)).add(util.select().position(3, 1, 5)).add(util.select().position(5, 1, 5));
+        scene.world().showSection(burners, Direction.UP);
+        caption(scene, util, TRAYS, util.grid().at(2, 2, 4), "gas");
+        var made = new net.minecraft.world.item.ItemStack(BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("uranium_dioxide")), 4);
+        load(scene, util, centre, 0, "TrayLoad", feed.copyWithCount(12));
+        load(scene, util, centre, 0, "TrayMade", made);
+        load(scene, util, centre, 1, "TrayLoad", feed.copyWithCount(4));
+        load(scene, util, centre, 1, "TrayMade", made);
+        caption(scene, util, TRAYS, centre, "react");
+        scene.overlay().showControls(util.vector().topOf(side), Pointing.DOWN, 60).withItem(made);
+        caption(scene, util, TRAYS, side, "products");
+        caption(scene, util, TRAYS, top, "catalyst");
+        scene.markAsFinished();
+    }
+
+    /** Lays a stack on, or as the products of, one layer's tray. */
+    private static void load(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos centre, int layer, String key, net.minecraft.world.item.ItemStack stack) {
+        var lookup = scene.world().getHolderLookupProvider();
+        scene.world().modifyBlockEntityNBT(util.select().position(centre.above(layer)), ReactionTowerBlockEntity.class, tag -> tag.put(key, stack.save(lookup)));
+        scene.idle(10);
+    }
+
     public static void separator(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("reaction_tower_separator", PonderText.title(SEPARATOR + "title", "Reaction tower as a separator"));
@@ -95,7 +139,6 @@ public final class ReactionTowerPonderScenes {
         caption(scene, util, SEPARATOR, util.grid().at(2, 2, 4), "feed");
         // A separating tower holds a little liquid ammonia under the recycled feed gas.
         scene.world().modifyBlockEntityNBT(util.select().position(centre), ReactionTowerBlockEntity.class, tag -> {
-            tag.putBoolean("Glazed", true);
             tag.put("TowerTank2", fluid(CEProcessFluids.LIQUID_AMMONIA.get(), 4000));
             tag.put("TowerTank3", fluid(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(), 64000));
         });
@@ -161,7 +204,7 @@ public final class ReactionTowerPonderScenes {
         hatch(scene, util, owner, top, true);
         if (first) {
             scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 32)
-                .rightClick().withItem(CEReactor.CATALYST_BASKET.get().getDefaultInstance());
+                .rightClick().withItem(CEReactor.TRAY.get().getDefaultInstance());
             scene.idle(15);
         } else {
             scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 26)
@@ -212,6 +255,8 @@ public final class ReactionTowerPonderScenes {
                 if (part.equals(controller)) { tag.remove("Controller");tag.putInt("Size", 3);tag.putInt("Height", LAYERS); }
                 else tag.put("Controller", NbtUtils.writeBlockPos(controller));
             });
+            // A formed tower has a sight glass in the middle of each side.
+            if (x == 1 ^ z == 1) scene.world().modifyBlock(part, state -> state.setValue(net.createplant.block.ReactionTowerBlock.WINDOW, true), false);
         }
         scene.idle(10);
     }

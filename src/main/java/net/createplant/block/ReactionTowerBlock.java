@@ -29,9 +29,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * One block of a reaction tower: a closed 3x3 tank, hollow inside its 6 px walls, floor and roof, with a 22 px hatch in the middle of the roof and a
- * catalyst basket in each layer.
+ * reaction tray in each layer.
  * The side flags mark the faces that are the tower's outer walls; a block that is not part of a 3x3 tower has all four and is solid. The middle block of
- * each side has a sight glass, opened while the tower works as a gas-liquid separator. It accepts no fluid itself; the ports belong to the tower's bottom centre.
+ * each side of a formed tower has a framed sight glass. It accepts no fluid itself; the ports belong to the tower's bottom centre.
  */
 public class ReactionTowerBlock extends PlantFluidTankBlock {
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH, EAST = BlockStateProperties.EAST, SOUTH = BlockStateProperties.SOUTH, WEST = BlockStateProperties.WEST;
@@ -83,12 +83,12 @@ public class ReactionTowerBlock extends PlantFluidTankBlock {
     /** Every block collides as a whole block, so nothing reaches the hollow. */
     @Override public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) { return Shapes.block(); }
 
-    /** Through the open hatch a basket goes into the lowest layer without one, a catalyst into the lowest basket without one. */
+    /** Through the open hatch a tray goes into the lowest layer without one, a catalyst onto the lowest tray without one. */
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof ReactionTowerBlockEntity part)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         var owner = part.owner();
         if (owner == null || hit.getDirection() != Direction.UP || !part.hasServiceHatch()
-            || !ReactionTowerBlockEntity.basket(stack) && !ReactionTowerBlockEntity.catalyst(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            || !ReactionTowerBlockEntity.tray(stack) && !ReactionTowerBlockEntity.catalyst(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!owner.hatchOpen() || !owner.canInsert(stack)) return ItemInteractionResult.FAIL;
         if (!level.isClientSide) {
             BlockPos at = owner.insert(stack.copyWithCount(1));
@@ -105,7 +105,7 @@ public class ReactionTowerBlock extends PlantFluidTankBlock {
         if (owner == null || !part.hasServiceHatch()) return InteractionResult.PASS;
         if (!level.isClientSide) {
             if (player.isShiftKeyDown() && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()
-                && owner.hatchOpen() && owner.hasBaskets()) {
+                && owner.hatchOpen() && owner.hasTrays()) {
                 ItemStack taken = owner.takeTop();
                 if (!taken.isEmpty() && !player.addItem(taken)) player.drop(taken, false);
             } else owner.toggleHatch();
@@ -113,11 +113,11 @@ public class ReactionTowerBlock extends PlantFluidTankBlock {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    /** A wrench on the top takes out the highest catalyst, then the highest basket, through the open hatch. */
+    /** A wrench on the top takes out the highest catalyst, then what lies on the highest tray and the tray, through the open hatch. */
     @Override public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         if (context.getClickedFace() == Direction.UP && context.getLevel().getBlockEntity(context.getClickedPos()) instanceof ReactionTowerBlockEntity part) {
             var owner = part.owner();
-            if (owner != null && owner.hatchOpen() && owner.hasBaskets()) {
+            if (owner != null && owner.hatchOpen() && owner.hasTrays()) {
                 if (!context.getLevel().isClientSide) {
                     ItemStack taken = owner.takeTop();
                     var player = context.getPlayer();
@@ -135,7 +135,7 @@ public class ReactionTowerBlock extends PlantFluidTankBlock {
         if (!level.isClientSide && placer != null && level.getBlockEntity(pos) instanceof ReactionTowerBlockEntity part) part.face(placer.getDirection().getOpposite());
     }
 
-    /** A centre block drops its basket and catalyst; the bottom centre also releases the gas it held. */
+    /** A centre block drops its tray and what lies on it; the bottom centre also releases the gas it held. */
     @Override public void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moving) {
         if (!state.is(next.getBlock()) && !level.isClientSide && level.getBlockEntity(pos) instanceof ReactionTowerBlockEntity part) part.removed();
         super.onRemove(state, level, pos, next, moving);

@@ -76,8 +76,7 @@ final class VesselContentsClientCheck {
                 for(int i=0;i<origins.length;i++) {
                     var origin=origins[i];var owner=((LiddedVesselBlockEntity)level.getBlockEntity(origin)).getControllerBE();
                     if(stage==1){
-                        owner.putInternal(CEReactor.INTERNALS.get(MODULES[i]).get().getDefaultInstance());
-                        owner.putInternal(CEReactor.INTERNALS.get(MODULES[i]).get().getDefaultInstance());
+                        level.setBlock(owner.stirrerPos(), CEReactor.STIRRER.get().defaultBlockState(), 3);
                         owner.validateStructure();owner.toggleWindows();
                     }
                     int capacity=MODULES[i]==ReactorModule.STIRRED ? owner.getTankInventory().getCapacity()+ReactorMachineBlockEntity.CAPACITY : ReactorMachineBlockEntity.CAPACITY;
@@ -85,7 +84,7 @@ final class VesselContentsClientCheck {
                     if(port==null)throw new IllegalStateException("No real fluid input for "+MODULES[i]);
                     var fluid=Fluids.WATER;
                     if(stage<=2 || stage==4) {
-                        if(stage==4) {level.removeBlock(origin.offset(1,-1,1),false);owner.toggleLid();}
+                        if(stage==4) owner.toggleLid();
                         port.fill(new FluidStack(fluid,stage==1 ? capacity/2 : capacity),EXECUTE);
                     } else if(stage==3) {
                         owner.processRecoveryPort().drain(Integer.MAX_VALUE,EXECUTE);owner.getTankInventory().drain(Integer.MAX_VALUE,EXECUTE);owner.toggleLid();

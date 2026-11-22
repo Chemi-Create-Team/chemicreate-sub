@@ -3932,7 +3932,8 @@
       "yellowcake",
       "uranium_dioxide",
       "uranium_tetrafluoride",
-      "reactor_separator_core"
+      "reactor_separator_core",
+      "vessel_stirrer"
     ],
     "steps": [
       {
@@ -3965,8 +3966,8 @@
       },
       {
         "target": [
-          10,
-          3,
+          13,
+          2,
           10
         ],
         "key": "step_4",

@@ -52,7 +52,7 @@ public class GradeConnectivityMixin {
         }
         if(net.createplant.mixture.MixtureHelper.isMixableLiquid(a) && net.createplant.mixture.MixtureHelper.isMixableLiquid(b)
             && (net.createplant.mixture.MixtureHelper.isMixture(a) || net.createplant.mixture.MixtureHelper.isMixture(b)
-                || be instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel && !vessel.hasInternals()))return true;
+                || be instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel && !vessel.stirred()))return true;
         return original.call(a,b);
     }
     /** Create merges a part's contents by filling the controller at its old size; a compressed gas is taken whole, since the part is emptied next. */

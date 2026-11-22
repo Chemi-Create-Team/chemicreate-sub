@@ -460,7 +460,7 @@ public final class SteamAcidPlaytestWorld {
         var chest = entity(level, pos, ChestBlockEntity.class);
         var items = List.of(Items.COAL_BLOCK.getDefaultInstance().copyWithCount(32), Items.WATER_BUCKET.getDefaultInstance(),
             CEItems.SULFUR_DUST.toStack(8), CEElectrolysis.NICKEL_ELECTRODE_PLATE.toStack(4), CEItems.ASBESTOS.toStack(4),
-            CEItems.OXIDATION_CATALYST.toStack(), CEElectrolysis.CELL.toStack(4), CEReactor.INTERNALS.get(ReactorModule.STIRRED).toStack(2),
+            CEItems.OXIDATION_CATALYST.toStack(), CEElectrolysis.CELL.toStack(4), CEReactor.STIRRER.toStack(2),
             CETransport.STAINLESS_PIPE.toStack(64), stainlessPump().getBlock().asItem().getDefaultInstance().copyWithCount(12),
             CEWorldFluids.bucket(stack(CEChlorAlkali.BRINE.get(),1000)), CEItems.AMMONIA_GAS_BUCKET.toStack(), CEItems.OXYGEN_GAS_BUCKET.toStack(),
             CEItems.OXIDATION_CATALYST.toStack(), CEItems.OXIDATION_CATALYST.toStack());

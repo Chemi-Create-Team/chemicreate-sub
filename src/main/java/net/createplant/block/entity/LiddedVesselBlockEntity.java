@@ -54,18 +54,22 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 /**
  * Create's tank inventory and joining, up to 3x3 across and four blocks high. Whether the hatch is open is the block state of every part, set from
  * the controller; while it is open the contents stand at atmospheric pressure, and opening it under pressure throws out what was held back.
- * In a 3x3 vessel each layer holds one reaction-plant internal, kept by the layer's block over the controller. The vessel itself receives
- * kinetic power and runs the process selected by those internals.
+ * A 3x3 vessel two or more layers high with a stirrer under its bottom centre is a stirred tank: the stirrer turns impellers in its two lowest
+ * layers, and the vessel runs the stirred process.
  */
 public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implements IMultiBlockEntityContainer.Fluid {
     /** Reinforced lidded vessels share Create's 16 bar gameplay pressure rating. */
     private final GradeFluidTank tankInventory;
-    private BlockPos controller, lastKnownPos, powerInput;
+    /** Stirred tanks turn impellers in this many of their lowest layers, whatever their height. */
+    public static final int IMPELLER_LAYERS = 2;
+    private BlockPos controller, lastKnownPos;
     private int width = 1, height = 1;
-    private boolean updateConnectivity, selectingPower, connectionsPending;
-    private float inputSpeed;
+    private boolean updateConnectivity, refreshing, connectionsPending;
+    /** Whether a stirrer stands under the bottom centre. Kept by the controller. */
+    private boolean stirrer;
     private LerpedFloat fluidLevel = LerpedFloat.linear().startWithValue(0);
     private final LerpedFloat lid;
+    /** An impeller or reaction tray fitted before stirrers replaced them; it is dropped once the vessel loads. */
     private ItemStack internal = ItemStack.EMPTY;
     private boolean windows;
     private final FluidStack[] storageDisplay = {FluidStack.EMPTY,FluidStack.EMPTY};
@@ -95,7 +99,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     /** 0 closed to 1 fully open, eased on the client. */
     public float lidOpening(float partialTicks) { return lid.getValue(partialTicks); }
 
-    public ItemStack internal() { return internal; }
     public VesselFouling fouling() { if (fouling==null) fouling=new VesselFouling(this);return fouling; }
 
 
@@ -277,80 +280,40 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     }
 
     @Override public ReactorModule module() {
-        if (level == null || internal == null) return ReactorModule.NONE;
-        var owner = getControllerBE();
-        if (owner == null || owner.width != 3 && owner.width != 1) return ReactorModule.NONE;
-        ReactorModule module = CEReactor.module(owner.internal);
-        return module == null || owner.width!=3 ? ReactorModule.NONE : module;
+        var owner = level == null ? null : getControllerBE();
+        return owner != null && owner.width == 3 && owner.height >= IMPELLER_LAYERS && owner.stirrer ? ReactorModule.STIRRED : ReactorModule.NONE;
+    }
+    public boolean stirred() { return module() == ReactorModule.STIRRED; }
+    /** Where the stirrer of this vessel stands: under the bottom centre. Called on the controller. */
+    public BlockPos stirrerPos() { return worldPosition.offset(width / 2, -1, width / 2); }
+    private void refreshStirrer() {
+        if (level == null || level.isClientSide || !isController()) return;
+        var at = stirrerPos();
+        boolean found = width == 3 && level.hasChunkAt(at) && level.getBlockState(at).is(CEReactor.STIRRER.get());
+        if (found != stirrer) { stirrer = found;sendData(); }
+        if (level.hasChunkAt(at) && level.getBlockEntity(at) instanceof VesselStirrerBlockEntity drive) drive.refreshStress();
     }
     @Override protected boolean processController() { return isController() && module() != ReactorModule.NONE; }
     @Override protected boolean vesselOpen() { return open(); }
+    /** The stirrer's speed; the vessel itself takes no rotation. */
     @Override public float rotationSpeed() {
-        if (level == null) return 0;
-        var owner = getControllerBE();
-        if (owner == null || owner.width != 3) return 0;
-        if (owner != this) return owner.rotationSpeed();
-        if (!ReactorStructure.loaded(level, worldPosition)) return 0;
-        if (level.isClientSide) return powerInput == null ? 0 : inputSpeed;
-        return powerInput != null && level.hasChunkAt(powerInput) && level.getBlockEntity(powerInput) instanceof LiddedVesselBlockEntity part && part.acceptsRotation() ? part.getSpeed() : 0;
+        var owner = level == null ? null : getControllerBE();
+        if (owner == null || !owner.stirred()) return 0;
+        var at = owner.stirrerPos();
+        return level.hasChunkAt(at) && level.getBlockEntity(at) instanceof VesselStirrerBlockEntity drive ? drive.getSpeed() : 0;
     }
-    @Override public float calculateStressApplied() {
-        var owner = getControllerBE();
-        return lastStressApplied = owner != null && owner.formed() && worldPosition.equals(owner.powerInput) && acceptsRotation() ? owner.module().stress * owner.sections() : 0;
-    }
-    @Override public void onSpeedChanged(float previousSpeed) {
-        super.onSpeedChanged(previousSpeed);
-        var owner = getControllerBE();
-        if (level != null && !level.isClientSide && owner != null) owner.selectPowerInput();
-    }
-    private boolean acceptsRotation() {
-        var current = state();
-        if (!(current.getBlock() instanceof LiddedVesselBlock block)) return false;
-        return block.hasShaftTowards(level, worldPosition, current, Direction.DOWN);
-    }
-    private void selectPowerInput() {
-        if (selectingPower || level == null || level.isClientSide || !isController()) return;
-        selectingPower = true;
-        try {
-            BlockPos selected = null;float speed = 0;
-            for (int y = 0; width == 3 && y < height; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) {
-                BlockPos pos = worldPosition.offset(x, y, z);
-                // An overstressed network still owns this load even though its effective speed has fallen to zero.
-                if (selected == null && level.hasChunkAt(pos) && level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity part && part.getController().equals(worldPosition) && part.acceptsRotation() && part.getTheoreticalSpeed() != 0) {
-                    selected = pos;speed = part.getSpeed();
-                }
-            }
-            boolean changed = !java.util.Objects.equals(powerInput, selected) || inputSpeed != speed;
-            powerInput = selected;inputSpeed = speed;
-            if (changed) {
-                for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++)
-                    if (level.hasChunkAt(worldPosition.offset(x, y, z)) && level.getBlockEntity(worldPosition.offset(x, y, z)) instanceof LiddedVesselBlockEntity part && part.hasNetwork()) part.getOrCreateNetwork().updateStressFor(part, part.calculateStressApplied());
-                sendData();
-            }
-        } finally { selectingPower = false; }
-    }
+    @Override public float calculateStressApplied() { return lastStressApplied = 0; }
+    /** Called when the vessel is resized or the block under its bottom centre changes. */
     @Override public void invalidateStructure() {
         super.invalidateStructure();
-        if (level == null || level.isClientSide || selectingPower) return;
-        var owner = getControllerBE();
-        if (owner == null || owner.selectingPower) return;
-        owner.selectingPower = true;
-        try {
-            for (int y = 0; y < owner.height; y++) for (int x = 0; x < owner.width; x++) for (int z = 0; z < owner.width; z++)
-                if (level.hasChunkAt(owner.worldPosition.offset(x, y, z)) && level.getBlockEntity(owner.worldPosition.offset(x, y, z)) instanceof LiddedVesselBlockEntity part && part.hasNetwork()) part.getOrCreateNetwork().updateStressFor(part, part.calculateStressApplied());
-        } finally { owner.selectingPower = false; }
-    }
-    @Override public void validateStructure() {
-        super.validateStructure();
-        selectPowerInput();
-        if (isController() && level != null && !level.isClientSide)
-            for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++)
-                if (level.hasChunkAt(worldPosition.offset(x, y, z)) && level.getBlockEntity(worldPosition.offset(x, y, z)) instanceof LiddedVesselBlockEntity part && part.hasNetwork()) part.getOrCreateNetwork().updateStressFor(part, part.calculateStressApplied());
+        if (refreshing) return;
+        refreshing = true;
+        try { refreshStirrer(); } finally { refreshing = false; }
     }
 
     @Override public void initialize() {
         super.initialize();
-        if (level != null && !level.isClientSide) { connectionsPending = true;refreshConnections(); }
+        if (level != null && !level.isClientSide) { connectionsPending = true;refreshConnections();refreshStirrer(); }
     }
 
     @Override public void lazyTick() { super.lazyTick();refreshConnections(); }
@@ -367,10 +330,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         var next=current.setValue(LiddedVesselBlock.LADDER, expected).setValue(LiddedVesselBlock.DRIVE, owner.width == 3).setValue(LiddedVesselBlock.AXIS, Direction.Axis.Y);
         if(owner.width==1)next=next.setValue(LiddedVesselBlock.HATCH,LiddedVesselBlock.Hatch.NONE).setValue(LiddedVesselBlock.OPEN,false);
         setState(next);
-        if (!acceptsRotation() && (hasSource() || getTheoreticalSpeed() != 0)) {
-            detachKinetics();removeSource();sendData();
-        }
-        owner.selectPowerInput();
+        if (hasSource() || getTheoreticalSpeed() != 0) { detachKinetics();removeSource();sendData(); }
     }
 
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
@@ -385,6 +345,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             updateConnectivity = false;ConnectivityHandler.formMulti(this);
         }
         if (level!=null && !level.isClientSide && isController()) { fouling().tick(); }
+        if (level!=null && !level.isClientSide && !internal.isEmpty()) dropInternal();
         super.tick();
         if (level == null || !isController()) return;
         if (!level.isClientSide && !isRemoved() && module()==ReactorModule.NONE && ReactorStructure.loaded(level,worldPosition))
@@ -412,7 +373,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         } else if(previous!=heating.progress())setChanged();
     }
 
-    /** An internal off its layer's slot moves there when joining, or drops if that is taken. */
     @Override public void notifyMultiUpdated() {
         onFluidStackChanged(tankInventory.getFluid());
         invalidateStructure();
@@ -428,11 +388,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             .setValue(LiddedVesselBlock.EAST, x == w - 1).setValue(LiddedVesselBlock.BOTTOM, worldPosition.getY() == origin.getY()).setValue(LiddedVesselBlock.DRIVE, w == 3)
             .setValue(LiddedVesselBlock.HATCH, top ? hatch(x, z, w) : LiddedVesselBlock.Hatch.NONE).setValue(LiddedVesselBlock.LADDER, ladder(x, z, w, lead.getValue(LiddedVesselBlock.HINGE)))
             .setValue(LiddedVesselBlock.OPEN, lead.getValue(LiddedVesselBlock.OPEN)).setValue(LiddedVesselBlock.HINGE, lead.getValue(LiddedVesselBlock.HINGE)));
-        BlockPos slot = new BlockPos(origin.getX(), worldPosition.getY(), origin.getZ());
-        if (!internal.isEmpty() && !slot.equals(worldPosition)) {
-            if (level.getBlockEntity(slot) instanceof LiddedVesselBlockEntity holder && holder.internal.isEmpty()) { holder.setInternal(internal);internal = ItemStack.EMPTY;setChanged();sendData(); }
-            else dropInternal();
-        }
     }
 
     /** Wide vessels have a central hatch; a one-block column has a fixed lid. */
@@ -453,11 +408,10 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         };
     }
 
-    /** A separated block retains its internal for recovery with a wrench. */
     @Override public void removeController(boolean keepFluids) {
         if (level == null || level.isClientSide) return;
         controller = null;updateConnectivity = true;
-        width = 1;height = 1;powerInput = null;inputSpeed = 0;
+        width = 1;height = 1;stirrer = false;
         if (!keepFluids) setTankSize(0, 1);
         invalidateStructure();invalidateCapabilities();setChanged();sendData();
         setState(state().setValue(LiddedVesselBlock.NORTH, true).setValue(LiddedVesselBlock.EAST, true).setValue(LiddedVesselBlock.SOUTH, true).setValue(LiddedVesselBlock.WEST, true)
@@ -517,58 +471,10 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     /** The lid is thrown back with a bang and the jet lifts whatever stands over the opening. */
 
 
-    /** The block of a layer that keeps its internal: the one over the controller. Called on the controller. */
-    public LiddedVesselBlockEntity slot(int layer) {
-        return level != null && level.hasChunkAt(worldPosition.above(layer)) && level.getBlockEntity(worldPosition.above(layer)) instanceof LiddedVesselBlockEntity slot ? slot : null;
-    }
-
-    public boolean canTakeInternal() {
-        if (width != 3) return false;
-        for (int y = 0; y < height; y++) if (slot(y) != null && slot(y).internal.isEmpty()) return true;
-        return false;
-    }
-
-    public boolean canTakeInternal(ItemStack stack) { return width == 3 && CEReactor.module(stack) != null && canTakeInternal(); }
-
-    public boolean hasInternals() {
-        for (int y = 0; y < height; y++) if (slot(y) != null && !slot(y).internal.isEmpty()) return true;
-        return false;
-    }
-
-    /** Puts an internal into the lowest empty layer and returns where it went. */
-    public BlockPos putInternal(ItemStack stack) {
-        if (!canTakeInternal(stack)) throw new IllegalStateException("No available vessel layer for this internal");
-        for (int y = 0; y < height; y++) {
-            var slot = slot(y);
-            if (slot != null && slot.internal.isEmpty()) { slot.setInternal(stack);return slot.getBlockPos(); }
-        }
-        throw new IllegalStateException("No empty layer");
-    }
-
-    /** Takes the internal out of the highest layer that has one. */
-    public ItemStack takeTopInternal() {
-        for (int y = height - 1; y >= 0; y--) {
-            var slot = slot(y);
-            if (slot != null && !slot.internal.isEmpty()) { ItemStack item = slot.internal;slot.setInternal(ItemStack.EMPTY);return item; }
-        }
-        return ItemStack.EMPTY;
-    }
-
-    public void setInternal(ItemStack stack) {
-        internal = stack;
-        setChanged();
-        sendData();
-        ReactorStructure.changed(level, worldPosition);
-        var owner=getControllerBE();
-        if(owner!=null && level!=null && !level.isClientSide)for(int y=0;y<owner.height;y++)for(int x=0;x<owner.width;x++)for(int z=0;z<owner.width;z++) {
-            if(level.getBlockEntity(owner.worldPosition.offset(x,y,z)) instanceof LiddedVesselBlockEntity part){part.connectionsPending=true;part.refreshConnections();}
-        }
-    }
-
     public void dropInternal() {
         if (internal.isEmpty()) return;
         Containers.dropItemStack(level, worldPosition.getX() + .5, worldPosition.getY() + .5, worldPosition.getZ() + .5, internal);
-        internal = ItemStack.EMPTY;
+        internal = ItemStack.EMPTY;setChanged();
     }
 
     /** The connected vessel itself runs the process selected by its internals. */
@@ -612,8 +518,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         }
         if(!clientPacket)heating.write(tag,lookup);
         if (updateConnectivity) tag.putBoolean("Uninitialized", true);
-        if (powerInput != null) tag.putLong("PowerInput", powerInput.asLong());
-        tag.putFloat("InputSpeed", inputSpeed);
+        if (stirrer) tag.putBoolean("Stirrer", true);
         if (!internal.isEmpty()) tag.put("Internal", internal.save(lookup));
         tag.putBoolean("Windows",windows);
         var foulingTag=new CompoundTag();fouling().write(foulingTag);tag.put("Fouling",foulingTag);
@@ -630,35 +535,33 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             tankInventory.readFromNBT(lookup, tag.getCompound("TankContent"));
             if (tankInventory.getSpace() < 0) tankInventory.drain(-tankInventory.getSpace(), FluidAction.EXECUTE);
         }
-        powerInput = tag.contains("PowerInput") ? BlockPos.of(tag.getLong("PowerInput")) : null;inputSpeed = tag.getFloat("InputSpeed");
+        stirrer = tag.getBoolean("Stirrer");
         super.read(tag, lookup, clientPacket);
         if(!clientPacket)heating.read(tag,lookup);
         if (clientPacket) fluidLevel.chase(getFillState(), .5, LerpedFloat.Chaser.EXP);
         else fluidLevel = LerpedFloat.linear().startWithValue(getFillState());
         internal = tag.contains("Internal") ? ItemStack.parseOptional(lookup, tag.getCompound("Internal")) : ItemStack.EMPTY;
-        if (CEReactor.module(internal) == null) internal = ItemStack.EMPTY;
         windows=tag.getBoolean("Windows");
         if (!clientPacket) connectionsPending = true;
         fouling().read(tag.getCompound("Fouling"));
         if (clientPacket && (oldWindows!=windows || oldWidth!=width || oldHeight!=height)) updateWindowModel(oldWidth,oldHeight);
     }
 
-    /** Once internals form a process, pipes and funnels on any face reach its buffers instead of the vessel's storage tank. */
+    /** Once a stirred process forms, pipes and funnels on any face reach its buffers as well as the vessel's storage tank. */
     public static void register(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.LIDDED_VESSEL_ENTITY.get(), (be, side) -> {
             if (side==Direction.UP && be.underOpenHatch()) return null;
             var owner=be.getControllerBE();if (owner==null) return null;
             var reactor = be.reactor();
             IFluidHandler handler;
-            if (reactor!=null && reactor.module()!=ReactorModule.STIRRED) handler=reactor.port(side);
-            else if (reactor!=null) {
+            if (reactor!=null) {
                 int generation=owner.portGeneration();
                 var storage=be.storagePhasePort(side,()->be.getControllerBE()==owner && owner.portGeneration()==generation && owner.formed() && owner.module()==ReactorModule.STIRRED && !(side==Direction.UP && be.underOpenHatch()));
                 handler=combined(reactor.port(side),storage);
             } else {
                 var storage=GradeFluidTank.port(be, side, new FluidTank(0),
                 () -> be.getControllerBE() != null && be.reactor() == null && !(side == Direction.UP && be.underOpenHatch()),
-                () -> be.getControllerBE() != null && !be.getControllerBE().hasInternals());
+                () -> be.getControllerBE() != null && !be.getControllerBE().stirred());
                 var recovery=guarded(owner.processRecoveryPort(),()->be.getControllerBE()==owner && be.reactor()==null);
                 handler=combined(storage,recovery);
             }

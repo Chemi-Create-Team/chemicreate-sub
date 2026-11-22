@@ -10,7 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-/** The vessel footprint and every layer count accepted for its installed internal. */
+/** The stirred tank's footprint and every layer count accepted over its stirrer. */
 public final class ReactorGuide implements StructureGuide {
     @Override public BlockPos anchor(BlockEntity be) {
         return be instanceof LiddedVesselBlockEntity vessel && vessel.isController() && vessel.module() != ReactorModule.NONE && !vessel.formed() ? be.getBlockPos() : null;
@@ -28,7 +28,7 @@ public final class ReactorGuide implements StructureGuide {
         if (module == ReactorModule.NONE) return List.of();
         List<GhostLayout> result = new ArrayList<>();
         var vessel = CETransport.LIDDED_VESSEL.get().defaultBlockState();
-        for (int sections = width==1 ? 1 : module.minSections; sections <= ReactorStructure.MAX_SECTIONS; sections++) {
+        for (int sections = width==1 ? 1 : Math.max(module.minSections, LiddedVesselBlockEntity.IMPELLER_LAYERS); sections <= ReactorStructure.MAX_SECTIONS; sections++) {
             List<GhostLayout.Cell> cells = new ArrayList<>();
             for (int y = 0; y < sections; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++)
                 cells.add(new GhostLayout.Cell(base.offset(x, y, z), vessel, ReactorStructure::matches));

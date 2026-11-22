@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Game fuel line using existing fans, tray/stirred vessels, centrifuges and presses."""
+"""Game fuel line using existing fans, reaction towers with trays, stirred tanks, centrifuges and presses."""
 import json
 from pathlib import Path
 import generate_petrochemical_ponder as p
@@ -26,9 +26,9 @@ def feed(scene,x,y,z,solids=True):
 
 def preparation():
     scene=p.Structure(15,7)
-    scene.reactor(4,2,3,'absorber',2,((-1,-1),),windows=True);feed(scene,4,2,3)
-    scene.reactor(10,2,3,'stirred',1,((-1,-1),),windows=True);feed(scene,10,2,3)
-    scene.reactor(10,2,10,'absorber',2,((-1,-1),),heat='seething',windows=True);feed(scene,10,2,10)
+    scene.tower(4,2,3,load=NS+'yellowcake');feed(scene,4,2,3)
+    scene.reactor(10,2,3,'stirred',2,((-1,-1),),windows=True);feed(scene,10,2,3)
+    scene.tower(10,2,10,heat='seething',load=NS+'uranium_tetrafluoride');feed(scene,10,2,10)
     scene.block(3,3,7,'create:creative_motor',facing='south');scene.block(3,3,8,'create:encased_fan',facing='south')
     scene.block(3,3,9,'minecraft:lava',level='0');scene.block(3,2,9,'minecraft:stone_bricks')
     scene.block(2,3,9,'minecraft:iron_bars',east='false',west='false',north='true',south='true',waterlogged='false')
@@ -38,9 +38,10 @@ def preparation():
         scene.block(x+2,2,z,'create:andesite_funnel',facing='east',extracting='true',powered='false')
     for x,y,z in ((4,3,5),(10,2,5),(10,3,12)):
         scene.block(x,y,z,'create:fluid_valve', facing='up', axis_along_first='true', enabled='true', waterlogged='false')
-    scene.pump(11,4,10,'up');pipe(scene,11,5,10,'up','down')
-    scene.block(11,6,10,NS+'gas_receiver',bottom='true',top='true',shape='plain')
-    scene.block(12,4,10,'create:cogwheel',axis='y',waterlogged='false');scene.block(12,3,10,'create:creative_motor',facing='up')
+    # The tower's products, the fluoride gas included, leave its bottom layer.
+    pipe(scene,12,2,10,'east','west');scene.pump(13,2,10,'east')
+    scene.block(13,1,10,'create:cogwheel',axis='x',waterlogged='false');scene.block(12,1,10,'create:creative_motor',facing='east')
+    scene.block(14,2,10,NS+'gas_receiver',bottom='true',top='true',shape='plain')
     p.OUT=A/'ponder/plant';scene.save('uranium_preparation')
 
 
@@ -53,7 +54,7 @@ def finishing():
     scene.block(3,6,3,NS+'gas_receiver',bottom='true',top='true',shape='plain')
     scene.block(3,4,2,'create:cogwheel',axis='y',waterlogged='false');scene.block(3,3,2,'create:creative_motor',facing='up')
     pipe(scene,2,3,3,'east','west');scene.block(1,3,3,NS+'gas_receiver',bottom='true',top='true',shape='plain')
-    scene.reactor(10,2,3,'stirred',1,windows=True);feed(scene,10,2,3,solids=False)
+    scene.reactor(10,2,3,'stirred',2,windows=True);feed(scene,10,2,3,solids=False)
     for dx,dz,sides in ((0,-2,('north','south')),(2,0,('east','west'))):pipe(scene,10+dx,2,3+dz,*sides)
     scene.block(10,2,5,'create:andesite_funnel',facing='south',extracting='true',powered='false')
     scene.block(4,2,10,'create:depot',waterlogged='false');scene.block(4,4,10,'create:mechanical_press',facing='north')
@@ -67,24 +68,24 @@ def finishing():
 SCENES={
  'uranium_preparation':{
   'title':('From uranium ore to centrifuge feed','ウラン鉱石から濃縮前の気体を作る','从铀矿石到离心机原料'),
-  'components':['uranium_ore','deepslate_uranium_ore','uraninite','yellowcake','uranium_dioxide','uranium_tetrafluoride','reactor_separator_core'],
+  'components':['uranium_ore','deepslate_uranium_ore','uraninite','yellowcake','uranium_dioxide','uranium_tetrafluoride','reactor_separator_core','vessel_stirrer'],
   'steps':[
    ([3,2,11],{'speed':32,'item':NS+'uraninite'},(
     'Crush uranium ore with Create Crushing Wheels to obtain Raw Uranium. Blow a fan through lava onto the raw pieces on this depot to roast them into yellowcake.',
     'ウラン鉱石をCreateのクラッシングホイールで粉砕し、ウラン原石にします。溶岩を通したファンの風をデポ上の原石へ当て、焙焼したイエローケーキにします。',
     '用Create粉碎轮将铀矿石粉碎为粗铀矿。风扇吹过熔岩，对置物台上的原料进行焙烧，得到黄饼。')),
    ([4,3,3],{'item':NS+'reactor_separator_core'},(
-    'Fit trays in a 3×3 vessel two to four layers high. Feed roasted ore and hydrogen, then heat below. No rotation is needed.',
-    '3×3・2～4段の槽へ棚段を入れます。焙焼物と水素を送り、下のバーナーで加熱します。回転は不要です。',
-    '3×3、高2～4层槽内装棚板，供给焙烧物和氢气，从下方加热，无需旋转动力。')),
+    'Fit reaction trays in a reaction tower without catalyst. A funnel on a side of the bottom layer lays roasted ore on the trays; feed hydrogen there and heat below. No rotation is needed.',
+    '反応塔へ触媒なしで反応棚段を入れます。最下段の側面のファンネルから焙焼物を入れると棚段にたまります。同じ段へ水素を送り、下のバーナーで加熱します。回転は不要です。',
+    '向反应塔装入不放催化剂的反应塔板。从最底层侧面的漏斗投入焙烧物，物料会堆在塔板上；在同一层送入氢气，从下方加热，无需旋转动力。')),
    ([10,2,3],{'item':NS+'uranium_tetrafluoride'},(
-    'Feed uranium dioxide and hydrogen fluoride to a 3×3 impeller vessel. Heat below and drive its bottom centre at 32 RPM or more.',
-    '撹拌翼付き3×3槽へ二酸化ウランとフッ化水素を入れます。下から加熱し、底面中央へ32 RPM以上を入力します。',
-    '二氧化铀和氟化氢送入3×3叶轮槽，底部加热，底部中心输入至少32 RPM。')),
-   ([10,3,10],{'item':NS+'gas_receiver'},(
-    'Feed green salt and fluorine into a tray vessel and superheat with blue flames. Take gas from the top beside the hatch.',
-    '棚段付き槽へグリーンソルトとフッ素を送り、青い炎で超加熱します。生成ガスは上面のハッチ横から取ります。',
-    '绿盐和氟气送入棚板槽，用蓝焰超加热，产气从顶面检修口旁取出。')),
+    'Feed uranium dioxide and hydrogen fluoride to a stirred tank: a 3×3 stainless tank two or more layers high over a stirrer. Heat below and turn the cogwheel beside the stirrer at 32 RPM or more.',
+    '撹拌槽（撹拌機の上に3×3・2段以上で組んだステンレスタンク）へ二酸化ウランとフッ化水素を入れます。下から加熱し、撹拌機の横の歯車を32 RPM以上で回します。',
+    '二氧化铀和氟化氢送入搅拌槽（在搅拌器上方搭建3×3、至少两层的不锈钢罐）。底部加热，并以至少32 RPM转动搅拌器旁的齿轮。')),
+   ([13,2,10],{'item':NS+'gas_receiver'},(
+    'Lay green salt on the trays of another reaction tower, feed fluorine and superheat with blue flames. Pump the gas made out of a side of the bottom layer.',
+    '別の反応塔の棚段へグリーンソルトを入れ、フッ素を送って青い炎で超加熱します。生成ガスは最下段の側面からポンプで取り出します。',
+    '把绿盐放到另一座反应塔的塔板上，送入氟气并用蓝焰超加热。生成的气体从最底层侧面用泵抽出。')),
    ([10,3,12],{},(
     'Close the hatch, use fluoride-resistant pipes, fit relief valves and keep outlets clear.',
     'ハッチを閉じ、フッ化物には耐食配管を使います。安全弁を付け、出口を空けます。',
@@ -99,9 +100,9 @@ SCENES={
     'ウラン用に4台、小型炉燃料用に8台を横につなぎ、各台の底面を32 RPM以上で回します。原料は側面、濃縮物は上面、劣化物は別の側面です。',
     '铀浓缩并排连接4台，小型堆燃料连接8台，每台底部输入至少32 RPM，侧面进料、顶部取浓缩气、另一侧取贫化气。')),
    ([10,2,3],{'item':NS+'enriched_uranium_dioxide'},(
-    'Mix enriched UF6, water and hydrogen in an impeller vessel at 32 RPM or more without heating. Collect UO2 powder and hydrogen fluoride.',
-    '濃縮UF6・水・水素を撹拌翼付き槽へ入れます。加熱せず32 RPM以上で混ぜ、UO2粉末とフッ化水素を回収します。',
-    '浓缩UF6、水、氢气送入叶轮槽，不加热并以至少32 RPM搅拌，回收UO2粉末和氟化氢。')),
+    'Mix enriched UF6, water and hydrogen in a stirred tank at 32 RPM or more without heating. Collect UO2 powder and hydrogen fluoride.',
+    '濃縮UF6・水・水素を撹拌槽へ入れます。加熱せず32 RPM以上で混ぜ、UO2粉末とフッ化水素を回収します。',
+    '浓缩UF6、水、氢气送入搅拌槽，不加热并以至少32 RPM搅拌，回收UO2粉末和氟化氢。')),
    ([4,2,10],{'item':NS+'green_uranium_pellet'},(
     'Place powder on a depot and press it with a Mechanical Press to make green pellets.',
     '粉末をデポに載せ、メカニカルプレスで押すと未焼結ペレットになります。',

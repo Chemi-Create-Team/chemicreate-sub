@@ -16,8 +16,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 /**
- * A reaction of gases with other materials, run by heated, stirred or tray-equipped vessels. The JSON is Create's
- * processing format: item and fluid ingredients, item and fluid results, heat_requirement and processing_time.
+ * A reaction of gases with other materials, run by heated or stirred stainless tanks, or with module "absorber" on the reaction tower's trays.
+ * The JSON is Create's processing format: item and fluid ingredients, item and fluid results, heat_requirement and processing_time.
  */
 public class PressureReactionRecipe extends StandardProcessingRecipe<RecipeInput> {
     private ReactorModule module=ReactorModule.STIRRED;

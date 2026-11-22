@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
-import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEReactor;
@@ -99,7 +98,7 @@ final class SurvivalSulfurWorkshop {
             wet.pressTick();
             works.release(pressGate, AllItems.IRON_SHEET.get());
             int smelted = ironChests.stream().mapToInt(chest -> chestCount(chest, Items.IRON_INGOT)).sum();
-            if (smelted < 143 || chestCount(ironSheets, AllItems.IRON_SHEET.get()) < 22 || chestCount(stoneChest, Items.ANDESITE) < 304 || !wet.ready()) {
+            if (smelted < 275 || chestCount(ironSheets, AllItems.IRON_SHEET.get()) < 22 || chestCount(stoneChest, Items.ANDESITE) < 520 || !wet.ready()) {
                 check(now - built < 6500, "Vessel components stalled: iron=" + smelted + ", sheets=" + chestCount(ironSheets, AllItems.IRON_SHEET.get())
                     + ", andesite=" + chestCount(stoneChest, Items.ANDESITE) + ", press=" + rpm(level, pressGate.depot().above(2))
                     + ", depot=" + works.inventories(pressGate.depot()) + ", input=" + works.inventories(pressGate.depot().south())
@@ -107,7 +106,7 @@ final class SurvivalSulfurWorkshop {
                 return false;
             }
             for (int i = 0; i < 3; i++) {
-                crafting.collect(ironChests.get(i * 2), Items.IRON_INGOT, i == 0 ? 26 : 24);
+                crafting.collect(ironChests.get(i * 2), Items.IRON_INGOT, i == 0 ? 70 : 68);
                 crafting.collect(ironChests.get(i * 2 + 1), Items.IRON_INGOT, 23);
                 makeVessel(List.of(vessel, wet.acid(), wet.leach()).get(i));
             }
@@ -122,9 +121,9 @@ final class SurvivalSulfurWorkshop {
             burner(level, vesselBurner);
             burner(level, wet.leach().east(2).below());
             works.hopper(sulfurHopper, Direction.EAST);
-            measurements.put("crafted_vessel_shell_blocks", 27);
-            measurements.put("stainless_sheets_used_for_vessels", 108);
-            measurements.put("starting_iron_ore_for_vessels_and_cell", 165);
+            measurements.put("crafted_vessel_shell_blocks", 54);
+            measurements.put("stainless_sheets_used_for_vessels", 216);
+            measurements.put("starting_iron_ore_for_vessels_and_cell", 297);
             built = now;
             phase = 1;
             return false;
@@ -132,8 +131,6 @@ final class SurvivalSulfurWorkshop {
         var controller = entity(level, vessel, LiddedVesselBlockEntity.class);
         if (phase == 1) {
             if (sulfurChest == null || now - built < 20) return false;
-            for (var at : List.of(vessel, wet.acid(), wet.leach()))
-                crafting.useHeld(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get(), at.east().south(), Direction.UP);
             wet.prepare();
             airLine();
             crafting.useHeld(Items.COAL_BLOCK, vesselBurner, Direction.UP);
@@ -213,9 +210,9 @@ final class SurvivalSulfurWorkshop {
 
     private void makeVessel(BlockPos vessel) {
         var sheet = AllItems.IRON_SHEET.get();
-        crafting.collect(plateChest, CEItems.STAINLESS_STEEL_SHEET.get(), 36);
+        crafting.collect(plateChest, CEItems.STAINLESS_STEEL_SHEET.get(), 72);
         crafting.collect(ironSheets, sheet, 7);
-        crafting.collect(stoneChest, Items.ANDESITE, 98);
+        crafting.collect(stoneChest, Items.ANDESITE, 170);
         var ingot = Items.IRON_INGOT;
         var nugget = Items.IRON_NUGGET;
         var alloy = AllItems.ANDESITE_ALLOY.get();
@@ -223,28 +220,30 @@ final class SurvivalSulfurWorkshop {
         var trapdoor = Items.IRON_TRAPDOOR;
         var shaft = AllBlocks.SHAFT.asItem();
         var whisk = AllItems.WHISK.get();
-        crafting.craft(trapdoor, 1, 9, ingot, ingot, null, ingot, ingot);
-        crafting.craft(nugget, 9, 11, ingot);
-        crafting.craft(alloy, 1, 49, nugget, Items.ANDESITE, null, Items.ANDESITE, nugget);
-        crafting.craft(basin, 1, 9, alloy, null, alloy, alloy, alloy, alloy);
+        crafting.craft(trapdoor, 1, 18, ingot, ingot, null, ingot, ingot);
+        crafting.craft(nugget, 9, 19, ingot);
+        crafting.craft(alloy, 1, 85, nugget, Items.ANDESITE, null, Items.ANDESITE, nugget);
+        crafting.craft(basin, 1, 18, alloy, null, alloy, alloy, alloy, alloy);
         crafting.craft(shaft, 8, 1, alloy, null, null, alloy);
         crafting.craft(whisk, 1, 1, null, alloy, null, sheet, alloy, sheet, sheet, sheet, sheet);
-        crafting.craft(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get(), 1, 1, null, shaft, null, sheet, whisk, sheet, null, shaft);
+        crafting.craft(CEReactor.IMPELLER.get(), 1, 1, null, shaft, null, sheet, whisk, sheet, null, shaft);
 
         var shell = CETransport.LIDDED_VESSEL.asItem();
         var stainless = CEItems.STAINLESS_STEEL_SHEET.get();
-        crafting.craft(shell, 1, 9, stainless, trapdoor, stainless, stainless, basin, stainless);
+        crafting.craft(shell, 1, 18, stainless, trapdoor, stainless, stainless, basin, stainless);
         var center = vessel.east().south();
         var drive = center.offset(-3, -3, -2);
-        check(verticalDrive(level, drive, Direction.NORTH).equals(center.below()), "Vessel shaft must enter from below");
+        check(verticalDrive(level, drive, Direction.NORTH).equals(center.below()), "The drive must end under the tank's bottom centre");
+        // The stirrer takes the place of the drive's last cogwheel, meshing with the large one beside it; its casing and gear are placed like the drive's.
+        place(level, center.below(), CEReactor.STIRRER.get().defaultBlockState());
         for (int i = 1; i <= 6; i++) {
             var at = drive.west(i);
             if (i % 3 == 0) wheel(level, at, Direction.NORTH);
             else place(level, at, axis(AllBlocks.SHAFT.getDefaultState(), Direction.Axis.X));
         }
-        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) {
-            var pos = vessel.offset(x, 0, z);
-            if (level.isEmptyBlock(pos.below())) place(level, pos.below(), Blocks.STONE_BRICKS.defaultBlockState());
+        for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) {
+            var pos = vessel.offset(x, y, z);
+            if (y == 0 && level.isEmptyBlock(pos.below())) place(level, pos.below(), Blocks.STONE_BRICKS.defaultBlockState());
             crafting.placeHeld(shell, pos);
         }
 

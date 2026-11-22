@@ -74,6 +74,8 @@ public class ElectrolysisClient {
         event.enqueueWork(net.createplant.client.StainlessPipeModels::setup);
         event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get())
             .factory(com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual::shaft).skipVanillaRender(be -> true).apply());
+        event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(net.createplant.registry.CEReactor.STIRRER_ENTITY.get())
+            .factory(com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual.of(com.simibubi.create.AllPartialModels.SHAFTLESS_COGWHEEL)).skipVanillaRender(be -> true).apply());
         event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(net.createplant.registry.CETransport.MATERIAL_PUMP_ENTITY.get())
             .factory(com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual.ofZ(com.simibubi.create.AllPartialModels.MECHANICAL_PUMP_COG))
             .skipVanillaRender(be -> true).apply());
@@ -131,6 +133,7 @@ public class ElectrolysisClient {
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(), net.createplant.client.HorizontalTankRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.STAINLESS_BOILER_ENTITY.get(), net.createplant.client.HorizontalTankRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.LIDDED_VESSEL_ENTITY.get(), net.createplant.client.LiddedVesselRenderer::new);
+        event.registerBlockEntityRenderer(net.createplant.registry.CEReactor.STIRRER_ENTITY.get(), net.createplant.client.VesselStirrerRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.REACTION_TOWER_ENTITY.get(), net.createplant.client.ReactionTowerRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.AMMONIA_SEPARATOR_ENTITY.get(), net.createplant.client.AmmoniaSeparatorRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEReactor.ENTITY.get(), net.createplant.client.ReactorMachineRenderer::new);

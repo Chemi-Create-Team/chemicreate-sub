@@ -85,7 +85,7 @@ public class CECreativeModeTabs {
             "cooling_tower_fill", "cooling_tower_distributor", "cooling_tower_hot_inlet", "cooling_tower_cold_outlet",
             "cooling_tower_makeup_inlet", "condenser_waterbox", "condenser_shell", "condenser_tube_bundle", "condenser_cooling_inlet",
             "condenser_cooling_outlet", "cryogenic_cold_box_drive", "cryogenic_regenerator"),
-        List.of("fractionating_column", "reactor_catalyst_basket", "reactor_impeller", "gas_centrifuge", "cubic_press", "reactor_separator_core", "large_absorption_tower", "reaction_tower",
+        List.of("fractionating_column", "vessel_stirrer", "reactor_impeller", "gas_centrifuge", "cubic_press", "reactor_separator_core", "large_absorption_tower", "reaction_tower",
             "electrolysis_cell", "electrolysis_electrode_head", "electrolysis_cell_controller", "electrolysis_furnace_shell", "electrolysis_furnace_anode",
             "electrolysis_furnace_busbar", "converter_shell", "converter_trunnion_bearing", "fuel_cell", "flare_tip"),
         List.of("reactor_graphite", "reactor_fuel_channel", "reactor_fuel_channel_tube", "reactor_top_cap", "reactor_feed_bundle",

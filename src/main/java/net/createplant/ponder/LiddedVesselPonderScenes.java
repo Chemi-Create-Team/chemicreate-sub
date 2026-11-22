@@ -1,6 +1,5 @@
 package net.createplant.ponder;
 
-import com.mojang.math.Transformation;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
@@ -9,25 +8,20 @@ import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
-import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
-import net.minecraft.world.entity.Display;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
-/** A 3x3 lidded vessel: joining, pipes, opening the hatch by hand, putting an internal in, the blowout under pressure, and reading it. */
+/** A 3x3 lidded vessel: joining, pipes, opening the hatch by hand, where a stirrer goes, the blowout under pressure, and reading it; and the stirrer. */
 public final class LiddedVesselPonderScenes {
     private static final String LANG = "ponder.create_refinery_n_reactors.lidded_vessel.";
     private static final String COMPACT_LANG = "ponder.create_refinery_n_reactors.lidded_vessel_2x2.";
@@ -94,17 +88,8 @@ public final class LiddedVesselPonderScenes {
 
         lid(scene, util, vessel, top, true);
         text(scene, util, top, 120, "open");
-        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.SOUTH), Pointing.LEFT, 40).rightClick().withItem(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
-        scene.idle(7);
-        scene.world().modifyBlockEntityNBT(util.select().position(controller), LiddedVesselBlockEntity.class, tag -> {
-            var item = new CompoundTag();item.putString("id", CEReactor.INTERNALS.get(ReactorModule.STIRRED).getId().toString());item.putInt("count", 1);tag.put("Internal", item);
-        });
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(2, 1, 2), Direction.DOWN), Pointing.UP, 60).withItem(CEReactor.STIRRER.toStack());
         text(scene, util, top, 140, "internals");
-        scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 35)
-            .rightClick().withItem(AllItems.WRENCH.asStack());
-        scene.idle(7);
-        scene.world().modifyBlockEntityNBT(util.select().position(controller), LiddedVesselBlockEntity.class, tag -> tag.remove("Internal"));
-        scene.idle(30);
 
         lid(scene, util, vessel, top, false);
         scene.idle(20);
@@ -157,50 +142,28 @@ public final class LiddedVesselPonderScenes {
         scene.markAsFinished();
     }
 
-    /** Full-size native item models are easier to inspect outside the closed pressure envelope. */
+    /** The stirrer under a stainless tank: placing it, the cogwheel that turns it, and the impellers it turns in the tank's two lowest layers. */
     public static void internals(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("vessel_internals", PonderText.title(INTERNAL_LANG + "title", "Internals for reaction vessels"));
+        scene.title("vessel_internals", PonderText.title(INTERNAL_LANG + "title", "Stirring a stainless tank"));
         scene.configureBasePlate(0, 0, 9);
         scene.showBasePlate();
-        ReactorModule[] modules = {ReactorModule.STIRRED};
-        Vec3[] centres = {new Vec3(4.5, 1.5, 4.5)};
-        String[] captions = {"impeller"};
-        for (int i = 0; i < modules.length; i++) {
-            ItemStack stack = CEReactor.INTERNALS.get(modules[i]).get().getDefaultInstance();
-            Vec3 centre = centres[i];
-            scene.world().createEntity(world -> display(world, stack, centre));
-        }
-        scene.idle(30);
-        for (int i = 0; i < modules.length; i++) {
-            PonderText.caption(scene, centres[i], INTERNAL_LANG + captions[i], 120);
-        }
-        scene.overlay().showControls(new Vec3(4.5, 1, 4.5), Pointing.DOWN, 80).rightClick()
-            .withItem(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
-        PonderText.caption(scene, new Vec3(4.5, 1, 4.5), INTERNAL_LANG + "install", 170);
-        PonderText.caption(scene, new Vec3(4.5, 1, 4.5), INTERNAL_LANG + "operate", 150);
-        // Leave a clean final view of the model for inspection and native screenshots.
-        scene.idle(120);
+        BlockPos stirrer = util.grid().at(4, 1, 4), cog = stirrer.north(), centre = stirrer.above();
+        Selection drive = util.select().position(stirrer).add(util.select().position(cog));
+        scene.idle(10);
+        scene.world().showSection(drive, Direction.DOWN);
+        scene.overlay().showOutline(net.createmod.ponder.api.PonderPalette.GREEN, "stirrer", util.select().position(stirrer), 140);
+        PonderText.caption(scene, util.vector().centerOf(stirrer), INTERNAL_LANG + "install", 140);
+        scene.world().showSection(util.select().fromTo(3, 1, 3, 5, 1, 5).substract(drive), Direction.UP);
+        scene.world().showSection(util.select().fromTo(3, 2, 3, 5, 3, 5), Direction.DOWN);
+        scene.idle(15);
+        scene.world().setKineticSpeed(util.select().position(stirrer), 64);
+        scene.world().setKineticSpeed(util.select().position(cog).add(util.select().position(cog.below())), -64);
+        PonderText.caption(scene, util.vector().centerOf(centre), INTERNAL_LANG + "impeller", 160);
+        PonderText.caption(scene, util.vector().blockSurface(cog, Direction.NORTH), INTERNAL_LANG + "operate", 160);
+        scene.overlay().showControls(util.vector().topOf(centre.above()), Pointing.DOWN, 80).withItem(AllItems.GOGGLES.asStack());
+        scene.idle(100);
         scene.markAsFinished();
-    }
-
-    private static Display.ItemDisplay display(Level world, ItemStack stack, Vec3 centre) {
-        var tag = new CompoundTag();
-        tag.put("item", stack.save(world.registryAccess()));
-        tag.putString("item_display", "none");
-        tag.putString("billboard", "fixed");
-        tag.put("transformation", Transformation.EXTENDED_CODEC.encodeStart(NbtOps.INSTANCE, Transformation.identity()).getOrThrow());
-        var brightness = new CompoundTag();
-        brightness.putInt("block", 15);brightness.putInt("sky", 15);
-        tag.put("brightness", brightness);
-        tag.putFloat("view_range", 4);
-        tag.putFloat("width", 3);tag.putFloat("height", 3);
-        tag.putFloat("shadow_strength", 0);
-        var item = new Display.ItemDisplay(EntityType.ITEM_DISPLAY, world);
-        item.load(tag);
-        item.setNoGravity(true);
-        item.setPos(centre);
-        return item;
     }
 
     private static void inspectionWindows(CreateSceneBuilder scene,BlockPos origin,int width,int height) {

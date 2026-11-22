@@ -5,7 +5,7 @@ import net.minecraft.util.StringRepresentable;
 public enum ReactorModule implements StringRepresentable {
     NONE(null,0,1), PREHEATER(ProcessModule.PROCESS_HEATER,8,1),
     STIRRED(ProcessModule.STIRRED_REACTOR,16,1),
-    /** Trays in the vessel carry heated gas/solid reactions without rotation. */
+    /** Marks the heated gas-solid reactions that run on the reaction tower's trays without a catalyst. */
     ABSORBER(null,0,2),
     /** Counter-current gas absorption in the absorption tower, without rotation or heat. */
     TOWER(ProcessModule.ABSORPTION_TRAYS,0,4);

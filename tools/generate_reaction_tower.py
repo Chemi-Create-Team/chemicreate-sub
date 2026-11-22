@@ -16,27 +16,31 @@ K = 'create_refinery_n_reactors'
 WALL, FLOOR, ROOF = 6, 2, 2
 # The hatch in the middle of the roof, 22 px across, as the lidded vessel's: its span in tower pixels (the tower is 48 px across).
 HATCH = (13, 35)  # ReactionTowerBlock.HATCH_MIN, HATCH_MAX
-# The sight glass through the middle block of each side: its opening across the wall and up the block, and the glass set 1 px in.
-OPENING, GLASS_DEPTH = (3, 13), 1
+# The sight glass through the middle block of each side: its opening across the wall and up the block, a thick pane set 2 px into the wall,
+# and a bolted steel flange standing 1 px proud of the shell round it.
+OPENING, GLASS = (4, 12), (2, 4)
+FLANGE, BOLTS = (2, 14), ((2.5, 2.5), (2.5, 12.5), (12.5, 2.5), (12.5, 12.5), (7.5, 2.5), (7.5, 12.5), (2.5, 7.5), (12.5, 7.5))
 # Outer-wall flags as the block state numbers them; a 3x3 tower uses the empty mask, the four sides and the four corners.
 NORTH, EAST, SOUTH, WEST = 1, 2, 4, 8
 SHAFT_MASKS = (0, NORTH, EAST, SOUTH, WEST, NORTH | EAST, NORTH | WEST, SOUTH | EAST, SOUTH | WEST)
 TEXTURES = {'side': NS + 'block/tank/reaction_tower', 'top': NS + 'block/tank/reaction_tower_top', 'inner': NS + 'block/reactor/steel',
-            'floor': NS + 'block/reactor/steel', 'glass': 'minecraft:block/glass', 'particle': NS + 'block/tank/reaction_tower'}
+            'floor': NS + 'block/reactor/steel', 'glass': 'minecraft:block/glass', 'frame': NS + 'block/reactor/silver/frame',
+            'bolt': NS + 'block/reactor/steel', 'particle': NS + 'block/tank/reaction_tower'}
 TEXTS = {
     f'block.{K}.reaction_tower': ('Reaction Tower', '反応塔', '反应塔'),
     f'reaction_tower.{K}.size': ('Build it 3x3 and %s to %s layers high', '3×3で%s～%s段に積んでください', '请建成3×3、%s～%s层高'),
     f'reaction_tower.{K}.status.unformed': ('unformed', '未成立', '未成形'),
-    f'reaction_tower.{K}.separator': ('No baskets: a high-pressure gas-liquid separator', 'バスケットなし：高圧気液分離タンク', '无篮：高压气液分离罐'),
-    f'reaction_tower.{K}.status.catalyst': ('put catalyst into the baskets', 'バスケットに触媒を入れてください', '请向篮中放入催化剂'),
-    f'reaction_tower.{K}.status.mixed': ('the baskets hold different catalysts', 'バスケットの触媒がそろっていません', '篮中的催化剂不一致'),
+    f'reaction_tower.{K}.separator': ('No trays: a high-pressure gas-liquid separator', '反応棚段なし：高圧気液分離タンク', '无塔板：高压气液分离罐'),
+    f'reaction_tower.{K}.status.catalyst': ('put catalyst onto the trays', '反応棚段に触媒を入れてください', '请在塔板上放入催化剂'),
+    f'reaction_tower.{K}.status.mixed': ('the trays hold different catalysts', '反応棚段の触媒がそろっていません', '塔板上的催化剂不一致'),
     f'reaction_tower.{K}.status.hatch': ('hatch open: close it with an empty hand to run', 'ハッチが開いています。素手で閉じると運転します', '舱口已打开：空手关闭后运行'),
     f'reaction_tower.{K}.status.no_feed': ('waiting for feed', '原料待ち', '等待原料'),
     f'reaction_tower.{K}.status.heat': ('needs more heat under the base', '底面の下の熱が足りません', '底部下方热量不足'),
     f'reaction_tower.{K}.status.output': ('product outlet full', '製品の出口が満杯', '产物出口已满'),
     f'reaction_tower.{K}.status.running': ('running', '運転中', '运行中'),
-    f'reaction_tower.{K}.catalyst': ('Working catalysts %s | baskets %s of %s layers | longest life %s batches', '働いている触媒 %s | バスケット %s／%s段 | 最長寿命 %sバッチ',
-                                     '有效催化剂 %s | 篮 %s／%s层 | 最长寿命 %s批'),
+    f'reaction_tower.{K}.catalyst': ('Working catalysts %s | trays %s of %s layers | longest life %s batches', '働いている触媒 %s | 反応棚段 %s／%s段 | 最長寿命 %sバッチ',
+                                     '有效催化剂 %s | 塔板 %s／%s层 | 最长寿命 %s批'),
+    f'reaction_tower.{K}.solids': ('Trays %s of %s layers | solid feed %s | products %s', '反応棚段 %s／%s段 | 固体原料 %s | 生成物 %s', '塔板 %s／%s层 | 固体原料 %s | 产物 %s'),
     # The tower's feed is an intermediate gas, so its page says what it is made of and the compressor gets a page of its own.
     f'jei.{K}.note.haber_bosch': ('Feed: H2 3 : N2 1 gas, compressed once. Heat: %s', '原料＝水素3：窒素1の合成ガスを1段圧縮。熱：%s',
                                   '原料＝氢3：氮1合成气压缩一级。热：%s'),
@@ -61,12 +65,16 @@ def face(texture, cull=None):
 
 
 def sight_glass(mask):
-    """The wall of a side's middle block with an opening through it and a pane of glass across the opening."""
+    """The wall of a side's middle block with an opening through it, a thick pane of glass in the opening and a bolted flange round it outside."""
     side = {NORTH: 'north', SOUTH: 'south', WEST: 'west', EAST: 'east'}[mask]
     inward = {'north': 'south', 'south': 'north', 'west': 'east', 'east': 'west'}[side]
-    depth = (0, WALL) if side in ('north', 'west') else (16 - WALL, 16)
-    glass = GLASS_DEPTH if side in ('north', 'west') else 16 - GLASS_DEPTH
+    outward = side in ('north', 'west')
+    depth = (0, WALL) if outward else (16 - WALL, 16)
     along_x = side in ('north', 'south')
+
+    def into(d0, d1):
+        """A depth range measured inward from the outer face."""
+        return (d0, d1) if outward else (16 - d1, 16 - d0)
 
     def box(u0, u1, y0, y1, faces, w0=depth[0], w1=depth[1]):
         lo, hi = ([u0, y0, w0], [u1, y1, w1]) if along_x else ([w0, y0, u0], [w1, y1, u1])
@@ -74,13 +82,24 @@ def sight_glass(mask):
 
     o0, o1 = OPENING
     across = ('west', 'east') if along_x else ('north', 'south')
+    ends = ('down', 'up')
     elements = [
         box(0, o0, 0, 16, {side: face('side', side), inward: face('inner'), across[1]: face('inner'), 'up': face('top', 'up'), 'down': face('top', 'down')}),
         box(o1, 16, 0, 16, {side: face('side', side), inward: face('inner'), across[0]: face('inner'), 'up': face('top', 'up'), 'down': face('top', 'down')}),
         box(o0, o1, 0, o0, {side: face('side', side), inward: face('inner'), 'up': face('inner'), 'down': face('top', 'down')}),
         box(o0, o1, o1, 16, {side: face('side', side), inward: face('inner'), 'down': face('inner'), 'up': face('top', 'up')}),
-        box(o0, o1, o0, o1, {side: face('glass'), inward: face('glass')}, glass, glass),
+        box(o0, o1, o0, o1, {side: face('glass'), inward: face('glass')}, *into(*GLASS)),
     ]
+    # The flange: four bars framing the opening, 1 px proud of the shell.
+    f0, f1 = FLANGE
+    proud = into(-1, 0)
+    all_faces = lambda: {d: face('frame') for d in ('north', 'east', 'south', 'west', 'up', 'down') if d != inward}
+    for u0, u1, y0, y1 in ((f0, f1, f0, o0), (f0, f1, o1, f1), (f0, o0, o0, o1), (o1, f1, o0, o1)):
+        elements.append(box(u0, u1, y0, y1, all_faces(), *proud))
+    # Bolt heads on the flange.
+    head = into(-1.5, -1)
+    for u, y in BOLTS:
+        elements.append(box(u, u + 1, y, y + 1, {d: face('bolt') for d in ('north', 'east', 'south', 'west', 'up', 'down') if d != inward}, *head))
     return elements
 
 
@@ -218,8 +237,8 @@ def names():
         path.write_text(json.dumps(strings, ensure_ascii=False, indent=2) + '\n')
 
 
-def tower(s, window):
-    """Four layers of a 3x3 tower from y 2, with its side middles glazed or not."""
+def tower(s, window=True):
+    """Four layers of a 3x3 tower from y 2, with sight glasses in its side middles as a formed tower has."""
     for y in range(2, 6):
         for x in range(3, 6):
             for z in range(3, 6):
@@ -234,7 +253,7 @@ def structures():
     ponder.OUT = A / 'ponder/plant'
     for name, window in ((REACTION, False), (REACTION + '_separator', True)):
         s = ponder.Structure(9, 7)
-        tower(s, window)
+        tower(s)
         if not window:
             for x, z in ((3, 3), (5, 3), (3, 5), (5, 5)): s.burner(x, 1, z, 'kindled')
         s.pipe(2, 2, 4, 'east', 'west');s.pump(1, 2, 4, 'east');s.tank(0, 2, 4)

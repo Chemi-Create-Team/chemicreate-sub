@@ -27,8 +27,8 @@ public class ReactionTowerGameTests {
     private static IFluidHandler fluid(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(relative),side);}
     private static IItemHandler items(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,h.absolutePos(relative),side);}
     private static void heat(GameTestHelper h){h.setBlock(BASE.offset(0,-1,0),AllBlocks.BLAZE_BURNER.get().defaultBlockState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED));}
-    private static ItemStack basket(){return new ItemStack(CEReactor.CATALYST_BASKET.get());}
-    /** Builds and forms a 3x3 tower at once from its north-west bottom corner, with a basket and, unless empty, the catalyst in every layer; returns its owner. */
+    private static ItemStack tray(){return new ItemStack(CEReactor.TRAY.get());}
+    /** Builds and forms a 3x3 tower at once from its north-west bottom corner, with a tray and, unless empty, the catalyst in every layer; returns its owner. */
     public static ReactionTowerBlockEntity tower(ServerLevel level,BlockPos corner,int layers,ItemStack catalyst){
         for(int y=0;y<layers;y++)for(int x=0;x<3;x++)for(int z=0;z<3;z++)level.setBlock(corner.offset(x,y,z),CETransport.REACTION_TOWER.get().defaultBlockState(),3);
         com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti((ReactionTowerBlockEntity)level.getBlockEntity(corner));
@@ -40,8 +40,8 @@ public class ReactionTowerGameTests {
     public static IFluidHandler port(ReactionTowerBlockEntity owner){return owner.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,owner.getBlockPos().west(),Direction.WEST);}
     /** Kindles a blaze burner under the tower's bottom corner. */
     public static void heat(ReactionTowerBlockEntity owner){owner.getLevel().setBlockAndUpdate(owner.getBlockPos().offset(-1,-1,-1),AllBlocks.BLAZE_BURNER.get().defaultBlockState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED));}
-    /** Fits a basket and the given catalyst into each of the first layers. */
-    private static void load(ReactionTowerBlockEntity owner,int layers,ItemStack catalyst){for(int i=0;i<layers;i++){owner.insert(basket());if(!catalyst.isEmpty())owner.insert(catalyst.copy());}}
+    /** Fits a tray and the given catalyst into each of the first layers. */
+    private static void load(ReactionTowerBlockEntity owner,int layers,ItemStack catalyst){for(int i=0;i<layers;i++){owner.insert(tray());if(!catalyst.isEmpty())owner.insert(catalyst.copy());}}
 
     @GameTest(template="test_fractionation")
     public static void placementSetsTheTowerFrontAndItsLeftSideLadder(GameTestHelper h) {
@@ -86,23 +86,23 @@ public class ReactionTowerGameTests {
             h.assertTrue(fluid(h,BASE.offset(0,1,1),Direction.WEST)==null && fluid(h,BASE,Direction.DOWN)==null && fluid(h,BASE.offset(0,0,1),Direction.EAST)==null,"The middle layer, the rest of the underside and inner faces connect nothing");
             h.assertTrue(items(h,CENTRE.above(2),Direction.UP)!=null && items(h,CENTRE,Direction.UP)==null,"Catalysts go in through the top");
             owner.process(5);
-            h.assertTrue(owner.status().equals("no_feed") && fluid(h,BASE.offset(0,0,1),Direction.WEST).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0,"Without baskets the tower takes only what it can separate: "+owner.status());
+            h.assertTrue(owner.status().equals("no_feed") && fluid(h,BASE.offset(0,0,1),Direction.WEST).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0,"Without trays the tower takes only what it can separate: "+owner.status());
             h.setBlock(BASE.offset(0,2,0),net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
             h.runAfterDelay(10,()->{h.assertTrue(owner(h)==null && fluid(h,BASE.offset(0,0,1),Direction.WEST)==null,"A broken tower closes its ports");h.succeed();});
         });
     }
     @GameTest(template="test_fractionation")
-    public static void basketsAndOneKindOfCatalystGoInFromTheBottomUp(GameTestHelper h){
+    public static void traysAndOneKindOfCatalystGoInFromTheBottomUp(GameTestHelper h){
         build(h,3);
         h.runAfterDelay(10,()->{
             var owner=owner(h);
-            for(int i=0;i<3;i++)owner.insert(basket());
-            h.assertTrue(!owner.canInsert(basket()) && owner.layer(0).hasBasket() && owner.layer(2).hasBasket(),"One basket per layer");
+            for(int i=0;i<3;i++)owner.insert(tray());
+            h.assertTrue(!owner.canInsert(tray()) && owner.layer(0).hasTray() && owner.layer(2).hasTray(),"One tray per layer");
             owner.insert(new ItemStack(CEItems.OXIDATION_CATALYST.get()));
-            h.assertTrue(owner.layer(0).catalystStack().is(CEItems.OXIDATION_CATALYST.get()) && !owner.canInsert(new ItemStack(CEItems.IRON_CATALYST.get())),"The lowest basket fills first and every basket holds the same catalyst");
+            h.assertTrue(owner.layer(0).catalystStack().is(CEItems.OXIDATION_CATALYST.get()) && !owner.canInsert(new ItemStack(CEItems.IRON_CATALYST.get())),"The lowest tray fills first and every tray holds the same catalyst");
             var top=items(h,CENTRE.above(2),Direction.UP);
             h.assertTrue(top.insertItem(1,new ItemStack(CEItems.OXIDATION_CATALYST.get()),false).isEmpty() && top.extractItem(1,1,false).isEmpty(),"A funnel adds catalyst and cannot take a working one out");
-            h.assertTrue(owner.takeTop().is(CEItems.OXIDATION_CATALYST.get()) && owner.takeTop().is(CEItems.OXIDATION_CATALYST.get()) && ReactionTowerBlockEntity.basket(owner.takeTop()),"The wrench takes the highest catalyst first, then a basket");
+            h.assertTrue(owner.takeTop().is(CEItems.OXIDATION_CATALYST.get()) && owner.takeTop().is(CEItems.OXIDATION_CATALYST.get()) && ReactionTowerBlockEntity.tray(owner.takeTop()),"The wrench takes the highest catalyst first, then a tray");
             h.succeed();
         });
     }
@@ -135,7 +135,7 @@ public class ReactionTowerGameTests {
             h.assertTrue(feed.fill(new FluidStack(CEFluids.AMMONIA_GAS.get(),200),EXECUTE)==200 && feed.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(),250),EXECUTE)==250,"Both feeds of the reaction share one port");
             owner.process(100);
             var made=fluid(h,BASE.offset(1,0,2),Direction.SOUTH).drain(1000000,EXECUTE);
-            h.assertTrue(made.is(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get()) && made.getAmount()==500 && owner.tank(0).isEmpty() && owner.tank(1).isEmpty(),"Two baskets oxidise two batches of ammonia: "+made.getAmount()+" "+owner.status());
+            h.assertTrue(made.is(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get()) && made.getAmount()==500 && owner.tank(0).isEmpty() && owner.tank(1).isEmpty(),"Two trays oxidise two batches of ammonia: "+made.getAmount()+" "+owner.status());
             h.succeed();
         });
     }
@@ -159,7 +159,7 @@ public class ReactionTowerGameTests {
             owner.process(100);owner.process(100);
             h.assertTrue(owner.tank(0).getAmount()==10000 && owner.status().equals("catalyst"),"The last batch spends the catalyst and the tower stops: "+owner.status());
             var spent=items(h,CENTRE.above(2),Direction.UP).extractItem(0,1,false);
-            h.assertTrue(spent.is(CEItems.IRON_CATALYST.get()) && owner.layer(0).catalystStack().isEmpty() && owner.layer(0).hasBasket(),"A funnel takes the spent catalyst out and leaves the basket");
+            h.assertTrue(spent.is(CEItems.IRON_CATALYST.get()) && owner.layer(0).catalystStack().isEmpty() && owner.layer(0).hasTray(),"A funnel takes the spent catalyst out and leaves the tray");
             h.assertTrue(worn.getMaxDamage()==CEItems.CATALYST_BATCHES && h.getLevel().getRecipeManager().byKey(CreatePlant.location("iron_catalyst_regeneration")).isPresent() && !spent.isRepairable(),"A catalyst lasts "+CEItems.CATALYST_BATCHES+" batches and comes back with metal, not by joining two worn ones");
             var saved=owner.saveWithoutMetadata(h.getLevel().registryAccess());owner.loadWithComponents(saved,h.getLevel().registryAccess());
             h.assertTrue(owner.tank(0).getAmount()==10000,"The feed survives a reload");
@@ -167,7 +167,7 @@ public class ReactionTowerGameTests {
         });
     }
     @GameTest(template="test_fractionation")
-    public static void withoutBasketsTheTowerSeparatesBehindOpenSightGlasses(GameTestHelper h){
+    public static void withoutTraysTheTowerSeparatesBehindItsSightGlasses(GameTestHelper h){
         build(h,3);
         h.runAfterDelay(10,()->{
             var owner=owner(h);var bottom=fluid(h,BASE.offset(0,0,1),Direction.WEST);var top=fluid(h,BASE.offset(2,2,1),Direction.EAST);
@@ -175,38 +175,38 @@ public class ReactionTowerGameTests {
             owner.process(59);
             h.assertTrue(owner.status().equals("running") && owner.tank(0).getAmount()==27000,"The separation settles only when the batch completes: "+owner.status());
             h.assertTrue(h.getBlockState(BASE.offset(1,1,0)).getValue(ReactionTowerBlock.WINDOW) && h.getBlockState(BASE.offset(0,2,1)).getValue(ReactionTowerBlock.WINDOW) && !h.getBlockState(BASE).getValue(ReactionTowerBlock.WINDOW),"The sight glasses in the middle of each side open while it separates");
-            h.assertTrue(!owner.canInsert(basket()),"No basket goes into a separator that holds fluid");
+            h.assertTrue(!owner.canInsert(tray()),"No tray goes into a separator that holds fluid");
             owner.process(1);
             h.assertTrue(owner.tank(0).isEmpty() && owner.tank(2).getAmount()==3 && owner.tank(3).getAmount()==24000,"Three layers separate three batches: "+owner.tank(2).getAmount()+" "+owner.tank(3).getAmount());
             h.assertTrue(top.drain(1,SIMULATE).is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()) && bottom.drain(1000,SIMULATE).is(CEProcessFluids.LIQUID_AMMONIA.get()),"The gas leaves at the top and the liquid at the bottom");
             h.assertTrue(bottom.drain(1000,EXECUTE).getAmount()==3 && top.drain(1000000,EXECUTE).getAmount()==24000 && bottom.drain(1000,SIMULATE).isEmpty(),"Each outlet gives only its own phase");
             owner.process(5);
-            h.assertTrue(!h.getBlockState(BASE.offset(1,1,0)).getValue(ReactionTowerBlock.WINDOW) && owner.canInsert(basket()),"Empty, it closes its sight glasses and takes a basket again");
+            h.assertTrue(h.getBlockState(BASE.offset(1,1,0)).getValue(ReactionTowerBlock.WINDOW) && owner.canInsert(tray()),"Empty, it keeps its sight glasses and takes a tray again");
             h.succeed();
         });
     }
     @GameTest(template="test_fractionation")
-    public static void basketsAndCatalystGoInOnlyThroughTheOpenHatchWhichStopsTheTower(GameTestHelper h){
+    public static void traysAndCatalystGoInOnlyThroughTheOpenHatchWhichStopsTheTower(GameTestHelper h){
         build(h,3);
         h.runAfterDelay(10,()->{
             var owner=owner(h);var player=h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);var top=h.absolutePos(CENTRE.above(2));
             var hit=new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(top).add(0,.5,0),Direction.UP,top,false);
-            player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,basket());
+            player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,tray());
             h.getLevel().getBlockState(top).useItemOn(player.getMainHandItem(),h.getLevel(),player,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
-            h.assertTrue(!owner.hatchOpen() && !owner.hasBaskets() && player.getMainHandItem().getCount()==1,"A shut hatch keeps baskets out");
+            h.assertTrue(!owner.hatchOpen() && !owner.hasTrays() && player.getMainHandItem().getCount()==1,"A shut hatch keeps trays out");
             player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,ItemStack.EMPTY);
             h.getLevel().getBlockState(top).useWithoutItem(h.getLevel(),player,hit);
             h.assertTrue(owner.hatchOpen(),"An empty hand on the roof opens the hatch");
-            player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,basket());
+            player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,tray());
             h.getLevel().getBlockState(top).useItemOn(player.getMainHandItem(),h.getLevel(),player,net.minecraft.world.InteractionHand.MAIN_HAND,hit);
-            h.assertTrue(owner.layer(0).hasBasket() && player.getMainHandItem().isEmpty(),"Through the open hatch the basket drops into the lowest layer");
-            for(int i=1;i<3;i++)owner.insert(basket());
+            h.assertTrue(owner.layer(0).hasTray() && player.getMainHandItem().isEmpty(),"Through the open hatch the tray drops into the lowest layer");
+            for(int i=1;i<3;i++)owner.insert(tray());
             var feed=fluid(h,BASE.offset(2,0,1),Direction.EAST);
-            h.assertTrue(feed.fill(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(),100),EXECUTE)==100 && feed.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(),50),EXECUTE)==50,"Baskets without catalyst take the feed of a reaction that needs none");
+            h.assertTrue(feed.fill(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(),100),EXECUTE)==100 && feed.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(),50),EXECUTE)==50,"Trays without catalyst take the feed of a reaction that needs none");
             owner.process(200);
             h.assertTrue(owner.status().equals("hatch") && owner.tank(0).getAmount()==100,"Nothing reacts while the hatch is open: "+owner.status());
             owner.toggleHatch();owner.process(200);
-            h.assertTrue(owner.tank(0).isEmpty() && owner.tank(1).isEmpty() && fluid(h,CENTRE,Direction.DOWN).drain(1000,SIMULATE).is(CEOstwaldFluids.NITROGEN_DIOXIDE.get()),"Shut, the empty baskets oxidise nitric oxide: "+owner.status()+" "+owner.tank(2).getFluid());
+            h.assertTrue(owner.tank(0).isEmpty() && owner.tank(1).isEmpty() && fluid(h,CENTRE,Direction.DOWN).drain(1000,SIMULATE).is(CEOstwaldFluids.NITROGEN_DIOXIDE.get()),"Shut, the empty trays oxidise nitric oxide: "+owner.status()+" "+owner.tank(2).getFluid());
             feed.fill(new FluidStack(CEOstwaldFluids.NITRIC_OXIDE.get(),100),EXECUTE);owner.toggleHatch();
             h.assertTrue(owner.tank(0).isEmpty() && owner.tank(2).isEmpty(),"Opening the hatch lets the gas out");
             h.succeed();
@@ -235,5 +235,25 @@ public class ReactionTowerGameTests {
             h.assertTrue(aged[0]<fresh[0]-20 && aged[2]>fresh[2]+5 && aged[1]>fresh[1],"Worn catalyst leaves the upper stage cooler and heats the lower ones: "+java.util.Arrays.toString(fresh)+" -> "+java.util.Arrays.toString(aged));
             h.succeed();
         });
+    }
+
+    @GameTest(template="test_fractionation")
+    public static void solidFeedFillsTheLowestTrayFirstAndKeepsCatalystsOut(GameTestHelper h){
+        var owner=tower(h.getLevel(),h.absolutePos(BASE),3,ItemStack.EMPTY);
+        var solids=items(h,BASE.offset(0,0,1),Direction.WEST);
+        h.assertTrue(items(h,BASE.offset(0,1,1),Direction.WEST)==null && solids!=null && solids.getSlots()==6,"Only the bottom layer's sides take solids: one feed and one product slot per tray");
+        h.assertTrue(!solids.isItemValid(0,new ItemStack(net.minecraft.world.item.Items.DIRT)) && !solids.insertItem(0,new ItemStack(net.minecraft.world.item.Items.DIRT),false).isEmpty(),"No tray reaction takes dirt");
+        var rest=net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(solids,net.createplant.registry.CEUranium.YELLOWCAKE.toStack(20),false);
+        h.assertTrue(rest.isEmpty() && owner.layer(0).load().getCount()==ReactionTowerBlockEntity.TRAY_LOAD && owner.layer(1).load().getCount()==4 && owner.layer(2).load().isEmpty(),
+            "A funnel fills the lowest tray to sixteen, then the next");
+        h.assertTrue(solids.extractItem(0,1,false).isEmpty(),"Feed on a tray cannot be pulled back out of the side");
+        h.assertTrue(!owner.canInsert(new ItemStack(CEItems.OXIDATION_CATALYST.get())),"A catalyst cannot share the tower with solid feed");
+        owner.toggleHatch();
+        h.assertTrue(ReactionTowerBlockEntity.tray(owner.takeTop()) && !owner.layer(2).hasTray() && owner.takeTop().getCount()==4 && owner.layer(1).load().isEmpty() && owner.layer(1).hasTray(),
+            "Through the hatch the highest tray comes out first; the next tray gives its feed before itself");
+        h.setBlock(CENTRE,net.minecraft.world.level.block.Blocks.AIR);
+        h.assertTrue(!h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(h.absolutePos(CENTRE)).inflate(2),
+            e->e.getItem().is(net.createplant.registry.CEUranium.YELLOWCAKE.get()) && e.getItem().getCount()==ReactionTowerBlockEntity.TRAY_LOAD).isEmpty(),"Breaking a layer's centre drops the feed on its tray");
+        h.succeed();
     }
 }

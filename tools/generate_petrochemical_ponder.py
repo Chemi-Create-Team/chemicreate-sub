@@ -11,7 +11,6 @@ DIRECTIONS = {'east': (1, 0, 0), 'west': (-1, 0, 0), 'up': (0, 1, 0),
     'down': (0, -1, 0), 'north': (0, 0, -1), 'south': (0, 0, 1)}
 
 
-INTERNALS = {'stirred': 'reactor_impeller', 'absorber': 'reactor_separator_core'}
 
 
 def text(value):
@@ -30,7 +29,7 @@ def compounds(name, values): return named(9, name, b'\x0a' + integer(len(values)
 class Structure:
     def __init__(self, width, height, floor=True):
         self.size = width, height, width
-        self.states, self.blocks, self.positions = [], [], set()
+        self.states, self.blocks, self.positions = [], [], {}
         if floor:
             for x in range(width):
                 for z in range(width):
@@ -40,13 +39,20 @@ class Structure:
         """nbt: the encoded fields of the block entity's data, for blocks whose look depends on it."""
         assert all(0 <= c < limit for c, limit in zip((block_x, block_y, block_z), self.size))
         assert (block_x, block_y, block_z) not in self.positions, (block_x, block_y, block_z)
-        self.positions.add((block_x, block_y, block_z))
+        self.positions[(block_x, block_y, block_z)] = len(self.blocks)
+        self.blocks.append(self.encode(block_x, block_y, block_z, name, nbt, properties))
+
+    def replace(self, block_x, block_y, block_z, name, nbt=None, **properties):
+        """Puts a block where one already stands, such as the floor."""
+        self.blocks[self.positions[(block_x, block_y, block_z)]] = self.encode(block_x, block_y, block_z, name, nbt, properties)
+
+    def encode(self, block_x, block_y, block_z, name, nbt, properties):
         key = name, tuple(sorted(properties.items()))
         if key not in self.states:
             self.states.append(key)
         fields = [ints('pos', (block_x, block_y, block_z)), named(3, 'state', integer(self.states.index(key)))]
         if nbt is not None: fields.append(named(10, 'nbt', compound(nbt)))
-        self.blocks.append(compound(fields))
+        return compound(fields)
 
     def machine(self, x, y, z, name, **extra):
         if name=='cooler_radiator': self.block(x,y,z,NS+name,facing='north')
@@ -65,16 +71,25 @@ class Structure:
         self.block(x, y, z, 'create:blaze_burner', blaze=heat)
 
     def reactor(self, x, y, z, kind, sections, burners=(), heat='kindled', windows=False):
-        """A lidded reaction vessel with an internal in each layer and a motor directly under its bottom centre; absorption trays need no motor."""
+        """
+        A stirred stainless tank, two or more layers high, over its stirrer under the bottom centre; a cogwheel beside the stirrer, on a creative motor
+        in the floor, turns it as a mechanical mixer is driven.
+        """
         if kind == 'centrifuge':
             self.centrifuge(x, y, z, sections)
             return
-        burners = tuple((-1, -1) if pos == (0, 0) else pos for pos in burners)
+        assert kind == 'stirred', kind
+        sections = max(2, sections)
+        burners = tuple((-1, -1) if pos in ((0, 0), (0, -1)) else pos for pos in burners)
         for dx in range(-1, 2):
             for dz in range(-1, 2):
-                if (dx, dz) == (0, 0) and kind != 'absorber': self.block(x, y - 1, z, 'create:creative_motor', facing='up')
+                if (dx, dz) == (0, 0): self.block(x, y - 1, z, NS + 'vessel_stirrer')
+                elif (dx, dz) == (0, -1): self.block(x, y - 1, z - 1, 'create:cogwheel', axis='y', waterlogged='false')
                 elif (dx, dz) in burners: self.burner(x + dx, y - 1, z + dz, heat)
                 else: self.block(x + dx, y - 1, z + dz, 'create:andesite_casing')
+        motor = (x, y - 2, z - 1)
+        if motor in self.positions: self.replace(*motor, 'create:creative_motor', facing='up')
+        else: self.block(*motor, 'create:creative_motor', facing='up')
         origin = (x - 1, y, z - 1)
         for i in range(sections):
             for dx in range(-1, 2):
@@ -83,11 +98,31 @@ class Structure:
                     nbt = [string('id', NS + 'lidded_vessel')]
                     nbt += [named(3, 'Size', integer(3)), named(3, 'Height', integer(sections))] if pos == origin else [named(11, 'Controller', b''.join(integer(c) for c in (3, *origin)))]
                     if pos == origin and windows: nbt.append(named(3, 'Windows', integer(1)))
-                    if (dx, dz) == (-1, -1): nbt.append(named(10, 'Internal', compound([string('id', NS + INTERNALS[kind]), named(3, 'count', integer(1))])))
-                    if pos == origin: nbt.append(named(4, 'PowerInput', struct.pack('>q', (x << 38) | (z << 12) | y)))
+                    if pos == origin: nbt.append(named(1, 'Stirrer', b'\x01'))
                     hatch = 'full' if i == sections - 1 and (dx, dz) == (0, 0) else 'none'
                     self.block(*pos, NS + 'lidded_vessel', nbt=nbt, drive='true', axis='y', open='false', facing='north', hatch=hatch, ladder=str((dx, dz) == (-1, -1)).lower(), bottom=str(i == 0).lower(),
                                north=str(dz == -1).lower(), south=str(dz == 1).lower(), west=str(dx == -1).lower(), east=str(dx == 1).lower())
+
+    def tower(self, x, y, z, layers=3, burners=((-1, -1),), heat='kindled', load=None):
+        """A reaction tower round the given bottom centre with a reaction tray in every layer, over burners; load: an item lying on each tray."""
+        for dx in range(-1, 2):
+            for dz in range(-1, 2):
+                if (dx, dz) in burners: self.burner(x + dx, y - 1, z + dz, heat)
+                else: self.block(x + dx, y - 1, z + dz, 'create:andesite_casing')
+        origin = (x - 1, y, z - 1)
+        for i in range(layers):
+            for dx in range(-1, 2):
+                for dz in range(-1, 2):
+                    pos = (x + dx, y + i, z + dz)
+                    nbt = [string('id', NS + 'reaction_tower')]
+                    nbt += [named(3, 'Size', integer(3)), named(3, 'Height', integer(layers))] if pos == origin else [named(11, 'Controller', b''.join(integer(c) for c in (3, *origin)))]
+                    if (dx, dz) == (0, 0):
+                        nbt.append(named(1, 'Basket', b'\x01'))
+                        if i == 0: nbt.append(string('Front', 'north'))
+                        if load: nbt.append(named(10, 'TrayLoad', compound([string('id', load), named(3, 'count', integer(8))])))
+                    side = (dx == 0) != (dz == 0)
+                    self.block(*pos, NS + 'reaction_tower', nbt=nbt, north=str(dz == -1).lower(), south=str(dz == 1).lower(), west=str(dx == -1).lower(),
+                               east=str(dx == 1).lower(), bottom=str(i == 0).lower(), top=str(i == layers - 1).lower(), shape='plain', window=str(side).lower())
 
     def centrifuge(self, x, y, z, count, columns=4):
         for i in range(count):

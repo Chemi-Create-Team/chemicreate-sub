@@ -890,14 +890,14 @@
     "zh_cn": "建造搅拌反应槽"
   },
   "guide.reactor_plant_stirred.step_0": {
-    "en_us": "Fit an impeller in each layer of a 3×3 lidded vessel. Heat it with Blaze Burners underneath.",
-    "ja_jp": "3×3のふた付き槽へ各段に撹拌翼を入れます。加熱には下面のブレイズバーナーを使います。",
-    "zh_cn": "3×3带盖槽每层装入搅拌叶轮，需要加热时在底部放烈焰人燃烧器。"
+    "en_us": "Place a stirrer under the bottom centre of a 3×3 lidded vessel. Heat it with Blaze Burners underneath.",
+    "ja_jp": "3×3のふた付き槽の底面中央の下に撹拌機を置きます。加熱には下面のブレイズバーナーを使います。",
+    "zh_cn": "在3×3带盖槽底面中心下方放置搅拌器，用下方的烈焰人燃烧室加热。"
   },
   "guide.reactor_plant_stirred.step_1": {
-    "en_us": "Stack the vessel one to four layers high and put an impeller into every layer; every stage runs one batch at a time.",
-    "ja_jp": "槽を1～4段に積み、各段に撹拌翼を入れます。1段ごとに1バッチを同時に処理します。",
-    "zh_cn": "槽体可堆叠一至四层，每层装一个搅拌叶轮；每层同一时间运行一批。"
+    "en_us": "Stack the vessel two to four layers high. Impellers turn in the two lowest layers, which run two batches at a time.",
+    "ja_jp": "槽を2～4段に積みます。撹拌翼は下の2段に付き、2バッチを同時に処理します。",
+    "zh_cn": "将槽叠至2～4层。叶轮装在最下面两层，同时处理2批。"
   },
   "guide.reactor_plant_stirred.step_2": {
     "en_us": "Keep the hatch shut.",
@@ -905,9 +905,9 @@
     "zh_cn": "保持检修口关闭。"
   },
   "guide.reactor_plant_stirred.step_3": {
-    "en_us": "Supply at least 32 RPM at the single bottom centre. Side faces have no shaft connection.",
-    "ja_jp": "底面中央の1か所へ32 RPM以上を入力します。側面には軸をつなげません。",
-    "zh_cn": "仅从底部中心输入至少32 RPM，侧面不连接传动轴。"
+    "en_us": "Turn the cogwheel beside the stirrer at 32 RPM or more, as for a mechanical mixer. The tank itself takes no shaft.",
+    "ja_jp": "撹拌機の横の歯車を、メカニカルミキサーと同じように32 RPM以上で回します。槽そのものには軸をつなげません。",
+    "zh_cn": "像动力搅拌器一样，以32 RPM以上转动搅拌器旁的齿轮。槽本身不连接传动杆。"
   },
   "guide.reactor_plant_stirred.step_4": {
     "en_us": "Use pipes for fluids and funnels for items. Check JEI for recipes.",
@@ -1915,9 +1915,9 @@
     "zh_cn": "用九个槽块搭成3×3槽，最多可扩至4层。"
   },
   "vessel_basin.window": {
-    "en_us": "Wrench a side for windows or the top to remove internals. The shaft connects only at the bottom centre.",
-    "ja_jp": "側面レンチで点検窓、上面レンチで内部部品を回収します。回転入力は底面中央だけです。",
-    "zh_cn": "侧面扳手切换观察窗，顶面扳手取出内件，传动轴仅接底部中心。"
+    "en_us": "Wrench a side for windows. The stirrer under the bottom centre turns the impellers.",
+    "ja_jp": "側面レンチで点検窓を切り替えます。撹拌翼は底面中央の下の撹拌機で回ります。",
+    "zh_cn": "用扳手点击侧面切换观察窗。叶轮由底面中心下方的搅拌器带动。"
   },
   "vessel_basin.feed": {
     "en_us": "Feed solids with a belt and funnel. Feed fluids with a powered pump and pipes.",
@@ -1930,9 +1930,9 @@
     "zh_cn": "给槽下方的烈焰人燃烧室添加燃料。流体每50刻上升一档，直到最高温度。"
   },
   "vessel_basin.rotate": {
-    "en_us": "Drive the bottom centre at 32 RPM or more. Place heating burners around the central shaft.",
-    "ja_jp": "底面中央へ32 RPM以上を入力します。加熱用バーナーは中央を避けて置きます。",
-    "zh_cn": "底部中心输入至少32 RPM，加热燃烧器避开中央轴放置。"
+    "en_us": "Turn the cogwheel beside the stirrer at 32 RPM or more. Place heating burners under the other blocks.",
+    "ja_jp": "撹拌機の横の歯車を32 RPM以上で回します。加熱用バーナーは残りのブロックの下に置きます。",
+    "zh_cn": "以32 RPM以上转动搅拌器旁的齿轮。加热用燃烧室放在其余方块下方。"
   },
   "vessel_basin.products": {
     "en_us": "Extract solids with funnels and fluids with pumps. If processing stops, check outputs, heat, rotation, the hatch and sludge.",
@@ -1975,9 +1975,9 @@
     "zh_cn": "用有动力的冷箱液化氮气，将液氮存入低温储罐。"
   },
   "lidded_vessel.window": {
-    "en_us": "Use a wrench on the side to toggle tank windows. View the fluid, items and internals without opening the hatch.",
-    "ja_jp": "側面レンチで槽全体を窓に切り替えます。ハッチを開けずに流体・アイテム・内部部品を確認できます。",
-    "zh_cn": "用扳手操作侧面切换整槽窗口，无需开盖即可查看流体、物品与内部部件。"
+    "en_us": "Use a wrench on the side to toggle tank windows. View the fluid, items and impellers without opening the hatch.",
+    "ja_jp": "側面レンチで槽全体を窓に切り替えます。ハッチを開けずに流体・アイテム・撹拌翼を確認できます。",
+    "zh_cn": "用扳手点击侧面切换整个罐的观察窗，无需打开舱口即可查看流体、物品和叶轮。"
   },
   "diorite_casing.title": {
     "en_us": "Building with Diorite Casing",
@@ -2375,19 +2375,19 @@
     "zh_cn": "粉碎铀矿石得到粗铀，再用经过熔岩的风焙烧成黄饼。"
   },
   "guide.uranium_preparation.step_2": {
-    "en_us": "Fit trays in a 3×3 vessel two to four layers high. Feed roasted ore and hydrogen, then heat below. No rotation is needed.",
-    "ja_jp": "3×3・2～4段の槽へ棚段を入れます。焙焼物と水素を送り、下のバーナーで加熱します。回転は不要です。",
-    "zh_cn": "3×3、高2～4层槽内装棚板，供给焙烧物和氢气，从下方加热，无需旋转动力。"
+    "en_us": "Fit reaction trays in a reaction tower without catalyst. A funnel on a side of the bottom layer lays roasted ore on the trays; feed hydrogen there and heat below. No rotation is needed.",
+    "ja_jp": "反応塔へ触媒なしで反応棚段を入れます。最下段の側面のファンネルから焙焼物を入れると棚段にたまります。同じ段へ水素を送り、下のバーナーで加熱します。回転は不要です。",
+    "zh_cn": "向反应塔装入不放催化剂的反应塔板。从最底层侧面的漏斗投入焙烧物，物料会堆在塔板上；在同一层送入氢气，从下方加热，无需旋转动力。"
   },
   "guide.uranium_preparation.step_3": {
-    "en_us": "Feed uranium dioxide and hydrogen fluoride to a 3×3 impeller vessel. Heat below and drive its bottom centre at 32 RPM or more.",
-    "ja_jp": "撹拌翼付き3×3槽へ二酸化ウランとフッ化水素を入れます。下から加熱し、底面中央へ32 RPM以上を入力します。",
-    "zh_cn": "二氧化铀和氟化氢送入3×3叶轮槽，底部加热，底部中心输入至少32 RPM。"
+    "en_us": "Feed uranium dioxide and hydrogen fluoride to a stirred tank: a 3×3 stainless tank two or more layers high over a stirrer. Heat below and turn the cogwheel beside the stirrer at 32 RPM or more.",
+    "ja_jp": "撹拌槽（撹拌機の上に3×3・2段以上で組んだステンレスタンク）へ二酸化ウランとフッ化水素を入れます。下から加熱し、撹拌機の横の歯車を32 RPM以上で回します。",
+    "zh_cn": "二氧化铀和氟化氢送入搅拌槽（在搅拌器上方搭建3×3、至少两层的不锈钢罐）。底部加热，并以至少32 RPM转动搅拌器旁的齿轮。"
   },
   "guide.uranium_preparation.step_4": {
-    "en_us": "Feed green salt and fluorine into a tray vessel and superheat with blue flames. Take gas from the top beside the hatch.",
-    "ja_jp": "棚段付き槽へグリーンソルトとフッ素を送り、青い炎で超加熱します。生成ガスは上面のハッチ横から取ります。",
-    "zh_cn": "绿盐和氟气送入棚板槽，用蓝焰超加热，产气从顶面检修口旁取出。"
+    "en_us": "Lay green salt on the trays of another reaction tower, feed fluorine and superheat with blue flames. Pump the gas made out of a side of the bottom layer.",
+    "ja_jp": "別の反応塔の棚段へグリーンソルトを入れ、フッ素を送って青い炎で超加熱します。生成ガスは最下段の側面からポンプで取り出します。",
+    "zh_cn": "把绿盐放到另一座反应塔的塔板上，送入氟气并用蓝焰超加热。生成的气体从最底层侧面用泵抽出。"
   },
   "guide.uranium_preparation.step_5": {
     "en_us": "Close the hatch and pump the fluoride gas out. Keep all product outlets clear.",
@@ -2405,9 +2405,9 @@
     "zh_cn": "铀浓缩连接4台，小型堆燃料连接8台，每台至少32 RPM。下半部进料，顶部取浓缩气，上半部侧面取贫化气。"
   },
   "guide.uranium_fuel_finishing.step_2": {
-    "en_us": "Mix enriched UF6, water and hydrogen in an impeller vessel at 32 RPM or more without heating. Collect UO2 powder and hydrogen fluoride.",
-    "ja_jp": "濃縮UF6・水・水素を撹拌翼付き槽へ入れます。加熱せず32 RPM以上で混ぜ、UO2粉末とフッ化水素を回収します。",
-    "zh_cn": "浓缩UF6、水、氢气送入叶轮槽，不加热并以至少32 RPM搅拌，回收UO2粉末和氟化氢。"
+    "en_us": "Mix enriched UF6, water and hydrogen in a stirred tank at 32 RPM or more without heating. Collect UO2 powder and hydrogen fluoride.",
+    "ja_jp": "濃縮UF6・水・水素を撹拌槽へ入れます。加熱せず32 RPM以上で混ぜ、UO2粉末とフッ化水素を回収します。",
+    "zh_cn": "浓缩UF6、水、氢气送入搅拌槽，不加热并以至少32 RPM搅拌，回收UO2粉末和氟化氢。"
   },
   "guide.uranium_fuel_finishing.step_3": {
     "en_us": "Place powder on a depot and press it with a Mechanical Press to make green pellets.",
@@ -2475,9 +2475,9 @@
     "zh_cn": "电解水制取氢气"
   },
   "guide.manufacturing_ammonia.step_1": {
-    "en_us": "Fit impellers in a 3×3 vessel and drive its bottom centre at 32 RPM or more. Mix hydrogen and nitrogen into synthesis gas.\n%s → %s",
-    "ja_jp": "3×3槽に撹拌翼を入れ、底面中央を32 RPM以上で回します。水素と窒素を合成ガスにします。\n%s → %s",
-    "zh_cn": "在3×3槽装入搅拌桨，从底部中心输入至少32 RPM，将氢氮混合成合成气。\n%s → %s"
+    "en_us": "Stack a 3×3 tank two layers high over a stirrer and turn the cogwheel beside it at 32 RPM or more. Mix hydrogen and nitrogen into synthesis gas.\n%s → %s",
+    "ja_jp": "撹拌機の上に3×3の槽を2段積み、撹拌機の横の歯車を32 RPM以上で回します。水素と窒素を合成ガスにします。\n%s → %s",
+    "zh_cn": "在搅拌器上方叠两层3×3罐，以32 RPM以上转动搅拌器旁的齿轮，把氢气和氮气混合成合成气。\n%s → %s"
   },
   "guide.manufacturing_ammonia.step_2": {
     "en_us": "Compress synthesis feed one grade. Supply it to the heated reaction tower.",
@@ -2485,9 +2485,9 @@
     "zh_cn": "将合成原料压缩一级，送入加热的反应塔。"
   },
   "guide.manufacturing_ammonia.step_3": {
-    "en_us": "Open a reaction tower's roof hatch, fill its baskets with iron catalyst and close it. Pump the compressed feed into a bottom-layer side, heat it from below and collect the hot mixture from the other bottom side.\n%s → %s",
-    "ja_jp": "反応塔の天井ハッチを開けてバスケットに鉄触媒を入れ、閉じます。加圧原料を最下段の側面へ送り、下から加熱して、反対側の最下段側面から高温混合ガスを取り出します。\n%s → %s",
-    "zh_cn": "打开反应塔顶部舱口，向篮中装入铁催化剂后关闭。将加压原料泵入底层侧面，从下方加热，并从另一侧底层侧面取出高温混合气。\n%s → %s"
+    "en_us": "Open a reaction tower's roof hatch, put iron catalyst onto its trays and close it. Pump the compressed feed into a bottom-layer side, heat it from below and collect the hot mixture from the other bottom side.\n%s → %s",
+    "ja_jp": "反応塔の天井ハッチを開けて反応棚段に鉄触媒を入れ、閉じます。加圧原料を最下段の側面へ送り、下から加熱して、反対側の最下段側面から高温混合ガスを取り出します。\n%s → %s",
+    "zh_cn": "打开反应塔顶部舱口，在塔板上放入铁催化剂后关闭。把加压原料泵入最底层侧面，从下方加热，从另一侧底层取出高温混合气。\n%s → %s"
   },
   "guide.manufacturing_ammonia.step_4": {
     "en_us": "Cool the product gas before separation. Return unreacted gas and supply fresh hydrogen and nitrogen.",
@@ -2505,9 +2505,9 @@
     "zh_cn": "由氢氮制取氨"
   },
   "guide.manufacturing_nitric_fertilizer.step_1": {
-    "en_us": "Load an oxidation catalyst into a reaction tower's baskets. Feed ammonia and oxygen into a bottom-layer side; collect the hot mixture from the bottom layer.\n%s → %s",
-    "ja_jp": "反応塔のバスケットに酸化触媒を入れます。アンモニアと酸素を最下段の側面へ送り、高温混合物を最下段から回収します。\n%s → %s",
-    "zh_cn": "向反应塔的篮中装入氧化催化剂，从底层侧面送入氨和氧，从底层回收高温混合物。\n%s → %s"
+    "en_us": "Put an oxidation catalyst onto a reaction tower's trays. Feed ammonia and oxygen into a bottom-layer side; collect the hot mixture from the bottom layer.\n%s → %s",
+    "ja_jp": "反応塔の反応棚段に酸化触媒を入れます。アンモニアと酸素を最下段の側面へ送り、高温混合物を最下段から回収します。\n%s → %s",
+    "zh_cn": "在反应塔塔板上放入氧化催化剂。把氨和氧送入最底层侧面，从最底层回收高温混合物。\n%s → %s"
   },
   "guide.manufacturing_nitric_fertilizer.step_2": {
     "en_us": "Pass the hot mixture through a powered radiator. Send the cooled flow to the separation tower.",
@@ -2520,9 +2520,9 @@
     "zh_cn": "搭建2×2、2层塔。北侧上层回收一氧化氮，下层回收水。\n%s → %s"
   },
   "guide.manufacturing_nitric_fertilizer.step_4": {
-    "en_us": "Feed nitric oxide and oxygen into a reaction tower to obtain nitrogen dioxide. It needs the baskets but no catalyst.\n%s → %s",
-    "ja_jp": "反応塔で一酸化窒素と酸素から二酸化窒素を作ります。バスケットは要りますが、触媒は要りません。\n%s → %s",
-    "zh_cn": "在反应塔中用一氧化氮与氧气制取二氧化氮。需要篮，但不需要催化剂。\n%s → %s"
+    "en_us": "Feed nitric oxide and oxygen into a reaction tower to obtain nitrogen dioxide. It needs the trays but no catalyst.\n%s → %s",
+    "ja_jp": "反応塔で一酸化窒素と酸素から二酸化窒素を作ります。反応棚段は要りますが、触媒は要りません。\n%s → %s",
+    "zh_cn": "在反应塔中由一氧化氮和氧气制取二氧化氮。需要塔板，但不需要催化剂。\n%s → %s"
   },
   "guide.manufacturing_nitric_fertilizer.step_5": {
     "en_us": "Stack an absorption tower four to eight storeys high: NO2 in at the bottom, water at the top. Collect acid at the bottom; return the NO from the top to oxidation.\n%s → %s",
@@ -2530,9 +2530,9 @@
     "zh_cn": "吸收塔堆叠4～8节，NO2从下、水从上送入。硝酸从下部回收，顶部排出的NO返回氧化工序。\n%s → %s"
   },
   "guide.manufacturing_nitric_fertilizer.step_6": {
-    "en_us": "Mix the recovered nitric acid with ammonia in an impeller vessel to make ammonium nitrate. Extract the solid through a funnel.\n%s → %s",
-    "ja_jp": "回収した硝酸を撹拌翼入り槽でアンモニアと反応させ、硝酸アンモニウムをファンネルで取り出します。\n%s → %s",
-    "zh_cn": "在搅拌槽中用硝酸与氨制取硝酸铵，经漏斗取出固体。\n%s → %s"
+    "en_us": "Mix the recovered nitric acid with ammonia in a stirred tank to make ammonium nitrate. Extract the solid through a funnel.\n%s → %s",
+    "ja_jp": "回収した硝酸を撹拌槽でアンモニアと反応させ、硝酸アンモニウムをファンネルで取り出します。\n%s → %s",
+    "zh_cn": "把回收的硝酸与氨在搅拌槽中反应制成硝酸铵，用漏斗取出固体。\n%s → %s"
   },
   "guide.manufacturing_nitric_fertilizer.step_7": {
     "en_us": "Sulfuric acid gives the alternative ammonium sulfate fertilizer in the same kind of vessel. Empty the previous batch before switching feeds. Use either one on a crop to grow the 3×3 crops around it; a deployer spreads it the same way.\n%s → %s",
@@ -2550,9 +2550,9 @@
     "zh_cn": "粉碎下界岩，将硫粉与其他产物一并回收。\n%s → %s"
   },
   "guide.manufacturing_sulfuric_acid.step_2": {
-    "en_us": "Burn sulfur in a heated impeller vessel with air drawn in through an open pipe end, as a real sulfur burner does. Oxygen works too.\n%s → %s",
-    "ja_jp": "加熱した撹拌翼入り槽で、硫黄を空気で燃やします。空気は何もつないでいない配管の口から吸い込みます。酸素でも燃やせます。\n%s → %s",
-    "zh_cn": "在加热的搅拌槽中用空气燃烧硫，空气从未连接的管口吸入。也可以用氧气燃烧。\n%s → %s"
+    "en_us": "Burn sulfur in a heated stirred tank with air drawn in through an open pipe end, as a real sulfur burner does. Oxygen works too.\n%s → %s",
+    "ja_jp": "加熱した撹拌槽で、硫黄を空気で燃やします。空気は何もつないでいない配管の口から吸い込みます。酸素でも燃やせます。\n%s → %s",
+    "zh_cn": "在加热的搅拌槽中用空气燃烧硫磺，空气从未连接的管口吸入。也可用氧气。\n%s → %s"
   },
   "guide.manufacturing_sulfuric_acid.step_3": {
     "en_us": "Send the gas to a reaction tower holding an oxidation catalyst. It needs no rotation.\n%s → %s",
@@ -2605,9 +2605,9 @@
     "zh_cn": "粉碎闪长岩得到石棉。装入升起的电极吊架可提高苛性钠产量。\n%s → %s"
   },
   "guide.manufacturing_chlor_alkali.step_5": {
-    "en_us": "Combine the separated hydrogen and chlorine in an impeller vessel.\n%s → %s",
-    "ja_jp": "分離した水素と塩素を撹拌翼入り槽で反応させます。\n%s → %s",
-    "zh_cn": "在搅拌槽中使分离出的氢与氯反应。\n%s → %s"
+    "en_us": "Combine the separated hydrogen and chlorine in a stirred tank.\n%s → %s",
+    "ja_jp": "分離した水素と塩素を撹拌槽で反応させます。\n%s → %s",
+    "zh_cn": "在搅拌槽中使分离出的氢气和氯气反应。\n%s → %s"
   },
   "guide.manufacturing_chlor_alkali.step_6": {
     "en_us": "Absorb the hydrogen chloride into water in an absorption tower: gas at the bottom, water at the top. Keep the acid in suitable pipes and tanks.\n%s → %s",
@@ -2670,9 +2670,9 @@
     "zh_cn": "在加热条件下聚合普通乙烯或丙烯。"
   },
   "guide.manufacturing_polymers.step_2": {
-    "en_us": "Load a polymerization catalyst into a reaction tower's baskets and collect molten polyethylene from the bottom layer.\n%s → %s",
-    "ja_jp": "反応塔のバスケットに重合触媒を入れ、溶融ポリエチレンを最下段から回収します。\n%s → %s",
-    "zh_cn": "向反应塔的篮中装入聚合催化剂，从底层回收熔融聚乙烯。\n%s → %s"
+    "en_us": "Put a polymerization catalyst onto a reaction tower's trays and collect molten polyethylene from the bottom layer.\n%s → %s",
+    "ja_jp": "反応塔の反応棚段に重合触媒を入れ、溶融ポリエチレンを最下段から回収します。\n%s → %s",
+    "zh_cn": "在反应塔塔板上放入聚合催化剂，从最底层回收熔融聚乙烯。\n%s → %s"
   },
   "guide.manufacturing_polymers.step_3": {
     "en_us": "The matching propylene feed gives molten polypropylene in the same type of equipment. Keep the two production batches separate.\n%s → %s",
@@ -2710,9 +2710,9 @@
     "zh_cn": "树脂制造2　树脂粒到成品"
   },
   "guide.manufacturing_rubber.step_1": {
-    "en_us": "Send separated ethylene, propylene and sulfur to a heated impeller vessel. Drive its bottom centre and extract the cured rubber through a funnel.\n%s → %s",
-    "ja_jp": "分離したエチレン・プロピレンと硫黄を、加熱した撹拌槽へ送ります。底面中央を駆動し、合成ゴムをファンネルで取り出します。\n%s → %s",
-    "zh_cn": "将分离出的乙烯、丙烯与硫送入加热搅拌槽，驱动底部中心，经漏斗取出合成橡胶。\n%s → %s"
+    "en_us": "Send separated ethylene, propylene and sulfur to a heated stirred tank. Turn its stirrer and extract the cured rubber through a funnel.\n%s → %s",
+    "ja_jp": "分離したエチレン・プロピレンと硫黄を、加熱した撹拌槽へ送ります。撹拌機を回し、合成ゴムをファンネルで取り出します。\n%s → %s",
+    "zh_cn": "把分离出的乙烯、丙烯和硫送入加热的搅拌槽。转动搅拌器，用漏斗取出合成橡胶。\n%s → %s"
   },
   "guide.manufacturing_rubber.step_2": {
     "en_us": "Turn the solid rubber into gaskets for the existing fluid equipment.\n%s → %s",
@@ -2735,7 +2735,7 @@
     "zh_cn": "合成橡胶与柔性制品"
   },
   "guide.manufacturing_pvc.step_1": {
-    "en_us": "Bring ethylene from the oil line and chlorine from brine electrolysis to an impeller vessel.\n%s → %s",
+    "en_us": "Bring ethylene from the oil line and chlorine from brine electrolysis to a stirred tank.\n%s → %s",
     "ja_jp": "石油ラインのエチレンと、塩水電解の塩素を撹拌槽へ送ります。\n%s → %s",
     "zh_cn": "把石油线的乙烯与盐水电解的氯送入搅拌槽。\n%s → %s"
   },
@@ -2745,7 +2745,7 @@
     "zh_cn": "超加热下一批以制氯乙烯，另一产物流回收氯化氢并送往盐酸生产。\n%s → %s"
   },
   "guide.manufacturing_pvc.step_3": {
-    "en_us": "Use the heated polymerization recipe in an impeller vessel and extract the solid PVC resin.\n%s → %s",
+    "en_us": "Use the heated polymerization recipe in a stirred tank and extract the solid PVC resin.\n%s → %s",
     "ja_jp": "撹拌槽で加熱重合のレシピを進め、固形のPVC樹脂を取り出します。\n%s → %s",
     "zh_cn": "在搅拌槽中执行加热聚合配方，取出固体PVC树脂。\n%s → %s"
   },
@@ -2805,7 +2805,7 @@
     "zh_cn": "向装有氧化催化剂的反应塔供给预热乙烯与氧气。\n%s → %s"
   },
   "guide.manufacturing_antifreeze.step_2": {
-    "en_us": "Heat ethylene oxide with water in an impeller vessel to obtain ethylene glycol.\n%s → %s",
+    "en_us": "Heat ethylene oxide with water in a stirred tank to obtain ethylene glycol.\n%s → %s",
     "ja_jp": "撹拌槽で酸化エチレンと水を加熱し、エチレングリコールを作ります。\n%s → %s",
     "zh_cn": "在搅拌槽中加热环氧乙烷与水，制得乙二醇。\n%s → %s"
   },
@@ -2850,7 +2850,7 @@
     "zh_cn": "粉碎矿石以取得冶炼原料。\n%s → %s"
   },
   "guide.manufacturing_aluminum.step_2": {
-    "en_us": "The sulfate route heats the mineral with sulfuric acid in an impeller vessel.\n%s → %s",
+    "en_us": "The sulfate route heats the mineral with sulfuric acid in a stirred tank.\n%s → %s",
     "ja_jp": "硫酸法では、撹拌槽で鉱物と硫酸を加熱します。\n%s → %s",
     "zh_cn": "硫酸路线在搅拌槽中加热矿物与硫酸。\n%s → %s"
   },
@@ -2890,7 +2890,7 @@
     "zh_cn": "粉碎矿石收集钛铁矿。\n%s → %s"
   },
   "guide.manufacturing_titanium.step_2": {
-    "en_us": "Heat the mineral with sulfuric acid in an impeller vessel, keeping the recovered iron nuggets.\n%s → %s",
+    "en_us": "Heat the mineral with sulfuric acid in a stirred tank, keeping the recovered iron nuggets.\n%s → %s",
     "ja_jp": "撹拌槽で鉱物と硫酸を加熱し、回収される鉄塊も取り出します。\n%s → %s",
     "zh_cn": "在搅拌槽中加热矿物与硫酸，同时取出回收的铁粒。\n%s → %s"
   },
@@ -2925,7 +2925,7 @@
     "zh_cn": "粉碎锆石矿取得矿物原料。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_2": {
-    "en_us": "Superheat zircon with sulfuric acid in an impeller vessel.\n%s → %s",
+    "en_us": "Superheat zircon with sulfuric acid in a stirred tank.\n%s → %s",
     "ja_jp": "撹拌槽でジルコンと硫酸を超加熱します。\n%s → %s",
     "zh_cn": "在搅拌槽中超加热锆石与硫酸。\n%s → %s"
   },
@@ -3100,7 +3100,7 @@
     "zh_cn": "建材制造1　水泥与防腐地板"
   },
   "guide.manufacturing_glass.step_1": {
-    "en_us": "Heat the brine batch in an impeller vessel to recover borax and salt. Keep the salt for the brine loop.\n%s → %s",
+    "en_us": "Heat the brine batch in a stirred tank to recover borax and salt. Keep the salt for the brine loop.\n%s → %s",
     "ja_jp": "撹拌槽で塩水のバッチを加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。\n%s → %s",
     "zh_cn": "在搅拌槽中加热盐水批次，回收硼砂和盐，盐可返回制盐水。\n%s → %s"
   },
@@ -3125,7 +3125,7 @@
     "zh_cn": "制作滤料，持续供给最后一个处理槽。\n%s → %s"
   },
   "guide.manufacturing_washwater.step_3": {
-    "en_us": "Collect the vessel drain wastewater and neutralize it with calcite in an impeller vessel.\n%s → %s",
+    "en_us": "Collect the vessel drain wastewater and neutralize it with calcite in a stirred tank.\n%s → %s",
     "ja_jp": "槽のドレンから洗浄排水を集め、撹拌槽で方解石を使って中和します。\n%s → %s",
     "zh_cn": "收集容器排水，在搅拌槽中用方解石中和。\n%s → %s"
   },
@@ -3150,9 +3150,9 @@
     "zh_cn": "回收洗涤废水与污泥"
   },
   "guide.manufacturing_catalysts.step_1": {
-    "en_us": "Prepare the iron catalyst for ammonia synthesis and load the cartridge into a reaction tower's basket.\n%s → %s",
-    "ja_jp": "アンモニア合成用の鉄触媒を製作し、反応塔のバスケットへ装荷します。\n%s → %s",
-    "zh_cn": "制作合成氨用铁催化剂，装入反应塔的篮中。\n%s → %s"
+    "en_us": "Prepare the iron catalyst for ammonia synthesis and put the cartridge onto a reaction tower's tray.\n%s → %s",
+    "ja_jp": "アンモニア合成用の鉄触媒を製作し、反応塔の反応棚段へ装荷します。\n%s → %s",
+    "zh_cn": "制作氨合成用铁催化剂，并装到反应塔的塔板上。\n%s → %s"
   },
   "guide.manufacturing_catalysts.step_2": {
     "en_us": "Prepare the oxidation cartridge for sulfur, nitrogen and ethylene-oxide production.\n%s → %s",
@@ -3440,9 +3440,9 @@
     "zh_cn": "制备阻燃颗粒并循环用水"
   },
   "guide.manufacturing_resin_water_loop.step_1": {
-    "en_us": "Run the bottom centre of a 3×3 impeller vessel at 32 RPM or more and light a Blaze Burner under a corner. Extract pellets with a funnel and pump the vapor out through the closed vessel's top.\n%s → %s",
-    "ja_jp": "3×3の撹拌槽の底面中央を32 RPM以上で回し、底面の隅でブレイズバーナーを燃やします。ペレットはファンネルで取り出し、蒸気はハッチを閉じた槽の上面からポンプで取り出します。\n%s → %s",
-    "zh_cn": "以至少32 RPM驱动3×3搅拌槽的底部中央，在底角点燃烈焰人燃烧室。用漏斗取出颗粒，封闭舱门后从槽的顶部泵出蒸气。\n%s → %s"
+    "en_us": "Turn the stirrer of a 3×3 stirred tank at 32 RPM or more and light a Blaze Burner under a corner. Extract pellets with a funnel and pump the vapor out through the closed vessel's top.\n%s → %s",
+    "ja_jp": "3×3の撹拌槽の撹拌機を32 RPM以上で回し、底面の隅でブレイズバーナーを燃やします。ペレットはファンネルで取り出し、蒸気はハッチを閉じた槽の上面からポンプで取り出します。\n%s → %s",
+    "zh_cn": "以32 RPM以上转动3×3搅拌槽的搅拌器，并在底部角落点燃烈焰人燃烧室。用漏斗取出颗粒，从关闭舱口的槽顶部泵出蒸汽。\n%s → %s"
   },
   "guide.manufacturing_resin_water_loop.step_2": {
     "en_us": "Feed vapor into the bottom side of an absorption tower and water into the top storey. Pump the recovered wash water out of another bottom side.\n%s → %s",
@@ -3450,12 +3450,12 @@
     "zh_cn": "蒸气从吸收塔底层侧面送入，水从顶层送入。从底层另一面泵出中和洗涤水。\n%s → %s"
   },
   "guide.manufacturing_resin_water_loop.step_3": {
-    "en_us": "Mix the recovered wash water with flocculant in a second impeller vessel. Filter the outlet for clarified water.\n%s → %s",
+    "en_us": "Mix the recovered wash water with flocculant in a second stirred tank. Filter the outlet for clarified water.\n%s → %s",
     "ja_jp": "回収した中和処理水と水処理凝集剤を別の撹拌槽で混ぜます。出口のフィルターに澄明水を指定します。\n%s → %s",
     "zh_cn": "在另一座搅拌槽中混合回收的中和洗涤水和絮凝剂。在出口过滤器上选定澄清水。\n%s → %s"
   },
   "guide.manufacturing_resin_water_loop.step_4": {
-    "en_us": "Filter the clarified water in a third impeller vessel. Remove the sludge and return the recovered water to the pellet vessel and the top of the tower.\n%s → %s",
+    "en_us": "Filter the clarified water in a third stirred tank. Remove the sludge and return the recovered water to the pellet vessel and the top of the tower.\n%s → %s",
     "ja_jp": "3基目の撹拌槽で澄明水をろ過します。汚泥を取り出し、回収した水をペレット製造槽と吸収塔の最上段に戻します。\n%s → %s",
     "zh_cn": "用第三座搅拌槽过滤澄清水。取出污泥，把回收的水送回颗粒制造槽与吸收塔顶层。\n%s → %s"
   },
@@ -3520,7 +3520,7 @@
     "zh_cn": "用粉碎轮粉碎方解石，获得萤石（50%）和骨粉。磨石只能得到骨粉。\n%s → %s"
   },
   "guide.manufacturing_fluorine.step_2": {
-    "en_us": "Heat fluorite with sulfuric acid in an impeller vessel. Recover hydrogen fluoride gas from the top through corrosion-resistant equipment.\n%s → %s",
+    "en_us": "Heat fluorite with sulfuric acid in a stirred tank. Recover hydrogen fluoride gas from the top through corrosion-resistant equipment.\n%s → %s",
     "ja_jp": "撹拌槽で蛍石と硫酸を加熱し、フッ化水素を作ります。気体は上面から対応する耐食設備で回収します。\n%s → %s",
     "zh_cn": "在搅拌槽中加热萤石与硫酸，通过顶部的相应耐腐蚀设备回收氟化氢气体。\n%s → %s"
   },
@@ -4160,7 +4160,7 @@
     "zh_cn": "用机械动力的粉碎轮粉碎1份粗矿。倍率以粗矿为基准，不含时运或矿石方块粉碎奖励。"
   },
   "ore_recovery.leach": {
-    "en_us": "Heat one crushed ore and 250 mB dilute sulfuric acid in a 3×3 impeller vessel at 32 RPM or more. After 200 ticks, recover 1000 mB purified solution and one tailings sludge.",
+    "en_us": "Heat one crushed ore and 250 mB dilute sulfuric acid in a 3×3 stirred tank at 32 RPM or more. After 200 ticks, recover 1000 mB purified solution and one tailings sludge.",
     "ja_jp": "加熱した3×3撹拌槽に粉砕済み鉱石1個と希硫酸250 mBを入れ、32 RPM以上で回します。200 tickで精製溶液1000 mBと鉱滓スラッジ1個を直接回収できます。",
     "zh_cn": "将1份粉碎矿石和250 mB稀硫酸加入加热的3×3搅拌槽，转速至少32 RPM。200 tick后直接回收1000 mB精制液和1份矿渣污泥。"
   },
@@ -4220,9 +4220,9 @@
     "zh_cn": "运行中的冷却塔从顶部开口冒出宽大的白色凝结云。冷却停止后不再生成，新旧云团上升后消散，显示量服从粒子设置。"
   },
   "vessel_internals.operate": {
-    "en_us": "Close the hatch and drive the bottom centre at 32 RPM or more. Catalytic reactions run in the reaction tower.",
-    "ja_jp": "ハッチを閉じ、底面中央へ32 RPM以上を入力します。触媒反応は反応塔で行います。",
-    "zh_cn": "关盖并从底部中心输入至少32 RPM。催化反应在反应塔中进行。"
+    "en_us": "Close the hatch and turn the cogwheel at 32 RPM or more; the stirrer carries 32 SU per RPM. Catalytic and tray reactions run in the reaction tower.",
+    "ja_jp": "ハッチを閉じ、歯車を32 RPM以上で回します。撹拌機の負荷は1 RPMあたり32 SUです。触媒反応と棚段の反応は反応塔で行います。",
+    "zh_cn": "关闭舱口，以32 RPM以上转动齿轮；搅拌器每RPM承受32 SU。催化反应与塔板反应在反应塔中进行。"
   },
   "large_absorption_tower.title": {
     "en_us": "Absorption tower",
@@ -4230,19 +4230,19 @@
     "zh_cn": "吸收塔"
   },
   "lidded_vessel.internals": {
-    "en_us": "Fit impellers in a 3×3 vessel. Smaller vessels are storage only; use a wrench on top to recover internals.",
-    "ja_jp": "撹拌翼は3×3へ取り付けます。小さな槽は保管用で、上面レンチで内部部品を回収できます。",
-    "zh_cn": "搅拌叶装在3×3槽中。较小的槽仅用于储存，可用扳手点击顶面取回内部组件。"
+    "en_us": "To stir, stack a 3×3 tank two or more layers high over a stirrer. Smaller tanks are storage only.",
+    "ja_jp": "撹拌するには、撹拌機の上に3×3の槽を2段以上積みます。小さな槽は保管用です。",
+    "zh_cn": "如需搅拌，在搅拌器上方叠起至少两层的3×3罐。更小的罐仅用于储存。"
   },
   "vessel_internals.install": {
-    "en_us": "Fit impellers in a 3×3 vessel. Smaller vessels are storage only; use a wrench on top to recover internals.",
-    "ja_jp": "撹拌翼は3×3へ取り付けます。小さな槽は保管用で、上面レンチで内部部品を回収できます。",
-    "zh_cn": "搅拌叶装在3×3槽中。较小的槽仅用于储存，可用扳手点击顶面取回内部组件。"
+    "en_us": "Place the stirrer directly under the bottom centre of a 3×3 stainless tank. Like Create's mechanical mixer, cogwheels meshing with the gear round its middle turn it.",
+    "ja_jp": "撹拌機は3×3のステンレスタンクの底面中央の真下に置きます。Createのメカニカルミキサーと同じく、中ほどの歯車にかみ合う歯車で回します。",
+    "zh_cn": "把搅拌器放在3×3不锈钢罐底面中心的正下方。与Create的动力搅拌器一样，由与其中部齿轮啮合的齿轮带动。"
   },
   "vessel_basin.impeller": {
-    "en_us": "Fit an impeller in each layer and close the hatch. No external mixer is needed.",
-    "ja_jp": "各段へ撹拌翼を入れてハッチを閉じます。外付けミキサーは不要です。",
-    "zh_cn": "每层装入叶轮并关盖，无需外置搅拌器。"
+    "en_us": "Place a stirrer under the bottom centre of a tank two or more layers high and close the hatch. Impellers turn in the two lowest layers.",
+    "ja_jp": "2段以上の槽の底面中央の下に撹拌機を置き、ハッチを閉じます。撹拌翼は下の2段で回ります。",
+    "zh_cn": "在至少两层高的槽底面中心下方放置搅拌器并关闭舱口。叶轮在最下面两层转动。"
   },
   "large_absorption_tower.storey": {
     "en_us": "Each storey is placed as a whole 3 by 3 octagon. Click the top of a storey to stack the next one on its centre.",
@@ -4250,19 +4250,19 @@
     "zh_cn": "塔节放置时整体占3×3八角形。点击塔节顶面，下一节会叠在正中央上方。"
   },
   "lidded_vessel_2x2.rotation": {
-    "en_us": "A 2×2 vessel has no shaft input. For 3×3, supply at least 32 RPM at the bottom centre.",
-    "ja_jp": "2×2は動力を受けません。3×3は底面中央1か所から32 RPM以上を入力します。",
-    "zh_cn": "2×2槽不接旋转动力，3×3槽仅从底部中心输入至少32 RPM。"
+    "en_us": "A 2×2 vessel takes no rotation. A 3×3 vessel stirs with a stirrer under its bottom centre, turned at 32 RPM or more.",
+    "ja_jp": "2×2は動力を受けません。3×3は底面中央の下の撹拌機を32 RPM以上で回して撹拌します。",
+    "zh_cn": "2×2槽不接受动力。3×3槽由底面中心下方以32 RPM以上转动的搅拌器搅拌。"
   },
   "vessel_internals.title": {
-    "en_us": "Three internals for reaction vessels",
-    "ja_jp": "反応槽の3種類の内部部品",
-    "zh_cn": "反应槽的三种内部组件"
+    "en_us": "Stirring a stainless tank",
+    "ja_jp": "ステンレスタンクを撹拌する",
+    "zh_cn": "搅拌不锈钢罐"
   },
   "lidded_vessel_2x2.internals": {
-    "en_us": "Fit impellers in a 3×3 vessel. Smaller vessels are storage only; use a wrench on top to recover internals.",
-    "ja_jp": "撹拌翼は3×3へ取り付けます。小さな槽は保管用で、上面レンチで内部部品を回収できます。",
-    "zh_cn": "搅拌叶装在3×3槽中。较小的槽仅用于储存，可用扳手点击顶面取回内部组件。"
+    "en_us": "To stir, stack a 3×3 tank two or more layers high over a stirrer. Smaller tanks are storage only.",
+    "ja_jp": "撹拌するには、撹拌機の上に3×3の槽を2段以上積みます。小さな槽は保管用です。",
+    "zh_cn": "如需搅拌，在搅拌器上方叠起至少两层的3×3罐。更小的罐仅用于储存。"
   },
   "large_absorption_tower.ring": {
     "en_us": "Pipes join only the centre and the four straight-side blocks, never the diagonal corners. At the bottom storey, gas goes in through their sides and liquid comes out through their sides or undersides. At the top storey, spent gas leaves through their sides and water enters through their tops.",
@@ -4275,9 +4275,9 @@
     "zh_cn": "叠放4～8节。每节处理1批，无需转动或加热。"
   },
   "vessel_internals.impeller": {
-    "en_us": "Fit an impeller to mix materials inside the vessel. Drive it from below.",
-    "ja_jp": "撹拌翼を入れると、槽の中で材料を混ぜられます。底面から回転を入れます。",
-    "zh_cn": "装入搅拌叶轮后可在槽内混合材料，从底部输入旋转动力。"
+    "en_us": "Impellers turn in the tank's two lowest layers, whatever its height, and run two batches at a time. A tank one layer high cannot stir.",
+    "ja_jp": "撹拌翼は槽の高さにかかわらず下の2段に付き、2バッチを同時に処理します。1段の槽は撹拌できません。",
+    "zh_cn": "无论罐有多高，叶轮都装在最下面两层，同时处理2批。只有一层的罐无法搅拌。"
   },
   "reaction_tower.title": {
     "en_us": "Reaction tower",
@@ -4290,19 +4290,19 @@
     "zh_cn": "将反应塔按3×3叠成3～12层。与带盖釜相同，壁内是空的。面朝反应塔正面时，梯子位于左侧壁的远端。"
   },
   "reaction_tower.hatch": {
-    "en_us": "Right-click the middle of the roof with an empty hand to open its hatch. Baskets and catalyst go in only while it is open, and opening it lets out any gas inside. The hatch lifts away from the front of the tower.",
-    "ja_jp": "天井の真ん中を素手で右クリックするとハッチが開きます。バスケットと触媒は開いている間だけ入れられます。開けると中の気体は外へ抜けます。ハッチは塔の正面から奥へ向かって開きます。",
-    "zh_cn": "空手右键点击顶部中央可打开舱口。只有打开时才能放入篮和催化剂，打开时内部气体会排出。舱盖朝反应塔的背面掀开。"
+    "en_us": "Right-click the middle of the roof with an empty hand to open its hatch. Trays and catalyst go in only while it is open, and opening it lets out any gas inside. The hatch lifts away from the front of the tower.",
+    "ja_jp": "天井の真ん中を素手で右クリックするとハッチが開きます。反応棚段と触媒は開いている間だけ入れられます。開けると中の気体は外へ抜けます。ハッチは塔の正面から奥へ向かって開きます。",
+    "zh_cn": "空手右键点击塔顶中央打开舱口。只有打开时才能放入塔板和催化剂，打开时内部气体会排出。舱口从塔的正面向后掀起。"
   },
   "reaction_tower.baskets": {
-    "en_us": "Use catalyst baskets on the open hatch. One drops into each layer, from the bottom up.",
-    "ja_jp": "開いたハッチに触媒バスケットを使うと、下の段から1段に1個ずつ入ります。",
-    "zh_cn": "对打开的舱口使用催化剂篮，会从下往上每层放入一个。"
+    "en_us": "Use reaction trays on the open hatch. One drops into each layer, from the bottom up.",
+    "ja_jp": "開いたハッチに反応棚段を使うと、下の段から1段に1個ずつ入ります。",
+    "zh_cn": "对打开的舱口使用反应塔板，会从下往上每层放入一个。"
   },
   "reaction_tower.catalyst": {
-    "en_us": "Put the same catalyst into every basket through the hatch, or with a funnel on top, then close the hatch to run. The catalyst decides the reaction; baskets without catalyst run reactions that need none.",
-    "ja_jp": "すべてのバスケットに同じ触媒を、ハッチから手で、または上面のファンネルで入れ、ハッチを閉じると運転します。触媒で反応が決まり、触媒のないバスケットでは触媒の要らない反応を行います。",
-    "zh_cn": "通过舱口手动或用顶部漏斗向所有篮放入同一种催化剂，关闭舱口后运行。催化剂决定反应；没有催化剂的篮可进行无需催化剂的反应。"
+    "en_us": "Put the same catalyst onto every tray through the hatch, or with a funnel on top, then close the hatch to run. The catalyst decides the reaction; trays without catalyst run reactions that need none, or heat a solid feed from the funnels on the bottom layer's sides.",
+    "ja_jp": "すべての反応棚段に同じ触媒を、ハッチから手で、または上面のファンネルで入れ、ハッチを閉じると運転します。触媒で反応が決まります。触媒のない棚段では、触媒の要らない反応か、最下段側面のファンネルから入れた固体の加熱反応を行います。",
+    "zh_cn": "通过舱口手动或用顶部漏斗在每块塔板上放入相同的催化剂，关闭舱口后运行。催化剂决定反应；没有催化剂的塔板进行无需催化剂的反应，或加热从最底层侧面漏斗投入的固体原料。"
   },
   "reaction_tower.feed": {
     "en_us": "Pipe the feed into a side of the bottom layer. The gas rises along the shell and flows down through the beds from the top. Both feeds of a reaction may share one pipe.",
@@ -4335,9 +4335,9 @@
     "zh_cn": "将反应塔用作气液分离器"
   },
   "reaction_tower_separator.mode": {
-    "en_us": "Without catalyst baskets the reaction tower is a high-pressure gas-liquid separator. Each layer runs one batch at a time.",
-    "ja_jp": "触媒バスケットを入れない反応塔は、高圧気液分離タンクになります。1段につき1バッチを同時に処理します。",
-    "zh_cn": "不放催化剂篮的反应塔是高压气液分离罐，每层同时处理1批。"
+    "en_us": "Without reaction trays the reaction tower is a high-pressure gas-liquid separator. Each layer runs one batch at a time.",
+    "ja_jp": "反応棚段を入れない反応塔は、高圧気液分離タンクになります。1段につき1バッチを同時に処理します。",
+    "zh_cn": "不装反应塔板的反应塔是高压气液分离罐，每层同时处理1批。"
   },
   "reaction_tower_separator.feed": {
     "en_us": "Pipe the mixture into a side of the bottom layer, such as cooled synthesis gas from the ammonia loop.",
@@ -4360,9 +4360,9 @@
     "zh_cn": "分离期间，各面中央的观察窗打开，可看到内部液面。"
   },
   "reaction_tower.gauges": {
-    "en_us": "On the front, the side that faced you as you placed it, each layer with a basket shows its temperature on the left. The gauge on the right, second from the bottom, shows the loop pressure: 15 to 25 MPa.",
-    "ja_jp": "正面（置いたときに自分の側だった面）の左側に、バスケットの入った段ごとの温度計が付きます。右側の下から2段目の計器は合成ループの圧力で、15～25 MPaで運転します。",
-    "zh_cn": "在正面（放置时朝向自己的面）左侧，装有篮的每层显示温度计。右侧从下数第2层的仪表显示合成回路压力，运行在15～25 MPa。"
+    "en_us": "On the front, the side that faced you as you placed it, each layer with a tray shows its temperature on the left. The gauge on the right, second from the bottom, shows the loop pressure: 15 to 25 MPa.",
+    "ja_jp": "正面（置いたときに自分の側だった面）の左側に、反応棚段の入った段ごとの温度計が付きます。右側の下から2段目の計器は合成ループの圧力で、15～25 MPaで運転します。",
+    "zh_cn": "在正面（放置时朝向自己的面）左侧，装有塔板的每层显示温度计。右侧从下数第2层的仪表显示合成回路压力，运行在15～25 MPa。"
   },
   "reaction_tower.aging": {
     "en_us": "Fresh catalyst reacts mostly in the upper layers, which run hottest. As the catalyst wears, the upper layers stay cooler and the heat moves down into the lower ones.",
@@ -4375,9 +4375,9 @@
     "zh_cn": "混合并输送液体与气体"
   },
   "chemical_mixtures.vessel": {
-    "en_us": "Build an ordinary lidded vessel without internal parts. Feed different liquids through its normal side connections.",
-    "ja_jp": "内部部品のないふた付き槽を組みます。通常の側面接続から、異なる液体を入れてください。",
-    "zh_cn": "搭建不带内部部件的带盖槽，通过普通侧面接口输入不同液体。"
+    "en_us": "Build an ordinary lidded vessel without a stirrer. Feed different liquids through its normal side connections.",
+    "ja_jp": "撹拌機のないふた付き槽を組みます。通常の側面接続から、異なる液体を入れてください。",
+    "zh_cn": "搭建不带搅拌器的带盖槽，通过普通侧面接口输入不同液体。"
   },
   "chemical_mixtures.blend": {
     "en_us": "In the tank, heavier liquids settle below lighter ones. The window shows each layer in its own colour.",
@@ -4400,9 +4400,9 @@
     "zh_cn": "悬停在流体容器或JEI流体上可查看化学式。纯物质和单一溶质的溶液会显示旋转的模型。聚合物显示重复单元。显示链接可查看混合物的成分量。"
   },
   "guide.manufacturing_sulfuric_acid.step_8": {
-    "en_us": "Without a catalyst bed: blow sulfur dioxide and air, or oxygen, into water with an iron nugget or iron oxide in an impeller vessel. The dissolved iron carries the oxygen, and dilute sulfuric acid forms cold.\n%s → %s",
-    "ja_jp": "触媒床を使わない方法：撹拌翼入り槽の水に鉄ナゲットか酸化鉄を入れ、二酸化硫黄と空気（または酸素）を吹き込みます。溶けた鉄が酸素を運び、加熱なしで希硫酸になります。\n%s → %s",
-    "zh_cn": "不用催化剂床的方法：在搅拌槽的水中放入铁粒或氧化铁，通入二氧化硫和空气（或氧气）。溶解的铁传递氧，无需加热即生成稀硫酸。\n%s → %s"
+    "en_us": "Without a catalyst bed: blow sulfur dioxide and air, or oxygen, into water with an iron nugget or iron oxide in a stirred tank. The dissolved iron carries the oxygen, and dilute sulfuric acid forms cold.\n%s → %s",
+    "ja_jp": "触媒床を使わない方法：撹拌槽の水に鉄ナゲットか酸化鉄を入れ、二酸化硫黄と空気（または酸素）を吹き込みます。溶けた鉄が酸素を運び、加熱なしで希硫酸になります。\n%s → %s",
+    "zh_cn": "不用催化床的方法：在搅拌槽的水中放入铁粒或氧化铁，吹入二氧化硫和空气（或氧气）。溶解的铁传递氧，无需加热即可生成稀硫酸。\n%s → %s"
   },
   "guide.manufacturing_sulfuric_acid.step_9": {
     "en_us": "Or absorb the sulfur dioxide itself into water in an absorption tower to make sulfurous acid.\n%s → %s",
@@ -4460,7 +4460,7 @@
     "zh_cn": "湿法浸出与低速沉降"
   },
   "wet_processing.build": {
-    "en_us": "Use a lidded vessel with stirred internals and heating below. No dedicated leaching tank is needed.",
+    "en_us": "Use a lidded vessel over a stirrer and heating below. No dedicated leaching tank is needed.",
     "ja_jp": "ふた付き槽に攪拌羽根を組み込み、下から加熱します。専用の浸出槽は不要です。",
     "zh_cn": "在带盖槽中安装搅拌叶片并从下方加热，无需专用浸出槽。"
   },
@@ -4525,7 +4525,7 @@
     "zh_cn": "在超级加热的工作盆中把氧化镍与碳粉混合，还原成镍。\n%s → %s"
   },
   "guide.manufacturing_nickel.step_4": {
-    "en_us": "Once you have a stainless impeller vessel, roast with oxygen instead and send the sulfur dioxide to acid production.\n%s → %s",
+    "en_us": "Once you have a stainless stirred tank, roast with oxygen instead and send the sulfur dioxide to acid production.\n%s → %s",
     "ja_jp": "ステンレス鋼の撹拌槽ができたら、酸素で焙焼して二酸化硫黄を硫酸製造へ回収できます。\n%s → %s",
     "zh_cn": "有了不锈钢搅拌槽后，可改用氧气焙烧，并把二氧化硫回收至制酸。\n%s → %s"
   },
@@ -4540,7 +4540,7 @@
     "zh_cn": "将镍压成板，供电极、合金与流体设备使用。\n%s → %s"
   },
   "guide.manufacturing_chromium.step_4": {
-    "en_us": "For parts that need pure chromium, use thermite with aluminium in a superheated stainless impeller vessel. Recover chromium, iron and alumina.\n%s → %s",
+    "en_us": "For parts that need pure chromium, use thermite with aluminium in a superheated stainless stirred tank. Recover chromium, iron and alumina.\n%s → %s",
     "ja_jp": "純粋なクロムが要る部品には、ステンレス鋼の撹拌槽でアルミニウムと超加熱するテルミット法を使います。クロム・鉄・アルミナを回収します。\n%s → %s",
     "zh_cn": "需要纯铬的部件，在不锈钢搅拌槽中与铝超级加热进行铝热还原，回收铬、铁和氧化铝。\n%s → %s"
   },
@@ -4755,12 +4755,12 @@
     "zh_cn": "制备甲基膦酸二甲酯"
   },
   "guide.manufacturing_methylphosphonate.step_1": {
-    "en_us": "Fit an impeller, shut the lid and drive the bottom centre at 32 RPM or more. Feed liquid through the side pipe and iodine through the funnel. Set the smart pipe to draw only the crude product.\n%s → %s",
-    "ja_jp": "撹拌羽根を取り付け、ふたを閉めて底面中央を32 RPM以上で駆動します。側面の配管から原料液、ファンネルからヨウ素を供給します。スマート液体パイプには粗生成液入りバケツを指定します。\n%s → %s",
-    "zh_cn": "安装搅拌叶轮并关闭盖板，从底部中央输入至少32 RPM。用侧面管道供原料液，用漏斗供碘。将智能流体管道设为仅抽取粗产物。\n%s → %s"
+    "en_us": "Stand the tank over a stirrer, shut the lid and turn the stirrer at 32 RPM or more. Feed liquid through the side pipe and iodine through the funnel. Set the smart pipe to draw only the crude product.\n%s → %s",
+    "ja_jp": "槽を撹拌機の上に組み、ふたを閉めて撹拌機を32 RPM以上で回します。側面の配管から原料液、ファンネルからヨウ素を供給します。スマート液体パイプには粗生成液入りバケツを指定します。\n%s → %s",
+    "zh_cn": "把罐搭在搅拌器上方，关上盖子并以32 RPM以上转动搅拌器。从侧面管道送入原料液，从漏斗送入碘。智能流体管道设为只取粗产物。\n%s → %s"
   },
   "guide.manufacturing_methylphosphonate.step_2": {
-    "en_us": "Feed the crude product and filter medium into a second impeller vessel. Set its smart pipe to the purified product and return the iodine from the output funnel to the first vessel. Check the goggles if either vessel stops.\n%s → %s",
+    "en_us": "Feed the crude product and filter medium into a second stirred tank. Set its smart pipe to the purified product and return the iodine from the output funnel to the first vessel. Check the goggles if either vessel stops.\n%s → %s",
     "ja_jp": "粗生成液とろ材を次の撹拌槽に送ります。スマート液体パイプに精製品を指定し、搬出ファンネルから回収したヨウ素を最初の槽へ戻します。槽が止まったらゴーグルで状態を確認します。\n%s → %s",
     "zh_cn": "将粗产物和滤料送入第二个搅拌容器。将它的智能管道设为仅抽取精制产物，再把输出漏斗回收的碘送回第一个容器。任一容器停工时用护目镜检查状态。\n%s → %s"
   },
@@ -4770,9 +4770,9 @@
     "zh_cn": "制备史莱姆冷却液"
   },
   "guide.manufacturing_slime_coolant.step_1": {
-    "en_us": "Fit an impeller and drive the bottom centre at 32 RPM or more. Feed water and the solids, shut the lid and light a Blaze Burner under a corner. Filter the liquid outlet for the coolant blend.\n%s → %s",
-    "ja_jp": "撹拌羽根を取り付け、底面中央を32 RPM以上で駆動します。水と固体原料を入れてふたを閉め、底面の隅をブレイズバーナーで加熱します。スマート液体パイプで冷却原液を取り出します。\n%s → %s",
-    "zh_cn": "安装搅拌叶轮，从底部中央输入至少32 RPM。送入水和固体原料，关闭盖板，用角落下方的烈焰人燃烧室加热。用智能流体管道抽取冷却原液。\n%s → %s"
+    "en_us": "Stand the tank over a stirrer and turn it at 32 RPM or more. Feed water and the solids, shut the lid and light a Blaze Burner under a corner. Filter the liquid outlet for the coolant blend.\n%s → %s",
+    "ja_jp": "槽を撹拌機の上に組み、撹拌機を32 RPM以上で回します。水と固体原料を入れてふたを閉め、底面の隅をブレイズバーナーで加熱します。スマート液体パイプで冷却原液を取り出します。\n%s → %s",
+    "zh_cn": "把罐搭在搅拌器上方，以32 RPM以上转动。加入水和固体原料，关上盖子，在底部角落用烈焰人燃烧室加热。用智能流体管道取出冷却原液。\n%s → %s"
   },
   "guide.manufacturing_slime_coolant.step_2": {
     "en_us": "Pump the blend into the east face of the upper layer of a two-layer 2×2 column. Draw water from the upper north outlet and coolant from the lower north outlet. Return the water to the mixer or another line.\n%s → %s",
@@ -4925,9 +4925,9 @@
     "zh_cn": "在吸收塔净化水煤气。用两层分馏塔把净化气分成一氧化碳和氢气。"
   },
   "synthetic_reactions.shift": {
-    "en_us": "Open the hatch and fit a basket and a shift core. Heat the tower and feed water and some of the CO through its bottom sides.",
-    "ja_jp": "ハッチを開けてバスケットとシフト触媒を入れます。加熱し、底段の側面から水と一酸化炭素の一部を供給します。",
-    "zh_cn": "打开舱盖，装入催化篮和变换芯。加热，从底层侧面供入水和部分一氧化碳。"
+    "en_us": "Open the hatch and fit a tray and a shift core. Heat the tower and feed water and some of the CO through its bottom sides.",
+    "ja_jp": "ハッチを開けて反応棚段とシフト触媒を入れます。加熱し、底段の側面から水と一酸化炭素の一部を供給します。",
+    "zh_cn": "打开舱口，放入塔板和变换催化剂。加热塔体，并从底层侧面送入水和部分一氧化碳。"
   },
   "synthetic_reactions.compress": {
     "en_us": "Collect the extra hydrogen and carbon dioxide at the bottom. Use separate compressors on the remaining CO and the combined hydrogen.",
@@ -5218,5 +5218,40 @@
     "en_us": "The ratings apply to gases as well as liquids. Hold Shift over the item to see its ranges and the corrosion it resists. A pipe carrying a fluid it is not rated for shows a red ⚠ warning through goggles, cracks and then bursts.",
     "ja_jp": "対応範囲は液体にも気体にも適用されます。アイテムにカーソルを合わせてShiftを押すと、範囲と耐食性が見られます。合わない流体を流すとゴーグルに赤い⚠の警告が出て、配管にひびが入り、やがて壊れます。",
     "zh_cn": "额定范围同样适用于气体。在物品上按住 Shift 可查看额定范围与耐腐蚀性。输送不符合额定的流体时，护目镜会显示红色⚠警告，管道会开裂并最终破裂。"
+  },
+  "reaction_tower_trays.title": {
+    "en_us": "Solid feed on the reaction tower's trays",
+    "ja_jp": "反応塔の棚段で固体を反応させる",
+    "zh_cn": "在反应塔塔板上处理固体原料"
+  },
+  "reaction_tower_trays.trays": {
+    "en_us": "Fit a reaction tray in every layer and leave out the catalyst. The trays then take a solid feed.",
+    "ja_jp": "各段に反応棚段を入れ、触媒は入れません。すると棚段が固体の原料を受け取ります。",
+    "zh_cn": "每层装入反应塔板，不放催化剂。塔板即可接收固体原料。"
+  },
+  "reaction_tower_trays.feed": {
+    "en_us": "A funnel or chute on a side of the bottom layer lays the solid on the trays: sixteen on the lowest tray with room, then the next one up. You can see it through the sight glasses.",
+    "ja_jp": "最下段の側面のファンネルやシュートから入れた固体は、空きのある一番下の棚段に16個まで、その次は上の棚段にたまります。のぞき窓から見えます。",
+    "zh_cn": "从最底层侧面的漏斗或溜槽投入的固体，会堆在仍有空位的最低塔板上，每块最多16个，满后放到上一层。可透过观察窗看到。"
+  },
+  "reaction_tower_trays.gas": {
+    "en_us": "Pump the reaction gas into a side of the bottom layer and heat the tower from below, as the reaction needs.",
+    "ja_jp": "反応に使う気体を最下段の側面へ送り、反応に合わせて下から加熱します。",
+    "zh_cn": "把反应用气体送入最底层侧面，并按反应需要从下方加热。"
+  },
+  "reaction_tower_trays.react": {
+    "en_us": "Each tray holding the solid runs one batch at a time. Its solid products stay on the tray; gases join the product buffer.",
+    "ja_jp": "固体の載った棚段ごとに1バッチずつ反応します。固体の生成物は棚段に残り、気体は製品の側へ移ります。",
+    "zh_cn": "每块放有固体的塔板各进行1批反应。固体产物留在塔板上，气体进入产物缓冲区。"
+  },
+  "reaction_tower_trays.products": {
+    "en_us": "Pull the products out through a funnel on a side of the bottom layer, and gases through a pump there.",
+    "ja_jp": "生成物は最下段の側面のファンネルで、気体は同じ段のポンプで取り出します。",
+    "zh_cn": "用最底层侧面的漏斗取出产物，气体用同一层的泵抽出。"
+  },
+  "reaction_tower_trays.catalyst": {
+    "en_us": "A tower runs either catalysts or solids: no catalyst goes in while a tray holds solids, and no solid while a tray holds a catalyst.",
+    "ja_jp": "触媒と固体は同時に使えません。棚段に固体があるうちは触媒を入れられず、触媒があるうちは固体を入れられません。",
+    "zh_cn": "催化剂与固体不能同时使用：塔板上有固体时不能放入催化剂，有催化剂时不能投入固体。"
   }
 }

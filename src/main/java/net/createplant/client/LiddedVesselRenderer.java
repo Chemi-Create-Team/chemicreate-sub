@@ -3,13 +3,9 @@ package net.createplant.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.WeakHashMap;
-import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.foundation.block.connected.ConnectedTextureBehaviour.CTContext;
-import com.simibubi.create.content.kinetics.base.IRotate;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.platform.NeoForgeCatnipServices;
@@ -18,8 +14,6 @@ import net.createmod.catnip.render.CachedBuffers;
 import net.createplant.CreatePlant;
 import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
-import net.createplant.chemistry.ReactorModule;
-import net.createplant.registry.CEReactor;
 import net.minecraft.core.Direction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -34,33 +28,28 @@ import net.createmod.catnip.render.FluidRenderHelper;
 import net.neoforged.neoforge.client.model.pipeline.VertexConsumerWrapper;
 
 /**
- * The contents, the reaction-plant internals and the top of a lidded vessel, drawn once from its controller. The top is a fixed plate across the
+ * The contents, the impellers of a stirred tank and the top of a lidded vessel, drawn once from its controller. The top is a fixed plate across the
  * opening of the top layer with a one-block hatch in its middle that swings up about its hinge edge; both keep the block-face pixel density by
  * taking each block's share of the texture.
  */
 public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBlockEntity> {
     private static final float WALL = 2, MAX_ANGLE = 105;
-    private static final Map<ReactorModule, PartialModel> INTERNALS = new EnumMap<>(ReactorModule.class);
+    private static final PartialModel IMPELLER = PartialModel.of(CreatePlant.location("block/lidded_vessel/internal/reactor_impeller_wide"));
     private final Map<LiddedVesselBlockEntity, Swirl> swirls = new WeakHashMap<>();
     private static final class Swirl { float time, angle; }
     private static final PartialModel BEARING = PartialModel.of(CreatePlant.location("block/lidded_vessel/shaft_bearing")),
         HATCH = PartialModel.of(CreatePlant.location("block/lidded_vessel/hatch"));
-
-    static {
-        for (var entry : CEReactor.INTERNALS.entrySet()) INTERNALS.put(entry.getKey(), PartialModel.of(CreatePlant.location("block/lidded_vessel/internal/" + entry.getValue().getId().getPath() + "_wide")));
-    }
 
     public static void init() { }
 
     public LiddedVesselRenderer(BlockEntityRendererProvider.Context context) { }
 
     @Override protected void renderSafe(LiddedVesselBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        renderShafts(be, ms, buffer, light);
         renderWindows(be, ms, buffer, light, overlay);
         if (!be.isController()) return;
         int width = be.getWidth(), height = be.getHeight();
         renderSludge(be, ms, buffer, light, overlay);
-        if (width == 3) renderInternals(be, width, height, ms, buffer, light);
+        if (be.stirred()) renderImpellers(be, width, ms, buffer, light);
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite top = atlas.apply(CreatePlant.location("block/reactor/silver/top")), under = atlas.apply(CreatePlant.location("block/reactor/steel")),
             edge = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/steel")), fitting = atlas.apply(CreatePlant.location("block/reactor/silver/frame"));
@@ -142,40 +131,19 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             u + (x1 - x * 16) / 4, v + (z1 - z * 16) / 4, light, overlay);
     }
 
-    private static void renderShafts(LiddedVesselBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light) {
-        var state = be.getBlockState();
-        var block = (LiddedVesselBlock) state.getBlock();
-        VertexConsumer vc = buffer.getBuffer(RenderType.solid());
-        for (Direction face : Direction.values()) {
-            if (!block.hasShaftTowards(be.getLevel(), be.getBlockPos(), state, face)) continue;
-            CachedBuffers.partialFacing(BEARING, state, face).light(light).renderInto(ms, vc);
-            ms.pushPose();
-            var adjacentPos = be.getBlockPos().relative(face);
-            var adjacent = be.getLevel().getBlockState(adjacentPos);
-            if (!(adjacent.getBlock() instanceof IRotate kinetic && kinetic.hasShaftTowards(be.getLevel(), adjacentPos, adjacent, face.getOpposite())))
-                ms.translate(face.getStepX() / 8f, face.getStepY() / 8f, face.getStepZ() / 8f);
-            KineticBlockEntityRenderer.renderRotatingBuffer(be, CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state, face), ms, vc, light);
-            ms.popPose();
-        }
-    }
-
-    /** Every layer shares the actual receiving shaft's rotation. */
-    private static void renderInternals(LiddedVesselBlockEntity be, int width, int height, PoseStack ms, MultiBufferSource buffer, int light) {
-        var level = be.getLevel();
-        float angle = AnimationTickHolder.getRenderTime(level) * be.rotationSpeed() * .3f % 360 * (float) Math.PI / 180;
+    /** The stirrer's shaft comes up through the bearing in the floor and turns an impeller in each of the two lowest layers. */
+    private static void renderImpellers(LiddedVesselBlockEntity be, int width, PoseStack ms, MultiBufferSource buffer, int light) {
+        float angle = AnimationTickHolder.getRenderTime(be.getLevel()) * be.rotationSpeed() * .3f % 360 * (float) Math.PI / 180;
         float centre = width / 2f;
         VertexConsumer vc = buffer.getBuffer(RenderType.solid());
-        for (int y = 0; y < height; y++) {
-            var slot = be.slot(y);
-            ReactorModule module = slot == null ? null : CEReactor.module(slot.internal());
-            if (module == null || width!=3) continue;
-            ms.pushPose();
-            ms.translate(centre - .5f, y, centre - .5f);
-            PartialModel support = INTERNALS.get(module);
-            var model = CachedBuffers.partial(support, be.getBlockState());
-            (module == ReactorModule.STIRRED ? model.rotateCentered(angle, Direction.UP) : model).light(light).renderInto(ms, vc);
-            ms.popPose();
+        ms.pushPose();
+        ms.translate(centre - .5f, 0, centre - .5f);
+        CachedBuffers.partialFacing(BEARING, be.getBlockState(), Direction.DOWN).light(light).renderInto(ms, vc);
+        for (int y = 0; y < LiddedVesselBlockEntity.IMPELLER_LAYERS; y++) {
+            CachedBuffers.partial(IMPELLER, be.getBlockState()).rotateCentered(angle, Direction.UP).light(light).renderInto(ms, vc);
+            ms.translate(0, 1, 0);
         }
+        ms.popPose();
     }
 
     private void renderContents(LiddedVesselBlockEntity be, int width, int height, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {

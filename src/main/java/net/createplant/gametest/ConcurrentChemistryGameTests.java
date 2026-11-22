@@ -75,6 +75,11 @@ public class ConcurrentChemistryGameTests {
                         "Complete finite feed enters " + fluid);
             }
 
+            /** The solid feed and products at the west side of a tower's bottom layer. */
+            net.neoforged.neoforge.items.IItemHandler solids(ReactionTowerBlockEntity be) {
+                return level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, be.getBlockPos().west(), Direction.WEST);
+            }
+
             void item(ReactorMachineBlockEntity be, ItemStack item) {
                 h.assertTrue(
                         be.itemPort().insertItem(0, item, false).isEmpty(),
@@ -150,12 +155,18 @@ public class ConcurrentChemistryGameTests {
         var c0 = p.machine(2, 22, ReactorModule.STIRRED, 1);
         var c1 = p.machine(10, 22, ReactorModule.TOWER, 4);
         p.link(c0, c1, f.apply("hydrogen_chloride"));
-        var u0 = p.machine(2, 32, ReactorModule.ABSORBER, 2);
+        var u0 = p.tower(2, 32, ItemStack.EMPTY);
         var u1 = p.machine(10, 32, ReactorModule.STIRRED, 1);
-        var u2 = p.machine(18, 32, ReactorModule.ABSORBER, 2);
+        var u2 = p.tower(18, 32, ItemStack.EMPTY);
         var u3 = GasCentrifugeGameTests.build(h, new BlockPos(26, 4, 32), 4);
         var u4 = p.machine(34, 32, ReactorModule.STIRRED, 1);
-        links.add(new Link(() -> u2.port(Direction.NORTH), () -> u3.port(0), f.apply("uranium_hexafluoride")));
+        links.add(new Link(() -> ReactionTowerGameTests.port(u2), () -> u3.port(0), f.apply("uranium_hexafluoride")));
+        // The towers' trays reduce and gasify over kindled and blue-flame burners.
+        for (var tower : List.of(u0, u2)) {
+            level.setBlock(tower.getBlockPos().below(), AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,
+                tower == u0 ? BlazeBurnerBlock.HeatLevel.KINDLED : BlazeBurnerBlock.HeatLevel.SEETHING), 3);
+            if (level.getBlockEntity(tower.getBlockPos().below()) instanceof com.simibubi.create.content.processing.burner.BlazeBurnerBlockEntity burner) burner.isCreative = true;
+        }
         links.add(
                 new Link(
                         () -> u3.port(1),
@@ -165,12 +176,8 @@ public class ConcurrentChemistryGameTests {
                 Map.of(
                         s0,
                         BlazeBurnerBlock.HeatLevel.KINDLED,
-                        u0,
-                        BlazeBurnerBlock.HeatLevel.KINDLED,
                         u1,
-                        BlazeBurnerBlock.HeatLevel.KINDLED,
-                        u2,
-                        BlazeBurnerBlock.HeatLevel.SEETHING);
+                        BlazeBurnerBlock.HeatLevel.KINDLED);
         long[] overlap = {0}, powder = {0};
         double[] maxPressure = {0}, maxTemperature = {0};
         int[] campaigns = {0};
@@ -214,7 +221,7 @@ public class ConcurrentChemistryGameTests {
                         var roast =
                                 AllFanProcessingTypes.BLASTING.process(
                                         CEUranium.URANINITE.toStack(8), level);
-                        p.item(u0, roast.getFirst());
+                        h.assertTrue(p.solids(u0).insertItem(0, roast.getFirst(), false).isEmpty(), "Complete solid feed lies on the trays");
                         p.fill(u0, f.apply("hydrogen_gas"), 2000);
                         p.fill(u1, f.apply("hydrogen_fluoride"), 4000);
                         p.fill(u2, f.apply("fluorine"), 2000);
@@ -256,17 +263,15 @@ public class ConcurrentChemistryGameTests {
                                     "Transfer preserves all material");
                         }
                     }
-                    for (var pair :
-                            List.of(
-                                    new ReactorMachineBlockEntity[] {u0, u1},
-                                    new ReactorMachineBlockEntity[] {u1, u2})) {
-                        var stack = pair[0].itemPort().extractItem(9, 64, true);
-                        if (!stack.isEmpty()
-                                && pair[1].itemPort().insertItem(0, stack, true).isEmpty()) {
-                            pair[0].itemPort().extractItem(9, stack.getCount(), false);
-                            pair[1].itemPort().insertItem(0, stack, false);
-                        }
+                    var reduced = p.solids(u0);
+                    for (int slot = u0.layers(); slot < reduced.getSlots(); slot++) {
+                        var stack = reduced.extractItem(slot, 64, true);
+                        if (!stack.isEmpty() && u1.itemPort().insertItem(0, stack, true).isEmpty())
+                            u1.itemPort().insertItem(0, reduced.extractItem(slot, stack.getCount(), false), false);
                     }
+                    var salt = u1.itemPort().extractItem(9, 64, true);
+                    if (!salt.isEmpty() && net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(p.solids(u2), salt, true).isEmpty())
+                        net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(p.solids(u2), u1.itemPort().extractItem(9, salt.getCount(), false), false);
                     p.collect(n2, CEFluids.NITRIC_ACID.get());
                     p.collect(n2, f.apply("nitric_oxide"));
                     p.collect(s2, f.apply("sulfuric_acid"));

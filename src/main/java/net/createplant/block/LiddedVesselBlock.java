@@ -11,8 +11,6 @@ import com.simibubi.create.foundation.blockEntity.ComparatorUtil;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import net.createmod.catnip.data.Iterate;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
-import net.createplant.chemistry.ReactorModule;
-import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -157,34 +155,14 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
             if (!context.getLevel().isClientSide) withBlockEntityDo(context.getLevel(), context.getClickedPos(), LiddedVesselBlockEntity::toggleWindows);
             return InteractionResult.SUCCESS;
         }
-        if (context.getClickedFace() == Direction.UP && takeInternal(context)) return InteractionResult.SUCCESS;
         if (!context.getLevel().isClientSide && state.getValue(AXIS) != Direction.Axis.Y)
             context.getLevel().setBlock(context.getClickedPos(), state.setValue(AXIS, Direction.Axis.Y), Block.UPDATE_ALL);
         return InteractionResult.SUCCESS;
     }
 
-    /** Sneaking with a wrench also empties the internals first, from the top down; only an empty vessel block is picked up. */
-    @Override public InteractionResult onSneakWrenched(BlockState state, UseOnContext context) {
-        return takeInternal(context) ? InteractionResult.SUCCESS : super.onSneakWrenched(state, context);
-    }
-
-    private boolean takeInternal(UseOnContext context) {
-        Level level = context.getLevel();
-        LiddedVesselBlockEntity vessel = ConnectivityHandler.partAt(getBlockEntityType(), level, context.getClickedPos());
-        var owner = vessel == null ? null : vessel.getControllerBE();
-        if (owner == null || !owner.hasInternals()) return false;
-        if (!level.isClientSide) {
-            ItemStack item = owner.takeTopInternal();
-            Player player = context.getPlayer();
-            if (player == null || !player.addItem(item)) Block.popResource(level, context.getClickedPos(), item);
-            IWrenchable.playRemoveSound(level, context.getClickedPos());
-        }
-        return true;
-    }
-
     /**
-     * A matching internal goes into the lowest empty layer at its supported vessel width. With the hatch open, buckets and other
-     * fluid containers fill from and empty into ordinary storage like a basin; configured process vessels use their feed and product buffers.
+     * With the hatch open, buckets and other fluid containers fill from and empty into ordinary storage like a basin, and other items go into the
+     * stirred process's charge.
      */
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -204,18 +182,8 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
             }
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
-        if (CEReactor.module(stack) != null) {
-            if (!owner.canTakeInternal(stack)) return ItemInteractionResult.FAIL;
-            if (!level.isClientSide) {
-                var slot = owner.putInternal(stack.copyWithCount(1));
-                if (!player.isCreative()) stack.shrink(1);
-                level.playSound(null, slot, SoundEvents.NETHERITE_BLOCK_PLACE, SoundSource.BLOCKS, 1, 1);
-            }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
         if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == this || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-        if (owner.module() != ReactorModule.NONE && owner.module() != ReactorModule.STIRRED) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, owner) || FluidHelper.tryFillItemFromBE(level, player, hand, stack, owner)) return ItemInteractionResult.sidedSuccess(level.isClientSide);
         var inventory = owner.itemPort();
         if (inventory == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
@@ -270,19 +238,8 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
 
     @Override public Direction.Axis getRotationAxis(BlockState state) { return Direction.Axis.Y; }
 
-    @Override public boolean hasShaftTowards(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, Direction side) { return shaft(state, side); }
-
-    @Override protected boolean areStatesKineticallyEquivalent(BlockState a, BlockState b) {
-        if (!super.areStatesKineticallyEquivalent(a, b)) return false;
-        for (Direction side : Direction.values()) if (shaft(a, side) != shaft(b, side)) return false;
-        return true;
-    }
-
-    private static boolean shaft(BlockState state, Direction side) {
-        return side == Direction.DOWN && state.getValue(DRIVE) && state.getValue(BOTTOM)
-            && ((!state.getValue(NORTH) && !state.getValue(EAST) && !state.getValue(SOUTH) && !state.getValue(WEST))
-                || (state.getValue(NORTH) && state.getValue(EAST) && state.getValue(SOUTH) && state.getValue(WEST)));
-    }
+    /** The stirrer under a tank turns its impellers; the tank itself takes no shaft. */
+    @Override public boolean hasShaftTowards(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, Direction side) { return false; }
 
     @Override public Class<LiddedVesselBlockEntity> getBlockEntityClass() { return LiddedVesselBlockEntity.class; }
 

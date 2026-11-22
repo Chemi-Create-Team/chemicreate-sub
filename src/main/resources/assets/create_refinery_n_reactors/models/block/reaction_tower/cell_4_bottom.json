@@ -7,6 +7,8 @@
     "inner": "create_refinery_n_reactors:block/reactor/steel",
     "floor": "create_refinery_n_reactors:block/reactor/steel",
     "glass": "minecraft:block/glass",
+    "frame": "create_refinery_n_reactors:block/reactor/silver/frame",
+    "bolt": "create_refinery_n_reactors:block/reactor/steel",
     "particle": "create_refinery_n_reactors:block/tank/reaction_tower"
   },
   "elements": [

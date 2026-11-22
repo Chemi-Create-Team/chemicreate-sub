@@ -63,17 +63,23 @@ public class ReactorGameTests {
     public static ReactorMachineBlockEntity assemble(ServerLevel level,BlockPos base,ReactorModule kind,int sections) {
         if (kind==ReactorModule.PREHEATER) return ThermalControlGameTests.build(level,base,Direction.NORTH,sections);
         if (kind==ReactorModule.TOWER) return AbsorptionTowerGameTests.tower(level,base.offset(1,0,1),sections,false);
-        for (int y=1;y<=sections;y++) layer(level,base,y,kind);
+        // A stirred tank stands two or more layers high over its stirrer.
+        for (int y=1;y<=Math.max(sections,LiddedVesselBlockEntity.IMPELLER_LAYERS);y++) layer(level,base,y);
+        stir(level,base);
         var be=(ReactorMachineBlockEntity)level.getBlockEntity(base);be.validateStructure();return be;
     }
-    /** One layer at the module's supported width, filled from the lowest empty internal slot. */
-    public static void layer(ServerLevel level,BlockPos base,int y,ReactorModule kind) {
-        int width=3;
-        for (int x=0;x<width;x++) for (int z=0;z<width;z++) level.setBlock(base.offset(x,y-1,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
-        if (level.getBlockEntity(base.above(y-1)) instanceof LiddedVesselBlockEntity part) {
-            var owner=part.getControllerBE();
-            if (owner!=null && owner.canTakeInternal()) owner.putInternal(CEReactor.INTERNALS.get(kind).get().getDefaultInstance());
-        }
+    /** One 3x3 layer of a stainless tank. */
+    public static void layer(ServerLevel level,BlockPos base,int y) {
+        for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,y-1,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
+    }
+    /** A stirrer under the bottom centre of the 3x3 tank whose controller is at base. */
+    public static void stir(ServerLevel level,BlockPos base) { level.setBlock(base.offset(1,-1,1),CEReactor.STIRRER.get().defaultBlockState(),3); }
+    /** A cogwheel meshing with the stirrer's gear from the north, turned by a creative motor under it at 128 RPM, as a mechanical mixer is driven. */
+    public static void driveStirrer(GameTestHelper h,BlockPos stirrer) {
+        BlockPos cog=stirrer.north(),motor=cog.below();
+        h.setBlock(cog,AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.Y));
+        h.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP));
+        h.runAfterDelay(5,()->((CreativeMotorBlockEntity)h.getBlockEntity(motor)).generatedSpeed.setValue(128));
     }
     private static ReactorMachineBlockEntity build(GameTestHelper h,ReactorModule kind,int sections) { return assemble(h.getLevel(),h.absolutePos(BASE),kind,sections); }
     private static IFluidHandler in(ReactorMachineBlockEntity be) { return be.horizontal() ? ThermalControlGameTests.tube(be,0) : be.port(be.inlet()); }
@@ -91,8 +97,9 @@ public class ReactorGameTests {
             @Override public FluidStack drain(int amount,FluidAction action) { return port.drain(amount,action); }
         };
     }
-    static ReactorMachineBlockEntity receiver(ReactorMachineBlockEntity be) {
-        return be instanceof LiddedVesselBlockEntity vessel && vessel.getWidth()==3 ? (ReactorMachineBlockEntity)be.getLevel().getBlockEntity(be.getBlockPos().offset(1,0,1)) : be;
+    /** What takes the rotation: a stirred tank's stirrer, or the machine itself. */
+    static KineticBlockEntity receiver(ReactorMachineBlockEntity be) {
+        return be instanceof LiddedVesselBlockEntity vessel && vessel.getLevel().getBlockEntity(vessel.stirrerPos()) instanceof VesselStirrerBlockEntity stirrer ? stirrer : be;
     }
     static void speed(ReactorMachineBlockEntity be,float speed) {
         var input=receiver(be);float previous=input.getSpeed();input.setSpeed(speed);input.onSpeedChanged(previous);
@@ -208,14 +215,14 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void expandingIsBoundedAndOutputBackpressureIsAtomic(GameTestHelper h) {
         var be=build(h,ReactorModule.STIRRED,4);heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
-        speed(be,32);h.assertTrue(be.sections()==4 && receiver(be).calculateStressApplied()==64 && be.calculateStressApplied()==0,"Four impeller layers charge 64 SU/RPM to the central receiver");
+        speed(be,32);h.assertTrue(be.sections()==2 && receiver(be).calculateStressApplied()==32 && be.calculateStressApplied()==0,"A four-layer tank still stirs with two impellers, charging 32 SU/RPM to its stirrer");
         for (int i=0;i<8;i++) { in(be).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);run(be,100); }
         h.assertTrue(out(be).getFluidInTank(0).getAmount()==8000 && out(be).getTankCapacity(0)==8000,"Finite liquid output capacity holds exactly eight batches");
         in(be).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);run(be,200);
         h.assertTrue(in(be).getFluidInTank(0).getAmount()==1000,"A full liquid product buffer consumes no feed");
         out(be).drain(1000,EXECUTE);run(be,100);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==8000,"Making room permits exactly one further batch");
-        layer(h.getLevel(),h.absolutePos(BASE),5,ReactorModule.STIRRED);
-        be.validateStructure();h.assertTrue(be.formed() && be.sections()==4,"A fifth layer cannot join a vessel four blocks high");h.succeed();
+        layer(h.getLevel(),h.absolutePos(BASE),5);
+        be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==4,"A fifth layer cannot join a vessel four blocks high");h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void heaterRequiresRealHeatAndColumnRequiresColdFeed(GameTestHelper h) {
@@ -405,12 +412,13 @@ public class ReactorGameTests {
     }
     /** Each vessel reaction, with its required internals and burner heat. */
     @GameTest(template="test_reactor",timeoutTicks=100)
-    public static void everyVesselReactionRunsWithItsInternalsAndHeat(GameTestHelper h) {
+    public static void everyStirredReactionRunsOverTheStirrerWithItsHeat(GameTestHelper h) {
         var failures=new ArrayList<String>();
         var recipes=h.getLevel().getRecipeManager().getAllRecipesFor(CERecipeTypes.PRESSURE_REACTION.<net.minecraft.world.item.crafting.RecipeInput,net.createplant.recipe.PressureReactionRecipe>getType());
         h.assertTrue(recipes.size()>=18,"Vessel reactions load: "+recipes.size());
         for (var holder:recipes) {
-            if (holder.value().module()==ReactorModule.NONE) continue;
+            // Heat-only reactions run in a plain tank, and the tray reactions on the reaction tower (UraniumFuelGameTests).
+            if (holder.value().module()!=ReactorModule.STIRRED) continue;
             var recipe=holder.value();clear(h,2);
             var be=build(h,recipe.module(),recipe.module().minSections);
             var heat=recipe.getRequiredHeat();
@@ -437,57 +445,53 @@ public class ReactorGameTests {
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
-    public static void theVesselRunsOnlyEmptyClosedAndWithItsInternals(GameTestHelper h) {
+    public static void theTankStirsOnlyClosedTwoLayersHighAndOverItsStirrer(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(BASE);
-        for (int y=0;y<2;y++) for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,y,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
-        var owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();
-        var impeller=CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance();
-        h.assertTrue(owner.putInternal(impeller.copy()).equals(base) && owner.putInternal(impeller.copy()).equals(base.above()) && !owner.canTakeInternal(),
-            "Internals fill the layers from the bottom up and a full vessel takes no more");
+        for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,0,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
+        stir(level,base);
+        var owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();owner.validateStructure();
+        h.assertTrue(owner.module()==ReactorModule.NONE && !owner.formed(),"A one-layer tank has no room for impellers and stays plain storage over a stirrer");
+        layer(level,base,2);
+        owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();
         owner.getTankInventory().fill(new FluidStack(Fluids.WATER,1000),EXECUTE);owner.validateStructure();
-        h.assertTrue(owner.formed() && owner.getTankInventory().getFluidAmount()==1000,"A stirred vessel retains prefilled storage water as an additional mixing ingredient pool");
-        owner.getTankInventory().drain(1000,EXECUTE);owner.validateStructure();
-        h.assertTrue(owner.formed() && owner.sections()==2,"The emptied vessel and its impellers form the stirred reactor without a drive");
+        h.assertTrue(owner.stirred() && owner.formed() && owner.sections()==2 && owner.getTankInventory().getFluidAmount()==1000,
+            "Two layers over the stirrer form a stirred tank with two impellers that keeps its storage water as a mixing pool");
+        var stirrer=(VesselStirrerBlockEntity)level.getBlockEntity(owner.stirrerPos());
+        h.assertTrue(stirrer.vessel()==owner && stirrer.calculateStressApplied()==32 && owner.calculateStressApplied()==0,"The stirrer carries the two impellers' 32 SU/RPM; the tank none");
         h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(level.getBlockState(base).getShape(level,base),
             net.minecraft.world.phys.shapes.Shapes.block(),net.minecraft.world.phys.shapes.BooleanOp.NOT_SAME),"The stirred vessel keeps its complete square corner");
         var port=level.getCapability(Capabilities.FluidHandler.BLOCK,base.offset(2,0,1),Direction.EAST);
         h.assertTrue(port!=null && port.getTanks()==10,"Every vessel wall reaches three feed buffers, five product buffers and two physical storage phases");
+        for (Direction face:Direction.values()) h.assertTrue(!CETransport.LIDDED_VESSEL.get().hasShaftTowards(level,owner.stirrerPos().above(),level.getBlockState(owner.stirrerPos().above()),face),
+            "The tank itself takes no shaft");
         owner.toggleLid();
         h.assertTrue(level.getBlockState(base.offset(1,1,1)).getValue(LiddedVesselBlock.HATCH)==LiddedVesselBlock.Hatch.FULL && level.getBlockState(base.offset(2,1,2)).getValue(LiddedVesselBlock.HATCH)==LiddedVesselBlock.Hatch.NONE,"Only the top centre opens");
-        speed(owner,32);owner.tickProcess();h.assertTrue(owner.status().equals("lid"),"An open hatch stops the process");
+        speed(owner,32);h.assertTrue(owner.rotationSpeed()==32,"The tank turns at its stirrer's speed");
+        owner.tickProcess();h.assertTrue(owner.status().equals("lid"),"An open hatch stops the process");
         owner.toggleLid();owner.tickProcess();h.assertTrue(!owner.status().equals("lid"),"Closing permits the process again");
-        h.assertTrue(owner.takeTopInternal().is(impeller.getItem()) && owner.slot(1).internal().isEmpty() && !owner.slot(0).internal().isEmpty(),"The wrench removes the highest internal first");
-        owner.validateStructure();h.assertTrue(!owner.formed() && owner.getWidth()==3,"Missing internals stop the process without changing the square enclosure");
-        level.setBlock(base,Blocks.AIR.defaultBlockState(),3);
-        h.assertTrue(!level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(base).inflate(1),e->e.getItem().is(impeller.getItem())).isEmpty(),"A broken holder drops its internal once");
+        level.removeBlock(owner.stirrerPos(),false);owner.validateStructure();
+        h.assertTrue(!owner.stirred() && !owner.formed() && owner.getWidth()==3,"Taking the stirrer away stops the process without changing the square enclosure");
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
-    public static void aTwoByTwoVesselOnlyStoresAndRejectsAllProcessInternals(GameTestHelper h) {
+    public static void aTwoByTwoVesselOnlyStoresAndDropsAnOldInternal(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(BASE);
         for (int y=0;y<2;y++) for (int x=0;x<2;x++) for (int z=0;z<2;z++) level.setBlock(base.offset(x,y,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
         var owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();
         h.assertTrue(owner.getWidth()==2 && owner.getHeight()==2,"Eight blocks form a 2x2 vessel two high");
-        var player=h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
-        var hit=new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(base),Direction.NORTH,base,false);
-        for (var module:new ReactorModule[]{ReactorModule.STIRRED}) {
-            var internal=CEReactor.INTERNALS.get(module).get().getDefaultInstance();player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,internal);
-            h.assertTrue(level.getBlockState(base).useItemOn(internal,level,player,net.minecraft.world.InteractionHand.MAIN_HAND,hit)==net.minecraft.world.ItemInteractionResult.FAIL && internal.getCount()==1,
-                "A 2x2 tank rejects the internal without consuming it: "+module);
-        }
-        owner.validateStructure();h.assertTrue(!owner.formed() && owner.module()==ReactorModule.NONE && !owner.canTakeInternal(),"A 2x2 tank cannot select or form a process");
+        level.setBlock(base.offset(1,-1,1),CEReactor.STIRRER.get().defaultBlockState(),3);owner.validateStructure();
+        h.assertTrue(!owner.formed() && owner.module()==ReactorModule.NONE,"A 2x2 tank cannot stir");
         h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(level.getBlockState(base).getShape(level,base),
             net.minecraft.world.phys.shapes.Shapes.block(),net.minecraft.world.phys.shapes.BooleanOp.NOT_SAME),"A closed 2x2 vessel keeps its complete square corner");
         h.assertTrue(level.getBlockState(base.above()).getValue(LiddedVesselBlock.HATCH)==LiddedVesselBlock.Hatch.SE,"The hatch covers the inner quarters of the four top cells");
         var port=level.getCapability(Capabilities.FluidHandler.BLOCK,base,Direction.WEST);
         h.assertTrue(port!=null && port.fill(new FluidStack(Fluids.WATER,1000),EXECUTE)==1000 && owner.getTankInventory().getFluidAmount()==1000,"The 2x2 vessel retains its ordinary shared storage tank");
-        for (int y=0;y<2;y++) for (int x=0;x<2;x++) for (int z=0;z<2;z++) for (Direction face:Direction.values()) {
-            var at=base.offset(x,y,z);var state=level.getBlockState(at).setValue(LiddedVesselBlock.AXIS,face.getAxis());
-            h.assertTrue(!CETransport.LIDDED_VESSEL.get().hasShaftTowards(level,at,state,face),"A 2x2 storage tank has no rotational connection");
-        }
-        var rotor=CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance();owner.setInternal(rotor.copy());
-        var saved=owner.saveWithoutMetadata(level.registryAccess());owner.loadWithComponents(saved,level.registryAccess());owner.validateStructure();
-        h.assertTrue(!owner.formed() && owner.module()==ReactorModule.NONE && owner.getTankInventory().getFluidAmount()==1000 && owner.takeTopInternal().is(rotor.getItem()),"An old saved internal is recoverable without reactivating a 2x2 process or losing its water");
+        // A world saved before stirrers had impellers fitted in the tank's layers: they come back out as items.
+        var saved=owner.saveWithoutMetadata(level.registryAccess());
+        saved.put("Internal",CEReactor.IMPELLER.get().getDefaultInstance().save(level.registryAccess()));
+        owner.loadWithComponents(saved,level.registryAccess());owner.tick();
+        h.assertTrue(!level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(base).inflate(2),e->e.getItem().is(CEReactor.IMPELLER.get())).isEmpty()
+            && owner.getTankInventory().getFluidAmount()==1000,"An old fitted impeller drops as an item without losing the contents");
         h.succeed();
     }
     @GameTest(template="test_empty")

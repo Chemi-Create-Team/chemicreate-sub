@@ -105,32 +105,6 @@ def internal_parts():
         return {(x, z) for x in range(-6, 22) for z in range(-6, 22)
                 if max((xx - 8) ** 2 + (zz - 8) ** 2 for xx in (x, x + 1) for zz in (z, z + 1)) <= radius ** 2}
 
-    basket = parts['reactor_catalyst_basket'] = []
-    rim = {(x, z) for x in range(-4, 20) for z in range(-4, 20) if octagon(x, z, 12) and not octagon(x, z, 10)}
-    pixels(basket, rim, 2, 4, 'basket_rim')
-    pixels(basket, rim, 12, 14, 'basket_rim')
-    for x in (0, 6, 12):
-        for z in (0, 6, 12):
-            box(basket, [x - 1, 4, z - 1, x + 5, 10 + ((x + z) // 6 % 2), z + 5], 'pellets')
-    for at in range(-2, 19, 4):
-        box(basket, [at, 4, -3, at + 1, 12, -2], 'basket')
-        box(basket, [at, 4, 18, at + 1, 12, 19], 'basket')
-        box(basket, [-3, 4, at, -2, 12, at + 1], 'basket')
-        box(basket, [18, 4, at, 19, 12, at + 1], 'basket')
-    for y in (6, 9):
-        box(basket, [-2, y, -3, 18, y + 1, -2], 'basket')
-        box(basket, [-2, y, 18, 18, y + 1, 19], 'basket')
-        box(basket, [-3, y, -2, -2, y + 1, 18], 'basket')
-        box(basket, [18, y, -2, 19, y + 1, 18], 'basket')
-    for x in (-2, 16):
-        for z in (-2, 16): box(basket, [x, 3, z, x + 2, 13, z + 2], 'basket_rim')
-    box(basket, [7, 12, -2, 9, 13, 18], 'basket_rim')
-    for z in (2, 12):
-        box(basket, [4, 11, z, 5, 14, z + 1], 'steel')
-        box(basket, [11, 11, z, 12, 14, z + 1], 'steel')
-        box(basket, [5, 13, z, 11, 14, z + 1], 'steel')
-    box(basket, [6, 13, 7, 10, 14, 9], 'brass')
-
     impeller = parts['reactor_impeller'] = []
     box(impeller, [7, 0, 7, 9, 16, 9], 'shaft')
     for y, phase in ((3, 0), (10, math.pi / 6)):
@@ -166,21 +140,6 @@ def wide_internal_parts():
         return {(x, z) for x in range(-14, 30) for z in range(-14, 30)
                 if max((xx - 8) ** 2 + (zz - 8) ** 2 for xx in (x, x + 1) for zz in (z, z + 1)) <= radius ** 2}
 
-    basket = parts['reactor_catalyst_basket_wide'] = []
-    ring = octagon(21) - octagon(19)
-    for y in (2, 12): pixels(basket, ring, y, y + 2, 'basket_rim')
-    for x in (-8, -1, 6, 13, 20):
-        for z in (-8, -1, 6, 13, 20): box(basket, [x, 4, z, x + 5, 10 + ((x + z) % 3), z + 5], 'pellets')
-    for at in range(-10, 28, 4):
-        for edge in (-12, 27):
-            box(basket, [at, 4, edge, at + 1, 12, edge + 1], 'basket')
-            box(basket, [edge, 4, at, edge + 1, 12, at + 1], 'basket')
-    for y in (6, 9):
-        for edge in (-12, 27):
-            box(basket, [-11, y, edge, 27, y + 1, edge + 1], 'basket_rim')
-            box(basket, [edge, y, -11, edge + 1, y + 1, 27], 'basket_rim')
-    box(basket, [7, 12, -11, 9, 14, 27], 'basket_rim')
-    box(basket, [5, 13, 6, 11, 14, 10], 'brass')
 
     impeller = parts['reactor_impeller_wide'] = []
     box(impeller, [7, 0, 7, 9, 16, 9], 'shaft')
@@ -390,7 +349,6 @@ def data():
 
 
 INTERNAL_RECIPES = (
-    ('reactor_catalyst_basket', ['PIP', 'I I', 'PIP'], {'P': {'item': 'create:iron_sheet'}, 'I': {'item': 'minecraft:iron_bars'}}),
     ('reactor_impeller', [' S ', 'PWP', ' S '], {'S': {'item': 'create:shaft'}, 'P': {'item': 'create:iron_sheet'}, 'W': {'item': 'create:whisk'}}),
     # The rotor column is precision work like the other big machines: only the mechanical crafter makes it.
 )
@@ -400,14 +358,13 @@ NAMES = {
     f'block.{NS}.lidded_vessel': ('Stainless Tank', 'ステンレスタンク'),
     f'lidded_vessel.{NS}.lid.open': ('Hatch open', 'ハッチ：開'),
     f'lidded_vessel.{NS}.lid.closed': ('Hatch closed', 'ハッチ：閉'),
-    f'item.{NS}.reactor_catalyst_basket': ('Catalyst Basket', '触媒充填バスケット'),
     f'item.{NS}.reactor_impeller': ('Impeller', '撹拌翼'),
     f'item.{NS}.reactor_separator_core': ('Reaction Trays', '反応棚段'),
     f'reactor.{NS}.status.vessel': ('Use a 1x1 centrifuge vessel or a 3x3 reaction vessel', '遠心分離は1×1、反応槽は3×3で組み立ててください'),
     f'reactor.{NS}.status.contents': ('Empty the vessel first: it cannot hold anything of its own', '槽の中身を空にしてください'),
     f'reactor.{NS}.status.lid': ('Close the vessel hatch', '槽のハッチを閉じてください'),
     f'reactor.{NS}.status.core': ('Missing functional internals in one or more layers', '内部部品が不足している段があります'),
-    f'reactor.{NS}.status.structure': ('Assemble a lidded vessel with matching internals', 'ふた付き槽を組み立てて各段に同じ内部部品を入れてください'),
+    f'reactor.{NS}.status.structure': ('Build a 3x3 stainless tank two or more layers high over a stirrer', '撹拌機の上に3×3・2段以上のステンレスタンクを組み立ててください'),
 }
 
 

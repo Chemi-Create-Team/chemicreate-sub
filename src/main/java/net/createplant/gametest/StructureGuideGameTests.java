@@ -28,8 +28,7 @@ public final class StructureGuideGameTests {
     public static void reactorGuideOffersEverySectionCountTheScanAccepts(GameTestHelper helper) {
         BlockPos base = new BlockPos(1, 1, 1);
         var vessel = ReactorGuide.layouts(base, ReactorModule.STIRRED);
-        helper.assertTrue(vessel.size() == 4 && vessel.get(0).cells().size() == 9 && vessel.get(3).cells().size() == 4 * 9, "Vessel: a 3x3 stirred vessel of one to four layers on the drive");
-        helper.assertTrue(ReactorGuide.layouts(base, ReactorModule.ABSORBER).size() == 3, "The absorber needs at least two layers of trays");
+        helper.assertTrue(vessel.size() == 3 && vessel.get(0).cells().size() == 2 * 9 && vessel.get(2).cells().size() == 4 * 9, "Vessel: a 3x3 stirred vessel of two to four layers over its stirrer");
         helper.succeed();
     }
 
@@ -42,10 +41,8 @@ public final class StructureGuideGameTests {
             var owner = ((LiddedVesselBlockEntity) helper.getBlockEntity(origin)).getControllerBE();
             helper.assertTrue(guide.anchor(owner) == null && guide.layouts(level, owner.getBlockPos()).isEmpty(), "Plain storage has no process assembly preview at width " + width);
             if (width == 2) {
-                owner.setInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
-                helper.assertTrue(guide.anchor(owner) == null && guide.layouts(level, owner.getBlockPos()).isEmpty(), "A saved 2x2 internal cannot request a process preview");
-            } else {
-                helper.assertTrue(!owner.canTakeInternal(net.createplant.registry.CEHighStressMachines.CENTRIFUGE.asItem().getDefaultInstance()), "The standalone centrifuge is not a vessel internal");
+                helper.setBlock(origin.offset(1, -1, 1), CEReactor.STIRRER.get());
+                helper.assertTrue(guide.anchor(owner) == null && guide.layouts(level, owner.getBlockPos()).isEmpty(), "A stirrer under a 2x2 tank cannot request a process preview");
             }
         }
         helper.succeed();

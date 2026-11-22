@@ -6,7 +6,6 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
-import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
@@ -162,8 +161,8 @@ final class VesselWorldClientCheck {
         if (!items.insertItem(0, new ItemStack(Items.IRON_INGOT, 8), false).isEmpty()
             || !items.insertItem(1, new ItemStack(Items.GOLD_INGOT, 4), false).isEmpty())
             throw new IllegalStateException("Vessel capability did not accept its display ingredients");
-        // Only the 3x3 vessel accepts the two process internals; the smaller vessels retain plain storage.
-        if (index == 3) for (int layer = 0; layer < 2; layer++) owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
+        // Only the 3x3 vessel stirs over its stirrer; the smaller vessels retain plain storage.
+        if (index == 3) level.setBlock(owner.stirrerPos(), CEReactor.STIRRER.get().defaultBlockState(), 3);
         owner.validateStructure();
         if (owner.formed() != (index == 3) || index == 3 && owner.sections() != 2 || owner.rotationSpeed() != 0)
             throw new IllegalStateException("The unpowered two-layer stirred vessel did not form");

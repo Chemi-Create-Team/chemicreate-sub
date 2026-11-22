@@ -78,7 +78,7 @@ public final class SurvivalReachabilityGameTests {
     }
     private static boolean equipmentFor(Recipe<?> recipe, Set<Item> reached) {
         if (recipe instanceof PressureReactionRecipe reaction)
-            return has(reached, "lidded_vessel", reaction.module()==net.createplant.chemistry.ReactorModule.ABSORBER ? "reactor_separator_core" : "reactor_impeller");
+            return reaction.module()==net.createplant.chemistry.ReactorModule.ABSORBER ? has(reached, "reaction_tower", "reactor_separator_core") : has(reached, "lidded_vessel", "vessel_stirrer");
         if (recipe instanceof net.createplant.recipe.ClarifyingRecipe) return has(reached, "clarifier_center_drive", "tank_casing", "clarifier_feed_port");
         if (recipe instanceof net.createplant.recipe.CubicPressRecipe) return has(reached, "cubic_press");
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe)
@@ -129,8 +129,8 @@ public final class SurvivalReachabilityGameTests {
         if (module == ProcessModule.FRACTION_SEPARATOR) return has(reached, "fractionating_column");
         if (module == ProcessModule.ABSORPTION_TRAYS) return has(reached, "large_absorption_tower");
         if (module == ProcessModule.GAS_CENTRIFUGE) return has(reached, "gas_centrifuge");
-        if (module == ProcessModule.REACTION_VESSEL || module == ProcessModule.CATALYST_UNIT) return has(reached, "reaction_tower", "reactor_catalyst_basket");
-        return module == ProcessModule.STIRRED_REACTOR && has(reached, "lidded_vessel", "reactor_impeller");
+        if (module == ProcessModule.REACTION_VESSEL || module == ProcessModule.CATALYST_UNIT) return has(reached, "reaction_tower", "reactor_separator_core");
+        return module == ProcessModule.STIRRED_REACTOR && has(reached, "lidded_vessel", "vessel_stirrer");
     }
     private static boolean addFixedProcesses(Set<Item> items, Set<Fluid> fluids) {
         boolean changed = false;
@@ -197,7 +197,7 @@ public final class SurvivalReachabilityGameTests {
             && items.contains(com.simibubi.create.AllBlocks.SHAFT.asItem())
             && fluids.contains(Fluids.WATER) && fluids.contains(CEFusion.HELIUM_GAS.get()))
             changed |= fluids.add(CEFusion.LIQUID_HELIUM.get());
-        if (has(items, "lidded_vessel", "reactor_impeller") && items.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
+        if (has(items, "lidded_vessel", "vessel_stirrer") && items.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
             && fluids.contains(Fluids.WATER) && fluids.contains(CEUranium.SULFURIC_ACID.get()))
             changed |= fluids.add(CEProcessFluids.WASTEWATER.get());
         return changed;

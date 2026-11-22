@@ -102,6 +102,11 @@ public class VesselBasinGameTests {
         return ((LiddedVesselBlockEntity) h.getBlockEntity(base)).getControllerBE();
     }
 
+    /** A stirrer under the tank's bottom centre, and the stirred process formed over it. */
+    private static void stir(GameTestHelper h, LiddedVesselBlockEntity owner) {
+        h.getLevel().setBlock(owner.stirrerPos(), CEReactor.STIRRER.get().defaultBlockState(), 3);owner.validateStructure();
+    }
+
     private static IItemHandler items(GameTestHelper h, BlockPos member, Direction face) {
         var port = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(member), face);
         h.assertTrue(port != null, "A vessel member exposes its shared item inventory");
@@ -149,9 +154,7 @@ public class VesselBasinGameTests {
         h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(pos)).generatedSpeed.setValue(128));
     }
 
-    private static void bottomMotor(GameTestHelper h) {
-        motor(h, BASE.offset(1, -1, 1), Direction.UP);
-    }
+    private static void bottomMotor(GameTestHelper h) { ReactorGameTests.driveStirrer(h, BASE.offset(1, -1, 1)); }
 
     @GameTest(template = "test_fractionation")
     public static void sideWrenchWindowsPersistAtEveryWidthWithoutTakingAnInternal(GameTestHelper h) {
@@ -161,7 +164,7 @@ public class VesselBasinGameTests {
             BlockPos base = new BlockPos(3 + width * 6, 3, 3);
             var owner = square(h, base, width, 2);
             owner.getTankInventory().fill(new FluidStack(Fluids.WATER, 1000), EXECUTE);
-            if (width == 3) for (int y = 0; y < 2; y++) owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
+            if (width == 3) h.setBlock(base.offset(1, -1, 1), CEReactor.STIRRER.get());
             BlockPos member = base.offset(0, 1, width / 2);
             boolean before = owner.windowsEnabled();
             var axis = h.getBlockState(member).getValue(LiddedVesselBlock.AXIS);
@@ -175,8 +178,7 @@ public class VesselBasinGameTests {
             }
             h.assertTrue(h.getBlockState(member).getValue(LiddedVesselBlock.AXIS) == axis && owner.getTankInventory().getFluidAmount() == 1000,
                 "Window changes keep the shaft axis and stored water");
-            if (width == 3) h.assertTrue(owner.slot(0).internal().is(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get())
-                && owner.slot(1).internal().is(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get()), "Side wrenching never removes either internal");
+            if (width == 3) h.assertTrue(owner.stirred(), "Side wrenching never takes the tank off its stirrer");
             block.onWrenched(h.getBlockState(member), wrench(h, player, member, Direction.WEST));
             h.assertTrue(owner.windowsEnabled() == before, "A second side click returns to the original window mode");
         }
@@ -201,7 +203,7 @@ public class VesselBasinGameTests {
             var saved = owner.saveWithoutMetadata(h.getLevel().registryAccess());
             owner.loadWithComponents(saved, h.getLevel().registryAccess());
             var reloaded = items(h, BASE, Direction.WEST);
-            h.assertTrue(count(reloaded, Items.IRON_INGOT) == 3 && !owner.hasInternals(), "Saving plain contents keeps all three items without an internal");
+            h.assertTrue(count(reloaded, Items.IRON_INGOT) == 3 && !owner.stirred(), "Saving plain contents keeps all three items without a stirrer");
             h.assertTrue(reloaded.extractItem(0, 1, true).getCount() == 1 && count(reloaded, Items.IRON_INGOT) == 3,
                 "Simulated extraction never removes visible storage items");
             h.assertTrue(reloaded.extractItem(0, 1, false).is(Items.IRON_INGOT) && count(reloaded, Items.IRON_INGOT) == 2,
@@ -288,7 +290,7 @@ public class VesselBasinGameTests {
             int received = owner.getTankInventory().getFluidAmount();
             h.assertTrue(received > 0 && received + from.getFluidAmount() == 4000,
                 "The native driven pump fills storage through its member wall and conserves all water: " + received + " + " + from.getFluidAmount());
-            h.assertTrue(!owner.hasInternals(), "A storage vessel needs no process internal for pipe input");
+            h.assertTrue(!owner.stirred(), "A storage vessel needs no stirrer for pipe input");
             h.succeed();
         });
     }
@@ -339,7 +341,7 @@ public class VesselBasinGameTests {
     public static void nativeMixingUsesPreloadedWaterRealFuelAndAtomicContainerRemainders(GameTestHelper h) {
         installContainerRecipe(h);
         guarded(h, () -> {
-            var owner = square(h, BASE, 3, 1);
+            var owner = square(h, BASE, 3, 2);
             var raw = items(h, BASE, Direction.WEST);
             h.assertTrue(raw.insertItem(0, new ItemStack(Items.MILK_BUCKET), true).isEmpty() && raw.getStackInSlot(0).isEmpty(),
                 "Plain inventory simulation accepts without consuming or creating an item");
@@ -348,8 +350,7 @@ public class VesselBasinGameTests {
             h.assertTrue(owner.getTankInventory().fill(new FluidStack(Fluids.WATER, 10000), SIMULATE) == 10000 && owner.getTankInventory().isEmpty(),
                 "Simulated prefill changes no fluid");
             owner.getTankInventory().fill(new FluidStack(Fluids.WATER, 10000), EXECUTE);
-            owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
-            owner.validateStructure();
+            stir(h, owner);
             h.assertTrue(owner.formed() && owner.getTankInventory().getFluidAmount() == 10000
                 && count(items(h, BASE, Direction.NORTH), Items.MILK_BUCKET) == 1, "Installing the impeller preserves and uses the existing storage rather than moving or rejecting it");
             bottomMotor(h);
@@ -422,8 +423,7 @@ public class VesselBasinGameTests {
 
     @GameTest(template = "test_fractionation")
     public static void cachedMemberPhasePortsCannotExtractAfterTheProcessReforms(GameTestHelper h) {
-        var owner = square(h, BASE, 3, 1);
-        owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());owner.validateStructure();
+        var owner = square(h, BASE, 3, 2);stir(h, owner);
         // Seed one finite wet product hold-up; no motor or heat source can change it during the lifecycle assertions.
         var saved = owner.saveWithoutMetadata(h.getLevel().registryAccess());
         var wet = new FluidStack(Fluids.WATER,1000);
@@ -436,10 +436,10 @@ public class VesselBasinGameTests {
         h.assertTrue(oldTop != null && oldSide != null && oldTop.drain(1, SIMULATE).is(CEFluids.STEAM.get())
             && oldSide.drain(1, SIMULATE).is(Fluids.WATER), "A live member exposes separate real steam and liquid product phases");
         int generation = owner.portGeneration();
-        var internal = owner.takeTopInternal();owner.validateStructure();
-        h.assertTrue(!owner.formed() && !internal.isEmpty(), "Taking out the internal ends the old process lifetime");
-        owner.putInternal(internal);owner.validateStructure();
-        h.assertTrue(owner.formed() && owner.portGeneration() != generation, "Reinstalling the internal forms a new process lifetime on the same owner");
+        h.getLevel().removeBlock(owner.stirrerPos(), false);owner.validateStructure();
+        h.assertTrue(!owner.formed(), "Taking the stirrer away ends the old process lifetime");
+        stir(h, owner);
+        h.assertTrue(owner.formed() && owner.portGeneration() != generation, "Putting the stirrer back forms a new process lifetime on the same owner");
         var top = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(member), Direction.UP);
         var side = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(member), Direction.EAST);
         h.assertTrue(top != null && side != null && top.drain(1, SIMULATE).is(CEFluids.STEAM.get())
@@ -461,7 +461,7 @@ public class VesselBasinGameTests {
 
     @GameTest(template = "test_fractionation", timeoutTicks = 440)
     public static void aNativePumpReachesTheSecondFeedAndConservesGas(GameTestHelper h) {
-        var owner=square(h,BASE,3,1);owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());owner.validateStructure();
+        var owner=square(h,BASE,3,2);stir(h,owner);
         owner.port(Direction.WEST).fill(new FluidStack(Fluids.WATER,500),EXECUTE);
         var sourcePos=BASE.west(4);h.setBlock(sourcePos,CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.X));var source=((FluidTankBlockEntity)h.getBlockEntity(sourcePos)).getTankInventory();source.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),40000),EXECUTE);
         for(int offset:new int[]{1,3}){var state=CETransport.STAINLESS_PIPE.get().defaultBlockState();for(Direction side:Direction.values())state=state.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side),side.getAxis()==Direction.Axis.X);h.setBlock(BASE.west(offset),state);}

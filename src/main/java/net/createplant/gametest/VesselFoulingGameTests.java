@@ -58,6 +58,12 @@ public class VesselFoulingGameTests {
         return ((LiddedVesselBlockEntity) h.getBlockEntity(BASE)).getControllerBE();
     }
 
+    /** Raises the 3x3 tank to two layers over a stirrer: the stirred process. */
+    private static void stir(GameTestHelper h, LiddedVesselBlockEntity owner) {
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, 1, z), CETransport.LIDDED_VESSEL.get());
+        h.setBlock(BASE.offset(1, -1, 1), CEReactor.STIRRER.get());owner.validateStructure();
+    }
+
     private static class SolidParams extends ProcessingRecipeParams {
         SolidParams() {
             ingredients.add(Ingredient.of(Items.CLAY_BALL));
@@ -116,7 +122,7 @@ public class VesselFoulingGameTests {
     public static void finiteWashWaterProducesOnlyItsOwnVolumeAndKeepsTemperatureAndEnergy(GameTestHelper h) {
         var owner = vessel(h, 3);
         var fouling = owner.fouling();
-        owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());owner.validateStructure();
+        stir(h, owner);
         soil(owner, 300);
         owner.port(Direction.NORTH).fill(FluidThermal.at(new FluidStack(Fluids.WATER, 3500), 310), EXECUTE);
         String initialState = washSnapshot(owner);
@@ -245,13 +251,13 @@ public class VesselFoulingGameTests {
         recipes.add(new RecipeHolder<>(SOLID_RECIPE, solidRecipe()));manager.replaceRecipes(recipes);
         guarded(h, () -> {
             var owner = vessel(h, 3);
-            owner.putInternal(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());owner.validateStructure();
+            stir(h, owner);
             owner.itemPort().insertItem(0, new ItemStack(Items.CLAY_BALL), false);
             owner.port(Direction.NORTH).fill(new FluidStack(Fluids.WATER, 1000), EXECUTE);
             soil(owner, 400);
-            BlockPos motor = BASE.offset(1, -1, 1);
-            h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.UP));
-            h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(128));
+            // The motor under the cogwheel that turns the stirrer.
+            BlockPos motor = BASE.offset(1, -2, 0);
+            ReactorGameTests.driveStirrer(h, BASE.offset(1, -1, 1));
             h.runAfterDelay(60, () -> guarded(h, () -> {
                 h.assertTrue(owner.rotationSpeed() != 0 && owner.fouling().blocked() && !owner.running() && owner.progress() == 0
                     && count(owner.itemPort(), Items.CLAY_BALL) == 1 && count(owner.itemPort(), Items.BRICK) == 0,
@@ -259,7 +265,7 @@ public class VesselFoulingGameTests {
                 h.setBlock(motor, Blocks.AIR);
             }));
             h.runAfterDelay(80, () -> guarded(h, () -> {
-                owner.toggleLid();var player = brushPlayer(h);brush(h, player, BASE.offset(1, 0, 1));
+                owner.toggleLid();var player = brushPlayer(h);brush(h, player, BASE.offset(1, 1, 1));
                 h.assertTrue(owner.fouling().dirtLevel() == 360 && player.getMainHandItem().getDamageValue() == 1,
                     "One real top-face brush removes 40 trace load for one durability while stopped");
                 owner.toggleLid();

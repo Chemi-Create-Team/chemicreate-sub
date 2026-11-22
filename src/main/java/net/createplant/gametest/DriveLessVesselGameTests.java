@@ -6,6 +6,7 @@ import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createplant.CreatePlant;
 import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
+import net.createplant.block.entity.VesselStirrerBlockEntity;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CETransport;
@@ -24,7 +25,7 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class DriveLessVesselGameTests {
-    private static final BlockPos BASE = new BlockPos(4, 3, 4);
+    private static final BlockPos BASE = new BlockPos(4, 3, 4), STIRRER = BASE.offset(1, -1, 1);
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
     public static void closedStainlessTankBurnsSulfurWithOxygenAtSuperheat(GameTestHelper h) {
@@ -56,14 +57,15 @@ public class DriveLessVesselGameTests {
             var sulfurDioxide = net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get();
             var product = tank.drain(new FluidStack(sulfurDioxide, 500), EXECUTE);
             h.assertTrue(product.getAmount() == 500 && product.is(sulfurDioxide) && vessel.getTankInventory().isEmpty()
-                && vessel.itemPort().getStackInSlot(0).isEmpty() && vessel.internal().isEmpty() && vessel.rotationSpeed() == 0,
+                && vessel.itemPort().getStackInSlot(0).isEmpty() && vessel.rotationSpeed() == 0,
                 "The stock roof port gives one batch of SO2 without an agitator or a rotation source");
             h.succeed();
         });
     }
 
+    /** A two-layer stirred tank over its stirrer, with a lit burner under one corner. */
     private static LiddedVesselBlockEntity vessel(GameTestHelper h) {
-        var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 1);
+        var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 2);
         h.setBlock(BASE.below(), AllBlocks.BLAZE_BURNER.getDefaultState().setValue(
                 com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL,
                 com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED));
@@ -77,66 +79,69 @@ public class DriveLessVesselGameTests {
         h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(pos)).generatedSpeed.setValue(128));
     }
 
+    private static void drive(GameTestHelper h) { ReactorGameTests.driveStirrer(h, STIRRER); }
+
+    private static VesselStirrerBlockEntity stirrer(GameTestHelper h) { return (VesselStirrerBlockEntity) h.getBlockEntity(STIRRER); }
+
     @GameTest(template = "test_reactor", timeoutTicks = 160)
-    public static void bottomShaftRunsTheVesselAndCarriesItsStress(GameTestHelper h) {
+    public static void aCogwheelTurnsTheStirrerWhichRunsTheTankAndCarriesItsStress(GameTestHelper h) {
         var owner = vessel(h);
-        var receiver = (LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(1, 0, 1));
         owner.port(Direction.NORTH).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
-        motor(h, BASE.offset(1, -1, 1), Direction.UP);
+        drive(h);
         h.runAfterDelay(90, () -> {
-            h.assertTrue(owner.formed() && Math.abs(owner.rotationSpeed()) == 128, "A motor below the vessel drives it through Create's kinetic network");
-            h.assertTrue(receiver.calculateStressApplied() == 16 && owner.calculateStressApplied() == 0, "Only the central receiver carries the one-bed process load");
+            h.assertTrue(owner.formed() && Math.abs(owner.rotationSpeed()) == 128 && Math.abs(stirrer(h).getSpeed()) == 128,
+                "A cogwheel beside the stirrer turns it through Create's kinetic network, and the tank runs at its speed");
+            h.assertTrue(stirrer(h).calculateStressApplied() == 32 && owner.calculateStressApplied() == 0, "The stirrer carries the two impellers' load; the tank none");
             var port = owner.port(Direction.NORTH);
-            h.assertTrue(port.getFluidInTank(0).isEmpty() && port.getFluidInTank(2).getAmount() == 1000, "One powered vessel consumes one feed batch and produces exactly one output batch");
+            h.assertTrue(port.getFluidInTank(0).isEmpty() && port.getFluidInTank(2).getAmount() == 1000, "One feed batch makes exactly one output batch");
             h.succeed();
         });
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
-    public static void nineBottomMotorsOnlyConnectToTheCentralReceiver(GameTestHelper h) {
+    public static void theTankTakesNoRotationOfItsOwn(GameTestHelper h) {
         var owner = vessel(h);
-        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) motor(h, BASE.offset(x, -1, z), Direction.UP);
-        var block = CETransport.LIDDED_VESSEL.get();
-        h.runAfterDelay(45, () -> {
-            float stress = 0;
+        owner.port(Direction.NORTH).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
+        // Motors under every block but the stirrer and the corner burner.
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if ((x != 1 || z != 1) && (x != 0 || z != 0)) motor(h, BASE.offset(x, -1, z), Direction.UP);
+        for (Direction side : Direction.Plane.HORIZONTAL) motor(h, BASE.offset(1, 0, 1).relative(side, 2), side.getOpposite());
+        h.runAfterDelay(50, () -> {
             for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) {
-                BlockPos pos = BASE.offset(x, 0, z);var part = (LiddedVesselBlockEntity) h.getBlockEntity(pos);boolean centre = x == 1 && z == 1;
-                h.assertTrue(block.hasShaftTowards(h.getLevel(), h.absolutePos(pos), h.getBlockState(pos), Direction.DOWN) == centre,
-                    "Only the centre of the nine bottom faces exposes a shaft");
-                h.assertTrue(Math.abs(part.getSpeed()) == (centre ? 128 : 0), "An actual bottom motor cannot rotate any off-centre block");
-                stress += part.calculateStressApplied();
+                var part = (LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(x, 0, z));
+                h.assertTrue(part.getSpeed() == 0 && part.calculateStressApplied() == 0, "No motor under or beside the tank connects to it");
             }
-            h.assertTrue(owner.rotationSpeed() == 128 && stress == 16 && owner.calculateStressApplied() == 0, "The central input alone runs and carries the process load");
-            h.setBlock(BASE.offset(1, -1, 1), Blocks.AIR);
-            owner.port(Direction.NORTH).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
+            h.assertTrue(owner.rotationSpeed() == 0 && owner.status().equals("speed") && owner.progress() == 0
+                && owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "Without its stirrer turning, the tank cannot run or consume its charge");
+            drive(h);
         });
-        h.runAfterDelay(100, () -> {
-            h.assertTrue(owner.rotationSpeed() == 0 && owner.status().equals("speed"), "The eight remaining motors cannot substitute for the disconnected central input");
-            h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000 && owner.progress() == 0, "Off-centre motors cannot consume the waiting charge");
+        h.runAfterDelay(120, () -> {
+            h.assertTrue(Math.abs(owner.rotationSpeed()) == 128 && owner.port(Direction.NORTH).getFluidInTank(0).isEmpty()
+                && owner.port(Direction.NORTH).getFluidInTank(2).getAmount() == 1000, "Driving the stirrer completes the waiting batch");
             h.succeed();
         });
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
-    public static void resizingAStorageTankRebuildsTheCentralDriveConnection(GameTestHelper h) {
-        for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) h.setBlock(BASE.offset(x, 0, z), CETransport.LIDDED_VESSEL.get());
+    public static void resizingATankEngagesTheStirrerOnlyUnderAThreeByThree(GameTestHelper h) {
+        for (int y = 0; y < 2; y++) for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
+        h.setBlock(STIRRER, net.createplant.registry.CEReactor.STIRRER.get());
         var owner = ((LiddedVesselBlockEntity) h.getBlockEntity(BASE)).getControllerBE();
         owner.getTankInventory().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
         owner.itemPort().insertItem(0, new ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 7), false);
-        motor(h, BASE.offset(1, -1, 1), Direction.UP);
+        // Left still, so that no stirred recipe takes the stored water while the tank is 3x3.
         h.runAfterDelay(30, () -> {
-            h.assertTrue(owner.getWidth() == 2 && ((LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(1, 0, 1))).getSpeed() == 0,
-                "A motor underneath a 2x2 tank has no rotational connection");
-            for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, 0, z), CETransport.LIDDED_VESSEL.get());
+            h.assertTrue(owner.getWidth() == 2 && !owner.stirred() && stirrer(h).calculateStressApplied() == 0,
+                "A stirrer under a 2x2 tank stirs nothing and carries no load");
+            for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
         });
         h.runAfterDelay(65, () -> {
-            h.assertTrue(owner.getWidth() == 3 && ((LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(1, 0, 1))).getSpeed() == 128,
-                "Expanding to 3x3 reconnects the same motor at the new bottom centre");
-            for (int x = 2; x >= 0; x--) for (int z = 2; z >= 0; z--) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, 0, z), Blocks.AIR);
+            h.assertTrue(owner.getWidth() == 3 && owner.stirred() && stirrer(h).vessel() == owner && stirrer(h).calculateStressApplied() == 32,
+                "Expanding to 3x3 over the stirrer makes a stirred tank whose load the stirrer carries");
+            for (int y = 1; y >= 0; y--) for (int x = 2; x >= 0; x--) for (int z = 2; z >= 0; z--) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, y, z), Blocks.AIR);
         });
         h.runAfterDelay(110, () -> {
-            h.assertTrue(owner.getWidth() == 2 && !owner.canTakeInternal() && !owner.formed() && owner.rotationSpeed() == 0
-                && ((LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(1, 0, 1))).getSpeed() == 0, "Shrinking to storage disconnects the old central drive");
+            h.assertTrue(owner.getWidth() == 2 && !owner.stirred() && !owner.formed() && stirrer(h).calculateStressApplied() == 0,
+                "Shrinking back to storage lets the stirrer go");
             h.assertTrue(owner.getTankInventory().getFluidAmount() == 1000 && owner.itemPort().getStackInSlot(0).getCount() == 7,
                 "Resizing retains the complete stored water and items");
             h.succeed();
@@ -144,56 +149,67 @@ public class DriveLessVesselGameTests {
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 40)
-    public static void savedOffCentreRotationCannotRunAProcessAfterLoading(GameTestHelper h) {
+    public static void aSavedOldShaftConnectionCannotRunATank(GameTestHelper h) {
         var owner = vessel(h);var level = h.getLevel();
         owner.port(Direction.NORTH).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
+        // Before stirrers the tank's own bottom centre took the shaft and saved its speed.
         var saved = owner.saveWithoutMetadata(level.registryAccess());
         saved.putLong("PowerInput", owner.getBlockPos().asLong());saved.putFloat("InputSpeed", 128);
         owner.loadWithComponents(saved, level.registryAccess());
         for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) {
-            BlockPos pos = BASE.offset(x, 0, z);
-            h.setBlock(pos, h.getBlockState(pos).setValue(LiddedVesselBlock.DRIVE, false).setValue(LiddedVesselBlock.AXIS, Direction.Axis.X));
-            var part = (LiddedVesselBlockEntity) h.getBlockEntity(pos);part.setSpeed(x == 0 && z == 0 ? 128 : 0);part.initialize();
+            var part = (LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(x, 0, z));part.setSpeed(128);part.initialize();
         }
         owner.validateStructure();owner.tickProcess();
-        h.assertTrue(owner.formed() && owner.rotationSpeed() == 0 && owner.calculateStressApplied() == 0 && owner.progress() == 0,
-            "Loading the old controller's saved speed cannot bypass the input location check");
-        h.assertTrue(owner.getTheoreticalSpeed() == 0 && !owner.hasSource() && !owner.hasNetwork(), "The saved off-centre kinetic connection is removed during loading");
-        h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "The waiting process charge survives the connection migration");
+        h.assertTrue(owner.formed() && owner.rotationSpeed() == 0 && owner.progress() == 0, "A saved speed of the tank itself cannot turn its impellers");
         for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) {
-            BlockPos pos = BASE.offset(x, 0, z);var state = h.getBlockState(pos);
-            h.assertTrue(state.getValue(LiddedVesselBlock.AXIS) == Direction.Axis.Y && state.getValue(LiddedVesselBlock.DRIVE)
-                && CETransport.LIDDED_VESSEL.get().hasShaftTowards(level, h.absolutePos(pos), state, Direction.DOWN) == (x == 1 && z == 1),
-                "Loading refreshes every saved member and leaves just the central bottom shaft");
+            var part = (LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(x, 0, z));
+            h.assertTrue(part.getTheoreticalSpeed() == 0 && !part.hasSource(), "The saved kinetic connection of every member is removed during loading");
         }
+        h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "The waiting process charge survives the connection migration");
         h.succeed();
     }
 
-    @GameTest(template = "test_reactor", timeoutTicks = 180)
-    public static void sideMotorsCannotDriveTheVesselButTheBottomCentreCan(GameTestHelper h) {
+    @GameTest(template = "test_reactor", timeoutTicks = 40)
+    public static void anOverstressedStirrerKeepsItsLoad(GameTestHelper h) {
         var owner = vessel(h);
-        owner.port(Direction.NORTH).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
-        for (Direction side : Direction.Plane.HORIZONTAL) {
-            BlockPos input = BASE.offset(1, 0, 1).relative(side);
-            h.setBlock(input, h.getBlockState(input).setValue(LiddedVesselBlock.AXIS, side.getAxis()));
-            motor(h, input.relative(side), side.getOpposite());
-        }
-        h.runAfterDelay(50, () -> {
-            for (Direction side : Direction.Plane.HORIZONTAL) {
-                var receiver = (LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(1, 0, 1).relative(side));
-                h.assertTrue(receiver.getSpeed() == 0 && receiver.calculateStressApplied() == 0, "A real motor cannot connect to any horizontal wall");
-            }
-            h.assertTrue(owner.rotationSpeed() == 0 && owner.status().equals("speed") && owner.progress() == 0
-                && owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "Side motors cannot run the process or consume its charge");
-            motor(h, BASE.offset(1, -1, 1), Direction.UP);
-        });
-        h.runAfterDelay(110, () -> {
-            var receiver = (LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(1, 0, 1));
-            h.assertTrue(Math.abs(owner.rotationSpeed()) == 128 && receiver.calculateStressApplied() == 16, "The bottom centre still powers the vessel and owns its stress");
-            h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).isEmpty() && owner.port(Direction.NORTH).getFluidInTank(2).getAmount() == 1000,
-                "Only the bottom motor can complete the waiting batch");
-            h.succeed();
-        });
+        var stirrer = stirrer(h);
+        stirrer.setSpeed(128);
+        owner.validateStructure();
+        stirrer.updateFromNetwork(0, 2048, 1);
+        h.assertTrue(stirrer.getSpeed() == 0 && owner.rotationSpeed() == 0, "An overloaded network stops both the stirrer and the process");
+        h.assertTrue(stirrer.calculateStressApplied() == 32 && owner.calculateStressApplied() == 0, "A stopped overloaded stirrer retains the process load");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 40)
+    public static void removingTheStirrerAndSavingKeepsTheReactionCharge(GameTestHelper h) {
+        var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 2);
+        owner.itemPort().insertItem(0, net.createplant.registry.CEUranium.URANIUM_TRIOXIDE.toStack(), false);
+        h.setBlock(STIRRER, Blocks.AIR);owner.validateStructure();
+        h.assertTrue(!owner.formed() && owner.getWidth() == 3, "Taking the stirrer away stops processing while retaining the square storage vessel");
+        var saved = owner.saveWithoutMetadata(h.getLevel().registryAccess());
+        owner.loadWithComponents(saved, h.getLevel().registryAccess());
+        h.assertTrue(owner.module() == ReactorModule.NONE && owner.hasProcessContents(), "An unstirred saved vessel still owns its reaction charge");
+        h.setBlock(STIRRER, net.createplant.registry.CEReactor.STIRRER.get());owner.validateStructure();
+        h.assertTrue(owner.formed() && owner.itemPort().getStackInSlot(0).is(net.createplant.registry.CEUranium.URANIUM_TRIOXIDE.get()), "Putting the stirrer back makes the saved ingredient reachable again");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 40)
+    public static void cachedStoragePortsRespectProcessingAndTheOpenHatch(GameTestHelper h) {
+        for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
+        var owner = (LiddedVesselBlockEntity) h.getBlockEntity(BASE);
+        var port = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(BASE.offset(1, 1, 1)), Direction.UP);
+        var water = new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000);
+        h.setBlock(STIRRER, net.createplant.registry.CEReactor.STIRRER.get());
+        h.assertTrue(port != null && port.fill(water, EXECUTE) == 0, "Placing the stirrer immediately closes the storage-fill path before the next structure scan");
+        owner.validateStructure();
+        h.assertTrue(owner.formed() && port.fill(water, EXECUTE) == 0 && owner.getTankInventory().isEmpty(), "A cached storage port cannot insert hidden water into an active process");
+        h.setBlock(STIRRER, Blocks.AIR);
+        h.assertTrue(port.fill(water, EXECUTE) == 1000, "The storage port works again once the stirrer is gone");
+        owner.toggleLid();
+        h.assertTrue(port.fill(water, EXECUTE) == 0 && port.drain(1000, EXECUTE).isEmpty(), "Opening the hatch retires a previously cached top pipe connection");
+        h.succeed();
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 40)
@@ -201,57 +217,13 @@ public class DriveLessVesselGameTests {
         var owner = vessel(h);
         var port = owner.port(Direction.NORTH);
         port.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
-        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, -1, z), CETransport.LIDDED_VESSEL.get());
+        // Tanks round the stirrer under the vessel.
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x != 1 || z != 1) h.setBlock(BASE.offset(x, -1, z), CETransport.LIDDED_VESSEL.get());
         owner.validateStructure();
-        h.assertTrue(owner.isController() && owner.getBlockPos().equals(h.absolutePos(BASE)), "Adding a floor cannot strand a filled process in a non-controller member");
+        h.assertTrue(owner.isController() && owner.getBlockPos().equals(h.absolutePos(BASE)) && owner.stirred(), "Tanks placed under it cannot strand a filled process in a non-controller member");
         h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "The feed remains reachable at its original controller");
         var text = new ArrayList<Component>();
         h.assertTrue(owner.addToGoggleTooltip(text, false) && !text.isEmpty() && text.size() <= 4, "A formed vessel's goggle summary is finite and four lines or fewer");
-        h.succeed();
-    }
-
-    @GameTest(template = "test_reactor", timeoutTicks = 40)
-    public static void anOverstressedCentralReceiverKeepsItsLoad(GameTestHelper h) {
-        var owner = vessel(h);
-        BlockPos input = BASE.offset(1, 0, 1);
-        var receiver = (LiddedVesselBlockEntity) h.getBlockEntity(input);
-        receiver.setSpeed(128);
-        owner.validateStructure();
-        receiver.updateFromNetwork(0, 2048, 1);
-        h.assertTrue(receiver.getSpeed() == 0 && owner.rotationSpeed() == 0, "An overloaded network stops both the receiver and the process");
-        h.assertTrue(receiver.calculateStressApplied() == 16 && owner.calculateStressApplied() == 0, "A stopped overloaded bottom network retains the process load");
-        h.succeed();
-    }
-
-    @GameTest(template = "test_reactor", timeoutTicks = 40)
-    public static void removingInternalsAndSavingKeepsTheReactionCharge(GameTestHelper h) {
-        var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 1);
-        owner.itemPort().insertItem(0, net.createplant.registry.CEUranium.URANIUM_TRIOXIDE.toStack(), false);
-        var internal = owner.takeTopInternal();
-        h.assertTrue(!owner.formed() && owner.getWidth() == 3, "Removing the last internal stops processing while retaining the square storage vessel");
-        var saved = owner.saveWithoutMetadata(h.getLevel().registryAccess());
-        owner.loadWithComponents(saved, h.getLevel().registryAccess());
-        h.assertTrue(owner.module() == ReactorModule.NONE && owner.hasProcessContents(), "An unconfigured saved vessel still owns its reaction charge");
-        owner.putInternal(internal);
-        owner.validateStructure();
-        h.assertTrue(owner.formed() && owner.itemPort().getStackInSlot(0).is(net.createplant.registry.CEUranium.URANIUM_TRIOXIDE.get()), "Reinstalling the internal makes the saved ingredient reachable again");
-        h.succeed();
-    }
-
-    @GameTest(template = "test_reactor", timeoutTicks = 40)
-    public static void cachedStoragePortsRespectProcessingAndTheOpenHatch(GameTestHelper h) {
-        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, 0, z), CETransport.LIDDED_VESSEL.get());
-        var owner = (LiddedVesselBlockEntity) h.getBlockEntity(BASE);
-        var port = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(BASE.offset(1, 0, 1)), Direction.UP);
-        var water = new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000);
-        owner.putInternal(net.createplant.registry.CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
-        h.assertTrue(port != null && port.fill(water, EXECUTE) == 0, "Installing an internal immediately closes the storage-fill path before the next structure scan");
-        owner.validateStructure();
-        h.assertTrue(port != null && owner.formed() && port.fill(water, EXECUTE) == 0 && owner.getTankInventory().isEmpty(), "A cached storage port cannot insert hidden water into an active process");
-        owner.takeTopInternal();
-        h.assertTrue(port.fill(water, EXECUTE) == 1000, "The storage port works again once the internals are removed");
-        owner.toggleLid();
-        h.assertTrue(port.fill(water, EXECUTE) == 0 && port.drain(1000, EXECUTE).isEmpty(), "Opening the hatch retires a previously cached top pipe connection");
         h.succeed();
     }
 
@@ -261,8 +233,8 @@ public class DriveLessVesselGameTests {
         int index = 0;
         for (var module : new ReactorModule[] {ReactorModule.STIRRED}) {
             BlockPos base = BASE.offset((index % 2) * 9, 0, (index / 2) * 9);index++;
-            var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(base), module, module.minSections);
-            h.assertTrue(owner.formed() && owner.getWidth() == 3, "The internal forms its process at its supported width: " + module);
+            var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(base), module, 2);
+            h.assertTrue(owner.formed() && owner.getWidth() == 3, "The stirrer forms its process at its supported width: " + module);
             int[] corners=new int[]{0,2};
             for (int x : corners) for (int z : corners) {
                 BlockPos pos = base.offset(x, 0, z);var state = h.getBlockState(pos);var absolute = h.absolutePos(pos);
@@ -272,7 +244,7 @@ public class DriveLessVesselGameTests {
                     h.assertTrue(!block.hasShaftTowards(h.getLevel(), absolute, state.setValue(LiddedVesselBlock.AXIS, face.getAxis()), face),
                         "No outer wall exposes a horizontal shaft, including saved horizontal-axis states");
                 }
-                h.assertTrue(block.hasShaftTowards(h.getLevel(), absolute, state, Direction.DOWN)==false, "Only the central bottom face accepts a shaft");
+                h.assertTrue(block.hasShaftTowards(h.getLevel(), absolute, state, Direction.DOWN)==false, "No face of the tank takes a shaft; the stirrer does");
             }
         }
         h.succeed();

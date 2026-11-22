@@ -8,9 +8,11 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import io.netty.buffer.Unpooled;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
+import net.createplant.block.entity.ReactionTowerBlockEntity;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.registry.CEFluids;
+import net.createplant.registry.CEItems;
 import net.createplant.registry.CEUranium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -84,24 +86,47 @@ public final class UraniumFuelGameTests {
         h.assertTrue(h.getLevel().getRecipeManager().byKey(CreatePlant.location("pressure_reaction/yellowcake")).isEmpty(),"The replaced wet ore route is absent");h.succeed();
     }
 
+    /** A three-layer reaction tower with an empty tray in every layer, its north-west bottom corner at base. */
+    private static ReactionTowerBlockEntity tower(GameTestHelper h,BlockPos base) { return ReactionTowerGameTests.tower(h.getLevel(),h.absolutePos(base),3,ItemStack.EMPTY); }
+    /** The solid feed and products at the west side of a tower's bottom layer. */
+    private static IItemHandler solids(GameTestHelper h,ReactionTowerBlockEntity tower) {
+        var result=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,tower.getBlockPos().west(),Direction.WEST);
+        h.assertTrue(result!=null,"The tower's bottom side takes and gives solids");return result;
+    }
+    private static void burner(GameTestHelper h,ReactionTowerBlockEntity tower,HeatLevel heat) {
+        h.getLevel().setBlock(tower.getBlockPos().below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,heat),3);
+    }
+    /** Runs the tower's batches of 100 ticks, one per call, as its own tick would. */
+    private static void run(ReactionTowerBlockEntity tower,int batches) { for(int i=0;i<batches;i++)tower.process(100); }
+    private static void reload(GameTestHelper h,ReactionTowerBlockEntity tower) {
+        var lookup=h.getLevel().registryAccess();
+        for(int y=0;y<tower.layers();y++){var layer=tower.layer(y);layer.loadWithComponents(layer.saveWithoutMetadata(lookup).copy(),lookup);}
+    }
+
     @GameTest(template="test_fractionation")
-    public static void traysNeedHeatForReductionAndSuperheatForGasification(GameTestHelper h) {
-        var tray=vessel(h,BASE,ReactorModule.ABSORBER,2);var items=funnel(h,tray);var input=pipe(h,tray);
+    public static void towerTraysNeedHeatForReductionAndSuperheatForGasification(GameTestHelper h) {
+        var tray=tower(h,BASE);var items=solids(h,tray);var input=ReactionTowerGameTests.port(tray);
         h.assertTrue(items.insertItem(0,CEUranium.YELLOWCAKE.toStack(),true).isEmpty() && items.getStackInSlot(0).isEmpty(),"Simulated funnel insertion is inert");
-        items.insertItem(0,CEUranium.YELLOWCAKE.toStack(),false);input.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),250),EXECUTE);
-        run(tray,110);h.assertTrue(tray.status().equals("heat") && count(items,CEUranium.YELLOWCAKE.get())==1 && amount(tray,CEFluids.HYDROGEN_GAS.get())==250,"Unheated trays retain both feeds");
-        burner(h,BASE,HeatLevel.KINDLED);run(tray,45);reload(h,tray);items=funnel(h,tray);run(tray,70);
-        h.assertTrue(count(items,CEUranium.URANIUM_DIOXIDE.get())==1 && count(items,CEUranium.YELLOWCAKE.get())==0 && amount(tray,CEFluids.HYDROGEN_GAS.get())==0,"Reduction survives reload and consumes exactly one batch");
-        h.assertTrue(tray.rotationSpeed()==0 && tray.calculateStressApplied()==0,"Tray reduction needs no rotation");
-        var gasBase=BASE.offset(8,0,0);var gas=vessel(h,gasBase,ReactorModule.ABSORBER,2);var gasItems=funnel(h,gas);
-        gasItems.insertItem(0,CEUranium.URANIUM_TETRAFLUORIDE.toStack(),false);pipe(h,gas).fill(new FluidStack(CEUranium.FLUORINE.get(),250),EXECUTE);
-        burner(h,gasBase,HeatLevel.KINDLED);run(gas,110);
-        h.assertTrue(gas.status().equals("heat") && amount(gas,CEUranium.URANIUM_HEXAFLUORIDE.get())==0 && count(gasItems,CEUranium.URANIUM_TETRAFLUORIDE.get())==1,"Ordinary heat cannot gasify green salt");
-        burner(h,gasBase,HeatLevel.SEETHING);run(gas,105);
-        h.assertTrue(amount(gas,CEUranium.URANIUM_HEXAFLUORIDE.get())==250 && amount(gas,CEUranium.FLUORINE.get())==0,"Superheated trays make the UF6 gas");
-        var stirred=vessel(h,BASE.offset(16,0,0),ReactorModule.STIRRED,1);var stirItems=funnel(h,stirred);
-        stirItems.insertItem(0,CEUranium.YELLOWCAKE.toStack(),false);pipe(h,stirred).fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),250),EXECUTE);burner(h,BASE.offset(16,0,0),HeatLevel.SEETHING);run(stirred,150);
-        h.assertTrue(count(stirItems,CEUranium.URANIUM_DIOXIDE.get())==0,"A stirred vessel cannot bypass the tray requirement");h.succeed();
+        items.insertItem(0,CEUranium.YELLOWCAKE.toStack(),false);
+        h.assertTrue(input.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),250),EXECUTE)==250,"The trays' solid lets the tower take hydrogen");
+        tray.process(110);
+        h.assertTrue(tray.status().equals("heat") && tray.layer(0).load().is(CEUranium.YELLOWCAKE.get()) && tray.tank(0).getAmount()==250,"Unheated trays retain both feeds");
+        burner(h,tray,HeatLevel.KINDLED);tray.process(45);reload(h,tray);tray.process(70);
+        h.assertTrue(tray.layer(0).made().is(CEUranium.URANIUM_DIOXIDE.get()) && tray.layer(0).made().getCount()==1 && tray.layer(0).load().isEmpty() && tray.tank(0).isEmpty(),
+            "Reduction survives reload and consumes exactly one batch, leaving the dioxide on the tray");
+        h.assertTrue(items.extractItem(tray.layers(),1,false).is(CEUranium.URANIUM_DIOXIDE.get()) && tray.layer(0).made().isEmpty(),"A funnel takes the product from the bottom side");
+        var gasBase=BASE.offset(8,0,0);var gas=tower(h,gasBase);
+        solids(h,gas).insertItem(0,CEUranium.URANIUM_TETRAFLUORIDE.toStack(),false);ReactionTowerGameTests.port(gas).fill(new FluidStack(CEUranium.FLUORINE.get(),250),EXECUTE);
+        burner(h,gas,HeatLevel.KINDLED);run(gas,2);
+        h.assertTrue(gas.status().equals("heat") && gas.tank(2).isEmpty() && gas.layer(0).load().is(CEUranium.URANIUM_TETRAFLUORIDE.get()),"Ordinary heat cannot gasify green salt");
+        burner(h,gas,HeatLevel.SEETHING);run(gas,1);
+        h.assertTrue(gas.tank(2).is(CEUranium.URANIUM_HEXAFLUORIDE.get()) && gas.tank(2).getAmount()==250 && gas.tank(0).isEmpty(),"Superheated trays make the UF6 gas");
+        var catalysed=tower(h,BASE.offset(16,0,0));catalysed.insert(CEItems.OXIDATION_CATALYST.toStack());
+        h.assertTrue(!solids(h,catalysed).isItemValid(0,CEUranium.YELLOWCAKE.toStack()) && !solids(h,catalysed).insertItem(0,CEUranium.YELLOWCAKE.toStack(),false).isEmpty(),
+            "A tower holding a catalyst takes no solid feed");
+        var stirred=vessel(h,BASE.offset(24,0,0),ReactorModule.STIRRED,2);var stirItems=funnel(h,stirred);
+        stirItems.insertItem(0,CEUranium.YELLOWCAKE.toStack(),false);pipe(h,stirred).fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),250),EXECUTE);burner(h,BASE.offset(24,0,0),HeatLevel.SEETHING);run(stirred,150);
+        h.assertTrue(count(stirItems,CEUranium.URANIUM_DIOXIDE.get())==0,"A stirred tank cannot bypass the tray requirement");h.succeed();
     }
 
     @GameTest(template="test_fractionation")
@@ -145,14 +170,14 @@ public final class UraniumFuelGameTests {
 
     @GameTest(template="test_fractionation")
     public static void oreToPelletRunsThroughTheRequestedExistingMachines(GameTestHelper h) {
-        var tray=vessel(h,BASE,ReactorModule.ABSORBER,2);var stirBase=BASE.offset(8,0,0);var stir=vessel(h,stirBase,ReactorModule.STIRRED,1);var gasBase=BASE.offset(16,0,0);var gas=vessel(h,gasBase,ReactorModule.ABSORBER,2);
+        var tray=tower(h,BASE);var stirBase=BASE.offset(8,0,0);var stir=vessel(h,stirBase,ReactorModule.STIRRED,2);var gasBase=BASE.offset(16,0,0);var gas=tower(h,gasBase);
         var roast=AllFanProcessingTypes.BLASTING.process(CEUranium.URANINITE.toStack(8),h.getLevel());
-        funnel(h,tray).insertItem(0,roast.getFirst(),false);pipe(h,tray).fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),2000),EXECUTE);burner(h,BASE,HeatLevel.KINDLED);run(tray,410);
-        var reduced=funnel(h,tray).extractItem(9,8,false);h.assertTrue(reduced.is(CEUranium.URANIUM_DIOXIDE.get()) && reduced.getCount()==8,"Eight roasted feeds reduce on trays");
+        solids(h,tray).insertItem(0,roast.getFirst(),false);ReactionTowerGameTests.port(tray).fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),2000),EXECUTE);burner(h,tray,HeatLevel.KINDLED);run(tray,8);
+        var reduced=solids(h,tray).extractItem(tray.layers(),8,false);h.assertTrue(reduced.is(CEUranium.URANIUM_DIOXIDE.get()) && reduced.getCount()==8,"Eight roasted feeds reduce on the trays");
         funnel(h,stir).insertItem(0,reduced,false);pipe(h,stir).fill(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),4000),EXECUTE);burner(h,stirBase,HeatLevel.KINDLED);run(stir,820);
-        var salt=funnel(h,stir).extractItem(9,8,false);h.assertTrue(salt.is(CEUranium.URANIUM_TETRAFLUORIDE.get()) && salt.getCount()==8,"The heated impeller vessel makes green salt");
-        funnel(h,gas).insertItem(0,salt,false);pipe(h,gas).fill(new FluidStack(CEUranium.FLUORINE.get(),2000),EXECUTE);burner(h,gasBase,HeatLevel.SEETHING);run(gas,410);
-        var feed=gas.port(Direction.NORTH).drain(new FluidStack(CEUranium.URANIUM_HEXAFLUORIDE.get(),2000),EXECUTE);h.assertTrue(feed.getAmount()==2000,"Superheated trays provide the centrifuge feed");
+        var salt=funnel(h,stir).extractItem(9,8,false);h.assertTrue(salt.is(CEUranium.URANIUM_TETRAFLUORIDE.get()) && salt.getCount()==8,"The heated stirred tank makes green salt");
+        solids(h,gas).insertItem(0,salt,false);ReactionTowerGameTests.port(gas).fill(new FluidStack(CEUranium.FLUORINE.get(),2000),EXECUTE);burner(h,gas,HeatLevel.SEETHING);run(gas,8);
+        var feed=ReactionTowerGameTests.port(gas).drain(new FluidStack(CEUranium.URANIUM_HEXAFLUORIDE.get(),2000),EXECUTE);h.assertTrue(feed.getAmount()==2000,"Superheated trays provide the centrifuge feed");
         var centrifuge=GasCentrifugeGameTests.build(h,BASE.offset(24,0,0),4);centrifuge.port(0).fill(feed,EXECUTE);GasCentrifugeGameTests.run(centrifuge,410);
         var enriched=centrifuge.port(1).drain(250,EXECUTE);h.assertTrue(enriched.is(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get()) && enriched.getAmount()==250,"The unchanged enrichment stage separates 250 mB product");
         h.setBlock(stirBase.below(),Blocks.AIR);var input=pipe(h,stir);input.fill(enriched,EXECUTE);input.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),250),EXECUTE);input.fill(new FluidStack(Fluids.WATER,250),EXECUTE);run(stir,105);

@@ -246,11 +246,7 @@ public class LiddedVesselPlacementGameTests {
             clearColumn(h);
             for (int y = 0; y < 4; y++) square(h, BASE.above(y), width, hinge);
             var owner = root(h, BASE);owner.toggleWindows();
-            var impeller = CEReactor.INTERNALS.get(ReactorModule.STIRRED).get();
-            for (int y = 0; y < 4; y++) {
-                if (width == 3) owner.putInternal(impeller.getDefaultInstance());
-                else owner.slot(y).setInternal(impeller.getDefaultInstance());
-            }
+            if (width == 3) h.setBlock(BASE.offset(1, -1, 1), CEReactor.STIRRER.get());
             owner.validateStructure();
             owner.getTankInventory().fill(FluidThermal.at(new FluidStack(Fluids.WATER, 1000), 310), EXECUTE);
             owner.itemPort().insertItem(0, new ItemStack(Items.IRON_INGOT, 7), false);
@@ -265,10 +261,8 @@ public class LiddedVesselPlacementGameTests {
                 h.setBlock(at, h.getBlockState(at).setValue(LiddedVesselBlock.LADDER, old));
                 part.loadWithComponents(saved, lookup);part.lazyTick();
             }
-            for (int y = 0; y < 4; y++) {
-                assertLadderLayer(h, player, width, hinge, y);
-                h.assertTrue(((LiddedVesselBlockEntity) h.getBlockEntity(BASE.above(y))).internal().is(impeller), "Migration keeps each impeller in its original layer slot");
-            }
+            for (int y = 0; y < 4; y++) assertLadderLayer(h, player, width, hinge, y);
+            h.assertTrue(owner.stirred() == (width == 3), "Migration keeps a 3x3 tank stirred over its stirrer");
             h.assertTrue(owner.getTankInventory().getFluidAmount() == 1000 && Math.abs(FluidThermal.energy(owner.getTankInventory().getFluid()) - energy) < 1e-6
                 && owner.itemPort().getStackInSlot(0).is(Items.IRON_INGOT) && owner.itemPort().getStackInSlot(0).getCount() == 7,
                 "Reloading an old ladder layout preserves all fluid heat and stored items");

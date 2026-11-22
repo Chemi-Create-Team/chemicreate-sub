@@ -140,11 +140,13 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
                 CreatePlant.location("reciprocating_cylinder"),
                 CreatePlant.location("reciprocating_compressor"))
             .addStoryBoard("chemistry/reciprocating_compressor", ReciprocatingPonderScenes::compressor);
-        helper.forComponents(CreatePlant.location("reaction_tower"), CreatePlant.location("reactor_catalyst_basket"), CreatePlant.location("iron_catalyst"),
+        helper.forComponents(CreatePlant.location("reaction_tower"), CreatePlant.location("reactor_separator_core"), CreatePlant.location("iron_catalyst"),
                 CreatePlant.location("oxidation_catalyst"), CreatePlant.location("cracking_catalyst"), CreatePlant.location("polymerization_catalyst"),
                 CreatePlant.location("hydrotreating_catalyst"), CreatePlant.location("hydrocracking_catalyst"))
             .addStoryBoard("plant/reaction_tower", ReactionTowerPonderScenes::tower)
             .addStoryBoard("plant/reaction_tower_separator", ReactionTowerPonderScenes::separator);
+        helper.forComponents(CreatePlant.location("reaction_tower"), CreatePlant.location("reactor_separator_core"), CreatePlant.location("yellowcake"))
+            .addStoryBoard("plant/reaction_tower", ReactionTowerPonderScenes::trays);
         helper.forComponents(CreatePlant.location("reaction_tower"), CreatePlant.location("shift_catalyst_core"),
                 CreatePlant.location("iron_ft_catalyst_core"), CreatePlant.location("cobalt_ft_catalyst_core"),
                 CreatePlant.location("zsm5_catalyst_core"), CreatePlant.location("purified_syngas_bucket"),
@@ -238,11 +240,11 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/material_pump", LiddedVesselPonderScenes::sulfur);
         helper.forComponents(CreatePlant.location("lidded_vessel"))
             .addStoryBoard("plant/lidded_vessel_2x2", LiddedVesselPonderScenes::compactVessel);
-        helper.forComponents(CreatePlant.location("reactor_impeller"), CreatePlant.location("gas_centrifuge"), CreatePlant.location("lidded_vessel"))
+        helper.forComponents(CreatePlant.location("vessel_stirrer"), CreatePlant.location("reactor_impeller"), CreatePlant.location("lidded_vessel"))
             .addStoryBoard("plant/vessel_internals", LiddedVesselPonderScenes::internals);
-        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("reactor_impeller"))
+        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("vessel_stirrer"))
             .addStoryBoard("plant/vessel_basin",VesselBasinPonderScenes::basin);
-        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("reactor_impeller"),CreatePlant.location("pipe_pressure_gauge"))
+        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("vessel_stirrer"),CreatePlant.location("pipe_pressure_gauge"))
             .addStoryBoard("plant/vessel_maintenance",VesselBasinPonderScenes::maintenance);
 
         helper.forComponents(

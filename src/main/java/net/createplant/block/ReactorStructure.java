@@ -4,14 +4,13 @@ import java.util.*;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.chemistry.ReactorModule;
-import net.createplant.registry.CEReactor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 /**
- * A 3x3 lidded vessel of one to four layers runs the process selected by an internal in every layer. The hatch closes the pressure envelope,
- * and the vessel's storage tank must be empty before processing starts. The northwest bottom member owns the process inventory.
+ * A 3x3 stainless tank two to four layers high with a stirrer under its bottom centre runs the stirred process, one batch for each of the two
+ * impeller layers. The hatch closes the pressure envelope. The northwest bottom member owns the process inventory.
  */
 public final class ReactorStructure {
     public static final int MAX_SECTIONS=4;
@@ -27,19 +26,13 @@ public final class ReactorStructure {
         if (!loaded(level,base)) return new Result(0,members,base,"unloaded");
         if (!(level.getBlockEntity(base) instanceof LiddedVesselBlockEntity vessel) || !vessel.isController() || module==ReactorModule.NONE
             || vessel.getWidth()!=3) return new Result(0,members,base,"vessel");
-        BlockPos origin=vessel.getBlockPos();int width=vessel.getWidth(),sections=vessel.getHeight();
-        for (int y=0;y<sections;y++) for (int x=0;x<width;x++) for (int z=0;z<width;z++) {
+        BlockPos origin=vessel.getBlockPos();int width=vessel.getWidth(),layers=vessel.getHeight();
+        for (int y=0;y<layers;y++) for (int x=0;x<width;x++) for (int z=0;z<width;z++) {
             BlockPos at=origin.offset(x,y,z);
             if (!(level.getBlockEntity(at) instanceof LiddedVesselBlockEntity part) || !part.getController().equals(origin)) return new Result(0,members,at,"vessel");
         }
-        if (module!=ReactorModule.STIRRED && !vessel.getTankInventory().isEmpty()) return new Result(0,members,origin,"contents");
-        for (int y=0;y<sections;y++) {
-            var slot=vessel.slot(y);
-            if (slot==null || CEReactor.module(slot.internal())!=module) return new Result(0,members,origin.above(y),"core");
-        }
-        if (sections<module.minSections) return new Result(0,members,origin.above(sections),"core");
-        for (int y=0;y<sections;y++) for (int x=0;x<width;x++) for (int z=0;z<width;z++) members.add(origin.offset(x,y,z));
-        return new Result(sections,List.copyOf(members),base,"ready");
+        for (int y=0;y<layers;y++) for (int x=0;x<width;x++) for (int z=0;z<width;z++) members.add(origin.offset(x,y,z));
+        return new Result(LiddedVesselBlockEntity.IMPELLER_LAYERS,List.copyOf(members),base,"ready");
     }
     /** Whether the block at a place of the envelope is a lidded vessel; the build guide uses this. */
     public static boolean matches(Level level,BlockPos pos) { return level.getBlockState(pos).is(net.createplant.registry.CETransport.LIDDED_VESSEL.get()); }

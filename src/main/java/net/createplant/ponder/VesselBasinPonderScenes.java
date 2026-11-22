@@ -5,6 +5,7 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import java.util.function.Consumer;
 import net.createmod.catnip.math.Pointing;
+import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
@@ -12,9 +13,7 @@ import net.createplant.CreatePlant;
 import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.PipeGaugeBlockEntity;
-import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEChlorAlkali;
-import net.createplant.registry.CEReactor;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
@@ -31,7 +30,8 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 
 /** Standard Create transport around an internally stirred vessel; the shown inventories use its normal client sync format. */
 public final class VesselBasinPonderScenes {
-    private static final BlockPos OWNER=new BlockPos(3,2,3), RECEIVER=new BlockPos(4,2,4), MOTOR=new BlockPos(4,1,4);
+    /** The two-layer stirred tank, its stirrer under the bottom centre and the cogwheel beside that on a creative motor in the floor. */
+    private static final BlockPos OWNER=new BlockPos(3,2,3), TOP=new BlockPos(4,3,4), STIRRER=new BlockPos(4,1,4), COG=new BlockPos(4,1,3), COG_MOTOR=new BlockPos(4,0,3);
     private static final BlockPos GAUGE=new BlockPos(2,2,3), INPUT=new BlockPos(2,2,4), OUTPUT=new BlockPos(6,2,3);
     private static final BlockPos PUMP_IN=new BlockPos(4,2,1), PUMP_OUT=new BlockPos(4,2,7), DEPLOYER=new BlockPos(4,4,4);
     private static final BlockPos COOLANT=new BlockPos(3,2,2);
@@ -41,7 +41,7 @@ public final class VesselBasinPonderScenes {
 
     public static void basin(SceneBuilder builder,SceneBuildingUtil util) {
         var scene=begin(builder,"vessel_basin",BASIN,"Mixing and heating in a lidded vessel");
-        PonderText.build(scene, util, 3,2,3,5,2,5, Direction.DOWN);
+        PonderText.build(scene, util, 3,2,3,5,3,5, Direction.DOWN);
         text(scene,util,OWNER,BASIN,"assemble",110);
         scene.overlay().showControls(util.vector().blockSurface(OWNER,Direction.NORTH),Pointing.RIGHT,45).rightClick().withItem(AllItems.WRENCH.asStack());
         scene.idle(7);windows(scene,true);
@@ -56,19 +56,20 @@ public final class VesselBasinPonderScenes {
         contents(scene,false,false);
         text(scene,util,INPUT,BASIN,"feed",140);
 
-        scene.overlay().showControls(util.vector().topOf(OWNER),Pointing.DOWN,45).rightClick().withItem(CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance());
+        scene.world().showSection(util.select().position(STIRRER).add(util.select().position(COG)),Direction.UP);
+        scene.overlay().showOutline(PonderPalette.GREEN,"stirrer",util.select().position(STIRRER),80);
         scene.idle(7);
         contents(scene,true,false);
-        text(scene,util,OWNER,BASIN,"impeller",130);
-        scene.world().showSection(util.select().fromTo(3,1,3,5,1,5).substract(util.select().position(MOTOR)),Direction.UP);
+        text(scene,util,STIRRER,BASIN,"impeller",130);
+        var burners=util.select().fromTo(3,1,3,5,1,5).substract(util.select().position(STIRRER)).substract(util.select().position(COG));
+        scene.world().showSection(burners,Direction.UP);
         scene.overlay().showControls(util.vector().centerOf(OWNER.below()),Pointing.RIGHT,45).rightClick().withItem(new ItemStack(Items.COAL));
-        scene.world().modifyBlocks(util.select().fromTo(3,1,3,5,1,5).substract(util.select().position(MOTOR)),state->state.setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED),false);
+        scene.world().modifyBlocks(burners,state->state.setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED),false);
         text(scene,util,OWNER.below(),BASIN,"heat",130);
 
-        scene.world().showSection(util.select().position(MOTOR),Direction.UP);
         scene.world().showSection(util.select().position(GAUGE),Direction.EAST);
         contents(scene,true,true);gauge(scene,0,false);
-        text(scene,util,MOTOR,BASIN,"rotate",130);
+        text(scene,util,COG,BASIN,"rotate",130);
         PonderText.build(scene, util, 6,1,2,8,2,3, Direction.WEST);
         PonderText.build(scene, util, 4,1,6,4,2,8, Direction.NORTH);
         scene.world().flapFunnel(OUTPUT,true);
@@ -81,24 +82,24 @@ public final class VesselBasinPonderScenes {
     public static void maintenance(SceneBuilder builder,SceneBuildingUtil util) {
         var scene=begin(builder,"vessel_maintenance",MAINTENANCE,"Grades, cooling and cleaning");
         scene.rotateCameraY(90);
-        scene.world().showSection(util.select().fromTo(0,1,0,8,2,8).substract(util.select().fromTo(3,1,2,3,2,2)),Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(0,1,0,8,3,8).substract(util.select().fromTo(3,1,2,3,2,2)),Direction.DOWN);
         windows(scene,true);speed(scene,util,false);coldContents(scene,250,0);
         storedFluid(scene,new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(),20000));gauge(scene,2,true);
         text(scene,util,GAUGE,MAINTENANCE,"pressure",140);
         text(scene,util,OWNER,MAINTENANCE,"boiling",180);
-        scene.overlay().showControls(util.vector().topOf(new BlockPos(4,2,4)),Pointing.DOWN,50).rightClick();
-        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,2,5),state->state.setValue(LiddedVesselBlock.OPEN,true),false);
+        scene.overlay().showControls(util.vector().topOf(TOP),Pointing.DOWN,50).rightClick();
+        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,3,5),state->state.setValue(LiddedVesselBlock.OPEN,true),false);
         storedFluid(scene,FluidStack.EMPTY);gauge(scene,-1,false);
         text(scene,util,OWNER,MAINTENANCE,"hatch",160);
-        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,2,5),state->state.setValue(LiddedVesselBlock.OPEN,false),false);
+        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,3,5),state->state.setValue(LiddedVesselBlock.OPEN,false),false);
         scene.overlay().showControls(util.vector().centerOf(OWNER.below()),Pointing.RIGHT,45).rightClick().withItem(new ItemStack(Items.ICE));
         PonderText.build(scene, util, 3,1,2,3,2,2, Direction.SOUTH);
         scene.world().modifyBlockEntity(COOLANT,FluidTankBlockEntity.class,be->be.getTankInventory().fill(
             new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),6000),FluidAction.EXECUTE));
         coldContents(scene,250,0);gauge(scene,0,false);
         text(scene,util,OWNER,MAINTENANCE,"cooling",140);
-        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,2,5),state->state.setValue(LiddedVesselBlock.OPEN,true),false);
-        scene.overlay().showControls(util.vector().topOf(OWNER),Pointing.DOWN,55).rightClick().withItem(new ItemStack(Items.BRUSH));
+        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,3,5),state->state.setValue(LiddedVesselBlock.OPEN,true),false);
+        scene.overlay().showControls(util.vector().topOf(TOP),Pointing.DOWN,55).rightClick().withItem(new ItemStack(Items.BRUSH));
         coldContents(scene,210,0);
         text(scene,util,OWNER,MAINTENANCE,"brush",140);
         PonderText.build(scene, util, 4,4,4,4,5,4, Direction.DOWN);
@@ -112,7 +113,7 @@ public final class VesselBasinPonderScenes {
         text(scene,util,OWNER.below(),MAINTENANCE,"wash",150);
         scene.overlay().showControls(util.vector().blockSurface(OWNER,Direction.DOWN),Pointing.UP,45).rightClick().withItem(com.simibubi.create.AllItems.WRENCH.asStack());
         text(scene,util,OWNER.below(),MAINTENANCE,"purge",115);
-        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,2,5),state->state.setValue(LiddedVesselBlock.OPEN,false),false);
+        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,3,5),state->state.setValue(LiddedVesselBlock.OPEN,false),false);
         coldContents(scene,0,0,true);
         scene.world().hideSection(util.select().position(INPUT).add(util.select().position(4,2,6)),Direction.DOWN);
         text(scene,util,OWNER,MAINTENANCE,"cryo",140);
@@ -125,11 +126,12 @@ public final class VesselBasinPonderScenes {
     }
     private static ItemStack bauxite(int count) { return new ItemStack(BuiltInRegistries.ITEM.get(CreatePlant.location("bauxite")),count); }
     private static void windows(CreateSceneBuilder scene,boolean enabled) {
-        for(int x=3;x<=5;x++)for(int z=3;z<=5;z++)clientState(scene,new BlockPos(x,2,z),tag->tag.putBoolean("Windows",enabled));
+        for(int y=2;y<=3;y++)for(int x=3;x<=5;x++)for(int z=3;z<=5;z++)clientState(scene,new BlockPos(x,y,z),tag->tag.putBoolean("Windows",enabled));
         scene.addInstruction(s->s.forEach(net.createmod.ponder.api.element.WorldSectionElement.class,net.createmod.ponder.api.element.WorldSectionElement::queueRedraw));
     }
     private static void speed(CreateSceneBuilder scene,SceneBuildingUtil util,boolean running) {
-        scene.world().setKineticSpeed(util.select().fromTo(3,2,3,5,2,5).add(util.select().position(MOTOR)),running ? 64 : 0);
+        scene.world().setKineticSpeed(util.select().position(STIRRER),running ? 64 : 0);
+        scene.world().setKineticSpeed(util.select().position(COG).add(util.select().position(COG_MOTOR)),running ? -64 : 0);
         scene.world().setKineticSpeed(util.select().fromTo(0,1,4,2,1,4).add(util.select().position(0,1,5)),running ? -64 : 0);
         scene.world().setKineticSpeed(util.select().fromTo(6,1,3,8,1,3).add(util.select().position(8,1,2)),running ? -64 : 0);
         for (BlockPos pump:new BlockPos[]{PUMP_IN,PUMP_OUT}) {
@@ -146,12 +148,11 @@ public final class VesselBasinPonderScenes {
             tag.put("Charge",items.serializeNBT(lookup));
             tag.put("TankContent",storage(FluidThermal.at(new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(),10000),running ? 363.15 : 293.15),lookup));
             if(running)tag.put("Tank2",FluidThermal.at(new FluidStack(CEChlorAlkali.SODIUM_ALUMINATE.get(),4000),363.15).save(lookup));else tag.remove("Tank2");
-            if(internal)tag.put("Internal",CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance().save(lookup));else tag.remove("Internal");
+            tag.remove("Internal");tag.putBoolean("Stirrer",internal);
             tag.putBoolean("Formed",internal);tag.putBoolean("Running",running);tag.putBoolean("Windows",true);
             tag.putInt("DisplayedHeat",running ? BlazeBurnerBlock.HeatLevel.KINDLED.ordinal() : BlazeBurnerBlock.HeatLevel.NONE.ordinal());
-            tag.putInt("Sections",1);tag.putInt("Scale",1);tag.putInt("CycleTicks",100);tag.putFloat("Progress",40);
+            tag.putInt("Sections",LiddedVesselBlockEntity.IMPELLER_LAYERS);tag.putInt("Scale",1);tag.putInt("CycleTicks",100);tag.putFloat("Progress",40);
             tag.putString("Batch",CreatePlant.location("pressure_reaction/sodium_aluminate_solution").toString());tag.putString("Status",running ? "running" : "speed");
-            tag.putLong("PowerInput",RECEIVER.asLong());tag.putFloat("InputSpeed",running ? 64 : 0);
             be.readClient(tag,lookup);
         });
     }
@@ -165,8 +166,8 @@ public final class VesselBasinPonderScenes {
             for(int i=0;i<7;i++)tag.remove("Tank"+i);
             tag.put("TankContent",storage(FluidThermal.at(cryogenic ? new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),6000)
                 : new FluidStack(Fluids.WATER,10000-wastewater),cryogenic ? 77.36 : 293.15),lookup));
-            tag.put("Internal",CEReactor.INTERNALS.get(ReactorModule.STIRRED).get().getDefaultInstance().save(lookup));
-            tag.putBoolean("Windows",true);tag.putBoolean("Formed",true);tag.putBoolean("Running",false);tag.putInt("Sections",1);tag.putFloat("InputSpeed",0);
+            tag.remove("Internal");tag.putBoolean("Stirrer",true);
+            tag.putBoolean("Windows",true);tag.putBoolean("Formed",true);tag.putBoolean("Running",false);tag.putInt("Sections",LiddedVesselBlockEntity.IMPELLER_LAYERS);
             tag.putInt("DisplayedHeat",BlazeBurnerBlock.HeatLevel.NONE.ordinal());tag.putString("Status","idle");
             var fouling=new CompoundTag();fouling.putInt("Dirt",dirt);fouling.putBoolean("DrainOpen",false);fouling.putInt("WasteAmount",wastewater);fouling.putDouble("WasteKelvin",293.15);tag.put("Fouling",fouling);
             be.readClient(tag,lookup);
