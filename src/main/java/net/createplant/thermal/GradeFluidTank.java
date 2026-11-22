@@ -38,7 +38,7 @@ public class GradeFluidTank extends ThermalFluidTank {
             return net.createplant.mixture.MixtureTransfer.fill(this, incoming, action, true);
         return super.fill(incoming,action);
     }
-    private boolean layered(Direction side) { return side != null && side.getAxis().isVertical() && MixtureHelper.composite(fluid); }
+    private boolean layered(Direction side) { return side != null && side.getAxis().isVertical() && MixtureHelper.isMixture(fluid) && !MixtureHelper.gas(fluid); }
     public FluidStack layer(Direction side) {
         if (!layered(side)) return fluid.copy();
         var layers = TankLayers.ordered(java.util.List.of(fluid));
@@ -48,10 +48,7 @@ public class GradeFluidTank extends ThermalFluidTank {
         if (!layered(side)) return request.isEmpty() ? drain(amount, action) : drain(request, action);
         var layer = layer(side);
         if (amount <= 0 || !request.isEmpty() && !FluidThermal.compatible(layer, request)) return FluidStack.EMPTY;
-        return drainComponent(layer, amount, action);
-    }
-    public FluidStack drainComponent(FluidStack layer, int amount, FluidAction action) {
-        var removal = TankLayers.remove(fluid, layer, amount);
+        var removal = MixtureHelper.removeComponent(fluid, layer, amount);
         if (action.execute() && !removal.sample().isEmpty()) setFluid(removal.remaining());
         return removal.sample();
     }

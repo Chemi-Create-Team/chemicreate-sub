@@ -1,7 +1,11 @@
 package net.createplant.gametest;
 
 import java.util.Map;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
+import com.simibubi.create.content.fluids.pump.PumpBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createplant.CreatePlant;
 import net.createplant.mixture.GasMixturePort;
 import net.createplant.mixture.MixtureContents;
@@ -17,6 +21,7 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -53,6 +58,39 @@ public class GasMixtureGameTests {
             && tank.getFluidAmount() == 1200, "Draining keeps the two-to-one ratio");
         h.assertTrue(tank.fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0, "A liquid never joins a gas mixture");
         h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation", timeoutTicks = 220)
+    public static void aPumpUnderAStainlessTankTransfersWholeAir(GameTestHelper h) {
+        var source = AT.above(5);
+        var pump = source.below(2);
+        var target = pump.below(2);
+        var cog = pump.east();
+        var motor = cog.above();
+        h.setBlock(source, CETransport.LIDDED_VESSEL.get());
+        h.setBlock(target, CETransport.GAS_RECEIVER.get());
+        var outlet = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(source), Direction.DOWN);
+        var air = new FluidStack(CEFluids.AIR_GAS.get(), 4000);
+        h.assertTrue(outlet.fill(air, EXECUTE) == 4000 && outlet.getFluidInTank(0).is(CEFluids.AIR_GAS.get()),
+            "The bottom capability lists the entire air parcel");
+        h.assertTrue(outlet.drain(new FluidStack(CEFluids.OXYGEN_GAS.get(), 100), SIMULATE).isEmpty(),
+            "A normal outlet cannot extract an individual constituent of air");
+        var verticalPipe = CETransport.STAINLESS_PIPE.get().defaultBlockState();
+        for (var side : Direction.values()) verticalPipe = verticalPipe.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side), side.getAxis().isVertical());
+        h.setBlock(pump.above(), verticalPipe);
+        h.setBlock(pump.below(), verticalPipe);
+        h.setBlock(pump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(PumpBlock.FACING, Direction.DOWN));
+        h.setBlock(cog, AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.Y));
+        h.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.DOWN));
+        h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(64));
+        h.succeedWhen(() -> {
+            var received = ((FluidTankBlockEntity) h.getBlockEntity(target)).getTankInventory().getFluid();
+            h.assertTrue(received.is(CEFluids.AIR_GAS.get()) && received.getAmount() >= 1000,
+                "The powered downward pump transfers air with its original identity: " + received);
+            h.assertTrue(received.getAmount() + outlet.getFluidInTank(0).getAmount() == air.getAmount()
+                && MixtureHelper.extractContents(received).equals(MixtureHelper.airContents(received.getAmount())),
+                "The running pump conserves volume and preserves the air proportions");
+        });
     }
 
     @GameTest(template = "test_fractionation")

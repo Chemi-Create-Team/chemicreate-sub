@@ -28,6 +28,7 @@ import net.createplant.thermal.FluidMaterials;
 import net.createplant.thermal.GradeFluidTank;
 import net.createplant.thermal.TankLayers;
 import net.createplant.mixture.MixtureHelper;
+import net.createplant.mixture.MixtureTransfer;
 import net.createplant.mixture.GasPassThrough;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
@@ -186,17 +187,17 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         for (int i = 0; i < PROCESS_TANKS; i++) {
             var gas = gasDisplay[i == THIRD_FEED ? 10 : i];
             if (!gas.isEmpty()) {
-                for (var component : TankLayers.ordered(List.of(gas))) draws.add(new GasLayer(i, component));
+                draws.add(new GasLayer(i, gas));
                 vapour.add(gas);
             }
         }
         if (!storageDisplay[1].isEmpty()) {
-            for (var gas : TankLayers.ordered(List.of(storageDisplay[1]))) draws.add(new GasLayer(STORAGE_GAS, gas));
+            draws.add(new GasLayer(STORAGE_GAS, storageDisplay[1]));
             vapour.add(storageDisplay[1]);
         }
         var pass = GasPassThrough.of(this);
         if (pass != null && !pass.gas().isEmpty()) {
-            for (var gas : TankLayers.ordered(List.of(pass.gas()))) draws.add(new GasLayer(PASS_THROUGH_GAS, gas));
+            draws.add(new GasLayer(PASS_THROUGH_GAS, pass.gas()));
             vapour.add(pass.gas());
         }
         draws.sort(Comparator.comparingDouble((GasLayer layer) -> TankLayers.density(layer.fluid())).reversed());
@@ -210,10 +211,11 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     }
     /** The process gas fits in the vessel's volume beside the stored gas and the gas waiting to pass through. */
     @Override protected int processGasLimit() {
-        long limit=tankInventory.gasCapacity();
-        if (tankInventory.gasStored()) limit-=tankInventory.getFluidAmount();
-        var pass=GasPassThrough.of(this);if (pass!=null) limit-=pass.gas().getAmount();
-        return (int)Math.max(0,limit);
+        return Math.max(0,batchGasLimit()-(tankInventory.gasStored() ? tankInventory.getFluidAmount() : 0));
+    }
+    @Override protected int batchGasLimit() {
+        var pass=GasPassThrough.of(this);
+        return Math.max(0,tankInventory.gasCapacity()-(pass==null ? 0 : pass.gas().getAmount()));
     }
     public List<FluidStack> liquidLayers() { ensureDisplay();return liquidLayers; }
     public List<FluidStack> gasLayers() { ensureDisplay();return gasLayers; }
@@ -565,7 +567,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                 var recovery=guarded(owner.processRecoveryPort(),()->be.getControllerBE()==owner && be.reactor()==null);
                 handler=combined(storage,recovery);
             }
-            if (reactor!=null) handler=net.createplant.mixture.GasMixturePort.both(handler,owner);
+            if (reactor!=null) handler=net.createplant.mixture.GasMixturePort.outlet(handler,owner);
             if (side==Direction.DOWN) handler=combined(handler,owner.fouling().drainPort());
             if (handler==null) return null;
             var delegate=handler;int lease=owner.portGeneration();
@@ -581,7 +583,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                     return side != null && side != Direction.UP && stratified() && owner.hasStoredGas()
                         && (owner.liquidLayers().isEmpty() || side != Direction.DOWN && upperGasOutlet() && owner.getHeight() > 1);
                 }
-                private boolean upperGasOutlet() { return side == Direction.UP || side != Direction.DOWN && be.getBlockPos().getY() - owner.getBlockPos().getY() >= owner.getHeight() / 2; }
+                private boolean upperGasOutlet() { return side == Direction.UP || side != Direction.DOWN && be.getBlockPos().getY() - owner.getBlockPos().getY() >= Math.max(1, owner.getHeight() / 2); }
                 private FluidStack upperLiquid() {
                     return MixtureHelper.isMixture(owner.tankInventory.getFluid()) ? owner.tankInventory.layer(Direction.UP) : FluidStack.EMPTY;
                 }
@@ -649,15 +651,11 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         var layer = gasDraw(upper);
         if (layer == null) return FluidStack.EMPTY;
         var sampled = layer.fluid();
-        if (!request.isEmpty() && !FluidThermal.compatible(sampled, request)) return FluidStack.EMPTY;
+        if (!request.isEmpty() && !MixtureTransfer.matches(sampled, request)) return FluidStack.EMPTY;
         if (layer.bank() == PASS_THROUGH_GAS) {
             var pass = GasPassThrough.of(this);
-            return pass == null ? FluidStack.EMPTY : pass.takeLayer(sampled, amount, action);
+            return pass == null ? FluidStack.EMPTY : pass.take(amount, action);
         }
-        if (layer.bank() == STORAGE_GAS && MixtureHelper.composite(tankInventory.getFluid()))
-            return tankInventory.drainComponent(sampled, amount, action);
-        if (layer.bank() >= 0 && MixtureHelper.composite(processGasContent(layer.bank())))
-            return drainProcessGasLayer(layer.bank(), sampled, amount, action);
         var port = layer.bank() == STORAGE_GAS ? storageGasPort() : processGasPort(layer.bank());
         return port == null ? FluidStack.EMPTY : port.drain(amount, action);
     }
@@ -665,10 +663,10 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (amount<=0 || isRemoved() || !isController() || open()) return FluidStack.EMPTY;
         for (int i=2;i<PROCESS_TANKS+2;i++) {
             var port=processGasPort(i%PROCESS_TANKS);if (port==null) continue;
-            var content=port.getFluidInTank(0);if (!content.isEmpty() && (requested.isEmpty() || FluidThermal.compatible(content,requested))) { var out=port.drain(amount,action);if (!out.isEmpty()) return out; }
+            var content=port.getFluidInTank(0);if (!content.isEmpty() && (requested.isEmpty() || MixtureTransfer.matches(content,requested))) { var out=port.drain(amount,action);if (!out.isEmpty()) return out; }
         }
         var storage=storageGasPort();var content=storage.getFluidInTank(0);
-        return !content.isEmpty() && (requested.isEmpty() || FluidThermal.compatible(content,requested)) ? storage.drain(amount,action) : FluidStack.EMPTY;
+        return !content.isEmpty() && (requested.isEmpty() || MixtureTransfer.matches(content,requested)) ? storage.drain(amount,action) : FluidStack.EMPTY;
     }
     private FluidStack extractVesselLiquid(FluidStack requested,int amount,FluidAction action) {
         if (isRemoved() || !isController() || amount<=0) return FluidStack.EMPTY;
@@ -730,7 +728,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             }
             @Override public int fill(FluidStack stack,FluidAction action) { return isFluidValid(0,stack) ? tankInventory.fill(stack,action) : 0; }
             @Override public FluidStack drain(int amount,FluidAction action) { return !live() ? FluidStack.EMPTY : tankInventory.gasStored() ? tankInventory.drain(amount,action) : FluidStack.EMPTY; }
-            @Override public FluidStack drain(FluidStack stack,FluidAction action) { return FluidThermal.compatible(getFluidInTank(0),stack) ? drain(stack.getAmount(),action) : FluidStack.EMPTY; }
+            @Override public FluidStack drain(FluidStack stack,FluidAction action) { return MixtureTransfer.matches(getFluidInTank(0),stack) ? drain(stack.getAmount(),action) : FluidStack.EMPTY; }
         };
     }
 }

@@ -5170,14 +5170,14 @@
     "zh_cn": "用不锈钢罐制取二氧化硫"
   },
   "lidded_vessel.sulfur_feed": {
-    "en_us": "Feed sulfur through a funnel and supply oxygen at the roof. Keep the stainless tank closed.",
-    "ja_jp": "ファンネルから硫黄を入れ、上面の配管から酸素を送ります。ステンレスタンクのふたは閉じます。",
-    "zh_cn": "用漏斗加入硫，从顶面管道送入氧气。盖好不锈钢罐。"
+    "en_us": "Feed in sulfur dust through a funnel and air through the top pipe. Keep the stainless tank closed.",
+    "ja_jp": "ファンネルから硫黄粉を入れ、上面の配管から空気を送ります。 ステンレスタンクのふたは閉じます。",
+    "zh_cn": "用漏斗加入硫粉，从顶面管道送入空气。 盖好不锈钢罐。"
   },
   "lidded_vessel.sulfur_heat": {
-    "en_us": "Superheat the tank from below. Pump sulfur dioxide out through the roof.",
-    "ja_jp": "下から超加熱します。二酸化硫黄は上面からポンプで取り出します。",
-    "zh_cn": "从底部超热，从顶面用泵导出二氧化硫。"
+    "en_us": "Superheat the tank and pump the sulfur dioxide out at the lower side. The unreacted gases stay mixed and can leave through the top.",
+    "ja_jp": "下から超加熱し、二酸化硫黄を下側の側面からポンプで取り出します。 反応後に残った気体は混合したまま上面から搬出できます。",
+    "zh_cn": "从底部超热，再用泵从下侧导出二氧化硫。 剩余气体保持混合，可从顶面排出。"
   },
   "horizontal_tank.atmospheric_output": {
     "en_us": "This tank makes hot atmospheric steam. Superheating doubles the flow.",

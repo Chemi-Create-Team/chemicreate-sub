@@ -19,6 +19,8 @@ import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.chemistry.ReactorModule;
+import net.createplant.mixture.MixtureContents;
+import net.createplant.mixture.MixtureHelper;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
@@ -26,6 +28,7 @@ import net.createplant.thermal.FluidMaterials;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -415,9 +418,11 @@ public class VesselBasinGameTests {
         var bottom = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, center, Direction.DOWN);
         var light = top.drain(600, EXECUTE);
         var heavy = bottom.drain(600, EXECUTE);
-        h.assertTrue(light.is(CEFluids.NITROGEN_GAS.get()) && light.getAmount() == 600
+        var residual = new java.util.TreeMap<>(MixtureHelper.airContents(3000).amounts());
+        residual.compute(BuiltInRegistries.FLUID.getKey(CEFluids.OXYGEN_GAS.get()), (id, amount) -> amount - 500);
+        h.assertTrue(light.getAmount() == 600 && MixtureHelper.extractContents(light).equals(new MixtureContents(residual).split(600).extracted())
             && heavy.is(net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get()) && heavy.getAmount() == 500,
-            "The upper outlet exports nitrogen while the lower outlet exports only sulfur dioxide");
+            "The upper outlet exports the residual gas as a mixture while the lower outlet exports the separate sulfur dioxide product");
         h.succeed();
     }
 

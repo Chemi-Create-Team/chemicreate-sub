@@ -41,15 +41,18 @@ public final class LiddedVesselPonderScenes {
             com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING), false);
         scene.world().setBlock(tank.above(), CETransport.STAINLESS_PIPE.get().defaultBlockState()
             .setValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.UP,true).setValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.DOWN,true),false);
+        scene.world().setBlock(tank.east(), CETransport.STAINLESS_PIPE.get().defaultBlockState()
+            .setValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.EAST,true).setValue(com.simibubi.create.content.fluids.pipes.FluidPipeBlock.WEST,true),false);
         scene.world().setBlock(tank.west(), com.simibubi.create.AllBlocks.ANDESITE_FUNNEL.getDefaultState()
             .setValue(com.simibubi.create.content.logistics.funnel.FunnelBlock.FACING, Direction.WEST)
             .setValue(com.simibubi.create.content.logistics.funnel.FunnelBlock.EXTRACTING, false),false);
         scene.world().showSection(util.select().fromTo(3, 1, 3, 3, 3, 3), Direction.DOWN);
         scene.world().showSection(util.select().position(tank.west()), Direction.EAST);
         scene.overlay().showControls(util.vector().centerOf(tank.west()), Pointing.RIGHT, 100).withItem(net.createplant.registry.CEItems.SULFUR_DUST.toStack());
-        scene.overlay().showControls(util.vector().centerOf(tank.above()), Pointing.DOWN, 100).withItem(new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("oxygen_gas_bucket"))));
+        scene.overlay().showControls(util.vector().centerOf(tank.above()), Pointing.DOWN, 100).withItem(new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("air_gas_bucket"))));
         text(scene,util,tank,120,"sulfur_feed");
-        scene.overlay().showControls(util.vector().centerOf(tank.above()), Pointing.DOWN, 100).withItem(new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("sulfur_dioxide_bucket"))));
+        scene.world().showSection(util.select().position(tank.east()), Direction.WEST);
+        scene.overlay().showControls(util.vector().centerOf(tank.east()), Pointing.LEFT, 100).withItem(new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("sulfur_dioxide_bucket"))));
         text(scene,util,tank.below(),120,"sulfur_heat");
         scene.markAsFinished();
     }

@@ -15,6 +15,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public final class MixtureHelper {
+    public record Removal(FluidStack sample, FluidStack remaining) { }
     private MixtureHelper() { }
     public static boolean isMixture(FluidStack stack) { return stack.getFluid() instanceof MixtureFluid; }
     public static MixtureContents extractContents(FluidStack stack) {
@@ -124,6 +125,22 @@ public final class MixtureHelper {
         var contents = extractContents(stack);var data = data(stack);
         return contents.amounts().entrySet().stream().map(entry -> new FluidStack(BuiltInRegistries.FLUID.get(entry.getKey()).builtInRegistryHolder(), entry.getValue(),
             data.components().getOrDefault(entry.getKey(), net.minecraft.core.component.DataComponentPatch.EMPTY))).toList();
+    }
+
+    /** Removes one selected constituent for reactions and liquid layers, preserving the rest of the parcel. */
+    public static Removal removeComponent(FluidStack mixture, FluidStack component, int amount) {
+        if (amount <= 0 || component.isEmpty() || !composite(mixture)) return new Removal(FluidStack.EMPTY, mixture);
+        var id = BuiltInRegistries.FLUID.getKey(component.getFluid());
+        var contents = extractContents(mixture);
+        int available = contents.amounts().getOrDefault(id, 0);
+        int extracted = Math.min(amount, available);
+        if (extracted <= 0) return new Removal(FluidStack.EMPTY, mixture);
+        var remaining = new TreeMap<>(contents.amounts());
+        remaining.put(id, available - extracted);
+        var data = data(mixture);
+        var sample = new FluidStack(component.getFluid().builtInRegistryHolder(), extracted,
+            data.components().getOrDefault(id, DataComponentPatch.EMPTY));
+        return new Removal(sample, createStack(new MixtureContents(remaining), data, true, gas(mixture)));
     }
     public static FluidStack createStack(MixtureContents contents,MixtureData data,boolean unwrap) {
         return createStack(contents,data,unwrap,null);

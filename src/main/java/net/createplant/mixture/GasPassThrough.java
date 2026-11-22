@@ -47,19 +47,12 @@ public final class GasPassThrough extends BlockEntityBehaviour {
         changed();
     }
 
-    FluidStack take(int amount, FluidAction action) {
+    public FluidStack take(int amount, FluidAction action) {
         int taken = Math.min(Math.max(0, amount), gas.getAmount());
         if (taken == 0) return FluidStack.EMPTY;
         var result = MixtureHelper.portion(gas, taken);
         if (action.execute()) { gas = MixtureHelper.remainder(gas, taken);changed(); }
         return result;
-    }
-
-    public FluidStack takeLayer(FluidStack layer, int amount, FluidAction action) {
-        if (!MixtureHelper.composite(gas)) return take(amount, action);
-        var removal = net.createplant.thermal.TankLayers.remove(gas, layer, amount);
-        if (action.execute() && !removal.sample().isEmpty()) { gas = removal.remaining();changed(); }
-        return removal.sample();
     }
 
     private boolean sharesLayers() { return blockEntity instanceof net.createplant.block.entity.LiddedVesselBlockEntity; }

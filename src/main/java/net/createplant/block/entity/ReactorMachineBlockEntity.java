@@ -8,6 +8,8 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import net.createplant.block.*;
 import net.createplant.chemistry.*;
+import net.createplant.mixture.MixtureHelper;
+import net.createplant.mixture.MixtureTransfer;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CERecipeTypes;
@@ -176,14 +178,6 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         };
     }
     public Object gasBankIdentity(int slot) { return gasBanks[slot]; }
-    protected FluidStack drainProcessGasLayer(int bank, FluidStack layer, int amount, FluidAction action) {
-        var removal = net.createplant.thermal.TankLayers.remove(tanks[bank], layer, amount);
-        if (action.execute() && !removal.sample().isEmpty()) {
-            tanks[bank] = removal.remaining();
-            changed();
-        }
-        return removal.sample();
-    }
     /** A gas network treats the separate process buffers as separate vessels, never as the plain tank's volume. */
     public IFluidHandler processGasPort(int bank) {
         if (bank<0 || bank>=tanks.length || isRemoved() || !tanks[bank].isEmpty() && processGasContent(bank).isEmpty() || tanks[bank].isEmpty() && (!inputTank(bank) || !ready())) return null;
@@ -213,11 +207,11 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             @Override public FluidStack drain(int amount,FluidAction action) {
                 if (!live() || amount<=0 || tanks[bank].isEmpty()) return FluidStack.EMPTY;
                 var gas=processGasContent(bank);if (gas.isEmpty()) return FluidStack.EMPTY;
-                var out=gas.copyWithAmount(Math.min(amount,gas.getAmount()));
-                if (action.execute()) { tanks[bank].shrink(out.getAmount());changed(); }
+                var out=MixtureHelper.portion(gas,Math.min(amount,gas.getAmount()));
+                if (action.execute()) { tanks[bank]=MixtureHelper.remainder(gas,out.getAmount());changed(); }
                 return out;
             }
-            @Override public FluidStack drain(FluidStack stack,FluidAction action) { return FluidThermal.compatible(processGasContent(bank),stack) ? drain(stack.getAmount(),action) : FluidStack.EMPTY; }
+            @Override public FluidStack drain(FluidStack stack,FluidAction action) { return MixtureTransfer.matches(processGasContent(bank),stack) ? drain(stack.getAmount(),action) : FluidStack.EMPTY; }
         };
     }
     protected List<FluidStack> removeProcessGases(java.util.function.Predicate<FluidStack> stays) {
@@ -522,9 +516,19 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         }
         for (var ingredient:recipe.getFluidIngredients()) {
             int needed=ingredient.amount();
-            for (int tank:mixingInputs()) if (ingredient.ingredient().test(fluids[tank])) {
-                int take=Math.min(needed,fluids[tank].getAmount());
-                fluids[tank].shrink(take);needed-=take;
+            for (int tank:mixingInputs()) {
+                var feed=fluids[tank];
+                if (ingredient.ingredient().test(feed)) {
+                    int take=Math.min(needed,feed.getAmount());
+                    fluids[tank]=MixtureHelper.remainder(feed,take);needed-=take;
+                } else if (recipe instanceof PressureReactionRecipe && MixtureHelper.composite(feed) && MixtureHelper.isMixableGas(feed)) {
+                    for (var component:MixtureHelper.components(feed)) {
+                        if (!ingredient.ingredient().test(component)) continue;
+                        var removal=MixtureHelper.removeComponent(fluids[tank],component,needed);
+                        fluids[tank]=removal.remaining();needed-=removal.sample().getAmount();
+                        if (needed==0) break;
+                    }
+                }
                 if (needed==0) break;
             }
             if (needed>0) return false;
@@ -546,7 +550,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             if (tank==7 || fluids[tank].getAmount()+product.getAmount()>bufferCapacity(product)) return false;
             if (fluids[tank].isEmpty()) fluids[tank]=product.copy();else fluids[tank]=FluidThermal.mix(fluids[tank],product,product.getAmount());
         }
-        if (gasIn(fluids)>processGasLimit()) { gasBlocked=true;return false; }
+        if (gasIn(fluids)>batchGasLimit()) { gasBlocked=true;return false; }
         return true;
     }
 
@@ -630,6 +634,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
     /** How much gas the process may hold in all its buffers together; a lidded vessel bounds it by its volume. */
     protected int processGasLimit() { return Integer.MAX_VALUE; }
+    protected int batchGasLimit() { return processGasLimit(); }
     private static long gasIn(FluidStack[] fluids) { long total=0;for (var fluid:fluids) if (net.createplant.thermal.FluidState.gas(fluid)) total+=fluid.getAmount();return total; }
     /** The gas that still fits beside what the process buffers hold. */
     protected long processGas() { return gasIn(tanks); }

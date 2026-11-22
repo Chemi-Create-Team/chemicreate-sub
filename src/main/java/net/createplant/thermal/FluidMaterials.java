@@ -59,7 +59,15 @@ public final class FluidMaterials {
     private FluidMaterials(){ }
     private static String key(Fluid fluid){var id=BuiltInRegistries.FLUID.getKey(fluid);String path=id.getPath().replaceFirst("^flowing_","");return id.getNamespace().equals(CreatePlant.MOD_ID) ? path : id.getNamespace()+":"+path;}
     public static boolean gas(Fluid fluid){var id=BuiltInRegistries.FLUID.getKey(fluid);return id.getNamespace().equals(CreatePlant.MOD_ID) ? FluidHazards.named(key(fluid)).gas() : fluid.getFluidType().isLighterThanAir();}
-    public static double molarMass(FluidStack stack){if(net.createplant.chemistry.WasteGas.contaminated(stack))return net.createplant.chemistry.WasteGas.of(stack).molarMass();return molarMass(stack.getFluid());}
+    public static double molarMass(FluidStack stack){
+        if(net.createplant.chemistry.WasteGas.contaminated(stack))return net.createplant.chemistry.WasteGas.of(stack).molarMass();
+        if (!stack.isEmpty() && net.createplant.mixture.MixtureHelper.isMixture(stack)) {
+            double mass = 0;
+            for (var part : net.createplant.mixture.MixtureHelper.components(stack)) mass += molarMass(part) * part.getAmount();
+            return mass / stack.getAmount();
+        }
+        return molarMass(stack.getFluid());
+    }
     public static double molarMass(Fluid fluid){var values=TABLE.get(key(fluid));return values==null ? .028014 : values[0];}
     /** Whether a gas is denser than air at the same temperature and pressure, so that it settles in an open vessel; a mixture goes by its mean molar mass. */
     public static boolean heavierThanAir(FluidStack stack){

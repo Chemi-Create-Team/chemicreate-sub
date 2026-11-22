@@ -8,10 +8,14 @@ import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.VesselStirrerBlockEntity;
 import net.createplant.chemistry.ReactorModule;
+import net.createplant.mixture.MixtureContents;
+import net.createplant.mixture.MixtureHelper;
+import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CETransport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -21,6 +25,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
@@ -61,6 +66,42 @@ public class DriveLessVesselGameTests {
                 "The stock roof port gives one batch of SO2 without an agitator or a rotation source");
             h.succeed();
         });
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 180)
+    public static void airBurnsSulfurInASealedStainlessTank(GameTestHelper h) {
+        var sulfurDioxide = net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get();
+        var oxygen = BuiltInRegistries.FLUID.getKey(CEFluids.OXYGEN_GAS.get());
+        for (var pos : new BlockPos[] {BASE, BASE.east(4)}) {
+            h.setBlock(pos, CETransport.LIDDED_VESSEL.get());
+            var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(pos);
+            var inlet = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(pos), Direction.UP);
+            var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(pos), Direction.EAST);
+            boolean nativeAir = pos.equals(BASE);
+            int amount = nativeAir ? 3000 : ((net.createplant.thermal.GradeFluidTank) vessel.getTankInventory()).gasCapacity();
+            var air = nativeAir ? new FluidStack(CEFluids.AIR_GAS.get(), amount)
+                : MixtureHelper.createStack(MixtureHelper.airContents(amount), false);
+            h.assertTrue(inlet.fill(air, EXECUTE) == amount && vessel.itemPort().insertItem(0, net.createplant.registry.CEItems.SULFUR_DUST.toStack(), false).isEmpty(),
+                "The normal ports accept the complete air parcel and sulfur dust");
+            var heat = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
+            var burner = AllBlocks.BLAZE_BURNER.getDefaultState().setValue(heat, com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SMOULDERING);
+            h.setBlock(pos.below(), burner);
+            com.simibubi.create.content.processing.burner.BlazeBurnerBlock.tryInsert(burner, h.getLevel(), h.absolutePos(pos.below()), com.simibubi.create.AllItems.BLAZE_CAKE.asStack(), false, false, false);
+            h.runAfterDelay(150, () -> {
+                var product = port.drain(new FluidStack(sulfurDioxide, 500), EXECUTE);
+                var expected = new java.util.TreeMap<>(MixtureHelper.airContents(amount).amounts());
+                expected.compute(oxygen, (id, available) -> available - 500);
+                var remaining = vessel.getTankInventory().getFluid();
+                h.assertTrue(product.is(sulfurDioxide) && product.getAmount() == 500 && vessel.itemPort().getStackInSlot(0).isEmpty()
+                    && MixtureHelper.extractContents(remaining).equals(new MixtureContents(expected)),
+                    "The batch uses only the needed oxygen and leaves the other gases together, including at full rated capacity: " + vessel.status());
+                var simulated = port.drain(1000, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
+                h.assertTrue(simulated.getAmount() == 1000 && MixtureHelper.extractContents(simulated).equals(new MixtureContents(expected).split(1000).extracted())
+                    && port.drain(new FluidStack(CEFluids.OXYGEN_GAS.get(), 1), EXECUTE).isEmpty(),
+                    "A normal outlet samples the residual mixture in proportion");
+                if (!nativeAir) h.succeed();
+            });
+        }
     }
 
     /** A two-layer stirred tank over its stirrer, with a lit burner under one corner. */
