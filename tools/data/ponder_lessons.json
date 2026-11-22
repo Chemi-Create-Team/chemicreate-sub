@@ -1395,9 +1395,9 @@
     "zh_cn": "氯气、硫化氢等有毒气体须使用适合的管道与储罐。"
   },
   "guide.toxic_gas.step_2": {
-    "en_us": "Leaked gas becomes a cloud in the space it can reach. Heavy gases like chlorine settle on the floor, light ones like ammonia under the ceiling, and walls and closed doors hold them back.",
-    "ja_jp": "漏れたガスは、通れるマスに広がる雲になります。塩素など重いガスは床に、アンモニアなど軽いガスは天井側に溜まり、壁や閉じたドアで止まります。",
-    "zh_cn": "泄漏的气体会在可通过的空间形成气云。氯气等重气体沉在地面，氨等轻气体聚在顶部，墙壁和关闭的门会将其挡住。"
+    "en_us": "Heavy gas spreads as a low mist along the floor and down steps. Light gas gathers higher up. Walls and closed doors contain both.",
+    "ja_jp": "重いガスは床を這うもやとなり、段差を下って低い所にたまります。 軽いガスは上に集まります。どちらも壁や閉じたドアで止まります。",
+    "zh_cn": "重气体形成贴地薄雾，沿台阶向下流动并在低处聚集。 轻气体聚集在高处。墙壁和关闭的门会挡住这两种气体。"
   },
   "guide.toxic_gas.step_3": {
     "en_us": "Breathing inside a toxic cloud poisons you. Coloured gases show as mist; colourless ones such as carbon monoxide are unseen, so check with a gas detector.",

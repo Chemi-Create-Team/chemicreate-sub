@@ -2,141 +2,155 @@ package net.createplant.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.HashCommon;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.createplant.cloud.CloudVolume;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import org.joml.Vector3fc;
 
 final class FallingGasMist {
-    private static final Direction[] HORIZONTAL = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
-    private static final int MAX_PATHS = 40, MAX_STEPS = 24, PUFFS = 4;
-    private final List<Path> paths;
+    private static final Direction[] SIDES = {
+        Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST, Direction.DOWN, Direction.UP
+    };
+    private final Map<BlockPos, Cell> cells = new HashMap<>();
+    private final BlockPos origin;
+    private final int top, sampleX, sampleZ;
 
     private static final class Cell {
         final BlockPos pos;
-        final Cell[] neighbors = new Cell[HORIZONTAL.length];
-        Cell below;
-        int distanceToDrop = Integer.MAX_VALUE;
-        boolean room;
+        final int openings, floor;
+        float arrival = Float.POSITIVE_INFINITY;
 
-        Cell(BlockPos pos) { this.pos = pos; }
+        Cell(Level level, CloudVolume volume, BlockPos pos, BoundingBox previewBounds) {
+            this.pos = pos;
+            int openings = 0;
+            for (int i = 0; i < SIDES.length; i++) {
+                var side = SIDES[i];
+                if ((previewBounds == null || previewBounds.isInside(pos.relative(side))) && volume.flowsThrough(level, pos, side))
+                    openings |= 1 << i;
+            }
+            this.openings = openings;
+            int floor = 0;
+            var state = level.getBlockState(pos);
+            if (!state.isAir() && (openings & 16) == 0) {
+                for (var box : state.getCollisionShape(level, pos).toAabbs())
+                    if (box.minY == 0 && box.minX == 0 && box.maxX == 1 && box.minZ == 0 && box.maxZ == 1)
+                        floor = Math.max(floor, Mth.floor(box.maxY * 16));
+            }
+            this.floor = floor;
+        }
     }
 
-    private record Point(int x, int y, int z, boolean room) { }
-    private record Path(List<Point> points, float phase, int delay) { }
+    private record Arrival(Cell cell, float time) { }
 
-    FallingGasMist(Level level, CloudVolume volume) {
-        var cells = new HashMap<BlockPos, Cell>();
-        for (var pos : volume.positions()) cells.put(pos, new Cell(pos));
-        var descending = new ArrayDeque<Cell>();
-        var origin = volume.origin();
+    FallingGasMist(Level level, CloudVolume volume, FallingGasMist previous, float time) {
+        origin = volume.origin();
+        top = (int) volume.bounds().maxY - 1 - origin.getY();
+        sampleX = Math.floorMod(origin.getX(), 256);
+        sampleZ = Math.floorMod(origin.getZ(), 256);
+        var pending = new PriorityQueue<Arrival>(Comparator.comparingDouble(Arrival::time));
+        boolean hasOrigin = volume.contains(origin);
+        float releaseTime = previous == null ? 0 : time;
+        var previewBounds = level instanceof PonderLevel preview ? preview.getBounds() : null;
+        for (var pos : volume.positions()) {
+            if (previewBounds != null && !previewBounds.isInside(pos)) continue;
+            var cell = new Cell(level, volume, pos, previewBounds);
+            cells.put(pos, cell);
+            var oldCell = previous == null ? null : previous.cells.get(pos);
+            if (oldCell != null) schedule(pending, cell, oldCell.arrival);
+            else if (hasOrigin ? pos.equals(origin) : pos.distManhattan(origin) == 1) schedule(pending, cell, releaseTime);
+        }
+        while (!pending.isEmpty()) {
+            var next = pending.remove();
+            var cell = next.cell();
+            if (next.time() != cell.arrival) continue;
+            for (int i = 0; i < SIDES.length; i++) {
+                if ((cell.openings & 1 << i) == 0) continue;
+                var neighbor = cells.get(cell.pos.relative(SIDES[i]));
+                float travel = switch (SIDES[i]) {
+                    case DOWN -> 8;
+                    case UP -> 23;
+                    default -> 13;
+                };
+                float start = previous == null || previous.cells.containsKey(neighbor.pos) ? next.time() : Math.max(next.time(), time);
+                schedule(pending, neighbor, start + travel);
+            }
+        }
+    }
+
+    private static void schedule(PriorityQueue<Arrival> pending, Cell cell, float time) {
+        if (time >= cell.arrival) return;
+        cell.arrival = time;
+        pending.add(new Arrival(cell, time));
+    }
+
+    void render(VertexConsumer buffer, PoseStack.Pose pose, Vector3fc view, float time, float charge, float distanceFade,
+        float topHeight, int color, int samples) {
+        float xView = Math.abs(view.x()), yView = Math.abs(view.y()), zView = Math.abs(view.z());
+        float threshold = Math.max(xView, Math.max(yView, zView)) * .78f;
+        float xWeight = Math.max(0, xView - threshold);
+        float yWeight = Math.max(0, yView - threshold);
+        float zWeight = Math.max(0, zView - threshold);
+        float visibility = Mth.sqrt(charge) * distanceFade / (xWeight + yWeight + zWeight);
+        int cap = Math.max(1, Math.round(topHeight * 16));
         for (var cell : cells.values()) {
-            for (int side = 0; side < HORIZONTAL.length; side++) {
-                var direction = HORIZONTAL[side];
-                if (volume.flowsThrough(level, cell.pos, direction)) cell.neighbors[side] = cells.get(cell.pos.relative(direction));
-            }
-            cell.room = hasRoom(volume, level, cell);
-            if (volume.flowsThrough(level, cell.pos, Direction.DOWN)) {
-                cell.below = cells.get(cell.pos.below());
-                cell.distanceToDrop = 0;
-                descending.add(cell);
-            }
-        }
-        while (!descending.isEmpty()) {
-            var cell = descending.remove();
-            for (var neighbor : cell.neighbors) {
-                if (neighbor == null || neighbor.distanceToDrop <= cell.distanceToDrop + 1) continue;
-                neighbor.distanceToDrop = cell.distanceToDrop + 1;
-                descending.add(neighbor);
-            }
-        }
-
-        var selected = new ArrayList<Path>();
-        var starts = new ArrayList<>(cells.values());
-        starts.sort(Comparator.comparingLong(cell -> HashCommon.murmurHash3(cell.pos.asLong())));
-        var source = cells.get(origin);
-        if (source != null) selected.add(path(source, origin));
-        for (var cell : starts) {
-            if (cell != source) selected.add(path(cell, origin));
-            if (selected.size() == MAX_PATHS) break;
-        }
-        paths = List.copyOf(selected);
-    }
-
-    private static boolean hasRoom(CloudVolume volume, Level level, Cell cell) {
-        for (int side = 0; side < HORIZONTAL.length; side++) {
-            var neighbor = cell.neighbors[side];
-            if (neighbor == null || !volume.flowsThrough(level, neighbor.pos, HORIZONTAL[(side + 1) % HORIZONTAL.length])) return false;
-        }
-        return true;
-    }
-
-    private static Path path(Cell start, BlockPos origin) {
-        var points = new ArrayList<Point>();
-        var visited = new HashSet<Cell>();
-        long seed = HashCommon.murmurHash3(start.pos.asLong());
-        var cell = start;
-        int groundSteps = 0;
-        for (int step = 0; cell != null && step <= MAX_STEPS; step++) {
-            visited.add(cell);
-            points.add(new Point(cell.pos.getX() - origin.getX(), cell.pos.getY() - origin.getY(), cell.pos.getZ() - origin.getZ(), cell.room));
-            if (cell.below != null) {
-                cell = cell.below;
-                continue;
-            }
-            boolean towardDrop = cell.distanceToDrop != Integer.MAX_VALUE;
-            if (!towardDrop && groundSteps++ >= 5) break;
-            int first = (int) (seed >>> (step % 8 * 8)) & 3;
-            Cell next = null;
-            for (int i = 0; i < HORIZONTAL.length; i++) {
-                var candidate = cell.neighbors[(first + i) & 3];
-                if (candidate != null && !visited.contains(candidate) && (!towardDrop || candidate.distanceToDrop < cell.distanceToDrop)) {
-                    next = candidate;
-                    break;
+            float age = Mth.clamp((time - cell.arrival) / 32, 0, 1);
+            float opacity = visibility * age * age * (3 - 2 * age);
+            if (opacity < .004f) continue;
+            float x = cell.pos.getX() - origin.getX() - .5f;
+            float y = cell.pos.getY() - origin.getY() - .5f;
+            float z = cell.pos.getZ() - origin.getZ() - .5f;
+            int ceiling = cell.pos.getY() - origin.getY() == top ? cap : 16;
+            float height = (ceiling - cell.floor) / 16f;
+            if (height <= 0) continue;
+            // The shader decodes the six face flags followed by the floor and ceiling in sixteenths of a block.
+            int data = cell.openings | cell.floor << 6 | ceiling << 11;
+            float bottom = y + cell.floor / 16f;
+            float upper = bottom + height;
+            // Blend adjacent slicing axes so rotating the camera does not switch the sampling abruptly.
+            int xAlpha = sliceOpacity(opacity, xWeight, xView, 1, samples);
+            int yAlpha = sliceOpacity(opacity, yWeight, yView, height, samples);
+            int zAlpha = sliceOpacity(opacity, zWeight, zView, 1, samples);
+            for (int i = 0; i < samples; i++) {
+                float t = (i + .5f) / samples;
+                if (xAlpha > 0) {
+                    float u = x + t;
+                    vertex(buffer, pose, u, bottom, z, data, color, xAlpha);
+                    vertex(buffer, pose, u, bottom, z + 1, data, color, xAlpha);
+                    vertex(buffer, pose, u, upper, z + 1, data, color, xAlpha);
+                    vertex(buffer, pose, u, upper, z, data, color, xAlpha);
+                }
+                if (yAlpha > 0) {
+                    float v = bottom + t * height;
+                    vertex(buffer, pose, x, v, z, data, color, yAlpha);
+                    vertex(buffer, pose, x + 1, v, z, data, color, yAlpha);
+                    vertex(buffer, pose, x + 1, v, z + 1, data, color, yAlpha);
+                    vertex(buffer, pose, x, v, z + 1, data, color, yAlpha);
+                }
+                if (zAlpha > 0) {
+                    float w = z + t;
+                    vertex(buffer, pose, x, bottom, w, data, color, zAlpha);
+                    vertex(buffer, pose, x + 1, bottom, w, data, color, zAlpha);
+                    vertex(buffer, pose, x + 1, upper, w, data, color, zAlpha);
+                    vertex(buffer, pose, x, upper, w, data, color, zAlpha);
                 }
             }
-            cell = next;
         }
-        return new Path(List.copyOf(points), (seed >>> 48) / 65536f, Math.max(0, (origin.getY() - start.pos.getY()) * 3));
     }
 
-    void render(VertexConsumer buffer, PoseStack.Pose pose, GasBillboard billboard, float time, float charge, float distanceFade,
-        int top, float topHeight, int color) {
-        for (var path : paths) {
-            int steps = path.points().size() - 1;
-            for (int i = 0; i < PUFFS; i++) {
-                float clock = (time - path.delay()) / (24 + steps * 5f) - (i + path.phase()) / PUFFS;
-                if (clock < 0) continue;
-                float age = clock - Mth.floor(clock);
-                int opacity = (int) (154 * Mth.sqrt(charge) * distanceFade * Mth.clamp(age * 7, 0, 1) * (1 - age));
-                if (opacity == 0) continue;
-                float progress = age * steps;
-                int segment = Mth.floor(progress);
-                var from = path.points().get(segment);
-                var to = path.points().get(Math.min(segment + 1, steps));
-                float fraction = progress - segment;
-                float phase = path.phase() * Mth.TWO_PI + i * 1.71f;
-                float fromHeight = from.y() == top ? topHeight : 1;
-                float toHeight = to.y() == top ? topHeight : 1;
-                float height = Mth.lerp(fraction, fromHeight, toHeight);
-                float lift = .37f + .055f * Mth.sin(phase + age * 5);
-                float x = Mth.lerp(fraction, from.x(), to.x()) + .048f * Mth.sin(phase + age * 7);
-                float z = Mth.lerp(fraction, from.z(), to.z()) + .048f * Mth.cos(phase + age * 7);
-                float y = Mth.lerp(fraction, from.y(), to.y()) - .5f + lift * height;
-                boolean descending = from.y() != to.y();
-                float widthLimit = !descending && from.room() && to.room() ? .91f : .45f;
-                float width = Math.min(widthLimit, .23f + .86f * age);
-                float depth = height * Math.min(.31f, .15f + age * .24f);
-                billboard.draw(buffer, pose, x, y, z, width, depth, .65f * Mth.sin(phase + age), color, opacity);
-            }
-        }
+    private static int sliceOpacity(float opacity, float weight, float view, float length, int samples) {
+        return weight == 0 ? 0 : Mth.clamp(Math.round(255 * opacity * weight * length / (view * samples)), 0, 255);
+    }
+
+    private void vertex(VertexConsumer buffer, PoseStack.Pose pose, float x, float y, float z, int data, int color, int opacity) {
+        buffer.addVertex(pose, x, y, z).setColor(color >> 16 & 255, color >> 8 & 255, color & 255, opacity)
+            .setUv(x + sampleX, z + sampleZ).setUv2(Math.round(y * 1024), data);
     }
 }
