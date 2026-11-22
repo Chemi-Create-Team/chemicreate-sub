@@ -55,6 +55,7 @@
     "TankLayerRendererMixin",
     "FluidStateRenderMixin",
     "FluidStateStreamRenderMixin",
+    "FluidStateGlassPipeMixin",
     "StatefulBucketModelMixin",
     "CreativeInventorySectionsMixin",
     "GoggleOverlayMixin",
