@@ -72,7 +72,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     private final FluidStack[] liquidDisplay=new FluidStack[12],gasDisplay=new FluidStack[12];
     private List<FluidStack> liquidLayers = List.of(), gasLayers = List.of();
     private List<GasLayer> gasDraws = List.of();
-    private static final int STORAGE_GAS = -1, PASS_THROUGH_GAS = -2;
+    private static final int STORAGE_GAS = -1, PASS_THROUGH_GAS = -2, ATMOSPHERIC = net.createplant.thermal.FluidState.pressureLevel(1);
     private record GasLayer(int bank, FluidStack fluid) { }
     private VesselFouling fouling;
     private final net.createplant.thermal.TankHeating heating=new net.createplant.thermal.TankHeating();
@@ -494,16 +494,24 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     /** The middle of the top layer, where the hatch opens. */
     private BlockPos top() { return worldPosition.offset(width / 2, height - 1, width / 2); }
 
-    /** An open vessel holds no gas and no vapour above atmospheric pressure: it leaves through the top, toxic ones as a cloud. */
+    /**
+     * An open vessel holds nothing above atmospheric pressure, and no gas lighter than air: it leaves through the top, toxic ones as a cloud.
+     * A gas heavier than air settles and stays, down to what fills the vessel at atmospheric pressure.
+     */
     void vent() {
         if(level==null || level.isClientSide)return;
         var pass = GasPassThrough.of(this);
         if (pass != null) pass.vent();
-        for(var released:removeProcessGases())ToxicGas.release(level,top(),released);
-        if(!tankInventory.isEmpty() && net.createplant.transport.FluidHazards.of(tankInventory.getFluid()).gas()) {
-            var released=tankInventory.drain(tankInventory.getFluidAmount(),FluidAction.EXECUTE);ToxicGas.release(level,top(),released);
-            ((ServerLevel)level).sendParticles(ParticleTypes.CLOUD,top().getX()+.5,top().getY()+.5,top().getZ()+.5,8,.3,.3,.3,.05);
-        }
+        for(var released:removeProcessGases(net.createplant.thermal.FluidMaterials::heavierThanAir))ToxicGas.release(level,top(),released);
+        var fluid=tankInventory.getFluid();
+        if(fluid.isEmpty() || !net.createplant.transport.FluidHazards.of(fluid).gas())return;
+        int kept=net.createplant.thermal.FluidMaterials.heavierThanAir(fluid) ? Math.min(fluid.getAmount(),tankInventory.volumeCapacity()) : 0;
+        if(kept==fluid.getAmount() && net.createplant.thermal.FluidState.pressure(fluid)<=ATMOSPHERIC)return;
+        var released=tankInventory.drain(fluid.getAmount()-kept,FluidAction.EXECUTE);
+        if(kept>0){var settled=tankInventory.getFluid().copy();net.createplant.thermal.FluidState.setPressure(settled,ATMOSPHERIC);tankInventory.setFluid(settled);}
+        if(released.isEmpty())return;
+        ToxicGas.release(level,top(),released);
+        ((ServerLevel)level).sendParticles(ParticleTypes.CLOUD,top().getX()+.5,top().getY()+.5,top().getZ()+.5,8,.3,.3,.3,.05);
     }
 
     /** The lid is thrown back with a bang and the jet lifts whatever stands over the opening. */

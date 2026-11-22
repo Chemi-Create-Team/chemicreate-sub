@@ -9,7 +9,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Fixed reference data for chemical quantities and fraction order; no vessel or phase solver. */
 public final class FluidMaterials {
-    public static final double R=8.314462618,ATMOSPHERE=101325;
+    public static final double R=8.314462618,ATMOSPHERE=101325,AIR_MOLAR_MASS=.02897;
     private static final Map<String,double[]> TABLE=Map.ofEntries(
         entry("minecraft:water",18.015,373.15),entry("minecraft:lava",60.08,2503),
         entry("neoforge:milk",18.015,373.7),entry("create:tea",18.015,373.15),
@@ -61,6 +61,13 @@ public final class FluidMaterials {
     public static boolean gas(Fluid fluid){var id=BuiltInRegistries.FLUID.getKey(fluid);return id.getNamespace().equals(CreatePlant.MOD_ID) ? FluidHazards.named(key(fluid)).gas() : fluid.getFluidType().isLighterThanAir();}
     public static double molarMass(FluidStack stack){if(net.createplant.chemistry.WasteGas.contaminated(stack))return net.createplant.chemistry.WasteGas.of(stack).molarMass();return molarMass(stack.getFluid());}
     public static double molarMass(Fluid fluid){var values=TABLE.get(key(fluid));return values==null ? .028014 : values[0];}
+    /** Whether a gas is denser than air at the same temperature and pressure, so that it settles in an open vessel; a mixture goes by its mean molar mass. */
+    public static boolean heavierThanAir(FluidStack stack){
+        if(!net.createplant.mixture.MixtureHelper.composite(stack))return molarMass(stack)>AIR_MOLAR_MASS;
+        double grams=0;long amount=0;
+        for(var part:net.createplant.mixture.MixtureHelper.components(stack)){grams+=molarMass(part)*part.getAmount();amount+=part.getAmount();}
+        return amount>0 && grams/amount>AIR_MOLAR_MASS;
+    }
     public static boolean known(Fluid fluid){return TABLE.containsKey(key(fluid));}
     public static double boilingOrder(FluidStack stack){return TABLE.getOrDefault(key(stack.getFluid()),new double[]{.028014,373.15})[1];}
     public static double referenceDensity(Fluid fluid,double kelvin){return FluidHazards.nominal(fluid).bar()*1e5*molarMass(fluid)/(R*kelvin)/1000;}

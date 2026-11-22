@@ -87,7 +87,6 @@ public abstract class GradeTankMixin implements net.createplant.block.entity.Tan
         var fluid = owner.getTankInventory().getFluid();
         lines.add(fluid.isEmpty() ? Component.literal("0 / " + volumeCapacity(owner) + " mB")
             : net.createplant.chemistry.ChemicalReadout.contents(fluid.copyWithAmount(gasVolume(owner)), volumeCapacity(owner)));
-        if(!fluid.isEmpty())lines.add(net.createplant.thermal.FluidState.describe(fluid));
         if(grade!=null)grade.describe(lines,fluid,sneaking);
         net.createplant.transport.ContainmentWear.addWarning(owner,lines);
         if(net.createplant.block.entity.TankBoiler.applies(owner))net.createplant.block.entity.TankBoiler.of(owner).goggle(lines);

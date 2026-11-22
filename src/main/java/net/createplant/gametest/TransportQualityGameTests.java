@@ -51,10 +51,10 @@ public final class TransportQualityGameTests {
         h.assertTrue(marks.length()==17 && marks.charAt(13)=='●' && marks.charAt(0)=='◆' && marks.charAt(1)=='·' && marks.charAt(16)=='◆',"Seventeen marks, a diamond on each grade, with the contents' level filled in: "+marks);
         var styles=new java.util.ArrayList<net.minecraft.network.chat.TextColor>();
         copper.visit((style,text)->{styles.add(style.getColor());return java.util.Optional.empty();},net.minecraft.network.chat.Style.EMPTY);
-        var green=net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.GREEN);
-        h.assertTrue(styles.get(8)==green && styles.get(12)==green && styles.get(4)!=green
-            && styles.get(13)==net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.WHITE),
-            "Copper's ambient-to-hot range is green and a level inside it is white");
+        var white=net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.WHITE);
+        h.assertTrue(styles.get(8)==white && styles.get(12)==white && styles.get(4)!=white
+            && styles.get(13)==net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.GREEN),
+            "Copper's ambient-to-hot range is white and a level inside it is green");
         var hot=net.createplant.thermal.GradeScale.temperature(PipeMaterial.COPPER.coldest,PipeMaterial.COPPER.hottest,16);
         var last=new net.minecraft.network.chat.TextColor[1];
         hot.visit((style,text)->{if(text.equals("●"))last[0]=style.getColor();return java.util.Optional.empty();},net.minecraft.network.chat.Style.EMPTY);

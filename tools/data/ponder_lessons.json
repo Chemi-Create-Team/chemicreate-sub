@@ -1865,9 +1865,9 @@
     "zh_cn": "空手右键打开检修口，可用桶注入或取出内容物。"
   },
   "lidded_vessel.blowout": {
-    "en_us": "Opening the hatch releases stored gas. Toxic contents spread as a cloud.",
-    "ja_jp": "ハッチを開くと貯留ガスを放出します。有毒な中身はガス雲になります。",
-    "zh_cn": "打开舱口会排放储气，有毒内容物会形成气云。"
+    "en_us": "Opening the hatch releases the gas above atmospheric pressure. Gases lighter than air escape; heavier ones such as chlorine or carbon dioxide settle and stay. Toxic releases spread as a cloud.",
+    "ja_jp": "ハッチを開くと、常圧を超える分のガスを放出します。空気より軽い気体は抜けますが、塩素や二酸化炭素など空気より重い気体は底にたまって残ります。有毒なガスはガス雲になります。",
+    "zh_cn": "打开舱口会排出高于常压的气体。比空气轻的气体会逸出，氯气、二氧化碳等比空气重的气体会沉积并留在罐内。有毒气体会形成气云。"
   },
   "lidded_vessel.goggles": {
     "en_us": "Goggles list all gas constituents. Draw light gas from the top and heavy gas from the bottom of a gas-filled vessel.",
@@ -2360,9 +2360,9 @@
     "zh_cn": "按配方提供加热或超级加热。产物以独立流体种类输出。"
   },
   "vessel_maintenance.hatch": {
-    "en_us": "Opening the hatch vents the stored gas. Close it before collecting gas again.",
-    "ja_jp": "ハッチを開くと貯留ガスを放出します。気体を回収するときは閉じます。",
-    "zh_cn": "打开舱口会排放储存的气体。收集气体前关闭舱口。"
+    "en_us": "Opening the hatch vents gas lighter than air; heavier gas stays. Close it before collecting gas again.",
+    "ja_jp": "ハッチを開くと空気より軽いガスを放出します。重いガスは残ります。気体を回収するときは閉じます。",
+    "zh_cn": "打开舱口会排放比空气轻的气体，较重的气体会留下。收集气体前关闭舱口。"
   },
   "guide.uranium_preparation.title": {
     "en_us": "From uranium ore to centrifuge feed",

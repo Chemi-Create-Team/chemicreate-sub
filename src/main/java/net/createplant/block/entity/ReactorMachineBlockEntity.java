@@ -220,9 +220,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             @Override public FluidStack drain(FluidStack stack,FluidAction action) { return FluidThermal.compatible(processGasContent(bank),stack) ? drain(stack.getAmount(),action) : FluidStack.EMPTY; }
         };
     }
-    protected List<FluidStack> removeProcessGases() {
+    protected List<FluidStack> removeProcessGases(java.util.function.Predicate<FluidStack> stays) {
         var removed=new ArrayList<FluidStack>();
-        for(int i=0;i<tanks.length;i++)if(!tanks[i].isEmpty() && net.createplant.transport.FluidHazards.of(tanks[i]).gas()){removed.add(tanks[i].copy());tanks[i]=FluidStack.EMPTY;}
+        for(int i=0;i<tanks.length;i++)if(!tanks[i].isEmpty() && net.createplant.transport.FluidHazards.of(tanks[i]).gas() && !stays.test(tanks[i])){removed.add(tanks[i].copy());tanks[i]=FluidStack.EMPTY;}
         if(!removed.isEmpty())changed();return removed;
     }
 

@@ -31,7 +31,7 @@ public final class ThermalClientCheck {
         var lines=tooltip.stream().map(Component::getString).toList();
         var result=tank.getTankInventory().getFluid();
         if(result.getAmount()!=2000 || FluidState.temperature(result)!=9
-            || lines.stream().noneMatch(line->line.contains(FluidState.describe(result).getString())))
+            || lines.stream().noneMatch(line->line.contains(net.createplant.thermal.GradeScale.temperature(net.createplant.thermal.TankGrade.LIQUID.coldest,net.createplant.thermal.TankGrade.LIQUID.hottest,9).getString())))
             throw new IllegalStateException("Native tank state tooltip failed: "+lines);
         java.nio.file.Files.writeString(mc.gameDirectory.toPath().resolve("thermal-client-result.txt"),String.join("\n",lines));
 

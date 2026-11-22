@@ -122,4 +122,21 @@ public class LiddedVesselGameTests {
         h.assertBlockPresent(CETransport.LIDDED_VESSEL.get(), BASE);
         h.succeed();
     }
+
+    @GameTest(template = "test_fractionation")
+    public static void aGasHeavierThanAirSettlesInTheOpenVessel(GameTestHelper h) {
+        for(int x=0;x<2;x++)for(int z=0;z<2;z++)h.setBlock(BASE.offset(x,0,z), CETransport.LIDDED_VESSEL.get().defaultBlockState());
+        var root = root(h, BASE);
+        var tank = (net.createplant.thermal.GradeFluidTank) root.getTankInventory();
+        int volume = tank.volumeCapacity();
+        var gas = FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.CARBON_DIOXIDE.get(), volume * 4), 293.15);
+        h.assertTrue(tank.fill(gas, FluidAction.EXECUTE) == volume * 4, "The closed vessel holds compressed carbon dioxide");
+        root.toggleLid();
+        var left = tank.getFluid();
+        h.assertTrue(left.getAmount() == volume && net.createplant.thermal.FluidState.pressure(left) == net.createplant.thermal.FluidState.pressureLevel(1),
+            "Opening lets out the compression but carbon dioxide, heavier than air, stays at atmospheric pressure: " + left.getAmount() + " of " + volume);
+        root.toggleLid();root.toggleLid();
+        h.assertTrue(tank.getFluidAmount() == volume, "Opening again loses none of the settled gas");
+        h.succeed();
+    }
 }
