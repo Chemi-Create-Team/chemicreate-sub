@@ -171,4 +171,21 @@ public final class TankGradeGameTests {
             h.succeed();
         });
     }
+
+    @GameTest(template="test_fractionation")
+    public static void aCorrosiveFluidTheTankIsNotRatedForNamesItsKindInTheWarning(GameTestHelper h) {
+        var be=tank(h,com.simibubi.create.AllBlocks.FLUID_TANK.get());
+        h.runAfterDelay(2,()->{
+            var wear=com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour.get(be,net.createplant.transport.ContainmentWear.TYPE);
+            h.assertTrue(be.getTankInventory().fill(new FluidStack(net.createplant.registry.CEChlorAlkali.HYDROCHLORIC_ACID.get(),1000),EXECUTE)==1000,"The plain tank takes the acid");
+            for(int i=0;i<20;i++)wear.tick();
+            var warning=net.createplant.transport.ContainmentWear.warning(be);
+            var reason=warning==null ? null : ((net.minecraft.network.chat.contents.TranslatableContents)warning.getContents()).getArgs()[0];
+            h.assertTrue(wear.reason().equals("halogen") && reason instanceof net.minecraft.network.chat.Component name
+                && ((net.minecraft.network.chat.contents.TranslatableContents)name.getContents()).getKey().endsWith(".wear.halogen")
+                && warning.getStyle().getColor()==net.minecraft.network.chat.TextColor.fromLegacyFormat(net.minecraft.ChatFormatting.RED),
+                "Hydrochloric acid in a plain tank warns in red that it does not resist halogens: "+wear.reason());
+            h.succeed();
+        });
+    }
 }

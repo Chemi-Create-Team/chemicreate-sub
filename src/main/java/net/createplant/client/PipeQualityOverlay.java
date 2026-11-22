@@ -14,7 +14,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-/** What a fluid is and what a pipe carries, in grades: on this mod's buckets, on pipe items, and on Create's own pipes seen through goggles. */
+/** What a fluid is and what a pipe, pump or tank holds, in grades: on this mod's buckets, on pipe, pump and tank items, and on Create's own pipes seen through goggles. */
 public final class PipeQualityOverlay {
     private static final String PREFIX = "transport." + CreatePlant.MOD_ID + ".";
 
@@ -27,8 +27,12 @@ public final class PipeQualityOverlay {
             if (chemical.corrosive()) event.getToolTip().add(Component.translatable(PREFIX + "corrosive." + chemical.corrosion().name().toLowerCase(java.util.Locale.ROOT)));
             if (chemical.gas()) event.getToolTip().add(Component.translatable(PREFIX + "gas"));
         }
-        if (item instanceof BlockItem block && PipeMaterial.pipe(block.getBlock().defaultBlockState()) instanceof PipeMaterial material)
-            material.describe(event.getToolTip(), net.neoforged.neoforge.fluids.FluidStack.EMPTY, net.minecraft.client.gui.screens.Screen.hasShiftDown());
+        if (!(item instanceof BlockItem block)) return;
+        boolean shift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+        if (PipeMaterial.carrier(block.getBlock().defaultBlockState()) instanceof PipeMaterial material) material.tooltip(event.getToolTip(), shift);
+        else if (net.createplant.thermal.TankGrade.of(block.getBlock()) instanceof net.createplant.thermal.TankGrade grade) grade.tooltip(event.getToolTip(), shift);
+        else return;
+        if (!shift) event.getToolTip().add(Component.translatable(PREFIX + "shift").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
     }
 
     /** Create's own pipes have no goggle readout of their own; this mod's pipes show the same lines through Create's goggle interface. */
@@ -38,9 +42,11 @@ public final class PipeQualityOverlay {
             || !(mc.hitResult instanceof BlockHitResult hit)) return;
         var state = mc.level.getBlockState(hit.getBlockPos());
         var material = PipeMaterial.pipe(state);
-        if (material == null || !material.createPipe() || mc.level.getBlockEntity(hit.getBlockPos()) instanceof com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation) return;
+        var pipe = mc.level.getBlockEntity(hit.getBlockPos());
+        if (material == null || !material.createPipe() || pipe instanceof com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation) return;
         List<Component> lines = new ArrayList<>();
-        material.describe(lines, PipeMaterial.contents(mc.level.getBlockEntity(hit.getBlockPos())), mc.player.isShiftKeyDown());
+        material.describe(lines, PipeMaterial.contents(pipe), mc.player.isShiftKeyDown());
+        net.createplant.transport.ContainmentWear.addWarning(pipe, lines);
         int x = mc.getWindow().getGuiScaledWidth() / 2 + 20, y = mc.getWindow().getGuiScaledHeight() / 2 + 8;
         for (var line : lines) { event.getGuiGraphics().drawString(mc.font, line, x, y, 0xE9E6CF, true); y += 10; }
     }

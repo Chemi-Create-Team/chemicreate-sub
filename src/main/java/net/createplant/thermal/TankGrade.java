@@ -10,6 +10,7 @@ import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.registry.CETransport;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 public enum TankGrade {
@@ -53,12 +54,23 @@ public enum TankGrade {
 
     public void describe(List<Component> lines) { describe(lines, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false); }
 
-    /** The rated range as a scale with the contents' level on it, or with Shift as the grade names. */
+    /** The rated range as a scale with the contents' level on it, or with Shift as the grade names, and whether it holds liquids or gases. */
     public void describe(List<Component> lines, net.neoforged.neoforge.fluids.FluidStack contents, boolean sneaking) {
         if (sneaking) lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.range",coldest.label(),hottest.label(),pressure.label()));
         else lines.add(GradeScale.line(coldest, hottest, pressure, contents.isEmpty() ? -1 : FluidState.temperature(contents), contents.isEmpty() ? -1 : FluidState.pressure(contents)));
-        lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.kind."+kind.name().toLowerCase(java.util.Locale.ROOT),
-            Component.translatable("grade.create_refinery_n_reactors.tank."+(resistance.isEmpty() ? "no_acid" : "acid"))));
+        lines.add(Component.translatable("grade.create_refinery_n_reactors.tank.kind."+kind.name().toLowerCase(java.util.Locale.ROOT)));
+    }
+
+    /** An item's lines: the scale and what it holds, or with Shift the ranges, what it holds and the corrosive fluids it holds against. */
+    public void tooltip(List<Component> lines, boolean shift) {
+        describe(lines, FluidStack.EMPTY, shift);
+        if (shift) lines.add(FluidHazards.resistance(resistance));
+    }
+
+    /** The corrosion in a fluid that this tank is not rated for; NONE when it holds. */
+    public FluidHazards.Corrosion attacking(FluidStack stack) {
+        var corrosion=FluidHazards.of(stack).corrosion();
+        return corrosion==FluidHazards.Corrosion.NONE || resistance.contains(corrosion) ? FluidHazards.Corrosion.NONE : corrosion;
     }
 
     public static TankGrade of(com.simibubi.create.foundation.blockEntity.SmartBlockEntity owner) {
@@ -67,12 +79,19 @@ public enum TankGrade {
         if (owner instanceof GasTankContainerBlockEntity) return GAS;
         if (owner instanceof HorizontalTankBlockEntity) return LIQUID;
         if (!(owner instanceof FluidTankBlockEntity)) return null;
-        var state=owner.getBlockState();
-        if (state.is(com.simibubi.create.AllBlocks.FLUID_TANK.get())) return LIQUID;
-        if (state.is(CETransport.GAS_RECEIVER.get())) return GAS;
-        if (state.is(CETransport.PRESSURE_TANK.get())) return PRESSURE;
-        if (state.is(CETransport.STAINLESS_STEEL_TANK.get())) return STAINLESS;
-        if (state.is(CETransport.CRYOGENIC_TANK.get())) return CRYOGENIC;
-        return STANDARD;
+        var grade=of(owner.getBlockState().getBlock());
+        return grade==null ? STANDARD : grade;
+    }
+
+    /** The grade of a tank block, for its item as well as the placed tank; null for any other block. */
+    public static TankGrade of(Block block) {
+        if (block==com.simibubi.create.AllBlocks.FLUID_TANK.get() || block==CETransport.HORIZONTAL_FLUID_TANK.get()) return LIQUID;
+        if (block==CETransport.GAS_RECEIVER.get() || block==CETransport.GAS_TANK_CONTAINER.get()) return GAS;
+        if (block==CETransport.PRESSURE_TANK.get()) return PRESSURE;
+        if (block==CETransport.STAINLESS_STEEL_TANK.get()) return STAINLESS;
+        if (block==CETransport.CRYOGENIC_TANK.get()) return CRYOGENIC;
+        if (block==net.createplant.registry.CEGasBell.TANK.get()) return HOLDER;
+        if (block==net.createplant.registry.CEBlocks.TANK_CASING.get()) return OPEN;
+        return null;
     }
 }

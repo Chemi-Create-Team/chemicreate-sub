@@ -62,6 +62,31 @@ public final class TransportQualityGameTests {
         h.succeed();
     }
     @GameTest(template="test_petrochemical")
+    public static void itemsListOnlyTheResistedCorrosionAndGogglesShowOnlyTheScale(GameTestHelper h) {
+        var pipe=new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        PipeMaterial.STAINLESS.tooltip(pipe,true);
+        h.assertTrue(pipe.size()==2 && resisted(pipe.getLast()).equals(java.util.List.of("acid","base")),"Stainless steel lists acids and alkalis only: "+pipe);
+        var tank=new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        var stainless=net.createplant.thermal.TankGrade.of(CETransport.STAINLESS_STEEL_TANK.get());
+        stainless.tooltip(tank,true);
+        h.assertTrue(stainless==net.createplant.thermal.TankGrade.STAINLESS && tank.size()==3 && resisted(tank.getLast()).equals(java.util.List.of("acid","halogen","base")),
+            "The stainless tank item lists acids, halogens and alkalis: "+tank);
+        var goggles=new java.util.ArrayList<net.minecraft.network.chat.Component>();
+        var chlorine=new FluidStack(net.createplant.registry.CEChlorAlkali.CHLORINE.get(),1000);
+        PipeMaterial.STAINLESS.describe(goggles,chlorine,false);
+        net.createplant.thermal.TankGrade.of(AllBlocks.FLUID_TANK.get()).describe(goggles,chlorine,false);
+        h.assertTrue(goggles.size()==3 && goggles.stream().noneMatch(line->line.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents key && key.getKey().endsWith(".resistance")),
+            "Goggles show the scales and the tank kind, never the resistance: "+goggles);
+        h.assertTrue(PipeMaterial.STAINLESS.attacking(chlorine)==FluidHazards.Corrosion.HALOGEN && PipeMaterial.NICKEL_ALLOY.attacking(chlorine)==FluidHazards.Corrosion.NONE,
+            "Chlorine attacks stainless steel as a halogen and spares nickel alloy");
+        h.succeed();
+    }
+    private static java.util.List<String> resisted(net.minecraft.network.chat.Component line) {
+        var names=((net.minecraft.network.chat.contents.TranslatableContents)line.getContents()).getArgs()[0];
+        return ((net.minecraft.network.chat.Component)names).getSiblings().stream().map(part->((net.minecraft.network.chat.contents.TranslatableContents)part.getContents()).getKey())
+            .filter(key->key.contains(".corrosion.")).map(key->key.substring(key.lastIndexOf('.')+1)).toList();
+    }
+    @GameTest(template="test_petrochemical")
     public static void plantTanksAcceptOnlyTheirOwnFluids(GameTestHelper h) {
         h.setBlock(SOURCE,AllBlocks.FLUID_TANK.get());h.setBlock(TARGET,AllBlocks.FLUID_TANK.get());
         var water=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(SOURCE),Direction.UP);

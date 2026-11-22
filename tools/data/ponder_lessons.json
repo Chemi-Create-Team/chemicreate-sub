@@ -5215,8 +5215,8 @@
     "zh_cn": "锆管耐热酸和碱，并适用于高温高压。"
   },
   "guide.pipe_materials.step_6": {
-    "en_us": "The ratings apply to gases as well as liquids. A pipe carrying a fluid it is not rated for cracks and then bursts; check its range with goggles.",
-    "ja_jp": "対応範囲は液体にも気体にも適用されます。合わない流体を流すと配管にひびが入り、やがて壊れます。ゴーグルで範囲を確認します。",
-    "zh_cn": "额定范围同样适用于气体。输送不符合额定的流体时管道会开裂并最终破裂，可用护目镜查看范围。"
+    "en_us": "The ratings apply to gases as well as liquids. Hold Shift over the item to see its ranges and the corrosion it resists. A pipe carrying a fluid it is not rated for shows a red ⚠ warning through goggles, cracks and then bursts.",
+    "ja_jp": "対応範囲は液体にも気体にも適用されます。アイテムにカーソルを合わせてShiftを押すと、範囲と耐食性が見られます。合わない流体を流すとゴーグルに赤い⚠の警告が出て、配管にひびが入り、やがて壊れます。",
+    "zh_cn": "额定范围同样适用于气体。在物品上按住 Shift 可查看额定范围与耐腐蚀性。输送不符合额定的流体时，护目镜会显示红色⚠警告，管道会开裂并最终破裂。"
   }
 }

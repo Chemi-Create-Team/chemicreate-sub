@@ -1,9 +1,12 @@
 package net.createplant.transport;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import net.createplant.CreatePlant;
 import net.createplant.thermal.FluidState;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Explicit game-scale transport classes, not real engineering pressure ratings.
@@ -113,7 +116,19 @@ public final class FluidHazards {
     }
     public static Properties named(String path) { return SPECIAL.getOrDefault(path,ORDINARY); }
     private static final Map<String, Properties> EXTERNAL = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final String KEY = "transport." + CreatePlant.MOD_ID + ".";
     /** Transport class of another mod's fluid, by the id of its source fluid. */
     public static void register(net.minecraft.resources.ResourceLocation fluid, Properties properties) { EXTERNAL.put(fluid.toString(), properties); }
+
+    /** The corrosive fluids a pipe or tank holds against, by name, or that it holds against none. */
+    public static Component resistance(Set<Corrosion> resists) {
+        var names = Component.empty();
+        for (var corrosion : Corrosion.values()) {
+            if (corrosion == Corrosion.NONE || !resists.contains(corrosion)) continue;
+            if (!names.getSiblings().isEmpty()) names.append(Component.translatable(KEY + "resistance.separator"));
+            names.append(Component.translatable(KEY + "corrosion." + corrosion.name().toLowerCase(Locale.ROOT)));
+        }
+        return Component.translatable(KEY + "resistance", names.getSiblings().isEmpty() ? Component.translatable(KEY + "resistance.none") : names);
+    }
     private FluidHazards() { }
 }

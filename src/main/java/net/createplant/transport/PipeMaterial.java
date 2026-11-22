@@ -72,14 +72,26 @@ public enum PipeMaterial {
     }
     public void describe(java.util.List<net.minecraft.network.chat.Component> lines) { describe(lines, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false); }
 
-    /** The rated range as a scale with the carried fluid's level on it, or with Shift as the grade names and their ranges. */
+    /** The rated range as a scale with the carried fluid's level on it, or with Shift as the grade names and their ranges; through goggles no more is shown. */
     public void describe(java.util.List<net.minecraft.network.chat.Component> lines, net.neoforged.neoforge.fluids.FluidStack contents, boolean sneaking) {
         if (sneaking) lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.carries",coldest.detail(),hottest.detail(),strongest.detail()));
         else lines.add(net.createplant.thermal.GradeScale.line(coldest, hottest, strongest, contents.isEmpty() ? -1 : net.createplant.thermal.FluidState.temperature(contents),
             contents.isEmpty() ? -1 : net.createplant.thermal.FluidState.pressure(contents)));
-        lines.add(net.minecraft.network.chat.Component.translatable("transport.create_refinery_n_reactors.resistance",
-            resists(Corrosion.ACID) ? "○" : "×",resists(Corrosion.HOT_ACID) ? "○" : "×",resists(Corrosion.FLUORIDE) ? "○" : "×",
-            resists(Corrosion.HALOGEN) ? "○" : "×",resists(Corrosion.BASE) ? "○" : "×"));
+    }
+    /** An item's lines: the scale, or with Shift the ranges and the corrosive fluids the material holds against. */
+    public void tooltip(java.util.List<net.minecraft.network.chat.Component> lines, boolean shift) {
+        describe(lines, net.neoforged.neoforge.fluids.FluidStack.EMPTY, shift);
+        if (shift) lines.add(FluidHazards.resistance(resists));
+    }
+    /** The corrosion that attacks this material in a fluid, from its worst constituent for a mixture; NONE when the material holds. */
+    public Corrosion attacking(net.neoforged.neoforge.fluids.FluidStack stack) {
+        if (stack.isEmpty()) return Corrosion.NONE;
+        if (net.createplant.mixture.MixtureHelper.isMixture(stack)) {
+            for (var part : net.createplant.mixture.MixtureHelper.components(stack)) { var corrosion = attacking(part);if (corrosion != Corrosion.NONE) return corrosion; }
+            return Corrosion.NONE;
+        }
+        var corrosion = FluidHazards.of(stack).corrosion();
+        return resists(corrosion) ? Corrosion.NONE : corrosion;
     }
     /** The fluid a pipe or pump is carrying now, from the flows its transport keeps on each side; empty when it carries none. */
     public static net.neoforged.neoforge.fluids.FluidStack contents(net.minecraft.world.level.block.entity.BlockEntity pipe) {

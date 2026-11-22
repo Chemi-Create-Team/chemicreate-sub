@@ -64,7 +64,7 @@ public final class ContainmentWear extends BlockEntityBehaviour {
             var grade = TankGrade.of(tank);
             fluid = tank.getTankInventory().getFluid();
             String problem = grade == null || fluid.isEmpty() ? "safe" : grade.incompatibility(fluid);
-            if (!problem.equals("safe") && !problem.equals("fluid")) next = problem;
+            if (!problem.equals("safe") && !problem.equals("fluid")) next = problem.equals("corrosion") ? name(grade.attacking(fluid)) : problem;
         } else {
             var material = PipeMaterial.carrier(blockEntity.getBlockState());
             var transport = blockEntity.getBehaviour(FluidTransportBehaviour.TYPE);
@@ -72,7 +72,7 @@ public final class ContainmentWear extends BlockEntityBehaviour {
                 var flow = transport.getFlow(side);
                 if (flow == null || flow.fluid.isEmpty()) continue;
                 String problem = material.problem(flow.fluid);
-                if (!problem.equals("safe")) { fluid = flow.fluid; next = problem; break; }
+                if (!problem.equals("safe")) { fluid = flow.fluid; next = problem.equals("corrosion") ? name(material.attacking(fluid)) : problem; break; }
             }
         }
         if (next.isEmpty() && wear == 0) {
@@ -87,6 +87,9 @@ public final class ContainmentWear extends BlockEntityBehaviour {
         if (stage != shownStage || !next.equals(reason)) { reason = next;shownStage = stage;blockEntity.sendData(); }
         blockEntity.setChanged();
     }
+
+    /** A corrosion's reason names the kind, so the warning says which fluid the walls do not resist. */
+    private static String name(FluidHazards.Corrosion corrosion) { return corrosion.name().toLowerCase(java.util.Locale.ROOT); }
 
     /** Vanilla's breaking cracks over every block of the vessel; a client drops them unless they are sent again within 400 ticks. */
     private void show(ServerLevel level, int stage) {
@@ -141,7 +144,7 @@ public final class ContainmentWear extends BlockEntityBehaviour {
         reason = tag.getString("ContainmentHazard");
     }
 
-    /** The warning for a block whose contents are wearing it through, read from the tank's controller for a tank part. */
+    /** The warning while the contents are something the block is not rated for, with the wear so far; read from the controller for a tank part. */
     public static Component warning(BlockEntity be) {
         if (be instanceof IMultiBlockEntityContainer part && part.getControllerBE() instanceof BlockEntity owner) be = owner;
         var wear = be == null ? null : get(be, TYPE);

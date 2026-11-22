@@ -28,11 +28,9 @@ NAMES.update({
     'separator': ('Feed %s mB | liquid %s mB | recycle %s mB', '原料 %s mB｜液体 %s mB｜循環ガス %s mB', '原料 %s mB｜液体 %s mB｜循环气 %s mB'),
     'reducer': ('Lowers one pressure grade', '圧力等級を一段下げます', '降低一个压力等级'),
     'tank.range': ('Holds %s to %s; pressure up to %s', '入れられる温度：%s～%s／圧力：%sまで', '可容纳温度：%s～%s／压力：最高%s'),
-    'tank.kind.all': ('Liquids and gases | %s','液体・気体｜%s','液体与气体｜%s'),
-    'tank.kind.liquid': ('Liquids only | %s','液体専用｜%s','仅液体｜%s'),
-    'tank.kind.gas': ('Gases only | %s','気体専用｜%s','仅气体｜%s'),
-    'tank.kind.water': ('Water and warm water only | %s','水・温排水専用｜%s','仅水与温排水｜%s'),
-    'tank.acid': ('Acid resistant','耐酸','耐酸'), 'tank.no_acid': ('No corrosive fluids','腐食性流体不可','不接收腐蚀性流体'),
+    'tank.kind.all': ('Liquids and gases','液体・気体','液体与气体'),
+    'tank.kind.liquid': ('Liquids only','液体専用','仅液体'),
+    'tank.kind.gas': ('Gases only','気体専用','仅气体'),
 })
 TRANSPORT = {
     'grade': ('Grade: %s', '等級：%s', '等级：%s'),
@@ -41,12 +39,17 @@ TRANSPORT = {
     'wear.gas': ('Not rated for gas', '気体に非対応', '不耐气体'),
     'wear.liquid': ('Not rated for liquid', '液体に非対応', '不耐液体'),
     'wear.corrosion': ('Not resistant to this corrosive fluid', 'この腐食性流体に非対応', '不耐该腐蚀性流体'),
-    'wear.hot': ('Too hot for its rating', '温度が等級より高すぎます', '温度高于额定等级'),
-    'wear.overheat': ('Too hot for its rating', '温度が等級より高すぎます', '温度高于额定等级'),
+    'wear.hot': ('Too hot', '温度が高すぎます', '温度过高'),
+    'wear.overheat': ('Too hot', '温度が高すぎます', '温度过高'),
     'wear.softening': ('Softening in the heat', '熱で軟化しています', '受热软化'),
-    'wear.cold': ('Too cold for its rating', '温度が等級より低すぎます', '温度低于额定等级'),
-    'wear.brittle': ('Brittle in the cold', '低温で脆くなっています', '低温变脆'),
-    'wear.pressure': ('Pressure above its rating', '圧力が等級より高すぎます', '压力高于额定等级'),
+    'wear.cold': ('Too cold', '温度が低すぎます', '温度过低'),
+    'wear.brittle': ('Too cold: brittle', '温度が低すぎます（脆くなります）', '温度过低（变脆）'),
+    'wear.pressure': ('Pressure too high', '圧力が高すぎます', '压力过高'),
+    'wear.acid': ('Not resistant to acids', '酸に非対応', '不耐酸'),
+    'wear.hot_acid': ('Not resistant to hot acid liquors', '熱い酸に非対応', '不耐高温酸液'),
+    'wear.fluoride': ('Not resistant to fluorides', 'フッ化物に非対応', '不耐氟化物'),
+    'wear.halogen': ('Not resistant to halogens', 'ハロゲンに非対応', '不耐卤素'),
+    'wear.base': ('Not resistant to alkalis', '塩基に非対応', '不耐碱'),
 }
 
 for index, code in enumerate(('en_us', 'ja_jp', 'zh_cn')):
