@@ -81,15 +81,13 @@ import org.slf4j.LoggerFactory;
 public final class SyntheticFuelPlaytestWorld {
     private static final Logger LOG = LoggerFactory.getLogger(SyntheticFuelPlaytestWorld.class);
     private static final String WORLD = "createplant-synthetic-fuel-" + System.currentTimeMillis();
-    private static final int BELT_RPM = 8, TIMEOUT = 48_000, ENGINE_TICKS = 600, Y = -60;
+    private static final int TIMEOUT = 48_000, ENGINE_TICKS = 600, Y = -60;
     private static final BlockPos GASIFIER = new BlockPos(0, Y + 1, 0), GASIFIER_ROOF = GASIFIER.above(5);
-    private static final BlockPos BOILER = new BlockPos(-7, Y + 1, -1), WATER = new BlockPos(-10, Y + 1, 0);
-    private static final BlockPos EXCHANGER = new BlockPos(3, Y, -6), WASHER = new BlockPos(11, Y + 2, -10);
-    private static BlockPos COOLANT;
-    private static final BlockPos SPLITTER = new BlockPos(-2, Y, -10), CO_CYLINDER = new BlockPos(-10, Y + 3, -16), H2_CYLINDER = new BlockPos(-2, Y + 3, -16);
+    private static final BlockPos CO_CYLINDER = new BlockPos(-10, Y + 3, -16), H2_CYLINDER = new BlockPos(-2, Y + 3, -16);
     private static final BlockPos FT = new BlockPos(6, Y + 2, -24), CRUDE = new BlockPos(16, Y, -24), ENGINE = new BlockPos(26, Y + 1, -38);
     private static final Map<String, Object> REPORT = new LinkedHashMap<>();
     private static PlaytestPlant plant;
+    private static SyngasTrain syngas;
     private static volatile String failure;
     private static volatile boolean done;
     private static int phase, ticks;
@@ -167,48 +165,16 @@ public final class SyntheticFuelPlaytestWorld {
         level.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false, server);
         level.setDayTime(6000);
 
-        gasifier(level);
-        charcoal(level);
-        steam(level);
-        var splitter = column(level, SPLITTER, "separate_purified_syngas");
-        // The wet water gas from the front of the gasifier roof through the tubes of a water-cooled exchanger, where its steam condenses,
-        // to the column's east inlet.
-        var exchanger = ThermalControlGameTests.build(level, EXCHANGER, Direction.NORTH, 3);
-        var along = exchanger.getBlockState().getValue(net.createplant.block.ThermalMachineBlock.FACING);
-        var members = exchanger.members();
-        int cells = exchanger.exchanger().width * exchanger.exchanger().width, top = exchanger.exchanger().width - 1;
-        BlockPos tubeIn = members.getFirst().relative(along.getOpposite()), tubeOut = members.get(members.size() - cells).relative(along);
-        BlockPos shellIn = members.get(members.size() - cells + top).above(), shellOut = members.get(top).above();
-        BlockPos outlet = GASIFIER_ROOF.north();
-        int gasRack = outlet.getY() + 3;
-        plant.route(Direction.UP, outlet.above(), List.of(outlet.above(3), new BlockPos(outlet.getX(), gasRack, tubeIn.getZ()),
-            new BlockPos(outlet.getX(), tubeIn.getY(), tubeIn.getZ()), tubeIn), along);
-        plant.put(shellIn.above(3), AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
-        plant.route(Direction.DOWN, shellIn.above(2), List.of(shellIn), Direction.DOWN);
-        var warm = plant.route(Direction.UP, shellOut, List.of(shellOut.above(2), shellOut.above(2).south(3), shellOut.south(3).atY(Y)), Direction.SOUTH);
-        plant.store(warm.getLast(), Direction.SOUTH, "冷却水（温水）", PlaytestPlant.Kind.ANY);
-        // The cooled stream is washed in an absorption tower: the condensate and wash water leave its underside, the clean syngas its top storey.
-        AbsorptionTowerGameTests.tower(level, WASHER, 4, true);
-        BlockPos washIn = WASHER.west(2), washTop = WASHER.above(3).north(2), washUnder = WASHER.below();
-        BlockPos clear = tubeOut.relative(along, 2);
-        plant.route(along, tubeOut, List.of(clear, clear.atY(washIn.getY()), new BlockPos(clear.getX(), washIn.getY(), washIn.getZ()), washIn), Direction.EAST);
-        BlockPos inlet = inlet(splitter, "separate_purified_syngas");
-        int cooledRack = Y + 7;
-        plant.route(Direction.NORTH, washTop, List.of(washTop.north(), washTop.north().atY(cooledRack), new BlockPos(washTop.getX(), cooledRack, inlet.getZ()),
-            new BlockPos(inlet.getX(), cooledRack, inlet.getZ()), inlet), Direction.WEST);
-        var drain = plant.route(Direction.DOWN, washUnder, List.of(washUnder.below(), washUnder.below().east(3)), Direction.EAST);
-        plant.store(drain.getLast(), Direction.EAST, "洗浄塔の排水", PlaytestPlant.Kind.ANY);
-        COOLANT = shellIn.above(3);
-
-        compressor(level, CO_CYLINDER);
-        compressor(level, H2_CYLINDER);
+        syngas = new SyngasTrain(plant, level, GASIFIER);
+        var split = syngas.build();
+        plant.compressor(CO_CYLINDER);
+        plant.compressor(H2_CYLINDER);
         var ft = ReactionTowerGameTests.tower(level, FT, 3, ItemStack.EMPTY);
         for (int i = 0; i < 3; i++) ft.insert(CEItems.IRON_FT_CATALYST_CORE.toStack());
         plant.burner(ft.getBlockPos().offset(-1, -1, -1), BlazeBurnerBlock.HeatLevel.KINDLED);
         plant.burner(ft.getBlockPos().offset(1, -1, 1), BlazeBurnerBlock.HeatLevel.KINDLED);
 
         // The column's cuts: carbon monoxide and hydrogen each to their own compressor; half the monoxide, more than the iron catalyst can use, to a store.
-        var split = cuts(splitter, "separate_purified_syngas");
         for (var cut : split) {
             boolean monoxide = cut.fluid().isSame(CEProcessFluids.CARBON_MONOXIDE.get());
             BlockPos cylinder = monoxide ? CO_CYLINDER : H2_CYLINDER;
@@ -235,15 +201,15 @@ public final class SyntheticFuelPlaytestWorld {
         plant.store(offgasLine.getLast(), Direction.UP, "FTオフガス", true);
 
         // The crude from under the tower to the second column, whose cuts go to stores and the diesel to the engine.
-        var crude = column(level, CRUDE, "distill_synthetic_crude");
-        BlockPos crudeInlet = inlet(crude, "distill_synthetic_crude");
+        var crude = plant.column(CRUDE, "distill_synthetic_crude");
+        BlockPos crudeInlet = plant.inlet(crude, "distill_synthetic_crude");
         BlockPos under = ft.getBlockPos().below();
         int crudeZ = ft.getBlockPos().getZ() + 2;
         plant.route(Direction.DOWN, under, List.of(under.below(), new BlockPos(under.getX(), Y, crudeZ),
             new BlockPos(crudeInlet.getX(), Y, crudeZ), new BlockPos(crudeInlet.getX(), Y, crudeInlet.getZ()), crudeInlet), Direction.WEST);
         engine(level);
         int store = 0, index = 0;
-        for (var cut : cuts(crude, "distill_synthetic_crude")) {
+        for (var cut : plant.cuts(crude, "distill_synthetic_crude")) {
             // The cuts leave the same face one above another, so their pumps stand at different distances to keep their cogs apart.
             int pumpAt = 1 + 2 * index++;
             String id = BuiltInRegistries.FLUID.getKey(cut.fluid()).getPath();
@@ -260,10 +226,6 @@ public final class SyntheticFuelPlaytestWorld {
         }
 
         plant.driveAll();
-        plant.sign(new BlockPos(9, Y, 4), "原木→木炭");
-        plant.sign(GASIFIER.offset(-2, -1, 2), "ガス化炉");
-        plant.sign(BOILER.offset(0, -1, 3), "ボイラー（蒸気）");
-        plant.sign(SPLITTER.offset(-1, 0, 2), "水性ガス分留");
         plant.sign(CO_CYLINDER.offset(0, -3, 2), "CO圧縮機");
         plant.sign(H2_CYLINDER.offset(0, -3, 2), "H2圧縮機");
         plant.sign(FT.offset(-1, -2, 4), "FT反応塔");
@@ -287,92 +249,6 @@ public final class SyntheticFuelPlaytestWorld {
         };
     }
 
-    private static void gasifier(ServerLevel level) {
-        for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++)
-            plant.put(GASIFIER.offset(x, y, z), CEGasifier.GASIFIER.get().defaultBlockState());
-        plant.burner(GASIFIER.below(), BlazeBurnerBlock.HeatLevel.KINDLED);
-        PlaytestPlant.require(((GasifierBlockEntity) level.getBlockEntity(GASIFIER)).rebuild(), "The gasifier forms");
-    }
-
-    /** Felled logs in a chest drop through a hopper onto a belt, which carries them through a fan's blast past a lit blaze burner and into a chute on the roof. */
-    private static void charcoal(ServerLevel level) {
-        int beltY = GASIFIER_ROOF.getY() + 1, z = GASIFIER_ROOF.getZ() + 1;
-        BlockPos chute = new BlockPos(GASIFIER_ROOF.getX() + 1, beltY, z), start = new BlockPos(9, beltY, z), end = chute.east();
-        plant.put(chute, AllBlocks.CHUTE.getDefaultState());
-        plant.put(start, AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
-        plant.put(end, AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
-        BeltConnectorItem.createBelts(level, start, end);
-        // A slow belt keeps each log long enough in the blast to bake through.
-        plant.motor(start.north(), Direction.SOUTH, BELT_RPM);
-        plant.DRIVES.add(new BlockPos[] {start, start.north()});
-        // A row of fans blows south across the belt, each through a lit burner.
-        for (int x = end.getX() + 1; x < start.getX(); x++) {
-            BlockPos fanAt = new BlockPos(x, beltY, z - 2);
-            plant.put(fanAt, AllBlocks.ENCASED_FAN.getDefaultState().setValue(BlockStateProperties.FACING, Direction.SOUTH));
-            plant.burner(fanAt.south(), BlazeBurnerBlock.HeatLevel.KINDLED);
-            plant.motor(fanAt.north(), Direction.SOUTH);
-        }
-        plant.put(start.above(), Blocks.HOPPER.defaultBlockState().setValue(HopperBlock.FACING, Direction.DOWN));
-        plant.put(start.above(2), Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, Direction.WEST));
-        var chest = (ChestBlockEntity) level.getBlockEntity(start.above(2));
-        for (int slot = 0; slot < chest.getContainerSize(); slot++) chest.setItem(slot, new ItemStack(Items.OAK_LOG, 64));
-        REPORT.put("logs", chest.getContainerSize() * 64);
-    }
-
-    /** A 2x2 Create tank on four burners is the boiler; a pump fills it from the water supply and one on its roof sends steam to the gasifier's west inlet. */
-    private static void steam(ServerLevel level) {
-        for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) {
-            plant.put(BOILER.offset(x, 0, z), AllBlocks.FLUID_TANK.getDefaultState());
-            plant.burner(BOILER.offset(x, -1, z), BlazeBurnerBlock.HeatLevel.KINDLED);
-        }
-        com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti((FluidTankBlockEntity) level.getBlockEntity(BOILER));
-        plant.put(WATER, AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
-        plant.route(Direction.EAST, WATER.east(), List.of(WATER.east().above(2), new BlockPos(BOILER.getX(), WATER.getY() + 2, WATER.getZ()), new BlockPos(BOILER.getX(), BOILER.getY() + 1, WATER.getZ())), Direction.DOWN);
-        BlockPos roof = BOILER.offset(1, 1, 0), inlet = GASIFIER.west(2);
-        plant.route(Direction.UP, roof, List.of(roof.above(2), new BlockPos(roof.getX(), roof.getY() + 2, -3), new BlockPos(inlet.getX(), roof.getY() + 2, -3),
-            new BlockPos(inlet.getX(), roof.getY() + 2, inlet.getZ()), inlet), Direction.EAST);
-    }
-
-    private static FractionatingColumnBlockEntity column(ServerLevel level, BlockPos origin, String recipe) {
-        var column = DistillationGameTests.build(level, origin, 2, DistillationProfile.requiredHeight(recipe));
-        PlaytestPlant.require(column.ready(), "The column for " + recipe + " forms");
-        return column;
-    }
-
-    /** The pipe position east of the column's feed layer. */
-    private static BlockPos inlet(FractionatingColumnBlockEntity column, String recipe) {
-        int layer = DistillationProfile.feedLayer(DistillationProfile.requiredHeight(recipe));
-        return column.getBlockPos().offset(2, layer, 0);
-    }
-
-    private record Cut(Fluid fluid, BlockPos pipe) { }
-
-    /** Each cut's pipe position north of its outlet layer. */
-    private static List<Cut> cuts(FractionatingColumnBlockEntity column, String recipe) {
-        var fraction = DistillationProfile.fraction(recipe);
-        int height = DistillationProfile.requiredHeight(recipe), count = fraction.outputs().size();
-        var cuts = new ArrayList<Cut>();
-        for (int i = 0; i < count; i++)
-            cuts.add(new Cut(fraction.outputs().get(i).getFluid(), column.getBlockPos().offset(0, DistillationProfile.fractionLayer(i + 1, height, count), -1)));
-        return cuts;
-    }
-
-    /** A cylinder with its engine on its east side, the crank shaft beyond it and a motor turning the shaft. */
-    private static void compressor(ServerLevel level, BlockPos cylinder) {
-        plant.put(cylinder, CEReciprocating.CYLINDER.get().defaultBlockState());
-        var state = CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.FACE, AttachFace.WALL).setValue(ReciprocatingCompressorBlock.FACING, Direction.EAST);
-        BlockPos enginePos = cylinder.east();
-        plant.put(enginePos, state);
-        BlockPos shaft = ReciprocatingCompressorBlock.shaftPos(state, enginePos);
-        plant.put(shaft, AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, ReciprocatingCompressorBlock.shaftAxis(state)));
-        var engine = (ReciprocatingCompressorBlockEntity) level.getBlockEntity(enginePos);
-        engine.attachShaft();
-        Direction along = Direction.get(Direction.AxisDirection.NEGATIVE, ReciprocatingCompressorBlock.shaftAxis(state));
-        plant.motor(shaft.relative(along), along.getOpposite());
-        for (int y = Y; y < cylinder.getY(); y++) if (level.getBlockState(new BlockPos(enginePos.getX(), y, enginePos.getZ())).isAir())
-            plant.put(new BlockPos(enginePos.getX(), y, enginePos.getZ()), Blocks.SMOOTH_STONE.defaultBlockState());
-    }
-
     private static void engine(ServerLevel level) {
         plant.put(ENGINE, BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("createdieselgenerators", "diesel_engine")).defaultBlockState()
             .setValue(BlockStateProperties.FACING, Direction.EAST));
@@ -389,11 +265,9 @@ public final class SyntheticFuelPlaytestWorld {
         try {
             serverTicks++;
             // A cog or belt train sets each drive's turning direction; flip any that runs backwards.
-            if (serverTicks == 5 || serverTicks == 40) plant.correctDrives((pos, speed) -> wrongWay(level, pos, speed));
+            if (serverTicks == 5 || serverTicks == 40) plant.correctDrives(syngas::wrongWay);
             if (serverTicks == 20) {
-                plant.supply(WATER, new FluidStack(Fluids.WATER, 1_000));
-                plant.supply(COOLANT, new FluidStack(Fluids.WATER, 1_000));
-                ((GasifierBlockEntity) level.getBlockEntity(GASIFIER)).rebuild();
+                syngas.start();
             }
             if (serverTicks < 20) return;
             var gasifier = (GasifierBlockEntity) level.getBlockEntity(GASIFIER);
@@ -432,15 +306,6 @@ public final class SyntheticFuelPlaytestWorld {
             LOG.error("SYNTHETIC FUEL tick failed", error);
             failure = error.getMessage();
         }
-    }
-
-    /** A pump must push toward its front and a belt carry toward the gasifier. */
-    private static boolean wrongWay(ServerLevel level, BlockPos pos, float speed) {
-        var state = level.getBlockState(pos);
-        if (state.getBlock() instanceof com.simibubi.create.content.kinetics.belt.BeltBlock)
-            return com.simibubi.create.content.kinetics.belt.BeltHelper.getSegmentBE(level, pos) instanceof com.simibubi.create.content.kinetics.belt.BeltBlockEntity belt
-                && belt.getMovementFacing() != Direction.WEST;
-        return speed < 0;
     }
 
     private static void mark(String key, boolean reached) {

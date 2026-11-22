@@ -44,6 +44,48 @@ public final class PlaytestPlant {
         this.ground = ground;
     }
 
+    /** A 2x2 fractionating column of the height its recipe needs, on {@code origin}. */
+    public net.createplant.block.entity.FractionatingColumnBlockEntity column(BlockPos origin, String recipe) {
+        var column = net.createplant.gametest.DistillationGameTests.build(level, origin, 2, net.createplant.chemistry.DistillationProfile.requiredHeight(recipe));
+        require(column.ready(), "The column for " + recipe + " forms");
+        return column;
+    }
+
+    /** The pipe position east of the column's feed layer. */
+    public BlockPos inlet(net.createplant.block.entity.FractionatingColumnBlockEntity column, String recipe) {
+        int layer = net.createplant.chemistry.DistillationProfile.feedLayer(net.createplant.chemistry.DistillationProfile.requiredHeight(recipe));
+        return column.getBlockPos().offset(2, layer, 0);
+    }
+
+    public record Cut(Fluid fluid, BlockPos pipe) { }
+
+    /** Each cut's pipe position north of its outlet layer. */
+    public List<Cut> cuts(net.createplant.block.entity.FractionatingColumnBlockEntity column, String recipe) {
+        var fraction = net.createplant.chemistry.DistillationProfile.fraction(recipe);
+        int height = net.createplant.chemistry.DistillationProfile.requiredHeight(recipe), count = fraction.outputs().size();
+        var cuts = new ArrayList<Cut>();
+        for (int i = 0; i < count; i++)
+            cuts.add(new Cut(fraction.outputs().get(i).getFluid(), column.getBlockPos().offset(0, net.createplant.chemistry.DistillationProfile.fractionLayer(i + 1, height, count), -1)));
+        return cuts;
+    }
+
+    /** A reciprocating compressor: the cylinder, its engine on the east side, the crank shaft beyond and a motor turning it. Suction is above the cylinder, discharge below. */
+    public void compressor(BlockPos cylinder) {
+        put(cylinder, net.createplant.registry.CEReciprocating.CYLINDER.get().defaultBlockState());
+        var state = net.createplant.registry.CEReciprocating.COMPRESSOR.get().defaultBlockState()
+            .setValue(net.createplant.block.ReciprocatingCompressorBlock.FACE, net.minecraft.world.level.block.state.properties.AttachFace.WALL)
+            .setValue(net.createplant.block.ReciprocatingCompressorBlock.FACING, Direction.EAST);
+        BlockPos enginePos = cylinder.east();
+        put(enginePos, state);
+        BlockPos shaft = net.createplant.block.ReciprocatingCompressorBlock.shaftPos(state, enginePos);
+        put(shaft, AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, net.createplant.block.ReciprocatingCompressorBlock.shaftAxis(state)));
+        ((net.createplant.block.entity.ReciprocatingCompressorBlockEntity) level.getBlockEntity(enginePos)).attachShaft();
+        Direction along = Direction.get(Direction.AxisDirection.NEGATIVE, net.createplant.block.ReciprocatingCompressorBlock.shaftAxis(state));
+        motor(shaft.relative(along), along.getOpposite());
+        for (int y = ground; y < cylinder.getY(); y++) if (level.getBlockState(new BlockPos(enginePos.getX(), y, enginePos.getZ())).isAir())
+            put(new BlockPos(enginePos.getX(), y, enginePos.getZ()), Blocks.SMOOTH_STONE.defaultBlockState());
+    }
+
     /** Fits every pump laid so far with its cog and motor; called once the lines are laid so the drives keep clear of them. */
     public void driveAll() { for (BlockPos pump : PUMPS) drive(pump); }
 
