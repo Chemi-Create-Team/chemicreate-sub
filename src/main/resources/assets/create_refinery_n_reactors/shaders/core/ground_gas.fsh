@@ -10,8 +10,11 @@ uniform float GameTime;
 
 in vec4 vertexColor;
 in vec3 samplePosition;
+in vec3 cameraRelative;
 in float vertexDistance;
 flat in int cellData;
+flat in int sliceAxis;
+flat in float sliceDepth;
 
 out vec4 fragColor;
 
@@ -42,6 +45,15 @@ float fadeEdge(float d, float width, int side) {
 }
 
 void main() {
+    float opticalDepth = sliceDepth;
+    if (sliceAxis >= 0) {
+        vec3 ray = abs(normalize(cameraRelative));
+        float threshold = max(ray.x, max(ray.y, ray.z)) * 0.78;
+        vec3 weights = max(vec3(0.0), ray - threshold);
+        float weight = weights[sliceAxis];
+        if (weight <= 0.0) discard;
+        opticalDepth *= weight / ((weights.x + weights.y + weights.z) * ray[sliceAxis]);
+    }
     vec3 local = fract(samplePosition + vec3(0.5));
     float floorY = float((cellData >> 6) & 31) / 16.0;
     float ceilingY = float((cellData >> 11) & 31) / 16.0;
@@ -59,10 +71,10 @@ void main() {
         * fadeEdge(ceilingY - local.y, min(0.55, (ceilingY - floorY) * 0.85), 32);
 
     float veil = 0.20 + 0.19 * folds;
-    float profile = openTo(16) ? veil * (0.82 + 0.18 * sin(samplePosition.y * 3.4 + phase + 3.0 * drift))
+    float profile = openTo(16) ? veil * (0.46 + 0.10 * sin(samplePosition.y * 3.4 + phase + 3.0 * drift))
         : veil + 1.15 * exp2(-height * mix(9.0, 4.5, broad));
     float density = edge * profile * mix(0.12, 1.92, smoothstep(0.20, 0.78, folds));
-    float opacity = 1.0 - exp(-density * vertexColor.a);
+    float opacity = 1.0 - exp(-density * opticalDepth);
     float neutral = dot(vertexColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     vec3 color = mix(vertexColor.rgb, vec3(neutral), mix(0.27, 0.04, folds)) * mix(0.81, 1.02, folds);
     fragColor = linear_fog(vec4(color, opacity) * ColorModulator, vertexDistance, FogStart, FogEnd, FogColor);
