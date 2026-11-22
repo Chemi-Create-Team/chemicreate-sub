@@ -6,7 +6,6 @@ TEXT = {
  'fluid.create_refinery_n_reactors.chemical_mixture': ('Chemical Mixture', '混合液', '混合液'),
  'mixture.create_refinery_n_reactors.total': ('Mixture: %s mB', '混合液：%s mB', '混合液：%s mB'),
  'mixture.create_refinery_n_reactors.component': ('%s: %s mB (%s%%)', '%s：%s mB（%s%%）', '%s：%s mB（%s%%）'),
- 'mixture.create_refinery_n_reactors.more': ('And %s more; use a Display Link', 'ほか%s成分：Display Linkで確認', '另有%s种成分，请用显示链接查看'),
  'create_refinery_n_reactors.display_source.mixture': ('Mixture composition', '混合液の成分', '混合液成分'),
 }
 def generate():

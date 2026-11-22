@@ -558,6 +558,5 @@ public final class MachineReadings {
 
     public static void compact(List<Component> text) {
         text.removeIf(c->c.getString().isBlank());
-        if (text.size()>4) text.subList(4,text.size()).clear();
     }
 }

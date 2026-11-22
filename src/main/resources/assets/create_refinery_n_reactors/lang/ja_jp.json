@@ -2681,7 +2681,6 @@
   "fluid.create_refinery_n_reactors.other_gases": "その他の気体",
   "mixture.create_refinery_n_reactors.total": "混合液：%s mB",
   "mixture.create_refinery_n_reactors.component": "%s：%s mB（%s%%）",
-  "mixture.create_refinery_n_reactors.more": "ほか%s成分：Display Linkで確認",
   "create_refinery_n_reactors.display_source.mixture": "混合液の成分",
   "jei.create_refinery_n_reactors.note.electrolysis_sulfurous": "極板1枚・%s tick、%s kJ（ハイブリッド硫黄法）。水素は陰極側の側面、硫酸は奥の端面から出ます。",
   "fluid.create_refinery_n_reactors.sulfurous_acid": "亜硫酸",

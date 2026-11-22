@@ -502,9 +502,9 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         tooltip.add(Component.translatable("create."+condition.getTranslationKey()));
         long amount=owner.tankInventory.getFluidAmount();for(int i=0;i<PROCESS_TANKS;i++)amount+=owner.climateFluid(i).getAmount();
         tooltip.add(Component.translatable(key+"operation",Math.round(Math.abs(owner.rotationSpeed())),Math.round(owner.progress()*100/Math.max(1,owner.cycleTicks())),amount));
-        // The overview keeps to four lines: the contents, or with Shift the maintenance state.
-        var stock=isPlayerSneaking ? null : owner.stockLine(owner.tankInventory.getFluid());
-        tooltip.add(stock!=null ? stock : Component.translatable(key+"maintenance",Math.round(owner.fouling().foulingFraction()*100),Component.translatable(key+"drain."+(owner.fouling().drainOpen() ? "open" : "closed"))));return true;
+        var stock=owner.stockLine(owner.tankInventory.getFluid());
+        if (stock!=null) tooltip.add(stock);
+        tooltip.add(Component.translatable(key+"maintenance",Math.round(owner.fouling().foulingFraction()*100),Component.translatable(key+"drain."+(owner.fouling().drainOpen() ? "open" : "closed"))));return true;
     }
 
     /** The open hatch stands up one block over the top. */

@@ -2681,7 +2681,6 @@
   "fluid.create_refinery_n_reactors.other_gases": "其他气体",
   "mixture.create_refinery_n_reactors.total": "混合液：%s mB",
   "mixture.create_refinery_n_reactors.component": "%s：%s mB（%s%%）",
-  "mixture.create_refinery_n_reactors.more": "另有%s种成分，请用显示链接查看",
   "create_refinery_n_reactors.display_source.mixture": "混合液成分",
   "jei.create_refinery_n_reactors.note.electrolysis_sulfurous": "一片电极运行%s tick消耗%s kJ（混合硫法）。氢气从阴极侧排出，硫酸从远端排出。",
   "fluid.create_refinery_n_reactors.sulfurous_acid": "亚硫酸",

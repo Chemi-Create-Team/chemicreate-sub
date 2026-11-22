@@ -6,7 +6,7 @@
 
 総量と各成分量は整数mBです。抜き出す側を最大剰余法で割り当て、残る側は元の各成分から差し引きます。槽・Createタンクを分割するときも同じ補完関係を使い、成分ごとの量を保ちます。純粋流体への自動復元は `MixtureHelper.createStack(contents, true)`、または `MixtureFluidTank` の `unwrapPureOutput` で選べます。
 
-配管内の色は成分の色をmB量で加重平均します。窓付きのタンクでは液体と気体がそれぞれ層になり、重いものほど下に見えます。液体のゴーグル表示は4行以内です。混合気体が入ったタンクでは、ゴーグルが量の多い順に全成分と化学式を表示します。Display Linkの「混合液の成分」は、量の多い順に全成分の名前・mB・割合（小数第1位まで）を渡します。
+配管内の色は成分の色をmB量で加重平均します。窓付きのタンクでは液体と気体がそれぞれ層になり、重いものほど下に見えます。液体のゴーグル表示は全成分を示します。混合気体が入ったタンクでは、ゴーグルが量の多い順に全成分と化学式を表示します。Display Linkの「混合液の成分」は、量の多い順に全成分の名前・mB・割合（小数第1位まで）を渡します。
 
 ## 混合気体
 
@@ -40,7 +40,7 @@
 - `MixtureHelper.extractContents` / `createStack`：単一流体とキャリアを相互変換します。キャリアの成分合計とスタック量の不一致、未知のID、キャリアの入れ子は受け付けません。
 - `MixtureFluidTank(int capacity, boolean unwrapPureOutput, Runnable onContentsChanged)`：異種液体を受ける標準の流体ハンドラーです。保存と同期はFluidStackのCodecとData Componentを使い、槽の保存用NBTは通常のコンテナとしてだけ使います。シミュレーションは在庫も通知回数も変えません。
 - `MixtureData`：温度等級・放射性核種などの各成分のData Componentを保持する補助データです。量を重複して保存しません。同じ流体IDの異なる温度や核種の混合には既存の混合則を使い、他Mod独自の互換性のないプロパティ同士は拒否します。
-- `MixtureGoggleHelper.describe`：全成分の表示リスト、`appendSummary`：4行までの概要を作ります。
+- `MixtureGoggleHelper.describe`：全成分の表示リスト、`appendSummary`：名前・状態と全成分の概要を作ります。
 
 混合した瞬間の化学反応や混合物の蒸留レシピは追加していません。今後の反応・分離は `extractContents` と `components` で在庫を読み、`split` と `merge` で物量を確定し、`createStack` で残量・生成物を返す形で接続できます。装置側の再評価はタンクの `onContentsChanged` から開始できます。コードの共通処理だけで新しい流体の組合せに対応でき、流体ごとの専用ブロックを追加する必要はありません。
 

@@ -83,7 +83,7 @@ public final class MixtureClientCheck {
         if (phase == 4 && !reportWritten && mc.level.getBlockEntity(TARGET) instanceof FluidTankBlockEntity tank) {
             var fluid = tank.getControllerBE().getTankInventory().getFluid();if (!MixtureHelper.isMixture(fluid) || !MixtureHelper.extractContents(fluid).equals(EXPECTED)) return;
             var lines = new ArrayList<net.minecraft.network.chat.Component>();MixtureGoggleHelper.appendSummary(lines, fluid);
-            if (lines.size() > 4 || MixtureGoggleHelper.describe(fluid).size() != 5) throw new IllegalStateException("Composition display lost constituents");
+            if (MixtureGoggleHelper.describe(fluid).size() != 5) throw new IllegalStateException("Composition display lost constituents");
             try {
                 Files.writeString(mc.gameDirectory.toPath().resolve("mixture-client-result.json"), new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(Map.of("nativeTransport", "passed", "clientSync", "passed", "components", EXPECTED.amounts(), "tint", Integer.toHexString(MixtureClient.tint(fluid)), "goggles", lines.stream().map(net.minecraft.network.chat.Component::getString).toList(), "fullComposition", MixtureGoggleHelper.describe(fluid).stream().map(net.minecraft.network.chat.Component::getString).toList())));
                 reportWritten = true;org.slf4j.LoggerFactory.getLogger(MixtureClientCheck.class).info("MIXTURE CLIENT PASSED: P opens the Ponder");

@@ -46,7 +46,6 @@ final class ProductionReadings {
         }
         if (!meter.limit().isEmpty()) summary.add(Component.translatable(PREFIX + "bottleneck", limit(owner)));
         if (summary.isEmpty()) return;
-        while (tooltip.size() + summary.size() > 4) tooltip.removeLast();
         tooltip.addAll(summary);
     }
 

@@ -90,8 +90,8 @@ public final class ProcessGoggles {
             lines.add(combined);
         }
         var hazards = sneaking && stock != null ? ChemicalReadout.hazards(stock.fluid) : null;
-        if (hazards != null && lines.size() < 4) lines.add(hazards);
-        for (var line : prior) if (line != nativeStock && !line.equals(gauges) && (lines.size() < 4 || wearWarning(line))
+        if (hazards != null) lines.add(hazards);
+        for (var line : prior) if (line != nativeStock && !line.equals(gauges)
             && (stopped == null || !line.getString().equals(stopped.getString()))) lines.add(line);
         MachineReadings.compact(lines);
     }
@@ -161,10 +161,6 @@ public final class ProcessGoggles {
     private static boolean rated(BlockEntity source, BlockEntity owner) {
         return net.createplant.transport.PipeMaterial.carrier(source.getBlockState()) != null
             || owner instanceof com.simibubi.create.foundation.blockEntity.SmartBlockEntity tank && TankGrade.of(tank) != null;
-    }
-
-    private static boolean wearWarning(Component line) {
-        return line.getContents() instanceof TranslatableContents text && text.getKey().equals("transport." + net.createplant.CreatePlant.MOD_ID + ".wear");
     }
 
     private static Stock stockOf(FluidStack fluid, int capacity) { return fluid.isEmpty() ? null : new Stock(fluid, capacity); }

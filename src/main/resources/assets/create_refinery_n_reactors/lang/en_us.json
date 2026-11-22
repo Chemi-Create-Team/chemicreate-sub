@@ -2681,7 +2681,6 @@
   "fluid.create_refinery_n_reactors.other_gases": "Other Gases",
   "mixture.create_refinery_n_reactors.total": "Mixture: %s mB",
   "mixture.create_refinery_n_reactors.component": "%s: %s mB (%s%%)",
-  "mixture.create_refinery_n_reactors.more": "And %s more; use a Display Link",
   "create_refinery_n_reactors.display_source.mixture": "Mixture composition",
   "jei.create_refinery_n_reactors.note.electrolysis_sulfurous": "One plate for %s ticks, %s kJ: the hybrid sulfur cell. Hydrogen leaves the cathode side; the sulfuric acid leaves the far end.",
   "fluid.create_refinery_n_reactors.sulfurous_acid": "Sulfurous Acid",

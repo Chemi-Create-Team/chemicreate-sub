@@ -264,7 +264,7 @@ public class DriveLessVesselGameTests {
         h.assertTrue(owner.isController() && owner.getBlockPos().equals(h.absolutePos(BASE)) && owner.stirred(), "Tanks placed under it cannot strand a filled process in a non-controller member");
         h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "The feed remains reachable at its original controller");
         var text = new ArrayList<Component>();
-        h.assertTrue(owner.addToGoggleTooltip(text, false) && !text.isEmpty() && text.size() <= 4, "A formed vessel's goggle summary is finite and four lines or fewer");
+        h.assertTrue(owner.addToGoggleTooltip(text, false) && !text.isEmpty(), "A formed vessel shows a goggle summary");
         h.succeed();
     }
 

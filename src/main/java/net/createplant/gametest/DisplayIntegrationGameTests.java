@@ -32,7 +32,7 @@ public class DisplayIntegrationGameTests {
         h.assertTrue(!MachineReadings.KEYS.contains("temperature_1") && MachineReadings.read(be,"temperature_1")==null,"Retired fluid temperature metrics are absent");
         h.assertTrue(MachineReadings.read(be,"fluid_1").value()==100 && MachineReadings.read(be,"fluid_3").value()==300,"Independent row sampling preserves finite stocks");
         h.assertTrue(MachineReadings.owner(h.getLevel().getBlockEntity(be.members().get(5)))==be,"Bundle links resolve the live controller");
-        for(boolean shift:new boolean[]{false,true}){var lines=new java.util.ArrayList<net.minecraft.network.chat.Component>();be.addToGoggleTooltip(lines,shift);h.assertTrue(lines.size()<=4,"Grades and throughput fit the four-line overview");}h.succeed();
+        for(boolean shift:new boolean[]{false,true}){var lines=new java.util.ArrayList<net.minecraft.network.chat.Component>();h.assertTrue(be.addToGoggleTooltip(lines,shift) && !lines.isEmpty(),"Grades and throughput show on the goggles");}h.succeed();
     }
     @GameTest(template="test_fractionation")
     public static void temperaturesAndInvalidSelectionsNeverInventPercentagesOrConsumeFluid(GameTestHelper h) {
@@ -56,11 +56,12 @@ public class DisplayIntegrationGameTests {
     }
 
     @GameTest(template="test_fractionation")
-    public static void gogglesAllowFourUsefulLinesWithoutPadding(GameTestHelper h) {
+    public static void gogglesKeepEveryUsefulLineWithoutPadding(GameTestHelper h) {
         var lines=new java.util.ArrayList<net.minecraft.network.chat.Component>();
         for(int i=0;i<5;i++) lines.add(net.minecraft.network.chat.Component.literal("value "+i));
-        MachineReadings.compact(lines);h.assertTrue(lines.size()==4,"Four useful rows survive compaction");
-        lines.subList(2,4).clear();MachineReadings.compact(lines);
+        lines.add(net.minecraft.network.chat.Component.literal(" "));
+        MachineReadings.compact(lines);h.assertTrue(lines.size()==5,"Every useful row survives compaction and blank rows are dropped");
+        lines.subList(2,5).clear();MachineReadings.compact(lines);
         h.assertTrue(lines.size()==2,"Short summaries are never padded");h.succeed();
     }
 

@@ -29,7 +29,6 @@ public final class DisplayClientCheck {
             be.setLevel(mc.level);
             for (boolean shift:new boolean[]{false,true}) {
                 var lines=new ArrayList<Component>();goggles.addToGoggleTooltip(lines,shift);
-                if (lines.size()>4) throw new IllegalStateException("Goggle summary exceeds four lines: "+id+" "+lines);
                 results.put(id+" shift="+shift,lines.stream().map(Component::getString).toList());
             }
         }

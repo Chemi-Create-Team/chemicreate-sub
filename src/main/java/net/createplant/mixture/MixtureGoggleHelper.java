@@ -19,9 +19,8 @@ public final class MixtureGoggleHelper {
     }
     public static void appendSummary(List<Component> lines, FluidStack stack) {
         var full = describe(stack);if (full.isEmpty()) return;
-        lines.add(full.getFirst().copy().append(" · ").append(net.createplant.thermal.FluidState.describe(stack)));int components=full.size()-1, shown=Math.min(components,components>3 ? 2 : 3);
-        for (int i = 1; i <= shown; i++) lines.add(full.get(i));
-        if (shown < components) lines.add(Component.translatable("mixture.create_refinery_n_reactors.more", components - shown));
+        lines.add(full.getFirst().copy().append(" · ").append(net.createplant.thermal.FluidState.describe(stack)));
+        lines.addAll(full.subList(1, full.size()));
     }
 
     /**
