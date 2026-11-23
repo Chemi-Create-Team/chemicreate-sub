@@ -310,7 +310,7 @@ public class CraftingRecipeGameTests {
             h.assertTrue(contains(holder.orElseThrow().value(), item(use.getValue())),
                 use.getKey() + " uses " + use.getValue());
         }
-        for (String id : List.of("pressure_reaction/zirconium_sulfate_solution", "pressure_reaction/zirconia")) {
+        for (String id : List.of("pressure_reaction/zirconium_sulfate_solution", "pressure_reaction/zirconium_sulfate_evaporation", "pressure_reaction/zirconium_sulfate_dehydration", "pressure_reaction/zirconia")) {
             var holder = manager.byKey(CreatePlant.location(id));
             h.assertTrue(holder.isPresent(), "The zirconia bootstrap recipe exists: " + id);
             h.assertTrue(!contains(holder.orElseThrow().value(), item("electrolysis_furnace_shell")),

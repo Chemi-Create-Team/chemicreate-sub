@@ -2880,9 +2880,9 @@
     "zh_cn": "在搅拌槽中加热矿物与硫酸，同时取出回收的铁粒。\n%s → %s"
   },
   "guide.manufacturing_titanium.step_3": {
-    "en_us": "Superheat the solution to obtain titanium dioxide and recover the sulfur trioxide.\n%s → %s",
-    "ja_jp": "溶液を超加熱して二酸化チタンを得て、三酸化硫黄も回収します。\n%s → %s",
-    "zh_cn": "超加热溶液取得二氧化钛并回收三氧化硫。\n%s → %s"
+    "en_us": "Boil the solution down to titanyl sulfate hydrate crystals, then superheat them to leave solid titanium dioxide and recover the sulfur trioxide.\n%s → %s",
+    "ja_jp": "溶液を加熱して水を蒸発させ、硫酸チタニル水和物の結晶を析出させます。それを超加熱すると固体の二酸化チタンが残り、三酸化硫黄も回収できます。\n%s → %s",
+    "zh_cn": "加热溶液蒸发水分，析出硫酸氧钛水合物晶体；再超加热留下固体二氧化钛并回收三氧化硫。\n%s → %s"
   },
   "guide.manufacturing_titanium.step_4": {
     "en_us": "The hydrochloric-acid route gives another way to obtain the same oxide. Choose a route according to the acids already produced by the factory.\n%s → %s",
@@ -2915,9 +2915,9 @@
     "zh_cn": "在搅拌槽中超加热锆石与硫酸。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_3": {
-    "en_us": "Keep the solution in its own batch and superheat it to collect zirconia and recover sulfur trioxide.\n%s → %s",
-    "ja_jp": "溶液を別バッチで超加熱し、ジルコニアと三酸化硫黄を回収します。\n%s → %s",
-    "zh_cn": "将溶液作为下一批超加热，回收氧化锆和三氧化硫。\n%s → %s"
+    "en_us": "Boil the solution down to zirconium sulfate hydrate crystals (about 100-150 °C). Heat on to dehydrate them to zirconyl sulfate, releasing part of the SO3 (about 150-500 °C). Superheating above 700 °C decomposes the rest and leaves solid zirconia.\n%s → %s",
+    "ja_jp": "溶液を加熱して水を蒸発させ、硫酸ジルコニウム水和物の結晶を析出させます(100〜150℃付近)。さらに加熱すると脱水してSO3の一部を放出し、硫酸ジルコニルになります(150〜500℃付近)。700℃以上に超加熱すると残りも分解し、固体のジルコニアが残ります。\n%s → %s",
+    "zh_cn": "加热溶液蒸发水分，析出硫酸锆水合物晶体（约100-150 ℃）；继续加热脱水并放出部分SO3，变为硫酸氧锆（约150-500 ℃）；超加热到700 ℃以上则残余部分完全分解，留下固体氧化锆。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_4": {
     "en_us": "Electrolyze the oxide with carbon in the powered furnace to recover zirconium metal.\n%s → %s",

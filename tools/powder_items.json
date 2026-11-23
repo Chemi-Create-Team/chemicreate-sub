@@ -233,6 +233,118 @@
         57
       ],
       "reason": "Loose carbon powder from milling or crushing coal and charcoal."
+    },
+    "zirconium_sulfate_hydrate": {
+      "colour": [
+        236,
+        232,
+        218
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "zirconyl_sulfate": {
+      "colour": [
+        226,
+        222,
+        208
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "titanyl_sulfate_hydrate": {
+      "colour": [
+        214,
+        214,
+        160
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "aluminium_sulfate_hydrate": {
+      "colour": [
+        236,
+        238,
+        240
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "iron_sulfate_hydrate": {
+      "colour": [
+        150,
+        190,
+        130
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "copper_sulfate_crystals": {
+      "colour": [
+        52,
+        120,
+        214
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "zinc_sulfate_hydrate": {
+      "colour": [
+        226,
+        232,
+        228
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "tin_sulfate_crystals": {
+      "colour": [
+        206,
+        214,
+        214
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "lead_chloride_crystals": {
+      "colour": [
+        232,
+        228,
+        214
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "uranyl_nitrate_hydrate": {
+      "colour": [
+        206,
+        204,
+        80
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "plutonium_nitrate_crystals": {
+      "colour": [
+        150,
+        126,
+        92
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "sodium_aluminate_crystals": {
+      "colour": [
+        232,
+        232,
+        226
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "caustic_soda_flakes": {
+      "colour": [
+        240,
+        240,
+        244
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
+    },
+    "ammonium_chloride_crystals": {
+      "colour": [
+        238,
+        236,
+        226
+      ],
+      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
     }
   },
   "preserved_items": {

@@ -70,6 +70,7 @@ public final class RadiationSources {
                 "uranium_dioxide",
                 "enriched_uranium_dioxide",
                 "uranium_trioxide",
+                "uranyl_nitrate_hydrate",
                 "uranium_tetrafluoride",
                 "compact_uranium_dioxide",
                 "green_uranium_pellet",

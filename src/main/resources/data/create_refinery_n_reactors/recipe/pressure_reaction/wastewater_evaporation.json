@@ -1,0 +1,20 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "create_refinery_n_reactors:wastewater"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:treatment_sludge"
+    },
+    {
+      "id": "create_refinery_n_reactors:steam",
+      "amount": 800
+    }
+  ]
+}
