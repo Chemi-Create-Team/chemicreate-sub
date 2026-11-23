@@ -15,6 +15,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 /** Two finite streams converted together; their inlet positions determine the direction of heat exchange. */
 public final class ThermalEquipment {
     private final ReactorMachineBlockEntity owner;
+    /** Share of the best-case heat that opposing flow moves, and the smallest temperature difference worth exchanging. */
+    public static final double COUNTERFLOW_EFFICIENCY=.9, MINIMUM_DELTA=.5;
     private final ThermalFluidTank[] tanks=new ThermalFluidTank[4];
     private final ThermalFluidTank[] condensate=new ThermalFluidTank[2];
     private final int[] rowInlet={-1,-1};
@@ -121,13 +123,21 @@ public final class ThermalEquipment {
             owner.thermalStatus("two_streams",false);
             return;
         }
-        int a=FluidState.temperature(first), b=FluidState.temperature(second);
-        if(a==b) {
+        double kelvinA=tanks[0].kelvin(), kelvinB=tanks[2].kelvin();
+        if(Math.abs(kelvinA-kelvinB)<MINIMUM_DELTA) {
             credit=0;
             owner.thermalStatus("temperature_delta",false);
             return;
         }
-        int outA=outletLevel(a,b,counterflow()), outB=outletLevel(b,a,counterflow());
+        // Heat moved per mB of each stream (both streams take the same amount): parallel flow ends at one temperature,
+        // counterflow moves a share of the best case. A stream that reaches its boiling point takes or gives its latent heat.
+        double capacityA=HeatContent.capacity(first.copyWithAmount(1000)), capacityB=HeatContent.capacity(second.copyWithAmount(1000));
+        double moved=(counterflow() ? COUNTERFLOW_EFFICIENCY*Math.min(capacityA,capacityB) : capacityA*capacityB/(capacityA+capacityB))*Math.abs(kelvinA-kelvinB);
+        boolean firstHot=kelvinA>kelvinB;
+        var shiftA=HeatContent.shift(first.copyWithAmount(1000),kelvinA,firstHot ? -moved : moved);
+        var shiftB=HeatContent.shift(second.copyWithAmount(1000),kelvinB,firstHot ? moved : -moved);
+        int outA=FluidState.levelFor(first,shiftA.kelvin(),FluidState.pressure(first),shiftA.gas());
+        int outB=FluidState.levelFor(second,shiftB.kelvin(),FluidState.pressure(second),shiftB.gas());
         var changeA=PhaseChange.transfer(first,outA,FluidState.pressure(first));
         var changeB=PhaseChange.transfer(second,outB,FluidState.pressure(second));
         long common=(long)changeA.consumed()/gcd(changeA.consumed(),changeB.consumed())*changeB.consumed();
@@ -155,7 +165,7 @@ public final class ThermalEquipment {
         }
         FluidStack productA=changeA.output(batches*unitA), productB=changeB.output(batches*unitB);
         // Steam in a hot gas that cools to or below boiling leaves as water through the hot row's condensate tank.
-        int hotRow=a>b ? 0 : 1;
+        int hotRow=firstHot ? 0 : 1;
         var hotProduct=hotRow==0 ? productA : productB;
         double hotKelvin=FluidState.kelvin(hotRow==0 ? outA : outB);
         var split=SteamCondensate.separate(hotProduct,hotKelvin,condensate[hotRow].getSpace());
@@ -165,12 +175,13 @@ public final class ThermalEquipment {
         int amount=batches*quantum;
         tanks[0].drain(amount,EXECUTE);
         tanks[2].drain(amount,EXECUTE);
-        tanks[1].fill(productA,EXECUTE);
-        tanks[3].fill(productB,EXECUTE);
+        // The outlet buffers take the streams at their real outlet temperature, so rounding to a level loses no heat.
+        tanks[1].fillAt(productA,shiftA.kelvin(),EXECUTE);
+        tanks[3].fillAt(productB,shiftB.kelvin(),EXECUTE);
         if(!split.water().isEmpty())condensate[hotRow].fill(split.water(),EXECUTE);
         credit=credit-amount;
         if(batches<feed)credit=0;
-        coolantRow=a<b ? 0 : 1;
+        coolantRow=firstHot ? 1 : 0;
         outletKelvin[0]=(int)Math.round(FluidState.kelvin(outA)*100);
         outletKelvin[1]=(int)Math.round(FluidState.kelvin(outB)*100);
         lastCold=lastHot=amount;

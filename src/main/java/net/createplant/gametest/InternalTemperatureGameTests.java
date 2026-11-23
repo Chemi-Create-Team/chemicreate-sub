@@ -80,4 +80,16 @@ public final class InternalTemperatureGameTests {
         h.assertTrue(held && boiled && tank.getFluidAmount()==1000,"The water waits at 100 C and then turns to steam");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty")
+    public static void exchangerOutletsFollowTheHeatBalance(GameTestHelper h) {
+        var hot=water(1000,9);var cold=water(1000,8);
+        double hotK=FluidState.kelvin(9),coldK=FluidState.kelvin(8),capacity=HeatContent.capacity(hot),delta=hotK-coldK;
+        double parallel=capacity/2*delta, counter=ThermalEquipment.COUNTERFLOW_EFFICIENCY*capacity*delta;
+        var a=HeatContent.shift(hot,hotK,-parallel);var b=HeatContent.shift(cold,coldK,parallel);
+        h.assertTrue(Math.abs(a.kelvin()-(hotK+coldK)/2)<.01 && Math.abs(b.kelvin()-(hotK+coldK)/2)<.01,"Parallel flow ends at the mean temperature");
+        a=HeatContent.shift(hot,hotK,-counter);b=HeatContent.shift(cold,coldK,counter);
+        h.assertTrue(Math.abs(a.kelvin()-(hotK-.9*delta))<.01 && Math.abs(b.kelvin()-(coldK+.9*delta))<.01 && b.kelvin()>a.kelvin(),"Counterflow moves 0.9 of the difference and crosses over");
+        h.succeed();
+    }
 }

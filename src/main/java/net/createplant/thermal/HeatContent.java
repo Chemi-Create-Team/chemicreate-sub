@@ -119,10 +119,11 @@ public final class HeatContent {
         FluidStack stack=input.copy();
         boolean structural=false;
         double t=kelvin(input), q=quality(input);
+        boolean gas=FluidState.gas(input);
         for(int guard=0;guard<16 && Math.abs(joules)>1e-6 && !stack.isEmpty();guard++) {
             double c=capacity(stack);
             if(c<=0)break;
-            boolean heating=joules>0, gas=FluidState.gas(stack);
+            boolean heating=joules>0;
             double boil=FluidState.phaseSensitive(stack) ? FluidState.boilingKelvin(stack,FluidState.pressure(stack)) : Double.POSITIVE_INFINITY;
             boolean boiling=boil>floor && boil<ceiling && heating!=gas;
             double stop=boiling ? boil : heating ? ceiling : floor;
@@ -140,12 +141,22 @@ public final class HeatContent {
             q+=heating ? use/latent : -use/latent;
             joules-=Math.signum(joules)*use;
             if(Math.abs(goal-q)>EPSILON)break;
-            var converted=convert(stack,t,heating,room);
+            // Without a room function the phase flips on paper only: the stack keeps its amount and takes the new phase's level.
+            var converted=room==null ? relevel(stack,t,heating) : convert(stack,t,heating,room);
             if(converted==null)break;
-            stack=converted;structural=true;q=goal;
+            stack=converted;structural=true;q=goal;gas=heating;
         }
         set(stack,t,q);
         return new Outcome(stack,structural,joules);
+    }
+
+    /** What a stream of {@code sample} (at {@code kelvin}) is like after taking {@code joules}, without touching any inventory. */
+    public record Shift(double kelvin,boolean gas,double quality) { }
+    public static Shift shift(FluidStack sample,double kelvin,double joules) {
+        var scratch=new HeatContent();
+        scratch.set(sample,kelvin);
+        var outcome=scratch.add(sample,joules,MINIMUM,MAXIMUM,null);
+        return new Shift(scratch.kelvin(outcome.stack()),scratch.quality(outcome.stack())>=.5,scratch.quality(outcome.stack()));
     }
 
     public void write(CompoundTag tag) {
