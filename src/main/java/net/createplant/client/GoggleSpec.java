@@ -239,6 +239,7 @@ public final class GoggleSpec {
 
     /** The same layout for a stirred or stacked reactor machine, a reaction tower, a gasifier or a fractionating column; false for anything else. */
     public static boolean machine(net.minecraft.world.level.block.entity.BlockEntity owner, List<Component> lines, boolean shift) {
+        if (owner instanceof net.createplant.block.entity.ColumnRingBlockEntity ring && ring.storey() != null) owner = ring.storey();
         if (owner instanceof net.createplant.block.entity.StackedReactorBlockEntity stack && stack.bottomStorey() != null) owner = stack.bottomStorey();
         if (owner instanceof net.createplant.block.entity.ReactorMachineBlockEntity machine && !(owner instanceof LiddedVesselBlockEntity) && machine.exchanger() == null
             && machine.module() != net.createplant.chemistry.ReactorModule.PREHEATER && !machine.horizontal()) return reactor(machine, lines, shift);
