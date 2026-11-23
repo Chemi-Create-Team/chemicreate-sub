@@ -601,6 +601,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
                 for (var result:recipe.getRollableResults()) right.add(result.getStack().getHoverName().getString());
                 if (!left.isEmpty() && !right.isEmpty()) return Component.literal(String.join(" + ",left)+" → "+String.join(" + ",right));
             }
+            if (!batch.contains(":")) for (var recipe:ProcessRecipe.all()) if (recipe.id().equals(batch)) return net.createplant.client.GoggleSpec.equation(recipe.inputs(),recipe.outputs());
         } catch (RuntimeException ignored) { }
         return batchName();
     }
@@ -610,7 +611,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
     private Component batchName() {
         if (batch.isEmpty()) return Component.translatable(KEY+"no_batch");
-        if (!batch.contains(":")) return Component.translatable("process.create_refinery_n_reactors.recipe."+batch);
+        if (!batch.contains(":")) return Component.translatableWithFallback("process.create_refinery_n_reactors.recipe."+batch,batch.replace('_',' '));
         var recipe=level.getRecipeManager().byKey(net.minecraft.resources.ResourceLocation.parse(batch)).map(holder->holder.value()).orElse(null);
         if (!(recipe instanceof StandardProcessingRecipe<?> reactionRecipe)) return Component.translatable(KEY+"no_batch");
         return reactionRecipe.getRollableResults().isEmpty() ? reactionRecipe.getFluidResults().getFirst().getHoverName() : reactionRecipe.getRollableResults().getFirst().getStack().getHoverName();

@@ -6331,5 +6331,7 @@
   "goggle_spec.create_refinery_n_reactors.reason.recipe": "No matching recipe",
   "goggle_spec.create_refinery_n_reactors.reason.power": "Drive short (need: %s RPM)",
   "goggle_spec.create_refinery_n_reactors.reason.heat": "Heat short (need: %s)",
-  "goggle_spec.create_refinery_n_reactors.reason.pressure": "Pressure short (need: %s)"
+  "goggle_spec.create_refinery_n_reactors.reason.pressure": "Pressure short (need: %s)",
+  "goggle_spec.create_refinery_n_reactors.storeys": "Storeys: %s",
+  "goggle_spec.create_refinery_n_reactors.catalyst": "Catalyst: %s / %s trays (up to %s batches left)"
 }

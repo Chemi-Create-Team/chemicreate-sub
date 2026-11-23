@@ -82,6 +82,12 @@ public final class ProcessGoggles {
                 return;
             }
         }
+        if (!(source instanceof FluidPipeBlockEntity) && GoggleSpec.machine(owner, lines, sneaking)) {
+            var production = new ArrayList<Component>(4);
+            MachineReadings.appendProduction(source, production);
+            lines.addAll(production);
+            return;
+        }
         var stock = stock(source, owner, face);
         var gauges = gauges(source, owner, stock);
         var stopped = stopped(owner);

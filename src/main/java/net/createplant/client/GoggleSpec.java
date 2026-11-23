@@ -12,6 +12,7 @@ import net.createplant.mixture.MixtureHelper;
 import net.createplant.thermal.FluidState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -124,20 +125,31 @@ public final class GoggleSpec {
 
     private enum Reason { HATCH, DRAIN, MAINTENANCE, OUTPUT, FEED, RECIPE, POWER, HEAT, PRESSURE, OTHER }
 
-    private static Reason reason(LiddedVesselBlockEntity vessel) {
-        var status = vessel.status();
-        if (vessel.open()) return Reason.HATCH;
-        if (vessel.fouling().drainOpen()) return Reason.DRAIN;
-        if (status.equals("fouled")) return Reason.MAINTENANCE;
+    /** The kind of stop a machine's status word means; anything else is shown with its own text. */
+    private static Reason classify(String status) {
         return switch (status) {
-            case "output", "gas_full" -> Reason.OUTPUT;
-            case "feed", "idle" -> Reason.FEED;
-            case "materials" -> Reason.RECIPE;
-            case "speed" -> Reason.POWER;
-            case "heat" -> Reason.HEAT;
+            case "fouled", "blocked" -> Reason.MAINTENANCE;
+            case "hatch", "lid" -> Reason.HATCH;
+            case "output", "gas_output", "gas_full", "products_full" -> Reason.OUTPUT;
+            case "feed", "no_feed", "idle", "input" -> Reason.FEED;
+            case "materials", "mixed" -> Reason.RECIPE;
+            case "speed", "no_speed", "power", "no_power", "energy" -> Reason.POWER;
+            case "heat", "heat_required", "preheat" -> Reason.HEAT;
             case "pressure" -> Reason.PRESSURE;
             default -> Reason.OTHER;
         };
+    }
+
+    private static Reason reason(LiddedVesselBlockEntity vessel) {
+        if (vessel.open()) return Reason.HATCH;
+        if (vessel.fouling().drainOpen()) return Reason.DRAIN;
+        return classify(vessel.status());
+    }
+
+    /** A machine status's own text under the first key that has a translation, else the word itself with its underscores opened. */
+    private static Component statusText(String status, String... prefixes) {
+        for (var prefix : prefixes) if (Language.getInstance().has(prefix + status)) return Component.translatable(prefix + status);
+        return Component.literal(status.replace('_', ' '));
     }
 
     private static boolean heated(LiddedVesselBlockEntity vessel) { return vessel.currentBurnerHeat().isAtLeast(BlazeBurnerBlock.HeatLevel.KINDLED); }
@@ -164,7 +176,7 @@ public final class GoggleSpec {
             lines.add(Component.translatable(K + "running").withStyle(ChatFormatting.GREEN).append(label(": ")).append(equation.copy().withStyle(ChatFormatting.WHITE))
                 .append(label(" (" + percent + "%)")));
         } else {
-            lines.add(Component.translatable(K + "stopped").withStyle(ChatFormatting.GOLD).append(label(": ")).append(reasonText(vessel, reason).withStyle(ChatFormatting.GOLD)));
+            lines.add(Component.translatable(K + "stopped").withStyle(ChatFormatting.GOLD).append(label(": ")).append(reasonText(reason, statusText(vessel.status(), "reactor.create_refinery_n_reactors.status."), heated(vessel)).withStyle(ChatFormatting.GOLD)));
             if (!vessel.batchEmpty()) lines.add(line(Component.translatable(K + "target").getString(), equation.copy().withStyle(ChatFormatting.WHITE)));
         }
         stock(lines, shown, capacity, shift);
@@ -188,13 +200,129 @@ public final class GoggleSpec {
         lines.add(equipment);
     }
 
-    private static MutableComponent reasonText(LiddedVesselBlockEntity vessel, Reason reason) {
+    private static MutableComponent reasonText(Reason reason, Component other, boolean superheat) {
         return switch (reason) {
             case POWER -> Component.translatable(K + "reason.power", 32);
-            case HEAT -> Component.translatable(K + "reason.heat", Component.translatable(K + "temperature." + (heated(vessel) ? "superheated" : "hot")));
+            case HEAT -> Component.translatable(K + "reason.heat", Component.translatable(K + "temperature." + (superheat ? "superheated" : "hot")));
             case PRESSURE -> Component.translatable(K + "reason.pressure", Component.translatable(K + "pressure.high"));
-            case OTHER -> Component.translatable("reactor.create_refinery_n_reactors.status." + vessel.status());
+            case OTHER -> other.copy();
             default -> Component.translatable(K + "reason." + reason.name().toLowerCase(Locale.ROOT));
         };
+    }
+
+    /** Line one, and under it the target reaction of a stopped machine that has one. */
+    private static void header(List<Component> lines, Component equation, int percent, Reason reason, Component other, boolean superheat) {
+        if (reason == null) {
+            var head = Component.translatable(K + "running").withStyle(ChatFormatting.GREEN);
+            if (equation != null) head.append(label(": ")).append(equation.copy().withStyle(ChatFormatting.WHITE));
+            if (percent >= 0) head.append(label(" (" + percent + "%)"));
+            lines.add(head);
+            return;
+        }
+        lines.add(Component.translatable(K + "stopped").withStyle(ChatFormatting.GOLD).append(label(": ")).append(reasonText(reason, other, superheat).withStyle(ChatFormatting.GOLD)));
+        if (equation != null) lines.add(line(Component.translatable(K + "target").getString(), equation.copy().withStyle(ChatFormatting.WHITE)));
+    }
+
+    /** The first filled bank as the stock, the other filled banks as one short line each. */
+    private static void banks(List<Component> lines, List<FluidStack> fluids, List<Integer> capacities, boolean shift) {
+        int first = -1;
+        for (int i = 0; i < fluids.size() && first < 0; i++) if (!fluids.get(i).isEmpty()) first = i;
+        if (first < 0) { stock(lines, List.of(), capacities.isEmpty() ? 0 : capacities.getFirst(), shift); return; }
+        stock(lines, List.of(fluids.get(first)), capacities.get(first), shift);
+        for (int i = first + 1; i < fluids.size(); i++) {
+            if (fluids.get(i).isEmpty()) continue;
+            lines.add(Component.literal(INDENT + "  ").append(white(name(fluids.get(i), shift))).append(label(": ")).append(count(fluids.get(i).getAmount(), capacities.get(i), shift)));
+        }
+    }
+
+    // ---- other machines --------------------------------------------------------------------------------------------------------------
+
+    /** The same layout for a stirred or stacked reactor machine, a reaction tower, a gasifier or a fractionating column; false for anything else. */
+    public static boolean machine(net.minecraft.world.level.block.entity.BlockEntity owner, List<Component> lines, boolean shift) {
+        if (owner instanceof net.createplant.block.entity.StackedReactorBlockEntity stack && stack.bottomStorey() != null) owner = stack.bottomStorey();
+        if (owner instanceof net.createplant.block.entity.ReactorMachineBlockEntity machine && !(owner instanceof LiddedVesselBlockEntity) && machine.exchanger() == null
+            && machine.module() != net.createplant.chemistry.ReactorModule.PREHEATER && !machine.horizontal()) return reactor(machine, lines, shift);
+        if (owner instanceof net.createplant.block.entity.ReactionTowerBlockEntity tower) return tower(tower, lines, shift);
+        if (owner instanceof net.createplant.block.entity.GasifierBlockEntity gasifier) return gasifier(gasifier, lines, shift);
+        if (owner instanceof net.createplant.block.entity.FractionatingColumnBlockEntity column) return column(column, lines, shift);
+        return false;
+    }
+
+    private static boolean reactor(net.createplant.block.entity.ReactorMachineBlockEntity machine, List<Component> lines, boolean shift) {
+        boolean running = machine.formed() && machine.running();
+        var reason = running ? null : classify(machine.status());
+        lines.clear();
+        header(lines, machine.batchEmpty() ? null : machine.reactionLabel(), Math.round(machine.progress() * 100 / Math.max(1, machine.cycleTicks())), reason,
+            statusText(machine.status(), "reactor.create_refinery_n_reactors.status.", "reaction_tower.create_refinery_n_reactors.status."), false);
+        var fluids = new ArrayList<FluidStack>();
+        var capacities = new ArrayList<Integer>();
+        for (int slot = 0; slot < machine.displayedFluidSlots(); slot++) { fluids.add(machine.displayedFluid(slot)); capacities.add(machine.getDisplayedCapacity(slot)); }
+        banks(lines, fluids, capacities, shift);
+        int rpm = Math.round(Math.abs(machine.rotationSpeed()));
+        if (rpm > 0 || reason == Reason.POWER) lines.add(line(Component.translatable(K + "environment").getString(), label(Component.translatable(K + "power").getString() + ": "),
+            Component.literal(rpm + " RPM").withStyle(reason == Reason.POWER ? ChatFormatting.GOLD : ChatFormatting.WHITE)));
+        if (shift) lines.add(line(Component.translatable(K + "equipment").getString(), Component.translatable(K + "storeys", machine.sections()).withStyle(ChatFormatting.WHITE)));
+        return true;
+    }
+
+    private static boolean tower(net.createplant.block.entity.ReactionTowerBlockEntity tower, List<Component> lines, boolean shift) {
+        var status = tower.status();
+        var recipe = tower.recipe();
+        var reason = status.equals("running") ? null : classify(status);
+        lines.clear();
+        header(lines, recipe == null ? null : equation(recipe.inputs(), recipe.outputs()), tower.cycleTicks() > 0 ? Math.round(tower.progress() * 100f / tower.cycleTicks()) : -1, reason,
+            statusText(status, "reaction_tower.create_refinery_n_reactors.status.", "reactor.create_refinery_n_reactors.status."),
+            recipe != null && recipe.requiredHeat() == com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        var fluids = new ArrayList<FluidStack>();
+        var capacities = new ArrayList<Integer>();
+        for (int bank = 0; bank < 4; bank++) { fluids.add(tower.contents(bank)); capacities.add(tower.contentsCapacity(bank)); }
+        banks(lines, fluids, capacities, shift);
+        lines.add(line(Component.translatable(K + "environment").getString(), white(tower.heaterGrade().label().getString()), label(" / "),
+            white(net.createplant.thermal.Grade.Pressure.of(tower.pressure()).label().getString())));
+        int[] trays = tower.trayCounts();
+        if (trays[0] > 0) lines.add(line(Component.translatable(K + "equipment").getString(), Component.translatable(K + "catalyst", trays[1], trays[0], trays[2]).withStyle(
+            reason == Reason.OTHER && status.equals("catalyst") ? ChatFormatting.GOLD : ChatFormatting.WHITE)));
+        if (shift) lines.add(line(Component.translatable(K + "equipment").getString(), Component.translatable(K + "storeys", tower.layers()).withStyle(ChatFormatting.WHITE)));
+        return true;
+    }
+
+    private static boolean gasifier(net.createplant.block.entity.GasifierBlockEntity gasifier, List<Component> lines, boolean shift) {
+        var status = gasifier.status();
+        var reason = status.equals("running") ? null : classify(status);
+        lines.clear();
+        header(lines, null, -1, reason, net.createplant.block.entity.GasifierBlockEntity.message(status), true);
+        if (!gasifier.formed()) return true;
+        var fluids = new ArrayList<FluidStack>();
+        var capacities = new ArrayList<Integer>();
+        for (int bank : new int[] {2, 1}) { fluids.add(gasifier.fluid(bank)); capacities.add(gasifier.capacity(bank)); }
+        banks(lines, fluids, capacities, shift);
+        lines.add(line(Component.translatable(K + "environment").getString(), white(net.createplant.thermal.Grade.Heat.of(gasifier.temperature() + 273.15).label().getString())));
+        return true;
+    }
+
+    private static boolean column(net.createplant.block.entity.FractionatingColumnBlockEntity column, List<Component> lines, boolean shift) {
+        var port = lines.isEmpty() ? null : lines.getLast();
+        var status = column.status();
+        var reason = column.running() ? null : classify(status);
+        lines.clear();
+        header(lines, null, column.running() ? Math.round(column.progress() * 100 / Math.max(1, column.cycleTicks())) : -1, reason,
+            statusText(status, "distillation.create_refinery_n_reactors.status."), false);
+        var fluids = new ArrayList<FluidStack>();
+        var capacities = new ArrayList<Integer>();
+        for (int slot = 0; slot < net.createplant.chemistry.DistillationProfile.SLOTS; slot++) { var fluid = column.content(slot); if (!fluid.isEmpty()) { fluids.add(fluid); capacities.add(column.capacity()); } }
+        banks(lines, fluids, capacities, shift);
+        if (shift) lines.add(line(Component.translatable(K + "equipment").getString(), Component.translatable(K + "structure", column.getWidth(), column.getHeight()).withStyle(ChatFormatting.WHITE)));
+        if (port != null) lines.add(Component.literal(INDENT).append(port.copy().withStyle(ChatFormatting.WHITE)));
+        return true;
+    }
+
+    /** "A + B → C + D" from the formulas of fluid stacks. */
+    public static Component equation(List<FluidStack> in, List<FluidStack> out) {
+        return Component.literal(String.join(" + ", in.stream().map(GoggleSpec::formula).toList()) + " → " + String.join(" + ", out.stream().map(GoggleSpec::formula).toList()));
+    }
+
+    static String formula(FluidStack fluid) {
+        var info = FluidChemicalRegistry.of(fluid);
+        return info == null || info.formula().equals("…") ? fluid.getHoverName().getString() : info.formula();
     }
 }

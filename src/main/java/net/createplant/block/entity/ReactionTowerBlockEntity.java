@@ -156,6 +156,18 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     public FluidStack contents(int bank) { return tanks[bank].copy(); }
     public int contentsCapacity(int bank) { return capacity(tanks[bank]); }
     public int progress() { return progress; }
+    public int cycleTicks() { return cycle; }
+    /** The trays in the tower, how many hold a working catalyst, and the most batches left in one: {trays, working, life}. */
+    public int[] trayCounts() {
+        int trays = 0, working = 0, life = 0;
+        for (int y = 0; y < layers(); y++) {
+            var layer = layer(y);
+            if (layer == null || !layer.tray) continue;
+            trays++;
+            if (!layer.catalyst.isEmpty() && !spent(layer.catalyst)) { working++;life = Math.max(life, layer.catalyst.getMaxDamage() - layer.catalyst.getDamageValue()); }
+        }
+        return new int[] {trays, working, life};
+    }
     public FluidStack tank(int slot) { return tanks[slot].copy(); }
 
     private void changed() { syncNeeded = true;setChanged(); }

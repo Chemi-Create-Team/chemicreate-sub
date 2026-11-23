@@ -6331,5 +6331,7 @@
   "goggle_spec.create_refinery_n_reactors.reason.recipe": "配方不成立",
   "goggle_spec.create_refinery_n_reactors.reason.power": "动力不足 (需要: %s RPM)",
   "goggle_spec.create_refinery_n_reactors.reason.heat": "温度不足 (需要: %s)",
-  "goggle_spec.create_refinery_n_reactors.reason.pressure": "压力不足 (需要: %s)"
+  "goggle_spec.create_refinery_n_reactors.reason.pressure": "压力不足 (需要: %s)",
+  "goggle_spec.create_refinery_n_reactors.storeys": "层数: %s",
+  "goggle_spec.create_refinery_n_reactors.catalyst": "催化剂: %s / %s 层 (最多剩余 %s 次)"
 }
