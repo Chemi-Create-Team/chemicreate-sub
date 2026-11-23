@@ -74,6 +74,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     private boolean dirty=true, recipeDirty=true, formed, running, syncNeeded, gasBlocked;
     private int sections, epoch, clock, scale, cycleTicks=100;
     private float progress;
+    /** How far through its current batch a fluid-only reaction has converted, 0 up to 1: fluids move a little every tick, not all at the end of a cycle. */
+    private double flow;
     private String batch="", status="structure";
     private BlockPos fault;
     private long scans;
@@ -359,24 +361,16 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         double ratedRate = ProductionMonitor.batchRate(1, sections, recipe.ticks(), module().stress == 0 ? 1 : 4);
         ProductionMonitor.plan(this, ProductionMonitor.fluids(recipe.outputs()) * ratedRate, 0, 0);
         if (!recipe.heatAllowed(currentBurnerHeat())) { setStatus("heat",false);return; }
-        int available=batches(recipe);
-        if (available==0) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : "materials",false);return; }
-        if (!batch.equals(recipe.id()) || scale<=0 || scale>available || progress==0 && scale!=available) { batch=recipe.id();scale=available;progress=0; }
+        double speed=Math.min(4,rpm/32f), wanted=sections*speed/recipe.ticks(), moving=supplyFraction(recipe,wanted);
+        if (moving<=0) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : "materials",false);return; }
+        if (!batch.equals(recipe.id())) { batch=recipe.id();flow=0; }
+        scale=Math.max(1,(int)Math.ceil(moving*recipe.ticks()/speed));
         cycleTicks=recipe.ticks();
         if(recipe.requiredHeat()!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE && takeBurnerHeat(recipe.requiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)<(recipe.requiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : 150)){setStatus("heat",false);return;}
-        ProductionMonitor.limitedBy(this, available < sections ? "throughput" : module().stress != 0 && rpm < 128 ? "speed" : "rated");
-        setStatus("running",true);progress+=Math.min(4,rpm/32f);setChanged();
-        if (progress>=recipe.ticks()) {
-            if (!ready() || batches(recipe)<scale) return;
-            for (int i=0;i<recipe.inputs().size();i++) tanks[i].shrink(requiredAmount(recipe,i)*scale);
-            for (int i=0;i<recipe.outputs().size();i++) {
-                FluidStack out=recipe.outputs().get(i);
-                var portion=out.copyWithAmount(out.getAmount()*scale);
-                tanks[i+2]=tanks[i+2].isEmpty() ? portion : FluidThermal.mix(tanks[i+2],portion,portion.getAmount());
-            }
-            ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.outputs()) * scale, 0, 0);
-            progress=0;changed();
-        }
+        ProductionMonitor.limitedBy(this, moving < wanted*.999 ? "throughput" : module().stress != 0 && rpm < 128 ? "speed" : "rated");
+        setStatus("running",true);
+        convert(recipe,moving);
+        progress=(float)(flow*cycleTicks);setChanged();
         if (clock%10==0) syncNeeded=true;
     }
     @Override public void lazyTick() {
@@ -440,6 +434,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         double itemCount = recipe.getRollableResults().stream().mapToDouble(result -> result.getStack().getCount() * result.getChance()).sum();
         ProductionMonitor.plan(this, ProductionMonitor.fluids(recipe.getFluidResults()) * ratedRate, itemCount * ratedRate, 0);
         if (!recipe.getRequiredHeat().testBlazeBurner(heat)) { progress=0;setStatus("heat",false);return true; }
+        if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) return reactFluids(recipe,duration,rpm,parallel);
         int available=batches(recipe,parallel);
         if (available==0) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : "materials",false);return true; }
         String id=reaction.id().toString();
@@ -516,25 +511,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             if (slot==FEED_SLOTS) return false;
             consumed.add(items[slot].copyWithCount(1));items[slot].shrink(1);
         }
-        for (var ingredient:recipe.getFluidIngredients()) {
-            int needed=ingredient.amount();
-            for (int tank:mixingInputs()) {
-                var feed=fluids[tank];
-                if (ingredient.ingredient().test(feed)) {
-                    int take=Math.min(needed,feed.getAmount());
-                    fluids[tank]=MixtureHelper.remainder(feed,take);needed-=take;
-                } else if (recipe instanceof PressureReactionRecipe && MixtureHelper.composite(feed) && MixtureHelper.isMixableGas(feed)) {
-                    for (var component:MixtureHelper.components(feed)) {
-                        if (!ingredient.ingredient().test(component)) continue;
-                        var removal=MixtureHelper.removeComponent(fluids[tank],component,needed);
-                        fluids[tank]=removal.remaining();needed-=removal.sample().getAmount();
-                        if (needed==0) break;
-                    }
-                }
-                if (needed==0) break;
-            }
-            if (needed>0) return false;
-        }
+        for (var ingredient:recipe.getFluidIngredients()) if (!takeFluid(recipe,ingredient,ingredient.amount(),fluids)) return false;
         var allProducts=new ArrayList<>(products);
         for (var remainder:recipe.getRemainingItems(CraftingInput.of(consumed.size(),1,consumed))) if (!remainder.isEmpty()) allProducts.add(remainder);
         for (ItemStack product:allProducts) {
@@ -545,15 +522,119 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             }
             if (!rest.isEmpty()) return false;
         }
+        for (FluidStack template:recipe.getFluidResults()) if (!putFluid(fluids,template)) return false;
+        if (gasIn(fluids)>batchGasLimit()) { gasBlocked=true;return false; }
+        return true;
+    }
+
+
+    /** Takes {@code needed} mB of a fluid ingredient out of the feed buffers, a component at a time from a mixed gas; false when the feed holds less. */
+    private boolean takeFluid(StandardProcessingRecipe<RecipeInput> recipe,net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient ingredient,int needed,FluidStack[] fluids) {
+        for (int tank:mixingInputs()) {
+            var feed=fluids[tank];
+            if (needed<=0) break;
+            if (ingredient.ingredient().test(feed)) {
+                int take=Math.min(needed,feed.getAmount());
+                fluids[tank]=MixtureHelper.remainder(feed,take);needed-=take;
+            } else if (recipe instanceof PressureReactionRecipe && MixtureHelper.composite(feed) && MixtureHelper.isMixableGas(feed)) {
+                for (var component:MixtureHelper.components(feed)) {
+                    if (!ingredient.ingredient().test(component)) continue;
+                    var removal=MixtureHelper.removeComponent(fluids[tank],component,needed);
+                    fluids[tank]=removal.remaining();needed-=removal.sample().getAmount();
+                    if (needed==0) break;
+                }
+            }
+        }
+        return needed<=0;
+    }
+    /** Puts a product in the first product buffer that holds the same fluid or is empty; false when none has room. */
+    private boolean putFluid(FluidStack[] fluids,FluidStack product) {
+        int tank=2;
+        while (tank<7 && !fluids[tank].isEmpty() && !FluidThermal.compatible(fluids[tank],product)) tank++;
+        if (tank==7 || fluids[tank].getAmount()+product.getAmount()>bufferCapacity(product)) return false;
+        if (fluids[tank].isEmpty()) fluids[tank]=product.copy();else fluids[tank]=FluidThermal.mix(fluids[tank],product,product.getAmount());
+        return true;
+    }
+    /** What a reaction taking {@code f} more batches takes from an amount per batch: ahead of the products, so nothing is made from nothing. */
+    private int owed(int amount,double f) { return net.createplant.chemistry.ReactionFlow.owed(amount,flow,f); }
+    /** What a reaction that has converted {@code f} more batches has made of an amount per batch. */
+    private int made(int amount,double f) { return net.createplant.chemistry.ReactionFlow.made(amount,flow,f); }
+    /** Moves a fluid-only reaction on by {@code f} batches out of the given buffers; false when the feed, the room for the products or the gas limit does not allow it. */
+    private boolean flowBatch(StandardProcessingRecipe<RecipeInput> recipe,FluidStack[] fluids,ItemStack[] items,double f) {
+        if (recipe instanceof PressureReactionRecipe && recipe.getIngredients().isEmpty() && recipe.getFluidIngredients().size()==1) {
+            if (Arrays.stream(items).anyMatch(stack->!stack.isEmpty())) return false;
+            for (int slot:mixingInputs()) if (!fluids[slot].isEmpty() && !recipe.getFluidIngredients().getFirst().test(fluids[slot])) return false;
+        }
+        for (var ingredient:recipe.getFluidIngredients()) if (!takeFluid(recipe,ingredient,owed(ingredient.amount(),f),fluids)) return false;
         for (FluidStack template:recipe.getFluidResults()) {
-            FluidStack product=template;
-            int tank=2;
-            while (tank<7 && !fluids[tank].isEmpty() && !FluidThermal.compatible(fluids[tank],product)) tank++;
-            if (tank==7 || fluids[tank].getAmount()+product.getAmount()>bufferCapacity(product)) return false;
-            if (fluids[tank].isEmpty()) fluids[tank]=product.copy();else fluids[tank]=FluidThermal.mix(fluids[tank],product,product.getAmount());
+            int amount=made(template.getAmount(),f);
+            if (amount>0 && !putFluid(fluids,template.copyWithAmount(amount))) return false;
         }
         if (gasIn(fluids)>batchGasLimit()) { gasBlocked=true;return false; }
         return true;
+    }
+    /** A stirred reaction of fluids alone runs continuously: each tick converts what the speed allows of the feed, halving the step until the buffers allow it. */
+    private boolean reactFluids(StandardProcessingRecipe<RecipeInput> recipe,int duration,float rpm,int parallel) {
+        double speed=Math.min(4,rpm/32f)*processingSpeedFactor(), wanted=parallel*speed/duration;
+        gasBlocked=false;
+        var items=items();
+        FluidStack[] result=null;
+        double step=wanted;
+        for (;step>1e-4;step/=2) { var trial=mixingFluids();if (flowBatch(recipe,trial,items,step)) { result=trial;break; } }
+        if (result==null) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : "materials",false);return true; }
+        var needed=recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.HEATED ? 150 : 0;
+        if (needed>0 && takeBurnerHeat(needed)<needed) { setStatus("heat",false);return true; }
+        String id=reaction.id().toString();
+        if (!batch.equals(id)) { batch=id;flow=0; }
+        cycleTicks=duration;scale=Math.max(1,(int)Math.ceil(step/Math.max(1e-9,speed/duration)));
+        ProductionMonitor.limitedBy(this, step<wanted*.999 ? "throughput" : processingSpeedFactor()<1 ? "fouled" : module().stress!=0 && rpm<128 ? "speed" : "rated");
+        setStatus("running",true);
+        commitMixingFluids(result);
+        ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.getFluidResults())*step, 0, 0);
+        double next=flow+step;int done=(int)Math.floor(next);flow=next-done;
+        if (done>0) completedStirredBatch(recipe,done);
+        progress=(float)(flow*cycleTicks);displayDirty=true;setChanged();
+        return true;
+    }
+    /** How many batches a machine of fixed recipes may convert this tick: what it wants, less what the feed, the product room and the gas room allow. */
+    private double supplyFraction(ProcessRecipe r,double wanted) {
+        gasBlocked=false;
+        if (r.catalyst()!=Items.AIR) return 0;
+        double f=wanted;
+        for (int i=0;i<r.inputs().size();i++) {
+            if (!r.accepts(i,tanks[i])) return 0;
+            f=Math.min(f,tanks[i].getAmount()/(double)requiredAmount(r,i));
+        }
+        for (int i=0;i<r.outputs().size();i++) {
+            FluidStack out=r.outputs().get(i),stored=tanks[i+2];
+            if (!stored.isEmpty() && !FluidThermal.compatible(stored,out)) return 0;
+            f=Math.min(f,(bufferCapacity(out)-stored.getAmount())/(double)out.getAmount());
+        }
+        long netGas=0;
+        for (int i=0;i<r.outputs().size();i++) if (net.createplant.thermal.FluidState.gas(r.outputs().get(i))) netGas+=r.outputs().get(i).getAmount();
+        for (int i=0;i<r.inputs().size();i++) if (net.createplant.thermal.FluidState.gas(r.inputs().get(i))) netGas-=requiredAmount(r,i);
+        if (netGas>0 && f>0) {
+            double fits=Math.max(0,gasRoom())/(double)netGas;
+            if (fits<=0) gasBlocked=true;
+            f=Math.min(f,fits);
+        }
+        return f>1e-6 ? f : 0;
+    }
+    /** Moves a fixed-recipe machine on by {@code f} batches: the feed goes out ahead of the products, a little every tick. */
+    private void convert(ProcessRecipe r,double f) {
+        int total=0;
+        for (int i=0;i<r.inputs().size();i++) tanks[i].shrink(Math.min(tanks[i].getAmount(),owed(requiredAmount(r,i),f)));
+        for (int i=0;i<r.outputs().size();i++) {
+            FluidStack out=r.outputs().get(i);
+            int give=made(out.getAmount(),f);
+            if (give<=0) continue;
+            var portion=out.copyWithAmount(give);
+            tanks[i+2]=tanks[i+2].isEmpty() ? portion : FluidThermal.mix(tanks[i+2],portion,give);
+            total+=give;
+        }
+        double next=flow+f;flow=next-Math.floor(next);
+        ProductionMonitor.produced(this, total, 0, 0);
+        displayDirty=true;
     }
 
     /** The components of a mixed gas feed while it is offered, so the feed takes only the components a recipe can use here. */
@@ -719,7 +800,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     @Override protected void write(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
         super.write(tag,lookup,packet);
         if (module()==ReactorModule.PREHEATER) { var state=new CompoundTag();thermal().write(state,lookup);tag.put("ThermalEquipment",state); }
-        tag.put("Charge",charge.serializeNBT(lookup));tag.putFloat("Progress",progress);tag.putString("Batch",batch);tag.putInt("Scale",scale);tag.putInt("CycleTicks",cycleTicks);
+        tag.put("Charge",charge.serializeNBT(lookup));tag.putFloat("Progress",progress);tag.putDouble("Flow",flow);tag.putString("Batch",batch);tag.putInt("Scale",scale);tag.putInt("CycleTicks",cycleTicks);
         tag.putInt("Sections",sections);tag.putBoolean("Formed",formed);tag.putBoolean("Running",running);tag.putString("Status",status);tag.putLong("Fault",fault.asLong());
         tag.putInt("DisplayedHeat",displayedHeat.ordinal());
         for (int i=0;i<tanks.length;i++) if (!tanks[i].isEmpty()) tag.put("Tank"+i,tanks[i].save(lookup));
@@ -727,7 +808,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     @Override protected void read(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
         if(!packet)announcer.loaded();
         super.read(tag,lookup,packet);
-        if (tag.contains("Charge")) charge.deserializeNBT(lookup,tag.getCompound("Charge"));float savedProgress=tag.getFloat("Progress");progress=Float.isFinite(savedProgress) ? Math.clamp(savedProgress,0,200) : 0;batch=tag.getString("Batch");scale=Math.clamp(tag.getInt("Scale"),0,4);cycleTicks=Math.clamp(tag.getInt("CycleTicks"),1,200);
+        if (tag.contains("Charge")) charge.deserializeNBT(lookup,tag.getCompound("Charge"));float savedProgress=tag.getFloat("Progress");progress=Float.isFinite(savedProgress) ? Math.clamp(savedProgress,0,200) : 0;batch=tag.getString("Batch");flow=Math.clamp(tag.getDouble("Flow"),0,1);scale=Math.clamp(tag.getInt("Scale"),0,4);cycleTicks=Math.clamp(tag.getInt("CycleTicks"),1,200);
         sections=Math.clamp(tag.getInt("Sections"),0,24);formed=packet && tag.getBoolean("Formed");running=packet && tag.getBoolean("Running");status=tag.getString("Status");fault=BlockPos.of(tag.getLong("Fault"));
         dirty=!packet;recipeDirty=true;
         displayDirty=true;displayedHeat=HeatLevel.values()[Math.clamp(tag.getInt("DisplayedHeat"),0,HeatLevel.values().length-1)];

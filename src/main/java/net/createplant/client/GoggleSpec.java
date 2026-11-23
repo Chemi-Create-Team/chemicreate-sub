@@ -325,4 +325,45 @@ public final class GoggleSpec {
         var info = FluidChemicalRegistry.of(fluid);
         return info == null || info.formula().equals("…") ? fluid.getHoverName().getString() : info.formula();
     }
+
+    // ---- electrolysis, turbines, fusion, the reactor console and the pipe gauge -----------------------------------------------------------
+
+    private static boolean firstIs(List<Component> lines, String keyPrefix) {
+        return !lines.isEmpty() && lines.getFirst().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text && text.getKey().startsWith(keyPrefix);
+    }
+
+    /** Puts the layout's first line over a machine whose own tooltip starts with a status line, and sets its other lines under it. */
+    public static boolean status(net.minecraft.world.level.block.entity.BlockEntity owner, List<Component> lines, boolean shift) {
+        boolean running;
+        Component text;
+        if (owner instanceof net.createplant.block.entity.ElectrolysisControllerBlockEntity cell && firstIs(lines, "electrolysis.status.")) {
+            running = cell.running() > 0;
+            text = Component.translatable("electrolysis.status." + cell.status());
+        } else if (owner instanceof net.createplant.block.entity.SteamTurbineBlockEntity turbine && firstIs(lines, "turbine.create_refinery_n_reactors.state")) {
+            var state = turbine.thermodynamics().status();
+            running = state.equals("running");
+            text = Component.translatable("turbine.create_refinery_n_reactors." + state);
+        } else if (owner instanceof net.createplant.block.entity.FusionReactorControllerBlockEntity fusion && firstIs(lines, "fusion_reactor.create_refinery_n_reactors.goggle.status")) {
+            running = fusion.status().equals("burning");
+            text = Component.translatable("fusion_reactor.create_refinery_n_reactors.status." + fusion.status());
+        } else if (owner instanceof net.createplant.block.entity.ReactorControlConsoleBlockEntity console && firstIs(lines, "reactor_control_console.create_refinery_n_reactors.status.")) {
+            running = console.linked() && java.util.Set.of("critical", "supercritical", "prompt_critical", "unstable").contains(console.reactorStatus());
+            text = console.linked() ? Component.translatable("reactor_core.create_refinery_n_reactors.status." + console.reactorStatus()) : lines.getFirst();
+        } else if (owner instanceof net.createplant.block.entity.PipeGaugeBlockEntity && lines.size() > 1) {
+            lines.removeFirst();
+            indentRest(lines);
+            return true;
+        } else return false;
+        lines.removeFirst();
+        var rest = new ArrayList<>(lines);
+        lines.clear();
+        header(lines, running ? text : null, -1, running ? null : Reason.OTHER, text, false);
+        for (var line : rest) lines.add(line.getString().isBlank() ? line : Component.literal(INDENT).append(line));
+        return true;
+    }
+
+    /** The first line stays where the icon is; the rest stand under it. */
+    private static void indentRest(List<Component> lines) {
+        for (int i = 1; i < lines.size(); i++) lines.set(i, Component.literal(INDENT).append(lines.get(i)));
+    }
 }
