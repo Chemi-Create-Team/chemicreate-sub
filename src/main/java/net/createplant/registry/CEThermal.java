@@ -23,6 +23,9 @@ public final class CEThermal {
         .persistent(Codec.intRange(0,1000)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
     public static final Supplier<DataComponentType<Boolean>> CONDENSATE=COMPONENTS.register("condensate",()->DataComponentType.<Boolean>builder()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
+    /** How concentrated a boiled-down solution is, in thousandths of its normal strength (1000 is the fluid as made). */
+    public static final Supplier<DataComponentType<Integer>> CONCENTRATION=COMPONENTS.register("concentration",()->DataComponentType.<Integer>builder()
+        .persistent(Codec.intRange(1000,4000)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
     private CEThermal() { }
     public static void register(IEventBus bus) { COMPONENTS.register(bus); }
 }

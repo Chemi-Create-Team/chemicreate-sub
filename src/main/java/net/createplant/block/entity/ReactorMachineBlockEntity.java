@@ -245,6 +245,28 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     public IItemHandler itemPort() { return module()==ReactorModule.STIRRED || module()==ReactorModule.NONE && this instanceof LiddedVesselBlockEntity ? chargePort : null; }
     /** A vertical process vessel must be closed to run. */
     protected boolean vesselOpen() { return false; }
+    /** Nothing but the main liquid is in the vessel: no other feed and no charge. */
+    protected boolean feedsEmpty() {
+        for(int slot=0;slot<CHARGE_SLOTS;slot++)if(!charge.getStackInSlot(slot).isEmpty())return false;
+        return tanks[0].isEmpty() && tanks[1].isEmpty() && tanks[THIRD_FEED].isEmpty();
+    }
+    /** How much steam the gas space can still take. */
+    protected int steamRoom() {
+        var steam=new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),1);
+        long room=0;
+        for(int i=2;i<7;i++)if(tanks[i].isEmpty() || tanks[i].is(steam.getFluid()))room+=Math.max(0,bufferCapacity(steam)-tanks[i].getAmount());
+        return (int)Math.min(room,gasRoom());
+    }
+    protected void storeSteam(int amount) {
+        for(int i=2;i<7 && amount>0;i++) {
+            if(!tanks[i].isEmpty() && !tanks[i].is(net.createplant.registry.CEFluids.STEAM.get()))continue;
+            var steam=tanks[i].isEmpty() ? new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),0) : tanks[i];
+            int add=Math.min(amount,Math.max(0,bufferCapacity(steam)-steam.getAmount()));
+            if(add<=0)continue;
+            tanks[i]=steam.copyWithAmount(steam.getAmount()+add);amount-=add;
+        }
+        changed();
+    }
     protected boolean processController() { return true; }
     public float rotationSpeed() { return getSpeed(); }
     public boolean hasProcessContents() { return Arrays.stream(tanks).anyMatch(stack->!stack.isEmpty()) || java.util.stream.IntStream.range(0,CHARGE_SLOTS).anyMatch(slot->!charge.getStackInSlot(slot).isEmpty()); }
@@ -549,8 +571,10 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             var feed=fluids[tank];
             if (needed<=0) break;
             if (ingredient.ingredient().test(feed)) {
-                int take=Math.min(needed,feed.getAmount());
-                fluids[tank]=MixtureHelper.remainder(feed,take);needed-=take;
+                // A solution boiled down to a higher strength carries more solute per mB, so a batch takes less of it.
+                double strength=net.createplant.thermal.Concentration.factor(feed);
+                int wanted=(int)Math.ceil(needed/strength), take=Math.min(wanted,feed.getAmount());
+                fluids[tank]=MixtureHelper.remainder(feed,take);needed=take==wanted ? 0 : needed-(int)Math.floor(take*strength);
             } else if (recipe instanceof PressureReactionRecipe && MixtureHelper.composite(feed) && MixtureHelper.isMixableGas(feed)) {
                 for (var component:MixtureHelper.components(feed)) {
                     if (!ingredient.ingredient().test(component)) continue;

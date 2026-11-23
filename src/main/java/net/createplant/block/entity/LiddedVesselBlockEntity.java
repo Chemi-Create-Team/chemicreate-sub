@@ -377,7 +377,19 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         // The main inventory keeps its own heat state; the process buffers are tracked by the heater.
         var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();
         heat.add(tankInventory instanceof net.createplant.thermal.ThermalFluidTank thermal ? thermal.heat() : null);
+        // A solution heated alone boils its water off; with the lid shut the steam stays in the gas space, with it open it leaves.
+        if(open())vent();
+        heating.boilSolutions(feedsEmpty());
+        heating.steamRoom(open() ? Integer.MAX_VALUE : steamRoom());
         int result=heating.tick(fluids,net.createplant.thermal.TankHeating.burnerWatts(level,base),ignored->Integer.MAX_VALUE,heat);
+        int steam=heating.takeSteam();
+        if(steam>0) {
+            if(open()) {
+                var top=top();
+                ((ServerLevel)level).sendParticles(ParticleTypes.CLOUD,top.getX()+.5,top.getY()+1,top.getZ()+.5,Math.min(12,1+steam/20),.3,.2,.3,.04);
+                level.playSound(null,top,SoundEvents.FIRE_EXTINGUISH,SoundSource.BLOCKS,.3f,1.4f);
+            } else storeSteam(steam);
+        }
         if(result==net.createplant.thermal.TankHeating.CHANGED) {
             onFluidStackChanged(tankInventory.getFluid());changed();
         } else if(result==net.createplant.thermal.TankHeating.KELVIN)setChanged();
@@ -466,7 +478,11 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if(level==null || level.isClientSide)return;
         var pass = GasPassThrough.of(this);
         if (pass != null) pass.vent();
-        for(var released:removeProcessGases(net.createplant.thermal.FluidMaterials::heavierThanAir))ToxicGas.release(level,top(),released);
+        boolean letOut=false;
+        for(var released:removeProcessGases(net.createplant.thermal.FluidMaterials::heavierThanAir)) {
+            ToxicGas.release(level,top(),released);letOut=true;
+        }
+        if(letOut)((ServerLevel)level).sendParticles(ParticleTypes.CLOUD,top().getX()+.5,top().getY()+1,top().getZ()+.5,8,.3,.2,.3,.04);
         var fluid=tankInventory.getFluid();
         if(fluid.isEmpty() || !net.createplant.transport.FluidHazards.of(fluid).gas())return;
         int kept=net.createplant.thermal.FluidMaterials.heavierThanAir(fluid) ? Math.min(fluid.getAmount(),tankInventory.volumeCapacity()) : 0;

@@ -6328,5 +6328,6 @@
   "item.create_refinery_n_reactors.caustic_soda_flakes": "苛性ソーダフレーク",
   "item.create_refinery_n_reactors.ammonium_chloride_crystals": "塩化アンモニウム結晶",
   "reaction_heat.create_refinery_n_reactors.exothermic": "発熱",
-  "reaction_heat.create_refinery_n_reactors.endothermic": "吸熱"
+  "reaction_heat.create_refinery_n_reactors.endothermic": "吸熱",
+  "fluid_state.create_refinery_n_reactors.concentration": "濃縮 ×%s"
 }

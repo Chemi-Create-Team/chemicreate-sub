@@ -6328,5 +6328,6 @@
   "item.create_refinery_n_reactors.caustic_soda_flakes": "Caustic Soda Flakes",
   "item.create_refinery_n_reactors.ammonium_chloride_crystals": "Ammonium Chloride Crystals",
   "reaction_heat.create_refinery_n_reactors.exothermic": "Exothermic",
-  "reaction_heat.create_refinery_n_reactors.endothermic": "Endothermic"
+  "reaction_heat.create_refinery_n_reactors.endothermic": "Endothermic",
+  "fluid_state.create_refinery_n_reactors.concentration": "Concentrated ×%s"
 }

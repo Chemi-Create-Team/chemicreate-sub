@@ -24,6 +24,16 @@ public final class TankHeating {
     /** What a pass did: nothing, only moved the real temperature, or changed the stack (level, phase or amount). */
     public static final int NOTHING=0, KELVIN=1, CHANGED=2;
     private final List<HeatContent> own=new ArrayList<>();
+    /** Steam made by boiling a solution down, waiting for the vessel to take it; and how much room it has for it. */
+    private int steam, steamRoom=Integer.MAX_VALUE;
+    private double steamCarry;
+
+    private boolean boilSolutions=true;
+    public void steamRoom(int room) { steamRoom=Math.max(0,room); }
+    /** Whether a solution may boil its water off; a vessel with other feed or a charge in it is running a reaction instead. */
+    public void boilSolutions(boolean allowed) { boilSolutions=allowed; }
+    /** The steam the last passes made, in mB; the owner puts it in its gas space or lets it out of the open lid. */
+    public int takeSteam() { int made=steam;steam=0;return made; }
 
     public static double burnerWatts(Level level,Iterable<BlockPos> base) {
         double watts=0;
@@ -76,7 +86,10 @@ public final class TankHeating {
             if(fluid.isEmpty())continue;
             var heat=i<external.size() && external.get(i)!=null ? external.get(i) : own.get(i);
             double before=heat.kelvin(fluid), beforeQuality=heat.quality(fluid);
-            var outcome=heat.add(fluid,joules*HeatContent.capacity(fluid)/total,0,FluidState.kelvin(FluidState.MAX),capacity);
+            // A solution alone can only boil its water off: it warms to the boiling point and the rest of the heat takes water away.
+            boolean solution=boilSolutions && Concentration.applies(fluid);
+            double ceiling=solution ? FluidState.boilingKelvin(fluid,FluidState.pressure(fluid)) : FluidState.kelvin(FluidState.MAX);
+            var outcome=heat.add(fluid,joules*HeatContent.capacity(fluid)/total,0,Double.isFinite(ceiling) ? ceiling : FluidState.kelvin(FluidState.MAX),capacity);
             var next=outcome.stack();
             if(next.getAmount()!=fluid.getAmount() || FluidState.temperature(next)!=FluidState.temperature(fluid) || FluidState.gas(next)!=FluidState.gas(fluid)) {
                 fluid.setAmount(next.getAmount());
@@ -87,8 +100,21 @@ public final class TankHeating {
                 heat.set(fluid,heat.kelvin(next),heat.quality(next));
                 result=CHANGED;
             } else if(result==NOTHING && (heat.kelvin(fluid)!=before || heat.quality(fluid)!=beforeQuality))result=KELVIN;
+            if(solution && outcome.left()>0 && heat.kelvin(fluid)>=ceiling-1e-6 && boilOff(fluid,outcome.left()))result=CHANGED;
         }
         return result;
+    }
+
+    private boolean boilOff(FluidStack fluid,double joules) {
+        double wanted=steamCarry+joules/Concentration.JOULES_PER_MB;
+        int limit=Math.min(Concentration.removable(fluid),steamRoom-steam);
+        int taken=(int)Math.min(Math.floor(wanted),Math.max(0,limit));
+        // What the strength or the room does not allow is lost to the air; what is only a part of a mB waits for the next pass.
+        steamCarry=taken<Math.floor(wanted) ? 0 : wanted-taken;
+        if(taken<=0)return false;
+        Concentration.boilOff(fluid,taken);
+        steam+=taken;
+        return true;
     }
 
     public void write(CompoundTag tag,HolderLookup.Provider lookup) {

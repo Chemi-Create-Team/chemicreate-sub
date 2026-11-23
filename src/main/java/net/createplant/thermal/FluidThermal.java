@@ -76,6 +76,7 @@ public final class FluidThermal {
         if(intendedPressure!=null)FluidState.setPressure(product,intendedPressure);
         product.remove(net.createplant.registry.CEThermal.EXPANDED_STEAM.get());
         product.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
+        product.remove(net.createplant.registry.CEThermal.CONCENTRATION.get());
     }
     public static boolean compatible(FluidStack a,FluidStack b) { return FluidStack.isSameFluidSameComponents(a,b); }
     public static boolean mixable(FluidStack a,FluidStack b) {
@@ -85,6 +86,7 @@ public final class FluidThermal {
         first.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());second.remove(net.createplant.registry.CEThermal.HEAT_GRADE.get());
         first.remove(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get());second.remove(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get());
         first.remove(net.createplant.registry.CEThermal.CONDENSATE.get());second.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
+        first.remove(net.createplant.registry.CEThermal.CONCENTRATION.get());second.remove(net.createplant.registry.CEThermal.CONCENTRATION.get());
         first.remove(net.createplant.registry.CEThermal.TEMPERATURE.get());second.remove(net.createplant.registry.CEThermal.TEMPERATURE.get());
         first.remove(net.createplant.registry.CEThermal.PRESSURE.get());second.remove(net.createplant.registry.CEThermal.PRESSURE.get());
         return compatible(first,second);
@@ -96,6 +98,7 @@ public final class FluidThermal {
         int pressure=FluidState.average(FluidState.pressure(stored),stored.getAmount(),FluidState.pressure(incoming),accepted);
         if(temperature!=FluidState.temperature(result) || result.has(net.createplant.registry.CEThermal.HEAT_GRADE.get()))FluidState.setTemperature(result,temperature);
         if(pressure!=FluidState.pressure(result))FluidState.setPressure(result,pressure);
+        Concentration.set(result,Concentration.mixed(stored,stored.getAmount(),incoming,accepted));
         var condensate=net.createplant.registry.CEThermal.CONDENSATE.get();
         if (!stored.has(condensate) || !incoming.has(condensate)) result.remove(condensate);
         var impurity=net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get();
@@ -115,6 +118,8 @@ public final class FluidThermal {
     public static Component readout(FluidStack stack) {
         var result=FluidState.describe(stack);
         int impurity=stack.getOrDefault(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get(),0);
-        return impurity>0 ? result.copy().append(" · ").append(Component.translatable("wet_process.create_refinery_n_reactors.impurity",impurity/10d)) : result;
+        if(impurity>0)result=result.copy().append(" · ").append(Component.translatable("wet_process.create_refinery_n_reactors.impurity",impurity/10d));
+        if(Concentration.permille(stack)>Concentration.NORMAL)result=result.copy().append(" · ").append(Component.translatable("fluid_state.create_refinery_n_reactors.concentration",String.format("%.1f",Concentration.factor(stack))));
+        return result;
     }
 }

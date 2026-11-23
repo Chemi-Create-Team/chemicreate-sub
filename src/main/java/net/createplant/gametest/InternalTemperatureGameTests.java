@@ -121,4 +121,23 @@ public final class InternalTemperatureGameTests {
         h.assertTrue(moved==300 && Math.abs(other.kelvin()-373.15)<.01 && Math.abs(other.heat().quality(other.getFluid())-quality)<1e-9,"A transfer between tanks carries the temperature and gas share");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty")
+    public static void aSolutionHeatedAloneBoilsItsWaterOffAndStopsAtDoubleStrength(GameTestHelper h) {
+        var solution=new FluidStack(net.createplant.registry.CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(),1000);
+        h.assertTrue(Concentration.applies(solution),"A solution in water boils its water off");
+        var heater=new TankHeating();
+        var fluids=java.util.List.of(solution);
+        int steam=0;
+        for(int pass=0;pass<400;pass++){heater.tick(fluids,TankHeating.SUPERHEATED_WATTS);steam+=heater.takeSteam();}
+        h.assertTrue(steam>0 && solution.getAmount()==1000-steam,"Every mB of steam is a mB less solution");
+        h.assertTrue(Concentration.permille(solution)>=1980 && solution.getAmount()<=505,"The solution ends at about twice its strength in half the volume");
+        var room=new TankHeating();var again=new FluidStack(net.createplant.registry.CEMetals.COPPER_SULFATE_SOLUTION.get(),1000);
+        room.steamRoom(0);for(int pass=0;pass<50;pass++)room.tick(java.util.List.of(again),TankHeating.SUPERHEATED_WATTS);
+        h.assertTrue(again.getAmount()==1000,"With no room for steam nothing boils off");
+        var solute=Concentration.permille(solution)*solution.getAmount();
+        var mixed=FluidThermal.mix(solution,new FluidStack(solution.getFluid(),500),500);
+        h.assertTrue(Math.abs(Concentration.permille(mixed)*mixed.getAmount()-(solute+500*1000))<=1500 && Concentration.permille(mixed)<Concentration.MAXIMUM,"Pouring plain solution into a strong one dilutes it and keeps the solute");
+        h.succeed();
+    }
 }

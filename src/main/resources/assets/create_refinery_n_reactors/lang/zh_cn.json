@@ -6328,5 +6328,6 @@
   "item.create_refinery_n_reactors.caustic_soda_flakes": "烧碱片",
   "item.create_refinery_n_reactors.ammonium_chloride_crystals": "氯化铵晶体",
   "reaction_heat.create_refinery_n_reactors.exothermic": "放热",
-  "reaction_heat.create_refinery_n_reactors.endothermic": "吸热"
+  "reaction_heat.create_refinery_n_reactors.endothermic": "吸热",
+  "fluid_state.create_refinery_n_reactors.concentration": "浓缩 ×%s"
 }
