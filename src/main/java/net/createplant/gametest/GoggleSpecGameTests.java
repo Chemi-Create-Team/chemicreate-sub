@@ -1,11 +1,21 @@
 package net.createplant.gametest;
 
+import java.util.ArrayList;
 import net.createplant.CreatePlant;
+import net.createplant.block.entity.LiddedVesselBlockEntity;
+import net.createplant.chemistry.ReactorModule;
 import net.createplant.client.GoggleSpec;
+import net.createplant.registry.CEFluids;
+import net.createplant.registry.CEMetals;
+import net.createplant.registry.CEUranium;
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 /** The goggle layout's number rules: buckets from 1,000 mB, whole buckets from 10,000 mB, mB under Shift, and "&lt;0.1%" for a trace. */
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
@@ -35,6 +45,25 @@ public class GoggleSpecGameTests {
             flow = net.createplant.chemistry.ReactionFlow.next(flow, step);
         }
         check(helper, (flow < 1e-9 || flow > 1 - 1e-9) && in == 250 && out == 100, "a whole batch takes 250 and gives 100 (took " + in + ", gave " + out + ", at " + flow + ")");
+        helper.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void stirredStockListsAllFluidsAndKeepsWaterAndSteamSeparate(GameTestHelper helper) {
+        var level = helper.getLevel();
+        var vessel = (LiddedVesselBlockEntity) ReactorGameTests.assemble(level, helper.absolutePos(new BlockPos(4, 2, 4)), ReactorModule.STIRRED, 2);
+        var saved = vessel.saveWithoutMetadata(level.registryAccess());
+        var fluids = new FluidStack[] {new FluidStack(Fluids.WATER, 101), new FluidStack(CEFluids.STEAM.get(), 102),
+            new FluidStack(CEFluids.OXYGEN_GAS.get(), 103), new FluidStack(CEFluids.NITROGEN_GAS.get(), 104),
+            new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 105), new FluidStack(CEUranium.SULFURIC_ACID.get(), 106),
+            new FluidStack(CEFluids.HYDROGEN_GAS.get(), 107)};
+        for (int i = 0; i < fluids.length; i++) saved.put("Tank" + i, fluids[i].save(level.registryAccess()));
+        vessel.loadWithComponents(saved, level.registryAccess());
+        var tooltip = new ArrayList<Component>();
+        GoggleSpec.vessel(vessel, tooltip, false);
+        var text = tooltip.stream().map(Component::getString).toList();
+        for (var fluid : fluids) check(helper, text.stream().anyMatch(line -> line.contains(" " + fluid.getAmount() + " mB")),
+            "Every stock has a row in mB without Shift: " + text);
         helper.succeed();
     }
 

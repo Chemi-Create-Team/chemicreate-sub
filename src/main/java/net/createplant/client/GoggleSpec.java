@@ -72,10 +72,14 @@ public final class GoggleSpec {
 
     /** "Stock: 8 / 144 B (H2SO4)"; under Shift in mB with the fluid listed below; a mixture lists its components by share. */
     public static void stock(List<Component> lines, List<FluidStack> parts, long capacity, boolean shift) {
+        stock(lines, parts, capacity, shift, false);
+    }
+
+    private static void stock(List<Component> lines, List<FluidStack> parts, long capacity, boolean shift, boolean all) {
         var present = parts.stream().filter(part -> !part.isEmpty()).toList();
         long total = present.stream().mapToLong(FluidStack::getAmount).sum();
         var title = Component.translatable(K + "stock").getString();
-        var head = (lines.isEmpty() ? Component.empty().append(label(title + ": ")) : line(title)).append(count(total, capacity, shift));
+        var head = (lines.isEmpty() ? Component.empty().append(label(title + ": ")) : line(title)).append(count(total, capacity, shift || all));
         var components = new ArrayList<FluidStack>();
         for (var part : present) {
             if (MixtureHelper.composite(part)) components.addAll(MixtureHelper.components(part));
@@ -83,19 +87,23 @@ public final class GoggleSpec {
         }
         var merged = new ArrayList<FluidStack>();
         for (var part : components) {
-            var same = merged.stream().filter(seen -> seen.getFluid().isSame(part.getFluid())).findFirst();
+            boolean gas = all && FluidState.gas(part);
+            var same = merged.stream().filter(seen -> seen.getFluid().isSame(part.getFluid()) && (!all || FluidState.gas(seen) == gas)).findFirst();
             if (same.isPresent()) same.get().grow(part.getAmount());
             else merged.add(part.copy());
         }
         merged.sort(Comparator.comparingInt(FluidStack::getAmount).reversed());
-        if (merged.size() == 1 && !shift) head.append(label(" (")).append(white(name(merged.getFirst(), false))).append(label(")"));
+        if (merged.size() == 1 && !shift && !all) head.append(label(" (")).append(white(name(merged.getFirst(), false))).append(label(")"));
         lines.add(head);
-        if (total <= 0 || merged.size() == 1 && !shift) return;
-        int shown = shift ? merged.size() : Math.min(LISTED, merged.size());
+        if (total <= 0 || merged.size() == 1 && !shift && !all) return;
+        int shown = shift || all ? merged.size() : Math.min(LISTED, merged.size());
         for (int i = 0; i < shown; i++) {
             var part = merged.get(i);
-            var row = Component.literal(INDENT + "  ").append(white(name(part, shift))).append(label(": "));
-            row.append(shift ? white(amount(part.getAmount(), true)).append(label(" (" + percent(part.getAmount(), total) + ")")) : label(percent(part.getAmount(), total)));
+            var row = Component.literal(INDENT + "  ").append(white(name(part, shift || all)));
+            if (all && FluidState.gas(part)) row.append(label(" [")).append(FluidState.phaseName(part).copy().withStyle(ChatFormatting.GRAY)).append(label("]"));
+            row.append(label(": "));
+            if (shift || all) row.append(white(amount(part.getAmount(), true)));
+            if (shift || !all) row.append(label(shift ? " (" + percent(part.getAmount(), total) + ")" : percent(part.getAmount(), total)));
             lines.add(row);
         }
         if (shown < merged.size()) lines.add(Component.literal(INDENT + "  ").append(Component.translatable(K + "more", merged.size() - shown)).withStyle(ChatFormatting.DARK_GRAY));
@@ -157,10 +165,16 @@ public final class GoggleSpec {
     public static void vessel(LiddedVesselBlockEntity vessel, List<Component> lines, boolean shift) {
         lines.clear();
         var stocks = new ArrayList<FluidStack>();
-        stocks.add(vessel.getTankInventory().getFluid());
-        for (int slot = 0; slot < vessel.displayedFluidSlots(); slot++) stocks.add(vessel.displayedFluid(slot));
+        boolean stirred = vessel.stirred();
+        if (stirred) {
+            stocks.addAll(vessel.liquidLayers());
+            stocks.addAll(vessel.gasLayers());
+        } else {
+            stocks.add(vessel.getTankInventory().getFluid());
+            for (int slot = 0; slot < vessel.displayedFluidSlots(); slot++) stocks.add(vessel.displayedFluid(slot));
+        }
         long capacity = vessel.getTankInventory().getCapacity();
-        boolean gasLayers = vessel.showGasComposition() && !vessel.gasLayers().isEmpty();
+        boolean gasLayers = !stirred && vessel.showGasComposition() && !vessel.gasLayers().isEmpty();
         var shown = gasLayers ? vessel.gasLayers() : stocks;
         if (gasLayers) capacity = ((net.createplant.thermal.ThermalFluidTank) vessel.getTankInventory()).gasCapacity();
         if (vessel.module() == net.createplant.chemistry.ReactorModule.NONE && !vessel.running() && !vessel.status().equals("heat")) {
@@ -171,7 +185,16 @@ public final class GoggleSpec {
         var reason = running ? null : reason(vessel);
         int percent = running ? Math.round(vessel.progress() * 100 / Math.max(1, vessel.cycleTicks())) : -1;
         header(lines, null, percent, reason, statusText(vessel.status(), "reactor.create_refinery_n_reactors.status."), heated(vessel));
-        stock(lines, shown, capacity, shift);
+        stock(lines, shown, stirred ? 0 : capacity, shift, stirred);
+        if (stirred) {
+            for (int slot = 0; slot < vessel.displayedItemSlots(); slot++) {
+                var item = vessel.displayedItem(slot);
+                if (item.isEmpty()) continue;
+                String role = slot < vessel.inputItemSlots() ? "item_input" : "item_output";
+                lines.add(Component.literal(INDENT).append(Component.translatable("reactor.create_refinery_n_reactors." + role,
+                    item.getHoverName(), item.getCount()).withStyle(ChatFormatting.WHITE)));
+            }
+        }
         // Environment: temperature, pressure and drive.
         var heat = vessel.currentBurnerHeat();
         var temperature = heat == BlazeBurnerBlock.HeatLevel.SEETHING ? "superheated" : heated(vessel) ? "hot" : "ambient";

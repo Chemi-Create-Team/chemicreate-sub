@@ -157,6 +157,13 @@ public class ReactorGameTests {
         var lines=new ArrayList<net.minecraft.network.chat.Component>();
         net.createplant.client.GoggleSpec.vessel(vessel,lines,false);
         h.assertTrue(lines.stream().noneMatch(line->line.getString().contains("→")),"The running goggles show progress without a recipe");
+        var stock=lines.stream().map(net.minecraft.network.chat.Component::getString).toList();
+        h.assertTrue(stock.stream().anyMatch(line->line.contains(new FluidStack(sulfate,1).getHoverName().getString()) && line.contains("495 mB"))
+            && stock.stream().anyMatch(line->line.contains(new FluidStack(acid,1).getHoverName().getString()) && line.contains("100 mB"))
+            && stock.stream().anyMatch(line->line.contains(new FluidStack(CEFluids.STEAM.get(),1).getHoverName().getString()) && line.contains("4 mB")),
+            "The unshifted goggles show all liquid and gas amounts together: "+stock);
+        h.assertTrue(goggleItem(lines,"item_input",new ItemStack(zircon)) && goggleItem(lines,"item_output",new ItemStack(Items.SAND)),
+            "The unshifted goggles show both charge and product items");
         run(vessel,105);
         var hydrate=items.extractItem(sand+1,1,false);
         h.assertTrue(hydrate.is(CEMetals.ZIRCONIUM_SULFATE_HYDRATE.get()) && items.getStackInSlot(sand).is(Items.SAND)
@@ -166,13 +173,21 @@ public class ReactorGameTests {
         h.assertTrue(lines.stream().noneMatch(line->line.getString().contains("→") || line.getString().contains("goggle_spec.create_refinery_n_reactors.target")),
             "The stopped goggles do not show a stale target recipe");
         h.assertTrue(items.insertItem(1,hydrate,false).isEmpty(),"Feed the hydrate back for dehydration");
-        run(vessel,105);
+        run(vessel,1);
+        h.assertTrue(items.getStackInSlot(1).isEmpty() && items.getStackInSlot(sand+1).isEmpty(),"The solid charge is used before the fluid products form");
+        vessel.loadWithComponents(vessel.saveWithoutMetadata(h.getLevel().registryAccess()),h.getLevel().registryAccess());vessel.validateStructure();
+        run(vessel,104);
         var zirconyl=items.extractItem(sand+1,1,false);
         h.assertTrue(zirconyl.is(CEMetals.ZIRCONYL_SULFATE.get()) && items.insertItem(1,zirconyl,false).isEmpty(),"The hydrate gives the zirconyl feed for calcining");
         run(vessel,105);
         h.assertTrue(items.getStackInSlot(sand+1).is(CEMetals.ZIRCONIA.get())
             && products(vessel).getOrDefault(CEUranium.SULFUR_TRIOXIDE.get(),0)==500,"The staged recipe produces zirconia and both SO3 portions");
         h.succeed();
+    }
+
+    private static boolean goggleItem(List<net.minecraft.network.chat.Component> lines,String role,ItemStack item) {
+        return lines.stream().flatMap(line->line.getSiblings().stream()).anyMatch(label->label.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text
+            && text.getKey().endsWith("."+role) && text.getArgs()[0].equals(item.getHoverName()) && text.getArgs()[1].equals(item.getCount()));
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 160)
@@ -190,6 +205,42 @@ public class ReactorGameTests {
                 "A driven, superheated vessel crystallizes the preserved solution: "+vessel.status());
             h.succeed();
         });
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void aStirredBatchKeepsItsPerTickAmountsWhenStoppedAndReloaded(GameTestHelper h) {
+        var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
+        var feed=new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(),250);
+        net.createplant.thermal.Concentration.set(feed,2000);
+        vessel.getTankInventory().setFluid(feed);
+        heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        run(vessel,1);
+        int output=vessel.inputItemSlots();
+        h.assertTrue(vessel.getTankInventory().getFluidAmount()==247 && gasProducts(vessel)==4
+            && vessel.displayedItem(output).isEmpty(),"The first tick uses 3 mB at double concentration and already makes 4 mB of steam: "
+            +vessel.getTankInventory().getFluid()+", "+products(vessel)+", "+vessel.status());
+        run(vessel,36);
+        h.assertTrue(vessel.getTankInventory().getFluidAmount()==157 && gasProducts(vessel)==148,
+            "Per-tick rounding carries the extra half dose forward");
+        var saved=vessel.saveWithoutMetadata(h.getLevel().registryAccess());
+        vessel.loadWithComponents(saved,h.getLevel().registryAccess());vessel.validateStructure();
+        speed(vessel,0);vessel.tickProcess();
+        h.assertTrue(vessel.getTankInventory().getFluidAmount()==157 && gasProducts(vessel)==148 && !vessel.running(),
+            "An undriven reloaded vessel retains both feed and products");
+        run(vessel,62);
+        h.assertTrue(vessel.getTankInventory().getFluidAmount()==2 && gasProducts(vessel)==396
+            && vessel.displayedItem(output).isEmpty(),"The reloaded batch reaches tick 99 without an early solid product or another charge");
+        run(vessel,1);
+        h.assertTrue(vessel.getTankInventory().isEmpty() && gasProducts(vessel)==400
+            && vessel.displayedItem(output).is(CEMetals.ZIRCONIUM_SULFATE_HYDRATE.get()) && vessel.displayedItem(output).getCount()==1,
+            "Exactly 250 mB of concentrate makes the promised steam and one hydrate at completion");
+        h.succeed();
+    }
+
+    private static int gasProducts(ReactorMachineBlockEntity vessel) {
+        var outlet=out(vessel);
+        return java.util.stream.IntStream.range(0,outlet.getTanks()).mapToObj(outlet::getFluidInTank)
+            .filter(net.createplant.thermal.FluidState::gas).mapToInt(FluidStack::getAmount).sum();
     }
 
     private static void run(ReactorMachineBlockEntity be,int ticks) { speed(be,32);for (int i=0;i<ticks;i++) be.tickProcess(); }
@@ -286,15 +337,17 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void rebuildSaveLoadAndRetiredPortsKeepContents(GameTestHelper h) {
         var be=build(h,ReactorModule.STIRRED,1);var old=in(be);
-        old.fill(new FluidStack(Fluids.WATER,1000),EXECUTE);heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);run(be,40);
+        var feed=CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
+        h.assertTrue(old.fill(new FluidStack(feed,500),EXECUTE)==500,"The inlet accepts a crystallization charge");
+        heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);run(be,40);
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
         be.loadWithComponents(saved,h.getLevel().registryAccess());be.validateStructure();
-        h.assertTrue(be.progress()==40 && in(be).getFluidInTank(0).getAmount()==1000,"Save and load preserve paid progress and feed");
+        h.assertTrue(be.progress()==40 && in(be).getFluidInTank(0).getAmount()==300 && gasProducts(be)==160,"Save and load preserve paid progress and both fluid amounts");
         var port=in(be);h.setBlock(BASE.offset(1,0,0),Blocks.AIR);
-        h.assertTrue(port.fill(new FluidStack(Fluids.WATER,100),EXECUTE)==0,"A cached port stops on dismantling");
+        h.assertTrue(port.fill(new FluidStack(feed,100),EXECUTE)==0,"A cached port stops on dismantling");
         h.setBlock(BASE.offset(1,0,0),CETransport.LIDDED_VESSEL.get());be.validateStructure();
-        h.assertTrue(port.fill(new FluidStack(Fluids.WATER,100),EXECUTE)==0 && in(be).getFluidInTank(0).getAmount()==1000,"Old ports remain retired after reforming; buffered feed remains");
-        run(be,60);h.assertTrue(out(be).getFluidInTank(0).getAmount()==1000,"A resumed batch completes exactly once");
+        h.assertTrue(port.fill(new FluidStack(feed,100),EXECUTE)==0 && in(be).getFluidInTank(0).getAmount()==300,"Old ports remain retired after reforming; buffered feed remains");
+        run(be,60);h.assertTrue(gasProducts(be)==400 && be.displayedItem(be.inputItemSlots()).getCount()==1,"A resumed batch completes exactly once");
         var outlet=out(be);h.setBlock(BASE,Blocks.AIR);h.assertTrue(outlet.drain(1000,EXECUTE).isEmpty(),"Removed machines cannot be drained through stale references");h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)

@@ -2915,9 +2915,9 @@
     "zh_cn": "在搅拌槽中超加热锆石与硫酸。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_3": {
-    "en_us": "Feed the solution into a heated stirred tank. Extract the hydrate crystals with a funnel.\n%s → %s",
-    "ja_jp": "硫酸ジルコニウム溶液を加熱した撹拌槽に送り、できた水和物をファンネルで取り出します。\n%s → %s",
-    "zh_cn": "把硫酸锆溶液送进加热的搅拌槽，用漏斗取出水合物晶体。\n%s → %s"
+    "en_us": "Heat the solution in a stirred tank. Steam comes out as it reacts. Use a funnel to collect the hydrate crystals at the end.\n%s → %s",
+    "ja_jp": "加熱した攪拌槽で溶液から少しずつ蒸気が出ます。反応後、水和物をファンネルで取り出します。\n%s → %s",
+    "zh_cn": "硫酸锆溶液在加热的搅拌槽中反应时逐步产生蒸汽。反应完成后用漏斗取出水合物晶体。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_4": {
     "en_us": "Feed the hydrate into a heated stirred tank. Route the zirconyl sulfate to calcining.\n%s → %s",

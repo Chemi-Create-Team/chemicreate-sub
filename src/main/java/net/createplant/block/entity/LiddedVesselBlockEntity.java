@@ -225,7 +225,8 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         return new int[]{0,1,THIRD_FEED,8};
     }
     @Override protected void commitMixingFluids(FluidStack[] fluids) {
-        super.commitMixingFluids(fluids);tankInventory.setFluid(fluids[8].copy());
+        super.commitMixingFluids(fluids);
+        if (!FluidStack.matches(tankInventory.getFluid(),fluids[8])) tankInventory.setFluid(fluids[8]);
     }
 
     public void connect() { if (level != null && !level.isClientSide && isController()) { updateConnectivity = false;ConnectivityHandler.formMulti(this); } }
@@ -365,6 +366,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if(joules==0 || level==null)return;
         var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();
         heat.add(tankInventory.heat());
+        heating.boilSolutions(canBoilSolutions());
         int result=heating.react(heatFluids(),joules,ignored->Integer.MAX_VALUE,heat);
         if(result==net.createplant.thermal.TankHeating.CHANGED) { onFluidStackChanged(tankInventory.getFluid());changed(); }
         else if(result==net.createplant.thermal.TankHeating.KELVIN)setChanged();
@@ -379,7 +381,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         heat.add(tankInventory instanceof net.createplant.thermal.ThermalFluidTank thermal ? thermal.heat() : null);
         // Storage tanks can concentrate a solution. Stirred vessels use their recipes to process it.
         if(open())vent();
-        heating.boilSolutions(!stirred() && feedsEmpty());
+        heating.boilSolutions(canBoilSolutions());
         heating.steamRoom(open() ? Integer.MAX_VALUE : steamRoom());
         int result=heating.tick(fluids,net.createplant.thermal.TankHeating.burnerWatts(level,base),ignored->Integer.MAX_VALUE,heat);
         int steam=heating.takeSteam();
@@ -394,6 +396,8 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             onFluidStackChanged(tankInventory.getFluid());changed();
         } else if(result==net.createplant.thermal.TankHeating.KELVIN)setChanged();
     }
+
+    private boolean canBoilSolutions() { return !stirred() && !processingStirredBatch() && feedsEmpty(); }
 
     @Override public void notifyMultiUpdated() {
         onFluidStackChanged(tankInventory.getFluid());

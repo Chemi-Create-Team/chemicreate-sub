@@ -9,6 +9,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import java.util.List;
 import net.createplant.block.entity.AbsorptionTowerBlockEntity;
+import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.client.ProcessGoggles;
 import net.createplant.registry.CEReactor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,21 +31,22 @@ public class GoggleOverlayMixin {
     }
 
     @WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;guiWidth()I"))
-    private static int createPlant$fitTowerWidth(GuiGraphics graphics, Operation<Integer> original, @Local(name = "be") BlockEntity source,
-        @Local(name = "tooltipTextWidth") int textWidth, @Share("towerScale") LocalFloatRef scale) {
+    private static int createPlant$fitWidth(GuiGraphics graphics, Operation<Integer> original, @Local(name = "be") BlockEntity source,
+        @Local(name = "tooltipTextWidth") int textWidth, @Local(name = "tooltipHeight") int textHeight, @Share("tooltipScale") LocalFloatRef scale) {
         int width = original.call(graphics);
-        if (!(source instanceof AbsorptionTowerBlockEntity) && (source == null || !source.getBlockState().is(CEReactor.LARGE_ABSORPTION_RING.get()))) return width;
-        int needed = textWidth + 40;
-        if (needed <= width) return width;
-        float fit = (float) width / needed;
+        boolean stirred = source instanceof LiddedVesselBlockEntity vessel && vessel.stirred();
+        if (!stirred && !(source instanceof AbsorptionTowerBlockEntity) && (source == null || !source.getBlockState().is(CEReactor.LARGE_ABSORPTION_RING.get()))) return width;
+        float fit = Math.min(1, (float) width / (textWidth + 40));
+        if (stirred) fit = Math.min(fit, (float) graphics.guiHeight() / (textHeight + 40));
+        if (fit >= 1) return width;
         // Create has already pushed this pose. Size and place the icon and tooltip together.
         graphics.pose().scale(fit, fit, 1);
         scale.set(fit);
-        return needed;
+        return Mth.floor(width / fit);
     }
 
     @WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;guiHeight()I"))
-    private static int createPlant$fitTowerHeight(GuiGraphics graphics, Operation<Integer> original, @Share("towerScale") LocalFloatRef scale) {
+    private static int createPlant$fitHeight(GuiGraphics graphics, Operation<Integer> original, @Share("tooltipScale") LocalFloatRef scale) {
         int height = original.call(graphics);
         float fit = scale.get();
         return fit > 0 ? Mth.floor(height / fit) : height;

@@ -525,7 +525,7 @@ route('zirconium', ('From zircon to zirconia and zirconium', 'ジルコンから
     ['zircon_ore', 'deepslate_zircon_ore', 'zircon', 'zirconium_sulfate_solution_bucket', 'zirconium_sulfate_hydrate', 'zirconyl_sulfate', 'zirconia', 'zirconium_ingot', 'zirconia_refractory_bricks', 'zirconium_pipe'], [
     step('crushing', 'crushing/zircon_ore', 'Crush zircon ore into the mineral feed.', 'ジルコン鉱石を粉砕して鉱物原料にします。', '粉碎锆石矿取得矿物原料。'),
     step('vessel', 'pressure_reaction/zirconium_sulfate_solution', 'Superheat zircon with sulfuric acid in an impeller vessel.', '撹拌槽でジルコンと硫酸を超加熱します。', '在搅拌槽中超加热锆石与硫酸。'),
-    step('vessel', 'pressure_reaction/zirconium_sulfate_evaporation', 'Feed the solution into a heated stirred tank. Extract the hydrate crystals with a funnel.', '硫酸ジルコニウム溶液を加熱した撹拌槽に送り、できた水和物をファンネルで取り出します。', '把硫酸锆溶液送进加热的搅拌槽，用漏斗取出水合物晶体。'),
+    step('vessel', 'pressure_reaction/zirconium_sulfate_evaporation', 'Heat the solution in a stirred tank. Steam comes out as it reacts. Use a funnel to collect the hydrate crystals at the end.', '加熱した攪拌槽で溶液から少しずつ蒸気が出ます。反応後、水和物をファンネルで取り出します。', '硫酸锆溶液在加热的搅拌槽中反应时逐步产生蒸汽。反应完成后用漏斗取出水合物晶体。'),
     step('vessel', 'pressure_reaction/zirconium_sulfate_dehydration', 'Feed the hydrate into a heated stirred tank. Route the zirconyl sulfate to calcining.', '水和物を加熱した撹拌槽に入れ、できた硫酸ジルコニルを焼成工程へ送ります。', '将水合物送入加热的搅拌槽，将生成的硫酸氧锆送往煅烧。'),
     step('vessel', 'pressure_reaction/zirconia', 'Superheat the zirconyl sulfate in a stirred tank. Collect the zirconia and sulfur trioxide.', '硫酸ジルコニルを撹拌槽で超加熱し、ジルコニアと三酸化硫黄を回収します。', '在搅拌槽中超加热硫酸氧锆，回收氧化锆和三氧化硫。'),
     step('furnace', 'operation:reduce_zirconia', 'Electrolyze the oxide with carbon in the powered furnace to recover zirconium metal.', '通電した炉で酸化物と炭素を電解し、ジルコニウム金属を回収します。', '在通电炉中电解氧化物与碳，回收金属锆。'),
