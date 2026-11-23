@@ -360,10 +360,13 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         for(int i=0;i<PROCESS_TANKS;i++)fluids.add(climateFluid(i));
         var base=new java.util.ArrayList<BlockPos>();
         for(int x=0;x<width;x++)for(int z=0;z<width;z++)base.add(worldPosition.offset(x,0,z));
-        int previous=heating.progress();
-        if(heating.tick(fluids,net.createplant.thermal.TankHeating.burnerBelow(level,base))) {
+        // The main inventory keeps its own heat state; the process buffers are tracked by the heater.
+        var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();
+        heat.add(tankInventory instanceof net.createplant.thermal.ThermalFluidTank thermal ? thermal.heat() : null);
+        int result=heating.tick(fluids,net.createplant.thermal.TankHeating.burnerWatts(level,base),ignored->Integer.MAX_VALUE,heat);
+        if(result==net.createplant.thermal.TankHeating.CHANGED) {
             onFluidStackChanged(tankInventory.getFluid());changed();
-        } else if(previous!=heating.progress())setChanged();
+        } else if(result==net.createplant.thermal.TankHeating.KELVIN)setChanged();
     }
 
     @Override public void notifyMultiUpdated() {

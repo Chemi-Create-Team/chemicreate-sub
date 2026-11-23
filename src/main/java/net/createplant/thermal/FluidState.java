@@ -33,6 +33,9 @@ public final class FluidState {
     public static double kelvin(int level) { return KELVIN[clamp(level)]; }
     public static double bar(int level) { return BAR[clamp(level)]; }
     public static int temperatureLevel(double kelvin) { return nearest(KELVIN,kelvin); }
+    /** The kelvin range a level stands for: halfway to its neighbours. */
+    public static double lowerBound(int level) { int l=clamp(level); return l==0 ? 0 : (KELVIN[l-1]+KELVIN[l])/2; }
+    public static double upperBound(int level) { int l=clamp(level); return l==MAX ? KELVIN[MAX]*2 : (KELVIN[l]+KELVIN[l+1])/2; }
     public static int pressureLevel(double bar) { return nearest(BAR,bar); }
 
     private static int nearest(double[] scale,double value) {
@@ -97,6 +100,27 @@ public final class FluidState {
         if(!Double.isFinite(latent) || latent<=0)latent=88*normal;
         double inverse=1/normal-FluidMaterials.R*Math.log(bar(pressure))/latent;
         return inverse<=0 ? Double.POSITIVE_INFINITY : 1/inverse;
+    }
+
+    /** Whether the stack changes between liquid and gas as its temperature changes; a mixture or an unlisted fluid never does. */
+    public static boolean phaseSensitive(FluidStack stack) {
+        return !stack.isEmpty() && !MixtureHelper.isMixture(stack) && (FluidMaterials.known(stack.getFluid()) || FluidIdentity.controlled(stack.getFluid()));
+    }
+
+    /** Latent heat of vaporisation in J/mol. */
+    public static double latentMolar(FluidStack stack) {
+        var data=net.createplant.chemistry.FluidChemicalRegistry.base(stack.getFluid());
+        double latent=data==null ? 0 : data.vaporizationHeat();
+        return Double.isFinite(latent) && latent>0 ? latent : 88*FluidMaterials.boilingOrder(stack);
+    }
+
+    /** The level nearest to a real temperature that is in the wanted phase. */
+    public static int levelFor(FluidStack stack,double kelvin,int pressure,boolean wantGas) {
+        int level=temperatureLevel(kelvin);
+        if(!phaseSensitive(stack))return level;
+        while(wantGas && level<MAX && !gas(stack,level,pressure))level++;
+        while(!wantGas && level>0 && gas(stack,level,pressure))level--;
+        return level;
     }
 
     public static boolean liquidWater(FluidStack stack) {

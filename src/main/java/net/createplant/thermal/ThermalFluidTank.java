@@ -2,11 +2,41 @@ package net.createplant.thermal;
 
 import java.util.function.Consumer;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Opt-in tank: preserves all other component distinctions and the native callback/save contract. */
 public class ThermalFluidTank extends SmartFluidTank {
+    private final HeatContent heat=new HeatContent();
+    /** The kelvin of the incoming stack during {@link #fillAt}; NaN means the stack's own level. */
+    private double entryKelvin=Double.NaN;
     public ThermalFluidTank(int capacity,Consumer<FluidStack> changed) { super(capacity,changed); }
+    /** The real temperature, heat balance and boiling share of the contents. */
+    public HeatContent heat(){return heat;}
+    public double kelvin(){return heat.kelvin(fluid);}
+    /** Fills a stream that carries a real temperature instead of its level's; the tank takes it with its heat. */
+    public int fillAt(FluidStack resource,double kelvin,FluidAction action) {
+        entryKelvin=kelvin;
+        try { return fill(resource,action); } finally { entryKelvin=Double.NaN; }
+    }
+    @Override public CompoundTag writeToNBT(HolderLookup.Provider lookup,CompoundTag tag) {
+        super.writeToNBT(lookup,tag);
+        heat.write(tag);
+        return tag;
+    }
+    @Override public net.neoforged.neoforge.fluids.capability.templates.FluidTank readFromNBT(HolderLookup.Provider lookup,CompoundTag tag) {
+        super.readFromNBT(lookup,tag);
+        heat.read(tag);
+        return this;
+    }
+    @Override public FluidStack drain(int maxDrain,FluidAction action) {
+        if(action.simulate() || fluid.isEmpty())return super.drain(maxDrain,action);
+        var before=fluid.copy();
+        var out=super.drain(maxDrain,action);
+        if(!out.isEmpty() && heat.leave(before,out,fluid))onContentsChanged();
+        return out;
+    }
     public int volumeCapacity(){return capacity;}
     /** How much gas at 1 bar the tank holds when it holds gas. */
     public int gasCapacity(){return (int)Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio());}
@@ -40,7 +70,11 @@ public class ThermalFluidTank extends SmartFluidTank {
             result=mixed(resource,accepted);
         }
         if(action.execute()) {
+            double kelvin=heat.enter(fluid,resource,accepted,entryKelvin,true);
             fluid=result;
+            int level=FluidState.levelFor(fluid,kelvin,FluidState.pressure(fluid),FluidState.gas(fluid));
+            if(level!=FluidState.temperature(fluid))FluidState.setTemperature(fluid,level);
+            heat.set(fluid,kelvin);
             net.createplant.nuclear.RadiationSources.stamp(fluid);
             onContentsChanged();
         }
@@ -52,7 +86,7 @@ public class ThermalFluidTank extends SmartFluidTank {
     }
 
     private int mixedState(FluidStack resource,int amount) {
-        int temperature=FluidState.average(FluidState.temperature(fluid),getFluidAmount(),FluidState.temperature(resource),amount);
+        int temperature=FluidState.temperatureLevel(heat.enter(fluid,resource,amount,entryKelvin,false));
         int pressure=FluidState.average(FluidState.pressure(fluid),getFluidAmount(),FluidState.pressure(resource),amount);
         return temperature*17+pressure;
     }
@@ -105,7 +139,14 @@ public class ThermalFluidTank extends SmartFluidTank {
         FluidStack merged;
         try { merged=net.createplant.mixture.MixtureHelper.merge(fluid,net.createplant.mixture.MixtureHelper.portion(resource,accepted),true); }
         catch (IllegalArgumentException error) { return 0; }
-        if (action.execute()) { fluid=merged;onContentsChanged(); }
+        if (action.execute()) {
+            double kelvin=heat.enter(fluid,resource,accepted,entryKelvin,true);
+            fluid=merged;
+            int level=FluidState.temperatureLevel(kelvin);
+            if(!net.createplant.mixture.MixtureHelper.isMixture(fluid) && level!=FluidState.temperature(fluid))FluidState.setTemperature(fluid,level);
+            heat.set(fluid,kelvin);
+            onContentsChanged();
+        }
         return accepted;
     }
     @Override public FluidStack drain(FluidStack request,FluidAction action) {

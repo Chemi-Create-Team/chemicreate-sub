@@ -1,0 +1,83 @@
+package net.createplant.gametest;
+
+import net.createplant.CreatePlant;
+import net.createplant.thermal.*;
+import net.minecraft.gametest.framework.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.gametest.*;
+import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
+
+/** Acceptance checks of docs/internal-temperature.md that need no machine: the heat balance of a tank and the burner heating. */
+@GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
+public final class InternalTemperatureGameTests {
+    private static FluidStack water(int amount,int level) { return FluidState.with(new FluidStack(Fluids.WATER,amount),level,FluidState.NORMAL_PRESSURE); }
+    private static double energy(FluidStack stack) { return stack.isEmpty() ? 0 : HeatContent.capacity(stack)*FluidState.kelvin(FluidState.temperature(stack)); }
+
+    @GameTest(template = "test_empty")
+    public static void fillingAndDrainingNeverMakesOrLosesHeat(GameTestHelper h) {
+        var tank=new ThermalFluidTank(8000,ignored->{});
+        double in=0,out=0;
+        for(int round=0;round<20;round++) {
+            var hot=water(500,9);var cold=water(500,8);
+            in+=energy(hot)+energy(cold);
+            tank.fill(hot,EXECUTE);tank.fill(cold,EXECUTE);
+            var drained=tank.drain(700,EXECUTE);
+            out+=energy(drained);
+            h.assertTrue(Math.abs(FluidState.temperature(tank.getFluid())-FluidState.temperatureLevel(tank.kelvin()))<=1,"The stack keeps the level of its real temperature");
+        }
+        double kept=HeatContent.capacity(tank.getFluid())*tank.kelvin()+tank.heat().residual();
+        h.assertTrue(Math.abs(in-out-kept)<1,"Heat in equals heat out plus what the tank holds: "+(in-out-kept));
+        h.succeed();
+    }
+
+    @GameTest(template = "test_empty")
+    public static void simulationAndSaveDoNotChangeTheTemperature(GameTestHelper h) {
+        var tank=new ThermalFluidTank(8000,ignored->{});
+        tank.fill(water(1000,9),EXECUTE);tank.fill(water(1000,8),EXECUTE);tank.drain(300,EXECUTE);
+        double kelvin=tank.kelvin(),residual=tank.heat().residual();int amount=tank.getFluidAmount();
+        tank.fill(water(500,9),SIMULATE);tank.drain(500,SIMULATE);
+        h.assertTrue(tank.kelvin()==kelvin && tank.heat().residual()==residual && tank.getFluidAmount()==amount,"Simulating changes nothing");
+        var saved=tank.writeToNBT(h.getLevel().registryAccess(),new CompoundTag());
+        var restored=new ThermalFluidTank(8000,ignored->{});
+        restored.readFromNBT(h.getLevel().registryAccess(),saved);
+        h.assertTrue(restored.kelvin()==kelvin,"The real temperature survives a reload");
+        var old=new CompoundTag();old.put("Fluid",saved.get("Fluid"));
+        var fresh=new ThermalFluidTank(8000,ignored->{});fresh.readFromNBT(h.getLevel().registryAccess(),old);
+        h.assertTrue(fresh.kelvin()==FluidState.kelvin(FluidState.temperature(fresh.getFluid())),"A tank saved without a temperature starts at its level's temperature");
+        h.succeed();
+    }
+
+    private static int passesToWarm(int amount) {
+        var fluids=java.util.List.of(water(amount,8));
+        var heater=new TankHeating();
+        int passes=0;
+        while(FluidState.temperature(fluids.get(0))<=8 && passes<100) { heater.tick(fluids,1e5);passes++; }
+        return passes;
+    }
+
+    @GameTest(template = "test_empty")
+    public static void warmingTimeFollowsHeatCapacity(GameTestHelper h) {
+        int one=passesToWarm(1000),two=passesToWarm(2000);
+        h.assertTrue(one>0 && two==2*one,"Twice the water takes twice as long: "+one+" and "+two);
+        h.succeed();
+    }
+
+    @GameTest(template = "test_empty")
+    public static void aBoilingTankHoldsItsBoilingPointUntilTheLatentHeatIsIn(GameTestHelper h) {
+        var tank=new ThermalFluidTank(8000,ignored->{});
+        tank.fill(water(1000,8),EXECUTE);
+        var fluids=java.util.List.of(tank.getFluid());
+        var heater=new TankHeating();
+        boolean held=false,boiled=false;
+        for(int pass=0;pass<12 && !boiled;pass++) {
+            heater.tick(fluids,TankHeating.LIT_WATTS,tank::capacityFor,java.util.List.of(tank.heat()));
+            boiled=FluidState.gas(tank.getFluid());
+            if(!boiled && Math.abs(tank.kelvin()-373.15)<.01)held=true;
+        }
+        h.assertTrue(held && boiled && tank.getFluidAmount()==1000,"The water waits at 100 C and then turns to steam");
+        h.succeed();
+    }
+}

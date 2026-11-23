@@ -31,12 +31,12 @@ public abstract class GradeTankMixin implements net.createplant.block.entity.Tan
                 && net.createplant.thermal.FluidState.liquidWater(owner.getTankInventory().getFluid()) || Math.floorMod(level.getGameTime()+owner.getBlockPos().asLong(),net.createplant.thermal.TankHeating.INTERVAL)!=0)return;
         var base=new java.util.ArrayList<net.minecraft.core.BlockPos>();
         if(!owner.getTankInventory().isEmpty())net.createplant.block.TankCells.forEachBase(owner,base::add);
-        int previous=createPlant$heating.progress();
         var inventory=owner.getTankInventory();
         java.util.function.ToIntFunction<FluidStack> capacity=inventory instanceof ThermalFluidTank thermal ? thermal::capacityFor : ignored->inventory.getCapacity();
-        if(createPlant$heating.tick(List.of(inventory.getFluid()),net.createplant.thermal.TankHeating.burnerBelow(level,base),capacity))
-            owner.getTankInventory().setFluid(owner.getTankInventory().getFluid().copy());
-        else if(previous!=createPlant$heating.progress())owner.setChanged();
+        var heat=inventory instanceof ThermalFluidTank thermal ? List.of(thermal.heat()) : List.<net.createplant.thermal.HeatContent>of();
+        int result=createPlant$heating.tick(List.of(inventory.getFluid()),net.createplant.thermal.TankHeating.burnerWatts(level,base),capacity,heat);
+        if(result==net.createplant.thermal.TankHeating.CHANGED)owner.getTankInventory().setFluid(owner.getTankInventory().getFluid().copy());
+        else if(result==net.createplant.thermal.TankHeating.KELVIN)owner.setChanged();
     }
     @Inject(method="write",at=@At("RETURN"))
     private void createPlant$saveHeating(net.minecraft.nbt.CompoundTag tag,net.minecraft.core.HolderLookup.Provider lookup,boolean packet,CallbackInfo ci) {

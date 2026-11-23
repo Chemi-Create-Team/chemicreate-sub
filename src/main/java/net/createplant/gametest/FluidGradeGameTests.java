@@ -26,10 +26,10 @@ public final class FluidGradeGameTests {
             h.assertTrue(FluidStack.matches(sample,restored) && FluidState.temperature(restored)==level
                 && FluidState.pressure(restored)==16-level,"All state levels survive save/reload");
             if(level>0)h.assertTrue(FluidState.kelvin(level)>FluidState.kelvin(level-1) && FluidState.bar(level)>FluidState.bar(level-1),"Both scales increase");
-            heater.tick(java.util.List.of(sample),false);
-            for(int tick=0;tick<40;tick+=TankHeating.INTERVAL)h.assertTrue(!heater.tick(java.util.List.of(sample),true),"Heating waits fifty ticks");
-            boolean changed=heater.tick(java.util.List.of(sample),true);
-            h.assertTrue(changed==(level<16) && FluidState.temperature(sample)==Math.min(16,level+1),"Heating advances one level and stops at sixteen");
+            h.assertTrue(heater.tick(java.util.List.of(sample),0)==TankHeating.NOTHING && FluidState.temperature(sample)==level,"Without a burner nothing warms");
+            int before=FluidState.temperature(sample);
+            for(int pass=0;pass<4;pass++)heater.tick(java.util.List.of(sample),TankHeating.LIT_WATTS);
+            h.assertTrue(FluidState.temperature(sample)>=before && FluidState.temperature(sample)<=16,"Heating only raises the level and stops at sixteen");
         }
         h.assertTrue(Grade.Heat.of(FluidState.kelvin(13))==Grade.Heat.HOT && Grade.Heat.of(FluidState.kelvin(14))==Grade.Heat.VERY_HOT
             && Grade.Pressure.of(FluidState.bar(0))==Grade.Pressure.VACUUM && Grade.Pressure.of(FluidState.bar(16))==Grade.Pressure.ULTRA_HIGH,"Pipe ratings use representative values");

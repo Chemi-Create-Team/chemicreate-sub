@@ -49,14 +49,14 @@ public class SeasonalPlantGameTests {
         var water = new FluidStack(Fluids.WATER, 1000);
         var fluids = List.of(water);
         var heater = new TankHeating();
-        for (int n = 0; n < 4; n++) heater.tick(fluids, true);
-        h.assertTrue(FluidState.temperature(water) == 8 && heater.progress() == 40, "No change before fifty ticks");
+        for (int n = 0; n < 4; n++) heater.tick(fluids, TankHeating.LIT_WATTS);
+        h.assertTrue(FluidState.temperature(water) > 8 && !FluidState.gas(water), "A kilogram of water on one burner warms but has not boiled away after two seconds");
         var saved = new net.minecraft.nbt.CompoundTag();
         heater.write(saved, h.getLevel().registryAccess());
         var restored = new TankHeating();
         restored.read(saved, h.getLevel().registryAccess());
-        restored.tick(fluids, true);
-        h.assertTrue(FluidState.temperature(water) == 9 && water.getAmount() == 1000, "Heating resumes after reload with no volume change");
+        for (int n = 0; n < 4; n++) restored.tick(fluids, TankHeating.LIT_WATTS);
+        h.assertTrue(FluidState.gas(water) && water.getAmount() == 1000, "Heating resumes after reload and the water boils with no volume change");
         h.succeed();
     }
 

@@ -2,6 +2,7 @@ package net.createplant.thermal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.ToIntFunction;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -11,80 +12,88 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-/** One temperature level every fifty ticks of uninterrupted heating of the same batch. */
+/**
+ * Heats the contents of a tank or vessel from the burners under it. Each burner adds its power; every content in the vessel warms
+ * by the same number of kelvin, so a heavy or high-heat-capacity content warms slowly, and a boiling content holds at its boiling
+ * point until it has taken the latent heat (docs/internal-temperature.md, 4.1).
+ */
 public final class TankHeating {
-    public static final int INTERVAL=10, DURATION=50;
-    private double ticks;
-    private List<FluidStack> batch=List.of();
+    public static final int INTERVAL=10;
+    /** Burner power in watts: a lit burner and a superheated one. */
+    public static final double LIT_WATTS=1e6, SUPERHEATED_WATTS=2e6;
+    /** What a pass did: nothing, only moved the real temperature, or changed the stack (level, phase or amount). */
+    public static final int NOTHING=0, KELVIN=1, CHANGED=2;
+    private final List<HeatContent> own=new ArrayList<>();
 
-    public static boolean burnerBelow(Level level,Iterable<BlockPos> base) {
+    public static double burnerWatts(Level level,Iterable<BlockPos> base) {
+        double watts=0;
         for(var pos:base) {
             var below=pos.below();
             if(!level.hasChunkAt(below))continue;
             var state=level.getBlockState(below);
-            if(state.getBlock() instanceof BlazeBurnerBlock && state.getValue(BlazeBurnerBlock.HEAT_LEVEL).isAtLeast(BlazeBurnerBlock.HeatLevel.KINDLED))return true;
+            if(!(state.getBlock() instanceof BlazeBurnerBlock))continue;
+            var heat=state.getValue(BlazeBurnerBlock.HEAT_LEVEL);
+            if(heat.isAtLeast(BlazeBurnerBlock.HeatLevel.SEETHING))watts+=SUPERHEATED_WATTS;
+            else if(heat.isAtLeast(BlazeBurnerBlock.HeatLevel.KINDLED))watts+=LIT_WATTS;
         }
-        return false;
+        return watts;
     }
 
-    public int progress() { return (int) ticks; }
+    public static boolean burnerBelow(Level level,Iterable<BlockPos> base) { return burnerWatts(level,base)>0; }
 
-    public boolean tick(List<FluidStack> fluids,boolean heated) {
-        return tick(fluids,heated,ignored->Integer.MAX_VALUE);
-    }
+    /** Energy one pass of {@link #INTERVAL} ticks takes from burners of this power. */
+    public static double joules(double watts) { return watts*INTERVAL/20d; }
 
-    public boolean tick(List<FluidStack> fluids,boolean heated,java.util.function.ToIntFunction<FluidStack> capacity) {
-        if(!heated || fluids.stream().noneMatch(f->!f.isEmpty() && FluidState.temperature(f)<FluidState.MAX)) {
-            ticks=0;batch=List.of();return false;
+    public int tick(List<FluidStack> fluids,double watts) { return tick(fluids,watts,ignored->Integer.MAX_VALUE); }
+
+    public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity) { return tick(fluids,watts,capacity,List.of()); }
+
+    /** {@code external.get(i)}, where present, is the heat state of {@code fluids.get(i)} that its own inventory already keeps. */
+    public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity,List<HeatContent> external) {
+        while(own.size()<fluids.size())own.add(new HeatContent());
+        if(watts<=0)return NOTHING;
+        double total=0;
+        for(var fluid:fluids)if(!fluid.isEmpty())total+=HeatContent.capacity(fluid);
+        if(total<=0)return NOTHING;
+        double joules=joules(watts);
+        int result=NOTHING;
+        for(int i=0;i<fluids.size();i++) {
+            var fluid=fluids.get(i);
+            if(fluid.isEmpty())continue;
+            var heat=i<external.size() && external.get(i)!=null ? external.get(i) : own.get(i);
+            double before=heat.kelvin(fluid), beforeQuality=heat.quality(fluid);
+            var outcome=heat.add(fluid,joules*HeatContent.capacity(fluid)/total,0,FluidState.kelvin(FluidState.MAX),capacity);
+            var next=outcome.stack();
+            if(next.getAmount()!=fluid.getAmount() || FluidState.temperature(next)!=FluidState.temperature(fluid) || FluidState.gas(next)!=FluidState.gas(fluid)) {
+                fluid.setAmount(next.getAmount());
+                fluid.applyComponents(next.getComponentsPatch());
+                // A level back at the substance's own state is stored by removing the data, which a patch does not carry.
+                FluidState.setTemperature(fluid,FluidState.temperature(next));
+                FluidState.setPressure(fluid,FluidState.pressure(next));
+                heat.set(fluid,heat.kelvin(next),heat.quality(next));
+                result=CHANGED;
+            } else if(result==NOTHING && (heat.kelvin(fluid)!=before || heat.quality(fluid)!=beforeQuality))result=KELVIN;
         }
-        if(!sameBatch(fluids)) {ticks=0;remember(fluids);}
-        ticks+=INTERVAL;
-        if(ticks<DURATION)return false;
-        boolean changed=false;
-        for(var fluid:fluids) if(!fluid.isEmpty()) {
-            int temperature=FluidState.temperature(fluid);
-            if(temperature==FluidState.MAX)continue;
-            var change=PhaseChange.transfer(fluid,temperature+1,FluidState.pressure(fluid));
-            int batches=change.batches(fluid.getAmount());
-            if(batches*change.consumed()!=fluid.getAmount() || (long)batches*change.produced()>capacity.applyAsInt(change.prototype()))continue;
-            fluid.setAmount(batches*change.produced());
-            fluid.applyComponents(change.prototype().getComponentsPatch());
-            // A level back at the substance's own state is stored by removing the data, which a patch does not carry.
-            FluidState.setTemperature(fluid,FluidState.temperature(change.prototype()));
-            FluidState.setPressure(fluid,FluidState.pressure(change.prototype()));
-            changed=true;
-        }
-        ticks-=DURATION;
-        remember(fluids);
-        return changed;
-    }
-
-    private boolean sameBatch(List<FluidStack> fluids) {
-        if(batch.size()!=fluids.size())return false;
-        for(int i=0;i<batch.size();i++) {
-            var old=batch.get(i);var next=fluids.get(i);
-            if(old.isEmpty() && next.isEmpty())continue;
-            if(!FluidThermal.compatible(old,next))return false;
-        }
-        return true;
-    }
-
-    private void remember(List<FluidStack> fluids) {
-        batch=new ArrayList<>(fluids.size());
-        for(var fluid:fluids)batch.add(fluid.isEmpty() ? FluidStack.EMPTY : fluid.copyWithAmount(1));
+        return result;
     }
 
     public void write(CompoundTag tag,HolderLookup.Provider lookup) {
-        tag.putDouble("HeatingTicks",ticks);
         var saved=new ListTag();
-        for(var fluid:batch)saved.add(fluid.isEmpty() ? new CompoundTag() : fluid.save(lookup));
-        tag.put("HeatingBatch",saved);
+        for(var heat:own) {
+            var entry=new CompoundTag();
+            heat.write(entry);
+            saved.add(entry);
+        }
+        tag.put("HeatContents",saved);
     }
 
     public void read(CompoundTag tag,HolderLookup.Provider lookup) {
-        ticks=Double.isFinite(tag.getDouble("HeatingTicks")) ? Math.clamp(tag.getDouble("HeatingTicks"),0,DURATION-.001) : 0;
-        batch=new ArrayList<>();
-        var saved=tag.getList("HeatingBatch",Tag.TAG_COMPOUND);
-        for(int i=0;i<Math.min(saved.size(),16);i++)batch.add(FluidStack.parseOptional(lookup,saved.getCompound(i)));
+        own.clear();
+        var saved=tag.getList("HeatContents",Tag.TAG_COMPOUND);
+        for(int i=0;i<Math.min(saved.size(),16);i++) {
+            var heat=new HeatContent();
+            heat.read(saved.getCompound(i));
+            own.add(heat);
+        }
     }
 }
