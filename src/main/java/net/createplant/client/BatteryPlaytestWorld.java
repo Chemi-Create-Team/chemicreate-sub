@@ -80,6 +80,7 @@ import org.slf4j.LoggerFactory;
  * the lithium carbonate vessel and an open vessel for the burn test. Sulfate solution goes on to the calcining vessel, its alumina by hopper into
  * the molten-salt furnace. A second line leaches lead in hydrochloric acid, clarifies it and electrowins it. Only the raw materials come from
  * creative tanks (oxygen, water, carbon monoxide, hydrochloric acid, electrolytes) and chests (ores, coal, soda ash).
+ * The fertilizer plant of {@link FertilizerPlaytestWorld} (wood to NPK fertilizer, 70 blocks east) is built in the same world.
  * {@code -Dcreateplant.batteryPlaytest} builds it, saves it and stays open for play; add {@code -Dcreateplant.batteryPlaytestClose} to quit after saving.
  * A part that cannot be built is recorded and skipped, so one wrong API leaves the rest standing; the failures are told in chat and the result file.
  * It has not been run by its author: the first run is the verification.
@@ -181,10 +182,12 @@ public final class BatteryPlaytestWorld {
         part(level, "鉛蓄電池", l -> bank(l, new BlockPos(-70, G, -10), true, 230));
         part(level, "リチウムイオン電池", l -> bank(l, new BlockPos(-70, G, -30), false, 330));
         part(level, "ポンプの駆動", l -> plant.driveAll());
+        // The fertilizer plant of FertilizerPlaytestWorld stands east of this one, with its own pumps and cells and its own run to NPK fertilizer.
+        part(level, "肥料プラント", FertilizerPlaytestWorld::addTo);
 
         player.setItemSlot(EquipmentSlot.HEAD, AllItems.GOGGLES.asStack());
         player.getInventory().setItem(1, AllItems.WRENCH.asStack());
-        BlockPos spawn = new BlockPos(8, G, -12);
+        BlockPos spawn = new BlockPos(60, G, -12); // between the two plants, so both stay within the simulation distance
         player.teleportTo(level, spawn.getX() + .5, spawn.getY(), spawn.getZ() + .5, 150, 15);
         player.setRespawnPosition(Level.OVERWORLD, spawn, 150, true, false);
         level.setDefaultSpawnPos(spawn, 150);
