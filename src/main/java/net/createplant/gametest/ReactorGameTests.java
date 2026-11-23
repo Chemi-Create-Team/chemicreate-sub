@@ -243,6 +243,28 @@ public class ReactorGameTests {
             .filter(net.createplant.thermal.FluidState::gas).mapToInt(FluidStack::getAmount).sum();
     }
 
+    @GameTest(template = "test_reactor")
+    public static void superheatingSodiumAluminatePrefersAluminaOverEvaporation(GameTestHelper h) {
+        var bath=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
+        var solution=net.createplant.registry.CEChlorAlkali.SODIUM_ALUMINATE.get();
+        var caustic=net.createplant.registry.CEChlorAlkali.CAUSTIC_SODA.get();
+        var feed=in(bath);
+        h.assertTrue(feed.fill(new FluidStack(solution,500),EXECUTE)==500,"The stirred vessel accepts the Bayer solution");
+        heat(bath,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        run(bath,105);
+        int product=bath.inputItemSlots();
+        var inventory=bath.itemPort();
+        h.assertTrue(inventory.extractItem(product,1,false).is(CEMetals.ALUMINA.get()) && products(bath).getOrDefault(caustic,0)==400,
+            "Superheat selects one alumina and 400 mB caustic soda");
+        h.assertTrue(out(bath).drain(new FluidStack(caustic,400),EXECUTE).getAmount()==400
+            && feed.fill(new FluidStack(solution,500),EXECUTE)==500,"Start a second charge without mixing the product stocks");
+        heat(bath,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
+        run(bath,105);
+        h.assertTrue(inventory.extractItem(product,1,false).is(CEMetals.SODIUM_ALUMINATE_CRYSTALS.get()) && gasProducts(bath)==400,
+            "Ordinary heat still evaporates the solution to its crystals and steam");
+        h.succeed();
+    }
+
     private static void run(ReactorMachineBlockEntity be,int ticks) { speed(be,32);for (int i=0;i<ticks;i++) be.tickProcess(); }
     @GameTest(template = "test_reactor")
     public static void heatedSlimeBlendBecomesTwoCutsAndAReusableCoolant(GameTestHelper h) {

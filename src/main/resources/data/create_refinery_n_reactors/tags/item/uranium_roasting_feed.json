@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:uraninite",
+    "create:crushed_raw_uranium"
+  ]
+}

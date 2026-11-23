@@ -1,7 +1,7 @@
 {
   "type": "minecraft:blasting",
   "ingredient": {
-    "item": "create_refinery_n_reactors:uraninite"
+    "tag": "create_refinery_n_reactors:uranium_roasting_feed"
   },
   "result": {
     "id": "create_refinery_n_reactors:yellowcake"

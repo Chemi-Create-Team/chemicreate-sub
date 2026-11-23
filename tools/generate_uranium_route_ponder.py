@@ -71,9 +71,9 @@ SCENES={
   'components':['uranium_ore','deepslate_uranium_ore','uraninite','yellowcake','uranium_dioxide','uranium_tetrafluoride','reactor_separator_core','vessel_stirrer'],
   'steps':[
    ([3,2,11],{'speed':32,'item':NS+'uraninite'},(
-    'Crush uranium ore with Create Crushing Wheels to obtain Raw Uranium. Blow a fan through lava onto the raw pieces on this depot to roast them into yellowcake.',
-    'ウラン鉱石をCreateのクラッシングホイールで粉砕し、ウラン原石にします。溶岩を通したファンの風をデポ上の原石へ当て、焙焼したイエローケーキにします。',
-    '用Create粉碎轮将铀矿石粉碎为粗铀矿。风扇吹过熔岩，对置物台上的原料进行焙烧，得到黄饼。')),
+    'Crush uranium ore with Create. The lava fan roasts raw uranium or crushed raw uranium into yellowcake.',
+    '粉砕で出たウラン原石とCreateの砕いた原石は、溶岩ファンでイエローケーキにできます。',
+    '本模组的粗铀和 Create 的粉碎粗铀都可用熔岩风扇焙烧成黄饼。')),
    ([4,3,3],{'item':NS+'reactor_separator_core'},(
     'Fit reaction trays in a reaction tower without catalyst. A funnel on a side of the bottom layer lays roasted ore on the trays; feed hydrogen there and heat below. No rotation is needed.',
     '反応塔へ触媒なしで反応棚段を入れます。最下段の側面のファンネルから焙焼物を入れると棚段にたまります。同じ段へ水素を送り、下のバーナーで加熱します。回転は不要です。',

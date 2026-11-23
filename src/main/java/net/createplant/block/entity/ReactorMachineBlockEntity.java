@@ -439,7 +439,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         var recipes=new ArrayList<RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>>>();
         var installed=module();
         for(var holder:reactions())if(holder.value().module()==installed || installed==ReactorModule.STIRRED && holder.value().module()==ReactorModule.NONE)recipes.add(holder);
-        recipes.sort(Comparator.comparingInt((RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> r)->r.value().getIngredients().size()+r.value().getFluidIngredients().size()).reversed());
+        recipes.sort(Comparator.comparingInt((RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> r)->r.value().getIngredients().size()+r.value().getFluidIngredients().size()).reversed()
+            .thenComparing(r->r.value().getRequiredHeat(),Comparator.reverseOrder()));
         if(module()!=ReactorModule.STIRRED)return recipes;
         var mixing=new ArrayList<>(level.getRecipeManager().getAllRecipesFor(AllRecipeTypes.MIXING.<RecipeInput,MixingRecipe>getType()));
         mixing.sort(Comparator.comparingInt((RecipeHolder<MixingRecipe> r)->r.value().getIngredients().size()).reversed());

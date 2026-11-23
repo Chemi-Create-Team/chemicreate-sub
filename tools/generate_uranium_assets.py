@@ -380,7 +380,8 @@ def recipes():
         if heat: recipe['heat_requirement'] = heat
         recipe |= {'ingredients': ingredients, 'results': results}
         write(r / 'pressure_reaction' / f'{name}.json', recipe)
-    write(r / 'blasting/roast_raw_uranium.json', {'type': 'minecraft:blasting', 'ingredient': {'item': U + 'uraninite'}, 'result': item(U + 'yellowcake'), 'experience': 0.1, 'cookingtime': 100})
+    write(r / 'blasting/roast_raw_uranium.json', {'type': 'minecraft:blasting', 'ingredient': {'tag': U + 'uranium_roasting_feed'}, 'result': item(U + 'yellowcake'), 'experience': 0.1, 'cookingtime': 100})
+    write(D / 'tags/item/uranium_roasting_feed.json', {'replace': False, 'values': [U + 'uraninite', 'create:crushed_raw_uranium']})
     write(D / 'tags/item/uranium_reduction_feed.json', {'replace': False, 'values': [U + 'yellowcake', U + 'uranium_trioxide']})
     write(r / 'smelting/uranium_pellet.json', {'type': 'minecraft:smelting', 'ingredient': {'item': U + 'green_uranium_pellet'}, 'result': item(U + 'uranium_pellet'), 'experience': 0.1, 'cookingtime': 200})
     write(r / 'pressing/green_uranium_pellet.json', {'type': 'create:pressing', 'ingredients': [{'item': U + 'enriched_uranium_dioxide'}], 'results': [item(U + 'green_uranium_pellet', 2)]})

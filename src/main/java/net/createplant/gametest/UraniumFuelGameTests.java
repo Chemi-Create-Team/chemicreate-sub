@@ -77,6 +77,10 @@ public final class UraniumFuelGameTests {
         h.setBlock(BASE,Blocks.LAVA);h.assertTrue(fan.isValidAt(h.getLevel(),h.absolutePos(BASE)),"Lava enables native Create blasting");
         var roasted=fan.process(CEUranium.URANINITE.toStack(8),h.getLevel());
         h.assertTrue(roasted!=null && roasted.size()==1 && roasted.getFirst().is(CEUranium.YELLOWCAKE.get()) && roasted.getFirst().getCount()==8,"Lava fan roasts eight raw uranium into eight oxide feeds");
+        var createUranium=net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("create","crushed_raw_uranium"));
+        var compatible=fan.process(new ItemStack(createUranium,8),h.getLevel());
+        h.assertTrue(compatible!=null && compatible.size()==1 && compatible.getFirst().is(CEUranium.YELLOWCAKE.get()) && compatible.getFirst().getCount()==8,
+            "Create's own crushing result also roasts into yellowcake");
         h.setBlock(BASE,AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,HeatLevel.KINDLED));
         h.assertTrue(fan.isValidAt(h.getLevel(),h.absolutePos(BASE)),"An ordinary lit Blaze Burner enables the same hot-air firing");
         for(var pair:List.of(List.of(CEUranium.GREEN_URANIUM_PELLET.get(),CEUranium.URANIUM_PELLET.get()),List.of(CEUranium.GREEN_COMPACT_URANIUM_PELLET.get(),CEUranium.COMPACT_URANIUM_PELLET.get()))) {

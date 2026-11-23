@@ -2365,9 +2365,9 @@
     "zh_cn": "从铀矿石到离心机原料"
   },
   "guide.uranium_preparation.step_1": {
-    "en_us": "Crush uranium ore into raw uranium. Apply lava-heated fan air to roast it into yellowcake.",
-    "ja_jp": "ウラン鉱石を粉砕して原石にします。溶岩を通したファンの風で焙焼し、イエローケーキにします。",
-    "zh_cn": "粉碎铀矿石得到粗铀，再用经过熔岩的风焙烧成黄饼。"
+    "en_us": "Crush uranium ore with Create. The lava fan roasts raw uranium or crushed raw uranium into yellowcake.",
+    "ja_jp": "粉砕で出たウラン原石とCreateの砕いた原石は、溶岩ファンでイエローケーキにできます。",
+    "zh_cn": "本模组的粗铀和 Create 的粉碎粗铀都可用熔岩风扇焙烧成黄饼。"
   },
   "guide.uranium_preparation.step_2": {
     "en_us": "Fit reaction trays in a reaction tower without catalyst. A funnel on a side of the bottom layer lays roasted ore on the trays; feed hydrogen there and heat below. No rotation is needed.",
