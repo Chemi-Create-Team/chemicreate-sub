@@ -1,4 +1,4 @@
-// Builds the battery, lead, lithium and aluminium test world and closes the game:
+// Builds the battery, lead, lithium and aluminium continuous-plant test world and leaves the game open (add -Dcreateplant.batteryPlaytestClose=true to quit after saving):
 //   ./gradlew -I docs/playtests/battery-playtest.gradle runClient
 // The world is saved under run/saves/createplant-battery-<time>/ and the result in run/battery-playtest-result.json.
 allprojects {
