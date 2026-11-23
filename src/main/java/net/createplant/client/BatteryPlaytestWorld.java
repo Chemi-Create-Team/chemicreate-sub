@@ -76,10 +76,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Opt-in creative flat world: one continuous plant. Lead is roasted and reduced; the sulfur dioxide goes through an absorption tower and an
- * electrolysis cell (the sulfur cycle of {@link SulfurCyclePlaytestWorld}) to sulfuric acid, which is piped on to the aluminium sulfate leach,
- * the lithium carbonate vessel and an open vessel for the burn test. Sulfate solution goes on to the calcining vessel, its alumina by hopper into
- * the molten-salt furnace. A second line leaches lead in hydrochloric acid, clarifies it and electrowins it. Only the raw materials come from
- * creative tanks (oxygen, water, carbon monoxide, hydrochloric acid, electrolytes) and chests (ores, coal, soda ash).
+ * electrolysis cell (the sulfur cycle of {@link SulfurCyclePlaytestWorld}) to sulfuric acid, which is piped to the lithium carbonate vessel and
+ * an open vessel for the burn test. The Bayer line feeds bauxite and a finite charge of caustic soda to make alumina for the molten-salt furnace.
+ * A second line leaches lead in hydrochloric acid, clarifies it and electrowins it. Other raw materials come from creative tanks
+ * (oxygen, water, carbon monoxide, hydrochloric acid, electrolytes) and chests (ores, coal, soda ash).
  * The fertilizer plant of {@link FertilizerPlaytestWorld} (wood to NPK fertilizer, 70 blocks east) is built in the same world.
  * {@code -Dcreateplant.batteryPlaytest} builds it, saves it and stays open for play; add {@code -Dcreateplant.batteryPlaytestClose} to quit after saving.
  * A part that cannot be built is recorded and skipped, so one wrong API leaves the rest standing; the failures are told in chat and the result file.
@@ -326,18 +326,25 @@ public final class BatteryPlaytestWorld {
         plant.sign(r2.south(5).west(), "鉛② 還元溶錬（焼結鉱→鉛・左のチェスト）");
     }
 
-    /** Sulfuric acid and bauxite make sulfate solution; it is calcined to alumina, which goes by hopper into the furnace with coal; the metal drops into a chest. */
+    /** The Bayer vessels dissolve bauxite in caustic soda and separate alumina, which goes by hopper into the furnace. */
     private static void aluminium(ServerLevel level) {
         var a1 = new BlockPos(14, -58, 12);
         vessel(level, a1, BlazeBurnerBlock.HeatLevel.KINDLED);
         intake(level, a1.west(), Direction.EAST, List.of(stack("bauxite", 64)));
-        straight(ACID, Direction.EAST, mid(a1, Direction.WEST).west());
+        var feed = mid(a1, Direction.WEST).west(6);
+        plant.put(feed, CETransport.STAINLESS_STEEL_TANK.get().defaultBlockState());
+        straight(feed, Direction.EAST, mid(a1, Direction.WEST).west());
+        LATER.add(new Object[] {"バイヤー法の苛性ソーダ", (Part) l -> {
+            var port = l.getCapability(Capabilities.FluidHandler.BLOCK, feed, Direction.EAST);
+            if (port == null || port.fill(new FluidStack(fluid("caustic_soda_solution"), 4000), IFluidHandler.FluidAction.EXECUTE) != 4000)
+                throw new IllegalStateException("The Bayer feed tank did not accept its caustic soda charge");
+        }});
+        outlet(level, a1.offset(2, -1, 2), Direction.SOUTH, true);
         var a2 = new BlockPos(30, -58, 12);
         vessel(level, a2, BlazeBurnerBlock.HeatLevel.SEETHING);
         straight(mid(a1, Direction.EAST), Direction.EAST, mid(a2, Direction.WEST).west());
-        // The sulfur trioxide to a store: not returned to the tower, which would mix it with the sulfur dioxide.
-        var so3 = straight(mid(a2, Direction.NORTH), Direction.NORTH, mid(a2, Direction.NORTH).north(5));
-        plant.store(so3.getLast(), Direction.NORTH, "三酸化硫黄", true);
+        var soda = straight(mid(a2, Direction.NORTH), Direction.NORTH, mid(a2, Direction.NORTH).north(5));
+        plant.store(soda.getLast(), Direction.NORTH, "回収した苛性ソーダ", PlaytestPlant.Kind.ANY);
         // The molten-salt furnace: its shell takes alumina from the hopper under the calcining vessel and coal from a chest; its busbar is wired at 200 V.
         var anode = new BlockPos(35, -57, 13);
         for (int y = -2; y <= 0; y++) for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++)
@@ -348,8 +355,8 @@ public final class BatteryPlaytestWorld {
         hopper(a2.offset(2, -1, 1), Direction.EAST);
         intake(level, anode.offset(3, -1, 0), Direction.WEST, List.of(new ItemStack(Items.COAL, 64)));
         outlet(level, anode.below(3), Direction.SOUTH, true);
-        plant.sign(a1.north(2), "Al① ボーキサイト＋硫酸→硫酸アルミニウム");
-        plant.sign(a2.north(2).west(2), "Al② 焼成（→アルミナ）");
+        plant.sign(a1.north(2), "Al① ボーキサイト＋苛性ソーダ→アルミン酸ナトリウム");
+        plant.sign(a2.north(2).west(2), "Al② 分離（アルミナ・苛性ソーダ）");
         plant.sign(anode.atY(G).south(5), "溶融塩電解炉（200V）：アルミニウムは左のチェスト");
     }
 

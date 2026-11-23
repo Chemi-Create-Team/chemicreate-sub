@@ -503,12 +503,10 @@ route('refrigeration', ('Coolants 2 — refrigeration and ice', '冷媒の製造
 ], family='coolants')
 
 route('aluminum', ('From bauxite to aluminum', 'ボーキサイトからアルミニウムを作る', '从铝土矿制取铝'),
-    ['bauxite_ore', 'deepslate_bauxite_ore', 'bauxite', 'aluminium_sulfate_solution_bucket', 'sodium_aluminate_solution_bucket', 'alumina', 'aluminum_ingot', 'aluminum_sheet'], [
+    ['bauxite_ore', 'deepslate_bauxite_ore', 'bauxite', 'sodium_aluminate_solution_bucket', 'alumina', 'aluminum_ingot', 'aluminum_sheet'], [
     step('crushing', 'crushing/bauxite_ore', 'Crush the ore to collect the mineral feed.', '鉱石を粉砕し、製錬用の鉱物を集めます。', '粉碎矿石以取得冶炼原料。'),
-    step('vessel', 'pressure_reaction/aluminium_sulfate_solution', 'The sulfate route heats the mineral with sulfuric acid in an impeller vessel.', '硫酸法では、撹拌槽で鉱物と硫酸を加熱します。', '硫酸路线在搅拌槽中加热矿物与硫酸。'),
-    step('vessel', 'pressure_reaction/alumina', 'Superheat the sulfate solution to obtain alumina. Recover sulfur trioxide into the sulfuric-acid line.', '硫酸塩溶液を超加熱してアルミナを得ます。三酸化硫黄を硫酸の系列へ回収します。', '超加热硫酸盐溶液得到氧化铝，三氧化硫回收到硫酸系列。'),
-    step('vessel', 'pressure_reaction/sodium_aluminate_solution', 'The alternative Bayer route uses caustic soda and also returns the iron as nuggets.', '別のバイヤー法では苛性ソーダを使い、鉄も鉄塊として回収します。', '另一条拜耳路线使用烧碱，并以铁粒回收铁。'),
-    step('vessel', 'pressure_reaction/alumina_from_sodium_aluminate_solution', 'Superheat the aluminate solution, collect alumina and send the recovered soda back to the previous batch.', 'アルミン酸塩溶液を超加熱し、アルミナと苛性ソーダを回収します。ソーダを前の工程へ戻します。', '超加热铝酸盐溶液，收集氧化铝并把回收烧碱返回前一工序。'),
+    step('vessel', 'pressure_reaction/sodium_aluminate_solution', 'Heat bauxite with caustic soda in a stirred tank. Collect the iron nuggets.', '撹拌槽でボーキサイトと苛性ソーダを加熱し、鉄塊も回収します。', '在搅拌槽中加热铝土矿与烧碱，同时回收铁粒。'),
+    step('vessel', 'pressure_reaction/alumina_from_sodium_aluminate_solution', 'Superheat the aluminate solution to separate the alumina. Top up the recovered caustic soda before reuse.', 'アルミン酸ナトリウム溶液を超加熱し、アルミナを分離します。回収した苛性ソーダは補給して再利用します。', '超加热铝酸钠溶液以分离氧化铝。补充回收的烧碱后再利用。'),
     step('furnace', 'operation:reduce_alumina', 'Build the 5×5×3 electrolysis furnace with its anode and busbar. Feed oxide and carbon through the busbar and connect its two electrical terminals. Wait for the molten working temperature.', '5×5×3の電解炉に陽極と母線を組み、母線から酸化物と炭素を搬入します。2端子へ結線し、浴が動作温度になるまで加熱します。', '组装带阳极和母线的5×5×3电解炉，经母线送入氧化物与碳，连接两个电气端子并等熔池达到工作温度。'),
     step('pressing', 'pressing/aluminum_sheet', 'Extract the metal through a bottom face, then press ingots into sheets for factory components.', '底面から金属を取り出し、インゴットをプレスして設備用の板にします。', '从底面取出金属，再把锭压成设备用板。'),
 ])

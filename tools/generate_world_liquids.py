@@ -233,9 +233,10 @@ def translations(entries):
                 kind + '.' + NS.replace(':', '.') + name for kind in ('fluid', 'fluid_type', 'block')) if key in strings), None)
             assert fluid_name, (language, name)
             strings['block.' + NS.replace(':', '.') + name] = fluid_name
-            suffix = (' Corrosion-Resistant Bucket' if entry['corrosive'] else ' Bucket') if language == 'en_us' else (
-                '入り耐食合金バケツ' if entry['corrosive'] else '入りバケツ') if language == 'ja_jp' else (
-                '耐蚀合金桶' if entry['corrosive'] else '桶')
+            alloy_only = entry['corrosive'] and name != 'brine'
+            suffix = (' Corrosion-Resistant Bucket' if alloy_only else ' Bucket') if language == 'en_us' else (
+                '入り耐食合金バケツ' if alloy_only else '入りバケツ') if language == 'ja_jp' else (
+                '耐蚀合金桶' if alloy_only else '桶')
             strings['item.' + NS.replace(':', '.') + name + '_bucket'] = fluid_name + suffix
         for key, values in {
             'item.create_refinery_n_reactors.corrosion_resistant_bucket': ('Corrosion-Resistant Alloy Bucket', '耐食合金バケツ', '耐蚀合金桶'),

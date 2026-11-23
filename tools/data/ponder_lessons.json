@@ -2860,31 +2860,21 @@
     "zh_cn": "粉碎矿石以取得冶炼原料。\n%s → %s"
   },
   "guide.manufacturing_aluminum.step_2": {
-    "en_us": "The sulfate route heats the mineral with sulfuric acid in a stirred tank.\n%s → %s",
-    "ja_jp": "硫酸法では、撹拌槽で鉱物と硫酸を加熱します。\n%s → %s",
-    "zh_cn": "硫酸路线在搅拌槽中加热矿物与硫酸。\n%s → %s"
+    "en_us": "Heat bauxite with caustic soda in a stirred tank. Collect the iron nuggets.\n%s → %s",
+    "ja_jp": "撹拌槽でボーキサイトと苛性ソーダを加熱し、鉄塊も回収します。\n%s → %s",
+    "zh_cn": "在搅拌槽中加热铝土矿与烧碱，同时回收铁粒。\n%s → %s"
   },
   "guide.manufacturing_aluminum.step_3": {
-    "en_us": "Superheat the sulfate solution to obtain alumina. Recover sulfur trioxide into the sulfuric-acid line.\n%s → %s",
-    "ja_jp": "硫酸塩溶液を超加熱してアルミナを得ます。三酸化硫黄を硫酸の系列へ回収します。\n%s → %s",
-    "zh_cn": "超加热硫酸盐溶液得到氧化铝，三氧化硫回收到硫酸系列。\n%s → %s"
+    "en_us": "Superheat the aluminate solution to separate the alumina. Top up the recovered caustic soda before reuse.\n%s → %s",
+    "ja_jp": "アルミン酸ナトリウム溶液を超加熱し、アルミナを分離します。回収した苛性ソーダは補給して再利用します。\n%s → %s",
+    "zh_cn": "超加热铝酸钠溶液以分离氧化铝。补充回收的烧碱后再利用。\n%s → %s"
   },
   "guide.manufacturing_aluminum.step_4": {
-    "en_us": "The alternative Bayer route uses caustic soda and also returns the iron as nuggets.\n%s → %s",
-    "ja_jp": "別のバイヤー法では苛性ソーダを使い、鉄も鉄塊として回収します。\n%s → %s",
-    "zh_cn": "另一条拜耳路线使用烧碱，并以铁粒回收铁。\n%s → %s"
-  },
-  "guide.manufacturing_aluminum.step_5": {
-    "en_us": "Superheat the aluminate solution, collect alumina and send the recovered soda back to the previous batch.\n%s → %s",
-    "ja_jp": "アルミン酸塩溶液を超加熱し、アルミナと苛性ソーダを回収します。ソーダを前の工程へ戻します。\n%s → %s",
-    "zh_cn": "超加热铝酸盐溶液，收集氧化铝并把回收烧碱返回前一工序。\n%s → %s"
-  },
-  "guide.manufacturing_aluminum.step_6": {
     "en_us": "Build the electrolysis furnace and connect both electrical terminals. Feed oxide and carbon; each ingot consumes fixed electrical work.\n%s → %s",
     "ja_jp": "電解炉を組み、両方の電極端子へ配線します。酸化物と炭素を入れ、インゴットごとの電力を供給します。\n%s → %s",
     "zh_cn": "组装电解炉并连接两个电端子。投入氧化物和碳，每块锭消耗固定电功。\n%s → %s"
   },
-  "guide.manufacturing_aluminum.step_7": {
+  "guide.manufacturing_aluminum.step_5": {
     "en_us": "Extract the metal through a bottom face, then press ingots into sheets for factory components.\n%s → %s",
     "ja_jp": "底面から金属を取り出し、インゴットをプレスして設備用の板にします。\n%s → %s",
     "zh_cn": "从底面取出金属，再把锭压成设备用板。\n%s → %s"

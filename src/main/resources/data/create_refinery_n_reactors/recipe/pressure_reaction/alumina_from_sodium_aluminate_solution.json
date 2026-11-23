@@ -13,7 +13,7 @@
       "id": "create_refinery_n_reactors:alumina"
     },
     {
-      "amount": 500,
+      "amount": 400,
       "id": "create_refinery_n_reactors:caustic_soda_solution"
     }
   ]

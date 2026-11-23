@@ -1,5 +1,6 @@
 package net.createplant.mixin;
 
+import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEWorldFluids;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.world.item.ItemStack;
@@ -19,13 +20,18 @@ public class FluidBucketWrapperMixin {
 
     @Inject(method = "canFillFluidType", at = @At("HEAD"), cancellable = true)
     private void createPlant$corrosion(FluidStack fluid, CallbackInfoReturnable<Boolean> callback) {
-        if (container.is(Items.BUCKET) && CEWorldFluids.isLiquid(fluid.getFluid()) && FluidHazards.of(fluid).corrosive())
+        if (container.is(Items.BUCKET) && !CEChlorAlkali.BRINE.get().isSame(fluid.getFluid())
+            && CEWorldFluids.isLiquid(fluid.getFluid()) && FluidHazards.of(fluid).corrosive())
             callback.setReturnValue(false);
     }
 
     @Inject(method="setFluid",at=@At("HEAD"),cancellable=true)
     private void createPlant$stainlessShell(FluidStack fluid,CallbackInfo ci) {
-        if(fluid.isEmpty() && net.createplant.item.StainlessBuckets.marked(container)) {
+        if (container.is(Items.BUCKET) && !fluid.isEmpty() && CEChlorAlkali.BRINE.get().isSame(fluid.getFluid())) {
+            container = CEWorldFluids.bucket(fluid);
+            container.set(CEWorldFluids.IRON_BUCKET_SHELL.get(), net.minecraft.util.Unit.INSTANCE);
+            ci.cancel();
+        } else if(fluid.isEmpty() && net.createplant.item.StainlessBuckets.marked(container)) {
             container=net.createplant.item.StainlessBuckets.empty();
             ci.cancel();
         }

@@ -86,7 +86,6 @@ def recipes():
     U = NS; acid = U + 'sulfuric_acid'
     reactions = {
         'aluminium_sulfate_solution': ([{'item': U + 'bauxite'}, {'item': U + 'bauxite'}, fluid(acid, 500)], [fluid_out(U + 'aluminium_sulfate_solution', 500)], 'heated'),
-        'alumina': ([fluid(U + 'aluminium_sulfate_solution', 500)], [item(U + 'alumina'), fluid_out(U + 'sulfur_trioxide', 500)], 'superheated'),
         'titanyl_sulfate_solution': ([{'item': U + 'ilmenite'}, {'item': U + 'ilmenite'}, fluid(acid, 500)], [fluid_out(U + 'titanyl_sulfate_solution', 500), item('minecraft:iron_nugget', 3)], 'heated'),
         'titanium_dioxide': ([fluid(U + 'titanyl_sulfate_solution', 500)], [item(U + 'titanium_dioxide'), fluid_out(U + 'sulfur_trioxide', 500)], 'superheated'),
         # The shorter chloride route consumes its acid and returns only half the titanium dioxide of the two-stage sulfate route.

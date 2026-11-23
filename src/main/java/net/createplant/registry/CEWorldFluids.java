@@ -38,6 +38,9 @@ public final class CEWorldFluids {
     private static final List<Entry> ENTRIES = new ArrayList<>();
     public static final Supplier<DataComponentType<BucketFluidContents>> BUCKET_CONTENTS = COMPONENTS.register("bucket_contents",
         () -> DataComponentType.<BucketFluidContents>builder().persistent(BucketFluidContents.CODEC).networkSynchronized(BucketFluidContents.STREAM_CODEC).build());
+    public static final Supplier<DataComponentType<net.minecraft.util.Unit>> IRON_BUCKET_SHELL = COMPONENTS.register("iron_bucket_shell",
+        () -> DataComponentType.<net.minecraft.util.Unit>builder().persistent(net.minecraft.util.Unit.CODEC)
+            .networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
     public static final DeferredItem<AlloyBucketItem> EMPTY_ALLOY_BUCKET = ITEMS.register("corrosion_resistant_bucket",
         () -> new AlloyBucketItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<StainlessBucketItem> STAINLESS_BUCKET = ITEMS.register("stainless_steel_bucket",
