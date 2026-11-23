@@ -353,7 +353,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (recipeDirty) {
             recipe=null;idle="materials";
             for (ProcessRecipe candidate:ProcessRecipe.all()) if (candidate.module()==module().process) {
-                if (supplied(candidate)>0) { recipe=candidate;break; }
+                if (supplyFraction(candidate,1)>0) { recipe=candidate;break; }
             }
             recipeDirty=false;
         }
@@ -417,7 +417,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> blocked=null;
             // Solid feed waits for a recipe that uses it, rather than letting a fluid-only one take the liquids it needs.
             boolean solids=java.util.stream.IntStream.range(0,FEED_SLOTS).anyMatch(slot->!charge.getStackInSlot(slot).isEmpty());
-            for (var holder:vesselRecipes()) if ((!solids || !holder.value().getIngredients().isEmpty()) && batches(holder.value(),parallel)>0) {
+            for (var holder:vesselRecipes()) if ((!solids || !holder.value().getIngredients().isEmpty()) && available(holder.value(),parallel)) {
                 if (holder.value().getRequiredHeat().testBlazeBurner(heat)) { reaction=holder;break; }
                 if(blocked==null)blocked=holder;
             }
@@ -528,6 +528,11 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
 
 
+    /** Whether a recipe can run now: a fluid-only one as soon as any feed is there (it runs continuously), one with solids once a whole batch is. */
+    private boolean available(StandardProcessingRecipe<RecipeInput> recipe,int parallel) {
+        if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) { gasBlocked=false;return flowBatch(recipe,mixingFluids(),items(),1e-3); }
+        return batches(recipe,parallel)>0;
+    }
     /** Takes {@code needed} mB of a fluid ingredient out of the feed buffers, a component at a time from a mixed gas; false when the feed holds less. */
     private boolean takeFluid(StandardProcessingRecipe<RecipeInput> recipe,net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient ingredient,int needed,FluidStack[] fluids) {
         for (int tank:mixingInputs()) {
@@ -563,7 +568,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     private boolean flowBatch(StandardProcessingRecipe<RecipeInput> recipe,FluidStack[] fluids,ItemStack[] items,double f) {
         if (recipe instanceof PressureReactionRecipe && recipe.getIngredients().isEmpty() && recipe.getFluidIngredients().size()==1) {
             if (Arrays.stream(items).anyMatch(stack->!stack.isEmpty())) return false;
-            for (int slot:mixingInputs()) if (!fluids[slot].isEmpty() && !recipe.getFluidIngredients().getFirst().test(fluids[slot])) return false;
+            for (int slot:mixingInputs()) if (!fluids[slot].isEmpty() && !recipe.getFluidIngredients().getFirst().ingredient().test(fluids[slot])) return false;
         }
         for (var ingredient:recipe.getFluidIngredients()) if (!takeFluid(recipe,ingredient,owed(ingredient.amount(),f),fluids)) return false;
         for (FluidStack template:recipe.getFluidResults()) {

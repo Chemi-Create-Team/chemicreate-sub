@@ -357,7 +357,9 @@ public final class GoggleSpec {
         lines.removeFirst();
         var rest = new ArrayList<>(lines);
         lines.clear();
-        header(lines, running ? text : null, -1, running ? null : Reason.OTHER, text, false);
+        // A status that already begins "Stopped:" does not need the layout's own.
+        var plain = text.getString().replaceFirst("^(Stopped|停止中|已停止)[:：]\\s*", "");
+        header(lines, running ? text : null, -1, running ? null : Reason.OTHER, running || plain.equals(text.getString()) ? text : Component.literal(plain), false);
         for (var line : rest) lines.add(line.getString().isBlank() ? line : Component.literal(INDENT).append(line));
         return true;
     }
