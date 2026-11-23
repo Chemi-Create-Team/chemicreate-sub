@@ -44,7 +44,7 @@ public final class ToxicGas {
         Map.entry("cold_nitric_oxide_mixture", new Gas(0, true, null)),
         // Tritium's external beta dose is small; this weakest cloud represents inhaled/internal contamination after a breach.
         Map.entry("tritium_gas", new Gas(0, false, null)),
-        Map.entry("hydrogen_sulfide", new Gas(1, true, null)), Map.entry("chlorine", new Gas(1, true, 0xC8D85A)), Map.entry("liquid_chlorine", new Gas(1, true, 0xC8D85A)),
+        Map.entry("hydrogen_sulfide", new Gas(1, true, null)), Map.entry("chlorine", new Gas(1, true, 0xBCD62A)), Map.entry("liquid_chlorine", new Gas(1, true, 0xD8BE1C)),
         Map.entry("converter_gas", new Gas(1, false, null)), Map.entry("carbon_monoxide", new Gas(1, false, null)),
         Map.entry("water_gas", new Gas(1, false, null)), Map.entry("purified_syngas", new Gas(1, false, null)),
         Map.entry("pressurised_carbon_monoxide", new Gas(1, false, null)),
