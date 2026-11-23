@@ -10,15 +10,22 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public class ThermalFluidTank extends SmartFluidTank {
     private final HeatContent heat=new HeatContent();
     /** The kelvin of the incoming stack during {@link #fillAt}; NaN means the stack's own level. */
-    private double entryKelvin=Double.NaN;
+    private double entryKelvin=Double.NaN, entryQuality=Double.NaN;
     public ThermalFluidTank(int capacity,Consumer<FluidStack> changed) { super(capacity,changed); }
     /** The real temperature, heat balance and boiling share of the contents. */
     public HeatContent heat(){return heat;}
     public double kelvin(){return heat.kelvin(fluid);}
     /** Fills a stream that carries a real temperature instead of its level's; the tank takes it with its heat. */
-    public int fillAt(FluidStack resource,double kelvin,FluidAction action) {
-        entryKelvin=kelvin;
-        try { return fill(resource,action); } finally { entryKelvin=Double.NaN; }
+    public int fillAt(FluidStack resource,double kelvin,FluidAction action) { return fillAt(resource,kelvin,Double.NaN,action); }
+    /** As above, for a stream that is partly through boiling or condensing; an empty tank keeps the gas share. */
+    public int fillAt(FluidStack resource,double kelvin,double quality,FluidAction action) {
+        entryKelvin=kelvin;entryQuality=quality;
+        try { return fill(resource,action); } finally { entryKelvin=Double.NaN;entryQuality=Double.NaN; }
+    }
+    @Override public void setFluid(FluidStack stack) {
+        super.setFluid(stack);
+        // Emptying the tank from outside (a rebuilt structure, a cleared machine) leaves no heat behind.
+        if(stack.isEmpty())heat.forget();
     }
     @Override public CompoundTag writeToNBT(HolderLookup.Provider lookup,CompoundTag tag) {
         super.writeToNBT(lookup,tag);
@@ -70,11 +77,12 @@ public class ThermalFluidTank extends SmartFluidTank {
             result=mixed(resource,accepted);
         }
         if(action.execute()) {
+            boolean wasEmpty=fluid.isEmpty();
             double kelvin=heat.enter(fluid,resource,accepted,entryKelvin,true);
             fluid=result;
             int level=FluidState.levelFor(fluid,kelvin,FluidState.pressure(fluid),FluidState.gas(fluid));
             if(level!=FluidState.temperature(fluid))FluidState.setTemperature(fluid,level);
-            heat.set(fluid,kelvin);
+            heat.set(fluid,kelvin,wasEmpty ? entryQuality : Double.NaN);
             net.createplant.nuclear.RadiationSources.stamp(fluid);
             onContentsChanged();
         }

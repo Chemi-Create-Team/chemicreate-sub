@@ -122,8 +122,13 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             var fluid=input.getFluid();
             if(fluid.isEmpty()) { coolingCredit=0;ProductionMonitor.limitedBy(this,"feed");return; }
             double season=SeasonalThermal.cooling(level), ambient=FluidState.kelvin(FluidState.AMBIENT);
-            // Each mB handed to the fans loses the heat that takes water down about one level, and never ends below room temperature.
-            var cooled=HeatContent.shift(fluid.copyWithAmount(1000),input.kelvin(),-JOULES_PER_MB*season*1000,ambient);
+            // Each mB handed to the fans loses at least the heat that takes water down one level, and enough to reach the next level
+            // down when that is more (steam must be able to condense); it never ends below room temperature. Season changes the flow.
+            var sample=fluid.copyWithAmount(1000);
+            int own=FluidState.temperature(fluid);
+            double toNext=own==0 ? 0 : Math.max(0,input.kelvin()-FluidState.kelvin(own-1))*HeatContent.capacity(sample)
+                +(FluidState.gas(sample)!=FluidState.gas(sample,own-1,FluidState.pressure(sample)) ? HeatContent.latent(sample) : 0);
+            var cooled=HeatContent.shift(sample,input.kelvin(),-Math.max(JOULES_PER_MB*1000,toNext),ambient);
             int target=input.kelvin()>ambient+.5 ? FluidState.levelFor(fluid,cooled.kelvin(),FluidState.pressure(fluid),cooled.gas()) : FluidState.temperature(fluid);
             var change=PhaseChange.transfer(fluid,target,FluidState.pressure(fluid));
             int maxRpm=com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
@@ -138,7 +143,7 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             if(batches<=0)return;
             flow=change.consumed()*batches;
             input.drain(flow,IFluidHandler.FluidAction.EXECUTE);
-            ProductionMonitor.produced(this,output.fillAt(change.output(batches),cooled.kelvin(),IFluidHandler.FluidAction.EXECUTE),0,0);
+            ProductionMonitor.produced(this,output.fillAt(change.output(batches),cooled.kelvin(),cooled.quality(),IFluidHandler.FluidAction.EXECUTE),0,0);
             coolingCredit-=flow;
             setChanged();
         }finally{if(clock%20==0 && flow>0 || previousFlow>0 && flow==0 || previousRpm!=fanRpm)sendData();}

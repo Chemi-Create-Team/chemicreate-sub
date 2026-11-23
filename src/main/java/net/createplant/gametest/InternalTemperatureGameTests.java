@@ -92,4 +92,17 @@ public final class InternalTemperatureGameTests {
         h.assertTrue(Math.abs(a.kelvin()-(hotK-.9*delta))<.01 && Math.abs(b.kelvin()-(coldK+.9*delta))<.01 && b.kelvin()>a.kelvin(),"Counterflow moves 0.9 of the difference and crosses over");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty")
+    public static void aRadiatorPassCondensesSteam(GameTestHelper h) {
+        var steam=water(1000,10);
+        h.assertTrue(FluidState.gas(steam),"Level 10 water is steam");
+        double kelvin=FluidState.kelvin(10);
+        double needed=(kelvin-FluidState.kelvin(9))*HeatContent.capacity(steam)+HeatContent.latent(steam);
+        var out=HeatContent.shift(steam,kelvin,-needed,FluidState.kelvin(FluidState.AMBIENT));
+        h.assertTrue(!out.gas() && out.kelvin()<=373.16,"The heat of one level plus the latent heat turns steam to water");
+        var partial=HeatContent.shift(steam,kelvin,-needed/2,FluidState.kelvin(FluidState.AMBIENT));
+        h.assertTrue(partial.gas()==(partial.quality()>=.5) && partial.quality()>0 && partial.quality()<1,"Half the heat leaves the stream part way through condensing");
+        h.succeed();
+    }
 }

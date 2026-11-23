@@ -176,8 +176,8 @@ public final class ThermalEquipment {
         tanks[0].drain(amount,EXECUTE);
         tanks[2].drain(amount,EXECUTE);
         // The outlet buffers take the streams at their real outlet temperature, so rounding to a level loses no heat.
-        tanks[1].fillAt(productA,shiftA.kelvin(),EXECUTE);
-        tanks[3].fillAt(productB,shiftB.kelvin(),EXECUTE);
+        tanks[1].fillAt(productA,shiftA.kelvin(),shiftA.quality(),EXECUTE);
+        tanks[3].fillAt(productB,shiftB.kelvin(),shiftB.quality(),EXECUTE);
         if(!split.water().isEmpty())condensate[hotRow].fill(split.water(),EXECUTE);
         credit=credit-amount;
         if(batches<feed)credit=0;
