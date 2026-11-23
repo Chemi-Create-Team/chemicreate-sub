@@ -588,6 +588,26 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         for (var holder:vesselRecipes()) for (var ingredient:holder.value().getFluidIngredients()) if (ingredient.ingredient().test(stack)) return true;
         return false;
     }
+    /** Whether the machine has picked no batch yet. */
+    public boolean batchEmpty() { return batch.isEmpty(); }
+    /** The batch as a reaction of formulas ("CuO + H2SO4 -> CuSO4 + H2O"); a recipe without chemistry shows its product's name. */
+    public Component reactionLabel() {
+        try {
+            if (batch.contains(":") && level!=null && level.getRecipeManager().byKey(net.minecraft.resources.ResourceLocation.parse(batch)).map(holder->holder.value()).orElse(null) instanceof StandardProcessingRecipe<?> recipe) {
+                var left=new ArrayList<String>();var right=new ArrayList<String>();
+                for (var ingredient:recipe.getFluidIngredients()) if (ingredient.getFluids().length>0) left.add(formulaOf(ingredient.getFluids()[0]));
+                for (var ingredient:recipe.getIngredients()) if (ingredient.getItems().length>0) left.add(ingredient.getItems()[0].getHoverName().getString());
+                for (var fluid:recipe.getFluidResults()) right.add(formulaOf(fluid));
+                for (var result:recipe.getRollableResults()) right.add(result.getStack().getHoverName().getString());
+                if (!left.isEmpty() && !right.isEmpty()) return Component.literal(String.join(" + ",left)+" → "+String.join(" + ",right));
+            }
+        } catch (RuntimeException ignored) { }
+        return batchName();
+    }
+    private static String formulaOf(FluidStack fluid) {
+        var info=net.createplant.chemistry.FluidChemicalRegistry.of(fluid);
+        return info==null || info.formula().equals("…") ? fluid.getHoverName().getString() : info.formula();
+    }
     private Component batchName() {
         if (batch.isEmpty()) return Component.translatable(KEY+"no_batch");
         if (!batch.contains(":")) return Component.translatable("process.create_refinery_n_reactors.recipe."+batch);

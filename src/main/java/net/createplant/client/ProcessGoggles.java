@@ -68,11 +68,15 @@ public final class ProcessGoggles {
         if (owner == null) return;
         if (owner instanceof HorizontalTankBlockEntity tank && tank.hasBoilerGauge()) return;
         if (owner instanceof ReactorMachineBlockEntity reactor && reactor.horizontal()) return;
-        if (source instanceof LiddedVesselBlockEntity && owner instanceof LiddedVesselBlockEntity vessel
-            && vessel.showGasComposition() && MixtureGoggleHelper.appendGasLayers(lines, vessel.gasLayers(), ((net.createplant.thermal.ThermalFluidTank) vessel.getTankInventory()).gasCapacity())) return;
+        if (source instanceof LiddedVesselBlockEntity && owner instanceof LiddedVesselBlockEntity vessel) {
+            GoggleSpec.vessel(vessel, lines, sneaking);
+            return;
+        }
         if (source instanceof FluidTankBlockEntity && owner instanceof FluidTankBlockEntity tank) {
             var fluid = tank.getTankInventory().getFluid();
-            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(lines, TankLayers.ordered(List.of(fluid)), tank.getTankInventory().getCapacity())) {
+            var layers = TankLayers.ordered(List.of(fluid));
+            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(new ArrayList<>(), layers, tank.getTankInventory().getCapacity())) {
+                GoggleSpec.storage(lines, layers, tank.getTankInventory().getCapacity(), sneaking);
                 if (tank instanceof GasTankContainerBlockEntity container) container.addDrainReadout(lines,true);
                 if (tank instanceof GasHolderBlockEntity holder) holder.addDrainReadout(lines,true);
                 return;
@@ -90,10 +94,12 @@ public final class ProcessGoggles {
         MachineReadings.appendProduction(source, production);
         lines.clear();
         if (stopped != null) lines.add(ChemicalReadout.warning(stopped));
+        else if (GoggleSpec.running(owner) != null) lines.add(GoggleSpec.running(owner));
         if (gauges != null) lines.add(gauges);
         var nativeStock = prior.stream().filter(line -> line.getContents() instanceof TranslatableContents text
             && text.getKey().equals(ChemicalReadout.KEY + "contents")).findFirst().orElse(null);
-        if (nativeStock != null) lines.add(nativeStock);
+        if (stock != null && stock.capacity > 0) GoggleSpec.stock(lines, List.of(stock.fluid), stock.capacity, sneaking);
+        else if (nativeStock != null) lines.add(nativeStock);
         else if (stock != null) lines.add(stock.capacity < 0 ? ChemicalReadout.name(stock.fluid) : ChemicalReadout.contents(stock.fluid, stock.capacity));
         if (!production.isEmpty()) {
             var combined = Component.empty();
