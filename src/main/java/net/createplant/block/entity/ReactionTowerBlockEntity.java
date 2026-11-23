@@ -394,9 +394,9 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
             tanks[2 + i] = tanks[2 + i].isEmpty() ? portion : FluidThermal.mix(tanks[2 + i], portion, give);
             total += give;
         }
-        double next = flow + f;
-        int done = (int) Math.floor(next);
-        flow = next - done;
+        double after = flow + f;
+        int done = (int) Math.floor(after);
+        flow = after - done;
         progress = (int) (flow * recipe.ticks());
         ProductionMonitor.produced(this, total, 0, 0);
         // Each batch that completes wears the catalyst of the next working layer by one.
