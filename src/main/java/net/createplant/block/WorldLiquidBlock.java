@@ -53,7 +53,7 @@ public final class WorldLiquidBlock extends LiquidBlock {
     }
 
     public ItemStack pickupAlloy(LevelAccessor accessor, BlockPos pos, BlockState state) {
-        return pickup(accessor, pos, state, fluid -> FluidHazards.of(fluid).corrosive());
+        return pickup(accessor, pos, state, CEWorldFluids::acceptsAlloyBucket);
     }
 
     public ItemStack pickupStainless(LevelAccessor accessor, BlockPos pos, BlockState state) {

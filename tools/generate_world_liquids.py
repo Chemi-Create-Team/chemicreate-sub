@@ -233,7 +233,7 @@ def translations(entries):
                 kind + '.' + NS.replace(':', '.') + name for kind in ('fluid', 'fluid_type', 'block')) if key in strings), None)
             assert fluid_name, (language, name)
             strings['block.' + NS.replace(':', '.') + name] = fluid_name
-            alloy_only = entry['corrosive'] and name != 'brine'
+            alloy_only = entry['corrosive']
             suffix = (' Corrosion-Resistant Bucket' if alloy_only else ' Bucket') if language == 'en_us' else (
                 '入り耐食合金バケツ' if alloy_only else '入りバケツ') if language == 'ja_jp' else (
                 '耐蚀合金桶' if alloy_only else '桶')
@@ -280,7 +280,7 @@ def generate():
     for entry in entries:
         name = entry['name']
         bucket = name + '_bucket'
-        bucket_image(bucket, entry['color'], entry['corrosive'])
+        bucket_image(bucket, entry['color'], entry['corrosive'] or name == 'brine')
         path = ASSETS / 'blockstates' / f'{name}.json'
         if not path.exists():
             write(path, {'variants': {'': {'model': 'minecraft:block/water'}}})

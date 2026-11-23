@@ -2600,9 +2600,9 @@
     "zh_cn": "粉碎岩盐矿石取得盐，也可在日照下的开放槽中蒸发水收盐。\n%s → %s"
   },
   "guide.manufacturing_chlor_alkali.step_2": {
-    "en_us": "Dissolve the salt in water with a Mechanical Mixer over a basin.\n%s → %s",
-    "ja_jp": "鉢とメカニカルミキサーで、塩を水に溶かします。\n%s → %s",
-    "zh_cn": "用工作盆和机械搅拌器把盐溶于水。\n%s → %s"
+    "en_us": "Dissolve salt in water with a Mechanical Mixer over a basin. Copper pipes can carry the brine to the electrolyzer.\n%s → %s",
+    "ja_jp": "鉢とメカニカルミキサーで塩を水に溶かします。できた塩水は銅管で電解槽へ送れます。\n%s → %s",
+    "zh_cn": "用工作盆和机械搅拌器把盐溶于水。制得的盐水可用铜管送入电解槽。\n%s → %s"
   },
   "guide.manufacturing_chlor_alkali.step_3": {
     "en_us": "Feed brine from below, wire the panel terminals and press START. Collect hydrogen and chlorine from the two long sides and caustic soda from the far end.\n%s → %s",

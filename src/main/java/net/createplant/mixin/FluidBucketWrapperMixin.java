@@ -20,8 +20,7 @@ public class FluidBucketWrapperMixin {
 
     @Inject(method = "canFillFluidType", at = @At("HEAD"), cancellable = true)
     private void createPlant$corrosion(FluidStack fluid, CallbackInfoReturnable<Boolean> callback) {
-        if (container.is(Items.BUCKET) && !CEChlorAlkali.BRINE.get().isSame(fluid.getFluid())
-            && CEWorldFluids.isLiquid(fluid.getFluid()) && FluidHazards.of(fluid).corrosive())
+        if (container.is(Items.BUCKET) && CEWorldFluids.isLiquid(fluid.getFluid()) && FluidHazards.of(fluid).corrosive())
             callback.setReturnValue(false);
     }
 

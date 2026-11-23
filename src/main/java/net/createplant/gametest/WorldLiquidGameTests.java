@@ -69,6 +69,14 @@ public class WorldLiquidGameTests {
             && filled.getContainer().is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get()), "Emptying returns the alloy and preserves heat");
         h.assertTrue(alloy.getContainer().getCraftingRemainingItem().is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get()),
             "Crafting also returns the alloy container");
+        var brine = new FluidStack(CEChlorAlkali.BRINE.get(), 1000);
+        for (var shell : new ItemStack[]{new ItemStack(Items.BUCKET), CEWorldFluids.EMPTY_ALLOY_BUCKET.toStack()}) {
+            var bucket = FluidUtil.getFluidHandler(shell).orElseThrow();
+            h.assertTrue(bucket.fill(brine, EXECUTE) == 1000, "Both bucket materials accept brine");
+            var full = FluidUtil.getFluidHandler(bucket.getContainer()).orElseThrow();
+            h.assertTrue(full.drain(1000, EXECUTE).is(CEChlorAlkali.BRINE.get()) && full.getContainer().is(shell.getItem()),
+                "Draining brine returns the original bucket material");
+        }
         h.succeed();
     }
 

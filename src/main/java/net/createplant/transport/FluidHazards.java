@@ -71,8 +71,8 @@ public final class FluidHazards {
         entry("uranium_hexafluoride",340,1,true,true), entry("enriched_uranium_hexafluoride",340,1,true,true),
         entry("compact_enriched_uranium_hexafluoride",340,1,true,true),
         entry("depleted_uranium_hexafluoride",340,1,true,true),
-        // Chlor-alkali: chloride brine and caustic soda attack carbon steel; the Bayer liquor leaves the digester at 150 C.
-        entry("brine",293,1,true,false), entry("chlorine",293,1,true,true), entry("liquid_chlorine",239,1,false,false), entry("liquid_sulfur_dioxide",263,1,false,false), entry("liquid_vinyl_chloride",260,1,false,false), entry("liquid_propylene",225,1,false,false), entry("caustic_soda_solution",293,1,true,false),
+        // The Bayer liquor leaves the digester at 150 C.
+        entry("brine",293,1,false,false), entry("chlorine",293,1,true,true), entry("liquid_chlorine",239,1,false,false), entry("liquid_sulfur_dioxide",263,1,false,false), entry("liquid_vinyl_chloride",260,1,false,false), entry("liquid_propylene",225,1,false,false), entry("caustic_soda_solution",293,1,true,false),
         entry("sodium_aluminate_solution",423,1,true,false), entry("hydrogen_chloride",293,1,true,true), entry("hydrochloric_acid",293,1,true,false), entry("sodium_hypochlorite_solution",293,1,true,false),
         entry("ethylene_dichloride",293,1,false,false), entry("vinyl_chloride",293,1,false,true),
         entry("deuterium_gas",293,1,false,true), entry("tritium_gas",293,1,false,true),

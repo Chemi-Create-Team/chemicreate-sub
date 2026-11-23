@@ -10,6 +10,7 @@ import net.createplant.item.BucketFluidContents;
 import net.createplant.item.ProcessBucketItem;
 import net.createplant.item.ProcessBucketWrapper;
 import net.createplant.item.StainlessBucketItem;
+import net.createplant.transport.FluidHazards;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.BlockPos;
@@ -81,6 +82,11 @@ public final class CEWorldFluids {
     public static boolean isLiquid(Fluid fluid) {
         for (Entry entry : ENTRIES) if (entry.fluid().get().isSame(fluid)) return true;
         return false;
+    }
+
+    /** Older brine buckets used an alloy shell, which still accepts brine and is returned when emptied. */
+    public static boolean acceptsAlloyBucket(FluidStack fluid) {
+        return CEChlorAlkali.BRINE.get().isSame(fluid.getFluid()) || FluidHazards.of(fluid).corrosive();
     }
 
     public static ItemStack bucket(FluidStack fluid) {
