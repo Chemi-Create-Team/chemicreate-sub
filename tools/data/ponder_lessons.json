@@ -3310,9 +3310,9 @@
     "zh_cn": "按上方控制器的START启动，电极全部降下后电流导通，下方旋钮调节负荷。"
   },
   "electrolysis_cell.gas": {
-    "en_us": "Cathode and anode plates alternate in one trough. For a Z-axis row the low-X side gives hydrogen-family gas and the high-X side oxygen-family gas; swap X/Z for X-axis rows.",
-    "ja_jp": "陰極板と陽極板は1本の槽の中に交互に並びます。Z向きなら低いX側の側面から水素系、高いX側から酸素系が出ます。X向きではX/Zを入れ替えます。",
-    "zh_cn": "阴极板与阳极板在同一槽内交替排列。Z轴机组低X侧出氢类气体，高X侧出氧类；X轴机组交换X/Z。"
+    "en_us": "With goggles on, look at either long side to see which gas leaves that face. Look at the far end to check the liquid product.",
+    "ja_jp": "ゴーグルを着けて長い側面を見ると、その面から出る気体が分かります。液体製品は奥の端面を見て確認します。",
+    "zh_cn": "戴上护目镜查看长侧面，即可确认该面排出的气体。查看远端端面可确认排出的液体。"
   },
   "electrolysis_cell.controls": {
     "en_us": "Click the dial's right half for +1％, left for −1％. Sneak for 10％ steps; STOP shuts it down.",

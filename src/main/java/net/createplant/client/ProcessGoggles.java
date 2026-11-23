@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import net.createplant.block.entity.AbsorptionTowerBlockEntity;
 import net.createplant.block.entity.ColumnRingBlockEntity;
+import net.createplant.block.entity.ElectrodeHeadBlockEntity;
+import net.createplant.block.entity.ElectrolysisCellBlockEntity;
 import net.createplant.block.entity.FractionatingColumnBlockEntity;
 import net.createplant.block.entity.GasifierBlockEntity;
 import net.createplant.block.entity.GasHolderBlockEntity;
@@ -34,6 +36,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -47,6 +50,19 @@ public final class ProcessGoggles {
     private ProcessGoggles() { }
 
     public static void add(BlockEntity source, List<Component> lines, boolean sneaking) {
+        var hit = Minecraft.getInstance().hitResult;
+        var face = hit instanceof BlockHitResult onBlock && hit.getType() == HitResult.Type.BLOCK
+            && onBlock.getBlockPos().equals(source.getBlockPos()) ? onBlock.getDirection() : null;
+        appendSummary(source, lines, sneaking, face);
+        var outlet = switch (source) {
+            case ElectrolysisCellBlockEntity cell -> cell.outletTooltip(face);
+            case ElectrodeHeadBlockEntity head -> head.outletTooltip(face);
+            default -> null;
+        };
+        if (outlet != null) lines.addFirst(outlet);
+    }
+
+    private static void appendSummary(BlockEntity source, List<Component> lines, boolean sneaking, Direction face) {
         if (source instanceof HoseConnectorBlockEntity && !sneaking) return;
         var owner = MachineReadings.owner(source);
         if (owner == null) return;
@@ -62,8 +78,6 @@ public final class ProcessGoggles {
                 return;
             }
         }
-        var hit = Minecraft.getInstance().hitResult;
-        var face = hit instanceof BlockHitResult onBlock && onBlock.getBlockPos().equals(source.getBlockPos()) ? onBlock.getDirection() : null;
         var stock = stock(source, owner, face);
         var gauges = gauges(source, owner, stock);
         var stopped = stopped(owner);
