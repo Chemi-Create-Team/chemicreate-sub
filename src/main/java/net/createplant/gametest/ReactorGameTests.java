@@ -107,6 +107,34 @@ public class ReactorGameTests {
     static void heat(ReactorMachineBlockEntity be,com.simibubi.create.content.processing.recipe.HeatCondition heat) {
         if(heat!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE) be.getLevel().setBlock(be.getBlockPos().below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, heat==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? BlazeBurnerBlock.HeatLevel.SEETHING : BlazeBurnerBlock.HeatLevel.KINDLED),3);
     }
+    @GameTest(template = "test_reactor")
+    public static void gasOutletsGiveTheProductAndLeaveTheReactantsForTheirBatch(GameTestHelper h) {
+        var vessel=build(h,ReactorModule.STIRRED,2);
+        var feed=vessel.port(Direction.NORTH);
+        var top=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(BASE.offset(1,1,1)),Direction.UP);
+        h.assertTrue(feed.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),500),EXECUTE)==500 && top!=null && top.drain(1000,SIMULATE).isEmpty(),
+            "Hydrogen waiting for its batch does not leave through the top");
+        feed.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),250),EXECUTE);feed.fill(new FluidStack(CEFluids.NITROGEN_GAS.get(),250),EXECUTE);
+        run(vessel,200);
+        var out=top.drain(1000,SIMULATE);
+        h.assertTrue(out.is(CEProcessFluids.SYNTHESIS_GAS.get()) && out.getAmount()==1000,"The top gives the synthesis gas made: "+out.getAmount()+" "+out.getFluid());
+        h.succeed();
+    }
+    @GameTest(template = "test_reactor")
+    public static void solidFeedWaitsForItsRecipeInsteadOfAFluidOnlyOne(GameTestHelper h) {
+        var vessel=build(h,ReactorModule.STIRRED,2);heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
+        h.assertTrue(vessel.itemPort().insertItem(0,new ItemStack(Items.BONE_MEAL,3),false).isEmpty(),"Bone meal goes in");
+        var feed=vessel.port(Direction.NORTH);
+        feed.fill(new FluidStack(Fluids.WATER,750),EXECUTE);feed.fill(new FluidStack(CEUranium.SULFURIC_ACID.get(),250),EXECUTE);
+        run(vessel,220);
+        h.assertTrue(vessel.displayedFluid(2).isEmpty() && vessel.displayedFluid(3).isEmpty(),"The acid is not diluted while bone meal waits: "+vessel.displayedFluid(2).getFluid());
+        feed.fill(new FluidStack(CEUranium.SULFURIC_ACID.get(),750),EXECUTE);
+        run(vessel,220);
+        boolean phosphoric=false;
+        for (int slot=0;slot<4;slot++) phosphoric|=vessel.displayedFluid(slot).is(CEFuelCycle.PHOSPHORIC_ACID.get());
+        h.assertTrue(phosphoric,"Once enough acid arrives the bone meal becomes phosphoric acid");
+        h.succeed();
+    }
     private static void run(ReactorMachineBlockEntity be,int ticks) { speed(be,32);for (int i=0;i<ticks;i++) be.tickProcess(); }
     @GameTest(template = "test_reactor")
     public static void heatedSlimeBlendBecomesTwoCutsAndAReusableCoolant(GameTestHelper h) {

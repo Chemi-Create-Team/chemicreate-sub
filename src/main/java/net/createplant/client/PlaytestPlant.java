@@ -70,7 +70,9 @@ public final class PlaytestPlant {
     }
 
     /** A reciprocating compressor: the cylinder, its engine on the east side, the crank shaft beyond and a motor turning it. Suction is above the cylinder, discharge below. */
-    public void compressor(BlockPos cylinder) {
+    public void compressor(BlockPos cylinder) { compressor(cylinder, RPM); }
+
+    public void compressor(BlockPos cylinder, int rpm) {
         put(cylinder, net.createplant.registry.CEReciprocating.CYLINDER.get().defaultBlockState());
         var state = net.createplant.registry.CEReciprocating.COMPRESSOR.get().defaultBlockState()
             .setValue(net.createplant.block.ReciprocatingCompressorBlock.FACE, net.minecraft.world.level.block.state.properties.AttachFace.WALL)
@@ -81,7 +83,7 @@ public final class PlaytestPlant {
         put(shaft, AllBlocks.SHAFT.getDefaultState().setValue(BlockStateProperties.AXIS, net.createplant.block.ReciprocatingCompressorBlock.shaftAxis(state)));
         ((net.createplant.block.entity.ReciprocatingCompressorBlockEntity) level.getBlockEntity(enginePos)).attachShaft();
         Direction along = Direction.get(Direction.AxisDirection.NEGATIVE, net.createplant.block.ReciprocatingCompressorBlock.shaftAxis(state));
-        motor(shaft.relative(along), along.getOpposite());
+        motor(shaft.relative(along), along.getOpposite(), rpm);
         for (int y = ground; y < cylinder.getY(); y++) if (level.getBlockState(new BlockPos(enginePos.getX(), y, enginePos.getZ())).isAir())
             put(new BlockPos(enginePos.getX(), y, enginePos.getZ()), Blocks.SMOOTH_STONE.defaultBlockState());
     }
@@ -113,7 +115,9 @@ public final class PlaytestPlant {
             Direction from = (Direction) ROUTES.get(r)[1], into = (Direction) ROUTES.get(r)[2];
             var source = level.getCapability(Capabilities.FluidHandler.BLOCK, cells.getFirst().relative(from.getOpposite()), from);
             var target = level.getCapability(Capabilities.FluidHandler.BLOCK, cells.getLast().relative(into), into.getOpposite());
-            log.info("{} line {} {}: source={} target={}", tag, r, cells.getFirst().toShortString(), source == null ? "-" : describeAll(source), target == null ? "-" : describeAll(target));
+            if (source != null && source.getTanks() > 0 && !source.getFluidInTank(0).isEmpty()) log.debug("{} line {} source state {}", tag, r, describe(source.getFluidInTank(0)));
+            log.info("{} line {} {}: source={} target={}", tag, r, cells.getFirst().toShortString(), source == null ? "-" : describeAll(source),
+                target == null ? "- (" + level.getBlockState(cells.getLast().relative(into)).getBlock() + " at " + cells.getLast().relative(into).toShortString() + ")" : describeAll(target));
         }
     }
 
@@ -165,6 +169,8 @@ public final class PlaytestPlant {
         int pump = 1;
         if (firstPump > 0) pump = firstPump;
         else for (int i = 1; i < cells.size() - 1; i++) if (cells.get(i).getY() != cells.get(i - 1).getY()) { pump = i; break; }
+        // A pump reaches 16 blocks, so the first one never stands further than that from the source.
+        if (pump > PUMP_SPACING) pump = 1;
         for (int i = 0; i < cells.size(); i++) {
             BlockPos cell = cells.get(i);
             Direction back = i == 0 ? from.getOpposite() : direction(cell, cells.get(i - 1));
@@ -232,13 +238,17 @@ public final class PlaytestPlant {
         BlockPos at = pipe.relative(side);
         var state = level.getBlockState(pipe);
         if (state.hasProperty(PipeBlock.PROPERTY_BY_DIRECTION.get(side))) put(pipe, state.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(side), true));
+        // A gas tank container takes pipes only at its ends, so it lies along the pipe; a vertical end takes a stainless tank instead.
+        if (kind == Kind.GAS && side.getAxis() == Direction.Axis.Y) kind = Kind.ANY;
         var tank = switch (kind) {
-            case GAS -> CETransport.GAS_TANK_CONTAINER.get().defaultBlockState();
+            case GAS -> CETransport.GAS_TANK_CONTAINER.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_AXIS, side.getAxis());
             case LIQUID -> AllBlocks.FLUID_TANK.getDefaultState();
             case ANY -> CETransport.STAINLESS_STEEL_TANK.get().defaultBlockState();
         };
         put(at, tank);
-        put(at.relative(side == Direction.DOWN ? Direction.DOWN : Direction.UP), tank);
+        // A horizontal gas tank grows four long along its axis; the others stand two high.
+        if (kind == Kind.GAS) for (int i = 1; i < 4; i++) put(at.relative(side, i), tank);
+        else put(at.relative(side == Direction.DOWN ? Direction.DOWN : Direction.UP), tank);
         sign(at.relative(side.getAxis() == Direction.Axis.Y ? Direction.NORTH : side.getClockWise()), name);
     }
 

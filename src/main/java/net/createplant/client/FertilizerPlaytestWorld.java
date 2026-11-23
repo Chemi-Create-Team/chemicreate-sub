@@ -80,7 +80,7 @@ import org.slf4j.LoggerFactory;
  * felled wood is gasified for hydrogen, air is drawn through a nozzle, compressed and separated for nitrogen, water is electrolysed for oxygen
  * and more hydrogen; sulfur burns in that oxygen, its dioxide is absorbed into sulfurous acid and electrolysed to sulfuric acid, which with bone meal
  * gives phosphoric acid and with calcite phosphate fertilizer; hydrogen and nitrogen become synthesis gas, are compressed and turned to ammonia over
- * an iron catalyst, cooled and separated with the unreacted gas recycled; calcined calcite gives the carbon dioxide that turns the ammonia into
+ * an iron catalyst and separated with the unreacted gas recycled; calcined calcite gives the carbon dioxide that turns the ammonia into
  * urea; dried kelp gives potash; and a Create mixer blends urea, phosphate fertilizer and potash into NPK fertilizer.
  * Every fluid moves through a Create pump on a stainless line and every item through a hopper, a basin or a chest.
  * {@code -Dcreateplant.fertilizerPlaytest} builds it, runs it until NPK fertilizer is made, checks the lines and saves the world for play.
@@ -97,14 +97,15 @@ public final class FertilizerPlaytestWorld {
     // Water electrolysis for oxygen and hydrogen, and the sulfur cycle.
     private static final BlockPos WATER_CELL = new BlockPos(52, Y + 1, 4), SO2_VESSEL = new BlockPos(62, Y + 2, -2), SO2_TOWER = new BlockPos(65, Y + 2, -12);
     private static final BlockPos ACID_CELL = new BlockPos(76, Y + 1, -12), PHOSPHORIC = new BlockPos(86, Y + 2, -6);
-    // Ammonia: synthesis gas, its compressor, the converter, the cooler and the separator.
+    // Ammonia: synthesis gas, its compressor, the converter and the separator.
     private static final BlockPos SYNGAS_VESSEL = new BlockPos(98, Y + 2, -6), FEED_CYLINDER = new BlockPos(105, Y + 3, -10), CONVERTER = new BlockPos(110, Y + 2, -14);
-    private static final BlockPos COOLER = new BlockPos(118, Y, -10), SEPARATOR = new BlockPos(126, Y + 2, -12);
+    private static final BlockPos COOLER = new BlockPos(116, Y, -10), SEPARATOR = new BlockPos(126, Y + 2, -12);
     // Carbon dioxide, urea, phosphate fertilizer, potash and the NPK mixer.
     private static final BlockPos CALCINER = new BlockPos(110, Y + 3, 24), UREA = new BlockPos(118, Y + 3, 24), PHOSPHATE = new BlockPos(124, Y + 3, 30);
     private static final BlockPos NPK_BASIN = new BlockPos(120, Y + 1, 30), POTASH_BASIN = NPK_BASIN.south(), NPK_CHEST = NPK_BASIN.west();
     private static final Map<String, Object> REPORT = new LinkedHashMap<>();
     private static final List<BlockPos[]> CELLS = new ArrayList<>();
+    private static BlockPos COOLANT;
     private static PlaytestPlant plant;
     private static SyngasTrain syngas;
     private static volatile String failure;
@@ -225,8 +226,8 @@ public final class FertilizerPlaytestWorld {
         plant.route(Direction.UP, so2Out, List.of(so2Out.above(), new BlockPos(so2Out.getX(), so2Out.getY() + 1, towerIn.getZ()), new BlockPos(towerIn.getX(), so2Out.getY() + 1, towerIn.getZ()),
             towerIn), Direction.EAST);
         BlockPos towerTop = SO2_TOWER.above(3);
-        put(level, towerTop.above(3), AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
-        plant.route(Direction.DOWN, towerTop.above(2), List.of(towerTop.above()), Direction.DOWN);
+        put(level, towerTop.above(4), AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
+        plant.route(Direction.DOWN, towerTop.above(3), List.of(towerTop.above()), Direction.DOWN);
         var offgas = plant.route(Direction.NORTH, towerTop.north(2), List.of(towerTop.north(4)), Direction.NORTH);
         plant.store(offgas.getLast(), Direction.NORTH, "未吸収ガス", true);
         cell(level, ACID_CELL);
@@ -266,31 +267,36 @@ public final class FertilizerPlaytestWorld {
             new BlockPos(SYNGAS_VESSEL.getX() + 3, nitrogenCut.getY(), SYNGAS_VESSEL.getZ() + 1), new BlockPos(SYNGAS_VESSEL.getX() + 3, SYNGAS_VESSEL.getY(), SYNGAS_VESSEL.getZ() + 1)), Direction.WEST);
 
         // The synthesis gas, compressed, to the converter; its hot gas through a water-cooled exchanger to the separator, whose unreacted gas goes back.
-        plant.compressor(FEED_CYLINDER);
+        plant.compressor(FEED_CYLINDER, 256);
         BlockPos synOut = SYNGAS_VESSEL.offset(1, 2, 1);
         plant.route(Direction.UP, synOut, List.of(synOut.above(), new BlockPos(synOut.getX(), synOut.getY() + 1, FEED_CYLINDER.getZ()),
             new BlockPos(FEED_CYLINDER.getX(), synOut.getY() + 1, FEED_CYLINDER.getZ()), FEED_CYLINDER.above()), Direction.DOWN);
-        var converter = ReactionTowerGameTests.tower(level, CONVERTER, 3, ItemStack.EMPTY);
-        for (int i = 0; i < 3; i++) converter.insert(CEItems.IRON_CATALYST.toStack());
+        // Six layers convert six batches at once; each pass makes only a little ammonia.
+        var converter = ReactionTowerGameTests.tower(level, CONVERTER, 6, ItemStack.EMPTY);
+        for (int i = 0; i < 6; i++) converter.insert(CEItems.IRON_CATALYST.toStack());
         plant.burner(converter.getBlockPos().offset(-1, -1, -1), BlazeBurnerBlock.HeatLevel.KINDLED);
         BlockPos feedIn = converter.getBlockPos().west(2), feedOut = FEED_CYLINDER.below();
         plant.route(Direction.DOWN, feedOut, List.of(feedOut.below(), new BlockPos(feedOut.getX(), feedOut.getY() - 1, feedIn.getZ()),
             new BlockPos(feedIn.getX(), feedOut.getY() - 1, feedIn.getZ()), feedIn), Direction.EAST);
+        // The converter's product leaves a bottom side still hot, passes the tubes of a water-cooled exchanger and goes to the separator.
         var cooler = ThermalControlGameTests.build(level, COOLER, Direction.NORTH, 3);
         var along = cooler.getBlockState().getValue(net.createplant.block.ThermalMachineBlock.FACING);
         var members = cooler.members();
         int cells = cooler.exchanger().width * cooler.exchanger().width, top = cooler.exchanger().width - 1;
         BlockPos tubeIn = members.getFirst().relative(along.getOpposite()), tubeOut = members.get(members.size() - cells).relative(along);
         BlockPos shellIn = members.get(members.size() - cells + top).above(), shellOut = members.get(top).above();
-        BlockPos hot = converter.getBlockPos().offset(2, 2, 0);
-        plant.route(Direction.EAST, hot, List.of(hot.east(), hot.east().atY(Y + 7), new BlockPos(tubeIn.getX(), Y + 7, hot.getZ()), new BlockPos(tubeIn.getX(), Y + 7, tubeIn.getZ()), tubeIn), along);
-        put(level, shellIn.above(3), AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
+        BlockPos hot = converter.getBlockPos().east(2);
+        plant.route(Direction.EAST, hot, List.of(hot.east(), hot.east().atY(Y + 7), new BlockPos(hot.getX() + 1, Y + 7, tubeIn.getZ()),
+            new BlockPos(tubeIn.getX(), Y + 7, tubeIn.getZ()), tubeIn), along);
+        COOLANT = shellIn.above(3);
+        put(level, COOLANT, AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
         plant.route(Direction.DOWN, shellIn.above(2), List.of(shellIn), Direction.DOWN);
         var warm = plant.route(Direction.UP, shellOut, List.of(shellOut.above(2), shellOut.above(2).south(3), shellOut.south(3).atY(Y)), Direction.SOUTH);
-        plant.store(warm.getLast(), Direction.SOUTH, "冷却水（温水）", PlaytestPlant.Kind.ANY);
+        plant.store(warm.getLast(), Direction.SOUTH, "冷却水（蒸気）", PlaytestPlant.Kind.GAS);
         var separator = HaberBoschGameTests.separator(level, SEPARATOR);
         BlockPos coldIn = SEPARATOR.above().north();
-        plant.route(along, tubeOut, List.of(tubeOut.relative(along, 2), new BlockPos(tubeOut.getX() + 2, Y, coldIn.getZ()), new BlockPos(coldIn.getX(), Y, coldIn.getZ()), coldIn), Direction.SOUTH);
+        plant.route(along, tubeOut, List.of(tubeOut.relative(along, 2), tubeOut.relative(along, 2).atY(coldIn.getY()), new BlockPos(tubeOut.getX() + 2, coldIn.getY(), coldIn.getZ() - 1),
+            new BlockPos(coldIn.getX(), coldIn.getY(), coldIn.getZ() - 1), coldIn), Direction.SOUTH);
         BlockPos recycle = SEPARATOR.above(2), recycleIn = converter.getBlockPos().north(2);
         plant.route(Direction.UP, recycle, List.of(recycle.above(), new BlockPos(recycle.getX(), recycle.getY() + 1, recycleIn.getZ()), new BlockPos(recycleIn.getX(), recycle.getY() + 1, recycleIn.getZ()),
             recycleIn), Direction.SOUTH);
@@ -405,7 +411,7 @@ public final class FertilizerPlaytestWorld {
         CELLS.add(new BlockPos[] {cell, brush});
     }
 
-    /** Fits each cell's electrode plate, wires its alternator to the panel and presses START, as a player would. */
+    /** Fits each cell's sixteen electrode plates, wires its alternator to the panel and presses START, as a player would. */
     private static void startCells(ServerLevel level) {
         var copper = CEERegistries.WIRE_TYPE.get(ResourceLocation.fromNamespaceAndPath("electroenergetics", "copper"));
         var wiring = InfrastructureSavedData.load(level);
@@ -414,7 +420,7 @@ public final class FertilizerPlaytestWorld {
         for (BlockPos[] pair : CELLS) {
             BlockPos cell = pair[0], brush = pair[1], panel = cell.north().above();
             var rack = level.getCapability(Capabilities.ItemHandler.BLOCK, cell.above(), Direction.UP);
-            PlaytestPlant.require(rack != null && rack.insertItem(1, CEElectrolysis.NICKEL_ELECTRODE_PLATE.toStack(), false).isEmpty(), "The nickel plate fits the head");
+            PlaytestPlant.require(rack != null && rack.insertItem(1, new ItemStack(CEElectrolysis.NICKEL_ELECTRODE_PLATE.get(), 16), false).isEmpty(), "Sixteen nickel plates fill the head");
             var controller = (ElectrolysisControllerBlockEntity) level.getBlockEntity(cell.north());
             PlaytestPlant.require(controller.validate(), "The electrolysis cell forms: " + controller.status());
             for (int terminal = 0; terminal < 2; terminal++) wiring.connect(new InWorldNode(terminal, brush), new InWorldNode(terminal, panel), copper);
@@ -432,14 +438,9 @@ public final class FertilizerPlaytestWorld {
             if (serverTicks == 20) {
                 syngas.start();
                 plant.supply(WATER_CELL.south(3), new FluidStack(Fluids.WATER, 1_000));
-                plant.supply(SO2_TOWER.above(6), new FluidStack(Fluids.WATER, 1_000));
+                plant.supply(SO2_TOWER.above(7), new FluidStack(Fluids.WATER, 1_000));
                 plant.supply(PHOSPHORIC.offset(-4, 2, 1), new FluidStack(Fluids.WATER, 1_000));
-                for (var exchanger : List.of(COOLER)) {
-                    var cooler = (ReactorMachineBlockEntity) level.getBlockEntity(exchanger);
-                    var along = cooler.getBlockState().getValue(net.createplant.block.ThermalMachineBlock.FACING);
-                    int cells = cooler.exchanger().width * cooler.exchanger().width, top = cooler.exchanger().width - 1;
-                    plant.supply(cooler.members().get(cooler.members().size() - cells + top).above(4), new FluidStack(Fluids.WATER, 1_000));
-                }
+                plant.supply(COOLANT, new FluidStack(Fluids.WATER, 1_000));
                 startCells(level);
             }
             if (serverTicks < 20) return;
@@ -456,6 +457,48 @@ public final class FertilizerPlaytestWorld {
                 LOG.info("{} tick {} air={} converter={} separatorFeed={} NH3={} npk={}", TAG, serverTicks, air == null ? "-" : air.status(), converter == null ? "-" : converter.status(),
                     separator == null ? "-" : separator.feed().getAmount(), separator == null ? 0 : separator.liquid().getAmount(), npk);
                 plant.logLines(LOG, TAG);
+                var liquidPort = level.getCapability(Capabilities.FluidHandler.BLOCK, SEPARATOR, Direction.DOWN);
+                var ureaPort = level.getCapability(Capabilities.FluidHandler.BLOCK, UREA.offset(0, 0, 1), Direction.WEST);
+                if (liquidPort != null && ureaPort != null && !liquidPort.getFluidInTank(0).isEmpty()) {
+                    var sample = liquidPort.getFluidInTank(0).copy();
+                    var path = new StringBuilder();
+                    for (var pos : plant.LINES) if (pos.getX() >= SEPARATOR.getX() - 1 && pos.getZ() >= SEPARATOR.getZ() - 1 && pos.getY() < Y + 12) {
+                        var stack = net.createplant.transport.PipeMaterial.contents(level.getBlockEntity(pos));
+                        if (!stack.isEmpty()) path.append(pos.toShortString()).append('=').append(stack.getAmount()).append(' ');
+                    }
+                    var urea = (ReactorMachineBlockEntity) level.getBlockEntity(UREA);
+                    LOG.info("{} ammonia {} urea accepts {} reactor port accepts {} storage {}", TAG, PlaytestPlant.describe(sample),
+                        ureaPort.fill(sample, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE),
+                        urea.port(Direction.WEST) == null ? "none" : urea.port(Direction.WEST).fill(sample, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE),
+                        PlaytestPlant.describe(urea.displayedFluid(7)) + " / " + PlaytestPlant.describe(urea.displayedFluid(8)));
+                }
+                var shell = level.getCapability(Capabilities.FluidHandler.BLOCK, COOLER.above(), Direction.UP);
+                if (shell != null) LOG.info("{} cooler shell outlet {}", TAG, PlaytestPlant.describe(shell.getFluidInTank(0)));
+                for (var at : List.of(SO2_VESSEL, PHOSPHORIC, PHOSPHATE, SYNGAS_VESSEL, CALCINER, UREA)) {
+                    var vessel = (ReactorMachineBlockEntity) level.getBlockEntity(at);
+                    var items = level.getCapability(Capabilities.ItemHandler.BLOCK, at, Direction.UP);
+                    var held = new StringBuilder();
+                    if (items != null) for (int slot = 0; slot < items.getSlots(); slot++) if (!items.getStackInSlot(slot).isEmpty()) held.append(items.getStackInSlot(slot)).append(' ');
+                    var fluids = new StringBuilder();
+                    for (int slot = 0; slot < 8; slot++) if (!vessel.displayedFluid(slot).isEmpty()) fluids.append(slot).append(':').append(vessel.displayedFluid(slot).getAmount()).append(' ')
+                        .append(BuiltInRegistries.FLUID.getKey(vessel.displayedFluid(slot).getFluid()).getPath()).append(' ');
+                    LOG.info("{} vessel {} status={} formed={} items={} fluids={}", TAG, at.toShortString(), vessel.status(), vessel.formed(), held, fluids);
+                }
+                for (BlockPos[] pair : CELLS) {
+                    var cell = (ElectrolysisControllerBlockEntity) level.getBlockEntity(pair[0].north());
+                    LOG.info("{} cell {} status={} V={} feed={}", TAG, pair[0].toShortString(), cell.status(), Math.round(cell.volts()), cell.stored(0));
+                }
+                var tower = (net.createplant.block.entity.AbsorptionTowerBlockEntity) level.getBlockEntity(SO2_TOWER);
+                LOG.info("{} SO2 tower status={}", TAG, tower == null ? "-" : tower.status());
+                var gasifier = syngas.gasifierEntity();
+                var syn = (ReactorMachineBlockEntity) level.getBlockEntity(SYNGAS_VESSEL);
+                var nitrogen = new StringBuilder();
+                for (var pos : plant.LINES) if (pos.getY() == Y + 13 && pos.getZ() < -13) {
+                    var stack = net.createplant.transport.PipeMaterial.contents(level.getBlockEntity(pos));
+                    if (!stack.isEmpty()) nitrogen.append(pos.getX()).append(' ');
+                }
+                LOG.info("{} gasifier={} coal={} gas={} synthesis tanks={} {} {} {} N2 pipes with gas at x={}", TAG, gasifier.status(), gasifier.itemCount(0), gasifier.fluid(2).getAmount(),
+                    PlaytestPlant.describe(syn.displayedFluid(0)), PlaytestPlant.describe(syn.displayedFluid(1)), PlaytestPlant.describe(syn.displayedFluid(2)), syn.status(), nitrogen);
             }
             PlaytestPlant.require(serverTicks < TIMEOUT, "The plant stalled: " + REPORT);
             if (npk <= 0) return;

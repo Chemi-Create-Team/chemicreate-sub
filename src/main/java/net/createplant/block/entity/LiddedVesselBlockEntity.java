@@ -187,7 +187,8 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         for (int i = 0; i < PROCESS_TANKS; i++) {
             var gas = gasDisplay[i == THIRD_FEED ? 10 : i];
             if (!gas.isEmpty()) {
-                draws.add(new GasLayer(i, gas));
+                // Reactant gases wait for their batch; only products and stored gas leave through the outlets.
+                if (!inputTank(i)) draws.add(new GasLayer(i, gas));
                 vapour.add(gas);
             }
         }
@@ -671,6 +672,8 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     private FluidStack extractVesselLiquid(FluidStack requested,int amount,FluidAction action) {
         if (isRemoved() || !isController() || amount<=0) return FluidStack.EMPTY;
         for (int i=reactor()==null || module()==ReactorModule.STIRRED ? 0 : 2;i<PROCESS_TANKS;i++) {
+            // A running process keeps its reactant liquids for the batch; only its products leave.
+            if (reactor()!=null && inputTank(i)) continue;
             var liquid=processLiquidContent(i);
             if (!liquid.isEmpty() && (requested.isEmpty() || FluidThermal.compatible(liquid,requested))) return drainProcessLiquid(i,amount,action);
         }

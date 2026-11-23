@@ -421,7 +421,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (recipeDirty) {
             reaction=null;
             RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> blocked=null;
-            for (var holder:vesselRecipes()) if (batches(holder.value(),parallel)>0) {
+            // Solid feed waits for a recipe that uses it, rather than letting a fluid-only one take the liquids it needs.
+            boolean solids=java.util.stream.IntStream.range(0,FEED_SLOTS).anyMatch(slot->!charge.getStackInSlot(slot).isEmpty());
+            for (var holder:vesselRecipes()) if ((!solids || !holder.value().getIngredients().isEmpty()) && batches(holder.value(),parallel)>0) {
                 if (holder.value().getRequiredHeat().testBlazeBurner(heat)) { reaction=holder;break; }
                 if(blocked==null)blocked=holder;
             }
@@ -711,7 +713,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         for (int i=0;i<tanks.length;i++) tanks[i]=tag.contains("Tank"+i) ? FluidStack.parseOptional(lookup,tag.getCompound("Tank"+i)) : FluidStack.EMPTY;
         if (module()==ReactorModule.PREHEATER) thermal().read(tag.getCompound("ThermalEquipment"),lookup);
     }
-    private boolean inputTank(int index) { return index>=0 && (index<2 || index==THIRD_FEED && module()==ReactorModule.STIRRED); }
+    protected boolean inputTank(int index) { return index>=0 && (index<2 || index==THIRD_FEED && module()==ReactorModule.STIRRED); }
     private class Port implements IFluidHandler {
         private final int first,count,generation;
         private final boolean input,output;

@@ -72,7 +72,7 @@ final class SyngasTrain {
         plant.put(coolant, AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
         plant.route(Direction.DOWN, shellIn.above(2), List.of(shellIn), Direction.DOWN);
         var warm = plant.route(Direction.UP, shellOut, List.of(shellOut.above(2), shellOut.above(2).south(3), shellOut.south(3).atY(ground + 1)), Direction.SOUTH);
-        plant.store(warm.getLast(), Direction.SOUTH, "冷却水（温水）", PlaytestPlant.Kind.ANY);
+        plant.store(warm.getLast(), Direction.SOUTH, "冷却水（蒸気）", PlaytestPlant.Kind.GAS);
         // The cooled stream is washed in an absorption tower: the condensate leaves its underside, the clean syngas its top storey.
         AbsorptionTowerGameTests.tower(level, washer, 4, true);
         BlockPos washIn = washer.west(2), washTop = washer.above(3).north(2), washUnder = washer.below();
