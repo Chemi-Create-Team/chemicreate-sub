@@ -135,6 +135,63 @@ public class ReactorGameTests {
         h.assertTrue(phosphoric,"Once enough acid arrives the bone meal becomes phosphoric acid");
         h.succeed();
     }
+
+    @GameTest(template = "test_reactor")
+    public static void zirconiumSulfateProcessesEvenWithSolidsAndAcidLeftByThePreviousBatch(GameTestHelper h) {
+        var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
+        heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        var items=vessel.itemPort();
+        var zircon=CEMetals.MINERALS.get("zircon").get();
+        var acid=CEUranium.SULFURIC_ACID.get();
+        var sulfate=CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
+        var feed=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,vessel.getBlockPos(),Direction.WEST);
+        h.assertTrue(items.insertItem(0,new ItemStack(zircon,3),false).isEmpty() && feed!=null
+            && feed.fill(new FluidStack(acid,600),EXECUTE)==600,"Load zircon and more acid than the first batch needs");
+        run(vessel,105);
+        int sand=vessel.inputItemSlots();
+        h.assertTrue(items.getStackInSlot(sand).is(Items.SAND) && items.getStackInSlot(0).getCount()==1,"The first batch leaves its sand and a spare zircon");
+        var solution=feed.drain(new FluidStack(sulfate,500),EXECUTE);
+        h.assertTrue(solution.is(sulfate) && solution.getAmount()==500 && feed.fill(solution,EXECUTE)==500,"Take the product and feed it back through a real side port");
+        run(vessel,1);
+        h.assertTrue(vessel.running(),"Superheated sulfate starts crystallizing with unrelated feed and products still present");
+        var lines=new ArrayList<net.minecraft.network.chat.Component>();
+        net.createplant.client.GoggleSpec.vessel(vessel,lines,false);
+        h.assertTrue(lines.stream().noneMatch(line->line.getString().contains("→")),"The running goggles show progress without a recipe");
+        run(vessel,105);
+        var hydrate=items.extractItem(sand+1,1,false);
+        h.assertTrue(hydrate.is(CEMetals.ZIRCONIUM_SULFATE_HYDRATE.get()) && items.getStackInSlot(sand).is(Items.SAND)
+            && items.getStackInSlot(0).getCount()==1 && in(vessel).getFluidInTank(0).getAmount()==100,
+            "Crystallization consumes only the sulfate solution");
+        net.createplant.client.GoggleSpec.vessel(vessel,lines,false);
+        h.assertTrue(lines.stream().noneMatch(line->line.getString().contains("→") || line.getString().contains("goggle_spec.create_refinery_n_reactors.target")),
+            "The stopped goggles do not show a stale target recipe");
+        h.assertTrue(items.insertItem(1,hydrate,false).isEmpty(),"Feed the hydrate back for dehydration");
+        run(vessel,105);
+        var zirconyl=items.extractItem(sand+1,1,false);
+        h.assertTrue(zirconyl.is(CEMetals.ZIRCONYL_SULFATE.get()) && items.insertItem(1,zirconyl,false).isEmpty(),"The hydrate gives the zirconyl feed for calcining");
+        run(vessel,105);
+        h.assertTrue(items.getStackInSlot(sand+1).is(CEMetals.ZIRCONIA.get())
+            && products(vessel).getOrDefault(CEUranium.SULFUR_TRIOXIDE.get(),0)==500,"The staged recipe produces zirconia and both SO3 portions");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor", timeoutTicks = 160)
+    public static void theHeaterDoesNotBoilAwayTheStirredVesselsStoredRecipeFeed(GameTestHelper h) {
+        var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
+        var sulfate=new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(),500);
+        h.assertTrue(vessel.getTankInventory().fill(sulfate,EXECUTE)==500,"Put a single exact charge in the main tank inventory");
+        heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        ((BlazeBurnerBlockEntity)h.getLevel().getBlockEntity(vessel.getBlockPos().below())).isCreative=true;
+        h.runAfterDelay(40,()->{
+            h.assertTrue(vessel.currentBurnerHeat()==BlazeBurnerBlock.HeatLevel.SEETHING && vessel.getTankInventory().getFluidAmount()==500,
+                "Heating before the drive starts preserves the liquid required for crystallization");
+            run(vessel,105);
+            h.assertTrue(vessel.itemPort().getStackInSlot(vessel.inputItemSlots()).is(CEMetals.ZIRCONIUM_SULFATE_HYDRATE.get()),
+                "A driven, superheated vessel crystallizes the preserved solution: "+vessel.status());
+            h.succeed();
+        });
+    }
+
     private static void run(ReactorMachineBlockEntity be,int ticks) { speed(be,32);for (int i=0;i<ticks;i++) be.tickProcess(); }
     @GameTest(template = "test_reactor")
     public static void heatedSlimeBlendBecomesTwoCutsAndAReusableCoolant(GameTestHelper h) {

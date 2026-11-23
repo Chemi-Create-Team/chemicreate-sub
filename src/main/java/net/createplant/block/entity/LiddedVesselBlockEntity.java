@@ -377,9 +377,9 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         // The main inventory keeps its own heat state; the process buffers are tracked by the heater.
         var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();
         heat.add(tankInventory instanceof net.createplant.thermal.ThermalFluidTank thermal ? thermal.heat() : null);
-        // A solution heated alone boils its water off; with the lid shut the steam stays in the gas space, with it open it leaves.
+        // Storage tanks can concentrate a solution. Stirred vessels use their recipes to process it.
         if(open())vent();
-        heating.boilSolutions(feedsEmpty());
+        heating.boilSolutions(!stirred() && feedsEmpty());
         heating.steamRoom(open() ? Integer.MAX_VALUE : steamRoom());
         int result=heating.tick(fluids,net.createplant.thermal.TankHeating.burnerWatts(level,base),ignored->Integer.MAX_VALUE,heat);
         int steam=heating.takeSteam();

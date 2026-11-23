@@ -6988,7 +6988,9 @@
       "zirconia_refractory_bricks",
       "zirconium_ingot",
       "zirconium_pipe",
-      "zirconium_sulfate_solution_bucket"
+      "zirconium_sulfate_hydrate",
+      "zirconium_sulfate_solution_bucket",
+      "zirconyl_sulfate"
     ],
     "steps": [
       {
@@ -7060,7 +7062,7 @@
         ],
         "process": {
           "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/zirconia",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/zirconium_sulfate_evaporation",
           "offset": 32,
           "width": 11,
           "height": 9,
@@ -7083,6 +7085,66 @@
       },
       {
         "key": "step_4",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/zirconium_sulfate_dehydration",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/zirconia",
+          "offset": 32,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_6",
         "target": [
           5,
           3,
@@ -7112,7 +7174,7 @@
         }
       },
       {
-        "key": "step_5",
+        "key": "step_7",
         "target": [
           5,
           1,

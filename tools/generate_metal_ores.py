@@ -92,7 +92,7 @@ def recipes():
         'synthetic_rutile': ([{'item': U + 'ilmenite'}] * 3 + [fluid(U + 'hydrochloric_acid', 500)],
                              [item(U + 'titanium_dioxide'), item('minecraft:iron_nugget', 5)], 'heated'),
         'zirconium_sulfate_solution': ([{'item': U + 'zircon'}, {'item': U + 'zircon'}, fluid(acid, 500)], [fluid_out(U + 'zirconium_sulfate_solution', 500), item('minecraft:sand')], 'superheated'),
-        'zirconia': ([fluid(U + 'zirconium_sulfate_solution', 500)], [item(U + 'zirconia'), fluid_out(U + 'sulfur_trioxide', 500)], 'superheated'),
+        'zirconia': ([{'item': U + 'zirconyl_sulfate'}], [item(U + 'zirconia'), fluid_out(U + 'sulfur_trioxide', 250)], 'superheated'),
         'nickel_oxide': ([{'item': U + 'pentlandite'}, {'item': U + 'pentlandite'}, fluid(U + 'oxygen_gas', 1000)], [item(U + 'nickel_oxide'), item('minecraft:iron_nugget', 3), fluid_out(U + 'sulfur_dioxide', 500)], 'heated'),
         'nickel_ingot': ([{'item': U + 'nickel_oxide'}, fluid(U + 'hydrogen_gas', 500)], [item(U + 'nickel_ingot'), fluid_out('minecraft:water', 250)], 'heated'),
         'molybdenum_trioxide': ([{'item': U + 'molybdenite'}, {'item': U + 'molybdenite'}, fluid(U + 'oxygen_gas', 1500)], [item(U + 'molybdenum_trioxide'), fluid_out(U + 'sulfur_dioxide', 1000)], 'heated'),

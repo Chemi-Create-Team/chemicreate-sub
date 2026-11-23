@@ -446,10 +446,14 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (recipeDirty) {
             reaction=null;
             RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> blocked=null;
-            // Solid feed waits for a recipe that uses it, rather than letting a fluid-only one take the liquids it needs.
-            boolean solids=java.util.stream.IntStream.range(0,FEED_SLOTS).anyMatch(slot->!charge.getStackInSlot(slot).isEmpty());
-            for (var holder:vesselRecipes()) if ((!solids || !holder.value().getIngredients().isEmpty()) && available(holder.value(),parallel)) {
-                if (holder.value().getRequiredHeat().testBlazeBurner(heat)) { reaction=holder;break; }
+            var recipes=vesselRecipes();
+            var reserved=reservedForSolids(recipes);
+            for (var holder:recipes) {
+                var candidate=holder.value();
+                if (!reserved.isEmpty() && candidate.getIngredients().isEmpty() && candidate.getFluidIngredients().stream()
+                    .anyMatch(ingredient->reserved.stream().anyMatch(ingredient.ingredient()))) continue;
+                if (!available(candidate,parallel)) continue;
+                if (candidate.getRequiredHeat().testBlazeBurner(heat)) { reaction=holder;break; }
                 if(blocked==null)blocked=holder;
             }
             if(reaction==null)reaction=blocked;
@@ -521,15 +525,33 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     protected FluidStack[] mixingFluids() { return fluids(); }
     protected int[] mixingInputs() { return new int[]{0,1,THIRD_FEED}; }
     protected void commitMixingFluids(FluidStack[] fluids) { System.arraycopy(fluids,0,tanks,0,tanks.length); }
+
+    /** A solid charge only reserves liquids that can react with it. Product slots are never part of the charge. */
+    private List<FluidStack> reservedForSolids(List<RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>>> recipes) {
+        var solids=java.util.stream.IntStream.range(0,FEED_SLOTS).mapToObj(charge::getStackInSlot).filter(stack->!stack.isEmpty()).toList();
+        if (solids.isEmpty()) return List.of();
+        var ingredients=recipes.stream().map(RecipeHolder::value)
+            .filter(recipe->!recipe.getFluidIngredients().isEmpty() && recipe.getIngredients().stream().anyMatch(ingredient->solids.stream().anyMatch(ingredient)))
+            .flatMap(recipe->recipe.getFluidIngredients().stream()).toList();
+        if (ingredients.isEmpty()) return List.of();
+        var fluids=mixingFluids();
+        var reserved=new ArrayList<FluidStack>();
+        for (int slot:mixingInputs()) {
+            var feed=fluids[slot];
+            if (feed.isEmpty()) continue;
+            if (ingredients.stream().anyMatch(ingredient->ingredient.ingredient().test(feed))) reserved.add(feed);
+            if (MixtureHelper.composite(feed) && MixtureHelper.isMixableGas(feed)) {
+                for (var part:MixtureHelper.components(feed))
+                    if (ingredients.stream().anyMatch(ingredient->ingredient.ingredient().test(part))) reserved.add(part);
+            }
+        }
+        return reserved;
+    }
+
     /** How many batches, one per section at most, the feed and the free product space allow; every product is counted as if it were rolled. */
     private int batches(StandardProcessingRecipe<RecipeInput> recipe,int parallel) {
         gasBlocked=false;
         ItemStack[] items=items();FluidStack[] fluids=mixingFluids();
-        if(recipe instanceof PressureReactionRecipe && recipe.getIngredients().isEmpty() && recipe.getFluidIngredients().size()==1){
-            var ingredient=recipe.getFluidIngredients().getFirst();
-            if(java.util.Arrays.stream(items).anyMatch(stack->!stack.isEmpty()))return 0;
-            for(int slot:mixingInputs())if(!fluids[slot].isEmpty() && !ingredient.test(fluids[slot]))return 0;
-        }
         int count=0;
         while (count<parallel && runBatch(recipe,items,fluids,recipe.getRollableResultsAsItemStacks())) count++;
         return count;
@@ -562,7 +584,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
     /** Whether a recipe can run now: a fluid-only one as soon as any feed is there (it runs continuously), one with solids once a whole batch is. */
     private boolean available(StandardProcessingRecipe<RecipeInput> recipe,int parallel) {
-        if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) { gasBlocked=false;return flowBatch(recipe,mixingFluids(),items(),1e-3); }
+        if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) { gasBlocked=false;return flowBatch(recipe,mixingFluids(),1e-3); }
         return batches(recipe,parallel)>0;
     }
     /** Takes {@code needed} mB of a fluid ingredient out of the feed buffers, a component at a time from a mixed gas; false when the feed holds less. */
@@ -599,9 +621,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     /** What a reaction that has converted {@code f} more batches has made of an amount per batch. */
     private int made(int amount,double f) { return net.createplant.chemistry.ReactionFlow.made(amount,flow,f); }
     /** Moves a fluid-only reaction on by {@code f} batches out of the given buffers; false when the feed, the room for the products or the gas limit does not allow it. */
-    private boolean flowBatch(StandardProcessingRecipe<RecipeInput> recipe,FluidStack[] fluids,ItemStack[] items,double f) {
+    private boolean flowBatch(StandardProcessingRecipe<RecipeInput> recipe,FluidStack[] fluids,double f) {
         if (recipe instanceof PressureReactionRecipe && recipe.getIngredients().isEmpty() && recipe.getFluidIngredients().size()==1) {
-            if (Arrays.stream(items).anyMatch(stack->!stack.isEmpty())) return false;
             for (int slot:mixingInputs()) if (!fluids[slot].isEmpty() && !recipe.getFluidIngredients().getFirst().ingredient().test(fluids[slot])) return false;
         }
         for (var ingredient:recipe.getFluidIngredients()) if (!takeFluid(recipe,ingredient,owed(ingredient.amount(),f),fluids)) return false;
@@ -616,10 +637,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     private boolean reactFluids(StandardProcessingRecipe<RecipeInput> recipe,int duration,float rpm,int parallel) {
         double speed=Math.min(4,rpm/32f)*processingSpeedFactor(), wanted=parallel*speed/duration;
         gasBlocked=false;
-        var items=items();
         FluidStack[] result=null;
         double step=wanted;
-        for (;step>1e-4;step/=2) { var trial=mixingFluids();if (flowBatch(recipe,trial,items,step)) { result=trial;break; } }
+        for (;step>1e-4;step/=2) { var trial=mixingFluids();if (flowBatch(recipe,trial,step)) { result=trial;break; } }
         if (result==null) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : "materials",false);return true; }
         var needed=recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.HEATED ? 150 : 0;
         if (needed>0 && takeBurnerHeat(needed)<needed) { setStatus("heat",false);return true; }

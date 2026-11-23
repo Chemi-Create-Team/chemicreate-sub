@@ -169,15 +169,8 @@ public final class GoggleSpec {
         }
         boolean running = vessel.running();
         var reason = running ? null : reason(vessel);
-        var equation = vessel.reactionLabel();
-        if (running) {
-            int percent = Math.round(vessel.progress() * 100 / Math.max(1, vessel.cycleTicks()));
-            lines.add(Component.translatable(K + "running").withStyle(ChatFormatting.GREEN).append(label(": ")).append(equation.copy().withStyle(ChatFormatting.WHITE))
-                .append(label(" (" + percent + "%)")));
-        } else {
-            lines.add(Component.translatable(K + "stopped").withStyle(ChatFormatting.GOLD).append(label(": ")).append(reasonText(reason, statusText(vessel.status(), "reactor.create_refinery_n_reactors.status."), heated(vessel)).withStyle(ChatFormatting.GOLD)));
-            if (!vessel.batchEmpty()) lines.add(line(Component.translatable(K + "target").getString(), equation.copy().withStyle(ChatFormatting.WHITE)));
-        }
+        int percent = running ? Math.round(vessel.progress() * 100 / Math.max(1, vessel.cycleTicks())) : -1;
+        header(lines, null, percent, reason, statusText(vessel.status(), "reactor.create_refinery_n_reactors.status."), heated(vessel));
         stock(lines, shown, capacity, shift);
         // Environment: temperature, pressure and drive.
         var heat = vessel.currentBurnerHeat();

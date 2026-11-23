@@ -522,10 +522,12 @@ route('titanium', ('From ilmenite to titanium and white pigment', 'チタン鉄�
 ])
 
 route('zirconium', ('From zircon to zirconia and zirconium', 'ジルコンからジルコニアとジルコニウムを作る', '从锆石制取氧化锆与锆'),
-    ['zircon_ore', 'deepslate_zircon_ore', 'zircon', 'zirconium_sulfate_solution_bucket', 'zirconia', 'zirconium_ingot', 'zirconia_refractory_bricks', 'zirconium_pipe'], [
+    ['zircon_ore', 'deepslate_zircon_ore', 'zircon', 'zirconium_sulfate_solution_bucket', 'zirconium_sulfate_hydrate', 'zirconyl_sulfate', 'zirconia', 'zirconium_ingot', 'zirconia_refractory_bricks', 'zirconium_pipe'], [
     step('crushing', 'crushing/zircon_ore', 'Crush zircon ore into the mineral feed.', 'ジルコン鉱石を粉砕して鉱物原料にします。', '粉碎锆石矿取得矿物原料。'),
     step('vessel', 'pressure_reaction/zirconium_sulfate_solution', 'Superheat zircon with sulfuric acid in an impeller vessel.', '撹拌槽でジルコンと硫酸を超加熱します。', '在搅拌槽中超加热锆石与硫酸。'),
-    step('vessel', 'pressure_reaction/zirconia', 'Boil the solution down to zirconium sulfate hydrate crystals (about 100-150 °C). Heat on to dehydrate them to zirconyl sulfate, releasing part of the SO3 (about 150-500 °C). Superheating above 700 °C decomposes the rest and leaves solid zirconia.', '溶液を加熱して水を蒸発させ、硫酸ジルコニウム水和物の結晶を析出させます(100〜150℃付近)。さらに加熱すると脱水してSO3の一部を放出し、硫酸ジルコニルになります(150〜500℃付近)。700℃以上に超加熱すると残りも分解し、固体のジルコニアが残ります。', '加热溶液蒸发水分，析出硫酸锆水合物晶体（约100-150 ℃）；继续加热脱水并放出部分SO3，变为硫酸氧锆（约150-500 ℃）；超加热到700 ℃以上则残余部分完全分解，留下固体氧化锆。'),
+    step('vessel', 'pressure_reaction/zirconium_sulfate_evaporation', 'Feed the solution into a heated stirred tank. Extract the hydrate crystals with a funnel.', '硫酸ジルコニウム溶液を加熱した撹拌槽に送り、できた水和物をファンネルで取り出します。', '把硫酸锆溶液送进加热的搅拌槽，用漏斗取出水合物晶体。'),
+    step('vessel', 'pressure_reaction/zirconium_sulfate_dehydration', 'Feed the hydrate into a heated stirred tank. Route the zirconyl sulfate to calcining.', '水和物を加熱した撹拌槽に入れ、できた硫酸ジルコニルを焼成工程へ送ります。', '将水合物送入加热的搅拌槽，将生成的硫酸氧锆送往煅烧。'),
+    step('vessel', 'pressure_reaction/zirconia', 'Superheat the zirconyl sulfate in a stirred tank. Collect the zirconia and sulfur trioxide.', '硫酸ジルコニルを撹拌槽で超加熱し、ジルコニアと三酸化硫黄を回収します。', '在搅拌槽中超加热硫酸氧锆，回收氧化锆和三氧化硫。'),
     step('furnace', 'operation:reduce_zirconia', 'Electrolyze the oxide with carbon in the powered furnace to recover zirconium metal.', '通電した炉で酸化物と炭素を電解し、ジルコニウム金属を回収します。', '在通电炉中电解氧化物与碳，回收金属锆。'),
     step('crafting', 'zirconia_refractory_bricks', 'Keep an oxide branch for refractory bricks. The metal branch supplies the existing zirconium components and pipes.', '酸化物の一部は耐火レンガに使います。金属の分岐は既存のジルコニウム部品や配管へ送ります。', '留一支氧化物用于耐火砖，金属支路供应已有锆部件和管道。'),
 ])
