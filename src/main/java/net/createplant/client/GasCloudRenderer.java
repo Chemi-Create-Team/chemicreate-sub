@@ -159,7 +159,8 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         var volume = cloud.volume();
         if (volume.size() == 0 || charge <= 0) return;
         int color = style.color();
-        var layer = style.ceiling() ? PLUME_LAYER : GROUND_LAYER;
+        boolean packs = !style.ceiling() && ShaderPackCompat.active();
+        var layer = style.ceiling() || packs ? PLUME_LAYER : GROUND_LAYER;
         var buffer = buffers.getBuffer(layer);
         var matrix = pose.last();
         var billboard = GasBillboard.facing(matrix, entityRenderDispatcher.cameraOrientation(), preview);
@@ -169,6 +170,8 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
                 mist.plume = new RisingGasMist(volume);
             }
             mist.plume.render(cloud.level(), preview, buffer, matrix, billboard, time, charge, distanceFade, color);
+        } else if (packs) {
+            mist.preview(cloud, (PonderLevel) cloud.level()).renderPuffs(buffer, matrix, null, null, billboard, time, color);
         } else {
             var view = new Vector3f(billboard.right()).cross(billboard.up());
             mist.preview(cloud, (PonderLevel) cloud.level()).render(buffer, matrix, null, null, view, time, charge, color);
@@ -186,6 +189,9 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         var pose = event.getPoseStack();
         var buffers = minecraft.renderBuffers().bufferSource();
         var ground = GROUND.computeIfAbsent(level, ignored -> new HashMap<>());
+        boolean packs = ShaderPackCompat.active();
+        var layer = packs ? PLUME_LAYER : GROUND_LAYER;
+        var billboard = packs ? GasBillboard.facing(pose.last(), event.getCamera().rotation(), false) : null;
         long gameTime = level.getGameTime();
         VertexConsumer buffer = null;
         // Entity rendering checks whether the source's chunk section was drawn. A mist can be far outside that section.
@@ -208,15 +214,16 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
                 continue;
             }
             if (draw.field.sections().isEmpty()) continue;
-            if (buffer == null) buffer = buffers.getBuffer(GROUND_LAYER);
+            if (buffer == null) buffer = buffers.getBuffer(layer);
             var anchor = Vec3.atCenterOf(draw.field.origin());
             pose.pushPose();
             pose.translate(anchor.x - camera.x, anchor.y - camera.y, anchor.z - camera.z);
             float time = tick + event.getPartialTick().getGameTimeDeltaPartialTick(false);
-            draw.mist.render(buffer, pose.last(), camera, frustum, null, time, 0, draw.color);
+            if (packs) draw.mist.renderPuffs(buffer, pose.last(), camera, frustum, billboard, time, draw.color);
+            else draw.mist.render(buffer, pose.last(), camera, frustum, null, time, 0, draw.color);
             pose.popPose();
         }
-        if (buffer != null) buffers.endBatch(GROUND_LAYER);
+        if (buffer != null) buffers.endBatch(layer);
     }
 
     static void vertex(VertexConsumer buffer, PoseStack.Pose matrix, float x, float y, float z, float u, float v, int color, int alpha) {

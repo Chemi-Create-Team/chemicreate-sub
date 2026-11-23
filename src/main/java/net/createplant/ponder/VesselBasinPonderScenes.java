@@ -80,7 +80,7 @@ public final class VesselBasinPonderScenes {
     }
 
     public static void maintenance(SceneBuilder builder,SceneBuildingUtil util) {
-        var scene=begin(builder,"vessel_maintenance",MAINTENANCE,"Grades, cooling and cleaning");
+        var scene=begin(builder,"vessel_maintenance",MAINTENANCE,"Grades and cooling");
         scene.rotateCameraY(90);
         scene.world().showSection(util.select().fromTo(0,1,0,8,3,8).substract(util.select().fromTo(3,1,2,3,2,2)),Direction.DOWN);
         windows(scene,true);speed(scene,util,false);coldContents(scene,250,0);
@@ -98,22 +98,6 @@ public final class VesselBasinPonderScenes {
             new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),6000),FluidAction.EXECUTE));
         coldContents(scene,250,0);gauge(scene,0,false);
         text(scene,util,OWNER,MAINTENANCE,"cooling",140);
-        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,3,5),state->state.setValue(LiddedVesselBlock.OPEN,true),false);
-        scene.overlay().showControls(util.vector().topOf(TOP),Pointing.DOWN,55).rightClick().withItem(new ItemStack(Items.BRUSH));
-        coldContents(scene,210,0);
-        text(scene,util,OWNER,MAINTENANCE,"brush",140);
-        PonderText.build(scene, util, 4,4,4,4,5,4, Direction.DOWN);
-        scene.world().modifyBlockEntityNBT(util.select().position(DEPLOYER),com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity.class,tag->tag.put("HeldItem",new ItemStack(Items.BRUSH).saveOptional(scene.world().getHolderLookupProvider())));
-        scene.world().moveDeployer(DEPLOYER,1,25);scene.idle(25);
-        scene.world().moveDeployer(DEPLOYER,-1,25);
-        coldContents(scene,170,0);
-        text(scene,util,DEPLOYER,MAINTENANCE,"deployer",130);
-        scene.overlay().showControls(util.vector().blockSurface(OWNER,Direction.DOWN),Pointing.UP,55).rightClick();
-        coldContents(scene,0,2000);
-        text(scene,util,OWNER.below(),MAINTENANCE,"wash",150);
-        scene.overlay().showControls(util.vector().blockSurface(OWNER,Direction.DOWN),Pointing.UP,45).rightClick().withItem(com.simibubi.create.AllItems.WRENCH.asStack());
-        text(scene,util,OWNER.below(),MAINTENANCE,"purge",115);
-        scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,3,5),state->state.setValue(LiddedVesselBlock.OPEN,false),false);
         coldContents(scene,0,0,true);
         scene.world().hideSection(util.select().position(INPUT).add(util.select().position(4,2,6)),Direction.DOWN);
         text(scene,util,OWNER,MAINTENANCE,"cryo",140);
@@ -169,7 +153,6 @@ public final class VesselBasinPonderScenes {
             tag.remove("Internal");tag.putBoolean("Stirrer",true);
             tag.putBoolean("Windows",true);tag.putBoolean("Formed",true);tag.putBoolean("Running",false);tag.putInt("Sections",LiddedVesselBlockEntity.IMPELLER_LAYERS);
             tag.putInt("DisplayedHeat",BlazeBurnerBlock.HeatLevel.NONE.ordinal());tag.putString("Status","idle");
-            var fouling=new CompoundTag();fouling.putInt("Dirt",dirt);fouling.putBoolean("DrainOpen",false);fouling.putInt("WasteAmount",wastewater);fouling.putDouble("WasteKelvin",293.15);tag.put("Fouling",fouling);
             be.readClient(tag,lookup);
         });
     }

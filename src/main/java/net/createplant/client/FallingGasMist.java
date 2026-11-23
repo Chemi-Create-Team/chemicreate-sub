@@ -34,6 +34,35 @@ final class FallingGasMist {
         }
     }
 
+    /**
+     * The same mist for a shader pack, which cannot run the ground shader: a few camera-facing puffs of the plume texture over each cell, on a vanilla program.
+     * The cells, their opacity and their fading are the shader version's; only the drawing is simpler. A null camera draws all cells without culling (Ponder).
+     */
+    void renderPuffs(VertexConsumer buffer, PoseStack.Pose pose, Vec3 camera, Frustum frustum, GasBillboard billboard, float time, int color) {
+        for (var section : field.sections()) {
+            if (camera != null && (section.bounds().distanceToSqr(camera) >= 48 * 48 || !frustum.isVisible(section.bounds()))) continue;
+            for (var cell : section.cells()) {
+                float opacity = cell.opacity(time);
+                if (cell.inFreeFall()) opacity *= .42f;
+                if (opacity < GroundGasField.MIN_CONCENTRATION) continue;
+                var pos = cell.pos();
+                if (camera != null) {
+                    double dx = pos.getX() + .5 - camera.x, dy = pos.getY() + .5 - camera.y, dz = pos.getZ() + .5 - camera.z;
+                    opacity *= fade((48 - (float) Math.sqrt(dx * dx + dy * dy + dz * dz)) / 16);
+                    if (opacity < .004f || !frustum.isVisible(cell.bounds())) continue;
+                }
+                float height = (cell.ceiling(opacity) - cell.floor()) / 16f;
+                if (height <= 0) continue;
+                float x = pos.getX() - origin.getX(), z = pos.getZ() - origin.getZ();
+                float y = pos.getY() - origin.getY() - .5f + cell.floor() / 16f + height * .5f;
+                int alpha = Mth.clamp((int) (170 * Mth.sqrt(opacity)), 0, 205);
+                if (alpha == 0) continue;
+                float roll = ((pos.getX() * 31 + pos.getZ() * 17) % 628) / 100f;
+                billboard.draw(buffer, pose, x, y, z, .62f, Math.max(.3f, height * .5f + .2f), roll, color, alpha);
+            }
+        }
+    }
+
     private void renderCell(VertexConsumer buffer, PoseStack.Pose pose, Vec3 camera, Frustum frustum, Vector3fc previewView,
         int color, GroundGasField.Cell cell, float opacity) {
         if (cell.inFreeFall()) opacity *= .42f;

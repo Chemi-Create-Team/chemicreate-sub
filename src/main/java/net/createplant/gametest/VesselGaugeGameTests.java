@@ -70,10 +70,8 @@ public class VesselGaugeGameTests {
         catalyst.setStackInSlot(0,new ItemStack(BuiltInRegistries.ITEM.get(CreatePlant.location("iron_catalyst"))));
         data.put("Catalyst",catalyst.serializeNBT(lookup));
         var charge=new ItemStackHandler(13);charge.setStackInSlot(0,new ItemStack(Items.IRON_INGOT,3));data.put("Charge",charge.serializeNBT(lookup));
-        var dirt=new CompoundTag();dirt.putInt("Dirt",240);dirt.putInt("WasteAmount",1000);dirt.putDouble("WasteKelvin",293.15);data.put("Fouling",dirt);
         owner.loadWithComponents(data,lookup);gauge.tick();
         var before=owner.saveWithoutMetadata(lookup);
-        h.assertTrue(Math.abs(MachineReadings.read(owner,"vessel_fouling").value()-60)<1e-3 && MachineReadings.read(owner,"vessel_waste").value()==1000,"Fouling and wastewater measurements reflect the stored maintenance state");
         h.assertTrue(MachineReadings.read(owner,"fluid_7").value()==owner.displayedFluid(7).getAmount() && owner.displayedFluid(7).getAmount()>0,"The linked fluid entry exposes the actual liquid inventory");
         var handler=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(BASE),Direction.DOWN);
         handler.drain(250,FluidAction.SIMULATE);handler.fill(new FluidStack(Fluids.WATER,250),FluidAction.SIMULATE);

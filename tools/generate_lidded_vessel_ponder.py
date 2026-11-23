@@ -142,12 +142,9 @@ BASIN_TEXTS = {
     'products': ('Extract items with funnels and fluids with pumps. If stopped, check outlets, heat, rotation, hatch and dirt.', '製品はファンネル、液体はポンプで取り出します。止まったら出口・加熱・回転・ハッチ・汚れを確認します。'),
 }
 MAINTENANCE_TEXTS = {
-    'title': ('Pressure, cooling and cleaning', '槽の圧力・冷却・清掃'),
+    'title': ('Grades and cooling', '流体の等級と冷却'),
     'pressure': ('A vessel is rated to 16 bar. Set relief below the limit and keep the vent clear.', '槽の耐圧は16 barです。安全弁を限界未満に設定し、排気口を空けます。'),
     'cooling': ('Before cleaning, stop rotation and heat; cool to 60 °C or less and 1.2 bar or less. Use ice or liquid nitrogen in a neighbouring tank.', '清掃前に回転と加熱を止め、60 °C以下・1.2 bar以下にします。冷却には氷や隣のタンクの液体窒素を使えます。'),
-    'brush': ('Processing stops at 400 dirt. Open the central hatch and clean with a brush.', '汚れが400になると止まります。中央ハッチを開け、ブラシで清掃します。'),
-    'deployer': ('A downward-facing Deployer holding a brush can clean automatically under the same stop, hatch, temperature and pressure conditions.', 'ブラシを持たせた下向きデプロイヤーでも清掃できます。停止・開ハッチ・温度・圧力の条件は同じです。'),
-    'wash': ('Empty-hand right-click below to open the drain, then supply 1,000 mB/s water. Remove wash wastewater underneath.', '下面を空手で右クリックしてドレンを開き、水を1,000 mB/s供給します。出た洗浄排水は下面から抜きます。'),
     'cryo': ("Fit a Smart Fluid Pipe to the air tower's north port at layer 14, filter liquid nitrogen, and pump it into a cryogenic tank beside the vessel.", '空気分離塔14段目の北面へスマートパイプを付け、液体窒素でフィルターします。槽の隣の保冷タンクへ送ります。'),
 }
 RUNTIME_TEXTS = {

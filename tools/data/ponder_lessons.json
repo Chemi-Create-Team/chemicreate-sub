@@ -1954,21 +1954,6 @@
     "ja_jp": "清掃前に回転と加熱を止めます。極低温の流体を入れると窓に霜が付きます。",
     "zh_cn": "清洁前停止旋转和加热。极低温流体会让观察窗结霜。"
   },
-  "vessel_maintenance.brush": {
-    "en_us": "Processing stops at 400 dirt. Open the central hatch and clean with a brush.",
-    "ja_jp": "汚れが400になると止まります。中央ハッチを開け、ブラシで清掃します。",
-    "zh_cn": "污垢达到400时停机，打开中央检修口并用刷子清理。"
-  },
-  "vessel_maintenance.deployer": {
-    "en_us": "A downward-facing Deployer with a brush automates cleaning. Stop the machine and open its hatch first.",
-    "ja_jp": "下向きのデプロイヤーにブラシを持たせると清掃を自動化できます。先に機械を止めてハッチを開きます。",
-    "zh_cn": "让向下的机械手持刷子即可自动清洁。先停机并打开舱盖。"
-  },
-  "vessel_maintenance.wash": {
-    "en_us": "Empty-hand right-click below to open the drain, then supply 1,000 mB/s water. Remove wash wastewater underneath.",
-    "ja_jp": "下面を空手で右クリックしてドレンを開き、水を1,000 mB/s供給します。出た洗浄排水は下面から抜きます。",
-    "zh_cn": "空手右键底面打开排污口，供水1,000 mB/s，并从底部排出清洗废水。"
-  },
   "vessel_maintenance.cryo": {
     "en_us": "Liquefy nitrogen gas in a powered cold box. Store liquid nitrogen in an insulated tank.",
     "ja_jp": "窒素ガスを動力付きコールドボックスで液化します。液体窒素は保冷タンクへ入れます。",
@@ -5143,11 +5128,6 @@
     "en_us": "Hold a wrench or hose to see ports. Blue is intake, orange is outlet, and yellow is shaft drive.",
     "ja_jp": "レンチかホースを持つと接続口が表示されます。青は吸込、橙は吐出、黄は動力入力です。",
     "zh_cn": "手持扳手或软管时会标出端口。蓝色是进料，橙色是出口，黄色是转轴输入。"
-  },
-  "vessel_maintenance.purge": {
-    "en_us": "Use a wrench on an exposed drain, or Shift-right-click it with empty hands, to purge leftover liquid.",
-    "ja_jp": "残留液を捨てるには、露出したドレンにレンチを使うか、素手でShift＋右クリックします。",
-    "zh_cn": "对外露的排液口使用扳手或空手 Shift 右键，可排出残液。"
   },
   "wet_processing.slurry_side": {
     "en_us": "Pump slurry into the left wall or the bottom feed. Use acid-resistant piping for leach slurry.",

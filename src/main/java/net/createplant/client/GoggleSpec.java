@@ -142,7 +142,6 @@ public final class GoggleSpec {
 
     private static Reason reason(LiddedVesselBlockEntity vessel) {
         if (vessel.open()) return Reason.HATCH;
-        if (vessel.fouling().drainOpen()) return Reason.DRAIN;
         return classify(vessel.status());
     }
 
@@ -189,13 +188,10 @@ public final class GoggleSpec {
             label(" / "), white(Component.translatable(K + "pressure." + (pressurised ? "high" : "normal")).getString()), bar(), label(Component.translatable(K + "power").getString() + ": "),
             Component.literal(rpm + " RPM").withStyle(reason == Reason.POWER ? ChatFormatting.GOLD : ChatFormatting.WHITE));
         lines.add(environment);
-        // Equipment: hatch, drain, dirt and, under Shift, the size.
+        // Equipment: the hatch and, under Shift, the size.
         var hatchKey = vessel.getWidth() == 1 ? "fixed" : vessel.open() ? "open" : "closed";
-        var drain = vessel.fouling().drainOpen();
         var equipment = line(Component.translatable(K + "equipment").getString(),
-            Component.translatable(K + "hatch." + hatchKey).withStyle(reason == Reason.HATCH ? ChatFormatting.GOLD : ChatFormatting.WHITE), bar(),
-            Component.translatable(K + "drain." + (drain ? "open" : "closed")).withStyle(reason == Reason.DRAIN ? ChatFormatting.GOLD : ChatFormatting.WHITE), bar(),
-            Component.translatable(K + "dirt", Math.round(vessel.fouling().foulingFraction() * 100)).withStyle(reason == Reason.MAINTENANCE ? ChatFormatting.GOLD : ChatFormatting.WHITE));
+            Component.translatable(K + "hatch." + hatchKey).withStyle(reason == Reason.HATCH ? ChatFormatting.GOLD : ChatFormatting.WHITE));
         if (shift) equipment.append(bar()).append(Component.translatable(K + "structure", vessel.getWidth(), vessel.getHeight()).withStyle(ChatFormatting.WHITE));
         lines.add(equipment);
     }
