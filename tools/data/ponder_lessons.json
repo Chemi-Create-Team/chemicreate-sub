@@ -1925,9 +1925,9 @@
     "zh_cn": "固体用传送带和漏斗送入。流体通过有动力的泵和管道输送。"
   },
   "vessel_basin.heat": {
-    "en_us": "Fuel a Blaze Burner below the vessel. Every 50 ticks, the fluid rises one temperature level, up to the highest level.",
-    "ja_jp": "槽の下のブレイズバーナーに燃料を入れます。50 tickごとに内容物の温度が1レベル上がり、最高レベルで止まります。",
-    "zh_cn": "给槽下方的烈焰人燃烧室添加燃料。流体每50刻上升一档，直到最高温度。"
+    "en_us": "Fuel a Blaze Burner below the vessel. Each burner adds heat to the contents: a heavy or high-heat-capacity content warms slowly, and a boiling liquid waits at its boiling point until it has taken the heat to turn to gas.",
+    "ja_jp": "槽の下でブレイズバーナーを燃やします。バーナーごとに中身へ熱が加わります。量が多い・熱を溜めやすい中身はゆっくり温まり、沸騰する液体は気体になる熱を吸うまで沸点で止まります。",
+    "zh_cn": "在槽下点燃烈焰燃烧室。每个燃烧室向内容物加热：量大或热容大的内容物升温慢，沸腾的液体会停在沸点，直到吸足变成气体所需的热量。"
   },
   "vessel_basin.rotate": {
     "en_us": "Turn the cogwheel beside the stirrer at 32 RPM or more. Place heating burners under the other blocks.",
@@ -2815,9 +2815,9 @@
     "zh_cn": "冷媒制造1　制造防冻液"
   },
   "guide.manufacturing_refrigeration.step_1": {
-    "en_us": "A driven radiator drops one level per pass until ambient. This pass cools steam to liquid water.\n%s → %s",
-    "ja_jp": "駆動したラジエーターは常温まで1回に1段冷却します。この例では蒸気が水になります。\n%s → %s",
-    "zh_cn": "驱动散热器每次降温一档，最低为常温。这里的蒸汽冷却成水。\n%s → %s"
+    "en_us": "A driven radiator takes a fixed amount of heat from every mB until the fluid reaches ambient. This pass cools steam to liquid water.\n%s → %s",
+    "ja_jp": "回転するラジエーターは、1 mBごとに決まった熱を奪い、常温まで冷やします。このパスで蒸気が液体の水になります。\n%s → %s",
+    "zh_cn": "运转的散热器从每 mB 带走固定热量，直到流体降到常温。这一轮把蒸汽冷却成液态水。\n%s → %s"
   },
   "guide.manufacturing_refrigeration.step_2": {
     "en_us": "In the exchanger, liquid ammonia becomes gas while the other stream is cooled. The two streams stay separate.\n%s → %s",
@@ -3700,9 +3700,9 @@
     "zh_cn": "连接管侧端面与壳侧顶部。两路可以注入任意流体，按相同的量处理。"
   },
   "guide.heat_exchanger.step_3": {
-    "en_us": "Parallel flow reaches the average. Counterflow brings both streams to within one level of the opposite inlet. Goggles show both outlets.",
-    "ja_jp": "並行流は平均温度に、対向流は相手の入口温度の1段手前になります。ゴーグルで両方の出口を確認できます。",
-    "zh_cn": "并流取平均温度，逆流达到距另一入口一档的温度。护目镜可查看两路出口。"
+    "en_us": "Parallel flow ends both streams at one temperature. Counterflow moves more heat, so the cold stream can leave hotter than the hot stream. Goggles show both outlets.",
+    "ja_jp": "並行流では両方の流れが同じ温度になります。対向流はより多くの熱を移すので、冷たい側が熱い側より高い温度で出ることもあります。ゴーグルで両方の出口を確認できます。",
+    "zh_cn": "并流时两股流体最终温度相同。逆流能传递更多热量，冷流体出口温度可以高于热流体。护目镜可查看两个出口。"
   },
   "guide.jacketed_pipe.title": {
     "en_us": "Jacketed pipe",
@@ -4195,9 +4195,9 @@
     "zh_cn": "安装Serene Seasons后，空气冷却效率为春100%、夏80%、秋105%、冬120%。未安装时保持100%。"
   },
   "seasonal_thermal.heating": {
-    "en_us": "Tank burners raise the temperature one level every 50 ticks in every season. Seasons affect how much a radiator or cooling tower processes.",
-    "ja_jp": "タンクのバーナーは季節にかかわらず50 tickごとに温度を1レベル上げます。季節で変わるのはラジエーターや冷却塔の処理量です。",
-    "zh_cn": "储罐燃烧室在任何季节都每50刻升温一档。季节会改变散热器或冷却塔的处理量。"
+    "en_us": "Tank burners warm the contents by the same heat in every season. Seasons affect how much a radiator or cooling tower processes.",
+    "ja_jp": "タンクのバーナーは、どの季節でも同じ熱で中身を温めます。季節が変えるのは、ラジエーターと冷却塔の処理量です。",
+    "zh_cn": "储罐燃烧室在任何季节都以相同热量加热内容物。季节只影响散热器和冷却塔的处理量。"
   },
   "seasonal_thermal.steam": {
     "en_us": "Operating cooling towers release broad white condensate from the top opening. New steam stops when cooling stops; existing clouds rise and dissipate, and particle settings limit the effect.",
