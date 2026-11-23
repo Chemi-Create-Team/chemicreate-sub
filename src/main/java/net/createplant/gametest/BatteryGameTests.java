@@ -74,4 +74,29 @@ public class BatteryGameTests {
         h.assertTrue(mob.hasEffect(CESafety.ACID_BURN), "Milk does not cure it");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty", timeoutTicks = 20)
+    public static void leadComesOnlyFromTheDryProcesses(GameTestHelper h) {
+        var manager = h.getLevel().getRecipeManager();
+        for (String id : new String[] {"galena_roasting", "lead_sinter_reduction", "galena_direct_smelting"})
+            h.assertTrue(manager.byKey(net.minecraft.resources.ResourceLocation.parse(CreatePlant.MOD_ID + ":pressure_reaction/" + id)).isPresent(), "Missing recipe " + id);
+        var galena = CreatePlant.location("galena");
+        h.assertTrue(manager.getRecipes().stream().noneMatch(holder -> holder.value() instanceof net.minecraft.world.item.crafting.AbstractCookingRecipe cooking
+            && cooking.getIngredients().stream().anyMatch(ingredient -> java.util.Arrays.stream(ingredient.getItems()).anyMatch(stack -> galena.equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()))))),
+            "Galena has no furnace shortcut to lead");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_empty", timeoutTicks = 20)
+    public static void leadAlsoComesFromLeachingClarifyingAndElectrowinning(GameTestHelper h) {
+        var manager = h.getLevel().getRecipeManager();
+        for (String id : new String[] {"pressure_reaction/lead_leaching", "clarifying/lead"})
+            h.assertTrue(manager.byKey(net.minecraft.resources.ResourceLocation.parse(CreatePlant.MOD_ID + ":" + id)).isPresent(), "Missing recipe " + id);
+        var process = net.createplant.chemistry.ElectrolysisProcess.of(new FluidStack(net.createplant.registry.CEMetals.LEAD_CHLORIDE_SOLUTION.get(), 1000));
+        h.assertTrue(process != null && process.metal() == net.createplant.registry.CEMetals.LEAD_INGOT.get() && process.metalAmount() == 3
+            && process.recovered() == net.createplant.registry.CEChlorAlkali.HYDROCHLORIC_ACID.get() && process.recoveredAmount() == 250,
+            "The cell turns the lead solution into three ingots and gives the hydrochloric acid back");
+        h.assertTrue(net.createplant.registry.CEWetProcessing.slurry(net.createplant.registry.CEWetProcessing.SLURRIES.get("lead_leach_slurry").get()), "The lead slurry is a clarifier slurry");
+        h.succeed();
+    }
 }

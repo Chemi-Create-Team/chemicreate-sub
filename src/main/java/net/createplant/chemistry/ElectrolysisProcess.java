@@ -22,8 +22,10 @@ public record ElectrolysisProcess(Fluid feed, int input, Fluid cathode, int cath
     public boolean electrowinning() { return metal != Items.AIR; }
     /** Whether the anode gives off a gas; it gives none where the anode reaction stays in the solution, as in the sulfurous acid cell. */
     public boolean anodeGas() { return anode != Fluids.EMPTY; }
-    private static ElectrolysisProcess metal(Fluid feed, Item product) {
-        return new ElectrolysisProcess(feed, 1000, Fluids.EMPTY, 0, Fluids.EMPTY, 0, product, 3, CEMetals.DILUTE_SULFURIC_ACID.get(), 250, 20000);
+    private static ElectrolysisProcess metal(Fluid feed, Item product) { return metal(feed, product, CEMetals.DILUTE_SULFURIC_ACID.get()); }
+    /** Electrowinning gives back the acid that leached the ore: sulfuric for the sulfates, hydrochloric for lead chloride. */
+    private static ElectrolysisProcess metal(Fluid feed, Item product, Fluid recovered) {
+        return new ElectrolysisProcess(feed, 1000, Fluids.EMPTY, 0, Fluids.EMPTY, 0, product, 3, recovered, 250, 20000);
     }
     public static final int PLATES_PER_HEAD = 16, WATER_PER_PLATE = 3, FLUORIDE_PER_PLATE = 2,
         BRINE_PER_PLATE = 2, SODA_PER_PLATE = 2, SULFUROUS_PER_PLATE = 2;
@@ -43,7 +45,8 @@ public record ElectrolysisProcess(Fluid feed, int input, Fluid cathode, int cath
             metal(CEMetals.IRON_SULFATE_SOLUTION.get(), Items.IRON_INGOT),
             metal(CEMetals.COPPER_SULFATE_SOLUTION.get(), Items.COPPER_INGOT),
             metal(CEMetals.ZINC_SULFATE_SOLUTION.get(), com.simibubi.create.AllItems.ZINC_INGOT.get()),
-            metal(CEMetals.TIN_SULFATE_SOLUTION.get(), CEMetals.TIN_INGOT.get()));
+            metal(CEMetals.TIN_SULFATE_SOLUTION.get(), CEMetals.TIN_INGOT.get()),
+            metal(CEMetals.LEAD_CHLORIDE_SOLUTION.get(), CEMetals.LEAD_INGOT.get(), CEChlorAlkali.HYDROCHLORIC_ACID.get()));
     }
 
     public static List<ElectrolysisProcess> all() { return Recipes.VALUES; }

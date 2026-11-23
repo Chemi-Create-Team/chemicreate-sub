@@ -68,9 +68,11 @@ public final class CEMetals {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ZINC_SULFATE_SOLUTION = stream("zinc_sulfate_solution", 0xEED6E2DE);
     public static final DeferredItem<Item> TIN_INGOT = ITEMS.registerSimpleItem("tin_ingot");
     public static final DeferredItem<Item> LEAD_INGOT = ITEMS.registerSimpleItem("lead_ingot");
+    public static final DeferredItem<Item> LEAD_SINTER = ITEMS.registerSimpleItem("lead_sinter");
     public static final DeferredItem<Item> LITHIUM_CARBONATE = ITEMS.registerSimpleItem("lithium_carbonate");
     public static final DeferredItem<Item> CRUSHED_TIN = ITEMS.registerSimpleItem("crushed_raw_tin");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TIN_SULFATE_SOLUTION = stream("tin_sulfate_solution", 0xEEC9D9DB);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LEAD_CHLORIDE_SOLUTION = stream("lead_chloride_solution", 0xEEE6E2D2);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DILUTE_SULFURIC_ACID = stream("dilute_sulfuric_acid", 0xEED4DB96);
 
     private CEMetals() { }

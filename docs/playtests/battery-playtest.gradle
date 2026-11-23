@@ -1,0 +1,10 @@
+// Builds the battery, lead, lithium and aluminium test world and closes the game:
+//   ./gradlew -I docs/playtests/battery-playtest.gradle runClient
+// The world is saved under run/saves/createplant-battery-<time>/ and the result in run/battery-playtest-result.json.
+allprojects {
+    afterEvaluate {
+        extensions.getByName('neoForge').runs.named('client') {
+            systemProperty 'createplant.batteryPlaytest', 'true'
+        }
+    }
+}

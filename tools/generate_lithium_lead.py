@@ -8,6 +8,7 @@ sys.path.insert(0, 'tools')
 import generate_metal_ores as metal_ores
 from generate_reactor_assets import A, D, NS, write
 from generate_uranium_assets import loot, tag, item, fluid, fluid_out
+from generate_world_liquids import bucket_image
 
 ROOT = Path(__file__).resolve().parents[1]
 # Ore: (worldgen size, count, lowest y, highest y, names of the ore, names of the mineral), each en/ja/zh.
@@ -19,8 +20,13 @@ BATTERIES = {
     'lead_acid': ('Lead-Acid', '鉛蓄電池', '铅酸蓄电池', (58, 66, 84), (140, 150, 170)),
     'lithium_ion': ('Lithium-Ion', 'リチウムイオン電池', '锂离子电池', (36, 98, 104), (150, 214, 208)),
 }
+# Wet route: galena leached in hydrochloric acid, clarified, then electrowon like the sulfate metals.
+WET = {'lead_chloride_solution': (0xEEE6E2D2, ('Purified Lead Solution', '精製鉛溶液', '精制铅溶液'), True),
+       'lead_leach_slurry': (0xFF8B8F96, ('Lead Leach Slurry', '鉛浸出スラリー', '铅浸出矿浆'), False)}
+FLUID_INFO = {'lead_chloride_solution': ('PbCl₂ + H₂O', [], True), 'lead_leach_slurry': ('HCl + PbCl₂ + …', ['HIGH_VISCOSITY'], False)}
 TEXT = {
     'item.create_refinery_n_reactors.lead_ingot': ('Lead Ingot', '鉛インゴット', '铅锭'),
+    'item.create_refinery_n_reactors.lead_sinter': ('Lead Sinter', '鉛の焼結鉱', '铅烧结矿'),
     'item.create_refinery_n_reactors.lithium_carbonate': ('Lithium Carbonate', '炭酸リチウム', '碳酸锂'),
 }
 LANG = {
@@ -64,6 +70,10 @@ def textures():
         d.polygon([(2, 11), (4, 6), (13, 6), (14, 11)], fill=(70, 78, 98)); d.polygon([(4, 6), (13, 6), (12, 8), (3, 8)], fill=(150, 160, 184))
         d.rectangle((3, 9, 13, 10), fill=(104, 114, 138)); d.line((5, 7, 10, 7), fill=(206, 214, 232))
     texture_item('lead_ingot', ingot)
+    def sinter(d):
+        for x, y, c in ((2, 8, (150, 128, 70)), (7, 5, (196, 164, 82)), (8, 9, (120, 100, 58)), (4, 4, (176, 146, 76))):
+            d.polygon([(x, y + 2), (x + 1, y), (x + 4, y), (x + 5, y + 3), (x + 3, y + 5), (x, y + 4)], fill=c); d.point((x + 2, y + 1), fill=(236, 214, 130))
+    texture_item('lead_sinter', sinter)
     def salt(d):
         for x, y in ((3, 8), (6, 6), (9, 8), (5, 10), (8, 10), (11, 10), (7, 8)): d.rectangle((x, y, x + 2, y + 1), fill=(232, 234, 240)); d.point((x, y), fill=(255, 255, 255)); d.point((x + 2, y + 1), fill=(176, 180, 192))
     texture_item('lithium_carbonate', salt)
@@ -110,8 +120,24 @@ def blocks():
 
 
 def recipes():
-    write(D / 'recipe/smelting/galena.json', {'type': 'minecraft:smelting', 'category': 'misc', 'ingredient': {'item': NS + 'galena'}, 'result': item(NS + 'lead_ingot'), 'experience': .7, 'cookingtime': 200})
-    write(D / 'recipe/blasting/galena.json', {'type': 'minecraft:blasting', 'category': 'misc', 'ingredient': {'item': NS + 'galena'}, 'result': item(NS + 'lead_ingot'), 'experience': .7, 'cookingtime': 100})
+    # Lead has no furnace shortcut: galena is roasted to sinter and reduced, or smelted directly in one self-heating step.
+    for kind in ('smelting', 'blasting'): (D / f'recipe/{kind}/galena.json').unlink(missing_ok=True)
+    oxygen, dioxide = NS + 'oxygen_gas', NS + 'sulfur_dioxide'
+    # 2 PbS + 3 O2 -> 2 PbO + 2 SO2; the sulfur leaves as sulfur dioxide for the acid line.
+    write(D / 'recipe/pressure_reaction/galena_roasting.json', {'type': NS + 'pressure_reaction', 'heat_requirement': 'heated',
+        'ingredients': [{'item': NS + 'galena'}, {'item': NS + 'galena'}, fluid(oxygen, 1500)], 'results': [item(NS + 'lead_sinter', 2), fluid_out(dioxide, 1000)]})
+    # PbO + CO -> Pb + CO2.
+    write(D / 'recipe/pressure_reaction/lead_sinter_reduction.json', {'type': NS + 'pressure_reaction', 'heat_requirement': 'superheated',
+        'ingredients': [{'item': NS + 'lead_sinter'}, {'item': NS + 'lead_sinter'}, fluid(NS + 'carbon_monoxide', 1000)], 'results': [item(NS + 'lead_ingot', 2), fluid_out(NS + 'carbon_dioxide', 1000)]})
+    # PbS + O2 -> Pb + SO2: the burning sulfide heats the charge, so one vessel at the lower heat does both stages.
+    write(D / 'recipe/pressure_reaction/galena_direct_smelting.json', {'type': NS + 'pressure_reaction', 'heat_requirement': 'heated',
+        'ingredients': [{'item': NS + 'galena'}, {'item': NS + 'galena'}, fluid(oxygen, 1000)], 'results': [item(NS + 'lead_ingot', 2), fluid_out(dioxide, 1000)]})
+    # Wet route: 3 galena + 750 mB hydrochloric acid + 250 mB oxidant -> 4000 mB slurry; the clarifier gives 750 mB solution and 2 tailings; the electrolysis cell gives 3 ingots and 250 mB acid back.
+    write(D / 'recipe/pressure_reaction/lead_leaching.json', {'type': NS + 'pressure_reaction', 'module': 'stirred', 'heat_requirement': 'heated', 'processing_time': 200,
+        'ingredients': [{'item': NS + 'galena'}] * 3 + [fluid(NS + 'hydrochloric_acid', 750), {'type': 'neoforge:tag', 'tag': NS + 'leaching_oxidants', 'amount': 250}],
+        'results': [fluid_out(NS + 'lead_leach_slurry', 4000)]})
+    write(D / 'recipe/clarifying/lead.json', {'type': NS + 'clarifying', 'processing_time': 200, 'ingredients': [fluid(NS + 'lead_leach_slurry', 1000)],
+        'results': [fluid_out(NS + 'lead_chloride_solution', 750), {'id': NS + 'tailings_mud', 'count': 2}]})
     tag('c/tags/item/ingots/lead.json', [NS + 'lead_ingot']); tag('c/tags/item/ingots.json', ['#c:ingots/lead'])
     # Acid roasting of spodumene with soda ash gives lithium carbonate; the aluminosilicate residue is sand.
     write(D / 'recipe/pressure_reaction/lithium_carbonate.json', {'type': NS + 'pressure_reaction', 'heat_requirement': 'superheated',
@@ -136,20 +162,36 @@ def translations():
             data[f'block.create_refinery_n_reactors.deepslate_{ore}_ore'] = ('Deepslate ', '深層', '深板岩')[index] + ore_names[index]
             data[f'item.create_refinery_n_reactors.{ore}'] = mineral[index]
         for key, names in {**TEXT, **LANG}.items(): data[key] = names[index]
+        for name, (_, names, corrosive) in WET.items():
+            data[f'fluid.create_refinery_n_reactors.{name}'] = data[f'block.create_refinery_n_reactors.{name}'] = names[index]
+            suffix = ((' Corrosion-Resistant Bucket', '入り耐食合金バケツ', '耐蚀合金桶') if corrosive else (' Bucket', '入りバケツ', '桶'))[index]
+            data[f'item.create_refinery_n_reactors.{name}_bucket'] = names[index] + suffix
         for kind, names in BATTERIES.items():
             data[f'block.create_refinery_n_reactors.{kind}_battery_casing'] = (names[0] + ' Battery Casing', names[1] + 'ケーシング', names[2] + '外壳')[index]
             data[f'block.create_refinery_n_reactors.{kind}_battery_terminal'] = (names[0] + ' Battery Terminal', names[1] + '端子', names[2] + '端子')[index]
         path.write_bytes((json.dumps(data, ensure_ascii=False, indent=2).replace('\n', nl) + nl).encode('utf8'))
 
 
+def liquids():
+    for name, (color, *_) in WET.items():
+        bucket_image(name + '_bucket', color, True)
+        write(A / 'blockstates' / f'{name}.json', {'variants': {'': {'model': 'minecraft:block/water'}}})
+    path = D / 'chemistry/fluids.json'; text = path.read_text(encoding='utf8')
+    for name, (formula, hazards, aqueous) in FLUID_INFO.items():
+        if f'"{name}"' in text: continue
+        body = json.dumps({'formula': formula, 'hazards': hazards, **({'aqueous': True} if aqueous else {})}, ensure_ascii=False, indent=2).replace('\n', '\n  ')
+        text = text.replace('  "tin_leach_slurry": {', f'  "{name}": {body},\n  "tin_leach_slurry": {{', 1)
+    path.write_text(text, encoding='utf8')
+
+
 def classify():
     path = ROOT / 'tools/powder_items.json'; data = json.loads(path.read_text())
     for name, reason in (('spodumene', 'Mined mineral lump/crystal, not a powder process product.'), ('galena', 'Mined mineral lump/crystal, not a powder process product.'),
-                         ('lead_ingot', 'Metal ingot; retain its ingot sprite.'), ('lithium_carbonate', 'Refined lithium salt; retain its own sprite.')):
+                         ('lead_ingot', 'Metal ingot; retain its ingot sprite.'), ('lead_sinter', 'Roasted lead oxide sinter; retain its own sprite.'), ('lithium_carbonate', 'Refined lithium salt; retain its own sprite.')):
         data['preserved_items'][name] = reason
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
 
 
 if __name__ == '__main__':
-    textures(); blocks(); recipes(); translations(); classify()
+    textures(); blocks(); recipes(); liquids(); translations(); classify()
     print('Generated spodumene and galena, lead, lithium carbonate and the two battery banks')

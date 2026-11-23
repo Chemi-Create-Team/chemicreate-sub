@@ -64,6 +64,7 @@
   {"smiles":"[Cu+2].[O-]S(=O)(=O)[O-]","fluids":["copper_sulfate_solution"]},
   {"smiles":"[Fe+2].[O-]S(=O)(=O)[O-]","fluids":["iron_sulfate_solution"]},
   {"smiles":"[Sn+2].[O-]S(=O)(=O)[O-]","fluids":["tin_sulfate_solution"]},
+  {"smiles":"[Pb+2].[Cl-].[Cl-]","fluids":["lead_chloride_solution"]},
   {"smiles":"[Zn+2].[O-]S(=O)(=O)[O-]","fluids":["zinc_sulfate_solution"]},
   {"smiles":"O=[Ti+2].[O-]S(=O)(=O)[O-]","fluids":["titanyl_sulfate_solution"]},
   {"smiles":"[Zr+4].[O-]S(=O)(=O)[O-].[O-]S(=O)(=O)[O-]","fluids":["zirconium_sulfate_solution"]},

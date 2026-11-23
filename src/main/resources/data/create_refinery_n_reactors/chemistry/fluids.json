@@ -787,6 +787,17 @@
       "FLAMMABLE"
     ]
   },
+  "lead_chloride_solution": {
+    "formula": "PbCl₂ + H₂O",
+    "hazards": [],
+    "aqueous": true
+  },
+  "lead_leach_slurry": {
+    "formula": "HCl + PbCl₂ + …",
+    "hazards": [
+      "HIGH_VISCOSITY"
+    ]
+  },
   "tin_leach_slurry": {
     "formula": "H₂SO₄ + SnSO₄ + …",
     "hazards": [

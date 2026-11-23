@@ -132,7 +132,7 @@ def translations():
  captions={
  'title':('Wet leaching and slow clarification','湿式浸出と低速沈降','湿法浸出与低速沉降'),
  'build':('Use a lidded vessel with stirred internals and heating below. No dedicated leaching tank is needed.', 'ふた付き槽に攪拌羽根を組み込み、下から加熱します。専用の浸出槽は不要です。', '在带盖槽中安装搅拌叶片并从下方加热，无需专用浸出槽。'),
- 'ore':('Feed crushed iron, copper, zinc or tin through a funnel into the lidded vessel. Gold has no chemical route.', 'ふた付き槽へファンネルで砕いた鉄・銅・亜鉛・錫を投入。金は対象外です。', '用漏斗向带盖槽投入粉碎铁、铜、锌或锡，金不支持此路线。'),
+ 'ore':('Feed crushed iron, copper, zinc or tin, or galena for lead, through a funnel into the lidded vessel. Gold has no chemical route.', 'ふた付き槽へファンネルで砕いた鉄・銅・亜鉛・錫（鉛は方鉛鉱）を投入。金は対象外です。', '用漏斗向带盖槽投入粉碎铁、铜、锌或锡（铅用方铅矿），金不支持此路线。'),
  'inlets':('Supply dilute sulfuric acid to a lower liquid port and compressed air or oxygen to an upper gas process port.', '下段の液体入口へ希硫酸、上段の気体処理口へ圧搾空気か酸素を供給します。', '下层液体口供给稀硫酸，上层工艺气体口供给压缩空气或氧气。'),
  'stir':('Heat and stir: 3 crushed ores + 750 mB acid + 250 mB oxidant produce 4000 mB slurry in the lidded vessel.', '加熱しながら撹拌すると、砕いた鉱石3個＋希硫酸750 mB＋酸化用気体250 mBからスラリー4000 mBを生成します。', '加热搅拌：3份粉碎矿石＋750 mB酸＋250 mB氧化气体生成4000 mB矿浆。'),
  'clarifier':('Build an odd circular tank from tank casings. Place the center drive at rim height and replace the center floor block with a downward-facing inlet.', 'タンク構成ブロックで奇数径の円形タンクを作ります。縁と同じ高さの中央に駆動部を置き、床中央を下向きの流入口に替えます。', '用储罐外壳建造奇数直径的圆形储罐。在罐沿高度的中心安装驱动器，并把底板中心换成朝下的进料口。'),

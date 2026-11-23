@@ -325,6 +325,7 @@
     "spodumene": "Mined mineral lump/crystal, not a powder process product.",
     "galena": "Mined mineral lump/crystal, not a powder process product.",
     "lead_ingot": "Metal ingot; retain its ingot sprite.",
-    "lithium_carbonate": "Refined lithium salt; retain its own sprite."
+    "lithium_carbonate": "Refined lithium salt; retain its own sprite.",
+    "lead_sinter": "Roasted lead oxide sinter; retain its own sprite."
   }
 }

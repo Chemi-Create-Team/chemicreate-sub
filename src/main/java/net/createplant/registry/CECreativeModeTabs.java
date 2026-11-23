@@ -40,7 +40,7 @@ public class CECreativeModeTabs {
         List.of("uraninite", "bauxite", "pentlandite", "ilmenite", "zircon", "chromite", "molybdenite", "spodumene", "galena", "fluorite", "borax", "gypsum", "asbestos"),
         List.of("salt", "sulfur_dust", "alumina", "titanium_dioxide", "zirconia", "nickel_oxide", "molybdenum_trioxide", "chromium_oxide",
             "iron_oxide_red", "nickel_titanium_yellow", "molybdenum_blue", "triiron_tetroxide_pile", "ammonium_nitrate", "ammonium_sulfate",
-            "quicklime", "sodium_bicarbonate", "sodium_carbonate", "lithium_carbonate", "urea", "potash", "phosphate_fertilizer", "npk_fertilizer",
+            "quicklime", "sodium_bicarbonate", "sodium_carbonate", "lithium_carbonate", "lead_sinter", "urea", "potash", "phosphate_fertilizer", "npk_fertilizer",
             "pvc_resin", "cement_clinker", "ground_clinker", "cement_powder", "borosilicate_glass_frit", "water_treatment_flocculant",
             "treatment_sludge", "charred_wood"),
         List.of("carbon_powder", "unprocessed_steel", "pig_iron", "heated_unfinished_steel", "steel_slag", "steel_ingot", "steel_block", "ferrochrome", "aluminum_ingot", "lead_ingot", "nickel_ingot", "titanium_ingot", "zirconium_ingot", "chromium_ingot",
