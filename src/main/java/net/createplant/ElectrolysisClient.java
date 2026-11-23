@@ -60,7 +60,6 @@ public class ElectrolysisClient {
         if (Boolean.getBoolean("createplant.syntheticFuelPlaytest")) NeoForge.EVENT_BUS.addListener(net.createplant.client.SyntheticFuelPlaytestWorld::tick);
         if (Boolean.getBoolean("createplant.fertilizerPlaytest")) NeoForge.EVENT_BUS.addListener(net.createplant.client.FertilizerPlaytestWorld::tick);
         if (Boolean.getBoolean("createplant.batteryPlaytest")) NeoForge.EVENT_BUS.addListener(net.createplant.client.BatteryPlaytestWorld::tick);
-        modEventBus.addListener(net.createplant.client.GasCloudRenderer::registerShaders);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::renderGroundMist);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogColor);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogDistance);

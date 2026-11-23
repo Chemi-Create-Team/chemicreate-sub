@@ -113,6 +113,48 @@ def plume_texture():
     image.save(ASSETS / 'textures/entity/gas_plume.png')
 
 
+def mist_texture():
+    """The ground mist's density pattern, baked from the same value noise the old ground shader evaluated per pixel, so it looks the same with or without a shader pack.
+
+    One tile covers 32 blocks and wraps. Alpha is the pattern's density factor (never below 0.1, which the entity program discards), and the grey level follows it.
+    """
+    import numpy as np
+    size, y = 256, 3.17
+    u = (np.arange(size) + .5) / size
+    gx, gz = np.meshgrid(u, u)
+
+    def hash3(x, yy, z):
+        px, py, pz = (np.mod(v * k, 1) for v, k in ((x, .1031), (yy, .1030), (z, .0973)))
+        d = px * (py + 33.33) + py * (pz + 33.33) + pz * (px + 33.33)
+        px, py, pz = px + d, py + d, pz + d
+        return np.mod((px + py) * pz, 1)
+
+    def noise(x, yy, z, period):
+        ix, iy, iz = np.floor(x), np.floor(yy), np.floor(z)
+        fx, fy, fz = (v - np.floor(v) for v in (x, yy, z))
+        fx, fy, fz = (f * f * (3 - 2 * f) for f in (fx, fy, fz))
+        lx, hx = np.mod(ix, period[0]), np.mod(ix + 1, period[0])
+        lz, hz = np.mod(iz, period[1]), np.mod(iz + 1, period[1])
+        def plane(yo):
+            a = hash3(lx, iy + yo, lz) * (1 - fx) + hash3(hx, iy + yo, lz) * fx
+            b = hash3(lx, iy + yo, hz) * (1 - fx) + hash3(hx, iy + yo, hz) * fx
+            return a * (1 - fz) + b * fz
+        return plane(0) * (1 - fy) + plane(1) * fy
+
+    px, pz = gx * 21, gz * 21
+    drift = noise(px * .52, y * .52, pz * .52, (11, 11))
+    px, pz, py = px + (drift - .5) * .64, pz + (drift - .5) * .50, y + (drift - .5) * .24
+    broad = noise(px, py, pz, (21, 21))
+    fine = noise(px * 49 / 21 + 4, py * 2.35 + 2, pz * 49 / 21 + 7, (49, 49))
+    folds = broad * .67 + fine * .33
+    t = np.clip((folds - .2) / .58, 0, 1)
+    density = .12 + 1.8 * t * t * (3 - 2 * t)
+    alpha = np.clip(density / 1.92, .11, 1)
+    grey = np.clip(.81 + .21 * folds, 0, 1)
+    pixels = np.dstack([np.round(grey * 255)] * 3 + [np.round(alpha * 255)]).astype(np.uint8)
+    Image.fromarray(pixels, 'RGBA').save(ASSETS / 'textures/entity/gas_mist.png')
+
+
 def storyboard():
     scene = ponder.Structure(11, 5)
     for x in range(1, 6):
@@ -161,4 +203,5 @@ if __name__ == '__main__':
     duct_data()
     bucket_image('raw_process_gas_bucket', 0xFFBFCAD0)
     plume_texture()
+    mist_texture()
     storyboard()
