@@ -307,7 +307,8 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         }
         root.planProduction();
         feed.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        ProductionMonitor.produced(root, steam.fill(sample.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE), 0, 0);
+        double boiling = net.createplant.thermal.FluidState.boilingKelvin(sample, net.createplant.thermal.FluidState.pressure(sample));
+        ProductionMonitor.produced(root, steam.fillAt(sample.copyWithAmount(amount), Double.isFinite(boiling) ? boiling : net.createplant.thermal.FluidState.kelvin(net.createplant.thermal.FluidState.temperature(sample)), IFluidHandler.FluidAction.EXECUTE), 0, 0);
         heatJoules = Math.min(MAX_STORED_HEAT, heatJoules - amount * grade.joulesPerMb());
         status = "running";
         setChanged();

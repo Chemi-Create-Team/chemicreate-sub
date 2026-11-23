@@ -80,7 +80,7 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
             if(name.equals("cool_ammonia") || name.equals("condense_high_pressure_steam")) {
                 boolean high=name.equals("condense_high_pressure_steam");
                 source=net.createplant.thermal.FluidState.with(new FluidStack(Fluids.WATER,1000),high ? 12 : 10,high ? 12 : 4);
-                var step=net.createplant.thermal.PhaseChange.transfer(source,high ? 11 : 9,high ? 12 : 4);
+                var step=net.createplant.thermal.PhaseChange.transfer(source,net.createplant.block.entity.RadiatorBlockEntity.cooling(source,net.createplant.thermal.FluidState.kelvin(high ? 12 : 10)).level(),high ? 12 : 4);
                 return new ManufacturingRecipe(List.of(),List.of(source),List.of(),List.of(step.output(step.batches(1000))),
                     ItemStack.EMPTY,ReactorModule.NONE,HeatCondition.NONE);
             }
@@ -91,8 +91,9 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
                 source=net.createplant.thermal.FluidState.with(source,6,4);
                 a=6;
             }
-            var hot=net.createplant.thermal.PhaseChange.transfer(source,net.createplant.thermal.ThermalEquipment.outletLevel(a,b,false),net.createplant.thermal.FluidState.pressure(source));
-            var cold=net.createplant.thermal.PhaseChange.transfer(coolant,net.createplant.thermal.ThermalEquipment.outletLevel(b,a,false),net.createplant.thermal.FluidState.pressure(coolant));
+            var exchange=net.createplant.thermal.ThermalEquipment.exchange(source,net.createplant.thermal.FluidState.kelvin(a),coolant,net.createplant.thermal.FluidState.kelvin(b),false);
+            var hot=net.createplant.thermal.PhaseChange.transfer(source,exchange.firstLevel(),net.createplant.thermal.FluidState.pressure(source));
+            var cold=net.createplant.thermal.PhaseChange.transfer(coolant,exchange.secondLevel(),net.createplant.thermal.FluidState.pressure(coolant));
             int amount=hot.consumed()*cold.consumed();
             return new ManufacturingRecipe(List.of(),List.of(source.copyWithAmount(amount),coolant.copyWithAmount(amount)),List.of(),
                 List.of(hot.output(amount/hot.consumed()),cold.output(amount/cold.consumed())), ItemStack.EMPTY,ReactorModule.NONE,HeatCondition.NONE);

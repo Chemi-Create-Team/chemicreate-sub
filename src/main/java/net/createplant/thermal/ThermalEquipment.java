@@ -104,9 +104,21 @@ public final class ThermalEquipment {
         };
     }
 
-    public static int outletLevel(int own,int other,boolean opposing) {
-        if(opposing) return Math.abs(own-other)<=1 ? own : other+Integer.signum(own-other);
-        return (own+other+(own>other ? 1 : 0))/2;
+    /** The outlets of two streams that pass each other; {@code first} is the hotter when {@code firstHot}. */
+    public record Exchange(HeatContent.Shift first,HeatContent.Shift second,int firstLevel,int secondLevel,boolean firstHot) { }
+
+    /**
+     * Heat moved per mB of each stream (both take the same amount): parallel flow ends both at one temperature, counterflow moves a
+     * share of the best case. A stream that reaches its boiling point takes or gives its latent heat.
+     */
+    public static Exchange exchange(FluidStack first,double kelvinA,FluidStack second,double kelvinB,boolean counterflow) {
+        double capacityA=HeatContent.capacity(first.copyWithAmount(1000)), capacityB=HeatContent.capacity(second.copyWithAmount(1000));
+        double moved=(counterflow ? COUNTERFLOW_EFFICIENCY*Math.min(capacityA,capacityB) : capacityA*capacityB/(capacityA+capacityB))*Math.abs(kelvinA-kelvinB);
+        boolean firstHot=kelvinA>kelvinB;
+        var shiftA=HeatContent.shift(first.copyWithAmount(1000),kelvinA,firstHot ? -moved : moved);
+        var shiftB=HeatContent.shift(second.copyWithAmount(1000),kelvinB,firstHot ? moved : -moved);
+        return new Exchange(shiftA,shiftB,FluidState.levelFor(first,shiftA.kelvin(),FluidState.pressure(first),shiftA.gas()),
+            FluidState.levelFor(second,shiftB.kelvin(),FluidState.pressure(second),shiftB.gas()),firstHot);
     }
 
     private static int gcd(int a,int b) {
@@ -129,15 +141,10 @@ public final class ThermalEquipment {
             owner.thermalStatus("temperature_delta",false);
             return;
         }
-        // Heat moved per mB of each stream (both streams take the same amount): parallel flow ends at one temperature,
-        // counterflow moves a share of the best case. A stream that reaches its boiling point takes or gives its latent heat.
-        double capacityA=HeatContent.capacity(first.copyWithAmount(1000)), capacityB=HeatContent.capacity(second.copyWithAmount(1000));
-        double moved=(counterflow() ? COUNTERFLOW_EFFICIENCY*Math.min(capacityA,capacityB) : capacityA*capacityB/(capacityA+capacityB))*Math.abs(kelvinA-kelvinB);
-        boolean firstHot=kelvinA>kelvinB;
-        var shiftA=HeatContent.shift(first.copyWithAmount(1000),kelvinA,firstHot ? -moved : moved);
-        var shiftB=HeatContent.shift(second.copyWithAmount(1000),kelvinB,firstHot ? moved : -moved);
-        int outA=FluidState.levelFor(first,shiftA.kelvin(),FluidState.pressure(first),shiftA.gas());
-        int outB=FluidState.levelFor(second,shiftB.kelvin(),FluidState.pressure(second),shiftB.gas());
+        var exchange=exchange(first,kelvinA,second,kelvinB,counterflow());
+        boolean firstHot=exchange.firstHot();
+        var shiftA=exchange.first();var shiftB=exchange.second();
+        int outA=exchange.firstLevel(), outB=exchange.secondLevel();
         var changeA=PhaseChange.transfer(first,outA,FluidState.pressure(first));
         var changeB=PhaseChange.transfer(second,outB,FluidState.pressure(second));
         long common=(long)changeA.consumed()/gcd(changeA.consumed(),changeB.consumed())*changeB.consumed();

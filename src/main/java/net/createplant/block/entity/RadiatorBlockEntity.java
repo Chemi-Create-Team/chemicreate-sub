@@ -23,6 +23,24 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
     public static final int CONDENSER_FLOW=4000, CONDENSER_BUFFER=32000;
     /** Heat the fans take from each mB: one level of water, 1 g x 4.18 J/g/K x 68.75 K. */
     public static final double JOULES_PER_MB=287;
+
+    /** What one pass of the fans does to a stream. */
+    public record Cooling(HeatContent.Shift shift,int level) { }
+
+    /**
+     * Each mB handed to the fans loses at least the heat that takes water down one level, and enough to reach the next level down
+     * when that is more (steam must be able to condense); it never ends below room temperature. Season changes the flow, not this.
+     */
+    public static Cooling cooling(FluidStack fluid,double kelvin) {
+        double ambient=FluidState.kelvin(FluidState.AMBIENT);
+        var sample=fluid.copyWithAmount(1000);
+        int own=FluidState.temperature(fluid);
+        double toNext=own==0 ? 0 : Math.max(0,kelvin-FluidState.kelvin(own-1))*HeatContent.capacity(sample)
+            +(FluidState.gas(sample)!=FluidState.gas(sample,own-1,FluidState.pressure(sample)) ? HeatContent.latent(sample) : 0);
+        var cooled=HeatContent.shift(sample,kelvin,-Math.max(JOULES_PER_MB*1000,toNext),ambient);
+        int target=kelvin>ambient+.5 ? FluidState.levelFor(fluid,cooled.kelvin(),FluidState.pressure(fluid),cooled.gas()) : own;
+        return new Cooling(cooled,target);
+    }
     private final ThermalFluidTank input=new ThermalFluidTank(CONDENSER_BUFFER,s->changed()),output=new ThermalFluidTank(CONDENSER_BUFFER,s->changed());
     private BlockPos controller;
     private List<BlockPos> fans=List.of();
@@ -121,15 +139,10 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             }
             var fluid=input.getFluid();
             if(fluid.isEmpty()) { coolingCredit=0;ProductionMonitor.limitedBy(this,"feed");return; }
-            double season=SeasonalThermal.cooling(level), ambient=FluidState.kelvin(FluidState.AMBIENT);
-            // Each mB handed to the fans loses at least the heat that takes water down one level, and enough to reach the next level
-            // down when that is more (steam must be able to condense); it never ends below room temperature. Season changes the flow.
-            var sample=fluid.copyWithAmount(1000);
-            int own=FluidState.temperature(fluid);
-            double toNext=own==0 ? 0 : Math.max(0,input.kelvin()-FluidState.kelvin(own-1))*HeatContent.capacity(sample)
-                +(FluidState.gas(sample)!=FluidState.gas(sample,own-1,FluidState.pressure(sample)) ? HeatContent.latent(sample) : 0);
-            var cooled=HeatContent.shift(sample,input.kelvin(),-Math.max(JOULES_PER_MB*1000,toNext),ambient);
-            int target=input.kelvin()>ambient+.5 ? FluidState.levelFor(fluid,cooled.kelvin(),FluidState.pressure(fluid),cooled.gas()) : FluidState.temperature(fluid);
+            double season=SeasonalThermal.cooling(level);
+            var pass=cooling(fluid,input.kelvin());
+            var cooled=pass.shift();
+            int target=pass.level();
             var change=PhaseChange.transfer(fluid,target,FluidState.pressure(fluid));
             int maxRpm=com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
             int maximum=Math.max(1,(int)(100d*fans.size()*maxRpm/64*season));

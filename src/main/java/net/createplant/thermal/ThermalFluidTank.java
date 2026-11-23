@@ -22,6 +22,17 @@ public class ThermalFluidTank extends SmartFluidTank {
         entryKelvin=kelvin;entryQuality=quality;
         try { return fill(resource,action); } finally { entryKelvin=Double.NaN;entryQuality=Double.NaN; }
     }
+    /**
+     * Moves up to {@code amount} to another tank with its real temperature and gas share, so a part-way boiling or condensing
+     * content keeps its latent heat. Returns what the other tank took.
+     */
+    public int transferTo(ThermalFluidTank target,int amount) {
+        double kelvin=kelvin(), quality=heat.quality(fluid);
+        var offered=drain(amount,FluidAction.SIMULATE);
+        int fit=offered.isEmpty() ? 0 : target.fillAt(offered,kelvin,quality,FluidAction.SIMULATE);
+        if(fit<=0)return 0;
+        return target.fillAt(drain(fit,FluidAction.EXECUTE),kelvin,quality,FluidAction.EXECUTE);
+    }
     @Override public void setFluid(FluidStack stack) {
         super.setFluid(stack);
         // Emptying the tank from outside (a rebuilt structure, a cleared machine) leaves no heat behind.

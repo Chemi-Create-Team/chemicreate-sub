@@ -76,7 +76,7 @@ public final class TankBoiler {
         var level = owner.getLevel();
         if (level == null || level.isClientSide) return;
         if (!owner.isController()) {
-            if (!steam.isEmpty() && of(owner.getControllerBE()) instanceof TankBoiler root) steam.drain(root.steam.fill(steam.getFluid(), IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+            if (!steam.isEmpty() && of(owner.getControllerBE()) instanceof TankBoiler root) steam.transferTo(root.steam, steam.getFluidAmount());
             return;
         }
         String previous = status;
@@ -120,7 +120,9 @@ public final class TankBoiler {
         owner.setChanged();
         if (amount <= 0) { status = "working"; return; }
         feed.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        ProductionMonitor.produced(owner, steam.fill(sample.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE), 0, 0);
+        // Steam leaves the water at its boiling point, whatever level the grade rounds it to.
+        double boiling = net.createplant.thermal.FluidState.boilingKelvin(sample, net.createplant.thermal.FluidState.pressure(sample));
+        ProductionMonitor.produced(owner, steam.fillAt(sample.copyWithAmount(amount), Double.isFinite(boiling) ? boiling : net.createplant.thermal.FluidState.kelvin(net.createplant.thermal.FluidState.temperature(sample)), IFluidHandler.FluidAction.EXECUTE), 0, 0);
         heatJoules -= amount * SteamGrades.ORDINARY.joulesPerMb();
         status = "running";
     }

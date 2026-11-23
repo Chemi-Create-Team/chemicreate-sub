@@ -33,7 +33,12 @@ import net.neoforged.neoforge.items.*;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.*;
 
 public final class GasifierBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    private static final int REACTION_TEMPERATURE = 800, HEATER_TARGET = 1000, BATCH_HEAT_LOSS = 60, SPEED = 10;
+    private static final int REACTION_TEMPERATURE = 800, SPEED = 10;
+    /**
+     * The heat balance of the furnace body: each heat level of the burner below gives 1 MW, the walls lose 1020 W per kelvin above 20 C
+     * (so one lit burner settles at 1000 C), and the body warms by its heat capacity. A batch takes 480 kJ for the endothermic gasification.
+     */
+    private static final double THERMAL_MASS = 8000, BURNER_WATTS = 1e6, WALL_WATTS_PER_KELVIN = 1020, BATCH_JOULES = 480_000, TICK_SECONDS = .05;
     private static final TagKey<Fluid> STEAM_INPUTS = TagKey.create(Registries.FLUID, CreatePlant.location("gasifier_steam"));
     // Tank indices are part of the saved inventory and include recovery-only slots.
     private static final int OXIDIZER = 0, STEAM = 1, GAS = 2, COOLANT_IN = 3, COOLANT_OUT = 4, QUENCH = 5;
@@ -55,6 +60,8 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         };
         ItemStack hotSlag = ItemStack.EMPTY;
         int temperature = 20, progress, duration;
+        /** The temperature before rounding to whole degrees, so slow heating and cooling are not lost to the rounding. */
+        double exact = 20;
         ResourceLocation batch;
         boolean feedChanged = true;
         RecipeHolder<EntrainedGasificationRecipe> selected;
@@ -369,8 +376,15 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         return inventory.selected == null ? null : inventory.selected.value();
     }
 
-    private void heat(int target, int rate) {
-        inventory.temperature += Math.clamp(target - inventory.temperature, -rate, rate);
+    /** One tick of the heat balance with {@code watts} of burner power; the temperature never leaves 20 to 1800 C. */
+    private void exchangeHeat(double watts) {
+        inventory.exact = Math.clamp(inventory.exact + (watts - WALL_WATTS_PER_KELVIN * (inventory.exact - 20)) * TICK_SECONDS / THERMAL_MASS, 20, 1800);
+        inventory.temperature = (int) Math.round(inventory.exact);
+    }
+
+    private void takeHeat(double joules) {
+        inventory.exact = Math.max(20, inventory.exact - joules / THERMAL_MASS);
+        inventory.temperature = (int) Math.round(inventory.exact);
     }
 
     private void planProduction(EntrainedGasificationRecipe recipe) {
@@ -386,12 +400,13 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
             if (recipes.size() == 1) planProduction(recipes.getFirst().value());
         }
         var heater = worldPosition.below();
-        if (!(BoilerHeater.findHeat(level, heater, level.getBlockState(heater)) > 0)) {
+        float supplied = BoilerHeater.findHeat(level, heater, level.getBlockState(heater));
+        if (!(supplied > 0)) {
             status = "heat_required";
-            heat(20, 4);
+            exchangeHeat(0);
             return;
         }
-        heat(HEATER_TARGET, 24);
+        exchangeHeat(supplied * BURNER_WATTS);
         if (inventory.temperature < REACTION_TEMPERATURE) {
             status = "preheat";
             return;
@@ -422,7 +437,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         inventory.items.extractItem(inventory.fuelSlot, 1, false);
         inventory.tanks[STEAM].drain(recipe.steam().amount(), EXECUTE);
         ProductionMonitor.produced(this, inventory.tanks[GAS].fill(gas, EXECUTE), 0, 0);
-        heat(20, BATCH_HEAT_LOSS);
+        takeHeat(BATCH_JOULES);
     }
 
     @Override public void tick() {
@@ -479,6 +494,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         formed = true;
         status = state;
         inventory.temperature = temperature;
+        inventory.exact = temperature;
         for (int y = 0; y < 6; y++) for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
             if (level.getBlockEntity(worldPosition.offset(x, y, z)) instanceof GasifierBlockEntity part && part != this)
                 part.controller = worldPosition;
@@ -510,6 +526,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         data.put("Items", inventory.items.serializeNBT(lookup));
         if (!inventory.hotSlag.isEmpty()) data.put("HotSlag", inventory.hotSlag.save(lookup));
         data.putInt("Temperature", inventory.temperature);
+        data.putDouble("TemperatureExact", inventory.exact);
         data.putInt("Progress", inventory.progress);
         data.putInt("Duration", inventory.duration);
         if (inventory.batch != null) data.putString("Batch", inventory.batch.toString());
@@ -542,6 +559,8 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
         inventory.items.deserializeNBT(lookup, data.getCompound("Items"));
         inventory.hotSlag = ItemStack.parseOptional(lookup, data.getCompound("HotSlag"));
         inventory.temperature = Math.clamp(data.getInt("Temperature"), 20, 1800);
+        double exact = data.getDouble("TemperatureExact");
+        inventory.exact = data.contains("TemperatureExact") && Double.isFinite(exact) && Math.abs(exact - inventory.temperature) <= 1 ? exact : inventory.temperature;
         inventory.progress = Math.clamp(data.getInt("Progress"), 0, 720000);
         inventory.duration = Math.clamp(data.getInt("Duration"), 0, 720000);
         inventory.batch = ResourceLocation.tryParse(data.getString("Batch"));

@@ -15,7 +15,7 @@ public final class HeatContent {
     /** What a heating or cooling step produced; {@code left} is the energy the content could not take. */
     public record Outcome(FluidStack stack,boolean structural,double left) { }
 
-    private double kelvin=Double.NaN,quality=Double.NaN,residual;
+    private double kelvin=Double.NaN,quality=Double.NaN,residual,lastOutKelvin=Double.NaN,lastOutQuality=Double.NaN;
     private int level=-1;
     private Fluid fluid;
 
@@ -42,6 +42,9 @@ public final class HeatContent {
         return valid(stack) && !Double.isNaN(quality) ? quality : FluidState.gas(stack) ? 1 : 0;
     }
     public double residual() { return residual; }
+    /** The real temperature and gas share the contents had when the last amount left them. */
+    public double lastOutKelvin() { return lastOutKelvin; }
+    public double lastOutQuality() { return lastOutQuality; }
     public void set(FluidStack stack,double newKelvin,double newQuality) {
         if(stack.isEmpty()) { kelvin=Double.NaN;quality=Double.NaN;level=-1;fluid=null;return; }
         kelvin=clampKelvin(newKelvin);quality=newQuality;level=FluidState.temperature(stack);fluid=stack.getFluid();
@@ -71,6 +74,11 @@ public final class HeatContent {
     public boolean leave(FluidStack before,FluidStack out,FluidStack left) {
         double all=capacity(before), tAll=kelvin(before), cOut=capacity(out), tOut=FluidState.kelvin(FluidState.temperature(out));
         double q=quality(before);
+        // Part way through boiling or condensing, what leaves is the same mix of liquid and gas at the boiling point, so the rest
+        // keeps its temperature and its share, and the share of the latent heat that leaves is the share of the amount.
+        boolean partial=q>EPSILON && q<1-EPSILON;
+        if(partial)tOut=tAll;
+        lastOutKelvin=tAll;lastOutQuality=q;
         if(left.isEmpty()) {
             int own=FluidState.temperature(before);
             residual=cap(residual+all*tAll-cOut*tOut,all*(FluidState.upperBound(own)-FluidState.lowerBound(own))/2);
@@ -79,6 +87,11 @@ public final class HeatContent {
         }
         double t=clampKelvin(remainder(all,tAll,cOut,tOut,capacity(left)));
         if(Double.isNaN(t))t=tAll;
+        // A liquid never ends above its boiling point or a gas below it; rounding the stream to a level cannot push it there.
+        if(FluidState.phaseSensitive(left)) {
+            double boil=FluidState.boilingKelvin(left,FluidState.pressure(left));
+            if(Double.isFinite(boil))t=FluidState.gas(left) ? Math.max(t,boil) : Math.min(t,boil);
+        }
         int next=FluidState.levelFor(left,t,FluidState.pressure(left),FluidState.gas(left));
         boolean changed=next!=FluidState.temperature(left);
         if(changed)FluidState.setTemperature(left,next);

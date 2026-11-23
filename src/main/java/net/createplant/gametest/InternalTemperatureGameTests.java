@@ -105,4 +105,20 @@ public final class InternalTemperatureGameTests {
         h.assertTrue(partial.gas()==(partial.quality()>=.5) && partial.quality()>0 && partial.quality()<1,"Half the heat leaves the stream part way through condensing");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty")
+    public static void drainingABoilingTankKeepsItsBoilingPointAndGasShare(GameTestHelper h) {
+        var tank=new ThermalFluidTank(8000,ignored->{});
+        tank.fill(water(1000,8),EXECUTE);
+        var heater=new TankHeating();
+        for(int pass=0;pass<2;pass++)heater.tick(java.util.List.of(tank.getFluid()),TankHeating.LIT_WATTS,tank::capacityFor,java.util.List.of(tank.heat()));
+        double quality=tank.heat().quality(tank.getFluid());
+        h.assertTrue(quality>0 && quality<1 && !FluidState.gas(tank.getFluid()),"Two passes leave the water part way through boiling");
+        tank.drain(400,EXECUTE);
+        h.assertTrue(tank.getFluidAmount()==600 && Math.abs(tank.kelvin()-373.15)<.01 && Math.abs(tank.heat().quality(tank.getFluid())-quality)<1e-9,"A part-way boiling tank keeps its temperature and gas share when some leaves");
+        var other=new ThermalFluidTank(8000,ignored->{});
+        int moved=tank.transferTo(other,300);
+        h.assertTrue(moved==300 && Math.abs(other.kelvin()-373.15)<.01 && Math.abs(other.heat().quality(other.getFluid())-quality)<1e-9,"A transfer between tanks carries the temperature and gas share");
+        h.succeed();
+    }
 }

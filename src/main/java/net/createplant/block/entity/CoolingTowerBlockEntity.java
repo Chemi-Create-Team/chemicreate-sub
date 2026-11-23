@@ -30,12 +30,17 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
     private BlockPos fault;
     private double watts;
     private int flow;
+    /** Joules of heat the last pass rejected to the air. */
+    private double rejected;
+    /** Heat the tower rejects per mB of its rated flow: water at the top of the liquid range cooled to room temperature. */
+    public static final double RATED_JOULES_PER_MB=287.5;
     private String status = "validating";
     public CoolingTowerBlockEntity(BlockPos pos, BlockState state) { super(CEPlantSystems.TOWER_ENTITY.get(), pos, state);fault = pos; }
     private ThermalFluidTank tank() { return new ThermalFluidTank(CAPACITY, stack -> setChanged()); }
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
     public boolean formed() { return formed; }
     public double watts() { return watts; }
+    public double rejectedJoules() { return rejected; }
     public int maximumFlow() { return (int) Math.round(MAX_FLOW * net.createplant.thermal.SeasonalThermal.cooling(level)); }
     public boolean steaming() { return formed && watts > 0; }
 
@@ -122,28 +127,34 @@ public class CoolingTowerBlockEntity extends SmartBlockEntity implements IHaveGo
     }
 
     public void process() {
-        watts=0;flow=0;if(!formed || isRemoved()){status="structure";ProductionMonitor.limitedBy(this, status);return;}
+        watts=0;flow=0;rejected=0;if(!formed || isRemoved()){status="structure";ProductionMonitor.limitedBy(this, status);return;}
         int maximum = maximumFlow();
         ProductionMonitor.plan(this, maximum * 20d, 0, 0);
         if(tanks[0].isEmpty() && tanks[2].isEmpty()){status="feed";ProductionMonitor.limitedBy(this, status);return;}
         FluidStack hot=tanks[0].getFluid();
         int feed=Math.min(maximum,hot.getAmount());
         if(net.createplant.thermal.FluidState.liquidWater(hot)) {
-            var change=net.createplant.thermal.PhaseChange.transfer(hot,net.createplant.thermal.FluidState.AMBIENT,
-                net.createplant.thermal.FluidState.pressure(hot));
-            int count=change.fitting(change.batches(feed),tanks[1]);
+            // The tower is rated to reject the heat of its full flow of the hottest liquid water it takes down to room temperature;
+            // water already warmer than that takes more of the budget per mB, cooler water less, and none is cooled below ambient.
+            double ambient=net.createplant.thermal.FluidState.kelvin(net.createplant.thermal.FluidState.AMBIENT), kelvin=tanks[0].kelvin();
+            double perMb=Math.max(0,kelvin-ambient)*net.createplant.thermal.HeatContent.capacity(hot.copyWithAmount(1000))/1000;
+            int allowed=perMb<=0 ? feed : (int)Math.min(feed,Math.floor(maximum*RATED_JOULES_PER_MB/perMb));
+            int level=net.createplant.thermal.FluidState.temperature(hot)>net.createplant.thermal.FluidState.AMBIENT ? net.createplant.thermal.FluidState.AMBIENT : net.createplant.thermal.FluidState.temperature(hot);
+            var change=net.createplant.thermal.PhaseChange.transfer(hot,level,net.createplant.thermal.FluidState.pressure(hot));
+            int count=change.fitting(change.batches(allowed),tanks[1]);
             if(count>0) {
                 flow=count*change.consumed();
                 tanks[0].drain(flow,IFluidHandler.FluidAction.EXECUTE);
-                ProductionMonitor.produced(this,tanks[1].fill(change.output(count),IFluidHandler.FluidAction.EXECUTE),0,0);
+                ProductionMonitor.produced(this,tanks[1].fillAt(change.output(count),Math.min(kelvin,ambient),IFluidHandler.FluidAction.EXECUTE),0,0);
                 watts=flow*400d;
+                rejected=flow*perMb;
                 setChanged();
             }
         }
         ProductionMonitor.limitedBy(this, flow < feed ? "output" : feed < maximum ? "feed" : "rated");
         if(!tanks[2].isEmpty()){
             int count=tanks[1].fill(tanks[2].getFluid().copyWithAmount(Math.min(MAX_FLOW,tanks[2].getFluidAmount())),IFluidHandler.FluidAction.SIMULATE);
-            if(count>0)tanks[1].fill(tanks[2].drain(count,IFluidHandler.FluidAction.EXECUTE),IFluidHandler.FluidAction.EXECUTE);
+            if(count>0)tanks[2].transferTo(tanks[1],count);
         }
         status=flow>0 ? "cooling" : tanks[1].getSpace()==0 ? "output" : "idle";
     }

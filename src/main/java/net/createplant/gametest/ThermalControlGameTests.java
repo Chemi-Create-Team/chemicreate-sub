@@ -55,10 +55,13 @@ public class ThermalControlGameTests {
     @GameTest(template="test_fractionation")
     public static void parallelAndCounterflowLevelsAndRate(GameTestHelper h) {
         for(int heat=0;heat<=16;heat++)for(int cold=0;cold<heat;cold++) {
-            h.assertTrue(ThermalEquipment.outletLevel(heat,cold,false)==(heat+cold+1)/2
-                && ThermalEquipment.outletLevel(cold,heat,false)==(heat+cold)/2,"Parallel flow rounds both sides without gaining heat");
-            h.assertTrue(ThermalEquipment.outletLevel(heat,cold,true)==cold+1
-                && ThermalEquipment.outletLevel(cold,heat,true)==heat-1,"Opposing inlets approach the other side within one level");
+            // Two liquid streams of the same substance: parallel flow ends at the mean, counterflow moves 0.9 of the difference.
+            var a=FluidState.with(new FluidStack(net.createplant.registry.CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(),1000),heat,4);var b=FluidState.with(new FluidStack(net.createplant.registry.CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(),1000),cold,4);
+            double kelvinHot=FluidState.kelvin(heat),kelvinCold=FluidState.kelvin(cold);
+            var parallel=ThermalEquipment.exchange(a,kelvinHot,b,kelvinCold,false);
+            h.assertTrue(parallel.firstHot() && Math.abs(parallel.first().kelvin()-parallel.second().kelvin())<.01 && parallel.first().kelvin()<=kelvinHot && parallel.second().kelvin()>=kelvinCold,"Parallel flow ends both streams at one temperature without gaining heat");
+            var counter=ThermalEquipment.exchange(a,kelvinHot,b,kelvinCold,true);
+            h.assertTrue(Math.abs(counter.first().kelvin()-(kelvinHot-.9*(kelvinHot-kelvinCold)))<.01 && Math.abs(counter.second().kelvin()-(kelvinCold+.9*(kelvinHot-kelvinCold)))<.01,"Opposing inlets move 0.9 of the temperature difference");
         }
         var be=build(h.getLevel(),h.absolutePos(new BlockPos(3,2,2)),Direction.NORTH,2);
         var hot=FluidState.with(new FluidStack(CEPetroFluids.HEAVY_OIL.get(),500),11,4);

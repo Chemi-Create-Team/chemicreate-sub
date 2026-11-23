@@ -251,14 +251,14 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             f(CEProcessFluids.HIGH_PRESSURE_STEAM.get(),1000),f(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),
             f(CEProcessFluids.WARM_SLIME_COOLANT.get(),1000))) {
             int temperature=net.createplant.thermal.FluidState.temperature(hot), pressure=net.createplant.thermal.FluidState.pressure(hot);
-            var coolingStep=net.createplant.thermal.PhaseChange.transfer(hot,temperature-1,pressure);
+            var coolingStep=net.createplant.thermal.PhaseChange.transfer(hot,net.createplant.block.entity.RadiatorBlockEntity.cooling(hot,net.createplant.thermal.FluidState.kelvin(temperature)).level(),pressure);
             int batches=coolingStep.batches(hot.getAmount());
             if(batches>0)cooling.add(PlantProcess.fluids(List.of(hot.copyWithAmount(batches*coolingStep.consumed())),
                 List.of(coolingStep.output(batches)),Component.translatable("fluid_state.create_refinery_n_reactors.jei.radiator")));
             for(boolean counterflow:List.of(false,true)) {
                 var cold=net.createplant.thermal.FluidState.with(f(Fluids.WATER,1000),6,8);
-                int outHot=net.createplant.thermal.ThermalEquipment.outletLevel(temperature,6,counterflow);
-                int outCold=net.createplant.thermal.ThermalEquipment.outletLevel(6,temperature,counterflow);
+                var exchange=net.createplant.thermal.ThermalEquipment.exchange(hot,net.createplant.thermal.FluidState.kelvin(temperature),cold,net.createplant.thermal.FluidState.kelvin(6),counterflow);
+                int outHot=exchange.firstLevel(), outCold=exchange.secondLevel();
                 var a=net.createplant.thermal.PhaseChange.transfer(hot,outHot,pressure);
                 var b=net.createplant.thermal.PhaseChange.transfer(cold,outCold,8);
                 if(1000%a.consumed()!=0 || 1000%b.consumed()!=0)continue;
