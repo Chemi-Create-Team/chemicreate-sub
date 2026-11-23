@@ -136,6 +136,16 @@ public class ElectrodeHeadBlockEntity extends SmartBlockEntity implements IHaveG
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CEElectrolysis.HEAD_ENTITY.get(), (head, side) -> side == Direction.DOWN ? null : head.rack());
     }
 
+    public Component outletTooltip(Direction side) {
+        if (side == null || side == Direction.DOWN) return null;
+        var owner = controller();
+        var stored = products.getStackInSlot(0);
+        var recipe = owner == null ? null : owner.process();
+        if (stored.isEmpty() && (recipe == null || !recipe.electrowinning())) return null;
+        var product = stored.isEmpty() ? recipe.metal().getDescription() : stored.getHoverName();
+        return Component.translatable(raised() ? "electrolysis.port.metal" : "electrolysis.port.metal_locked", product);
+    }
+
     @Override protected void write(CompoundTag tag, HolderLookup.Provider lookup, boolean clientPacket) {
         super.write(tag, lookup, clientPacket);
         tag.put("Electrodes", electrodes.serializeNBT(lookup));tag.put("Products", products.serializeNBT(lookup));

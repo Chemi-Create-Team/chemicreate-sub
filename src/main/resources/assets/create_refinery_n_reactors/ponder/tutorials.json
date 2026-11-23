@@ -6617,7 +6617,6 @@
     "height": 9,
     "components": [
       "alumina",
-      "aluminium_sulfate_solution_bucket",
       "aluminum_ingot",
       "aluminum_sheet",
       "bauxite",
@@ -6665,7 +6664,7 @@
         ],
         "process": {
           "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/aluminium_sulfate_solution",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/sodium_aluminate_solution",
           "offset": 32,
           "width": 11,
           "height": 9,
@@ -6695,66 +6694,6 @@
         ],
         "process": {
           "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/alumina",
-          "offset": 32,
-          "width": 11,
-          "height": 9,
-          "machine": [
-            4,
-            2,
-            4
-          ],
-          "input": [
-            3,
-            2,
-            4
-          ],
-          "output": [
-            7,
-            4,
-            4
-          ]
-        }
-      },
-      {
-        "key": "step_4",
-        "target": [
-          4,
-          2,
-          4
-        ],
-        "process": {
-          "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/sodium_aluminate_solution",
-          "offset": 32,
-          "width": 11,
-          "height": 9,
-          "machine": [
-            4,
-            2,
-            4
-          ],
-          "input": [
-            3,
-            2,
-            4
-          ],
-          "output": [
-            7,
-            4,
-            4
-          ]
-        }
-      },
-      {
-        "key": "step_5",
-        "target": [
-          4,
-          2,
-          4
-        ],
-        "process": {
-          "kind": "vessel",
           "recipe": "create_refinery_n_reactors:pressure_reaction/alumina_from_sodium_aluminate_solution",
           "offset": 32,
           "width": 11,
@@ -6777,7 +6716,7 @@
         }
       },
       {
-        "key": "step_6",
+        "key": "step_4",
         "target": [
           5,
           3,
@@ -6807,7 +6746,7 @@
         }
       },
       {
-        "key": "step_7",
+        "key": "step_5",
         "target": [
           5,
           3,

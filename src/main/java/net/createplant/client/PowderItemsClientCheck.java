@@ -25,7 +25,8 @@ final class PowderItemsClientCheck {
         "nickel_oxide", "nickel_titanium_yellow", "plutonium_dioxide", "pvc_resin",
         "salt", "sulfur_dust", "titanium_dioxide",
         "treatment_sludge", "uranium_dioxide", "uranium_tetrafluoride",
-        "uranium_trioxide", "water_treatment_flocculant", "yellowcake", "zirconia", "compact_uranium_dioxide");
+        "uranium_trioxide", "water_treatment_flocculant", "yellowcake", "zirconia", "compact_uranium_dioxide",
+        "zirconium_sulfate_hydrate", "zirconyl_sulfate", "titanyl_sulfate_hydrate", "aluminium_sulfate_hydrate", "iron_sulfate_hydrate", "copper_sulfate_crystals", "zinc_sulfate_hydrate", "tin_sulfate_crystals", "lead_chloride_crystals", "uranyl_nitrate_hydrate", "plutonium_nitrate_crystals", "sodium_aluminate_crystals", "caustic_soda_flakes", "ammonium_chloride_crystals");
     private static ContainerScreen screen;
     private static int ticks;
 

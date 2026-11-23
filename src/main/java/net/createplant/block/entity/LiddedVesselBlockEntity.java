@@ -7,7 +7,6 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import net.createplant.chemistry.ReactorModule;
-import net.createplant.chemistry.VesselFouling;
 import net.createplant.recipe.PressureReactionRecipe;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import net.minecraft.world.item.crafting.RecipeInput;
@@ -79,7 +78,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     private List<GasLayer> gasDraws = List.of();
     private static final int STORAGE_GAS = -1, PASS_THROUGH_GAS = -2, ATMOSPHERIC = net.createplant.thermal.FluidState.pressureLevel(1);
     private record GasLayer(int bank, FluidStack fluid) { }
-    private VesselFouling fouling;
     private final net.createplant.thermal.TankHeating heating=new net.createplant.thermal.TankHeating();
 
     public LiddedVesselBlockEntity(BlockPos pos, BlockState state) {
@@ -100,7 +98,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     /** 0 closed to 1 fully open, eased on the client. */
     public float lidOpening(float partialTicks) { return lid.getValue(partialTicks); }
 
-    public VesselFouling fouling() { if (fouling==null) fouling=new VesselFouling(this);return fouling; }
 
 
 
@@ -117,15 +114,9 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     public boolean maintenanceSafe() {
         return rotationSpeed()==0 && !currentBurnerHeat().isAtLeast(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED);
     }
-    @Override public boolean hasProcessContents() { return super.hasProcessContents() || fouling!=null && (fouling.dirtLevel()>0 || !fouling.drainPort().getFluidInTank(0).isEmpty()); }
-    @Override public boolean blocksControllerMove() { return super.blocksControllerMove() || fouling!=null && (fouling.dirtLevel()>0 || !fouling.drainPort().getFluidInTank(0).isEmpty()); }
-    @Override public void dismantle() { super.dismantle();if (fouling!=null) ToxicGas.release(level,worldPosition,fouling.clear()); }
     public IFluidHandler processGasPort(Direction side,int bank) { return processGasPort(bank); }
-    @Override protected String processInhibit() { return fouling().blocked() ? "fouled" : ""; }
-    @Override protected float processingSpeedFactor() { return fouling().speedFactor(); }
 
 
-    @Override protected void completedStirredBatch(StandardProcessingRecipe<RecipeInput> recipe,int count) { fouling().onBatch(recipe,count); }
     @Override protected void changed() { super.changed(); }
     @Override public void thermalChanged() { changed(); }
     public FluidStack consumeWashWater(int amount,FluidAction action) {
@@ -347,7 +338,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (level != null && !level.isClientSide && updateConnectivity && isController()) {
             updateConnectivity = false;ConnectivityHandler.formMulti(this);
         }
-        if (level!=null && !level.isClientSide && isController()) { fouling().tick(); }
         if (level!=null && !level.isClientSide && !internal.isEmpty()) dropInternal();
         super.tick();
         if (level == null || !isController()) return;
@@ -505,7 +495,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         tooltip.add(Component.translatable(key+"operation",Math.round(Math.abs(owner.rotationSpeed())),Math.round(owner.progress()*100/Math.max(1,owner.cycleTicks())),amount));
         var stock=owner.stockLine(owner.tankInventory.getFluid());
         if (stock!=null) tooltip.add(stock);
-        tooltip.add(Component.translatable(key+"maintenance",Math.round(owner.fouling().foulingFraction()*100),Component.translatable(key+"drain."+(owner.fouling().drainOpen() ? "open" : "closed"))));return true;
+        return true;
     }
 
     /** The open hatch stands up one block over the top. */
@@ -524,7 +514,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (stirrer) tag.putBoolean("Stirrer", true);
         if (!internal.isEmpty()) tag.put("Internal", internal.save(lookup));
         tag.putBoolean("Windows",windows);
-        var foulingTag=new CompoundTag();fouling().write(foulingTag);tag.put("Fouling",foulingTag);
     }
 
     @Override protected void read(CompoundTag tag, HolderLookup.Provider lookup, boolean clientPacket) {
@@ -546,7 +535,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         internal = tag.contains("Internal") ? ItemStack.parseOptional(lookup, tag.getCompound("Internal")) : ItemStack.EMPTY;
         windows=tag.getBoolean("Windows");
         if (!clientPacket) connectionsPending = true;
-        fouling().read(tag.getCompound("Fouling"));
         if (clientPacket && (oldWindows!=windows || oldWidth!=width || oldHeight!=height)) updateWindowModel(oldWidth,oldHeight);
     }
 
@@ -569,7 +557,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                 handler=combined(storage,recovery);
             }
             if (reactor!=null) handler=net.createplant.mixture.GasMixturePort.outlet(handler,owner);
-            if (side==Direction.DOWN) handler=combined(handler,owner.fouling().drainPort());
             if (handler==null) return null;
             var delegate=handler;int lease=owner.portGeneration();
             return new IFluidHandler() {
@@ -578,7 +565,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                     return reactor==null ? be.reactor()==null : owner.portGeneration()==lease && owner.formed() && ReactorStructure.loaded(be.getLevel(),owner.getBlockPos());
                 }
                 private boolean gasAllowed(FluidStack stack) { var current=be.getControllerBE();return current!=null && (!current.open() || stack.isEmpty() || !net.createplant.thermal.FluidState.gas(stack)); }
-                private boolean wasteOnly() { return side==Direction.DOWN && owner.fouling().drainOpen(); }
                 private boolean stratified() { return !owner.open() && (owner.module() == ReactorModule.NONE || owner.module() == ReactorModule.STIRRED); }
                 private boolean lowGasOutlet() {
                     return side != null && side != Direction.UP && stratified() && owner.hasStoredGas()
@@ -588,10 +574,9 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                 private FluidStack upperLiquid() {
                     return MixtureHelper.isMixture(owner.tankInventory.getFluid()) ? owner.tankInventory.layer(Direction.UP) : FluidStack.EMPTY;
                 }
-                @Override public int getTanks() { return wasteOnly() ? 1 : delegate.getTanks(); }
+                @Override public int getTanks() { return delegate.getTanks(); }
                 @Override public FluidStack getFluidInTank(int tank) {
                     if (!live()) return FluidStack.EMPTY;
-                    if (wasteOnly()) return owner.fouling().drainPort().getFluidInTank(tank);
                     if (stratified() && side == Direction.UP) {
                         if (tank != 0) return FluidStack.EMPTY;
                         var gas = owner.previewVesselGas(true);
@@ -602,12 +587,11 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                     var stack=delegate.getFluidInTank(tank);
                     return side!=null && !stack.isEmpty() && net.createplant.thermal.FluidState.gas(stack)!=(side==Direction.UP) ? FluidStack.EMPTY : stack;
                 }
-                @Override public int getTankCapacity(int tank) { return !live() ? 0 : wasteOnly() ? owner.fouling().drainPort().getTankCapacity(tank) : delegate.getTankCapacity(tank); }
-                @Override public boolean isFluidValid(int tank,FluidStack stack) { return live() && !wasteOnly() && gasAllowed(stack) && delegate.isFluidValid(tank,stack); }
-                @Override public int fill(FluidStack stack,FluidAction action) { return live() && !wasteOnly() && gasAllowed(stack) ? delegate.fill(stack,action) : 0; }
+                @Override public int getTankCapacity(int tank) { return !live() ? 0 : delegate.getTankCapacity(tank); }
+                @Override public boolean isFluidValid(int tank,FluidStack stack) { return live() && gasAllowed(stack) && delegate.isFluidValid(tank,stack); }
+                @Override public int fill(FluidStack stack,FluidAction action) { return live() && gasAllowed(stack) ? delegate.fill(stack,action) : 0; }
                 @Override public FluidStack drain(int amount,FluidAction action) {
                     if (!live()) return FluidStack.EMPTY;
-                    if (wasteOnly()) return owner.fouling().drainPort().drain(amount,action);
                     if (stratified() && (side == Direction.UP || lowGasOutlet())) {
                         if (side == Direction.UP && !upperLiquid().isEmpty() && !owner.hasStoredGas())
                             return owner.tankInventory.drainLayer(Direction.UP, FluidStack.EMPTY, amount, action);
@@ -621,7 +605,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                 }
                 @Override public FluidStack drain(FluidStack stack,FluidAction action) {
                     if (!live()) return FluidStack.EMPTY;
-                    if (wasteOnly()) return owner.fouling().drainPort().drain(stack,action);
                     if (stratified() && (side == Direction.UP || lowGasOutlet())) {
                         if (side == Direction.UP && !upperLiquid().isEmpty() && !owner.hasStoredGas())
                             return owner.tankInventory.drainLayer(Direction.UP, stack, stack.getAmount(), action);

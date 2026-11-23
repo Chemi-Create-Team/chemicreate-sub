@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import net.createplant.block.entity.AbsorptionTowerBlockEntity;
 import net.createplant.block.entity.ColumnRingBlockEntity;
+import net.createplant.block.entity.ElectrodeHeadBlockEntity;
+import net.createplant.block.entity.ElectrolysisCellBlockEntity;
 import net.createplant.block.entity.FractionatingColumnBlockEntity;
 import net.createplant.block.entity.GasifierBlockEntity;
 import net.createplant.block.entity.GasHolderBlockEntity;
@@ -34,6 +36,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -47,23 +50,48 @@ public final class ProcessGoggles {
     private ProcessGoggles() { }
 
     public static void add(BlockEntity source, List<Component> lines, boolean sneaking) {
+        var hit = Minecraft.getInstance().hitResult;
+        var face = hit instanceof BlockHitResult onBlock && hit.getType() == HitResult.Type.BLOCK
+            && onBlock.getBlockPos().equals(source.getBlockPos()) ? onBlock.getDirection() : null;
+        appendSummary(source, lines, sneaking, face);
+        var outlet = switch (source) {
+            case ElectrolysisCellBlockEntity cell -> cell.outletTooltip(face);
+            case ElectrodeHeadBlockEntity head -> head.outletTooltip(face);
+            default -> null;
+        };
+        if (outlet != null) lines.addFirst(outlet);
+    }
+
+    private static void appendSummary(BlockEntity source, List<Component> lines, boolean sneaking, Direction face) {
         if (source instanceof HoseConnectorBlockEntity && !sneaking) return;
         var owner = MachineReadings.owner(source);
         if (owner == null) return;
         if (owner instanceof HorizontalTankBlockEntity tank && tank.hasBoilerGauge()) return;
         if (owner instanceof ReactorMachineBlockEntity reactor && reactor.horizontal()) return;
-        if (source instanceof LiddedVesselBlockEntity && owner instanceof LiddedVesselBlockEntity vessel
-            && vessel.showGasComposition() && MixtureGoggleHelper.appendGasLayers(lines, vessel.gasLayers(), ((net.createplant.thermal.ThermalFluidTank) vessel.getTankInventory()).gasCapacity())) return;
+        if (source instanceof LiddedVesselBlockEntity && owner instanceof LiddedVesselBlockEntity vessel) {
+            GoggleSpec.vessel(vessel, lines, sneaking);
+            return;
+        }
         if (source instanceof FluidTankBlockEntity && owner instanceof FluidTankBlockEntity tank) {
             var fluid = tank.getTankInventory().getFluid();
-            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(lines, TankLayers.ordered(List.of(fluid)), tank.getTankInventory().getCapacity())) {
+            var layers = TankLayers.ordered(List.of(fluid));
+            if (!fluid.isEmpty() && FluidHazards.of(fluid).gas() && MixtureGoggleHelper.appendGasLayers(new ArrayList<>(), layers, tank.getTankInventory().getCapacity())) {
+                GoggleSpec.storage(lines, layers, tank.getTankInventory().getCapacity(), sneaking);
                 if (tank instanceof GasTankContainerBlockEntity container) container.addDrainReadout(lines,true);
                 if (tank instanceof GasHolderBlockEntity holder) holder.addDrainReadout(lines,true);
                 return;
             }
         }
-        var hit = Minecraft.getInstance().hitResult;
-        var face = hit instanceof BlockHitResult onBlock && onBlock.getBlockPos().equals(source.getBlockPos()) ? onBlock.getDirection() : null;
+        if (GoggleSpec.status(owner, lines, sneaking)) {
+            MachineReadings.appendProduction(source, lines);
+            return;
+        }
+        if (!(source instanceof FluidPipeBlockEntity) && GoggleSpec.machine(owner, lines, sneaking)) {
+            var production = new ArrayList<Component>(4);
+            MachineReadings.appendProduction(source, production);
+            lines.addAll(production);
+            return;
+        }
         var stock = stock(source, owner, face);
         var gauges = gauges(source, owner, stock);
         var stopped = stopped(owner);
@@ -76,10 +104,12 @@ public final class ProcessGoggles {
         MachineReadings.appendProduction(source, production);
         lines.clear();
         if (stopped != null) lines.add(ChemicalReadout.warning(stopped));
+        else if (GoggleSpec.running(owner) != null) lines.add(GoggleSpec.running(owner));
         if (gauges != null) lines.add(gauges);
         var nativeStock = prior.stream().filter(line -> line.getContents() instanceof TranslatableContents text
             && text.getKey().equals(ChemicalReadout.KEY + "contents")).findFirst().orElse(null);
-        if (nativeStock != null) lines.add(nativeStock);
+        if (stock != null && stock.capacity > 0) GoggleSpec.stock(lines, List.of(stock.fluid), stock.capacity, sneaking);
+        else if (nativeStock != null) lines.add(nativeStock);
         else if (stock != null) lines.add(stock.capacity < 0 ? ChemicalReadout.name(stock.fluid) : ChemicalReadout.contents(stock.fluid, stock.capacity));
         if (!production.isEmpty()) {
             var combined = Component.empty();

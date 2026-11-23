@@ -17,6 +17,10 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
 import net.createplant.block.ElectrodeHeadBlock;
+import net.createplant.block.PulsationTubeBlock;
+import net.createplant.gametest.AbsorptionTowerGameTests;
+import net.createplant.registry.CETransport;
+import net.minecraft.network.chat.Component;
 import net.createplant.block.ElectrolysisCellBlock;
 import net.createplant.block.ElectrolysisControllerBlock;
 import net.createplant.block.WetProcessStructure;
@@ -71,21 +75,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Opt-in creative flat world for the lead-acid and lithium-ion banks, the acid-vessel burn, the calcite haunting and the lead, lithium and aluminium
- * lines. {@code -Dcreateplant.batteryPlaytest} builds it, wires the Electro Energetics circuits, fills the supplies, saves it and closes the game.
- * A station that cannot be built is recorded and skipped, so one wrong API leaves the rest of the world standing; the result file lists them.
- * The stations stand apart and each has its own creative fluid supplies and a chest of materials: the stages of a line are tried one by one, and
- * a player pipes one stage into the next. The product leaves a vessel through the ports the vessel exposes; the world does not pipe it away.
+ * Opt-in creative flat world: one continuous plant. Lead is roasted and reduced; the sulfur dioxide goes through an absorption tower and an
+ * electrolysis cell (the sulfur cycle of {@link SulfurCyclePlaytestWorld}) to sulfuric acid, which is piped to the lithium carbonate vessel and
+ * an open vessel for the burn test. The Bayer line feeds bauxite and a finite charge of caustic soda to make alumina for the molten-salt furnace.
+ * A second line leaches lead in hydrochloric acid, clarifies it and electrowins it. Other raw materials come from creative tanks
+ * (oxygen, water, carbon monoxide, hydrochloric acid, electrolytes) and chests (ores, coal, soda ash).
+ * The fertilizer plant of {@link FertilizerPlaytestWorld} (wood to NPK fertilizer, 70 blocks east) is built in the same world.
+ * {@code -Dcreateplant.batteryPlaytest} builds it, saves it and stays open for play; add {@code -Dcreateplant.batteryPlaytestClose} to quit after saving.
+ * A part that cannot be built is recorded and skipped, so one wrong API leaves the rest standing; the failures are told in chat and the result file.
  * It has not been run by its author: the first run is the verification.
  */
 public final class BatteryPlaytestWorld {
     private static final Logger LOG = LoggerFactory.getLogger(BatteryPlaytestWorld.class);
     private static final String WORLD = "createplant-battery-" + System.currentTimeMillis();
-    private static final int G = -60, TIMEOUT = 600;
+    private static final int G = -60, RUN_TICKS = 400;
+    private static final BlockPos T = new BlockPos(0, -58, 0), CELL = T.south(8), ACID = CELL.south(5);
     private static final Map<String, Object> REPORT = new LinkedHashMap<>();
     private static final List<String> FAILED = new ArrayList<>();
-    private static final List<Object[]> SUPPLIES = new ArrayList<>(), WIRES = new ArrayList<>();
-    private static final List<Runnable> LATER = new ArrayList<>();
+    private static final List<Object[]> SUPPLIES = new ArrayList<>(), WIRES = new ArrayList<>(), LATER = new ArrayList<>();
     private static final List<BlockPos> BANKS = new ArrayList<>();
     private static PlaytestPlant plant;
     private static volatile boolean done;
@@ -103,7 +110,7 @@ public final class BatteryPlaytestWorld {
                 ticks = 0;
                 mc.options.pauseOnLostFocus = false;
                 mc.createWorldOpenFlows().createFreshLevel(WORLD,
-                    new LevelSettings("Create-Plant battery, lead and aluminium test", GameType.CREATIVE, false, Difficulty.PEACEFUL, true, new GameRules(), WorldDataConfiguration.DEFAULT),
+                    new LevelSettings("Create-Plant battery, lead and aluminium plant", GameType.CREATIVE, false, Difficulty.PEACEFUL, true, new GameRules(), WorldDataConfiguration.DEFAULT),
                     new WorldOptions(42L, false, false), access -> access.registryOrThrow(Registries.WORLD_PRESET)
                         .getHolderOrThrow(WorldPresets.FLAT).value().createWorldDimensions(), mc.screen);
             } else if (phase == 1 && mc.level != null && mc.getOverlay() == null && ++ticks > 80) {
@@ -114,6 +121,7 @@ public final class BatteryPlaytestWorld {
                         build(server.overworld(), server.getPlayerList().getPlayers().getFirst());
                         NeoForge.EVENT_BUS.addListener(ServerTickEvent.Post.class, BatteryPlaytestWorld::serverTick);
                     } catch (RuntimeException error) {
+                        LOG.error("BATTERY PLAYTEST build failed", error);
                         failure = error.toString();
                     }
                 });
@@ -123,30 +131,36 @@ public final class BatteryPlaytestWorld {
                 phase = 3;
                 ticks = 0;
                 var server = mc.getSingleplayerServer();
-                server.execute(() -> server.saveEverything(false, true, true));
+                server.execute(() -> {
+                    server.saveEverything(false, true, true);
+                    var player = server.getPlayerList().getPlayers().getFirst();
+                    player.sendSystemMessage(Component.literal(FAILED.isEmpty() ? "試験プラントを作りました。看板で各設備を確認できます。"
+                        : "作れなかった設備が" + FAILED.size() + "件あります：" + String.join(" / ", FAILED)));
+                });
             } else if (phase == 3 && ++ticks > 40) {
-                phase = -2;
+                phase = 4;
                 REPORT.put("failedStations", FAILED);
                 Files.writeString(mc.gameDirectory.toPath().resolve("battery-playtest-result.json"), new GsonBuilder().setPrettyPrinting().create().toJson(REPORT));
                 if (FAILED.isEmpty()) LOG.info("BATTERY PLAYTEST BUILT: {}", REPORT);
-                else LOG.error("BATTERY PLAYTEST BUILT WITH {} FAILED STATIONS: {}", FAILED.size(), REPORT);
-                mc.stop();
+                else LOG.error("BATTERY PLAYTEST BUILT WITH {} FAILED PARTS: {}", FAILED.size(), REPORT);
+                if (Boolean.getBoolean("createplant.batteryPlaytestClose")) mc.stop();
             }
         } catch (Exception error) {
             phase = -1;
             LOG.error("BATTERY PLAYTEST FAILED: {}", REPORT, error);
-            mc.stop();
+            if (Boolean.getBoolean("createplant.batteryPlaytestClose")) mc.stop();
         }
     }
 
-    private interface Station { void build(ServerLevel level); }
+    private interface Part { void build(ServerLevel level); }
 
-    private static void station(ServerLevel level, String name, Station station) {
+    /** Builds one part; a failure is recorded and the next part is still built. */
+    private static void part(ServerLevel level, String name, Part part) {
         try {
-            station.build(level);
+            part.build(level);
         } catch (RuntimeException | LinkageError error) {
             FAILED.add(name + ": " + error);
-            LOG.error("BATTERY PLAYTEST station {} failed", name, error);
+            LOG.error("BATTERY PLAYTEST part {} failed", name, error);
         }
     }
 
@@ -158,57 +172,29 @@ public final class BatteryPlaytestWorld {
         level.setDayTime(6000);
         plant = new PlaytestPlant(level, G);
 
-        // Row 1 (z = 0): calcite, the three vessels for the burn, the two banks.
-        station(level, "calcite", l -> calcite(l, 0, 0));
-        station(level, "acid vessel", l -> burnVessel(l, new BlockPos(24, G, -1), "sulfuric_acid", "硫酸の槽：入ると死ぬまで燃える"));
-        station(level, "alkali vessel", l -> burnVessel(l, new BlockPos(32, G, -1), "caustic_soda_solution", "苛性ソーダの槽：入ると死ぬまで燃える"));
-        station(level, "water vessel", l -> burnVessel(l, new BlockPos(40, G, -1), "water", "水の槽：燃えない（対照）"));
-        station(level, "lead-acid bank", l -> bank(l, new BlockPos(56, G, 0), true, 230));
-        station(level, "lithium-ion bank", l -> bank(l, new BlockPos(76, G, 0), false, 330));
+        part(level, "硫黄サイクル", BatteryPlaytestWorld::sulfur);
+        part(level, "鉛 焙焼・還元", BatteryPlaytestWorld::leadDry);
+        part(level, "アルミニウム", BatteryPlaytestWorld::aluminium);
+        part(level, "炭酸リチウム", BatteryPlaytestWorld::lithium);
+        part(level, "酸の槽", BatteryPlaytestWorld::burn);
+        part(level, "鉛 湿式", BatteryPlaytestWorld::leadWet);
+        part(level, "方解石", l -> calcite(l, -40, -20));
+        part(level, "鉛蓄電池", l -> bank(l, new BlockPos(-70, G, -10), true, 230));
+        part(level, "リチウムイオン電池", l -> bank(l, new BlockPos(-70, G, -30), false, 330));
+        part(level, "ポンプの駆動", l -> plant.driveAll());
+        // The fertilizer plant of FertilizerPlaytestWorld stands east of this one, with its own pumps and cells and its own run to NPK fertilizer.
+        part(level, "肥料プラント", FertilizerPlaytestWorld::addTo);
 
-        // Row 2 (z = 40): lead, dry and wet.
-        station(level, "lead roasting", l -> reactor(l, new BlockPos(0, G + 2, 40), "鉛 焙焼・焼結", true,
-            List.of(feed(Direction.NORTH, "oxygen_gas")), List.of(stack("galena", 64))));
-        station(level, "lead reduction", l -> reactor(l, new BlockPos(24, G + 2, 40), "鉛 還元溶錬", false,
-            List.of(feed(Direction.NORTH, "carbon_monoxide")), List.of(stack("lead_sinter", 64))));
-        station(level, "lead direct smelting", l -> reactor(l, new BlockPos(48, G + 2, 40), "鉛 直接製錬", true,
-            List.of(feed(Direction.NORTH, "oxygen_gas")), List.of(stack("galena", 64))));
-        station(level, "lead leaching", l -> reactor(l, new BlockPos(72, G + 2, 40), "鉛 浸出（湿式）", true,
-            List.of(feed(Direction.NORTH, "hydrochloric_acid"), feed(Direction.EAST, "oxygen_gas")), List.of(stack("galena", 64))));
-
-        // Row 3 (z = 80): clarifier, electrowinning cell, lithium.
-        station(level, "lead clarifier", l -> clarifier(l, new BlockPos(3, G + 6, 83)));
-        station(level, "lead electrowinning", l -> cell(l, new BlockPos(30, G + 4, 83), "lead_chloride_solution"));
-        station(level, "lithium carbonate", l -> reactor(l, new BlockPos(56, G + 2, 80), "炭酸リチウム", false,
-            List.of(feed(Direction.NORTH, "sulfuric_acid")), List.of(stack("spodumene", 64), stack("sodium_carbonate", 64))));
-
-        // Row 4 (z = 120): aluminium, sulfate route, Bayer route and the molten-salt furnace.
-        station(level, "aluminium sulfate", l -> reactor(l, new BlockPos(0, G + 2, 120), "Al ①硫酸塩 浸出", true,
-            List.of(feed(Direction.NORTH, "sulfuric_acid")), List.of(stack("bauxite", 64))));
-        station(level, "alumina calcining", l -> reactor(l, new BlockPos(24, G + 2, 120), "Al ②アルミナ焼成", false,
-            List.of(feed(Direction.NORTH, "aluminium_sulfate_solution")), List.of()));
-        station(level, "bayer leaching", l -> reactor(l, new BlockPos(48, G + 2, 120), "Al ①' バイヤー法 浸出", true,
-            List.of(feed(Direction.NORTH, "caustic_soda_solution")), List.of(stack("bauxite", 64))));
-        station(level, "bayer alumina", l -> reactor(l, new BlockPos(72, G + 2, 120), "Al ②' アルミナ析出", false,
-            List.of(feed(Direction.NORTH, "sodium_aluminate_solution")), List.of()));
-        station(level, "electrolysis furnace", l -> furnace(l, new BlockPos(104, G + 3, 124)));
-
-        station(level, "pumps", l -> plant.driveAll());
-        station(level, "index", l -> index(l));
         player.setItemSlot(EquipmentSlot.HEAD, AllItems.GOGGLES.asStack());
         player.getInventory().setItem(1, AllItems.WRENCH.asStack());
-        BlockPos spawn = new BlockPos(4, G, 8);
-        player.teleportTo(level, spawn.getX() + .5, spawn.getY(), spawn.getZ() + .5, 180, 10);
-        player.setRespawnPosition(Level.OVERWORLD, spawn, 180, true, false);
-        level.setDefaultSpawnPos(spawn, 180);
+        BlockPos spawn = new BlockPos(60, G, -12); // between the two plants, so both stay within the simulation distance
+        player.teleportTo(level, spawn.getX() + .5, spawn.getY(), spawn.getZ() + .5, 150, 15);
+        player.setRespawnPosition(Level.OVERWORLD, spawn, 150, true, false);
+        level.setDefaultSpawnPos(spawn, 150);
         REPORT.put("world", WORLD);
     }
 
     // ---- helpers -------------------------------------------------------------------------------------------------------------------
-
-    private record Feed(Direction side, String fluid) { }
-
-    private static Feed feed(Direction side, String fluid) { return new Feed(side, fluid); }
 
     private static ItemStack stack(String id, int count) {
         var item = BuiltInRegistries.ITEM.get(CreatePlant.location(id));
@@ -229,19 +215,207 @@ public final class BatteryPlaytestWorld {
         for (int i = 0; i < items.size() && i < 27; i++) chest.setItem(i, items.get(i));
     }
 
-    /** A creative tank of one fluid that fills at tick 20, when its block entity is ready. */
-    private static BlockPos supply(ServerLevel level, BlockPos pos, String fluid) {
+    private static void hopper(BlockPos pos, Direction facing) {
+        plant.put(pos, Blocks.HOPPER.defaultBlockState().setValue(HopperBlock.FACING, facing));
+    }
+
+    /** A chest on a hopper that pushes into the block it faces: how a solid raw material enters a vessel or the furnace. */
+    private static void intake(ServerLevel level, BlockPos hopper, Direction into, List<ItemStack> items) {
+        hopper(hopper, into);
+        chest(level, hopper.above(), items);
+    }
+
+    /** A hopper under a vessel or furnace cell that pulls the product and pushes it toward {@code toward}, into a chest there when {@code store} is set. */
+    private static void outlet(ServerLevel level, BlockPos hopper, Direction toward, boolean store) {
+        hopper(hopper, toward);
+        if (store) plant.put(hopper.relative(toward), Blocks.CHEST.defaultBlockState());
+    }
+
+    private static BlockPos tank(BlockPos pos, String fluid) {
         plant.put(pos, AllBlocks.CREATIVE_FLUID_TANK.getDefaultState());
         SUPPLIES.add(new Object[] {pos, fluid});
         return pos;
     }
 
-    private static void wire(ServerLevel level, BlockPos battery, BlockPos device, double volts) {
+    /** A straight stainless line from beside {@code source} to {@code last}; the source is a port cell or a tank, and the target stands beyond {@code last}. */
+    private static List<BlockPos> straight(BlockPos source, Direction direction, BlockPos last) {
+        return plant.route(direction, source.relative(direction), List.of(last), direction);
+    }
+
+    private static void wire(BlockPos battery, BlockPos device, double volts) {
         plant.put(battery, CEEBlocks.CREATIVE_BATTERY.getDefaultState());
         WIRES.add(new Object[] {battery, device, volts});
     }
 
-    // ---- stations ------------------------------------------------------------------------------------------------------------------
+    /** The middle cell of a vessel's side on its bottom layer; every cell of a formed vessel is a port. */
+    private static BlockPos mid(BlockPos base, Direction side) {
+        return base.offset(1 + side.getStepX(), 0, 1 + side.getStepZ());
+    }
+
+    /** A 3x3 stirred vessel with a creative motor turning its stirrer through a cog and a creative blaze burner under a corner. */
+    private static void vessel(ServerLevel level, BlockPos base, BlazeBurnerBlock.HeatLevel heat) {
+        ReactorGameTests.assemble(level, base, ReactorModule.STIRRED, 1);
+        var stirrer = base.offset(1, -1, 1);
+        plant.put(stirrer.north(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.Y));
+        plant.motor(stirrer.north().below(), Direction.UP, 128);
+        plant.burner(base.below(), heat);
+    }
+
+    /** An electrolysis cell with its head, controller and panel; the nickel plate and START are pressed later, as a player would. */
+    private static void cell(ServerLevel level, BlockPos cell, double volts, BlockPos battery) {
+        plant.put(cell, CEElectrolysis.CELL.get().defaultBlockState().setValue(ElectrolysisCellBlock.AXIS, Direction.Axis.Z));
+        plant.put(cell.above(), CEElectrolysis.HEAD.get().defaultBlockState().setValue(ElectrodeHeadBlock.AXIS, Direction.Axis.Z));
+        for (int y = 0; y < 2; y++)
+            plant.put(cell.north().above(y), CEElectrolysis.CONTROLLER.get().defaultBlockState().setValue(ElectrolysisControllerBlock.FACING, Direction.NORTH));
+        var panel = cell.north().above();
+        wire(battery, panel, volts);
+        LATER.add(new Object[] {"電解セルの始動 " + cell.toShortString(), (Part) l -> {
+            var rack = l.getCapability(Capabilities.ItemHandler.BLOCK, cell.above(), Direction.UP);
+            if (rack == null || !rack.insertItem(1, CEElectrolysis.NICKEL_ELECTRODE_PLATE.toStack(), false).isEmpty()) throw new IllegalStateException("The nickel plate does not fit the head");
+            var owner = (ElectrolysisControllerBlockEntity) l.getBlockEntity(cell.north());
+            if (!owner.validate()) throw new IllegalStateException("The electrolysis cell does not form: " + owner.status());
+            var player = FakePlayerFactory.getMinecraft(l);
+            player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            l.getBlockState(panel).useWithoutItem(l, player, new BlockHitResult(Vec3.atLowerCornerOf(panel).add(.75, .21, 0), Direction.NORTH, panel, false));
+        }});
+    }
+
+    // ---- the plant -----------------------------------------------------------------------------------------------------------------
+
+    /** The sulfur cycle: sulfur dioxide into the tower, water on top, sulfurous acid under it to the cell, hydrogen to a receiver, sulfuric acid to a tank. */
+    private static void sulfur(ServerLevel level) {
+        AbsorptionTowerGameTests.tower(level, T, 4, true);
+        var top = T.above(3);
+        // Water from a tank above runs down onto the top storey's centre.
+        plant.route(Direction.DOWN, top.above(3), List.of(top.above()), Direction.DOWN);
+        tank(top.above(4), "water");
+        // Unabsorbed gas leaves a straight side of the top storey for a store.
+        var off = straight(top.north(), Direction.NORTH, top.north(5));
+        plant.store(off.getLast(), Direction.NORTH, "未吸収ガス", PlaytestPlant.Kind.ANY);
+        // Sulfurous acid from the underside to the cell's input below it.
+        plant.route(Direction.DOWN, T.below(), List.of(T.below().south(8)), Direction.UP);
+        cell(level, CELL, 400, CELL.offset(4, 0, -1));
+        plant.put(CELL.west(5), CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS, Direction.Axis.X));
+        straight(CELL, Direction.WEST, CELL.west(4));
+        straight(CELL, Direction.SOUTH, CELL.south(4));
+        plant.put(ACID, CETransport.STAINLESS_STEEL_TANK.get().defaultBlockState());
+        plant.sign(T.west(3).north(3), "吸収塔（亜硫酸）");
+        plant.sign(CELL.east(3), "電解セル→硫酸");
+        plant.sign(CELL.west(5).south(2), "水素");
+        plant.sign(ACID.south(2), "硫酸の母管");
+        plant.sign(T.east(3).north(3), "水は塔の頂上へ");
+    }
+
+    /** Galena is roasted (oxygen in; sulfur dioxide to the tower; sinter by hopper) and the sinter reduced with carbon monoxide to lead ingots. */
+    private static void leadDry(ServerLevel level) {
+        var r1 = new BlockPos(-14, -58, -1);
+        vessel(level, r1, BlazeBurnerBlock.HeatLevel.KINDLED);
+        intake(level, r1.west(), Direction.EAST, List.of(stack("galena", 64)));
+        straight(tank(mid(r1, Direction.WEST).west(6), "oxygen_gas"), Direction.EAST, mid(r1, Direction.WEST).west());
+        // The sulfur dioxide to the absorption tower's west side.
+        straight(mid(r1, Direction.EAST), Direction.EAST, T.west(2));
+        // The sinter drops by hopper into the reduction vessel, one layer lower.
+        var r2 = new BlockPos(-14, -59, 2);
+        vessel(level, r2, BlazeBurnerBlock.HeatLevel.SEETHING);
+        hopper(r1.offset(2, -1, 2), Direction.SOUTH);
+        straight(tank(mid(r2, Direction.WEST).west(6), "carbon_monoxide"), Direction.EAST, mid(r2, Direction.WEST).west());
+        var co2 = straight(mid(r2, Direction.EAST), Direction.EAST, mid(r2, Direction.EAST).east(5));
+        plant.store(co2.getLast(), Direction.EAST, "二酸化炭素", true);
+        outlet(level, r2.offset(2, -1, 2), Direction.SOUTH, true);
+        plant.sign(r1.north(2), "鉛① 焙焼（方鉛鉱→焼結鉱＋SO2）");
+        plant.sign(r2.south(5).west(), "鉛② 還元溶錬（焼結鉱→鉛・左のチェスト）");
+    }
+
+    /** The Bayer vessels dissolve bauxite in caustic soda and separate alumina, which goes by hopper into the furnace. */
+    private static void aluminium(ServerLevel level) {
+        var a1 = new BlockPos(14, -58, 12);
+        vessel(level, a1, BlazeBurnerBlock.HeatLevel.KINDLED);
+        intake(level, a1.west(), Direction.EAST, List.of(stack("bauxite", 64)));
+        var feed = mid(a1, Direction.WEST).west(6);
+        plant.put(feed, CETransport.STAINLESS_STEEL_TANK.get().defaultBlockState());
+        straight(feed, Direction.EAST, mid(a1, Direction.WEST).west());
+        LATER.add(new Object[] {"バイヤー法の苛性ソーダ", (Part) l -> {
+            var port = l.getCapability(Capabilities.FluidHandler.BLOCK, feed, Direction.EAST);
+            if (port == null || port.fill(new FluidStack(fluid("caustic_soda_solution"), 4000), IFluidHandler.FluidAction.EXECUTE) != 4000)
+                throw new IllegalStateException("The Bayer feed tank did not accept its caustic soda charge");
+        }});
+        outlet(level, a1.offset(2, -1, 2), Direction.SOUTH, true);
+        var a2 = new BlockPos(30, -58, 12);
+        vessel(level, a2, BlazeBurnerBlock.HeatLevel.SEETHING);
+        straight(mid(a1, Direction.EAST), Direction.EAST, mid(a2, Direction.WEST).west());
+        var soda = straight(mid(a2, Direction.NORTH), Direction.NORTH, mid(a2, Direction.NORTH).north(5));
+        plant.store(soda.getLast(), Direction.NORTH, "回収した苛性ソーダ", PlaytestPlant.Kind.ANY);
+        // The molten-salt furnace: its shell takes alumina from the hopper under the calcining vessel and coal from a chest; its busbar is wired at 200 V.
+        var anode = new BlockPos(35, -57, 13);
+        for (int y = -2; y <= 0; y++) for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++)
+            plant.put(anode.offset(x, y, z), (y == 0 && x == 0 && z == 0 ? CEFurnace.ANODE : CEFurnace.SHELL).get().defaultBlockState());
+        var busbar = anode.south(3);
+        plant.put(busbar, CEFurnace.BUSBAR.get().defaultBlockState().setValue(FurnaceBusbarBlock.FACING, Direction.NORTH));
+        wire(busbar.south(2), busbar, 200);
+        hopper(a2.offset(2, -1, 1), Direction.EAST);
+        intake(level, anode.offset(3, -1, 0), Direction.WEST, List.of(new ItemStack(Items.COAL, 64)));
+        outlet(level, anode.below(3), Direction.SOUTH, true);
+        plant.sign(a1.north(2), "Al① ボーキサイト＋苛性ソーダ→アルミン酸ナトリウム");
+        plant.sign(a2.north(2).west(2), "Al② 分離（アルミナ・苛性ソーダ）");
+        plant.sign(anode.atY(G).south(5), "溶融塩電解炉（200V）：アルミニウムは左のチェスト");
+    }
+
+    /** Spodumene and soda ash with sulfuric acid make lithium carbonate, which a hopper collects. */
+    private static void lithium(ServerLevel level) {
+        var l1 = new BlockPos(-1, -58, 20);
+        vessel(level, l1, BlazeBurnerBlock.HeatLevel.SEETHING);
+        intake(level, l1.west(), Direction.EAST, List.of(stack("spodumene", 64)));
+        intake(level, l1.west().south(), Direction.EAST, List.of(stack("sodium_carbonate", 64)));
+        straight(ACID, Direction.SOUTH, mid(l1, Direction.NORTH).north());
+        outlet(level, l1.offset(2, -1, 2), Direction.SOUTH, true);
+        plant.sign(l1.north(2).east(2), "炭酸リチウム（左下のチェスト）");
+    }
+
+    /** An open vessel on the acid line, an alkali vessel and a water vessel: stepping into the first two burns until death, the third does not. */
+    private static void burn(ServerLevel level) {
+        var b1 = new BlockPos(-12, -58, 12);
+        for (int layer = 1; layer <= 2; layer++) ReactorGameTests.layer(level, b1, layer);
+        straight(ACID, Direction.WEST, mid(b1, Direction.EAST).east());
+        ((LiddedVesselBlockEntity) level.getBlockEntity(b1)).toggleLid();
+        plant.sign(b1.north(2), "硫酸の槽：ハッチを開けてある");
+        var b2 = new BlockPos(-26, -58, 12);
+        var b3 = new BlockPos(-38, -58, 12);
+        for (int layer = 1; layer <= 2; layer++) { ReactorGameTests.layer(level, b2, layer);ReactorGameTests.layer(level, b3, layer); }
+        LATER.add(new Object[] {"苛性ソーダ・水の槽", (Part) l -> {
+            var alkali = (LiddedVesselBlockEntity) ((LiddedVesselBlockEntity) l.getBlockEntity(b2)).getControllerBE();
+            alkali.getTankInventory().fill(new FluidStack(fluid("caustic_soda_solution"), 8000), IFluidHandler.FluidAction.EXECUTE);
+            alkali.toggleLid();
+            var water = (LiddedVesselBlockEntity) ((LiddedVesselBlockEntity) l.getBlockEntity(b3)).getControllerBE();
+            water.getTankInventory().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 8000), IFluidHandler.FluidAction.EXECUTE);
+            water.toggleLid();
+        }});
+        plant.sign(b2.north(2), "苛性ソーダの槽（燃える）");
+        plant.sign(b3.north(2), "水の槽（燃えない・対照）");
+    }
+
+    /** Galena leached in hydrochloric acid, the slurry clarified, the solution electrowon to lead ingots. */
+    private static void leadWet(ServerLevel level) {
+        var w1 = new BlockPos(0, -58, 40);
+        vessel(level, w1, BlazeBurnerBlock.HeatLevel.KINDLED);
+        intake(level, w1.west().south(2), Direction.EAST, List.of(stack("galena", 64)));
+        straight(tank(mid(w1, Direction.WEST).west(6), "hydrochloric_acid"), Direction.EAST, mid(w1, Direction.WEST).west());
+        straight(tank(mid(w1, Direction.NORTH).north(6), "oxygen_gas"), Direction.SOUTH, mid(w1, Direction.NORTH).north());
+        // The clarifier stands east of it, fed from below at its centre.
+        var drive = new BlockPos(12, -57, 41);
+        for (var cell : WetProcessStructure.cells(drive, Direction.SOUTH, 7, 3)) level.setBlock(cell.pos(), cell.state(), 3);
+        ((WetProcessBlockEntity) level.getBlockEntity(drive)).rebuild();
+        plant.motor(drive.above(), Direction.DOWN, 4);
+        var feed = mid(w1, Direction.EAST).east();
+        plant.route(Direction.EAST, feed, List.of(feed.below(2), new BlockPos(drive.getX(), feed.getY() - 2, feed.getZ())), Direction.UP);
+        // The clear solution over the weir on the clarifier's front to the cell, from below.
+        var weir = drive.south(4);
+        var cellAt = new BlockPos(drive.getX(), -58, 52);
+        plant.route(Direction.SOUTH, weir, List.of(weir.below(2), new BlockPos(weir.getX(), weir.getY() - 2, cellAt.getZ())), Direction.UP);
+        cell(level, cellAt, 400, cellAt.offset(4, 0, -1));
+        plant.sign(w1.north(2).west(2), "鉛 湿式① 浸出（方鉛鉱＋塩酸）");
+        plant.sign(drive.atY(G).south(6), "沈降槽（4 RPM）");
+        plant.sign(cellAt.atY(G).south(2), "電解採取セル：鉛インゴットはヘッドから取り出す");
+    }
 
     /** Diorite on a depot under a fan blowing through a soul campfire, and a millstone to crush the calcite. */
     private static void calcite(ServerLevel level, int x, int z) {
@@ -256,110 +430,18 @@ public final class BatteryPlaytestWorld {
         chest(level, ground.east(6).south(2), List.of(new ItemStack(Items.DIORITE, 64), new ItemStack(Items.CALCITE, 64)));
         plant.sign(ground.east(4).north(), "閃緑岩を台に置く→方解石");
         plant.sign(ground.east(8).north(), "石臼：方解石→蛍石50%");
-        plant.sign(ground.east(6).south(3), "閃緑岩・方解石");
     }
 
-    /** A 3x3x2 stainless vessel with its hatch open and a liquid in it. */
-    private static void burnVessel(ServerLevel level, BlockPos base, String fluid, String label) {
-        ReactorGameTests.layer(level, base, 1);
-        ReactorGameTests.layer(level, base, 2);
-        var vessel = (LiddedVesselBlockEntity) ((LiddedVesselBlockEntity) level.getBlockEntity(base)).getControllerBE();
-        vessel.getTankInventory().fill(new FluidStack(fluid(fluid), 8000), IFluidHandler.FluidAction.EXECUTE);
-        vessel.toggleLid();
-        plant.sign(base.offset(1, 0, -2), label);
-    }
-
-    /** A solid box of casings with its terminal on top, an electrolyte filled once the structure is found, and a creative battery wired to it. */
+    /** A solid box of casings with its terminal on top, a creative tank of its electrolyte piped to the terminal, and a creative battery wired to it. */
     private static void bank(ServerLevel level, BlockPos corner, boolean lead, double volts) {
         var casing = (lead ? CEBattery.LEAD_ACID_CASING : CEBattery.LITHIUM_ION_CASING).get().defaultBlockState();
         for (int dx = 0; dx < 4; dx++) for (int dy = 0; dy < 2; dy++) for (int dz = 0; dz < 3; dz++) plant.put(corner.offset(dx, dy, dz), casing);
         var terminal = corner.offset(1, 2, 1);
         plant.put(terminal, (lead ? CEBattery.LEAD_ACID_TERMINAL : CEBattery.LITHIUM_ION_TERMINAL).get().defaultBlockState());
         BANKS.add(terminal);
-        wire(level, corner.offset(6, 0, 1), terminal, volts);
-        var electrolyte = lead ? "dilute_sulfuric_acid" : "acetone";
-        LATER.add(() -> ((BatteryTerminalBlockEntity) level.getBlockEntity(terminal)).electrolyte()
-            .fill(new FluidStack(fluid(electrolyte), 24 * 250), IFluidHandler.FluidAction.EXECUTE));
-        plant.sign(corner.offset(1, 0, -1), (lead ? "鉛蓄電池 200V" : "リチウムイオン電池 300V") + "（電池は " + (int) volts + "V で充電）");
-    }
-
-    /**
-     * A 3x3 stirred vessel with a creative blaze burner under a corner, a creative motor turning the stirrer through a cog, a creative tank and a
-     * stainless pump line on each feed side and a chest of materials. The feed cells are the flat sides' middles, as the vessel's ports are.
-     */
-    private static void reactor(ServerLevel level, BlockPos base, String label, boolean heated, List<Feed> feeds, List<ItemStack> items) {
-        ReactorGameTests.assemble(level, base, ReactorModule.STIRRED, 1);
-        var stirrer = base.offset(1, -1, 1);
-        plant.put(stirrer.north(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.Y));
-        plant.motor(stirrer.north().below(), Direction.UP, 128);
-        plant.burner(base.below(), heated ? BlazeBurnerBlock.HeatLevel.KINDLED : BlazeBurnerBlock.HeatLevel.SEETHING);
-        for (var feed : feeds) {
-            var side = feed.side();
-            // The middle cell of the side, and a line of five cells outward from it ending at a creative tank.
-            var middle = base.offset(1 + (side.getStepX() == 0 ? 0 : side.getStepX() > 0 ? 1 : -1), 0, 1 + (side.getStepZ() == 0 ? 0 : side.getStepZ() > 0 ? 1 : -1));
-            var last = middle.relative(side);
-            var first = middle.relative(side, 5);
-            var tank = middle.relative(side, 6);
-            supply(level, tank, feed.fluid());
-            plant.route(side.getOpposite(), first, List.of(last), side.getOpposite());
-        }
-        chest(level, base.offset(-2, 0 - 2, -2), items.isEmpty() ? List.of(new ItemStack(Items.PAPER)) : items);
-        plant.sign(base.offset(-2, -2, -3), label);
-    }
-
-    /** A 7x7x3 clarifier fed with the lead slurry from below and turned slowly by a creative motor on its drive. */
-    private static void clarifier(ServerLevel level, BlockPos drive) {
-        for (var cell : WetProcessStructure.cells(drive, Direction.NORTH, 7, 3)) level.setBlock(cell.pos(), cell.state(), 3);
-        ((WetProcessBlockEntity) level.getBlockEntity(drive)).rebuild();
-        plant.motor(drive.above(), Direction.DOWN, 4);
-        var port = drive.below(2);
-        var tank = supply(level, port.below(4), "lead_leach_slurry");
-        plant.route(Direction.UP, tank.above(), List.of(port.below()), Direction.UP);
-        chest(level, drive.offset(-5, G - drive.getY(), 0), List.of(stack("flocculant", 16)));
-        plant.sign(drive.offset(0, G - drive.getY(), 5), "沈降槽：鉛スラリー（4 RPM）");
-    }
-
-    /** An electrolysis cell fed from below, with a creative battery wired to its panel at 400 V. */
-    private static void cell(ServerLevel level, BlockPos cell, String solution) {
-        plant.put(cell, CEElectrolysis.CELL.get().defaultBlockState().setValue(ElectrolysisCellBlock.AXIS, Direction.Axis.Z));
-        plant.put(cell.above(), CEElectrolysis.HEAD.get().defaultBlockState().setValue(ElectrodeHeadBlock.AXIS, Direction.Axis.Z));
-        for (int y = 0; y < 2; y++)
-            plant.put(cell.north().above(y), CEElectrolysis.CONTROLLER.get().defaultBlockState().setValue(ElectrolysisControllerBlock.FACING, Direction.NORTH));
-        var panel = cell.north().above();
-        var tank = supply(level, cell.below(4), solution);
-        plant.route(Direction.UP, tank.above(), List.of(cell.below()), Direction.UP);
-        wire(level, cell.offset(4, -3, -1), panel, 400);
-        LATER.add(() -> {
-            var rack = level.getCapability(Capabilities.ItemHandler.BLOCK, cell.above(), Direction.UP);
-            if (rack == null || !rack.insertItem(1, CEElectrolysis.NICKEL_ELECTRODE_PLATE.toStack(), false).isEmpty()) throw new IllegalStateException("The nickel plate does not fit the head");
-            var owner = (ElectrolysisControllerBlockEntity) level.getBlockEntity(cell.north());
-            if (!owner.validate()) throw new IllegalStateException("The electrolysis cell does not form: " + owner.status());
-            var player = FakePlayerFactory.getMinecraft(level);
-            player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-            level.getBlockState(panel).useWithoutItem(level, player, new BlockHitResult(Vec3.atLowerCornerOf(panel).add(.75, .21, 0), Direction.NORTH, panel, false));
-        });
-        chest(level, cell.offset(-3, G - cell.getY(), 0), List.of(stack("nickel_electrode_plate", 16)));
-        plant.sign(cell.offset(0, G - cell.getY(), -2), "電解採取セル（400V）：鉛溶液→鉛インゴット");
-    }
-
-    /** The 5x5x3 molten-salt furnace with a hopper of alumina and coal on its anode, a hopper under it into a chest, and a creative battery at 200 V. */
-    private static void furnace(ServerLevel level, BlockPos anode) {
-        for (int y = -2; y <= 0; y++) for (int x = -2; x <= 2; x++) for (int z = -2; z <= 2; z++)
-            plant.put(anode.offset(x, y, z), (y == 0 && x == 0 && z == 0 ? CEFurnace.ANODE : CEFurnace.SHELL).get().defaultBlockState());
-        var busbar = anode.south(3);
-        plant.put(busbar, CEFurnace.BUSBAR.get().defaultBlockState().setValue(FurnaceBusbarBlock.FACING, Direction.NORTH));
-        wire(level, busbar.south(2), busbar, 200);
-        plant.put(anode.above(), Blocks.HOPPER.defaultBlockState().setValue(HopperBlock.FACING, Direction.DOWN));
-        chest(level, anode.above(2), List.of(stack("alumina", 64), new ItemStack(Items.COAL, 64), stack("titanium_dioxide", 16), stack("zirconia", 16)));
-        var under = anode.below(3);
-        plant.put(under, Blocks.HOPPER.defaultBlockState().setValue(HopperBlock.FACING, Direction.SOUTH));
-        plant.put(under.south(), Blocks.CHEST.defaultBlockState());
-        plant.sign(anode.offset(0, G - anode.getY(), 4), "溶融塩電解炉（200V）：アルミナ+石炭→アルミニウム");
-    }
-
-    private static void index(ServerLevel level) {
-        String[][] labels = {{"北：方解石・酸の槽・電池", "z=0"}, {"鉛 乾式・湿式", "z=40"}, {"沈降槽・電解セル・リチウム", "z=80"}, {"アルミニウム", "z=120"}};
-        for (int i = 0; i < labels.length; i++) plant.sign(new BlockPos(2 + 2 * i, G, 10), labels[i][0] + " " + labels[i][1]);
+        wire(corner.offset(6, 0, 1), terminal, volts);
+        straight(tank(terminal.west(8), lead ? "dilute_sulfuric_acid" : "acetone"), Direction.EAST, terminal.west());
+        plant.sign(corner.north(), (lead ? "鉛蓄電池 200V" : "リチウムイオン電池 300V") + "（" + (int) volts + "Vで充電）");
     }
 
     // ---- ticks ---------------------------------------------------------------------------------------------------------------------
@@ -371,12 +453,12 @@ public final class BatteryPlaytestWorld {
             serverTicks++;
             // A cog train sets each pump's turning direction; a positive speed moves fluid toward its front.
             if (serverTicks == 5 || serverTicks == 40) plant.correctDrives((pos, speed) -> speed < 0);
-            if (serverTicks == 20) for (var supply : SUPPLIES) station(level, "supply " + supply[1], l -> {
+            if (serverTicks == 20) for (var supply : SUPPLIES) part(level, "供給タンク " + supply[1], l -> {
                 var tank = ((com.simibubi.create.content.fluids.tank.FluidTankBlockEntity) l.getBlockEntity((BlockPos) supply[0])).getControllerBE();
                 ((com.simibubi.create.content.fluids.tank.CreativeFluidTankBlockEntity.CreativeSmartFluidTank) tank.getTankInventory())
                     .setContainedFluid(new FluidStack(fluid((String) supply[1]), 1_000));
             });
-            if (serverTicks == 25) for (var wire : WIRES) station(level, "wire " + wire[1], l -> {
+            if (serverTicks == 25) for (var wire : WIRES) part(level, "配線 " + wire[1], l -> {
                 var battery = (BlockPos) wire[0];
                 CEEBlocks.CREATIVE_BATTERY.get().ensureNodesExist(l, battery, l.getBlockState(battery));
                 var device = DevicesSavedData.load(l).getDevice(battery, CreativeBatteryDevice.class);
@@ -387,16 +469,15 @@ public final class BatteryPlaytestWorld {
                 var wiring = InfrastructureSavedData.load(l);
                 for (int node = 0; node < 2; node++) wiring.connect(new InWorldNode(node, battery), new InWorldNode(node, (BlockPos) wire[1]), copper);
             });
-            if (serverTicks == 90) for (var later : LATER) station(level, "late step", l -> later.run());
-            if (serverTicks == TIMEOUT / 2) {
-                for (var terminal : BANKS) station(level, "bank report", l -> {
+            if (serverTicks == 90) for (var later : LATER) part(level, (String) later[0], (Part) later[1]);
+            if (serverTicks == RUN_TICKS) {
+                for (var terminal : BANKS) part(level, "電池の確認", l -> {
                     var bank = (BatteryTerminalBlockEntity) l.getBlockEntity(terminal);
                     REPORT.put("bank " + terminal.toShortString(), bank.status() + ", casings " + bank.casings() + ", charge " + Math.round(bank.stateOfCharge() * 100) + "%");
                 });
-            }
-            if (serverTicks >= TIMEOUT / 2 + 20) {
                 REPORT.put("ticks", serverTicks);
-                REPORT.put("lines", plant.LINES.size());
+                REPORT.put("pipeBlocks", plant.LINES.size());
+                REPORT.put("pumps", plant.PUMPS.size());
                 done = true;
             }
         } catch (RuntimeException error) {

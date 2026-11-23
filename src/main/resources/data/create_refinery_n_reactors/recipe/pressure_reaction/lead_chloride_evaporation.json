@@ -1,0 +1,20 @@
+{
+  "type": "create_refinery_n_reactors:pressure_reaction",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "create_refinery_n_reactors:lead_chloride_solution"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:lead_chloride_crystals"
+    },
+    {
+      "id": "create_refinery_n_reactors:steam",
+      "amount": 400
+    }
+  ]
+}

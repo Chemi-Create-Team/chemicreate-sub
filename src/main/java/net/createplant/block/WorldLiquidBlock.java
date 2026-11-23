@@ -1,6 +1,7 @@
 package net.createplant.block;
 
 import net.createplant.chemistry.WoodCarbonization;
+import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEWorldFluids;
 import net.createplant.safety.CorrosiveContact;
 import net.createplant.transport.FluidHazards;
@@ -43,11 +44,16 @@ public final class WorldLiquidBlock extends LiquidBlock {
     }
 
     @Override public ItemStack pickupBlock(Player player, LevelAccessor accessor, BlockPos pos, BlockState state) {
+        if (CEChlorAlkali.BRINE.get().isSame(state.getFluidState().getType())) {
+            ItemStack filled = pickup(accessor, pos, state, fluid -> true);
+            if (!filled.isEmpty()) filled.set(CEWorldFluids.IRON_BUCKET_SHELL.get(), net.minecraft.util.Unit.INSTANCE);
+            return filled;
+        }
         return pickup(accessor, pos, state, fluid -> !FluidHazards.of(fluid).corrosive());
     }
 
     public ItemStack pickupAlloy(LevelAccessor accessor, BlockPos pos, BlockState state) {
-        return pickup(accessor, pos, state, fluid -> FluidHazards.of(fluid).corrosive());
+        return pickup(accessor, pos, state, CEWorldFluids::acceptsAlloyBucket);
     }
 
     public ItemStack pickupStainless(LevelAccessor accessor, BlockPos pos, BlockState state) {

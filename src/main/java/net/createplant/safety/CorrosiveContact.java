@@ -34,11 +34,7 @@ public final class CorrosiveContact {
 
     public static boolean harmful(FluidState state) {
         if (state.isEmpty()) return false;
-        var id = BuiltInRegistries.FLUID.getKey(state.getType());
-        String name = id.getPath();
-        if (name.startsWith("flowing_")) name = name.substring(8);
-        // Brine corrodes metal, but does not cause an acid or alkali skin burn.
-        if (!id.getNamespace().equals(CreatePlant.MOD_ID) || name.equals("brine")) return false;
+        if (!BuiltInRegistries.FLUID.getKey(state.getType()).getNamespace().equals(CreatePlant.MOD_ID)) return false;
         var properties = FluidHazards.of(new FluidStack(state.getType(), 1));
         return properties.corrosive() && !properties.gas();
     }

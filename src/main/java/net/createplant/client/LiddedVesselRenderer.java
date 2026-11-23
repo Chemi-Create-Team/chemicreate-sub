@@ -48,7 +48,6 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         renderWindows(be, ms, buffer, light, overlay);
         if (!be.isController()) return;
         int width = be.getWidth(), height = be.getHeight();
-        renderSludge(be, ms, buffer, light, overlay);
         if (be.stirred()) renderImpellers(be, width, ms, buffer, light);
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite top = atlas.apply(CreatePlant.location("block/reactor/silver/top")), under = atlas.apply(CreatePlant.location("block/reactor/steel")),
@@ -62,8 +61,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             ms.popPose();renderContents(be,width,height,ms,buffer,light,overlay);return;
         }
         box(vc, ms, middle - 2, -1, span - 7, middle + 2, 0, span - 3, fitting, fitting, edge, light, overlay);
-        if (be.fouling().drainOpen()) box(vc, ms, middle - 1, -2, span - 8, middle + 1, -1, span - 2, edge, edge, fitting, light, overlay);
-        else box(vc, ms, middle - 3, -2, span - 6, middle + 3, -1, span - 4, edge, edge, fitting, light, overlay);
+        box(vc, ms, middle - 3, -2, span - 6, middle + 3, -1, span - 4, edge, edge, fitting, light, overlay);
         // Wide vessels keep a 22 px hatch in the middle of their joined top.
         float h0 = middle - LiddedVesselBlock.HATCH_HALF, h1 = middle + LiddedVesselBlock.HATCH_HALF;
         ms.pushPose();
@@ -172,24 +170,6 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
                 NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(TankLayerColors.surface(gas), inset, surface, inset, width - inset, top, width - inset, vapour, ms, light, false, true);
             }
             surface = top;
-        }
-    }
-
-    private static void renderSludge(LiddedVesselBlockEntity be, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        float dirt = be.fouling().foulingFraction();
-        if (dirt <= 0) return;
-        var sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(CreatePlant.location("block/lidded_vessel/sludge"));
-        var vc = buffer.getBuffer(RenderType.solid());
-        float y = WALL + .05f + dirt * 1.4f;
-        for (int z = 2; z < be.getWidth() * 16 - 2; ) {
-            int low = 2, high = be.getWidth() * 16 - 2;
-            int end = Math.min(high, (z / 16 + 1) * 16);
-            for (int x = low; x < high; ) {
-                int next = Math.min(high, (x / 16 + 1) * 16);
-                up(vc, ms, x, z, next, end, y, sprite, x % 16, z % 16, x % 16 + next - x, z % 16 + end - z, light, overlay);
-                x = next;
-            }
-            z = end;
         }
     }
 

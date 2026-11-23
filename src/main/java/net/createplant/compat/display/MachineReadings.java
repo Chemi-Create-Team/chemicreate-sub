@@ -120,7 +120,6 @@ public final class MachineReadings {
         if (be instanceof ConverterTrunnionBearingBlockEntity converter)
             return Component.translatable("converter.create_refinery_n_reactors.status." + converter.status());
         if (be instanceof LiddedVesselBlockEntity vessel) {
-            if (vessel.fouling().blocked()) return Component.translatable("reactor.create_refinery_n_reactors.status.fouled");
             if (vessel.module()==net.createplant.chemistry.ReactorModule.NONE) return Component.translatable("lidded_vessel.create_refinery_n_reactors.lid." + (vessel.open() ? "open" : "closed"));
         }
         if (be instanceof ReactorMachineBlockEntity r) return Component.translatable("reactor.create_refinery_n_reactors.status."+r.status());
@@ -268,9 +267,9 @@ public final class MachineReadings {
         if (be instanceof LiddedVesselBlockEntity vessel) {
             switch (key) {
                 case "structure": return new Reading(vessel.getHeight(),net.createplant.block.ReactorStructure.MAX_SECTIONS);
-                case "vessel_fouling": return new Reading(vessel.fouling().foulingFraction()*100,100);
-                case "vessel_drain": return new Reading(vessel.fouling().drainOpen() ? 1 : 0,1);
-                case "vessel_waste": return new Reading(vessel.fouling().drainPort().getFluidInTank(0).getAmount(),net.createplant.chemistry.VesselFouling.WASTE_CAPACITY);
+                case "vessel_fouling": return new Reading(0,100); // vessels no longer foul; the measurement keeps its place for saved display links
+                case "vessel_drain": return new Reading(0,1);
+                case "vessel_waste": return new Reading(0,1);
             }
             if (key.startsWith("fluid_")) {
                 int index=Integer.parseInt(key.substring(key.lastIndexOf('_')+1));

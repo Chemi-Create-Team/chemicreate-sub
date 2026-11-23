@@ -1,7 +1,6 @@
 package net.createplant.item;
 
 import net.createplant.registry.CEWorldFluids;
-import net.createplant.transport.FluidHazards;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -16,7 +15,7 @@ public final class ProcessBucketWrapper extends FluidBucketWrapper {
     }
 
     @Override public boolean canFillFluidType(FluidStack fluid) {
-        return CEWorldFluids.isLiquid(fluid.getFluid()) && FluidHazards.of(fluid).corrosive() == alloy();
+        return CEWorldFluids.isLiquid(fluid.getFluid()) && CEWorldFluids.acceptsAlloyBucket(fluid) == alloy();
     }
 
     @Override public FluidStack getFluid() {
@@ -28,7 +27,8 @@ public final class ProcessBucketWrapper extends FluidBucketWrapper {
     @Override public boolean isFluidValid(int tank, FluidStack fluid) { return tank == 0 && canFillFluidType(fluid); }
 
     @Override protected void setFluid(FluidStack fluid) {
-        if (fluid.isEmpty()) container = StainlessBuckets.emptied(container, new ItemStack(alloy() ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET));
+        if (fluid.isEmpty() && container.getItem() instanceof ProcessBucketItem bucket) container = bucket.emptyBucket(container);
+        else if (fluid.isEmpty()) container = new ItemStack(alloy() ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET);
         else container = CEWorldFluids.bucket(fluid);
     }
 }

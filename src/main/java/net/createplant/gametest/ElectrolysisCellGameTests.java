@@ -12,6 +12,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -83,6 +85,36 @@ public class ElectrolysisCellGameTests {
         var cell = (ElectrolysisCellBlockEntity) h.getLevel().getBlockEntity(owner.structure().minimum());
         h.assertTrue(cell.port(Direction.WEST).drain(100, SIMULATE).is(CEFluids.HYDROGEN_GAS.get()), "Hydrogen leaves the cathode side");
         h.succeed();
+    }
+
+    @GameTest(template = "test_petrochemical")
+    public static void outletLabelsFollowTheExposedFaceAndItsProduct(GameTestHelper h) {
+        var owner = assemble(h.getLevel(), h.absolutePos(new BlockPos(3, 1, 3)), 2, Direction.WEST);
+        var first = owner.cells().getFirst();
+        var last = owner.cells().getLast();
+        outlet(h, first.outletTooltip(Direction.NORTH), "cathode", Component.translatable("electrolysis.port.awaiting_feed"));
+        h.assertTrue(first.outletTooltip(Direction.WEST) == null && first.outletTooltip(Direction.EAST) == null
+            && first.outletTooltip(Direction.UP) == null, "Joined, covered and panel faces have no outlet label");
+        feed(owner, new FluidStack(CEChlorAlkali.BRINE.get(), 500));
+        outlet(h, first.outletTooltip(Direction.NORTH), "cathode", CEFluids.HYDROGEN_GAS.get().getFluidType().getDescription());
+        outlet(h, first.outletTooltip(Direction.SOUTH), "anode", CEChlorAlkali.CHLORINE.get().getFluidType().getDescription());
+        outlet(h, last.outletTooltip(Direction.EAST), "liquid", CEChlorAlkali.CAUSTIC_SODA.get().getFluidType().getDescription());
+        var stored = new FluidStack(CEUranium.SULFURIC_ACID.get(), 100);
+        last.tanks.get(3).setFluid(stored);
+        outlet(h, last.outletTooltip(Direction.EAST), "liquid", stored.getHoverName());
+        var head = owner.heads().getFirst();
+        var metal = new ItemStack(net.minecraft.world.item.Items.IRON_INGOT);
+        head.products.setStackInSlot(0, metal);
+        outlet(h, head.outletTooltip(Direction.UP), "metal", metal.getHoverName());
+        head.lower(true);turn(head, 17);
+        outlet(h, head.outletTooltip(Direction.NORTH), "metal_locked", metal.getHoverName());
+        h.assertTrue(head.outletTooltip(Direction.DOWN) == null, "The head's underside does not expose an item port");
+        h.succeed();
+    }
+
+    private static void outlet(GameTestHelper h, Component label, String port, Component product) {
+        h.assertTrue(label != null && label.getContents() instanceof TranslatableContents text
+            && text.getKey().equals("electrolysis.port." + port) && product.equals(text.getArgs()[0]), "The " + port + " outlet identifies " + product);
     }
 
     @GameTest(template = "test_reactor")

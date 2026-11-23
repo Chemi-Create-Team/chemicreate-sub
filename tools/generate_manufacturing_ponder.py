@@ -428,7 +428,7 @@ route('sulfuric_acid', ('From sulfur and recovered gas to sulfuric acid', '硫�
 route('chlor_alkali', ('From salt to chlorine, soda and cleaning products', '塩から塩素・ソーダと洗浄剤を作る', '从盐制取氯、烧碱与清洁用品'),
     ['halite_ore', 'deepslate_halite_ore', 'salt', 'brine_bucket', 'caustic_soda_solution_bucket', 'hydrochloric_acid_bucket', 'sodium_hypochlorite_solution_bucket', 'soap', 'asbestos'], [
     step('crushing', 'crushing/halite_ore', 'Crush halite ore into salt. A sunlit open tank can also evaporate water to collect salt.', '岩塩鉱石を粉砕して塩にします。日光が当たる開放タンクで水を蒸発させても塩を集められます。', '粉碎岩盐矿石取得盐，也可在日照下的开放槽中蒸发水收盐。'),
-    step('mixing', 'mixing/brine', 'Dissolve the salt in water with a Mechanical Mixer over a basin.', '鉢とメカニカルミキサーで、塩を水に溶かします。', '用工作盆和机械搅拌器把盐溶于水。'),
+    step('mixing', 'mixing/brine', 'Dissolve salt in water with a Mechanical Mixer over a basin. Copper pipes can carry the brine to the electrolyzer.', '鉢とメカニカルミキサーで塩を水に溶かします。できた塩水は銅管で電解槽へ送れます。', '用工作盆和机械搅拌器把盐溶于水。制得的盐水可用铜管送入电解槽。'),
     step('electrolyzer', 'operation:brine_electrolysis', 'Feed brine below, wire the controller and press START. Collect hydrogen and chlorine above, caustic soda below. Amounts are per plate over 100 ticks.', '下段へ塩水を送り、配線してSTARTを押します。上段から水素・塩素、下段から苛性ソーダを回収します。量は極板1枚・100 tick分です。', '下部供盐水，接线后按START，上部收氢氯、下部收苛性钠，数量按每块极板100 tick计算。'),
     step('crushing', 'crushing/diorite_to_asbestos', 'Crush diorite for asbestos. Insert the diaphragm through an open cell hatch to recover a quarter more soda; one asbestos lasts for 10000 mB brine.', '閃緑岩を粉砕してアスベストを得ます。電解セルの開いたハッチへ隔膜を入れると苛性ソーダが4分の1増え、塩水10000 mBごとに1個を消費します。', '粉碎闪长岩得到石棉。从打开的电解单元检修口装入隔膜可增产四分之一烧碱，每10000 mB盐水消耗一份石棉。'),
     step('vessel', 'pressure_reaction/hydrogen_chloride', 'Combine the separated hydrogen and chlorine in an impeller vessel.', '分離した水素と塩素を撹拌翼入り槽で反応させます。', '在搅拌槽中使分离出的氢与氯反应。'),
@@ -503,12 +503,10 @@ route('refrigeration', ('Coolants 2 — refrigeration and ice', '冷媒の製造
 ], family='coolants')
 
 route('aluminum', ('From bauxite to aluminum', 'ボーキサイトからアルミニウムを作る', '从铝土矿制取铝'),
-    ['bauxite_ore', 'deepslate_bauxite_ore', 'bauxite', 'aluminium_sulfate_solution_bucket', 'sodium_aluminate_solution_bucket', 'alumina', 'aluminum_ingot', 'aluminum_sheet'], [
+    ['bauxite_ore', 'deepslate_bauxite_ore', 'bauxite', 'sodium_aluminate_solution_bucket', 'alumina', 'aluminum_ingot', 'aluminum_sheet'], [
     step('crushing', 'crushing/bauxite_ore', 'Crush the ore to collect the mineral feed.', '鉱石を粉砕し、製錬用の鉱物を集めます。', '粉碎矿石以取得冶炼原料。'),
-    step('vessel', 'pressure_reaction/aluminium_sulfate_solution', 'The sulfate route heats the mineral with sulfuric acid in an impeller vessel.', '硫酸法では、撹拌槽で鉱物と硫酸を加熱します。', '硫酸路线在搅拌槽中加热矿物与硫酸。'),
-    step('vessel', 'pressure_reaction/alumina', 'Superheat the sulfate solution to obtain alumina. Recover sulfur trioxide into the sulfuric-acid line.', '硫酸塩溶液を超加熱してアルミナを得ます。三酸化硫黄を硫酸の系列へ回収します。', '超加热硫酸盐溶液得到氧化铝，三氧化硫回收到硫酸系列。'),
-    step('vessel', 'pressure_reaction/sodium_aluminate_solution', 'The alternative Bayer route uses caustic soda and also returns the iron as nuggets.', '別のバイヤー法では苛性ソーダを使い、鉄も鉄塊として回収します。', '另一条拜耳路线使用烧碱，并以铁粒回收铁。'),
-    step('vessel', 'pressure_reaction/alumina_from_sodium_aluminate_solution', 'Superheat the aluminate solution, collect alumina and send the recovered soda back to the previous batch.', 'アルミン酸塩溶液を超加熱し、アルミナと苛性ソーダを回収します。ソーダを前の工程へ戻します。', '超加热铝酸盐溶液，收集氧化铝并把回收烧碱返回前一工序。'),
+    step('vessel', 'pressure_reaction/sodium_aluminate_solution', 'Heat bauxite with caustic soda in a stirred tank. Collect the iron nuggets.', '撹拌槽でボーキサイトと苛性ソーダを加熱し、鉄塊も回収します。', '在搅拌槽中加热铝土矿与烧碱，同时回收铁粒。'),
+    step('vessel', 'pressure_reaction/alumina_from_sodium_aluminate_solution', 'Superheat the aluminate solution to separate the alumina. Top up the recovered caustic soda before reuse.', 'アルミン酸ナトリウム溶液を超加熱し、アルミナを分離します。回収した苛性ソーダは補給して再利用します。', '超加热铝酸钠溶液以分离氧化铝。补充回收的烧碱后再利用。'),
     step('furnace', 'operation:reduce_alumina', 'Build the 5×5×3 electrolysis furnace with its anode and busbar. Feed oxide and carbon through the busbar and connect its two electrical terminals. Wait for the molten working temperature.', '5×5×3の電解炉に陽極と母線を組み、母線から酸化物と炭素を搬入します。2端子へ結線し、浴が動作温度になるまで加熱します。', '组装带阳极和母线的5×5×3电解炉，经母线送入氧化物与碳，连接两个电气端子并等熔池达到工作温度。'),
     step('pressing', 'pressing/aluminum_sheet', 'Extract the metal through a bottom face, then press ingots into sheets for factory components.', '底面から金属を取り出し、インゴットをプレスして設備用の板にします。', '从底面取出金属，再把锭压成设备用板。'),
 ])
@@ -517,7 +515,7 @@ route('titanium', ('From ilmenite to titanium and white pigment', 'チタン鉄�
     ['ilmenite_ore', 'deepslate_ilmenite_ore', 'ilmenite', 'titanyl_sulfate_solution_bucket', 'titanium_dioxide', 'titanium_ingot', 'titanium_sheet', 'titanium_block'], [
     step('crushing', 'crushing/ilmenite_ore', 'Crush the ore and collect ilmenite.', '鉱石を粉砕してチタン鉄鉱を集めます。', '粉碎矿石收集钛铁矿。'),
     step('vessel', 'pressure_reaction/titanyl_sulfate_solution', 'Heat the mineral with sulfuric acid in an impeller vessel, keeping the recovered iron nuggets.', '撹拌槽で鉱物と硫酸を加熱し、回収される鉄塊も取り出します。', '在搅拌槽中加热矿物与硫酸，同时取出回收的铁粒。'),
-    step('vessel', 'pressure_reaction/titanium_dioxide', 'Superheat the solution to obtain titanium dioxide and recover the sulfur trioxide.', '溶液を超加熱して二酸化チタンを得て、三酸化硫黄も回収します。', '超加热溶液取得二氧化钛并回收三氧化硫。'),
+    step('vessel', 'pressure_reaction/titanium_dioxide', 'Boil the solution down to titanyl sulfate hydrate crystals, then superheat them to leave solid titanium dioxide and recover the sulfur trioxide.', '溶液を加熱して水を蒸発させ、硫酸チタニル水和物の結晶を析出させます。それを超加熱すると固体の二酸化チタンが残り、三酸化硫黄も回収できます。', '加热溶液蒸发水分，析出硫酸氧钛水合物晶体；再超加热留下固体二氧化钛并回收三氧化硫。'),
     step('vessel', 'pressure_reaction/synthetic_rutile', 'The hydrochloric-acid route gives another way to obtain the same oxide. Choose a route according to the acids already produced by the factory.', '塩酸を使う工程でも同じ酸化物を得られます。工場で生産している酸に合わせて工程を選びます。', '盐酸路线也能取得相同氧化物，可按工厂现有酸源选择路线。'),
     step('furnace', 'operation:reduce_titanium_dioxide', 'Send oxide and carbon to a powered, molten electrolysis furnace and recover titanium through a bottom face.', '酸化物と炭素を通電・溶融した電解炉へ送り、底面からチタンを回収します。', '将氧化物与碳送入通电熔融的电解炉，从底面回收钛。'),
     step('pressing', 'pressing/titanium_sheet', 'Press the titanium ingot into sheets. Finished metal can also be assembled into its existing storage block.', 'チタンインゴットを板にプレスします。金属は既存のチタンブロックにもまとめられます。', '把钛锭压成板，也可按已有配方合成钛块。'),
@@ -527,7 +525,7 @@ route('zirconium', ('From zircon to zirconia and zirconium', 'ジルコンから
     ['zircon_ore', 'deepslate_zircon_ore', 'zircon', 'zirconium_sulfate_solution_bucket', 'zirconia', 'zirconium_ingot', 'zirconia_refractory_bricks', 'zirconium_pipe'], [
     step('crushing', 'crushing/zircon_ore', 'Crush zircon ore into the mineral feed.', 'ジルコン鉱石を粉砕して鉱物原料にします。', '粉碎锆石矿取得矿物原料。'),
     step('vessel', 'pressure_reaction/zirconium_sulfate_solution', 'Superheat zircon with sulfuric acid in an impeller vessel.', '撹拌槽でジルコンと硫酸を超加熱します。', '在搅拌槽中超加热锆石与硫酸。'),
-    step('vessel', 'pressure_reaction/zirconia', 'Keep the solution in its own batch and superheat it to collect zirconia and recover sulfur trioxide.', '溶液を別バッチで超加熱し、ジルコニアと三酸化硫黄を回収します。', '将溶液作为下一批超加热，回收氧化锆和三氧化硫。'),
+    step('vessel', 'pressure_reaction/zirconia', 'Boil the solution down to zirconium sulfate hydrate crystals (about 100-150 °C). Heat on to dehydrate them to zirconyl sulfate, releasing part of the SO3 (about 150-500 °C). Superheating above 700 °C decomposes the rest and leaves solid zirconia.', '溶液を加熱して水を蒸発させ、硫酸ジルコニウム水和物の結晶を析出させます(100〜150℃付近)。さらに加熱すると脱水してSO3の一部を放出し、硫酸ジルコニルになります(150〜500℃付近)。700℃以上に超加熱すると残りも分解し、固体のジルコニアが残ります。', '加热溶液蒸发水分，析出硫酸锆水合物晶体（约100-150 ℃）；继续加热脱水并放出部分SO3，变为硫酸氧锆（约150-500 ℃）；超加热到700 ℃以上则残余部分完全分解，留下固体氧化锆。'),
     step('furnace', 'operation:reduce_zirconia', 'Electrolyze the oxide with carbon in the powered furnace to recover zirconium metal.', '通電した炉で酸化物と炭素を電解し、ジルコニウム金属を回収します。', '在通电炉中电解氧化物与碳，回收金属锆。'),
     step('crafting', 'zirconia_refractory_bricks', 'Keep an oxide branch for refractory bricks. The metal branch supplies the existing zirconium components and pipes.', '酸化物の一部は耐火レンガに使います。金属の分岐は既存のジルコニウム部品や配管へ送ります。', '留一支氧化物用于耐火砖，金属支路供应已有锆部件和管道。'),
 ])

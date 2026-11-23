@@ -3,9 +3,7 @@
   "heat_requirement": "superheated",
   "ingredients": [
     {
-      "type": "neoforge:single",
-      "amount": 500,
-      "fluid": "create_refinery_n_reactors:titanyl_sulfate_solution"
+      "item": "create_refinery_n_reactors:titanyl_sulfate_hydrate"
     }
   ],
   "results": [
@@ -13,8 +11,8 @@
       "id": "create_refinery_n_reactors:titanium_dioxide"
     },
     {
-      "amount": 500,
-      "id": "create_refinery_n_reactors:sulfur_trioxide"
+      "id": "create_refinery_n_reactors:sulfur_trioxide",
+      "amount": 500
     }
   ]
 }

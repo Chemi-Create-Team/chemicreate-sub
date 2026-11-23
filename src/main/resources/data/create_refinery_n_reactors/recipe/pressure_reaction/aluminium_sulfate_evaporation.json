@@ -1,6 +1,6 @@
 {
   "type": "create_refinery_n_reactors:pressure_reaction",
-  "heat_requirement": "superheated",
+  "heat_requirement": "heated",
   "ingredients": [
     {
       "type": "neoforge:single",
@@ -10,11 +10,11 @@
   ],
   "results": [
     {
-      "id": "create_refinery_n_reactors:alumina"
+      "id": "create_refinery_n_reactors:aluminium_sulfate_hydrate"
     },
     {
-      "amount": 500,
-      "id": "create_refinery_n_reactors:sulfur_trioxide"
+      "id": "create_refinery_n_reactors:steam",
+      "amount": 400
     }
   ]
 }

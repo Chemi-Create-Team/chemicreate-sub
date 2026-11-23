@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import java.util.List;
 import net.createplant.block.ElectrolysisCellBlock;
 import net.createplant.chemistry.ElectrolysisProcess;
+import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEElectrolysis;
 import net.createplant.thermal.ThermalFluidTank;
 import net.minecraft.core.BlockPos;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -76,10 +78,39 @@ public class ElectrolysisCellBlockEntity extends SmartBlockEntity implements IHa
         return side.getAxisDirection() == Direction.AxisDirection.NEGATIVE ? 1 : 2;
     }
 
+    private boolean exposed(Direction side) {
+        return side == null || !getBlockState().getValue(ElectrolysisCellBlock.JOIN.get(side.ordinal()));
+    }
+
+    public Component outletTooltip(Direction side) {
+        if (side == null || !exposed(side)) return null;
+        int channel = channel(side);
+        var owner = controller();
+        var feed = owner == null ? tanks.getFirst().getFluid() : owner.fluid(0);
+        var recipe = ElectrolysisProcess.of(feed);
+        var stored = owner == null ? tanks.get(channel).getFluid() : owner.fluid(channel);
+        Component product;
+        if (!stored.isEmpty()) product = stored.getHoverName();
+        else if (recipe == null) product = Component.translatable("electrolysis.port.awaiting_feed");
+        else {
+            var fluid = switch (channel) {
+                case 1 -> recipe.cathode();
+                case 2 -> recipe.anode();
+                default -> recipe.soda() > 0 ? CEChlorAlkali.CAUSTIC_SODA.get() : recipe.recovered();
+            };
+            product = fluid == Fluids.EMPTY ? Component.translatable("electrolysis.port.no_product") : fluid.getFluidType().getDescription();
+        }
+        return Component.translatable(switch (channel) {
+            case 0 -> "electrolysis.port.feed";
+            case 1 -> "electrolysis.port.cathode";
+            case 2 -> "electrolysis.port.anode";
+            default -> "electrolysis.port.liquid";
+        }, product);
+    }
+
     public IFluidHandler port(Direction side) {
         return LiveMachinePorts.fluid(this, new IFluidHandler() {
-            private boolean exposed() { return side == null || !getBlockState().getValue(ElectrolysisCellBlock.JOIN.get(side.ordinal())); }
-            @Override public int getTanks() { return !exposed() ? 0 : channel(side) < 0 ? 4 : channel(side) == 3 ? 2 : 1; }
+            @Override public int getTanks() { return !exposed(side) ? 0 : channel(side) < 0 ? 4 : channel(side) == 3 ? 2 : 1; }
             private int index(int tank) { return channel(side) < 0 ? tank : channel(side) == 3 ? tank == 0 ? 0 : 3 : channel(side); }
             @Override public FluidStack getFluidInTank(int tank) {
                 if (tank < 0 || tank >= getTanks()) return FluidStack.EMPTY;
@@ -98,7 +129,7 @@ public class ElectrolysisCellBlockEntity extends SmartBlockEntity implements IHa
             }
             @Override public int fill(FluidStack resource, FluidAction action) {
                 int channel = channel(side);
-                if (!exposed() || resource.isEmpty() || channel == 1 || channel == 2 || ElectrolysisProcess.of(resource) == null) return 0;
+                if (!exposed(side) || resource.isEmpty() || channel == 1 || channel == 2 || ElectrolysisProcess.of(resource) == null) return 0;
                 var cells = members();
                 for (var cell : cells) if (!cell.tanks.getFirst().isEmpty() && !cell.tanks.getFirst().getFluid().is(resource.getFluid())) return 0;
                 int left = resource.getAmount();
@@ -111,7 +142,7 @@ public class ElectrolysisCellBlockEntity extends SmartBlockEntity implements IHa
             @Override public FluidStack drain(int maximum, FluidAction action) { return drain(FluidStack.EMPTY, maximum, action); }
             private FluidStack drain(FluidStack resource, int maximum, FluidAction action) {
                 int channel = channel(side);
-                if (!exposed() || maximum <= 0) return FluidStack.EMPTY;
+                if (!exposed(side) || maximum <= 0) return FluidStack.EMPTY;
                 if (channel < 0) channel = 3;
                 FluidStack result = FluidStack.EMPTY;
                 for (var cell : members()) {
@@ -131,7 +162,7 @@ public class ElectrolysisCellBlockEntity extends SmartBlockEntity implements IHa
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEElectrolysis.CELL_ENTITY.get(), (cell, side) ->
-            side != null && cell.getBlockState().getValue(ElectrolysisCellBlock.JOIN.get(side.ordinal())) ? null
+            !cell.exposed(side) ? null
                 : net.createplant.mixture.GasMixturePort.both(cell.port(side), cell.controller()));
     }
 

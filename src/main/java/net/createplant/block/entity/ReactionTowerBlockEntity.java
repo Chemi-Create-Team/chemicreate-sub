@@ -62,7 +62,9 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     private final IItemHandler catalystPort = new Catalysts(), solidPort = new Solids();
     /** Solid feed a tray holds, and as much of what it has made. */
     public static final int TRAY_LOAD = 16;
-    private int progress, clock;
+    private int progress, clock, wearCursor;
+    /** How far through its current batch the catalytic reaction has converted, 0 up to 1: feed is converted a little every tick. */
+    private double flow;
     private boolean syncNeeded, glazed, hatchOpen;
     /** 0 closed to 1 fully open, eased on the client. Kept by the owner. */
     private final LerpedFloat lid = LerpedFloat.linear().startWithValue(0);
@@ -156,6 +158,18 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     public FluidStack contents(int bank) { return tanks[bank].copy(); }
     public int contentsCapacity(int bank) { return capacity(tanks[bank]); }
     public int progress() { return progress; }
+    public int cycleTicks() { return cycle; }
+    /** The trays in the tower, how many hold a working catalyst, and the most batches left in one: {trays, working, life}. */
+    public int[] trayCounts() {
+        int trays = 0, working = 0, life = 0;
+        for (int y = 0; y < layers(); y++) {
+            var layer = layer(y);
+            if (layer == null || !layer.tray) continue;
+            trays++;
+            if (!layer.catalyst.isEmpty() && !spent(layer.catalyst)) { working++;life = Math.max(life, layer.catalyst.getMaxDamage() - layer.catalyst.getDamageValue()); }
+        }
+        return new int[] {trays, working, life};
+    }
     public FluidStack tank(int slot) { return tanks[slot].copy(); }
 
     private void changed() { syncNeeded = true;setChanged(); }
@@ -344,11 +358,11 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         int feedBatches = batches;
         if (recipe != null) {
             ProductionMonitor.plan(this, ProductionMonitor.batchRate(ProductionMonitor.fluids(recipe.outputs()), layers(), ((recipe.ticks()+4)/5)*5, 1), 0, 0);
-            for (int i = 0; i < recipe.inputs().size(); i++) feedBatches = Math.min(feedBatches, tanks[i].getAmount() / recipe.inputs().get(i).getAmount());
+            for (int i = 0; i < recipe.inputs().size(); i++) feedBatches = Math.min(feedBatches, ceilDiv(tanks[i].getAmount(), recipe.inputs().get(i).getAmount()));
             batches = feedBatches;
             for (int i = 0; i < recipe.outputs().size(); i++) {
                 FluidStack out = recipe.outputs().get(i), stored = tanks[2 + i];
-                batches = !stored.isEmpty() && !FluidThermal.compatible(stored, out) ? 0 : Math.min(batches, (capacity(out) - stored.getAmount()) / out.getAmount());
+                batches = !stored.isEmpty() && !FluidThermal.compatible(stored, out) ? 0 : Math.min(batches, ceilDiv(capacity(out) - stored.getAmount(), out.getAmount()));
             }
         }
         String next = !formed ? "unformed" : hatchOpen ? "hatch" : separator ? (recipe == null || feedShort(recipe) ? "no_feed" : batches > 0 ? "running" : "output")
@@ -366,19 +380,39 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         instruments(ticks, !separator && status.equals("running") ? recipe : null);
         if (!status.equals("running")) return;
         cycle = recipe.ticks();
-        progress += ticks;
-        if (progress < recipe.ticks()) { syncNeeded = true;return; }
-        progress = 0;
-        for (int i = 0; i < recipe.inputs().size(); i++) tanks[i] = tanks[i].copyWithAmount(tanks[i].getAmount() - recipe.inputs().get(i).getAmount() * batches);
+        // Feed is converted a little every tick, at most what the working layers do in these ticks, never more than the feed and the product room allow.
+        double f = (separator ? layers() : working.size()) * (double) ticks / recipe.ticks();
+        for (int i = 0; i < recipe.inputs().size(); i++) f = Math.min(f, tanks[i].getAmount() / (double) recipe.inputs().get(i).getAmount());
+        for (int i = 0; i < recipe.outputs().size(); i++) f = Math.min(f, (capacity(recipe.outputs().get(i)) - tanks[2 + i].getAmount()) / (double) recipe.outputs().get(i).getAmount());
+        if (f <= 1e-9) return;
+        int total = 0;
+        for (int i = 0; i < recipe.inputs().size(); i++) tanks[i] = tanks[i].copyWithAmount(tanks[i].getAmount() - Math.min(tanks[i].getAmount(), owed(recipe.inputs().get(i).getAmount(), f)));
         for (int i = 0; i < recipe.outputs().size(); i++) {
-            FluidStack made = recipe.outputs().get(i).copyWithAmount(recipe.outputs().get(i).getAmount() * batches);
-            tanks[2 + i] = tanks[2 + i].isEmpty() ? made : tanks[2 + i].copyWithAmount(tanks[2 + i].getAmount() + made.getAmount());
+            int give = made(recipe.outputs().get(i).getAmount(), f);
+            if (give <= 0) continue;
+            FluidStack portion = recipe.outputs().get(i).copyWithAmount(give);
+            tanks[2 + i] = tanks[2 + i].isEmpty() ? portion : FluidThermal.mix(tanks[2 + i], portion, give);
+            total += give;
         }
-        ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.outputs()) * batches, 0, 0);
-        // Each layer that ran wears its own catalyst by one batch.
-        for (int i = 0; i < batches && !separator && recipe.catalyst() != Items.AIR; i++) { var layer = working.get(i);var worn = layer.catalyst.copy();worn.setDamageValue(worn.getDamageValue() + 1);layer.setLayer(true, worn); }
-        changed();
+        double after = flow + f;
+        int done = (int) Math.floor(after);
+        flow = after - done;
+        progress = (int) (flow * recipe.ticks());
+        ProductionMonitor.produced(this, total, 0, 0);
+        // Each batch that completes wears the catalyst of the next working layer by one.
+        for (int i = 0; i < done && !separator && recipe.catalyst() != Items.AIR && !working.isEmpty(); i++) {
+            var layer = working.get(wearCursor++ % working.size());
+            var worn = layer.catalyst.copy();
+            worn.setDamageValue(worn.getDamageValue() + 1);
+            layer.setLayer(true, worn);
+        }
+        syncNeeded = true;
+        if (done > 0) changed();
     }
+    private static int ceilDiv(int amount, int per) { return amount <= 0 ? 0 : (amount + per - 1) / per; }
+    /** What a reaction moving on by {@code f} batches takes from an amount per batch: ahead of the products, so nothing is made from nothing. */
+    private int owed(int amount, double f) { return net.createplant.chemistry.ReactionFlow.owed(amount, flow, f); }
+    private int made(int amount, double f) { return net.createplant.chemistry.ReactionFlow.made(amount, flow, f); }
     /** The heated gas-solid reactions that run on trays without a catalyst. */
     private List<PressureReactionRecipe> solidRecipes() {
         if (level == null) return List.of();
@@ -559,7 +593,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         if (moved) changed();
     }
     private boolean feedShort(ProcessRecipe recipe) {
-        for (int i = 0; i < recipe.inputs().size(); i++) if (tanks[i].getAmount() < recipe.inputs().get(i).getAmount()) return true;
+        for (int i = 0; i < recipe.inputs().size(); i++) if (tanks[i].isEmpty()) return true;
         return false;
     }
 
@@ -704,6 +738,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         if (!load.isEmpty()) tag.put("TrayLoad", load.save(lookup));
         if (!made.isEmpty()) tag.put("TrayMade", made.save(lookup));
         if (cycle > 0) tag.putInt("TowerCycle", cycle);
+        if (flow > 0) tag.putDouble("TowerFlow", flow);
         tag.putString("Front", front.getSerializedName());
         if (!catalyst.isEmpty()) tag.put("Catalyst", catalyst.save(lookup));
         if (!status.equals("unformed") || progress > 0) { tag.putString("TowerStatus", status);tag.putInt("TowerProgress", progress); }
@@ -719,6 +754,7 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         load = tag.contains("TrayLoad") ? ItemStack.parseOptional(lookup, tag.getCompound("TrayLoad")) : ItemStack.EMPTY;
         made = tag.contains("TrayMade") ? ItemStack.parseOptional(lookup, tag.getCompound("TrayMade")) : ItemStack.EMPTY;
         cycle = tag.getInt("TowerCycle");
+        flow = Math.clamp(tag.getDouble("TowerFlow"), 0, 1);
         var facing = Direction.byName(tag.getString("Front"));
         front = facing != null && facing.getAxis().isHorizontal() ? facing : Direction.NORTH;
         catalyst = tag.contains("Catalyst") ? ItemStack.parseOptional(lookup, tag.getCompound("Catalyst")) : ItemStack.EMPTY;

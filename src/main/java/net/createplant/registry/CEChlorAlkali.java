@@ -44,8 +44,8 @@ public final class CEChlorAlkali {
     public static final DeferredItem<BlockItem> DEEPSLATE_HALITE_ORE = ore("deepslate_halite_ore", Blocks.DEEPSLATE);
 
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> BRINE = stream("brine", 0xCCD8E8EC);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CHLORINE = stream("chlorine", 0x99C8D85A);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIQUID_CHLORINE = stream("liquid_chlorine", 0xDDD8B830);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CHLORINE = stream("chlorine", 0xCC9EC41C);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIQUID_CHLORINE = stream("liquid_chlorine", 0xDDD8BE1C);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CAUSTIC_SODA = stream("caustic_soda_solution", 0xDDE8EEF0);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SODIUM_ALUMINATE = stream("sodium_aluminate_solution", 0xDDD8C8A8);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HYDROGEN_CHLORIDE = stream("hydrogen_chloride", 0x88E0E8E0);

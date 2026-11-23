@@ -3,7 +3,6 @@ package net.createplant.item;
 import net.createplant.chemistry.WoodCarbonization;
 import net.createplant.registry.CECarbonization;
 import net.createplant.registry.CEWorldFluids;
-import net.createplant.transport.FluidHazards;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -21,10 +20,11 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public final class ProcessBucketItem extends BucketItem {
     public ProcessBucketItem(Fluid fluid, Properties properties) { super(fluid, properties); }
 
-    public boolean alloy() { return FluidHazards.of(new FluidStack(content, 1000)).corrosive(); }
+    public boolean alloy() { return CEWorldFluids.acceptsAlloyBucket(new FluidStack(content, 1000)); }
 
     public ItemStack emptyBucket(ItemStack filled) {
-        return StainlessBuckets.emptied(filled, new ItemStack(alloy() ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET));
+        boolean alloyShell = alloy() && !filled.has(CEWorldFluids.IRON_BUCKET_SHELL.get());
+        return StainlessBuckets.emptied(filled, new ItemStack(alloyShell ? CEWorldFluids.EMPTY_ALLOY_BUCKET.get() : Items.BUCKET));
     }
 
     @Override public boolean hasCraftingRemainingItem(ItemStack stack) { return true; }

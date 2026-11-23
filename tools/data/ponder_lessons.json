@@ -1954,21 +1954,6 @@
     "ja_jp": "清掃前に回転と加熱を止めます。極低温の流体を入れると窓に霜が付きます。",
     "zh_cn": "清洁前停止旋转和加热。极低温流体会让观察窗结霜。"
   },
-  "vessel_maintenance.brush": {
-    "en_us": "Processing stops at 400 dirt. Open the central hatch and clean with a brush.",
-    "ja_jp": "汚れが400になると止まります。中央ハッチを開け、ブラシで清掃します。",
-    "zh_cn": "污垢达到400时停机，打开中央检修口并用刷子清理。"
-  },
-  "vessel_maintenance.deployer": {
-    "en_us": "A downward-facing Deployer with a brush automates cleaning. Stop the machine and open its hatch first.",
-    "ja_jp": "下向きのデプロイヤーにブラシを持たせると清掃を自動化できます。先に機械を止めてハッチを開きます。",
-    "zh_cn": "让向下的机械手持刷子即可自动清洁。先停机并打开舱盖。"
-  },
-  "vessel_maintenance.wash": {
-    "en_us": "Empty-hand right-click below to open the drain, then supply 1,000 mB/s water. Remove wash wastewater underneath.",
-    "ja_jp": "下面を空手で右クリックしてドレンを開き、水を1,000 mB/s供給します。出た洗浄排水は下面から抜きます。",
-    "zh_cn": "空手右键底面打开排污口，供水1,000 mB/s，并从底部排出清洗废水。"
-  },
   "vessel_maintenance.cryo": {
     "en_us": "Liquefy nitrogen gas in a powered cold box. Store liquid nitrogen in an insulated tank.",
     "ja_jp": "窒素ガスを動力付きコールドボックスで液化します。液体窒素は保冷タンクへ入れます。",
@@ -2600,9 +2585,9 @@
     "zh_cn": "粉碎岩盐矿石取得盐，也可在日照下的开放槽中蒸发水收盐。\n%s → %s"
   },
   "guide.manufacturing_chlor_alkali.step_2": {
-    "en_us": "Dissolve the salt in water with a Mechanical Mixer over a basin.\n%s → %s",
-    "ja_jp": "鉢とメカニカルミキサーで、塩を水に溶かします。\n%s → %s",
-    "zh_cn": "用工作盆和机械搅拌器把盐溶于水。\n%s → %s"
+    "en_us": "Dissolve salt in water with a Mechanical Mixer over a basin. Copper pipes can carry the brine to the electrolyzer.\n%s → %s",
+    "ja_jp": "鉢とメカニカルミキサーで塩を水に溶かします。できた塩水は銅管で電解槽へ送れます。\n%s → %s",
+    "zh_cn": "用工作盆和机械搅拌器把盐溶于水。制得的盐水可用铜管送入电解槽。\n%s → %s"
   },
   "guide.manufacturing_chlor_alkali.step_3": {
     "en_us": "Feed brine from below, wire the panel terminals and press START. Collect hydrogen and chlorine from the two long sides and caustic soda from the far end.\n%s → %s",
@@ -2860,31 +2845,21 @@
     "zh_cn": "粉碎矿石以取得冶炼原料。\n%s → %s"
   },
   "guide.manufacturing_aluminum.step_2": {
-    "en_us": "The sulfate route heats the mineral with sulfuric acid in a stirred tank.\n%s → %s",
-    "ja_jp": "硫酸法では、撹拌槽で鉱物と硫酸を加熱します。\n%s → %s",
-    "zh_cn": "硫酸路线在搅拌槽中加热矿物与硫酸。\n%s → %s"
+    "en_us": "Heat bauxite with caustic soda in a stirred tank. Collect the iron nuggets.\n%s → %s",
+    "ja_jp": "撹拌槽でボーキサイトと苛性ソーダを加熱し、鉄塊も回収します。\n%s → %s",
+    "zh_cn": "在搅拌槽中加热铝土矿与烧碱，同时回收铁粒。\n%s → %s"
   },
   "guide.manufacturing_aluminum.step_3": {
-    "en_us": "Superheat the sulfate solution to obtain alumina. Recover sulfur trioxide into the sulfuric-acid line.\n%s → %s",
-    "ja_jp": "硫酸塩溶液を超加熱してアルミナを得ます。三酸化硫黄を硫酸の系列へ回収します。\n%s → %s",
-    "zh_cn": "超加热硫酸盐溶液得到氧化铝，三氧化硫回收到硫酸系列。\n%s → %s"
+    "en_us": "Superheat the aluminate solution to separate the alumina. Top up the recovered caustic soda before reuse.\n%s → %s",
+    "ja_jp": "アルミン酸ナトリウム溶液を超加熱し、アルミナを分離します。回収した苛性ソーダは補給して再利用します。\n%s → %s",
+    "zh_cn": "超加热铝酸钠溶液以分离氧化铝。补充回收的烧碱后再利用。\n%s → %s"
   },
   "guide.manufacturing_aluminum.step_4": {
-    "en_us": "The alternative Bayer route uses caustic soda and also returns the iron as nuggets.\n%s → %s",
-    "ja_jp": "別のバイヤー法では苛性ソーダを使い、鉄も鉄塊として回収します。\n%s → %s",
-    "zh_cn": "另一条拜耳路线使用烧碱，并以铁粒回收铁。\n%s → %s"
-  },
-  "guide.manufacturing_aluminum.step_5": {
-    "en_us": "Superheat the aluminate solution, collect alumina and send the recovered soda back to the previous batch.\n%s → %s",
-    "ja_jp": "アルミン酸塩溶液を超加熱し、アルミナと苛性ソーダを回収します。ソーダを前の工程へ戻します。\n%s → %s",
-    "zh_cn": "超加热铝酸盐溶液，收集氧化铝并把回收烧碱返回前一工序。\n%s → %s"
-  },
-  "guide.manufacturing_aluminum.step_6": {
     "en_us": "Build the electrolysis furnace and connect both electrical terminals. Feed oxide and carbon; each ingot consumes fixed electrical work.\n%s → %s",
     "ja_jp": "電解炉を組み、両方の電極端子へ配線します。酸化物と炭素を入れ、インゴットごとの電力を供給します。\n%s → %s",
     "zh_cn": "组装电解炉并连接两个电端子。投入氧化物和碳，每块锭消耗固定电功。\n%s → %s"
   },
-  "guide.manufacturing_aluminum.step_7": {
+  "guide.manufacturing_aluminum.step_5": {
     "en_us": "Extract the metal through a bottom face, then press ingots into sheets for factory components.\n%s → %s",
     "ja_jp": "底面から金属を取り出し、インゴットをプレスして設備用の板にします。\n%s → %s",
     "zh_cn": "从底面取出金属，再把锭压成设备用板。\n%s → %s"
@@ -2905,9 +2880,9 @@
     "zh_cn": "在搅拌槽中加热矿物与硫酸，同时取出回收的铁粒。\n%s → %s"
   },
   "guide.manufacturing_titanium.step_3": {
-    "en_us": "Superheat the solution to obtain titanium dioxide and recover the sulfur trioxide.\n%s → %s",
-    "ja_jp": "溶液を超加熱して二酸化チタンを得て、三酸化硫黄も回収します。\n%s → %s",
-    "zh_cn": "超加热溶液取得二氧化钛并回收三氧化硫。\n%s → %s"
+    "en_us": "Boil the solution down to titanyl sulfate hydrate crystals, then superheat them to leave solid titanium dioxide and recover the sulfur trioxide.\n%s → %s",
+    "ja_jp": "溶液を加熱して水を蒸発させ、硫酸チタニル水和物の結晶を析出させます。それを超加熱すると固体の二酸化チタンが残り、三酸化硫黄も回収できます。\n%s → %s",
+    "zh_cn": "加热溶液蒸发水分，析出硫酸氧钛水合物晶体；再超加热留下固体二氧化钛并回收三氧化硫。\n%s → %s"
   },
   "guide.manufacturing_titanium.step_4": {
     "en_us": "The hydrochloric-acid route gives another way to obtain the same oxide. Choose a route according to the acids already produced by the factory.\n%s → %s",
@@ -2940,9 +2915,9 @@
     "zh_cn": "在搅拌槽中超加热锆石与硫酸。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_3": {
-    "en_us": "Keep the solution in its own batch and superheat it to collect zirconia and recover sulfur trioxide.\n%s → %s",
-    "ja_jp": "溶液を別バッチで超加熱し、ジルコニアと三酸化硫黄を回収します。\n%s → %s",
-    "zh_cn": "将溶液作为下一批超加热，回收氧化锆和三氧化硫。\n%s → %s"
+    "en_us": "Boil the solution down to zirconium sulfate hydrate crystals (about 100-150 °C). Heat on to dehydrate them to zirconyl sulfate, releasing part of the SO3 (about 150-500 °C). Superheating above 700 °C decomposes the rest and leaves solid zirconia.\n%s → %s",
+    "ja_jp": "溶液を加熱して水を蒸発させ、硫酸ジルコニウム水和物の結晶を析出させます(100〜150℃付近)。さらに加熱すると脱水してSO3の一部を放出し、硫酸ジルコニルになります(150〜500℃付近)。700℃以上に超加熱すると残りも分解し、固体のジルコニアが残ります。\n%s → %s",
+    "zh_cn": "加热溶液蒸发水分，析出硫酸锆水合物晶体（约100-150 ℃）；继续加热脱水并放出部分SO3，变为硫酸氧锆（约150-500 ℃）；超加热到700 ℃以上则残余部分完全分解，留下固体氧化锆。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_4": {
     "en_us": "Electrolyze the oxide with carbon in the powered furnace to recover zirconium metal.\n%s → %s",
@@ -3320,9 +3295,9 @@
     "zh_cn": "按上方控制器的START启动，电极全部降下后电流导通，下方旋钮调节负荷。"
   },
   "electrolysis_cell.gas": {
-    "en_us": "Cathode and anode plates alternate in one trough. For a Z-axis row the low-X side gives hydrogen-family gas and the high-X side oxygen-family gas; swap X/Z for X-axis rows.",
-    "ja_jp": "陰極板と陽極板は1本の槽の中に交互に並びます。Z向きなら低いX側の側面から水素系、高いX側から酸素系が出ます。X向きではX/Zを入れ替えます。",
-    "zh_cn": "阴极板与阳极板在同一槽内交替排列。Z轴机组低X侧出氢类气体，高X侧出氧类；X轴机组交换X/Z。"
+    "en_us": "With goggles on, look at either long side to see which gas leaves that face. Look at the far end to check the liquid product.",
+    "ja_jp": "ゴーグルを着けて長い側面を見ると、その面から出る気体が分かります。液体製品は奥の端面を見て確認します。",
+    "zh_cn": "戴上护目镜查看长侧面，即可确认该面排出的气体。查看远端端面可确认排出的液体。"
   },
   "electrolysis_cell.controls": {
     "en_us": "Click the dial's right half for +1％, left for −1％. Sneak for 10％ steps; STOP shuts it down.",
@@ -5153,11 +5128,6 @@
     "en_us": "Hold a wrench or hose to see ports. Blue is intake, orange is outlet, and yellow is shaft drive.",
     "ja_jp": "レンチかホースを持つと接続口が表示されます。青は吸込、橙は吐出、黄は動力入力です。",
     "zh_cn": "手持扳手或软管时会标出端口。蓝色是进料，橙色是出口，黄色是转轴输入。"
-  },
-  "vessel_maintenance.purge": {
-    "en_us": "Use a wrench on an exposed drain, or Shift-right-click it with empty hands, to purge leftover liquid.",
-    "ja_jp": "残留液を捨てるには、露出したドレンにレンチを使うか、素手でShift＋右クリックします。",
-    "zh_cn": "对外露的排液口使用扳手或空手 Shift 右键，可排出残液。"
   },
   "wet_processing.slurry_side": {
     "en_us": "Pump slurry into the left wall or the bottom feed. Use acid-resistant piping for leach slurry.",

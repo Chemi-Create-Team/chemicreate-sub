@@ -84,7 +84,7 @@ def recipes():
         # back its alumina and the soda.
         'sodium_aluminate_solution': ([{'item': U + 'bauxite'}, {'item': U + 'bauxite'}, fluid(U + 'caustic_soda_solution', 500)],
                                       [fluid_out(U + 'sodium_aluminate_solution', 500), item('minecraft:iron_nugget', 3)], 'heated'),
-        'alumina_from_sodium_aluminate_solution': ([fluid(U + 'sodium_aluminate_solution', 500)], [item(U + 'alumina'), fluid_out(U + 'caustic_soda_solution', 500)], 'superheated'),
+        'alumina_from_sodium_aluminate_solution': ([fluid(U + 'sodium_aluminate_solution', 500)], [item(U + 'alumina'), fluid_out(U + 'caustic_soda_solution', 400)], 'superheated'),
         # Hydrogen burns in chlorine to hydrogen chloride, which water takes up as hydrochloric acid.
         'hydrogen_chloride': ([fluid(U + 'hydrogen_gas', 250), fluid(U + 'chlorine', 250)], [fluid_out(U + 'hydrogen_chloride', 500)], None),
         # Ethylene and chlorine add to ethylene dichloride; cracked, it gives vinyl chloride and the hydrogen chloride back; polymerised, PVC.

@@ -177,19 +177,6 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         LiddedVesselBlockEntity vessel = ConnectivityHandler.partAt(getBlockEntityType(), level, pos);
         var owner = vessel == null ? null : vessel.getControllerBE();
         if (owner == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-        if (stack.is(Items.BRUSH)) {
-            Hatch hatch = state.getValue(HATCH);
-            if (hit.getDirection() != Direction.UP || !owner.open() || hatch == Hatch.NONE) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-            if (hatch != Hatch.FULL) {
-                int[] opening = hatch.box();double x = (hit.getLocation().x - pos.getX()) * 16, z = (hit.getLocation().z - pos.getZ()) * 16;
-                if (x < opening[0] || x > opening[2] || z < opening[1] || z > opening[3]) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-            }
-            if (!level.isClientSide && owner.fouling().brush()) {
-                if (!player.isCreative()) stack.hurtAndBreak(1, player, hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
-                level.playSound(null, pos, SoundEvents.BRUSH_GENERIC, SoundSource.BLOCKS, .7f, 1);
-            }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
         if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == this || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, owner) || FluidHelper.tryFillItemFromBE(level, player, hand, stack, owner)) return ItemInteractionResult.sidedSuccess(level.isClientSide);
@@ -213,10 +200,6 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
                 if (owner.open()) for (int slot = 0; slot < 13 && item.isEmpty(); slot++) item = owner.recoverStoredItem(slot, 64);
                 if (!item.isEmpty() && !player.addItem(item)) player.drop(item, false);
             }
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        }
-        if (hit.getDirection() == Direction.DOWN) {
-            if (!level.isClientSide) owner.fouling().toggleDrain();
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!level.isClientSide) vessel.toggleLid();

@@ -10,8 +10,10 @@ import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.ElectrolysisFurnaceBlockEntity;
 import net.createplant.chemistry.ProcessRecipe;
+import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEBlocks;
+import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEMetals;
 import net.createplant.registry.CERecipeTypes;
@@ -308,7 +310,7 @@ public class CraftingRecipeGameTests {
             h.assertTrue(contains(holder.orElseThrow().value(), item(use.getValue())),
                 use.getKey() + " uses " + use.getValue());
         }
-        for (String id : List.of("pressure_reaction/zirconium_sulfate_solution", "pressure_reaction/zirconia")) {
+        for (String id : List.of("pressure_reaction/zirconium_sulfate_solution", "pressure_reaction/zirconium_sulfate_evaporation", "pressure_reaction/zirconium_sulfate_dehydration", "pressure_reaction/zirconia")) {
             var holder = manager.byKey(CreatePlant.location(id));
             h.assertTrue(holder.isPresent(), "The zirconia bootstrap recipe exists: " + id);
             h.assertTrue(!contains(holder.orElseThrow().value(), item("electrolysis_furnace_shell")),
@@ -325,7 +327,7 @@ public class CraftingRecipeGameTests {
             "large_absorption_tower", "lidded_vessel", "pressing/stainless_steel_sheet", "mixing/stainless_steel_ingot",
             "pressure_reaction/nickel_oxide", "pressure_reaction/nickel_ingot", "pressure_reaction/chromium_ingot",
             "pressure_reaction/molybdenum_trioxide", "pressure_reaction/molybdenum_ingot",
-            "pressure_reaction/aluminium_sulfate_solution", "pressure_reaction/alumina",
+            "pressure_reaction/sodium_aluminate_solution", "pressure_reaction/alumina_from_sodium_aluminate_solution",
             "pressure_reaction/sulfur_dioxide");
         var manager = h.getLevel().getRecipeManager();
         FluidStack nitricAcid = new FluidStack(CEFluids.NITRIC_ACID.get(), 1);
@@ -344,6 +346,28 @@ public class CraftingRecipeGameTests {
         h.assertTrue(ElectrolysisFurnaceBlockEntity.reductions().containsKey(CEMetals.ALUMINA.get())
             && ElectrolysisFurnaceBlockEntity.reductions().get(CEMetals.ALUMINA.get()).metal() == CEItems.ALUMINUM_INGOT.get(),
             "Alumina reaches the aluminium needed for chromium without nitric acid");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void bayerSeparationConsumesFiveHundredAndReturnsFourHundred(GameTestHelper h) {
+        var manager = h.getLevel().getRecipeManager();
+        var sulfate = new FluidStack(CEMetals.ALUMINIUM_SULFATE_SOLUTION.get(), 1);
+        var alumina = CEMetals.ALUMINA.get();
+        for (var holder : manager.getRecipes()) {
+            if (!ours(holder) || !(holder.value() instanceof ProcessingRecipe<?, ?> recipe)) continue;
+            h.assertTrue(recipe.getFluidIngredients().stream().noneMatch(input -> input.ingredient().test(sulfate))
+                || recipe.getRollableResults().stream().noneMatch(output -> output.getStack().is(alumina)),
+                "Aluminium sulfate does not give alumina: " + holder.id());
+        }
+        var recipe = (PressureReactionRecipe) manager.byKey(CreatePlant.location("pressure_reaction/alumina_from_sodium_aluminate_solution")).orElseThrow().value();
+        var aluminate = new FluidStack(CEChlorAlkali.SODIUM_ALUMINATE.get(), 500);
+        h.assertTrue(recipe.getFluidIngredients().size() == 1 && recipe.getFluidIngredients().getFirst().test(aluminate)
+            && recipe.getFluidIngredients().getFirst().amount() == 500, "One batch consumes 500 mB of sodium aluminate solution");
+        h.assertTrue(recipe.getRollableResults().size() == 1 && recipe.getRollableResults().getFirst().getStack().is(alumina)
+            && recipe.getRollableResults().getFirst().getStack().getCount() == 1, "One batch produces one alumina");
+        h.assertTrue(recipe.getFluidResults().size() == 1 && recipe.getFluidResults().getFirst().is(CEChlorAlkali.CAUSTIC_SODA.get())
+            && recipe.getFluidResults().getFirst().getAmount() == 400, "One batch returns 400 mB of caustic soda");
         h.succeed();
     }
 }

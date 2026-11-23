@@ -90,19 +90,21 @@ public final class FertilizerPlaytestWorld {
     private static final String TAG = "FERTILIZER";
     private static final String WORLD = "createplant-fertilizer-" + System.currentTimeMillis();
     private static final int TIMEOUT = 96_000, Y = -60;
+    /** The plant stands this far east of the origin, clear of the battery plant when both share one world. */
+    static final int OX = 70;
     // The front of the plant: wood to hydrogen.
-    private static final BlockPos GASIFIER = new BlockPos(0, Y + 1, 0);
+    private static final BlockPos GASIFIER = new BlockPos(OX + 0, Y + 1, 0);
     // Air: a nozzle, a compressor and the air separation column.
-    private static final BlockPos NOZZLE = new BlockPos(28, Y + 2, -4), AIR_CYLINDER = new BlockPos(32, Y + 3, -4), AIR_COLUMN = new BlockPos(38, Y, -12);
+    private static final BlockPos NOZZLE = new BlockPos(OX + 28, Y + 2, -4), AIR_CYLINDER = new BlockPos(OX + 32, Y + 3, -4), AIR_COLUMN = new BlockPos(OX + 38, Y, -12);
     // Water electrolysis for oxygen and hydrogen, and the sulfur cycle.
-    private static final BlockPos WATER_CELL = new BlockPos(52, Y + 1, 4), SO2_VESSEL = new BlockPos(62, Y + 2, -2), SO2_TOWER = new BlockPos(65, Y + 2, -12);
-    private static final BlockPos ACID_CELL = new BlockPos(76, Y + 1, -12), PHOSPHORIC = new BlockPos(86, Y + 2, -6);
+    private static final BlockPos WATER_CELL = new BlockPos(OX + 52, Y + 1, 4), SO2_VESSEL = new BlockPos(OX + 62, Y + 2, -2), SO2_TOWER = new BlockPos(OX + 65, Y + 2, -12);
+    private static final BlockPos ACID_CELL = new BlockPos(OX + 76, Y + 1, -12), PHOSPHORIC = new BlockPos(OX + 86, Y + 2, -6);
     // Ammonia: synthesis gas, its compressor, the converter and the separator.
-    private static final BlockPos SYNGAS_VESSEL = new BlockPos(98, Y + 2, -6), FEED_CYLINDER = new BlockPos(105, Y + 3, -10), CONVERTER = new BlockPos(110, Y + 2, -14);
-    private static final BlockPos COOLER = new BlockPos(116, Y, -10), SEPARATOR = new BlockPos(126, Y + 2, -12);
+    private static final BlockPos SYNGAS_VESSEL = new BlockPos(OX + 98, Y + 2, -6), FEED_CYLINDER = new BlockPos(OX + 105, Y + 3, -10), CONVERTER = new BlockPos(OX + 110, Y + 2, -14);
+    private static final BlockPos COOLER = new BlockPos(OX + 116, Y, -10), SEPARATOR = new BlockPos(OX + 126, Y + 2, -12);
     // Carbon dioxide, urea, phosphate fertilizer, potash and the NPK mixer.
-    private static final BlockPos CALCINER = new BlockPos(110, Y + 3, 24), UREA = new BlockPos(118, Y + 3, 24), PHOSPHATE = new BlockPos(124, Y + 3, 30);
-    private static final BlockPos NPK_BASIN = new BlockPos(120, Y + 1, 30), POTASH_BASIN = NPK_BASIN.south(), NPK_CHEST = NPK_BASIN.west();
+    private static final BlockPos CALCINER = new BlockPos(OX + 110, Y + 3, 24), UREA = new BlockPos(OX + 118, Y + 3, 24), PHOSPHATE = new BlockPos(OX + 124, Y + 3, 30);
+    private static final BlockPos NPK_BASIN = new BlockPos(OX + 120, Y + 1, 30), POTASH_BASIN = NPK_BASIN.south(), NPK_CHEST = NPK_BASIN.west();
     private static final Map<String, Object> REPORT = new LinkedHashMap<>();
     private static final List<BlockPos[]> CELLS = new ArrayList<>();
     private static BlockPos COOLANT;
@@ -132,7 +134,6 @@ public final class FertilizerPlaytestWorld {
                 server.execute(() -> {
                     try {
                         build(server.overworld(), server.getPlayerList().getPlayers().getFirst());
-                        NeoForge.EVENT_BUS.addListener(ServerTickEvent.Post.class, FertilizerPlaytestWorld::serverTick);
                     } catch (RuntimeException error) {
                         LOG.error(TAG + " build failed", error);
                         failure = error.toString();
@@ -143,13 +144,13 @@ public final class FertilizerPlaytestWorld {
                 if (!done) return;
                 phase = 3;
                 ticks = 0;
-                view(mc, 60, -30, 40, 200, 35);
+                view(mc, OX + 60, -30, 40, 200, 35);
             } else if (phase == 3 && ++ticks == 60) {
                 net.minecraft.client.Screenshot.grab(mc.gameDirectory, "fertilizer-overview.png", mc.getMainRenderTarget(), message -> { });
-                view(mc, 112, -52, 36, 160, 30);
+                view(mc, OX + 112, -52, 36, 160, 30);
             } else if (phase == 3 && ticks == 120) {
                 net.minecraft.client.Screenshot.grab(mc.gameDirectory, "fertilizer-npk.png", mc.getMainRenderTarget(), message -> { });
-                view(mc, 12.5, Y, 8.5, 150, 15);
+                view(mc, OX + 12.5, Y, 8.5, 150, 15);
                 var server = mc.getSingleplayerServer();
                 server.execute(() -> server.saveEverything(false, true, true));
             } else if (phase == 3 && ticks > 160) {
@@ -176,12 +177,25 @@ public final class FertilizerPlaytestWorld {
     }
 
     private static void build(ServerLevel level, ServerPlayer player) {
-        plant = new PlaytestPlant(level, Y);
         var server = level.getServer();
         level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, server);
         level.getGameRules().getRule(GameRules.RULE_WEATHER_CYCLE).set(false, server);
         level.getGameRules().getRule(GameRules.RULE_DOMOBSPAWNING).set(false, server);
         level.setDayTime(6000);
+        addTo(level);
+        player.setItemSlot(EquipmentSlot.HEAD, AllItems.GOGGLES.asStack());
+        player.getInventory().setItem(1, AllItems.WRENCH.asStack());
+        BlockPos spawn = new BlockPos(OX + 12, Y, 8);
+        player.teleportTo(level, spawn.getX() + .5, spawn.getY(), spawn.getZ() + .5, 150, 15);
+        player.setRespawnPosition(Level.OVERWORLD, spawn, 150, true, false);
+        level.setDefaultSpawnPos(spawn, 150);
+        REPORT.put("world", WORLD);
+    }
+
+    /** Builds the whole plant (from {@code OX} eastward) into an existing flat world and starts its server-side run; the world and the player are the caller's. */
+    static void addTo(ServerLevel level) {
+        plant = new PlaytestPlant(level, Y);
+        NeoForge.EVENT_BUS.addListener(ServerTickEvent.Post.class, FertilizerPlaytestWorld::serverTick);
 
         // Hydrogen from wood; its carbon monoxide is kept in a store.
         syngas = new SyngasTrain(plant, level, GASIFIER);
@@ -342,13 +356,6 @@ public final class FertilizerPlaytestWorld {
         plant.sign(UREA.offset(-1, -3, 4), "尿素");
         plant.sign(POTASH_BASIN.offset(1, -1, 1), "カリ灰");
         plant.sign(NPK_BASIN.offset(-1, -1, -1), "NPK肥料");
-        player.setItemSlot(EquipmentSlot.HEAD, AllItems.GOGGLES.asStack());
-        player.getInventory().setItem(1, AllItems.WRENCH.asStack());
-        BlockPos spawn = new BlockPos(12, Y, 8);
-        player.teleportTo(level, spawn.getX() + .5, spawn.getY(), spawn.getZ() + .5, 150, 15);
-        player.setRespawnPosition(Level.OVERWORLD, spawn, 150, true, false);
-        level.setDefaultSpawnPos(spawn, 150);
-        REPORT.put("world", WORLD);
     }
 
     /** A 3x3 stainless tank two layers high over its stirrer, a cogwheel turning the stirrer from the north on a motor, and a burner for the heat. */
@@ -507,10 +514,16 @@ public final class FertilizerPlaytestWorld {
             REPORT.put("npk", npk);
             REPORT.put("linesChecked", plant.LINES.size());
             done = true;
+            tell(event, "肥料プラント：NPK肥料ができました（" + serverTicks + " tick、" + npk + "個）。");
         } catch (RuntimeException error) {
             LOG.error(TAG + " tick failed", error);
             failure = error.getMessage();
+            tell(event, "肥料プラントが止まりました：" + failure + "（run/logs/latest.log の FERTILIZER を見てください）");
         }
+    }
+
+    private static void tell(ServerTickEvent.Post event, String message) {
+        event.getServer().getPlayerList().broadcastSystemMessage(net.minecraft.network.chat.Component.literal(message), false);
     }
 
     private static int count(ServerLevel level, BlockPos pos, Item item) {

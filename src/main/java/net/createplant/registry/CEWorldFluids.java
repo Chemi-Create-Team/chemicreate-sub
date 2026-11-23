@@ -10,6 +10,7 @@ import net.createplant.item.BucketFluidContents;
 import net.createplant.item.ProcessBucketItem;
 import net.createplant.item.ProcessBucketWrapper;
 import net.createplant.item.StainlessBucketItem;
+import net.createplant.transport.FluidHazards;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.BlockPos;
@@ -38,6 +39,9 @@ public final class CEWorldFluids {
     private static final List<Entry> ENTRIES = new ArrayList<>();
     public static final Supplier<DataComponentType<BucketFluidContents>> BUCKET_CONTENTS = COMPONENTS.register("bucket_contents",
         () -> DataComponentType.<BucketFluidContents>builder().persistent(BucketFluidContents.CODEC).networkSynchronized(BucketFluidContents.STREAM_CODEC).build());
+    public static final Supplier<DataComponentType<net.minecraft.util.Unit>> IRON_BUCKET_SHELL = COMPONENTS.register("iron_bucket_shell",
+        () -> DataComponentType.<net.minecraft.util.Unit>builder().persistent(net.minecraft.util.Unit.CODEC)
+            .networkSynchronized(net.minecraft.network.codec.StreamCodec.unit(net.minecraft.util.Unit.INSTANCE)).build());
     public static final DeferredItem<AlloyBucketItem> EMPTY_ALLOY_BUCKET = ITEMS.register("corrosion_resistant_bucket",
         () -> new AlloyBucketItem(new Item.Properties().stacksTo(16)));
     public static final DeferredItem<StainlessBucketItem> STAINLESS_BUCKET = ITEMS.register("stainless_steel_bucket",
@@ -78,6 +82,11 @@ public final class CEWorldFluids {
     public static boolean isLiquid(Fluid fluid) {
         for (Entry entry : ENTRIES) if (entry.fluid().get().isSame(fluid)) return true;
         return false;
+    }
+
+    /** Older brine buckets used an alloy shell, which still accepts brine and is returned when emptied. */
+    public static boolean acceptsAlloyBucket(FluidStack fluid) {
+        return CEChlorAlkali.BRINE.get().isSame(fluid.getFluid()) || FluidHazards.of(fluid).corrosive();
     }
 
     public static ItemStack bucket(FluidStack fluid) {

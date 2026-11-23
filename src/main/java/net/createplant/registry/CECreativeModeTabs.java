@@ -38,7 +38,7 @@ public class CECreativeModeTabs {
             "ilmenite_ore", "deepslate_ilmenite_ore", "zircon_ore", "deepslate_zircon_ore", "chromite_ore", "deepslate_chromite_ore",
             "molybdenite_ore", "deepslate_molybdenite_ore", "spodumene_ore", "deepslate_spodumene_ore", "galena_ore", "deepslate_galena_ore", "halite_ore", "deepslate_halite_ore", "serpentinite"),
         List.of("uraninite", "bauxite", "pentlandite", "ilmenite", "zircon", "chromite", "molybdenite", "spodumene", "galena", "fluorite", "borax", "gypsum", "asbestos"),
-        List.of("salt", "sulfur_dust", "alumina", "titanium_dioxide", "zirconia", "nickel_oxide", "molybdenum_trioxide", "chromium_oxide",
+        List.of("salt", "sulfur_dust", "alumina", "titanium_dioxide", "zirconia", "zirconium_sulfate_hydrate", "zirconyl_sulfate", "titanyl_sulfate_hydrate", "aluminium_sulfate_hydrate", "iron_sulfate_hydrate", "copper_sulfate_crystals", "zinc_sulfate_hydrate", "tin_sulfate_crystals", "lead_chloride_crystals", "uranyl_nitrate_hydrate", "plutonium_nitrate_crystals", "sodium_aluminate_crystals", "caustic_soda_flakes", "ammonium_chloride_crystals", "nickel_oxide", "molybdenum_trioxide", "chromium_oxide",
             "iron_oxide_red", "nickel_titanium_yellow", "molybdenum_blue", "triiron_tetroxide_pile", "ammonium_nitrate", "ammonium_sulfate",
             "quicklime", "sodium_bicarbonate", "sodium_carbonate", "lithium_carbonate", "lead_sinter", "urea", "potash", "phosphate_fertilizer", "npk_fertilizer",
             "pvc_resin", "cement_clinker", "ground_clinker", "cement_powder", "borosilicate_glass_frit", "water_treatment_flocculant",

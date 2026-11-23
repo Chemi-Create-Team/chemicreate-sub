@@ -113,6 +113,26 @@ public final class TransportQualityGameTests {
         });
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
+    public static void brineFlowsThroughCopperWithoutCorrodingIt(GameTestHelper h) {
+        var brine=new FluidStack(CEChlorAlkali.BRINE.get(),8000);
+        h.assertTrue(FluidHazards.of(brine).corrosion()==FluidHazards.Corrosion.NONE && PipeMaterial.COPPER.carries(brine),
+            "Ambient brine is compatible with copper");
+        h.setBlock(SOURCE,AllBlocks.FLUID_TANK.get());h.setBlock(TARGET,AllBlocks.FLUID_TANK.get());
+        h.setBlock(PIPE,straight(AllBlocks.FLUID_PIPE.getDefaultState()));
+        h.setBlock(PUMP,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
+        h.setBlock(new BlockPos(2,2,4),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
+        drive(h,new BlockPos(1,2,4),Direction.EAST);
+        var source=fluids(h,SOURCE);var dest=fluids(h,TARGET);
+        h.assertTrue(source.fill(brine,IFluidHandler.FluidAction.EXECUTE)==8000,"The copper tank accepts brine");
+        h.runAfterDelay(60,()->{
+            var pipe=BlockEntityBehaviour.get(h.getBlockEntity(PIPE),ContainmentWear.TYPE);
+            var pump=BlockEntityBehaviour.get(h.getBlockEntity(PUMP),ContainmentWear.TYPE);
+            h.assertTrue(dest.getFluidInTank(0).is(CEChlorAlkali.BRINE.get()) && pipe!=null && pipe.wear()==0 && pump!=null && pump.wear()==0,
+                "Brine is transported without wearing the copper pipe or pump");
+            h.succeed();
+        });
+    }
+    @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void nativeCopperAndPumpFillAnAddonMachineWithoutLoss(GameTestHelper h) {
         transfer(h,straight(AllBlocks.FLUID_PIPE.getDefaultState()),CEPetroFluids.CRUDE_OIL.get(),true,false);
     }
