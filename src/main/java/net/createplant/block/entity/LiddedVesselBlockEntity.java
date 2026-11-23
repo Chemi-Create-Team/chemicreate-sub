@@ -355,9 +355,23 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         }
     }
 
-    private void heatContents() {
+    private java.util.List<FluidStack> heatFluids() {
         var fluids=new java.util.ArrayList<FluidStack>();fluids.add(tankInventory.getFluid());
         for(int i=0;i<PROCESS_TANKS;i++)fluids.add(climateFluid(i));
+        return fluids;
+    }
+
+    @Override protected void releaseHeat(double joules) {
+        if(joules==0 || level==null)return;
+        var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();
+        heat.add(tankInventory.heat());
+        int result=heating.react(heatFluids(),joules,ignored->Integer.MAX_VALUE,heat);
+        if(result==net.createplant.thermal.TankHeating.CHANGED) { onFluidStackChanged(tankInventory.getFluid());changed(); }
+        else if(result==net.createplant.thermal.TankHeating.KELVIN)setChanged();
+    }
+
+    private void heatContents() {
+        var fluids=heatFluids();
         var base=new java.util.ArrayList<BlockPos>();
         for(int x=0;x<width;x++)for(int z=0;z<width;z++)base.add(worldPosition.offset(x,0,z));
         // The main inventory keeps its own heat state; the process buffers are tracked by the heater.

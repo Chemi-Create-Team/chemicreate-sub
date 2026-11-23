@@ -33,6 +33,8 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 /** Shaft-powered liquefaction of nitrogen, oxygen and helium, with finite cooling-water and product buffers. */
 public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
     public static final double WATTS_PER_RPM = 4000;
+    /** The cooling water leaves just below its boiling point at most. */
+    public static final double WATER_LIMIT_KELVIN = 372;
     private final ThermalFluidTank gas = new ThermalFluidTank(128_000, f -> setChanged());
     private final ThermalFluidTank liquid = new ThermalFluidTank(16_000, f -> setChanged());
     private final ThermalFluidTank water = new ThermalFluidTank(32_000, f -> setChanged());
@@ -114,12 +116,23 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
         int cooled = Math.min(feed,water.getFluidAmount()/coolantPerLiquid);
         int count = cooled;
         count=Math.min(count,recipe.fitting(count,liquid));
-        var discharge=net.createplant.thermal.FluidState.with(water.getFluid(),9,net.createplant.thermal.FluidState.pressure(water.getFluid())).copyWithAmount(Math.max(1,count*coolantPerLiquid));
+        // The heat taken from the gas (cooling it to its boiling point, condensing it, cooling the liquid) and the work done on it
+        // both leave with the cooling water, which is never allowed to boil in the circuit.
+        var discharge=water.getFluid().copyWithAmount(Math.max(1,count*coolantPerLiquid));
+        int taken=Math.max(1,Math.min(count,cooled));
+        var sample=gas.getFluid().copyWithAmount(recipe.consumed()*taken);
+        var liquidProduct=recipe.output(taken);
+        double boil=net.createplant.thermal.FluidState.boilingKelvin(sample,net.createplant.thermal.FluidState.pressure(sample));
+        double toBoil=Math.max(0,gas.kelvin()-boil)*net.createplant.thermal.HeatContent.capacity(sample);
+        double subcool=Math.max(0,boil-net.createplant.thermal.FluidState.kelvin(net.createplant.thermal.FluidState.temperature(liquidProduct)))*net.createplant.thermal.HeatContent.capacity(liquidProduct);
+        double heat=toBoil+net.createplant.thermal.HeatContent.latent(sample)+subcool+taken*workPerLiquid*4d;
+        double outlet=Math.min(WATER_LIMIT_KELVIN,water.kelvin()+heat/Math.max(1e-9,net.createplant.thermal.HeatContent.capacity(discharge)));
+        discharge=net.createplant.thermal.FluidState.with(discharge,net.createplant.thermal.FluidState.levelFor(discharge,outlet,net.createplant.thermal.FluidState.pressure(discharge),false),net.createplant.thermal.FluidState.pressure(discharge));
         count=Math.min(count,warm.fill(discharge,SIMULATE)/coolantPerLiquid);
         if(count<=0){status=water.getFluidAmount()<coolantPerLiquid ? "water" : "output";return;}
         lastStressApplied=(float)(count*workPerLiquid*4/Math.abs(getSpeed()));
         if(hasNetwork())getOrCreateNetwork().updateStressFor(this,lastStressApplied);if(isOverStressed()){status="speed";return;}
-        var product=recipe.output(count);gas.drain(count*recipe.consumed(),EXECUTE);liquid.fill(product,EXECUTE);water.drain(count*coolantPerLiquid,EXECUTE);warm.fill(discharge.copyWithAmount(count*coolantPerLiquid),EXECUTE);
+        var product=recipe.output(count);gas.drain(count*recipe.consumed(),EXECUTE);liquid.fill(product,EXECUTE);water.drain(count*coolantPerLiquid,EXECUTE);warm.fillAt(discharge.copyWithAmount(count*coolantPerLiquid),outlet,EXECUTE);
         ProductionMonitor.produced(this, product.getAmount(), 0, 0);
         ProductionMonitor.limitedBy(this, count < cooled ? "output" : cooled < feed ? "water" : feed < power ? "feed" : power < maximum ? "speed" : "rated");
         watts=count*workPerLiquid*4;flow=count;status="running";

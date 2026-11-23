@@ -16,5 +16,6 @@
     {
       "id": "create_refinery_n_reactors:ammonium_nitrate"
     }
-  ]
+  ],
+  "reaction_heat": -1560
 }

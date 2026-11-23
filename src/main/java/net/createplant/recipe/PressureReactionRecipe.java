@@ -21,11 +21,14 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
  */
 public class PressureReactionRecipe extends StandardProcessingRecipe<RecipeInput> {
     private ReactorModule module=ReactorModule.STIRRED;
+    /** Joules a batch gives to its contents (positive) or takes from them (negative); zero when the recipe does not say. */
+    private double reactionHeat;
     private static final Codec<ReactorModule> MODULE_CODEC=StringRepresentable.fromEnum(ReactorModule::values)
         .validate(value->supported(value) ? DataResult.success(value) : DataResult.error(()->"Reaction module must be none, stirred or absorber"));
     private static boolean supported(ReactorModule module) { return module==ReactorModule.NONE || module==ReactorModule.STIRRED || module==ReactorModule.ABSORBER; }
     public PressureReactionRecipe(ProcessingRecipeParams params) { super(CERecipeTypes.PRESSURE_REACTION, params); }
     public ReactorModule module() { return module; }
+    public double reactionHeat() { return reactionHeat; }
 
     @Override protected int getMaxInputCount() { return 9; }
     @Override protected int getMaxOutputCount() { return 4; }
@@ -39,11 +42,12 @@ public class PressureReactionRecipe extends StandardProcessingRecipe<RecipeInput
         private final StandardProcessingRecipe.Serializer<PressureReactionRecipe> standard=new StandardProcessingRecipe.Serializer<>(PressureReactionRecipe::new);
         private final MapCodec<PressureReactionRecipe> codec=RecordCodecBuilder.mapCodec(instance->instance.group(
             standard.codec().forGetter((PressureReactionRecipe recipe)->recipe),
-            MODULE_CODEC.optionalFieldOf("module",ReactorModule.STIRRED).forGetter(PressureReactionRecipe::module)
-        ).apply(instance,(recipe,module)->{recipe.module=module;return recipe;}));
+            MODULE_CODEC.optionalFieldOf("module",ReactorModule.STIRRED).forGetter(PressureReactionRecipe::module),
+            Codec.DOUBLE.optionalFieldOf("reaction_heat",0d).forGetter(PressureReactionRecipe::reactionHeat)
+        ).apply(instance,(recipe,module,heat)->{recipe.module=module;recipe.reactionHeat=heat;return recipe;}));
         private final StreamCodec<RegistryFriendlyByteBuf,PressureReactionRecipe> stream=StreamCodec.of(
-            (buffer,recipe)->{standard.streamCodec().encode(buffer,recipe);buffer.writeEnum(recipe.module);},
-            buffer->{var recipe=standard.streamCodec().decode(buffer);recipe.module=buffer.readEnum(ReactorModule.class);if(!supported(recipe.module))throw new IllegalArgumentException("Invalid reaction module");return recipe;});
+            (buffer,recipe)->{standard.streamCodec().encode(buffer,recipe);buffer.writeEnum(recipe.module);buffer.writeDouble(recipe.reactionHeat);},
+            buffer->{var recipe=standard.streamCodec().decode(buffer);recipe.module=buffer.readEnum(ReactorModule.class);recipe.reactionHeat=buffer.readDouble();if(!supported(recipe.module))throw new IllegalArgumentException("Invalid reaction module");return recipe;});
         @Override public MapCodec<PressureReactionRecipe> codec() { return codec; }
         @Override public StreamCodec<RegistryFriendlyByteBuf,PressureReactionRecipe> streamCodec() { return stream; }
     }

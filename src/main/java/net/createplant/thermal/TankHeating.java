@@ -51,11 +51,25 @@ public final class TankHeating {
     /** {@code external.get(i)}, where present, is the heat state of {@code fluids.get(i)} that its own inventory already keeps. */
     public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity,List<HeatContent> external) {
         while(own.size()<fluids.size())own.add(new HeatContent());
-        if(watts<=0)return NOTHING;
+        return watts<=0 ? NOTHING : give(fluids,joules(watts),capacity,external);
+    }
+
+    /** Largest temperature change one reaction can make in the contents; the rest of its heat goes into the vessel walls. */
+    public static final double REACTION_LIMIT_KELVIN=100;
+
+    /** Adds (or, if negative, takes) the heat of a reaction to everything in the vessel. */
+    public int react(List<FluidStack> fluids,double joules,ToIntFunction<FluidStack> capacity,List<HeatContent> external) {
+        while(own.size()<fluids.size())own.add(new HeatContent());
+        double total=0;
+        for(var fluid:fluids)if(!fluid.isEmpty())total+=HeatContent.capacity(fluid);
+        double limit=REACTION_LIMIT_KELVIN*total;
+        return joules==0 ? NOTHING : give(fluids,Math.clamp(joules,-limit,limit),capacity,external);
+    }
+
+    private int give(List<FluidStack> fluids,double joules,ToIntFunction<FluidStack> capacity,List<HeatContent> external) {
         double total=0;
         for(var fluid:fluids)if(!fluid.isEmpty())total+=HeatContent.capacity(fluid);
         if(total<=0)return NOTHING;
-        double joules=joules(watts);
         int result=NOTHING;
         for(int i=0;i<fluids.size();i++) {
             var fluid=fluids.get(i);

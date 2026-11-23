@@ -157,6 +157,15 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
     protected void completedStirredBatch(StandardProcessingRecipe<RecipeInput> recipe,int count) { }
 
+    private final net.createplant.thermal.TankHeating reactionHeating=new net.createplant.thermal.TankHeating();
+    /** The heat of a reaction (docs/internal-temperature.md, 5): it goes into what is in the machine, and a vessel overrides this to include its tank. */
+    protected void releaseHeat(double joules) {
+        if (joules!=0 && reactionHeating.react(Arrays.asList(tanks),joules,ignored->Integer.MAX_VALUE,List.of())==net.createplant.thermal.TankHeating.CHANGED) changed();
+    }
+    private void releaseHeat(StandardProcessingRecipe<RecipeInput> recipe,double batches) {
+        if (recipe instanceof PressureReactionRecipe reaction && reaction.reactionHeat()!=0) releaseHeat(reaction.reactionHeat()*batches);
+    }
+
     public IFluidHandler processRecoveryPort() {
         return new IFluidHandler() {
             private boolean live() { return !isRemoved() && (!(ReactorMachineBlockEntity.this instanceof LiddedVesselBlockEntity vessel) || vessel.isController()); }
@@ -454,6 +463,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             commitMixingFluids(fluids);
             ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.getFluidResults()), ProductionMonitor.items(products), 0);
             completedStirredBatch(recipe,1);
+            releaseHeat(recipe,1);
         }
         progress=0;changed();return true;
     }
@@ -598,6 +608,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         ProductionMonitor.produced(this, ProductionMonitor.fluids(recipe.getFluidResults())*step, 0, 0);
         double next=flow+step;int done=(int)Math.floor(next);flow=next-done;
         if (done>0) completedStirredBatch(recipe,done);
+        releaseHeat(recipe,step);
         progress=(float)(flow*cycleTicks);displayDirty=true;setChanged();
         return true;
     }

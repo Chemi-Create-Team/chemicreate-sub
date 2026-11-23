@@ -17,5 +17,6 @@
       "amount": 500,
       "id": "create_refinery_n_reactors:sodium_hypochlorite_solution"
     }
-  ]
+  ],
+  "reaction_heat": -1162
 }

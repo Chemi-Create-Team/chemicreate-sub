@@ -135,8 +135,10 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         shaft.setLoad((float)load);
         if(shaft.isOverStressed()){status="power";ProductionMonitor.limitedBy(this, status);return;}
         pressureCredit-=n;
+        // Compression changes the pressure level only: the gas leaves at the real temperature it came in at.
+        double kelvin=inlet.kelvin();
         inlet.drain(n,FluidAction.EXECUTE);
-        ProductionMonitor.produced(this, outlet.fill(change.output(batches),FluidAction.EXECUTE), 0, 0);
+        ProductionMonitor.produced(this, outlet.fillAt(change.output(batches),kelvin,FluidAction.EXECUTE), 0, 0);
         ProductionMonitor.limitedBy(this, n < feed ? "output" : feed < capacity ? "feed" : capacity < maximum ? "speed" : "rated");
         flow=n;work=n*perMb;
         status = "running";

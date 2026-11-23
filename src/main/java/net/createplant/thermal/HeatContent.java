@@ -152,10 +152,12 @@ public final class HeatContent {
 
     /** What a stream of {@code sample} (at {@code kelvin}) is like after taking {@code joules}, without touching any inventory. */
     public record Shift(double kelvin,boolean gas,double quality) { }
-    public static Shift shift(FluidStack sample,double kelvin,double joules) {
+    public static Shift shift(FluidStack sample,double kelvin,double joules) { return shift(sample,kelvin,joules,MINIMUM); }
+    /** As above, but the stream is not cooled below {@code floor}. */
+    public static Shift shift(FluidStack sample,double kelvin,double joules,double floor) {
         var scratch=new HeatContent();
         scratch.set(sample,kelvin);
-        var outcome=scratch.add(sample,joules,MINIMUM,MAXIMUM,null);
+        var outcome=scratch.add(sample,joules,floor,MAXIMUM,null);
         return new Shift(scratch.kelvin(outcome.stack()),scratch.quality(outcome.stack())>=.5,scratch.quality(outcome.stack()));
     }
 

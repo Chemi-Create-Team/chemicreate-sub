@@ -16,5 +16,6 @@
       "id": "create_refinery_n_reactors:sulfur_dioxide",
       "amount": 500
     }
-  ]
+  ],
+  "reaction_heat": -6633
 }

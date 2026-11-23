@@ -21,6 +21,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 public class RadiatorBlockEntity extends KineticBlockEntity {
     /** Four eight-cell banks reject the latent-heat share of the 765 MW rating with headroom for control transients. */
     public static final int CONDENSER_FLOW=4000, CONDENSER_BUFFER=32000;
+    /** Heat the fans take from each mB: one level of water, 1 g x 4.18 J/g/K x 68.75 K. */
+    public static final double JOULES_PER_MB=287;
     private final ThermalFluidTank input=new ThermalFluidTank(CONDENSER_BUFFER,s->changed()),output=new ThermalFluidTank(CONDENSER_BUFFER,s->changed());
     private BlockPos controller;
     private List<BlockPos> fans=List.of();
@@ -119,10 +121,11 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             }
             var fluid=input.getFluid();
             if(fluid.isEmpty()) { coolingCredit=0;ProductionMonitor.limitedBy(this,"feed");return; }
-            int temperature=FluidState.temperature(fluid);
-            int target=temperature>FluidState.AMBIENT ? temperature-1 : temperature;
+            double season=SeasonalThermal.cooling(level), ambient=FluidState.kelvin(FluidState.AMBIENT);
+            // Each mB handed to the fans loses the heat that takes water down about one level, and never ends below room temperature.
+            var cooled=HeatContent.shift(fluid.copyWithAmount(1000),input.kelvin(),-JOULES_PER_MB*season*1000,ambient);
+            int target=input.kelvin()>ambient+.5 ? FluidState.levelFor(fluid,cooled.kelvin(),FluidState.pressure(fluid),cooled.gas()) : FluidState.temperature(fluid);
             var change=PhaseChange.transfer(fluid,target,FluidState.pressure(fluid));
-            double season=SeasonalThermal.cooling(level);
             int maxRpm=com.simibubi.create.infrastructure.config.AllConfigs.server().kinetics.maxRotationSpeed.get();
             int maximum=Math.max(1,(int)(100d*fans.size()*maxRpm/64*season));
             ProductionMonitor.plan(this,maximum*4d,0,0);
@@ -135,7 +138,7 @@ public class RadiatorBlockEntity extends KineticBlockEntity {
             if(batches<=0)return;
             flow=change.consumed()*batches;
             input.drain(flow,IFluidHandler.FluidAction.EXECUTE);
-            ProductionMonitor.produced(this,output.fill(change.output(batches),IFluidHandler.FluidAction.EXECUTE),0,0);
+            ProductionMonitor.produced(this,output.fillAt(change.output(batches),cooled.kelvin(),IFluidHandler.FluidAction.EXECUTE),0,0);
             coolingCredit-=flow;
             setChanged();
         }finally{if(clock%20==0 && flow>0 || previousFlow>0 && flow==0 || previousRpm!=fanRpm)sendData();}
