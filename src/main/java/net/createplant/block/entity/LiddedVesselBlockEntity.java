@@ -701,7 +701,9 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             // A running process keeps its reactant liquids for the batch; only its products leave.
             if (reactor()!=null && inputTank(i)) continue;
             var liquid=processLiquidContent(i);
-            if (!liquid.isEmpty() && (requested.isEmpty() || FluidThermal.compatible(liquid,requested))) return drainProcessLiquid(i,amount,action);
+            if (!liquid.isEmpty() && (requested.isEmpty() || FluidThermal.compatible(liquid,requested))) {
+                var drained=drainProcessLiquid(i,amount,action);if (!drained.isEmpty()) return drained;
+            }
         }
         return FluidStack.EMPTY;
     }

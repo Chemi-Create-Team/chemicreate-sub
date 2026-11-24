@@ -80,6 +80,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
     private boolean dirty=true, recipeDirty=true, formed, running, syncNeeded, gasBlocked;
     private int sections, epoch, clock, scale, cycleTicks=100;
+    private int reuseProductsAt;
     private float progress;
     /** The fraction already converted, used to apportion integral amounts across ticks. */
     private double flow;
@@ -88,11 +89,12 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     private long scans;
 
     /** A charge already paid for; keep its recipe quantities and rolled products through a save or reload. */
-    private record StirredBatch(HeatCondition heat, boolean mixedFeed, double joules, double expectedItems, List<SizedFluidIngredient> inputs,
+    private record StirredBatch(HeatCondition heat, boolean mixedFeed, boolean reuseLiquidProducts, double joules, double expectedItems, List<SizedFluidIngredient> inputs,
         List<FluidStack> fluids, List<ItemStack> items) {
         private static final Codec<StirredBatch> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             HeatCondition.CODEC.fieldOf("heat").forGetter(StirredBatch::heat),
             Codec.BOOL.fieldOf("mixed_gas").forGetter(StirredBatch::mixedFeed),
+            Codec.BOOL.optionalFieldOf("reuse_liquid_products",false).forGetter(StirredBatch::reuseLiquidProducts),
             Codec.DOUBLE.fieldOf("joules").forGetter(StirredBatch::joules),
             Codec.DOUBLE.fieldOf("expected_items").forGetter(StirredBatch::expectedItems),
             SizedFluidIngredient.FLAT_CODEC.listOf().fieldOf("inputs").forGetter(StirredBatch::inputs),
@@ -167,9 +169,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     public FluidStack processLiquidContent(int slot) { return !tanks[slot].isEmpty() && !net.createplant.transport.FluidHazards.of(tanks[slot]).gas() ? tanks[slot].copy() : FluidStack.EMPTY; }
     public FluidStack drainProcessLiquid(int bank,int amount,FluidAction action) {
         if (bank<0 || bank>=tanks.length || amount<=0 || isRemoved()) return FluidStack.EMPTY;
-        var liquid=processLiquidContent(bank);if (liquid.isEmpty()) return FluidStack.EMPTY;
+        var liquid=processLiquidContent(bank);if (liquid.isEmpty() || heldForStirredBatch(liquid)) return FluidStack.EMPTY;
         var out=liquid.copyWithAmount(Math.min(amount,liquid.getAmount()));
-        if (action.execute()) { tanks[bank].shrink(out.getAmount());changed(); }
+        if (action.execute()) { tanks[bank].shrink(out.getAmount());if (!inputTank(bank)) giveLiquidOutletsTime();changed(); }
         return out;
     }
     public HeatLevel currentBurnerHeat() { return burnerHeat(); }
@@ -398,6 +400,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     public void tickProcess() {
         if (level==null || level.isClientSide() || isRemoved()) return;
         clock++;
+        if (clock==reuseProductsAt) recipeDirty=true;
         if(isRemoved())return;
         if (!structureLoaded()) {
             if (formed) invalidateStructure();
@@ -516,7 +519,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             boolean pressureReaction=recipe instanceof PressureReactionRecipe;
             double joules=pressureReaction ? ((PressureReactionRecipe)recipe).reactionHeat() : 0;
             batch=id;scale=available;cycleTicks=duration;
-            return advanceStirredBatch(new StirredBatch(recipe.getRequiredHeat(),pressureReaction,joules,itemCount,
+            boolean reuseLiquidProducts=mayReuseProducts(recipe) && batches(recipe,parallel,false)<available;
+            return advanceStirredBatch(new StirredBatch(recipe.getRequiredHeat(),pressureReaction,reuseLiquidProducts,joules,itemCount,
                 List.copyOf(recipe.getFluidIngredients()),List.copyOf(recipe.getFluidResults()),products),contents,heat,rpm,parallel);
         }
         if (!batch.equals(id) || scale<=0 || scale>available || progress==0 && scale!=available) { batch=id;scale=available;progress=0; }
@@ -557,7 +561,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         for (int i=0;i<credit.length;i++) {
             var ingredient=active.inputs().get(i);
             int amount=ReactionFlow.owed(ingredient.amount(),position*scale,step*scale);
-            long owed=withdrawFluid(active.mixedFeed(),ingredient,(long)amount*Concentration.NORMAL-credit[i],fluids);
+            long owed=withdrawFluid(active.mixedFeed(),active.reuseLiquidProducts(),ingredient,(long)amount*Concentration.NORMAL-credit[i],fluids);
             if (owed>0) { setStatus("materials",false);return true; }
             credit[i]=(int)-owed;
         }
@@ -590,9 +594,25 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         ProductionMonitor.produced(this,produced,finished ? ProductionMonitor.items(active.items()) : 0,0);
         setStatus("running",true);
         releaseHeat(active.joules()*step*scale);
-        if (finished) changed();
+        if (finished) {
+            if (active.fluids().stream().anyMatch(fluid->!FluidState.gas(fluid))) giveLiquidOutletsTime();
+            changed();
+        }
         else { displayDirty=true;syncNeeded=true;setChanged(); }
         return true;
+    }
+
+    private boolean mayReuseProducts(StandardProcessingRecipe<RecipeInput> recipe) {
+        return module()==ReactorModule.STIRRED && clock>=reuseProductsAt
+            && recipe instanceof PressureReactionRecipe pressure && pressure.reuseLiquidProducts();
+    }
+
+    /** Give a connected pump first use of new liquid products while it keeps drawing them. */
+    private void giveLiquidOutletsTime() { reuseProductsAt=clock+20; }
+
+    private boolean heldForStirredBatch(FluidStack stock) {
+        return processingStirredBatch() && stirredBatch.reuseLiquidProducts() && !FluidState.gas(stock)
+            && stirredBatch.inputs().stream().anyMatch(ingredient->ingredient.ingredient().test(stock));
     }
     /** Electric replacements withdraw paid heat; ordinary burners keep their existing heat budget. */
     public double takeBurnerHeat(double requested) {
@@ -651,17 +671,24 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
     /** How many batches, one per section at most, the feed and the free product space allow; every product is counted as if it were rolled. */
     private int batches(StandardProcessingRecipe<RecipeInput> recipe,int parallel) {
+        return batches(recipe,parallel,mayReuseProducts(recipe));
+    }
+    private int batches(StandardProcessingRecipe<RecipeInput> recipe,int parallel,boolean reuseLiquidProducts) {
         gasBlocked=false;
         ItemStack[] items=items();FluidStack[] fluids=mixingFluids();
         int count=0;
-        while (count<parallel && runBatch(recipe,items,fluids,recipe.getRollableResultsAsItemStacks())) count++;
+        while (count<parallel && runBatch(recipe,items,fluids,recipe.getRollableResultsAsItemStacks(),reuseLiquidProducts)) count++;
         return count;
     }
     /** Takes one batch out of the given stacks and puts its products in; false when it does not fit, the stacks then being spoilt. */
     private boolean runBatch(StandardProcessingRecipe<RecipeInput> recipe,ItemStack[] items,FluidStack[] fluids,List<ItemStack> products) {
+        return runBatch(recipe,items,fluids,products,false);
+    }
+    private boolean runBatch(StandardProcessingRecipe<RecipeInput> recipe,ItemStack[] items,FluidStack[] fluids,List<ItemStack> products,boolean reuseLiquidProducts) {
         var consumed=takeItems(recipe,items);
         if (consumed==null) return false;
-        for (var ingredient:recipe.getFluidIngredients()) if (!takeFluid(recipe,ingredient,ingredient.amount(),fluids)) return false;
+        for (var ingredient:recipe.getFluidIngredients())
+            if (withdrawFluid(recipe instanceof PressureReactionRecipe,reuseLiquidProducts,ingredient,(long)ingredient.amount()*Concentration.NORMAL,fluids)>0) return false;
         if (!putItems(items,batchProducts(recipe,consumed,products))) return false;
         productsAtContents(heatOfReaction(recipe));
         try { for (FluidStack template:recipe.getFluidResults()) if (!putFluid(fluids,template)) return false; }
@@ -707,7 +734,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
     /** Takes {@code needed} mB of a fluid ingredient out of the feed buffers; false when the feed holds less. */
     private boolean takeFluid(StandardProcessingRecipe<RecipeInput> recipe,SizedFluidIngredient ingredient,int needed,FluidStack[] fluids) {
-        return withdrawFluid(recipe instanceof PressureReactionRecipe,ingredient,(long)needed*Concentration.NORMAL,fluids)<=0;
+        return withdrawFluid(recipe instanceof PressureReactionRecipe,false,ingredient,(long)needed*Concentration.NORMAL,fluids)<=0;
     }
 
     private static boolean canDrawComponents(FluidStack feed) {
@@ -715,27 +742,34 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
 
     /** The balance is in thousandths of a normal-strength mB. Negative balances pay toward the next tick. */
-    private long withdrawFluid(boolean mixedFeed,SizedFluidIngredient ingredient,long owed,FluidStack[] fluids) {
-        if (owed<=0) return owed;
+    private long withdrawFluid(boolean mixedFeed,boolean reuseLiquidProducts,SizedFluidIngredient ingredient,long owed,FluidStack[] fluids) {
         for (int tank:mixingInputs()) {
-            var feed=fluids[tank];
-            if (feed.isEmpty()) continue;
-            if (ingredient.ingredient().test(feed)) {
-                int strength=Concentration.permille(feed);
-                int take=(int)Math.min((owed+strength-1)/strength,feed.getAmount());
-                fluids[tank]=MixtureHelper.remainder(feed,take);owed-=(long)take*strength;
-            } else if (mixedFeed && canDrawComponents(feed)) {
-                for (var component:MixtureHelper.components(feed)) {
-                    if (!ingredient.ingredient().test(component)) continue;
-                    int strength=Concentration.permille(component);
-                    int take=(int)Math.min((owed+strength-1)/strength,component.getAmount());
-                    var held=fluids[tank];
-                    var removal=MixtureHelper.composite(held) ? MixtureHelper.removeComponent(held,component,take)
-                        : new MixtureHelper.Removal(held.copyWithAmount(take),MixtureHelper.remainder(held,take));
-                    fluids[tank]=removal.remaining();owed-=(long)removal.sample().getAmount()*strength;
-                    if (owed<=0) break;
-                }
-            }
+            if (owed<=0) return owed;
+            owed=withdrawFrom(tank,mixedFeed,ingredient,owed,fluids);
+        }
+        if (reuseLiquidProducts) for (int tank=2;tank<THIRD_FEED && owed>0;tank++) {
+            if (!FluidState.gas(fluids[tank])) owed=withdrawFrom(tank,false,ingredient,owed,fluids);
+        }
+        return owed;
+    }
+
+    private static long withdrawFrom(int tank,boolean mixedFeed,SizedFluidIngredient ingredient,long owed,FluidStack[] fluids) {
+        var feed=fluids[tank];
+        if (feed.isEmpty()) return owed;
+        if (ingredient.ingredient().test(feed)) {
+            int strength=Concentration.permille(feed);
+            int take=(int)Math.min((owed+strength-1)/strength,feed.getAmount());
+            fluids[tank]=MixtureHelper.remainder(feed,take);
+            return owed-(long)take*strength;
+        }
+        if (mixedFeed && canDrawComponents(feed)) for (var component:MixtureHelper.components(feed)) {
+            if (!ingredient.ingredient().test(component)) continue;
+            int strength=Concentration.permille(component);
+            int take=(int)Math.min((owed+strength-1)/strength,component.getAmount());
+            var held=fluids[tank];
+            var removal=MixtureHelper.composite(held) ? MixtureHelper.removeComponent(held,component,take)
+                : new MixtureHelper.Removal(held.copyWithAmount(take),MixtureHelper.remainder(held,take));
+            fluids[tank]=removal.remaining();owed-=(long)removal.sample().getAmount()*strength;
             if (owed<=0) break;
         }
         return owed;
@@ -1021,6 +1055,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         super.read(tag,lookup,packet);
         if (tag.contains("Charge")) charge.deserializeNBT(lookup,tag.getCompound("Charge"));float savedProgress=tag.getFloat("Progress");progress=Float.isFinite(savedProgress) ? Math.clamp(savedProgress,0,200) : 0;batch=tag.getString("Batch");flow=Math.clamp(tag.getDouble("Flow"),0,1);scale=Math.clamp(tag.getInt("Scale"),0,4);cycleTicks=Math.clamp(tag.getInt("CycleTicks"),1,200);
         if (!packet) {
+            giveLiquidOutletsTime();
             stirredBatch=scale>0 && flow>0 && flow<1 && tag.contains("StirredBatch")
                 ? StirredBatch.CODEC.parse(lookup.createSerializationContext(NbtOps.INSTANCE),tag.get("StirredBatch")).result().orElse(null) : null;
             feedCredit=stirredBatch==null ? new int[0] : Arrays.copyOf(tag.getIntArray("StirredCredit"),stirredBatch.inputs().size());
@@ -1062,14 +1097,16 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             return FluidStack.EMPTY;
         }
         @Override public FluidStack drain(int amount,FluidAction action) {
-            if (live() && output && amount>0) for (int i=Math.max(first,2);i<first+count;i++) if (!inputTank(i) && !tanks[i].isEmpty()) return take(i,amount,action);
+            if (live() && output && amount>0) for (int i=Math.max(first,2);i<first+count;i++) if (!inputTank(i) && !tanks[i].isEmpty()) {
+                var drained=take(i,amount,action);if (!drained.isEmpty()) return drained;
+            }
             return FluidStack.EMPTY;
         }
         private FluidStack take(int index,int amount,FluidAction action) {
             int n=Math.min(Math.max(0,amount),tanks[index].getAmount());
-            if (n==0) return FluidStack.EMPTY;
+            if (n==0 || heldForStirredBatch(tanks[index])) return FluidStack.EMPTY;
             FluidStack result=tanks[index].copyWithAmount(n);
-            if (action.execute()) { tanks[index].shrink(n);changed(); }
+            if (action.execute()) { tanks[index].shrink(n);if (!FluidState.gas(result)) giveLiquidOutletsTime();changed(); }
             return result;
         }
     }

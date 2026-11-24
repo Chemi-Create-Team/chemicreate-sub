@@ -69,15 +69,16 @@ def out_fluid(name, amount):
     return {'id': NS + name, 'amount': amount}
 
 
-def write(name, heat, ingredients, results):
-    recipe = {'type': NS + 'pressure_reaction', 'heat_requirement': heat, 'ingredients': ingredients, 'results': results}
+def write(name, heat, ingredients, results, **options):
+    recipe = {'type': NS + 'pressure_reaction', 'heat_requirement': heat, **options, 'ingredients': ingredients, 'results': results}
     (RECIPES / (name + '.json')).write_text(json.dumps(recipe, indent=2) + '\n')
 
 
 def recipes():
     for solution, (amount, solid, steam) in EVAPORATION.items():
+        options = {'reuse_liquid_products': True} if solution == 'zirconium_sulfate_solution' else {}
         write(solution.removesuffix('_solution').removesuffix('_liquor') + '_evaporation', 'heated',
-              [fluid(solution, amount)], [out_item(solid), out_fluid('steam', steam)])
+              [fluid(solution, amount)], [out_item(solid), out_fluid('steam', steam)], **options)
     # zirconium sulfate: hydrate -> zirconyl sulfate (+ SO3) -> zirconia (+ SO3)
     write('zirconium_sulfate_dehydration', 'heated', [item('zirconium_sulfate_hydrate')],
           [out_item('zirconyl_sulfate'), out_fluid('sulfur_trioxide', 250), out_fluid('steam', 200)])

@@ -87,10 +87,12 @@ public class WorldLiquidGameTests {
         var steam = FluidState.with(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), 14, 4);
         h.assertTrue(empty.fill(hotAcid, SIMULATE) == 0 && empty.fill(steam, SIMULATE) == 0,
             "Hot acids and gases that a stainless tank is not rated for do not go in");
-        var sulfate = new FluidStack(net.createplant.registry.CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 1500);
         var containers = new ItemStack(CEWorldFluids.STAINLESS_BUCKET.get(), 2);
-        h.assertTrue(com.simibubi.create.content.fluids.transfer.GenericItemFilling.getRequiredAmountForItem(h.getLevel(),containers,sulfate)==-1
-            && containers.getCount()==2 && sulfate.getAmount()==1500,"Create filling skips a sulfate the stainless bucket cannot take");
+        h.assertTrue(com.simibubi.create.content.fluids.transfer.GenericItemFilling.getRequiredAmountForItem(h.getLevel(),containers,hotAcid)==-1
+            && containers.getCount()==2 && hotAcid.getAmount()==1000,"Create filling skips a sulfate the stainless bucket cannot take");
+        var sulfate = new FluidStack(net.createplant.registry.CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 1000);
+        h.assertTrue(com.simibubi.create.content.fluids.transfer.GenericItemFilling.getRequiredAmountForItem(h.getLevel(),containers,sulfate)==1000,
+            "Create filling accepts zirconium sulfate in a stainless bucket");
         h.assertTrue(com.simibubi.create.content.fluids.transfer.GenericItemFilling.getRequiredAmountForItem(h.getLevel(),containers,
             new FluidStack(net.minecraft.world.level.material.Fluids.WATER,1000))==1000,"Create filling accepts a whole bucket for a compatible fluid");
         FluidStack base = FluidThermal.at(new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 1000), 343.15);

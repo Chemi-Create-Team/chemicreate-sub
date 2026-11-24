@@ -98,21 +98,21 @@ public final class TankGradeGameTests {
     public static void stainlessTankScoopsWithTheCorrectBucket(GameTestHelper h) {
         var tank = tank(h, CETransport.STAINLESS_STEEL_TANK.get());
         var sulfate = new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 1500);
-        h.assertTrue(tank.getTankInventory().fill(sulfate, EXECUTE) == 1500, "The tank contains the sulfate solution");
+        var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(AT), Direction.WEST);
+        h.assertTrue(TankGrade.STAINLESS.accepts(sulfate) && port.fill(sulfate, EXECUTE) == 1500,
+            "The stainless tank is rated to store and pipe in zirconium sulfate solution");
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var hand = InteractionHand.MAIN_HAND;
-        player.setItemInHand(hand, new ItemStack(CEWorldFluids.STAINLESS_BUCKET.get(), 2));
+        player.setItemInHand(hand, CEWorldFluids.STAINLESS_BUCKET.toStack());
         h.useBlock(AT, player);
-        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.STAINLESS_BUCKET.get()) && player.getItemInHand(hand).getCount() == 2
-            && tank.getTankInventory().getFluidAmount() == 1500, "The stainless bucket and all sulfate stay put on rejection");
-        player.setItemInHand(hand, CEWorldFluids.EMPTY_ALLOY_BUCKET.toStack());
+        var sampleBucket = player.getItemInHand(hand);
+        var filled = net.neoforged.neoforge.fluids.FluidUtil.getFluidHandler(sampleBucket).orElseThrow();
+        h.assertTrue(net.createplant.item.StainlessBuckets.marked(sampleBucket) && filled.drain(1000, EXECUTE).is(sulfate.getFluid())
+            && filled.getContainer().is(CEWorldFluids.STAINLESS_BUCKET.get())
+            && tank.getTankInventory().getFluidAmount() == 500, "A stainless bucket takes 1000 mB and keeps the stainless shell");
+        player.setItemInHand(hand, CEWorldFluids.STAINLESS_BUCKET.toStack());
         h.useBlock(AT, player);
-        var filled = net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(player.getItemInHand(hand)).orElse(FluidStack.EMPTY);
-        h.assertTrue(FluidStack.isSameFluidSameComponents(filled, sulfate) && filled.getAmount() == 1000
-            && tank.getTankInventory().getFluidAmount() == 500, "An alloy bucket takes 1000 mB and leaves the remaining sulfate");
-        player.setItemInHand(hand, CEWorldFluids.EMPTY_ALLOY_BUCKET.toStack());
-        h.useBlock(AT, player);
-        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get())
+        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.STAINLESS_BUCKET.get())
             && tank.getTankInventory().getFluidAmount() == 500, "A partial bucketful stays in the tank");
 
         var compatible = new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 1000);

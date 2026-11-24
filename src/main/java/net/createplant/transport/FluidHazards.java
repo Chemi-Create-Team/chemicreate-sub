@@ -23,7 +23,7 @@ public final class FluidHazards {
     }
     public static final Properties ORDINARY = new Properties(293, 1, Corrosion.NONE, false);
     private static final Map<String, Corrosion> STRONG = Map.ofEntries(Map.entry("aluminium_sulfate_solution", Corrosion.HOT_ACID),
-        Map.entry("titanyl_sulfate_solution", Corrosion.HOT_ACID), Map.entry("zirconium_sulfate_solution", Corrosion.HOT_ACID),
+        Map.entry("titanyl_sulfate_solution", Corrosion.HOT_ACID),
         Map.entry("hydrogen_fluoride", Corrosion.FLUORIDE), Map.entry("fluorine", Corrosion.FLUORIDE), Map.entry("uranium_hexafluoride", Corrosion.FLUORIDE),
         Map.entry("enriched_uranium_hexafluoride", Corrosion.FLUORIDE), Map.entry("compact_enriched_uranium_hexafluoride", Corrosion.FLUORIDE),
         Map.entry("depleted_uranium_hexafluoride", Corrosion.FLUORIDE),

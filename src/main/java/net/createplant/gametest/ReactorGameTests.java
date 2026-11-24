@@ -197,11 +197,11 @@ public class ReactorGameTests {
         h.useBlock(hatch,player);
         h.assertTrue(vessel.open(),"The player opened the hatch");
         var sulfate=CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
-        var bucket=net.neoforged.neoforge.fluids.FluidUtil.getFilledBucket(new FluidStack(sulfate,1000));
+        var bucket=net.createplant.item.StainlessBuckets.filled(new FluidStack(sulfate,1000));
         h.assertTrue(!bucket.isEmpty(),"The recipe feed has a filled bucket");
         player.setItemInHand(hand,bucket);
         h.useBlock(hatch,player);
-        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get())
+        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.STAINLESS_BUCKET.get())
             && vessel.itemPort().getStackInSlot(0).isEmpty() && in(vessel).getFluidInTank(0).is(sulfate)
             && in(vessel).getFluidInTank(0).getAmount()==1000 && vessel.getTankInventory().getFluid().is(Fluids.WATER),
             "The bucket returns empty and its liquid goes into the reaction feed: held "+player.getItemInHand(hand)
@@ -219,6 +219,58 @@ public class ReactorGameTests {
                 "The superheated, rotating vessel produces two hydrate crystals and 800 mB of steam: "+crystals+", "+vessel.status());
             h.assertTrue(output.extractItem(vessel.inputItemSlots(),2,false).getCount()==2,"The crystals can be taken from the normal item outlet");
         });
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void zirconiumSulfateCrystallizesInTheVesselThatMadeItAfterReload(GameTestHelper h) {
+        var vessel = (LiddedVesselBlockEntity) build(h, ReactorModule.STIRRED, 2);
+        heat(vessel, com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        var zircon = CEMetals.MINERALS.get("zircon").get();
+        var sulfate = CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
+        var acid = CEUranium.SULFURIC_ACID.get();
+        h.assertTrue(vessel.itemPort().insertItem(0, new ItemStack(zircon, 3), false).isEmpty()
+            && in(vessel).fill(new FluidStack(acid, 600), EXECUTE) == 600
+            && vessel.getTankInventory().fill(new FluidStack(Fluids.WATER, 1000), EXECUTE) == 1000,
+            "Start the first stage with water in storage and some surplus zircon and acid");
+        run(vessel, 100);
+        int slot = vessel.inputItemSlots();
+        h.assertTrue(vessel.displayedItem(slot).is(Items.SAND) && products(vessel).getOrDefault(sulfate, 0) == 500,
+            "The preceding stage really placed the solution in a product buffer");
+
+        var registry = h.getLevel().registryAccess();
+        vessel.loadWithComponents(vessel.saveWithoutMetadata(registry), registry);
+        vessel.validateStructure();
+        run(vessel, 45);
+        h.assertTrue(vessel.running() && gasProducts(vessel) > 0 && products(vessel).getOrDefault(sulfate, 0) < 500
+            && out(vessel).drain(new FluidStack(sulfate, 1000), SIMULATE).isEmpty(),
+            "Only the crystallizing charge is protected from drains once the batch has started");
+        vessel.loadWithComponents(vessel.saveWithoutMetadata(registry), registry);
+        vessel.validateStructure();
+        run(vessel, 100);
+        h.assertTrue(vessel.displayedItem(slot + 1).is(CEMetals.ZIRCONIUM_SULFATE_HYDRATE.get())
+            && vessel.displayedItem(slot + 1).getCount() == 1 && gasProducts(vessel) == 400
+            && products(vessel).getOrDefault(sulfate, 0) == 0
+            && vessel.getTankInventory().getFluidAmount() == 1000
+            && in(vessel).getFluidInTank(0).getAmount() == 100 && vessel.displayedItem(0).getCount() == 1,
+            "The visible sulfate becomes a hydrate after reload even with unrelated contents: " + vessel.status() + ", " + products(vessel));
+        h.succeed();
+    }
+
+    @GameTest(template = "test_reactor")
+    public static void superheatedVesselCrystallizesSulfateFromMixedStorage(GameTestHelper h) {
+        var vessel = (LiddedVesselBlockEntity) build(h, ReactorModule.STIRRED, 2);
+        var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, vessel.getBlockPos(), Direction.WEST);
+        var sulfate = new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 500);
+        h.assertTrue(vessel.getTankInventory().fill(new FluidStack(Fluids.WATER, 1000), EXECUTE) == 1000
+            && in(vessel).fill(new FluidStack(Fluids.WATER, 1000), EXECUTE) == 1000
+            && port.fill(sulfate, EXECUTE) == 500 && vessel.getTankInventory().getFluidAmount() == 1500,
+            "The solution goes to physical storage with water when the reaction feed already contains water");
+        heat(vessel, com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        run(vessel, 100);
+        h.assertTrue(vessel.displayedItem(vessel.inputItemSlots()).is(CEMetals.ZIRCONIUM_SULFATE_HYDRATE.get())
+            && gasProducts(vessel) == 400 && vessel.getTankInventory().getFluidAmount() == 1000,
+            "The mixed tank yields the hydrate and uses only the sulfate: " + vessel.status() + ", " + products(vessel));
+        h.succeed();
     }
 
     @GameTest(template = "test_reactor")
@@ -244,7 +296,7 @@ public class ReactorGameTests {
     @GameTest(template = "test_reactor")
     public static void vesselBucketPickupConservesTheOutOfRatingSulfate(GameTestHelper h) {
         var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
-        var sulfate=new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(),1500);
+        var sulfate=new FluidStack(CEMetals.TITANYL_SULFATE_SOLUTION.get(),1500);
         h.assertTrue(vessel.getTankInventory().fill(sulfate,EXECUTE)==1500,"The vessel contains the sulfate solution");
         var player=h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
@@ -674,8 +726,9 @@ public class ReactorGameTests {
                 var feed=ingredient.getFluids()[0];
                 if (in(be).fill(feed,EXECUTE)!=feed.getAmount()) failures.add(holder.id()+": port refused "+feed.getAmount()+" "+feed.getFluid());
             }
-            // The longest cycle is 200 ticks at full speed; the test stirs at half speed, and the first tick picks the recipe.
-            run(be,410);
+            // Check the zirconium liquor as soon as it can be piped out, before the next reaction uses it in the same vessel.
+            int ticks=holder.id().equals(CreatePlant.location("pressure_reaction/zirconium_sulfate_solution")) ? 100 : 410;
+            run(be,ticks);
             var made=products(be);
             for (var result:recipe.getFluidResults()) if (made.getOrDefault(result.getFluid(),0)!=result.getAmount()) failures.add(holder.id()+": made "+made+" status "+be.status());
             for (var result:recipe.getRollableResults()) {

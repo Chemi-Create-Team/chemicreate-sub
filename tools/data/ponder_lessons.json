@@ -2025,9 +2025,9 @@
     "zh_cn": "不锈钢桶的做法与桶相同，只是把铁锭换成不锈钢锭。它能装不锈钢储罐可装的液体。"
   },
   "world_liquids.stainless_fill": {
-    "en_us": "Emptying returns a stainless bucket. Use an alloy bucket for hot acids.",
-    "ja_jp": "空にするとステンレスバケツに戻ります。硫酸ジルコニウム溶液などの熱酸は耐食合金バケツで汲みます。",
-    "zh_cn": "倒空后仍是不锈钢桶。热酸（如硫酸锆溶液）要用耐蚀合金桶。"
+    "en_us": "A stainless bucket can scoop zirconium sulfate solution from a tank.",
+    "ja_jp": "硫酸ジルコニウム溶液は、タンクからステンレスバケツで汲めます。",
+    "zh_cn": "可用不锈钢桶从储罐取出硫酸锆溶液。"
   },
   "world_liquids.pour": {
     "en_us": "Use a liquid bucket on the ground to pour it. Gas buckets release a cloud instead.",
@@ -2930,9 +2930,9 @@
     "zh_cn": "在搅拌槽中超加热锆石与硫酸。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_3": {
-    "en_us": "Pipe in the solution or pour it through the open hatch, then close the hatch. Heat and stir it, then collect the hydrate crystals with a funnel.\n%s → %s",
-    "ja_jp": "溶液を配管か開いたハッチから入れ、ハッチを閉じます。加熱して撹拌し、水和物をファンネルで取り出します。\n%s → %s",
-    "zh_cn": "用管道或打开的舱盖加入硫酸锆溶液，随后关上舱盖。加热并搅拌后，用漏斗取出水合物晶体。\n%s → %s"
+    "en_us": "Solution left in the stirred tank forms hydrate when heated and stirred. Or pipe it into a second tank. Use a funnel to collect the hydrate.\n%s → %s",
+    "ja_jp": "槽に残った硫酸ジルコニウム溶液は、そのまま加熱と攪拌を続けると水和物になります。配管で別の槽に送っても作れます。水和物はファンネルで取り出します。\n%s → %s",
+    "zh_cn": "槽内留下的硫酸锆溶液继续加热和搅拌即可结晶。也可通过管道送到另一个搅拌槽。用漏斗取出水合物。\n%s → %s"
   },
   "guide.manufacturing_zirconium.step_4": {
     "en_us": "Feed the hydrate into a heated stirred tank. Route the zirconyl sulfate to calcining.\n%s → %s",
