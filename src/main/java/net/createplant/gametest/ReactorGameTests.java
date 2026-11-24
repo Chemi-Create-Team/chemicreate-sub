@@ -299,7 +299,8 @@ public class ReactorGameTests {
         var warmed = ThermalControlGameTests.tube(exchanger, 1).drain(1000, EXECUTE);
         var recooled = net.createplant.thermal.FluidState.with(warmed, net.createplant.thermal.FluidState.AMBIENT, net.createplant.thermal.FluidState.pressure(warmed));
         h.assertTrue(warmed.is(CEProcessFluids.SLIME_COOLANT.get()) && warmed.getAmount() == 750 && net.createplant.thermal.FluidState.temperature(warmed) == 9
-            && FluidStack.matches(recooled, coolant), "The coolant warms to the parallel-flow average and is the original coolant again at ambient");
+            && FluidStack.matches(recooled, coolant), "The coolant warms to the parallel-flow heat balance and is the original coolant again at ambient: "
+            +net.createplant.thermal.FluidState.temperature(warmed));
         h.succeed();
     }
 
@@ -388,10 +389,12 @@ public class ReactorGameTests {
     public static void heaterRequiresRealHeatAndColumnRequiresColdFeed(GameTestHelper h) {
         var heat=build(h,ReactorModule.PREHEATER,1);in(heat).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);run(heat,100);
         h.assertTrue(out(heat).getFluidInTank(0).isEmpty() && in(heat).getFluidInTank(0).getAmount()==1000,"A missing second stream retains the first feed");
-        var hot=heat.thermal().port(2,true,false,true);hot.fill(new FluidStack(CEProcessFluids.HOT_OLEFINS.get(),1000),EXECUTE);run(heat,50);
+        var hot=heat.thermal().port(2,true,false,true);hot.fill(new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),1000),EXECUTE);run(heat,50);
         var warmed=out(heat).getFluidInTank(0);var cooled=heat.thermal().tank(3).getFluid();
-        h.assertTrue(warmed.is(Fluids.WATER) && warmed.getAmount()==1000 && net.createplant.thermal.FluidState.temperature(warmed)==10
-            && cooled.is(CEProcessFluids.COOLED_OLEFINS.get()) && net.createplant.thermal.FluidState.temperature(cooled)==10,"Two finite rows meet at their average temperature together");
+        // A gas carries a thousandth of the heat of the same volume of water: the gas cools to the water, which keeps its level.
+        h.assertTrue(warmed.is(Fluids.WATER) && warmed.getAmount()==1000 && net.createplant.thermal.FluidState.temperature(warmed)==8
+            && cooled.is(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get()) && net.createplant.thermal.FluidState.temperature(cooled)==8,"Two finite rows meet at the temperature their heat balance gives: "
+            +net.createplant.thermal.FluidState.temperature(warmed)+"/"+cooled.getAmount()+" "+cooled.getHoverName().getString()+" at "+net.createplant.thermal.FluidState.temperature(cooled));
         var column=DistillationGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(12,2,4)),2,14);
         h.assertTrue(DistillationGameTests.inlet(column,2).fill(new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),9000),EXECUTE)==0 && DistillationGameTests.inlet(column,2).fill(new FluidStack(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get(),9000),EXECUTE)==0,"Ammonia mixtures belong in the dedicated gas-liquid separator");h.succeed();
     }
@@ -593,7 +596,8 @@ public class ReactorGameTests {
                 var feed=ingredient.getFluids()[0];
                 if (in(be).fill(feed,EXECUTE)!=feed.getAmount()) failures.add(holder.id()+": port refused "+feed.getAmount()+" "+feed.getFluid());
             }
-            run(be,200);
+            // The longest cycle is 200 ticks at full speed; the test stirs at half speed, and the first tick picks the recipe.
+            run(be,410);
             var made=products(be);
             for (var result:recipe.getFluidResults()) if (made.getOrDefault(result.getFluid(),0)!=result.getAmount()) failures.add(holder.id()+": made "+made+" status "+be.status());
             for (var result:recipe.getRollableResults()) {

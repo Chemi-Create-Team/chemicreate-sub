@@ -5,7 +5,7 @@ import json, sys
 sys.path.insert(0, 'tools')
 from powder_assets import write_powder_item
 from generate_reactor_assets import A, D, NS, write
-from generate_uranium_assets import full_cube, tag, item, fluid, fluid_out
+from generate_uranium_assets import REACTION_HEAT, full_cube, tag, item, fluid, fluid_out
 
 FLUIDS = {
     'brine': ('Brine', '塩水', '盐水'),
@@ -96,6 +96,7 @@ def recipes():
         data = {'type': U + 'pressure_reaction'}
         if heat: data['heat_requirement'] = heat
         data.update(ingredients=ingredients, results=results)
+        if id in REACTION_HEAT: data['reaction_heat'] = REACTION_HEAT[id]
         write(D / 'recipe/pressure_reaction' / f'{id}.json', data)
 
 

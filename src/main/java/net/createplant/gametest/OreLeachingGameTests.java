@@ -104,7 +104,10 @@ public class OreLeachingGameTests {
         for (var id : new String[]{"gold_leaching", "gold_pressure_leaching", "gold_from_gold_chloride_solution", "iron_pressure_leaching", "copper_pressure_leaching", "zinc_pressure_leaching"})
             h.assertTrue(manager.byKey(CreatePlant.location("pressure_reaction/" + id)).isEmpty(), "Obsolete and gold routes are removed: " + id);
         h.assertTrue(!BuiltInRegistries.FLUID.containsKey(CreatePlant.location("gold_chloride_solution")), "Gold chemical fluid is unregistered");
-        h.assertTrue(net.createplant.chemistry.ElectrolysisProcess.all().stream().filter(net.createplant.chemistry.ElectrolysisProcess::electrowinning).count() == 4, "Exactly four generic metals, never gold");
+        // Copper, zinc, nickel, tin and, since the lead wet route, lead.
+        var won = net.createplant.chemistry.ElectrolysisProcess.all().stream().filter(net.createplant.chemistry.ElectrolysisProcess::electrowinning).toList();
+        h.assertTrue(won.size() == 5 && won.stream().noneMatch(process -> process.metal() == Items.GOLD_INGOT || process.metal() == Items.GOLD_NUGGET),
+            "Exactly five generic metals, never gold: " + won.stream().map(process -> process.metal().toString()).toList());
         var crushing = (com.simibubi.create.content.kinetics.crusher.CrushingRecipe) manager.byKey(CreatePlant.location("crushing/raw_tin")).orElseThrow().value();
         h.assertTrue(crushing.getIngredients().getFirst().test(CEMetals.MINERALS.get("cassiterite").get().getDefaultInstance()) && crushing.getRollableResults().getFirst().getStack().is(CEMetals.CRUSHED_TIN.get()), "Tin raw tag resolves to the normal Create crusher path");
         h.assertTrue(!crushing.getIngredients().getFirst().test(Items.RAW_GOLD.getDefaultInstance()), "Raw gold cannot enter the tin route");h.succeed();

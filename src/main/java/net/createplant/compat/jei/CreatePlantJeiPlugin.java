@@ -283,7 +283,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             List<FluidStack> fluids = recipe.getFluidIngredients().stream().map(ingredient -> ingredient.getFluids()[0]).toList();
             int ticks = recipe.getProcessingDuration() > 0 ? recipe.getProcessingDuration() : 100;
             Component conditions=note(heatOnly ? "heated_tank" : module==ReactorModule.ABSORBER ? "tray_reactor" : "stirred_reactor",ticks,Component.translatable("create."+recipe.getRequiredHeat().getTranslationKey()));
-            if(recipe.reactionHeat()!=0)conditions=conditions.copy().append(" · ").append(Component.translatable("reaction_heat.create_refinery_n_reactors."+(recipe.reactionHeat()>0 ? "endothermic" : "exothermic")));
+            if(recipe.reactionHeat()!=0)conditions=conditions.copy().append(" · ").append(Component.translatable("reaction_heat.create_refinery_n_reactors."+(recipe.reactionHeat()>0 ? "exothermic" : "endothermic")));
             var products = recipe.getRollableResults().stream().map(ProcessingOutput::getStack).toList();
             var entry = new PlantProcess(items, fluids, List.of(), products, recipe.getFluidResults(), conditions)
                 .withFluidOptions(recipe.getFluidIngredients().stream().map(ingredient->Arrays.asList(ingredient.getFluids())).toList());

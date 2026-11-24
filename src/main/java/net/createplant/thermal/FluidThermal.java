@@ -22,7 +22,7 @@ public final class FluidThermal {
         Map.entry("warm_water",new double[]{1,4180}),Map.entry("crude_oil",new double[]{.85,2000}),
         Map.entry("heavy_oil",new double[]{.95,1900}),
         Map.entry("lubricating_oil",new double[]{.88,2000}),Map.entry("diesel",new double[]{.83,2100}),
-        Map.entry("liquid_ammonia",new double[]{.68182,4700}),Map.entry("ethylene_glycol",new double[]{1.113,2400}),Map.entry("antifreeze",new double[]{1.07,3300}),
+        Map.entry("liquid_ammonia",new double[]{.68182,4700}),Map.entry("ethylene_glycol",new double[]{1.113,2400}),Map.entry("antifreeze",new double[]{1.07,3300}),Map.entry("slime_coolant",new double[]{1.05,3500}),
         Map.entry("methanol",new double[]{.8,2500}),Map.entry("ammonium_chloride_liquor",new double[]{1.05,4000}),Map.entry("low_sulfur_diesel",new double[]{.83,2100}),
         Map.entry("hot_hydrotreater_effluent",new double[]{.83,2100}),
         Map.entry("hot_hydrocracker_effluent",new double[]{.8,2150}),Map.entry("cooled_hydrocracker_effluent",new double[]{.8,2150}),Map.entry("cooled_hydrotreater_effluent",new double[]{.83,2100}),
@@ -37,8 +37,16 @@ public final class FluidThermal {
     private FluidThermal() { }
     public static synchronized Properties properties(FluidStack stack) {
         if (net.createplant.chemistry.WasteGas.contaminated(stack)) {var gas=net.createplant.chemistry.WasteGas.of(stack);return new Properties(293.15,gas.density(),gas.heatCapacity());}
-        return nominalProperties(FluidState.gas(stack) ? stack.getFluid() : FluidIdentity.liquidVariant(stack.getFluid()));
+        if(!FluidState.gas(stack))return nominalProperties(FluidIdentity.liquidVariant(stack.getFluid()));
+        var type=stack.getFluid();
+        if(FluidMaterials.gas(type) || stack.is(net.minecraft.world.level.material.Fluids.WATER) || net.createplant.mixture.MixtureHelper.isMixture(stack))return nominalProperties(type);
+        // A substance that is a liquid at its own state, boiled here: the same mass spread over its gas volume, as the phase change counts it.
+        return BOILED.computeIfAbsent(type,fluid->{
+            var liquid=nominalProperties(fluid);
+            return new Properties(liquid.initialKelvin(),liquid.kilogramsPerLitre()/PhaseChange.ratio(stack.copyWithAmount(1)),liquid.joulesPerKilogramKelvin());
+        });
     }
+    private static final Map<Fluid,Properties> BOILED=new IdentityHashMap<>();
     static synchronized Properties nominalProperties(Fluid type) {
         return PROPERTIES.computeIfAbsent(type,fluid->{
             var id=BuiltInRegistries.FLUID.getKey(fluid);String name=id.getPath();

@@ -19,5 +19,5 @@
   ],
   "processing_time": 100,
   "heat_requirement": "heated",
-  "reaction_heat": 1341
+  "reaction_heat": -1341
 }

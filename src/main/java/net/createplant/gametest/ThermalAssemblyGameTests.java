@@ -35,14 +35,15 @@ public class ThermalAssemblyGameTests {
                 ThermalControlGameTests.shell(be,1),ThermalControlGameTests.shell(be,0)};
             for(var port:ports) h.assertTrue(port!=null,"Tube and shell each have a real inlet and outlet: "+kind+" "+along);
             var cold=net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER,100),300);
-            var hot=net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.createplant.registry.CEProcessFluids.HOT_OLEFINS.get(),100),360);
+            // A gas that stays a gas at the water's temperature (olefins would condense, and 100 mB is less than one liquid unit).
+            var hot=net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.createplant.registry.CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),100),360);
             var execute=net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
             var tubeSide=index%2==0 ? cold : hot;var shellSide=index%2==0 ? hot : cold;
             ports[0].fill(tubeSide,execute);ports[2].fill(shellSide,execute);
             h.assertTrue(ports[0].drain(100,execute).isEmpty() && ports[1].fill(cold,execute)==0,"Ports enforce one-way transfer");
             for(int tick=0;tick<5;tick++) be.tickProcess();
             var c=ports[1].drain(100,execute);var t=ports[3].drain(100,execute);
-            var water=net.minecraft.world.level.material.Fluids.WATER;var olefins=net.createplant.registry.CEProcessFluids.COOLED_OLEFINS.get();
+            var water=net.minecraft.world.level.material.Fluids.WATER;var olefins=net.createplant.registry.CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get();
             h.assertTrue(c.is(index%2==0 ? water : olefins) && t.is(index%2==0 ? olefins : water) && c.getAmount()==100 && t.getAmount()==100,"The tube and shell sides do not mix or lose fluid: "+kind+" "+along+" "+c+" / "+t);
 
         }

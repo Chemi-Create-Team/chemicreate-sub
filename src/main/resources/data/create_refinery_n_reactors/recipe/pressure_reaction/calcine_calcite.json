@@ -20,5 +20,5 @@
   ],
   "processing_time": 160,
   "heat_requirement": "superheated",
-  "reaction_heat": 3699
+  "reaction_heat": -3699
 }

@@ -183,6 +183,17 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     protected void releaseHeat(double joules) {
         if (joules!=0 && reactionHeating.react(Arrays.asList(tanks),joules,ignored->Integer.MAX_VALUE,List.of())==net.createplant.thermal.TankHeating.CHANGED) changed();
     }
+    /** The real temperature of what is in the machine; a vessel overrides this to include its tank. */
+    protected double contentsKelvin() { return reactionHeating.meanKelvin(Arrays.asList(tanks),List.of()); }
+    /**
+     * While a reaction with a heat of reaction makes its products, they enter at the temperature of the contents and the heat of
+     * reaction does the rest; otherwise they enter at their own level (docs/internal-temperature.md, 5). NaN for the latter.
+     */
+    private double productKelvin=Double.NaN;
+    private void productsAtContents(boolean heatOfReaction) { productKelvin=heatOfReaction ? contentsKelvin() : Double.NaN; }
+    private static boolean heatOfReaction(StandardProcessingRecipe<RecipeInput> recipe) {
+        return recipe instanceof PressureReactionRecipe reaction && reaction.reactionHeat()!=0;
+    }
     private void releaseHeat(StandardProcessingRecipe<RecipeInput> recipe,double batches) {
         if (recipe instanceof PressureReactionRecipe reaction && reaction.reactionHeat()!=0) releaseHeat(reaction.reactionHeat()*batches);
     }
@@ -551,12 +562,15 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             credit[i]=(int)-owed;
         }
         int produced=0;
-        for (var product:active.fluids()) {
-            int amount=ReactionFlow.made(product.getAmount(),position*scale,step*scale);
-            if (amount==0) continue;
-            if (!putFluid(fluids,product.copyWithAmount(amount))) { setStatus("output",false);return true; }
-            produced+=amount;
-        }
+        productsAtContents(active.joules()!=0);
+        try {
+            for (var product:active.fluids()) {
+                int amount=ReactionFlow.made(product.getAmount(),position*scale,step*scale);
+                if (amount==0) continue;
+                if (!putFluid(fluids,product.copyWithAmount(amount))) { setStatus("output",false);return true; }
+                produced+=amount;
+            }
+        } finally { productKelvin=Double.NaN; }
         if (gasIn(fluids)>batchGasLimit()) { setStatus("gas_full",false);return true; }
         var finalItems=finished ? starting ? newCharge : items() : null;
         if (finished && !putItems(finalItems,active.items())) { setStatus("output",false);return true; }
@@ -649,7 +663,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (consumed==null) return false;
         for (var ingredient:recipe.getFluidIngredients()) if (!takeFluid(recipe,ingredient,ingredient.amount(),fluids)) return false;
         if (!putItems(items,batchProducts(recipe,consumed,products))) return false;
-        for (FluidStack template:recipe.getFluidResults()) if (!putFluid(fluids,template)) return false;
+        productsAtContents(heatOfReaction(recipe));
+        try { for (FluidStack template:recipe.getFluidResults()) if (!putFluid(fluids,template)) return false; }
+        finally { productKelvin=Double.NaN; }
         if (gasIn(fluids)>batchGasLimit()) { gasBlocked=true;return false; }
         return true;
     }
@@ -721,6 +737,10 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
     /** Puts a product beside the same material and phase, or uses an empty product buffer. */
     private boolean putFluid(FluidStack[] fluids,FluidStack product) {
+        if (!Double.isNaN(productKelvin)) {
+            product=product.copy();
+            FluidState.setTemperature(product,FluidState.levelFor(product,productKelvin,FluidState.pressure(product),FluidState.gas(product)));
+        }
         int empty=-1,tank=-1;
         boolean gas=FluidState.gas(product);
         for (int slot=2;slot<THIRD_FEED;slot++) {
@@ -743,10 +763,13 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             for (int slot:mixingInputs()) if (!fluids[slot].isEmpty() && !recipe.getFluidIngredients().getFirst().ingredient().test(fluids[slot])) return false;
         }
         for (var ingredient:recipe.getFluidIngredients()) if (!takeFluid(recipe,ingredient,ReactionFlow.owed(ingredient.amount(),position,f),fluids)) return false;
-        for (FluidStack template:recipe.getFluidResults()) {
-            int amount=ReactionFlow.made(template.getAmount(),position,f);
-            if (amount>0 && !putFluid(fluids,template.copyWithAmount(amount))) return false;
-        }
+        productsAtContents(heatOfReaction(recipe));
+        try {
+            for (FluidStack template:recipe.getFluidResults()) {
+                int amount=ReactionFlow.made(template.getAmount(),position,f);
+                if (amount>0 && !putFluid(fluids,template.copyWithAmount(amount))) return false;
+            }
+        } finally { productKelvin=Double.NaN; }
         if (gasIn(fluids)>batchGasLimit()) { gasBlocked=true;return false; }
         return true;
     }

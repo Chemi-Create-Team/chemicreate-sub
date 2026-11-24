@@ -108,13 +108,25 @@ public final class ThermalEquipment {
     public record Exchange(HeatContent.Shift first,HeatContent.Shift second,int firstLevel,int secondLevel,boolean firstHot) { }
 
     /**
-     * Heat moved per mB of each stream (both take the same amount): parallel flow ends both at one temperature, counterflow moves a
-     * share of the best case. A stream that reaches its boiling point takes or gives its latent heat.
+     * Heat moved per mB of each stream (both take the same amount), counting the latent heat of a stream that boils or condenses on
+     * the way: parallel flow ends both at one temperature, counterflow moves 0.9 of the most either stream could give or take
+     * between the two inlet temperatures. For streams that keep their phase these are {@code C1C2/(C1+C2)·ΔT} and {@code 0.9·Cmin·ΔT}.
      */
     public static Exchange exchange(FluidStack first,double kelvinA,FluidStack second,double kelvinB,boolean counterflow) {
-        double capacityA=HeatContent.capacity(first.copyWithAmount(1000)), capacityB=HeatContent.capacity(second.copyWithAmount(1000));
-        double moved=(counterflow ? COUNTERFLOW_EFFICIENCY*Math.min(capacityA,capacityB) : capacityA*capacityB/(capacityA+capacityB))*Math.abs(kelvinA-kelvinB);
         boolean firstHot=kelvinA>kelvinB;
+        var hot=(firstHot ? first : second).copyWithAmount(1000);var cold=(firstHot ? second : first).copyWithAmount(1000);
+        double hotKelvin=Math.max(kelvinA,kelvinB), coldKelvin=Math.min(kelvinA,kelvinB), moved;
+        if(counterflow)moved=COUNTERFLOW_EFFICIENCY*Math.min(HeatContent.heatBetween(hot,hotKelvin,coldKelvin),HeatContent.heatBetween(cold,coldKelvin,hotKelvin));
+        else {
+            // The common outlet temperature: what the hot stream gives down to it equals what the cold one takes up to it.
+            double low=coldKelvin, high=hotKelvin;
+            for(int step=0;step<32;step++) {
+                double middle=(low+high)/2;
+                if(HeatContent.heatBetween(hot,hotKelvin,middle)>HeatContent.heatBetween(cold,coldKelvin,middle))low=middle;
+                else high=middle;
+            }
+            moved=HeatContent.heatBetween(cold,coldKelvin,(low+high)/2);
+        }
         var shiftA=HeatContent.shift(first.copyWithAmount(1000),kelvinA,firstHot ? -moved : moved);
         var shiftB=HeatContent.shift(second.copyWithAmount(1000),kelvinB,firstHot ? moved : -moved);
         return new Exchange(shiftA,shiftB,FluidState.levelFor(first,shiftA.kelvin(),FluidState.pressure(first),shiftA.gas()),

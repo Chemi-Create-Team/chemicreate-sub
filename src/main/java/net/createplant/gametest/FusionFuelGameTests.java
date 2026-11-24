@@ -12,7 +12,6 @@ import net.createplant.nuclear.ReactorCoreStructure;
 import net.createplant.registry.CEElectrolysis;
 import net.createplant.registry.CEFusion;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CEFusionFuel;
 import net.createplant.registry.CEMetals;
 import net.createplant.registry.CENuclear;
@@ -56,7 +55,10 @@ public class FusionFuelGameTests {
             be.port(Direction.UP).fill(new FluidStack(type,amount),EXECUTE);be.step();
             h.assertTrue(be.gas().isEmpty() && be.liquid().getFluid().is(conversion.output()) && be.liquid().getFluidAmount()==10,"The fixed liquefaction table processes "+type);
             int coolant=type==CEFusion.HELIUM_GAS.get() ? 2000 : 500;
-            h.assertTrue(be.water().getFluidAmount()==32000-coolant && be.warm().getFluid().is(CEProcessFluids.WARM_WATER.get()) && be.warm().getFluidAmount()==coolant,"Finite water becomes the exact warm discharge");
+            // The discharge carries the gas's heat and the shaft work, so it is warmer than the supply but never boils.
+            var warm=be.warm().getFluid();
+            h.assertTrue(be.water().getFluidAmount()==32000-coolant && net.createplant.thermal.FluidState.liquidWater(warm) && be.warm().getFluidAmount()==coolant
+                && be.warm().kelvin()>be.water().kelvin(),"Finite water becomes the exact warm discharge: "+be.warm().kelvin()+" K");
             near(h,be.watts(),coolant*20d*4,"The actual shaft work pays the batch cost");
         }h.succeed();
     }

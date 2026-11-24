@@ -12,17 +12,20 @@
 7. 反応熱：`pressure_reaction` に任意の `reaction_heat`（J/バッチ）を追加。ふた付き槽（と反応機械）の中身へ足し引きする。JEIに「発熱／吸熱」だけ表示。
 8. 文書（DESIGN.md、fluid-states.md、thermal-grades.md、counterflow-heat-exchanger.md）、Ponder文（槽の加熱、季節、熱交換器、ラジエーター）、GameTest（`InternalTemperatureGameTests`）。
 
-## 登録した反応熱（限界反応物のmolから。正が吸熱）
+## 登録した反応熱（限界反応物のmolから。発熱が正）
+
+2026-11-24：最初は化学の慣習（発熱が負）で書いたが、コードは正の値で中身を温めるため、発熱反応で槽が冷えていた。仕様5章どおり発熱を正に直した。値の正本は `tools/data/reaction_heat.json`。
+
 | レシピ | J/バッチ |
 | --- | ---: |
-| sodium_hypochlorite_solution | -1162 |
-| ammonium_nitrate | -1560 |
-| ammonium_sulfate | -1474 |
-| hydrogen_chloride | -1923 |
-| sulfur_dioxide / sulfur_dioxide_stirred | -6633 |
-| calcine_calcite | +3699 |
-| calcine_bicarbonate | +1341 |
-| urea | -271 |
+| sodium_hypochlorite_solution | +1162 |
+| ammonium_nitrate | +1560 |
+| ammonium_sulfate | +1474 |
+| hydrogen_chloride | +1923 |
+| sulfur_dioxide / sulfur_dioxide_stirred | +6633 |
+| calcine_calcite | -3699 |
+| calcine_bicarbonate | -1341 |
+| urea | +271 |
 
 ## ゲームの挙動が変わる点
 - 熱交換器は両方の流れから同じmBを取るので、沸騰・凝縮する流れ（液体アンモニア→気体、水蒸気→水）は蒸発熱・凝縮熱のぶん、1回では完了しない。冷媒が少ない・熱い側が水蒸気だと途中の状態（乾き度）で出る。[熱交換器の文書](../counterflow-heat-exchanger.md)にある「アンモニア循環を熱交換器とラジエーターだけで閉じる」運転は、この点で挙動が変わる。要プレイ確認。

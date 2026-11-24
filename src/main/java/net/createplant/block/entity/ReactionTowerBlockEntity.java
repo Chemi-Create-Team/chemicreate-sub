@@ -382,8 +382,8 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         cycle = recipe.ticks();
         // Feed is converted a little every tick, at most what the working layers do in these ticks, never more than the feed and the product room allow.
         double f = (separator ? layers() : working.size()) * (double) ticks / recipe.ticks();
-        for (int i = 0; i < recipe.inputs().size(); i++) f = Math.min(f, tanks[i].getAmount() / (double) recipe.inputs().get(i).getAmount());
-        for (int i = 0; i < recipe.outputs().size(); i++) f = Math.min(f, (capacity(recipe.outputs().get(i)) - tanks[2 + i].getAmount()) / (double) recipe.outputs().get(i).getAmount());
+        for (int i = 0; i < recipe.inputs().size(); i++) f = Math.min(f, net.createplant.chemistry.ReactionFlow.feedLimit(recipe.inputs().get(i).getAmount(), flow, tanks[i].getAmount()));
+        for (int i = 0; i < recipe.outputs().size(); i++) f = Math.min(f, net.createplant.chemistry.ReactionFlow.roomLimit(recipe.outputs().get(i).getAmount(), flow, capacity(recipe.outputs().get(i)) - tanks[2 + i].getAmount()));
         if (f <= 1e-9) return;
         int total = 0;
         for (int i = 0; i < recipe.inputs().size(); i++) tanks[i] = tanks[i].copyWithAmount(tanks[i].getAmount() - Math.min(tanks[i].getAmount(), owed(recipe.inputs().get(i).getAmount(), f)));

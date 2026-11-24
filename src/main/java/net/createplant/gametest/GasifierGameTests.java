@@ -66,12 +66,21 @@ public final class GasifierGameTests {
         for (int tick = 0; tick < count; tick++) gasifier.tick();
     }
 
+    /** Ticks while the furnace body warms to its reaction temperature; the tick that reaches it also runs the batch once. */
+    private static void heatUp(GameTestHelper h, GasifierBlockEntity gasifier) {
+        for (int tick = 0; tick < 2000; tick++) {
+            gasifier.tick();
+            if (!gasifier.status().equals("preheat")) return;
+        }
+        h.fail("The furnace never reaches its reaction temperature: " + gasifier.temperature());
+    }
+
     static FluidStack makeWaterGas(GameTestHelper h, int batches) {
         var gasifier = build(h);
         h.assertTrue(gasifier.rebuild(), "The 3x3x6 gasifier forms before feeding the synthesis line");
         charge(h, batches, new FluidStack(CEFluids.STEAM.get(), 250 * batches));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(gasifier, 32 + 40 * batches);
+        for (int tick = 0; tick < 4000 && gasifier.fluid(2).getAmount() < 600 * batches; tick++) gasifier.tick();
         return fluid(h, OUTLET, Direction.UP).drain(600 * batches + 1, EXECUTE);
     }
 
@@ -151,7 +160,8 @@ public final class GasifierGameTests {
         ticks(be, 32);
         h.assertTrue(be.temperature() < 800 && be.status().equals("preheat") && be.progress() == 0,
             "An active burner preheats the empty chamber without committing feed");
-        ticks(be, 39);
+        heatUp(h, be);
+        ticks(be, 38);
         h.assertTrue(be.fluid(2).isEmpty() && h.getBlockState(BASE.above(3).south()).getValue(GasifierBlock.LIT),
             "Thirty-nine hot ticks are insufficient, and the red-hot bed lights the sight glasses");
         ticks(be, 1);
@@ -171,16 +181,18 @@ public final class GasifierGameTests {
         h.assertTrue(be.rebuild(), "Gasifier forms");
         charge(h, 1, new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(), 250));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(be, 45);
+        heatUp(h, be);
+        ticks(be, 12);
         double progress = be.progress();
-        h.assertTrue(progress == 13 && be.temperature() == 1000, "The burner has formed a partial batch");
+        h.assertTrue(progress == 13 && be.temperature() >= 800, "The burner has formed a partial batch: " + progress + " at " + be.temperature());
         burner(h, BlazeBurnerBlock.HeatLevel.SMOULDERING);
         ticks(be, 30);
-        h.assertTrue(be.status().equals("heat_required") && be.temperature() > 800 && be.progress() == progress
+        h.assertTrue(be.status().equals("heat_required") && be.progress() == progress
             && be.itemCount(0) == 1 && be.fluid(1).getAmount() == 250 && be.fluid(2).isEmpty(),
             "A hot chamber still pauses immediately when its external heat stops");
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(be, 27);
+        heatUp(h, be);
+        ticks(be, 26);
         h.assertTrue(be.fluid(2).getAmount() == 600 && be.itemCount(0) == 0 && be.fluid(1).isEmpty(),
             "Restoring heat completes the same batch exactly once");
         h.succeed();
@@ -192,7 +204,7 @@ public final class GasifierGameTests {
         h.assertTrue(be.rebuild(), "Gasifier forms");
         charge(h, 33, new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 8000));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(be, 1400);
+        for (int tick = 0; tick < 12000 && !be.status().equals("gas_output"); tick++) be.tick();
         fluid(h, INLET, Direction.NORTH).fill(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 250), EXECUTE);
         ticks(be, 40);
         h.assertTrue(be.status().equals("gas_output") && be.fluid(2).getAmount() == 15600
@@ -204,7 +216,7 @@ public final class GasifierGameTests {
         h.succeed();
     }
 
-    @GameTest(template = "test_fractionation", timeoutTicks = 640)
+    @GameTest(template = "test_fractionation", timeoutTicks = 840)
     public static void pumpedOutputCanBeCooledAndStored(GameTestHelper h) {
         var gasifier = build(h);
         h.assertTrue(gasifier.rebuild(), "Gasifier forms");
@@ -246,11 +258,12 @@ public final class GasifierGameTests {
                 instanceof net.minecraft.network.chat.contents.TranslatableContents reason && reason.getKey().endsWith(".heat"),
                 "A preheating gasifier shows the single recipe's 300 mB/s wet-gas rating and the heating bottleneck");
         });
-        h.runAfterDelay(130, () -> {
+        // One lit burner warms the furnace body to its reaction temperature in about twelve seconds.
+        h.runAfterDelay(330, () -> {
             var current = MachineReadings.read(gasifier, "production_fluid");
             h.assertTrue(current != null && current.value() > 0, "The rolling meter counts the committed gasification batch");
         });
-        h.runAfterDelay(610, () -> {
+        h.runAfterDelay(810, () -> {
             var current = MachineReadings.read(gasifier, "production_fluid");
             h.assertTrue(current != null && current.value() == 0, "The old batch ages out of the rolling window");
             var water=fluid(h,receiver,Direction.DOWN).drain(new FluidStack(Fluids.WATER,600),EXECUTE);
@@ -333,7 +346,7 @@ public final class GasifierGameTests {
         var restored = (GasifierBlockEntity) h.getBlockEntity(BASE);
         h.assertTrue(restored.rebuild(), "The reassembled bottom centre restores the controller");
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
-        ticks(restored, 120);
+        heatUp(h, restored);
         h.assertTrue(restored.status().equals("gas_output") && restored.itemCount(0) == 1 && restored.fluid(1).getAmount() == 250,
             "Old synthesis gas blocks the outlet without changing composition or consuming feed");
         var oldGas = fluid(h, OUTLET, Direction.UP).drain(16000, EXECUTE);

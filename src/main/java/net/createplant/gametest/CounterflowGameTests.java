@@ -25,9 +25,9 @@ public class CounterflowGameTests {
             h.assertTrue(be.thermal().counterflow()==(counter==1),"The actual inlet positions select counterflow in "+face);
             run(be);result[counter]=be.thermal().tank(3).getFluidAmount();
             var water=be.thermal().tank(1).getFluid();var mixture=be.thermal().tank(3).getFluid();
-            int waterOut=counter==1 ? 11 : 10, mixtureOut=counter==1 ? 9 : 10;
-            h.assertTrue(water.is(Fluids.WATER) && FluidState.temperature(water)==waterOut && mixture.is(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get())
-                && FluidState.temperature(mixture)==mixtureOut,"Parallel flow meets at the average, counterflow comes within a level of the other inlet: "
+            // A gas mB holds about a thousandth of a water mB's heat: the gas cools to the water's temperature and the water barely warms.
+            h.assertTrue(water.is(Fluids.WATER) && FluidState.temperature(water)==FluidState.AMBIENT && mixture.is(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get())
+                && FluidState.temperature(mixture)==FluidState.AMBIENT,"The gas cools to the water and the water keeps its level: "
                 +FluidState.temperature(water)+"/"+FluidState.temperature(mixture));
             for(int i=0;i<4;i++)be.thermal().tank(i).setFluid(FluidStack.EMPTY);
         }
@@ -41,7 +41,8 @@ public class CounterflowGameTests {
     public static void partialOutputSpaceAndMissingCoolantCannotConsumeAnUnpaidPair(GameTestHelper h){
         var be=ThermalControlGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(6,3,6)),Direction.NORTH,2);var heat=be.thermal();
         heat.rowPort(0,0).fill(new FluidStack(Fluids.WATER,10),EXECUTE);run(be);h.assertTrue(heat.tank(0).getFluidAmount()==10 && heat.tank(1).isEmpty(),"A missing second stream does not bypass the recipe");
-        heat.rowPort(1,1).fill(new FluidStack(CEProcessFluids.HOT_OLEFINS.get(),10),EXECUTE);heat.tank(1).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(),7997),EXECUTE);run(be);
+        // A gas that stays a gas at the water's temperature, so each pair is one mB of each.
+        heat.rowPort(1,1).fill(new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),10),EXECUTE);heat.tank(1).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(),7997),EXECUTE);run(be);
         h.assertTrue(heat.tank(0).getFluidAmount()==7 && heat.tank(2).getFluidAmount()==7 && heat.tank(1).getFluidAmount()==8000 && heat.tank(3).getFluidAmount()==3,"Only three complete pairs fit in the destination");
         var before=be.saveWithoutMetadata(h.getLevel().registryAccess());for(int i=0;i<20;i++)be.tickProcess();
         h.assertTrue(heat.tank(0).getFluidAmount()==7 && heat.tank(2).getFluidAmount()==7,"Blocked output consumes neither side");
@@ -51,17 +52,18 @@ public class CounterflowGameTests {
     public static void lengthAndLargeCrossSectionScaleTheNumberOfConversionUnits(GameTestHelper h){
         for(var kind:ExchangerStructure.Kind.values()){
             var at=h.absolutePos(new BlockPos(6+kind.ordinal()*7,3,8));var be=ThermalControlGameTests.exchanger(h.getLevel(),at,Direction.NORTH,3,kind);
-            be.thermal().rowPort(0,0).fill(new FluidStack(Fluids.WATER,3000),EXECUTE);be.thermal().rowPort(1,0).fill(new FluidStack(CEProcessFluids.HOT_OLEFINS.get(),3000),EXECUTE);run(be);
+            be.thermal().rowPort(0,0).fill(new FluidStack(Fluids.WATER,3000),EXECUTE);be.thermal().rowPort(1,0).fill(new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),3000),EXECUTE);run(be);
             h.assertTrue(be.sections()==3*kind.sections && be.thermal().tank(3).getFluidAmount()==300*kind.sections,"Length and the real cross section set throughput for "+kind);
         }h.succeed();
     }
     @GameTest(template="test_fractionation")
     public static void convertingFluidTypesKeepsTheirSeparateComponentData(GameTestHelper h){
         var be=ThermalControlGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(6,3,6)),Direction.NORTH,2);var heat=be.thermal();
-        var hot=new FluidStack(CEProcessFluids.HOT_OLEFINS.get(),10);var cold=new FluidStack(Fluids.WATER,10);
+        var hot=new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),10);var cold=new FluidStack(Fluids.WATER,10);
         var tag=new net.minecraft.nbt.CompoundTag();tag.putInt("Lot",42);hot.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(tag));
         tag=new net.minecraft.nbt.CompoundTag();tag.putInt("Lot",73);cold.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,net.minecraft.world.item.component.CustomData.of(tag));
         heat.rowPort(0,0).fill(hot,EXECUTE);heat.rowPort(1,1).fill(cold,EXECUTE);run(be);
+        h.assertTrue(heat.tank(1).getFluid().is(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get()) && heat.tank(3).getFluid().is(Fluids.WATER),"Both products are made: "+be.status());
         h.assertTrue(heat.tank(1).getFluid().get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag().getInt("Lot")==42 && heat.tank(3).getFluid().get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag().getInt("Lot")==73,"Changing fluid identity preserves each stream's own components without mixing them");h.succeed();
     }
 }

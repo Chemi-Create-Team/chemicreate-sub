@@ -134,6 +134,13 @@ public class VesselBasinGameTests {
         return "status=" + owner.status() + ", progress=" + owner.progress() + ", heat=" + owner.currentBurnerHeat() + ", pool=" + owner.getTankInventory().getFluidAmount() + "mB, " + parts;
     }
 
+    /** All the water in the vessel, whatever its state: the heated vessel goes on to preheat its water as feedwater once mixing is done. */
+    private static int water(LiddedVesselBlockEntity owner) {
+        int total = 0;
+        for (int i = 0; i < owner.displayedFluidSlots(); i++) if (owner.displayedFluid(i).is(Fluids.WATER)) total += owner.displayedFluid(i).getAmount();
+        return total;
+    }
+
     private static Player player(GameTestHelper h) {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         GameType.SURVIVAL.updatePlayerAbilities(player.getAbilities());
@@ -384,7 +391,7 @@ public class VesselBasinGameTests {
                     var port = items(h, BASE, Direction.NORTH);
                     h.assertTrue(count(port, Items.MILK_BUCKET) == 0 && count(port, Items.DRAGON_BREATH) == 0
                         && count(port, Items.SPONGE) == 1 && count(port, Items.BUCKET) == 1 && count(port, Items.GLASS_BOTTLE) == 1
-                        && owner.getTankInventory().getFluidAmount() == 9900, "Exactly one native mixing batch consumes 100 mB of the preloaded water and preserves both empty containers: " + snapshot(owner));
+                        && water(owner) == 9900, "Exactly one native mixing batch consumes 100 mB of the preloaded water and preserves both empty containers: " + snapshot(owner));
                     h.succeed();
                 } finally { removeContainerRecipe(h); }
             });

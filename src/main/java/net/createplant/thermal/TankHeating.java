@@ -76,6 +76,20 @@ public final class TankHeating {
         return joules==0 ? NOTHING : give(fluids,Math.clamp(joules,-limit,limit),capacity,external);
     }
 
+    /** The heat-capacity weighted real temperature of everything in the vessel; ambient when it is empty. */
+    public double meanKelvin(List<FluidStack> fluids,List<HeatContent> external) {
+        double capacity=0,energy=0;
+        for(int i=0;i<fluids.size();i++) {
+            var fluid=fluids.get(i);
+            if(fluid.isEmpty())continue;
+            var heat=i<external.size() && external.get(i)!=null ? external.get(i) : i<own.size() ? own.get(i) : null;
+            double c=HeatContent.capacity(fluid);
+            capacity+=c;
+            energy+=c*(heat==null ? FluidState.kelvin(FluidState.temperature(fluid)) : heat.kelvin(fluid));
+        }
+        return capacity<=0 ? FluidState.kelvin(FluidState.AMBIENT) : energy/capacity;
+    }
+
     private int give(List<FluidStack> fluids,double joules,ToIntFunction<FluidStack> capacity,List<HeatContent> external) {
         double total=0;
         for(var fluid:fluids)if(!fluid.isEmpty())total+=HeatContent.capacity(fluid);

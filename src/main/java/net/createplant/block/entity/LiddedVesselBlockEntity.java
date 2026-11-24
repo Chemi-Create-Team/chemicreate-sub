@@ -362,6 +362,12 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         return fluids;
     }
 
+    @Override protected double contentsKelvin() {
+        var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();
+        heat.add(tankInventory.heat());
+        return heating.meanKelvin(heatFluids(),heat);
+    }
+
     @Override protected void releaseHeat(double joules) {
         if(joules==0 || level==null)return;
         var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();

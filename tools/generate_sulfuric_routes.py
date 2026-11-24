@@ -14,6 +14,7 @@ import json
 ROOT = Path(__file__).resolve().parents[1]
 A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
 D = ROOT / 'src/main/resources/data/create_refinery_n_reactors'
+REACTION_HEAT = json.loads((ROOT / 'tools/data/reaction_heat.json').read_text(encoding='utf-8'))
 NS = 'create_refinery_n_reactors:'
 # One batch: as much acid as the dilute acid mixed from 250 mB of sulfuric acid.
 WATER, SULFUR_DIOXIDE, OXYGEN = 1000, 250, 125
@@ -41,11 +42,11 @@ def recipes():
     write(D / 'recipe/pressure_reaction/sulfur_dioxide.json', {
         'type': NS + 'pressure_reaction', 'module': 'none', 'heat_requirement': 'superheated',
         'ingredients': [{'tag': 'c:dusts/sulfur'}, fluid(NS + 'oxygen_gas', BURNING_OXYGEN)],
-        'results': [{'amount': BURNT_SULFUR_DIOXIDE, 'id': NS + 'sulfur_dioxide'}]})
+        'results': [{'amount': BURNT_SULFUR_DIOXIDE, 'id': NS + 'sulfur_dioxide'}], 'reaction_heat': REACTION_HEAT['sulfur_dioxide']})
     write(D / 'recipe/pressure_reaction/sulfur_dioxide_stirred.json', {
         'type': NS + 'pressure_reaction', 'heat_requirement': 'heated',
         'ingredients': [{'tag': 'c:dusts/sulfur'}, fluid(NS + 'oxygen_gas', BURNING_OXYGEN)],
-        'results': [{'id': NS + 'sulfur_dioxide', 'amount': BURNT_SULFUR_DIOXIDE}]})
+        'results': [{'id': NS + 'sulfur_dioxide', 'amount': BURNT_SULFUR_DIOXIDE}], 'reaction_heat': REACTION_HEAT['sulfur_dioxide_stirred']})
     for retired in ('dilute_sulfuric_acid_iron_catalysed_air', 'sulfur_dioxide_from_air'):
         (D / f'recipe/pressure_reaction/{retired}.json').unlink(missing_ok=True)
 

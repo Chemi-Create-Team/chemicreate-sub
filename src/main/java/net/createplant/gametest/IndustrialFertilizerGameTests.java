@@ -171,7 +171,10 @@ public final class IndustrialFertilizerGameTests {
 
     private static FluidStack drain(GameTestHelper h, IFluidHandler port, Fluid fluid, int amount) {
         h.assertTrue(port != null, "Native outlet exists for " + fluid);
-        var output = port.drain(new FluidStack(fluid, amount + 1), EXECUTE);
+        // As Create's pumps do: look at what the outlet holds, then drain exactly that fluid with its temperature and pressure.
+        var request = new FluidStack(fluid, amount + 1);
+        for (int tank = 0; tank < port.getTanks(); tank++) if (port.getFluidInTank(tank).is(fluid)) { request = port.getFluidInTank(tank).copyWithAmount(amount + 1); break; }
+        var output = port.drain(request, EXECUTE);
         h.assertTrue(output.is(fluid) && output.getAmount() == amount, "Native outlet produced " + amount + " mB of " + fluid + ", found " + output);
         return output;
     }

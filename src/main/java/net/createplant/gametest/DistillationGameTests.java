@@ -136,12 +136,14 @@ public class DistillationGameTests {
     public static void fullOutputsAndRedstoneConsumeNothing(GameTestHelper h) {
         var owner=build(h.getLevel(),h.absolutePos(new BlockPos(5,2,5)),2,14);
         int maximum=owner.capacity()/780;
+        // The column separates continuously: it fills its nitrogen buffer to the brim and keeps the air it has no room for.
         for (int batch=0;batch<=maximum;batch++) { fill(inlet(owner,2),1000,EXECUTE);run(owner,DistillationProfile.CYCLE_TICKS+5); }
-        int nitrogen=owner.stock(DistillationProfile.NITROGEN);
-        h.assertTrue(nitrogen==maximum*780 && owner.stock(DistillationProfile.AIR)==1000 && owner.status().equals("products_full"),"A buffer that cannot take a whole batch stops it without consuming air: "+nitrogen);
-        run(owner,400);h.assertTrue(owner.stock(DistillationProfile.AIR)==1000 && owner.stock(DistillationProfile.NITROGEN)==nitrogen,"Waiting with a full output changes nothing");
+        int nitrogen=owner.stock(DistillationProfile.NITROGEN), air=owner.stock(DistillationProfile.AIR);
+        h.assertTrue(nitrogen==owner.capacity() && air>0 && air<1000 && owner.status().equals("products_full"),"A full product buffer stops the column with its remaining air: "
+            +nitrogen+" of "+owner.capacity()+", air "+air+" "+owner.status());
+        run(owner,400);h.assertTrue(owner.stock(DistillationProfile.AIR)==air && owner.stock(DistillationProfile.NITROGEN)==nitrogen,"Waiting with a full output changes nothing");
         outlet(owner,13).drain(1000,EXECUTE);run(owner,DistillationProfile.CYCLE_TICKS+5);
-        h.assertTrue(owner.stock(DistillationProfile.AIR)==0,"Draining the product allows the next batch");
+        h.assertTrue(owner.stock(DistillationProfile.AIR)==0,"Draining the product lets the remaining air through");
         fill(inlet(owner,2),1000,EXECUTE);h.getLevel().setBlock(owner.getBlockPos().west(),Blocks.REDSTONE_BLOCK.defaultBlockState(),3);run(owner,200);
         h.assertTrue(owner.status().equals("redstone") && owner.stock(DistillationProfile.AIR)==1000,"Redstone pauses the column and keeps its stock");
         h.succeed();
@@ -150,10 +152,16 @@ public class DistillationGameTests {
     public static void reloadKeepsStockAndProgressWithoutDuplicatingABatch(GameTestHelper h) {
         var owner=build(h.getLevel(),h.absolutePos(new BlockPos(5,2,5)),2,14);
         fill(inlet(owner,2),1200,EXECUTE);run(owner,50);
+        int[] before={owner.stock(DistillationProfile.AIR),owner.stock(DistillationProfile.OXYGEN),owner.stock(DistillationProfile.NITROGEN)};
         var saved=owner.saveWithoutMetadata(h.getLevel().registryAccess());owner.loadWithComponents(saved,h.getLevel().registryAccess());owner.rebuild();
-        h.assertTrue(owner.stock(DistillationProfile.AIR)==1200,"NBT restore retains the feed");
+        h.assertTrue(owner.stock(DistillationProfile.AIR)==before[0] && owner.stock(DistillationProfile.OXYGEN)==before[1] && owner.stock(DistillationProfile.NITROGEN)==before[2],
+            "NBT restore retains the feed and the products made so far: "+owner.stock(DistillationProfile.AIR)+"/"+before[0]);
         run(owner,60);
-        h.assertTrue(owner.stock(DistillationProfile.AIR)==200 && owner.stock(DistillationProfile.OXYGEN)==210 && owner.stock(DistillationProfile.NITROGEN)==780,"Reload retains the progress and processes one batch once");
+        // Products never run ahead of the air taken: each 1000 mB of air gives 780 mB of nitrogen and 210 mB of oxygen.
+        int consumed=1200-owner.stock(DistillationProfile.AIR);
+        h.assertTrue(consumed>=1200-before[0] && owner.stock(DistillationProfile.NITROGEN)<=consumed*780/1000 && owner.stock(DistillationProfile.NITROGEN)>=consumed*780/1000-1
+            && owner.stock(DistillationProfile.OXYGEN)<=consumed*210/1000 && owner.stock(DistillationProfile.OXYGEN)>=consumed*210/1000-1,
+            "Reload keeps the progress and converts the air once: "+consumed+" air to "+owner.stock(DistillationProfile.NITROGEN)+" N2, "+owner.stock(DistillationProfile.OXYGEN)+" O2");
         h.succeed();
     }
     @GameTest(template="test_fractionation")

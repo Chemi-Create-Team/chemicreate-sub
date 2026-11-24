@@ -42,10 +42,12 @@ public class ReactionTemperatureGameTests {
         h.assertTrue(owner.progress()==0 && input.getFluidInTank(0).getAmount()==1000,"No burner consumes no feed");
         h.setBlock(BASE.below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,HeatLevel.KINDLED));
         for(int i=0;i<30;i++)owner.tickProcess();
-        h.assertTrue(owner.progress()>0 && input.getFluidInTank(2).isEmpty(),"Heating starts immediately without vessel warm-up");
+        // A fluid-only reaction runs continuously: part of the water has already reacted, nothing more and nothing less.
+        int feed=input.getFluidInTank(0).getAmount(), made=input.getFluidInTank(2).getAmount();
+        h.assertTrue(owner.progress()>0 && feed<1000 && made>0 && feed+made<=1000,"Heating starts immediately without vessel warm-up: "+feed+" + "+made);
         h.setBlock(BASE.below(),net.minecraft.world.level.block.Blocks.AIR);
         for(int i=0;i<120;i++)owner.tickProcess();
-        h.assertTrue(owner.progress()==0 && owner.status().equals("heat") && input.getFluidInTank(0).getAmount()==1000 && input.getFluidInTank(2).isEmpty(),"Loss of heat stops the unpaid batch without consuming feed");
+        h.assertTrue(owner.status().equals("heat") && input.getFluidInTank(0).getAmount()==feed && input.getFluidInTank(2).getAmount()==made,"Loss of heat stops the reaction where it was");
         owner.loadWithComponents(owner.saveWithoutMetadata(h.getLevel().registryAccess()),h.getLevel().registryAccess());owner.validateStructure();ReactorGameTests.speed(owner,32);
         h.setBlock(BASE.below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,HeatLevel.KINDLED));
         for(int i=0;i<160;i++)owner.tickProcess();input=owner.port(Direction.NORTH);

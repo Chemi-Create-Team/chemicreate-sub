@@ -58,12 +58,16 @@ public final class NitricAcidGameTests {
         helper.assertTrue(port.fill(new FluidStack(CEOstwaldFluids.NITROGEN_DIOXIDE.get(), 1500), EXECUTE) == 1500
             && port.fill(new FluidStack(Fluids.WATER, 500), EXECUTE) == 500, "Five batches of both feeds enter");
         run(vessel, 99);
-        helper.assertTrue(vessel.status().equals("running") && product(port, 0).isEmpty(), "A batch takes its full 100 ticks: " + vessel.status());
+        // Reactions run continuously (docs/reports/continuous-reactions-2026-11-23.md): part of the batch is acid before the cycle ends.
+        helper.assertTrue(vessel.status().equals("running") && product(port, 0).getAmount() > 0 && product(port, 0).getAmount() < 800,
+            "A batch converts over its 100 ticks: " + vessel.status() + " " + product(port, 0).getAmount());
         run(vessel, 2);
-        helper.assertTrue(product(port, 0).is(CEFluids.NITRIC_ACID.get()) && product(port, 0).getAmount() == 800
-            && product(port, 1).is(CEOstwaldFluids.NITRIC_OXIDE.get()) && product(port, 1).getAmount() == 400,
-            "Four storeys make four batches at once: 800 mB nitric acid and 400 mB nitric oxide");
-        helper.assertTrue(port.getFluidInTank(0).getAmount() == 300 && port.getFluidInTank(1).getAmount() == 100, "The fifth batch waits for the next cycle");
+        helper.assertTrue(product(port, 0).is(CEFluids.NITRIC_ACID.get()) && product(port, 0).getAmount() >= 800
+            && product(port, 1).is(CEOstwaldFluids.NITRIC_OXIDE.get()) && product(port, 1).getAmount() >= 400,
+            "Four storeys make four batches in one cycle: " + product(port, 0).getAmount() + " mB nitric acid and " + product(port, 1).getAmount() + " mB nitric oxide");
+        run(vessel, 100);
+        helper.assertTrue(port.getFluidInTank(0).isEmpty() && port.getFluidInTank(1).isEmpty() && product(port, 0).getAmount() == 1000 && product(port, 1).getAmount() == 400 + 100,
+            "The fifth batch follows straight on and the five batches give exactly their recipe amounts: " + product(port, 0).getAmount() + " / " + product(port, 1).getAmount());
         helper.succeed();
     }
 

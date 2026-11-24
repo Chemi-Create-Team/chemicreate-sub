@@ -32,6 +32,12 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 public class DriveLessVesselGameTests {
     private static final BlockPos BASE = new BlockPos(4, 3, 4), STIRRER = BASE.offset(1, -1, 1);
 
+    /** What a Create pump asks for: the fluid the port holds, with its temperature, burning leaves the gas hot. */
+    private static FluidStack held(net.neoforged.neoforge.fluids.capability.IFluidHandler port, net.minecraft.world.level.material.Fluid fluid, int amount) {
+        for (int tank = 0; tank < port.getTanks(); tank++) if (port.getFluidInTank(tank).is(fluid)) return port.getFluidInTank(tank).copyWithAmount(amount);
+        return new FluidStack(fluid, amount);
+    }
+
     @GameTest(template = "test_reactor", timeoutTicks = 180)
     public static void closedStainlessTankBurnsSulfurWithOxygenAtSuperheat(GameTestHelper h) {
         var burnerPos = BASE.below();
@@ -60,10 +66,12 @@ public class DriveLessVesselGameTests {
         });
         h.runAfterDelay(150, () -> {
             var sulfurDioxide = net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get();
-            var product = tank.drain(new FluidStack(sulfurDioxide, 500), EXECUTE);
+            var product = tank.drain(held(tank, sulfurDioxide, 500), EXECUTE);
             h.assertTrue(product.getAmount() == 500 && product.is(sulfurDioxide) && vessel.getTankInventory().isEmpty()
                 && vessel.itemPort().getStackInSlot(0).isEmpty() && vessel.rotationSpeed() == 0,
-                "The stock roof port gives one batch of SO2 without an agitator or a rotation source");
+                "The stock roof port gives one batch of SO2 without an agitator or a rotation source: " + product.getAmount() + " " + vessel.status()
+                    + " tank " + vessel.getTankInventory().getFluid().getAmount() + " " + vessel.getTankInventory().getFluid().getHoverName().getString()
+                    + " lvl " + net.createplant.thermal.FluidState.temperature(vessel.getTankInventory().getFluid()) + " item " + vessel.itemPort().getStackInSlot(0));
             h.succeed();
         });
     }
@@ -88,13 +96,15 @@ public class DriveLessVesselGameTests {
             h.setBlock(pos.below(), burner);
             com.simibubi.create.content.processing.burner.BlazeBurnerBlock.tryInsert(burner, h.getLevel(), h.absolutePos(pos.below()), com.simibubi.create.AllItems.BLAZE_CAKE.asStack(), false, false, false);
             h.runAfterDelay(150, () -> {
-                var product = port.drain(new FluidStack(sulfurDioxide, 500), EXECUTE);
+                var product = port.drain(held(port, sulfurDioxide, 500), EXECUTE);
                 var expected = new java.util.TreeMap<>(MixtureHelper.airContents(amount).amounts());
                 expected.compute(oxygen, (id, available) -> available - 500);
                 var remaining = vessel.getTankInventory().getFluid();
                 h.assertTrue(product.is(sulfurDioxide) && product.getAmount() == 500 && vessel.itemPort().getStackInSlot(0).isEmpty()
                     && MixtureHelper.extractContents(remaining).equals(new MixtureContents(expected)),
-                    "The batch uses only the needed oxygen and leaves the other gases together, including at full rated capacity: " + vessel.status());
+                    "The batch uses only the needed oxygen and leaves the other gases together, including at full rated capacity: " + vessel.status()
+                        + " product " + product.getAmount() + " remaining " + MixtureHelper.extractContents(remaining) + " expected " + expected
+                        + " lvl " + net.createplant.thermal.FluidState.temperature(remaining) + " item " + vessel.itemPort().getStackInSlot(0));
                 var simulated = port.drain(1000, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE);
                 h.assertTrue(simulated.getAmount() == 1000 && MixtureHelper.extractContents(simulated).equals(new MixtureContents(expected).split(1000).extracted())
                     && port.drain(new FluidStack(CEFluids.OXYGEN_GAS.get(), 1), EXECUTE).isEmpty(),

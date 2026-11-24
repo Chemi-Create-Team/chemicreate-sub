@@ -27,6 +27,7 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
     private final int[] held=new int[SLOTS];
     private final int[] stocks=new int[SLOTS];
     private float progress;
+    private double exactFlow;
     private int scale;
     private String localRecipe="air",activeRecipe="air";
     private int compatibleCapacity;
@@ -195,8 +196,8 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
         if(height<requiredHeight()) { setStatus(totalStored()==0 ? "feed" : "height",false);return; }
         if (level.hasNeighborSignal(worldPosition)) { setStatus("redstone",false);return; }
         boolean active=airMode() ? separate() : fractionate();
-        int batch=airMode() ? DistillationProfile.AIR_BATCH : DistillationProfile.fraction(activeRecipe)==null ? Integer.MAX_VALUE : DistillationProfile.fraction(activeRecipe).input().getAmount();
-        setStatus(active ? "running" : stock(0)>=batch ? "products_full" : "feed",active);
+        // A continuous column stops with feed left only when a product has no room.
+        setStatus(active ? "running" : stock(0)>0 ? "products_full" : "feed",active);
         if (active) { setChanged();syncNeeded=true; }
     }
     private int totalStored() {int total=0;for(var part:members)for(int n:part.held)total+=n;return total;}
@@ -227,17 +228,17 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
         int batches=feed;
         for(int i=0;i<recipe.outputs().size();i++)batches=Math.min(batches,(capacity()-stock(i+1))/recipe.outputs().get(i).getAmount());
         reportBatch(feed, batches);
+        double flow=flow(recipe.ticks());
         double f=batchCapacity()*(double)INTERVAL/recipe.ticks();
-        f=Math.min(f,stock(0)/(double)recipe.input().getAmount());
-        for(int i=0;i<recipe.outputs().size();i++)f=Math.min(f,(capacity()-stock(i+1))/(double)recipe.outputs().get(i).getAmount());
+        f=Math.min(f,net.createplant.chemistry.ReactionFlow.feedLimit(recipe.input().getAmount(),flow,stock(0)));
+        for(int i=0;i<recipe.outputs().size();i++)f=Math.min(f,net.createplant.chemistry.ReactionFlow.roomLimit(recipe.outputs().get(i).getAmount(),flow,capacity()-stock(i+1)));
         if(f<=1e-9)return false;
-        double flow=Math.min(1,progress/recipe.ticks());
         int owed=owed(recipe.input().getAmount(),flow,f);
         if(owed>0)move(0,-owed);
         int total=0;
         for(int i=0;i<recipe.outputs().size();i++){int give=made(recipe.outputs().get(i).getAmount(),flow,f);if(give>0){move(i+1,give);total+=give;}}
         ProductionMonitor.produced(this, total, 0, 0);
-        double next=flow+f;progress=(float)((next-Math.floor(next))*recipe.ticks());
+        moveOn(flow,f,recipe.ticks());
         return true;
     }
     /** Air is separated the same way, a little every tick. */
@@ -246,19 +247,22 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
         int batches=feed;
         for (int i=0;i<DistillationProfile.PRODUCT.length;i++) batches=Math.min(batches,(capacity()-stock(DistillationProfile.PRODUCT[i]))/DistillationProfile.PRODUCT_AMOUNT[i]);
         reportBatch(feed, batches);
+        double flow=flow(DistillationProfile.CYCLE_TICKS);
         double f=batchCapacity()*(double)INTERVAL/DistillationProfile.CYCLE_TICKS;
-        f=Math.min(f,stock(DistillationProfile.AIR)/(double)DistillationProfile.AIR_BATCH);
-        for (int i=0;i<DistillationProfile.PRODUCT.length;i++) f=Math.min(f,(capacity()-stock(DistillationProfile.PRODUCT[i]))/(double)DistillationProfile.PRODUCT_AMOUNT[i]);
+        f=Math.min(f,net.createplant.chemistry.ReactionFlow.feedLimit(DistillationProfile.AIR_BATCH,flow,stock(DistillationProfile.AIR)));
+        for (int i=0;i<DistillationProfile.PRODUCT.length;i++) f=Math.min(f,net.createplant.chemistry.ReactionFlow.roomLimit(DistillationProfile.PRODUCT_AMOUNT[i],flow,capacity()-stock(DistillationProfile.PRODUCT[i])));
         if (f<=1e-9) return false;
-        double flow=Math.min(1,progress/DistillationProfile.CYCLE_TICKS);
         int owed=owed(DistillationProfile.AIR_BATCH,flow,f);
         if (owed>0) move(DistillationProfile.AIR,-owed);
         int total=0;
         for (int i=0;i<DistillationProfile.PRODUCT.length;i++) { int give=made(DistillationProfile.PRODUCT_AMOUNT[i],flow,f);if (give>0) { move(DistillationProfile.PRODUCT[i],give);total+=give; } }
         ProductionMonitor.produced(this, total, 0, 0);
-        double next=flow+f;progress=(float)((next-Math.floor(next))*DistillationProfile.CYCLE_TICKS);
+        moveOn(flow,f,DistillationProfile.CYCLE_TICKS);
         return true;
     }
+    /** The exact position in the batch, 0 to 1, while it still matches the saved {@code progress}; otherwise the saved one. */
+    private double flow(int ticks) { return Math.abs(exactFlow*ticks-progress)<1e-3 ? exactFlow : Math.min(1,progress/ticks); }
+    private void moveOn(double flow,double f,int ticks) { exactFlow=net.createplant.chemistry.ReactionFlow.next(flow,f);progress=(float)(exactFlow*ticks); }
     /** What a conversion moving on by {@code f} batches from {@code flow} takes of an amount per batch: ahead of the products, so nothing is made from nothing. */
     private static int owed(int amount,double flow,double f) { return net.createplant.chemistry.ReactionFlow.owed(amount,flow,f); }
     private static int made(int amount,double flow,double f) { return net.createplant.chemistry.ReactionFlow.made(amount,flow,f); }

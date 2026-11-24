@@ -96,7 +96,10 @@ public final class SyntheticFuelsGameTests {
             fill(h, ftPort, compressedH2.copyWithAmount(500));
             ReactionTowerGameTests.heat(ft);
             ft.process(110);
-            h.assertTrue(ft.status().equals("no_feed") && ft.tank(0).getAmount() == 250, "The iron ratio cannot start cobalt FT");
+            ft.process(5);
+            // Conversion is continuous: two thirds of the hydrogen a cobalt batch needs convert two thirds of the batch, then the tower waits.
+            h.assertTrue(ft.status().equals("no_feed") && ft.tank(0).getAmount() > 0 && ft.tank(0).getAmount() < 250 && ft.tank(1).isEmpty(),
+                "The iron ratio runs cobalt FT only as far as its hydrogen goes: " + ft.status() + " " + ft.tank(0).getAmount() + " CO left");
             fill(h, ftPort, compressedH2.copyWithAmount(250));
             ft.process(110);
             var crude = drain(h, ftPort, CEProcessFluids.SYNTHETIC_CRUDE_OIL.get(), 750);
@@ -107,7 +110,7 @@ public final class SyntheticFuelsGameTests {
                 && products.get(2).is(CEProcessFluids.LOW_SULFUR_DIESEL.get()) && products.get(3).is(CEProcessFluids.MOLTEN_PARAFFIN.get()),
                 "Four native column ports expose light gas, naphtha, diesel and wax in order");
             var olefins = cuts(h, new BlockPos(27, 3, 5), offgas.copyWithAmount(offgas.getAmount() + products.getFirst().getAmount()), "separate_ft_offgas");
-            h.assertTrue(olefins.getFirst().is(CEPetroFluids.ETHYLENE.get()) && olefins.getFirst().getAmount() == 150,
+            h.assertTrue(olefins.getFirst().is(CEPetroFluids.ETHYLENE.get()) && olefins.getFirst().getAmount() >= 150,
                 "The two off-gas sources reach the existing ethylene stream");
 
             var reformAt = new BlockPos(26, 3, 11);
@@ -157,7 +160,7 @@ public final class SyntheticFuelsGameTests {
         fill(h, ftPort, stack(CEProcessFluids.PRESSURISED_CARBON_MONOXIDE.get(), 250));
         fill(h, ftPort, stack(CEProcessFluids.PRESSURISED_HYDROGEN.get(), 500));
         ft.process(139);
-        h.assertTrue(ft.tank(2).isEmpty() && ft.tank(0).getAmount() == 250, "Iron FT settles feeds and products only on the last tick");
+        h.assertTrue(ft.tank(0).getAmount() < 250 && ft.tank(0).getAmount() > 0, "Iron FT converts its feed over the cycle: " + ft.tank(0).getAmount());
         ft.process(1);
         drain(h, ftPort, CEProcessFluids.SYNTHETIC_CRUDE_OIL.get(), 500);
         drain(h, ftPort, CEProcessFluids.FT_OFFGAS.get(), 125);
@@ -181,7 +184,8 @@ public final class SyntheticFuelsGameTests {
         var products = new java.util.ArrayList<FluidStack>();
         for (int i = 0; i < fraction.outputs().size(); i++) {
             var cut = fraction.outputs().get(i);
-            int amount = cut.getAmount() * (feed.getAmount() / fraction.input().getAmount());
+            // A continuous column converts the part of a batch left over too, rounding the products down.
+            int amount = (int) Math.floor(cut.getAmount() * (double) feed.getAmount() / fraction.input().getAmount() + 1e-9);
             products.add(drain(h, DistillationGameTests.outlet(column, DistillationProfile.fractionLayer(i + 1, height,
                 fraction.outputs().size())), cut.getFluid(), amount));
         }

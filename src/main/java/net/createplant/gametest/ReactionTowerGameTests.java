@@ -115,13 +115,16 @@ public class ReactionTowerGameTests {
             h.assertTrue(fluid(h,BASE.offset(2,2,1),Direction.EAST).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0 && fluid(h,CENTRE,Direction.DOWN).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0,"A reactor takes its feed only at the bottom layer's sides");
             h.assertTrue(feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),30000),EXECUTE)==30000,"Three batches of feed fit");
             owner.process(100);h.assertTrue(owner.status().equals("heat") && owner.tank(0).getAmount()==30000,"Without heat nothing reacts: "+owner.status());
-            heat(h);owner.process(99);h.assertTrue(owner.status().equals("running") && owner.tank(0).getAmount()==30000 && owner.tank(2).isEmpty(),"A batch settles only when it completes: "+owner.status());
+            heat(h);owner.process(99);h.assertTrue(owner.status().equals("running") && owner.tank(0).getAmount()<30000 && owner.tank(0).getAmount()>0,"A batch converts over its cycle: "+owner.status()+" "+owner.tank(0).getAmount());
             owner.process(1);var made=product.drain(1000000,EXECUTE);
             h.assertTrue(owner.tank(0).isEmpty() && made.is(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get()) && made.getAmount()==27000,"Three layers run three batches, drawn from another bottom side: "+made.getAmount());
             h.assertTrue(owner.layer(0).catalystStack().getDamageValue()==1 && owner.layer(2).catalystStack().getDamageValue()==1,"Each layer wears its own catalyst");
             feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),15000),EXECUTE);owner.process(100);
-            h.assertTrue(owner.tank(0).getAmount()==5000 && fluid(h,CENTRE,Direction.DOWN).drain(1000000,SIMULATE).getAmount()==9000 && owner.layer(2).catalystStack().getDamageValue()==2 && owner.layer(1).catalystStack().getDamageValue()==1,"Only whole batches run, the upper layer first, where the gas meets the beds");
-            owner.process(100);h.assertTrue(owner.status().equals("no_feed"),"Less than one batch waits: "+owner.status());
+            int wear=0;for(int layer=0;layer<3;layer++)wear+=owner.layer(layer).catalystStack().getDamageValue();
+            // Conversion is continuous: one and a half batches of feed go straight through, and only the batch that completes wears a bed.
+            h.assertTrue(owner.tank(0).isEmpty() && fluid(h,CENTRE,Direction.DOWN).drain(1000000,SIMULATE).getAmount()==13500 && wear==4,
+                "One and a half batches convert continuously and the completed batch wears one more bed: "+owner.tank(0).getAmount()+" left, wear "+wear);
+            owner.process(100);h.assertTrue(owner.status().equals("no_feed"),"With its feed used up the reactor waits: "+owner.status());
             h.succeed();
         });
     }
@@ -173,7 +176,7 @@ public class ReactionTowerGameTests {
             var owner=owner(h);var bottom=fluid(h,BASE.offset(0,0,1),Direction.WEST);var top=fluid(h,BASE.offset(2,2,1),Direction.EAST);
             h.assertTrue(bottom.fill(new FluidStack(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get(),27000),EXECUTE)==27000,"The cold synthesis mixture goes in at the bottom");
             owner.process(59);
-            h.assertTrue(owner.status().equals("running") && owner.tank(0).getAmount()==27000,"The separation settles only when the batch completes: "+owner.status());
+            h.assertTrue(owner.status().equals("running") && owner.tank(0).getAmount()<27000 && owner.tank(0).getAmount()>0,"The separation proceeds over the batch: "+owner.status()+" "+owner.tank(0).getAmount());
             h.assertTrue(h.getBlockState(BASE.offset(1,1,0)).getValue(ReactionTowerBlock.WINDOW) && h.getBlockState(BASE.offset(0,2,1)).getValue(ReactionTowerBlock.WINDOW) && !h.getBlockState(BASE).getValue(ReactionTowerBlock.WINDOW),"The sight glasses in the middle of each side open while it separates");
             h.assertTrue(!owner.canInsert(tray()),"No tray goes into a separator that holds fluid");
             owner.process(1);

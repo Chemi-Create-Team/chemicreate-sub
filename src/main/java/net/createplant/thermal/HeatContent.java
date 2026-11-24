@@ -154,8 +154,8 @@ public final class HeatContent {
             q+=heating ? use/latent : -use/latent;
             joules-=Math.signum(joules)*use;
             if(Math.abs(goal-q)>EPSILON)break;
-            // Without a room function the phase flips on paper only: the stack keeps its amount and takes the new phase's level.
-            var converted=room==null ? relevel(stack,t,heating) : convert(stack,t,heating,room);
+            // Without a room function nothing limits the converted amount; an amount that does not convert whole stays at its boiling point.
+            var converted=convert(stack,t,heating,room==null ? ignored->Integer.MAX_VALUE : room);
             if(converted==null)break;
             stack=converted;structural=true;q=goal;gas=heating;
         }
@@ -172,6 +172,17 @@ public final class HeatContent {
         scratch.set(sample,kelvin);
         var outcome=scratch.add(sample,joules,floor,MAXIMUM,null);
         return new Shift(scratch.kelvin(outcome.stack()),scratch.quality(outcome.stack())>=.5,scratch.quality(outcome.stack()));
+    }
+
+    /** The heat (always positive) {@code sample} at {@code from} gives or takes on the way to {@code to}, latent heat included. */
+    public static double heatBetween(FluidStack sample,double from,double to) {
+        if(Math.abs(to-from)<EPSILON)return 0;
+        boolean heating=to>from;
+        double big=1e9;
+        var scratch=new HeatContent();
+        scratch.set(sample,from);
+        var outcome=scratch.add(sample,heating ? big : -big,heating ? MINIMUM : to,heating ? to : MAXIMUM,null);
+        return big-Math.abs(outcome.left());
     }
 
     public void write(CompoundTag tag) {

@@ -1,0 +1,12 @@
+{
+  "_comment": "Heat of reaction per batch in J for pressure_reaction recipes: positive releases heat, negative takes it (docs/internal-temperature.md, 5). Generators copy these into the recipe JSON.",
+  "ammonium_nitrate": 1560,
+  "ammonium_sulfate": 1474,
+  "calcine_bicarbonate": -1341,
+  "calcine_calcite": -3699,
+  "hydrogen_chloride": 1923,
+  "sodium_hypochlorite_solution": 1162,
+  "sulfur_dioxide": 6633,
+  "sulfur_dioxide_stirred": 6633,
+  "urea": 271
+}

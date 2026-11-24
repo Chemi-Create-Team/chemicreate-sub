@@ -165,11 +165,14 @@ public class ColumnConsolidationGameTests {
     public static void chemicalStockAndProgressSurviveARealControllerNbtReload(GameTestHelper h) {
         var at=h.absolutePos(new BlockPos(5,2,5));var owner=DistillationGameTests.build(h.getLevel(),at,2,5);var recipe=DistillationProfile.fraction("distill_crude");
         DistillationGameTests.inlet(owner,2).fill(feed(recipe,2),EXECUTE);DistillationGameTests.run(owner,50);
+        // The column distils continuously, so halfway through the cycle part of the feed is already a product.
+        int feedLeft=owner.stock(0), made=owner.stock(1);
         var tag=owner.saveWithoutMetadata(h.getLevel().registryAccess());h.getLevel().removeBlockEntity(at);
         var restored=new FractionatingColumnBlockEntity(at,h.getLevel().getBlockState(at));restored.loadWithComponents(tag,h.getLevel().registryAccess());h.getLevel().setBlockEntity(restored);restored.rebuild();
-        h.assertTrue(restored.recipeId().equals("distill_crude") && restored.stock(0)==2000,"Local cell stocks and active process survive the controller's replacement");
+        h.assertTrue(restored.recipeId().equals("distill_crude") && restored.stock(0)==feedLeft && restored.stock(1)==made,
+            "Local cell stocks and active process survive the controller's replacement: "+restored.stock(0)+"/"+feedLeft);
         DistillationGameTests.run(restored,55);
-        h.assertTrue(restored.stock(0)==0 && restored.stock(1)==2*recipe.outputs().getFirst().getAmount(),"Reload preserves progress and commits the two paid parallel batches once");
+        h.assertTrue(restored.stock(0)==0 && restored.stock(1)==2*recipe.outputs().getFirst().getAmount(),"Reload preserves progress and finishes the two parallel batches once: "+restored.stock(0)+" / "+restored.stock(1));
         DistillationGameTests.run(restored,100);
         h.assertTrue(restored.stock(0)==0 && restored.stock(1)==2*recipe.outputs().getFirst().getAmount(),"Further ticking cannot repeat either paid batch");h.succeed();
     }

@@ -10,6 +10,8 @@ from powder_assets import MANIFEST as POWDER_ITEMS, write_powder_item
 from generate_reactor_assets import A, D, NS, element, slice_parts, octagon, write
 from generate_petrochemical_ponder import Structure
 
+REACTION_HEAT = json.loads((Path(__file__).resolve().parent / 'data/reaction_heat.json').read_text(encoding='utf-8'))
+
 ITEMS = {
     'uraninite': ('Raw Uranium', 'ウラン原石', '粗铀矿'),
     'fluorite': ('Fluorite', '蛍石', '萤石'),
@@ -379,6 +381,7 @@ def recipes():
         if name == 'spent_fuel_reprocessing': recipe['processing_time'] = 400
         if heat: recipe['heat_requirement'] = heat
         recipe |= {'ingredients': ingredients, 'results': results}
+        if name in REACTION_HEAT: recipe['reaction_heat'] = REACTION_HEAT[name]
         write(r / 'pressure_reaction' / f'{name}.json', recipe)
     write(r / 'blasting/roast_raw_uranium.json', {'type': 'minecraft:blasting', 'ingredient': {'tag': U + 'uranium_roasting_feed'}, 'result': item(U + 'yellowcake'), 'experience': 0.1, 'cookingtime': 100})
     write(D / 'tags/item/uranium_roasting_feed.json', {'replace': False, 'values': [U + 'uraninite', 'create:crushed_raw_uranium']})
