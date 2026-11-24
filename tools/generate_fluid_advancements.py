@@ -15,8 +15,8 @@ NS = 'create_refinery_n_reactors'
 A = R / 'src/main/resources/assets' / NS
 FOLDER = R / 'src/main/resources/data' / NS / 'advancement/fluids'
 LANGUAGES = ('en_us', 'ja_jp', 'zh_cn')
-# Buckets that are not a fluid's own, and gases registered by hand rather than generated.
-NOT_FLUIDS = {'corrosion_resistant', 'stainless_steel'}
+# Buckets that are not a fluid's own (the legacy raw process gas bucket is hidden from the creative tab), and gases registered by hand rather than generated.
+NOT_FLUIDS = {'corrosion_resistant', 'stainless_steel', 'raw_process_gas'}
 HAND_GASES = {'hydrogen_gas', 'oxygen_gas', 'nitrogen_gas', 'argon_gas', 'converter_gas', 'air_gas', 'ammonia_gas', 'ethylene', 'propylene',
               'nitric_oxide', 'nitrogen_dioxide', 'deuterium_gas', 'tritium_gas', 'helium_gas', 'helium_recovery_feed'}
 TEXT = {
