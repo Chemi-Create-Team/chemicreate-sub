@@ -88,11 +88,11 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     private long scans;
 
     /** A charge already paid for; keep its recipe quantities and rolled products through a save or reload. */
-    private record StirredBatch(HeatCondition heat, boolean mixedGas, double joules, double expectedItems, List<SizedFluidIngredient> inputs,
+    private record StirredBatch(HeatCondition heat, boolean mixedFeed, double joules, double expectedItems, List<SizedFluidIngredient> inputs,
         List<FluidStack> fluids, List<ItemStack> items) {
         private static final Codec<StirredBatch> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             HeatCondition.CODEC.fieldOf("heat").forGetter(StirredBatch::heat),
-            Codec.BOOL.fieldOf("mixed_gas").forGetter(StirredBatch::mixedGas),
+            Codec.BOOL.fieldOf("mixed_gas").forGetter(StirredBatch::mixedFeed),
             Codec.DOUBLE.fieldOf("joules").forGetter(StirredBatch::joules),
             Codec.DOUBLE.fieldOf("expected_items").forGetter(StirredBatch::expectedItems),
             SizedFluidIngredient.FLAT_CODEC.listOf().fieldOf("inputs").forGetter(StirredBatch::inputs),
@@ -557,7 +557,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         for (int i=0;i<credit.length;i++) {
             var ingredient=active.inputs().get(i);
             int amount=ReactionFlow.owed(ingredient.amount(),position*scale,step*scale);
-            long owed=withdrawFluid(active.mixedGas(),ingredient,(long)amount*Concentration.NORMAL-credit[i],fluids);
+            long owed=withdrawFluid(active.mixedFeed(),ingredient,(long)amount*Concentration.NORMAL-credit[i],fluids);
             if (owed>0) { setStatus("materials",false);return true; }
             credit[i]=(int)-owed;
         }
@@ -641,7 +641,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             var feed=fluids[slot];
             if (feed.isEmpty()) continue;
             if (ingredients.stream().anyMatch(ingredient->ingredient.ingredient().test(feed))) reserved.add(feed);
-            if (MixtureHelper.composite(feed) && MixtureHelper.isMixableGas(feed)) {
+            if (canDrawComponents(feed)) {
                 for (var part:MixtureHelper.components(feed))
                     if (ingredients.stream().anyMatch(ingredient->ingredient.ingredient().test(part))) reserved.add(part);
             }
@@ -705,13 +705,17 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) { gasBlocked=false;return flowBatch(recipe,mixingFluids(),position,1e-3); }
         return batches(recipe,parallel)>0;
     }
-    /** Takes {@code needed} mB of a fluid ingredient out of the feed buffers, a component at a time from a mixed gas; false when the feed holds less. */
+    /** Takes {@code needed} mB of a fluid ingredient out of the feed buffers; false when the feed holds less. */
     private boolean takeFluid(StandardProcessingRecipe<RecipeInput> recipe,SizedFluidIngredient ingredient,int needed,FluidStack[] fluids) {
         return withdrawFluid(recipe instanceof PressureReactionRecipe,ingredient,(long)needed*Concentration.NORMAL,fluids)<=0;
     }
 
+    private static boolean canDrawComponents(FluidStack feed) {
+        return MixtureHelper.composite(feed) && (MixtureHelper.isMixableGas(feed) || MixtureHelper.isMixableLiquid(feed));
+    }
+
     /** The balance is in thousandths of a normal-strength mB. Negative balances pay toward the next tick. */
-    private long withdrawFluid(boolean mixedGas,SizedFluidIngredient ingredient,long owed,FluidStack[] fluids) {
+    private long withdrawFluid(boolean mixedFeed,SizedFluidIngredient ingredient,long owed,FluidStack[] fluids) {
         if (owed<=0) return owed;
         for (int tank:mixingInputs()) {
             var feed=fluids[tank];
@@ -720,14 +724,15 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
                 int strength=Concentration.permille(feed);
                 int take=(int)Math.min((owed+strength-1)/strength,feed.getAmount());
                 fluids[tank]=MixtureHelper.remainder(feed,take);owed-=(long)take*strength;
-            } else if (mixedGas && MixtureHelper.composite(feed) && MixtureHelper.isMixableGas(feed)) {
+            } else if (mixedFeed && canDrawComponents(feed)) {
                 for (var component:MixtureHelper.components(feed)) {
                     if (!ingredient.ingredient().test(component)) continue;
-                    int take=(int)Math.min((owed+Concentration.NORMAL-1)/Concentration.NORMAL,component.getAmount());
+                    int strength=Concentration.permille(component);
+                    int take=(int)Math.min((owed+strength-1)/strength,component.getAmount());
                     var held=fluids[tank];
                     var removal=MixtureHelper.composite(held) ? MixtureHelper.removeComponent(held,component,take)
                         : new MixtureHelper.Removal(held.copyWithAmount(take),MixtureHelper.remainder(held,take));
-                    fluids[tank]=removal.remaining();owed-=(long)removal.sample().getAmount()*Concentration.NORMAL;
+                    fluids[tank]=removal.remaining();owed-=(long)removal.sample().getAmount()*strength;
                     if (owed<=0) break;
                 }
             }

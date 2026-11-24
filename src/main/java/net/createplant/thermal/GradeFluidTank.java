@@ -32,11 +32,15 @@ public class GradeFluidTank extends ThermalFluidTank {
         return true;
     }
     @Override public int fill(FluidStack incoming,FluidAction action){
-        if (owner instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel && !vessel.stirred()
-            && net.createplant.mixture.MixtureHelper.isMixableLiquid(incoming) && !fluid.isEmpty()
-            && net.createplant.mixture.MixtureHelper.isMixableLiquid(fluid) && !FluidThermal.mixable(fluid, incoming))
+        if (!fluid.isEmpty() && MixtureHelper.isMixableLiquid(incoming) && MixtureHelper.isMixableLiquid(fluid)
+            && !FluidThermal.mixable(fluid, incoming) && layersLiquids(incoming))
             return net.createplant.mixture.MixtureTransfer.fill(this, incoming, action, true);
         return super.fill(incoming,action);
+    }
+    private boolean layersLiquids(FluidStack incoming) {
+        if (owner instanceof net.createplant.block.entity.LiddedVesselBlockEntity vessel)
+            return !vessel.stirred() || TankGrade.STAINLESS.accepts(incoming);
+        return TankGrade.of(owner)==TankGrade.STAINLESS && TankGrade.STAINLESS.accepts(incoming);
     }
     private boolean layered(Direction side) { return side != null && side.getAxis().isVertical() && MixtureHelper.isMixture(fluid) && !MixtureHelper.gas(fluid); }
     public FluidStack layer(Direction side) {

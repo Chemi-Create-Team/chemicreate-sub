@@ -183,22 +183,20 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         if (owner == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
         if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == this || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
-        if (owner.stirred()) {
-            var fluid = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
-            if (!fluid.isEmpty()) {
-                if (level.isClientSide) return ItemInteractionResult.SUCCESS;
-                var inlet = owner.port(owner.inlet());
-                if (inlet != null && !FluidState.gas(fluid)) {
-                    var transfer = FluidUtil.tryEmptyContainerAndStow(stack, inlet, new PlayerMainInvWrapper(player.getInventory()), Integer.MAX_VALUE, player, true);
-                    if (transfer.isSuccess()) {
-                        player.setItemInHand(hand, transfer.getResult());
-                        return ItemInteractionResult.CONSUME;
-                    }
+        var fluid = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
+        if (owner.stirred() && !fluid.isEmpty()) {
+            if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+            var inlet = owner.port(owner.inlet());
+            if (inlet != null && !FluidState.gas(fluid)) {
+                var transfer = FluidUtil.tryEmptyContainerAndStow(stack, inlet, new PlayerMainInvWrapper(player.getInventory()), Integer.MAX_VALUE, player, true);
+                if (transfer.isSuccess()) {
+                    player.setItemInHand(hand, transfer.getResult());
+                    return ItemInteractionResult.CONSUME;
                 }
-                return FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, owner) ? ItemInteractionResult.CONSUME : ItemInteractionResult.FAIL;
             }
         }
         if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, owner) || FluidHelper.tryFillItemFromBE(level, player, hand, stack, owner)) return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        if (!fluid.isEmpty()) return ItemInteractionResult.FAIL;
         var inventory = owner.itemPort();
         if (inventory == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (!level.isClientSide) {

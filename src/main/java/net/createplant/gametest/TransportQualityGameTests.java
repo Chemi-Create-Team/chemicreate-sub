@@ -136,6 +136,23 @@ public final class TransportQualityGameTests {
     public static void nativeCopperAndPumpFillAnAddonMachineWithoutLoss(GameTestHelper h) {
         transfer(h,straight(AllBlocks.FLUID_PIPE.getDefaultState()),CEPetroFluids.CRUDE_OIL.get(),true,false);
     }
+    @GameTest(template="test_petrochemical",timeoutTicks=150)
+    public static void createPumpAddsBrineToWaterInStainlessStorage(GameTestHelper h) {
+        h.setBlock(SOURCE,CETransport.STAINLESS_STEEL_TANK.get());h.setBlock(TARGET,CETransport.STAINLESS_STEEL_TANK.get());
+        h.setBlock(PIPE,straight(AllBlocks.FLUID_PIPE.getDefaultState()));
+        h.setBlock(PUMP,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
+        h.setBlock(new BlockPos(2,2,4),AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
+        drive(h,new BlockPos(1,2,4),Direction.EAST);
+        var brine=new FluidStack(CEChlorAlkali.BRINE.get(),1000);
+        h.assertTrue(fluids(h,SOURCE).fill(brine,IFluidHandler.FluidAction.EXECUTE)==1000
+            && fluids(h,TARGET).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER,1000),IFluidHandler.FluidAction.EXECUTE)==1000,
+            "Both tanks start with one full charge");
+        h.succeedWhen(()->{
+            var contents=net.createplant.mixture.MixtureHelper.extractContents(fluids(h,TARGET).getFluidInTank(0));
+            h.assertTrue(fluids(h,SOURCE).getFluidInTank(0).isEmpty() && contents.totalAmount()==2000
+                && contents.amounts().getOrDefault(CreatePlant.location("brine"),0)==1000,"The running pump delivers all brine to the occupied tank: "+contents);
+        });
+    }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void ceramicPipeCarriesAcidAtAtmosphericPressure(GameTestHelper h) {
         var ceramic=PipeMaterial.CERAMIC;

@@ -221,6 +221,26 @@ public class ReactorGameTests {
         });
     }
 
+    @GameTest(template = "test_reactor")
+    public static void stirredStainlessVesselStoresRatedSolutionsAlongsideOtherLiquids(GameTestHelper h) {
+        var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
+        var port=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,vessel.getBlockPos(),Direction.WEST);
+        var liquor=new FluidStack(CEMetals.COPPER_SULFATE_SOLUTION.get(),250);
+        net.createplant.thermal.Concentration.set(liquor,2000);
+        h.assertTrue(vessel.getTankInventory().fill(new FluidStack(Fluids.WATER,1000),EXECUTE)==1000
+            && port.fill(new FluidStack(CEFluids.NITROGEN_GAS.get(),200),EXECUTE)==200
+            && net.createplant.thermal.TankGrade.STAINLESS.accepts(liquor),"Water is left in storage and another feed is waiting");
+        h.assertTrue(port.fill(liquor,SIMULATE)==250 && vessel.getTankInventory().getFluid().is(Fluids.WATER),"A different compatible solution fits without changing a simulated fill");
+        h.assertTrue(port.fill(liquor,EXECUTE)==250 && vessel.getTankInventory().getFluidAmount()==1250,"The actual side input stores the solution with the water");
+        heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
+        run(vessel,105);
+        var crystals=vessel.displayedItem(vessel.inputItemSlots());
+        h.assertTrue(crystals.is(CEMetals.COPPER_SULFATE_CRYSTALS.get())
+            && vessel.getTankInventory().getFluid().is(Fluids.WATER) && vessel.getTankInventory().getFluidAmount()==1000,
+            "A reaction draws only its own component, including the stored concentration: "+crystals+", "+vessel.getTankInventory().getFluid());
+        h.succeed();
+    }
+
     private static boolean goggleItem(List<net.minecraft.network.chat.Component> lines,String role,ItemStack item) {
         return lines.stream().flatMap(line->line.getSiblings().stream()).anyMatch(label->label.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text
             && text.getKey().endsWith("."+role) && text.getArgs()[0].equals(item.getHoverName()) && text.getArgs()[1].equals(item.getCount()));

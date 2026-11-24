@@ -4385,9 +4385,9 @@
     "zh_cn": "混合并输送液体与气体"
   },
   "chemical_mixtures.vessel": {
-    "en_us": "Build an ordinary lidded vessel without a stirrer. Feed different liquids through its normal side connections.",
-    "ja_jp": "撹拌機のないふた付き槽を組みます。通常の側面接続から、異なる液体を入れてください。",
-    "zh_cn": "搭建不带搅拌器的带盖槽，通过普通侧面接口输入不同液体。"
+    "en_us": "Pump rated solutions into the stainless vessel, or pour them through the open hatch. Different liquids settle in layers.",
+    "ja_jp": "ステンレスの定格内の溶液は配管か開いたハッチから入れます。異なる液体は槽内で層になります。",
+    "zh_cn": "用管道或打开的舱盖加入符合不锈钢额定条件的溶液。不同液体会在槽中分层。"
   },
   "chemical_mixtures.blend": {
     "en_us": "In the tank, heavier liquids settle below lighter ones. The window shows each layer in its own colour.",

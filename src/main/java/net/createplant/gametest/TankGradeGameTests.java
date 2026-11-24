@@ -51,6 +51,38 @@ public final class TankGradeGameTests {
     }
 
     @GameTest(template="test_fractionation")
+    public static void stainlessTankTakesRatedSolutionByPipeAndSurvivalBucket(GameTestHelper h) {
+        var tank=tank(h,CETransport.STAINLESS_STEEL_TANK.get());
+        var at=h.absolutePos(AT);
+        var pipe=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,at,Direction.WEST);
+        var brine=new FluidStack(CEChlorAlkali.BRINE.get(),1000);
+        var alkali=new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(),1000);
+        h.assertTrue(TankGrade.STAINLESS.accepts(brine) && TankGrade.STAINLESS.accepts(alkali) && pipe.fill(brine,EXECUTE)==1000,
+            "Brine is accepted through the normal pipe connection");
+        var player=h.makeMockPlayer(GameType.SURVIVAL);
+        var bucket=net.createplant.item.StainlessBuckets.filled(alkali);
+        player.setItemInHand(InteractionHand.MAIN_HAND,bucket);
+        h.useBlock(AT,player);
+        h.assertTrue(player.getItemInHand(InteractionHand.MAIN_HAND).is(CEWorldFluids.STAINLESS_BUCKET.get()),"A survival bucket can be emptied into the stainless tank");
+        var contents=net.createplant.mixture.MixtureHelper.components(tank.getTankInventory().getFluid());
+        h.assertTrue(contents.size()==2 && contents.stream().anyMatch(stack->stack.is(brine.getFluid()) && stack.getAmount()==1000)
+            && contents.stream().anyMatch(stack->stack.is(alkali.getFluid()) && stack.getAmount()==1000),"The tank retains both full charges");
+        int tested=0;
+        for (var fluid:net.minecraft.core.registries.BuiltInRegistries.FLUID) {
+            if (fluid instanceof net.minecraft.world.level.material.FlowingFluid flowing && flowing.getSource()!=fluid || FluidIdentity.legacy(fluid)) continue;
+            var info=net.createplant.chemistry.FluidChemicalRegistry.base(fluid);
+            var solution=new FluidStack(fluid,1000);
+            if (info==null || !info.aqueous() || !TankGrade.STAINLESS.accepts(solution)) continue;
+            tank.getTankInventory().setFluid(new FluidStack(Fluids.WATER,1000));
+            h.assertTrue(pipe.fill(solution,EXECUTE)==1000 && tank.getTankInventory().getFluidAmount()==2000,
+                "A rated aqueous solution fits alongside water: "+solution);
+            tested++;
+        }
+        h.assertTrue(tested>0,"The registered catalogue includes tested aqueous solutions");
+        h.succeed();
+    }
+
+    @GameTest(template="test_fractionation")
     public static void waterAndSteamNeverBypassTheMaterialOrFluidFilter(GameTestHelper h) {
         var liquid=tank(h,AllBlocks.FLUID_TANK.get());var port=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(AT),Direction.UP);
         var steam=new FluidStack(CEFluids.STEAM.get(),1000);
