@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:electrolysis_furnace_shell"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.facility.electrolysis_furnace"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.facility.electrolysis_furnace.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:facilities/hub",
+  "criteria": {
+    "built": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "built"
+    ]
+  ]
+}

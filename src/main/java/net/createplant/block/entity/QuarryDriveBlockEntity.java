@@ -150,6 +150,7 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
     public boolean drill() { return drill; }
     public boolean working() { return working; }
     public String status() { return status; }
+    public boolean built() { return structure != null; }
     public BlockPos constructionObstruction() {
         return status.equals("frame_blocked") || status.equals("belt_blocked") || status.equals("frame_dimensions") ? fault : null;
     }

@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:jacketed_pipe_controller"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.facility.jacketed_pipe"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.facility.jacketed_pipe.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:facilities/hub",
+  "criteria": {
+    "built": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "built"
+    ]
+  ]
+}

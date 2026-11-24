@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:fractionating_column"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.facility.hub"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.facility.hub.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/root",
+  "criteria": {
+    "built": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "built"
+    ]
+  ]
+}

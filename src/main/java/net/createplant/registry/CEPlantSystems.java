@@ -68,6 +68,7 @@ public final class CEPlantSystems {
         BLOCKS.register(bus);ITEMS.register(bus);TYPES.register(bus);bus.addListener(CEPlantSystems::capabilities);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.event.PlantStructureEvents::changed);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.event.PlantStructureEvents::unloaded);
+        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.event.FacilityAchievements::tick);
     }
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CONDENSER_PORT_ENTITY.get(), (be, side) -> {

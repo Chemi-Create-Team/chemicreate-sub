@@ -156,6 +156,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     public CraneStructure.Result structure() { return structure; }
     public boolean working() { return working; }
     public String status() { return status; }
+    public boolean built() { return structure != null; }
     public BlockPos console() { return console; }
 
     public boolean bindConsole(BlockPos desk) {

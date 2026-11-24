@@ -152,6 +152,7 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public int freshCount() { return fresh; }
     public int spentCount() { return spent; }
     public String status() { return status; }
+    public boolean built() { return structure().formed(); }
     public float waterLevel() { return cells == 0 ? 0 : amount / (float) (cells * WATER_PER_CELL); }
 
     public int find(byte state) {

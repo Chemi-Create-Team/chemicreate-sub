@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:natural_draft_cooling_tower"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.facility.cooling_tower"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.facility.cooling_tower.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:facilities/hub",
+  "criteria": {
+    "built": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "built"
+    ]
+  ]
+}

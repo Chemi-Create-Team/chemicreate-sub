@@ -60,6 +60,7 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
         flame=Math.clamp(value,0,MAX_FLAME);flow=Math.clamp(perTick,0,MAX_FLOW);formed=true;exhaust=true;height.startWithValue(flame);
     }
     public float flameHeight(float partialTicks) { return level!=null && level.isClientSide ? height.getValue(partialTicks) : flame; }
+    public boolean formed() { return formed; }
     public String status() { return !formed ? "chimney" : !exhaust ? "blocked" : !pilot() ? "unlit" : burning() ? "burning" : flow>0 ? "venting" : "ready"; }
 
     private boolean chimney() {
