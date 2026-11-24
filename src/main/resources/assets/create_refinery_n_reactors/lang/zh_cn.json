@@ -6347,5 +6347,10 @@
   "item.create_refinery_n_reactors.ammonium_chloride_crystals": "氯化铵晶体",
   "reaction_heat.create_refinery_n_reactors.exothermic": "放热",
   "reaction_heat.create_refinery_n_reactors.endothermic": "吸热",
-  "fluid_state.create_refinery_n_reactors.concentration": "浓缩 ×%s"
+  "fluid_state.create_refinery_n_reactors.concentration": "浓缩 ×%s",
+  "gui.create_refinery_n_reactors.fluid_state.title": "选择流体状态",
+  "gui.create_refinery_n_reactors.fluid_state.give": "取出",
+  "gui.create_refinery_n_reactors.fluid_state.temperature": "温度：%s",
+  "gui.create_refinery_n_reactors.fluid_state.pressure": "压力：%s",
+  "gui.create_refinery_n_reactors.fluid_state.phase": "相态：%s"
 }

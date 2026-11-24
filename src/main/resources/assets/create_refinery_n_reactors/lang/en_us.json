@@ -6347,5 +6347,10 @@
   "item.create_refinery_n_reactors.ammonium_chloride_crystals": "Ammonium Chloride Crystals",
   "reaction_heat.create_refinery_n_reactors.exothermic": "Exothermic",
   "reaction_heat.create_refinery_n_reactors.endothermic": "Endothermic",
-  "fluid_state.create_refinery_n_reactors.concentration": "Concentrated ×%s"
+  "fluid_state.create_refinery_n_reactors.concentration": "Concentrated ×%s",
+  "gui.create_refinery_n_reactors.fluid_state.title": "Choose the fluid state",
+  "gui.create_refinery_n_reactors.fluid_state.give": "Take it",
+  "gui.create_refinery_n_reactors.fluid_state.temperature": "Temperature: %s",
+  "gui.create_refinery_n_reactors.fluid_state.pressure": "Pressure: %s",
+  "gui.create_refinery_n_reactors.fluid_state.phase": "State: %s"
 }

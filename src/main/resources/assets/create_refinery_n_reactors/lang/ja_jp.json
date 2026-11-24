@@ -6347,5 +6347,10 @@
   "item.create_refinery_n_reactors.ammonium_chloride_crystals": "塩化アンモニウム結晶",
   "reaction_heat.create_refinery_n_reactors.exothermic": "発熱",
   "reaction_heat.create_refinery_n_reactors.endothermic": "吸熱",
-  "fluid_state.create_refinery_n_reactors.concentration": "濃縮 ×%s"
+  "fluid_state.create_refinery_n_reactors.concentration": "濃縮 ×%s",
+  "gui.create_refinery_n_reactors.fluid_state.title": "流体の状態を選ぶ",
+  "gui.create_refinery_n_reactors.fluid_state.give": "受け取る",
+  "gui.create_refinery_n_reactors.fluid_state.temperature": "温度：%s",
+  "gui.create_refinery_n_reactors.fluid_state.pressure": "圧力：%s",
+  "gui.create_refinery_n_reactors.fluid_state.phase": "相：%s"
 }

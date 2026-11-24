@@ -9,6 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -133,6 +134,7 @@ public class CECreativeModeTabs {
         if (materials) {
             output.accept(CEWorldFluids.EMPTY_ALLOY_BUCKET.get());
             output.accept(CEWorldFluids.STAINLESS_BUCKET.get());
+            output.accept(Items.WATER_BUCKET);
             liquids.forEach(output::accept);
             output.accept(com.jesz.createdieselgenerators.CDGFluids.CRUDE_OIL.getBucket().get());
             gases.forEach(output::accept);

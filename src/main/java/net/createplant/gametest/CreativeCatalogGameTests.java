@@ -62,4 +62,15 @@ public class CreativeCatalogGameTests {
     private static void check(GameTestHelper h,Set<Item> tab,List<String> ids) {
         for(String id:ids) h.assertTrue(tab.contains(BuiltInRegistries.ITEM.get(CreatePlant.location(id))),"Correct creative tab for "+id);
     }
+
+    @GameTest(template="test_reactor")
+    public static void pickedFluidStateSurvivesTheBucket(GameTestHelper h) {
+        var bucket=new net.minecraft.world.item.ItemStack(net.createplant.registry.CEItems.NITROGEN_GAS_BUCKET.get());
+        var nominal=net.createplant.item.StatefulBuckets.contents(bucket,((net.minecraft.world.item.BucketItem)bucket.getItem()).content);
+        var picked=net.createplant.thermal.FluidState.with(nominal,10,12);
+        net.createplant.item.StatefulBuckets.write(picked,bucket);
+        var read=net.createplant.item.StatefulBuckets.contents(bucket,((net.minecraft.world.item.BucketItem)bucket.getItem()).content);
+        h.assertTrue(net.createplant.thermal.FluidState.temperature(read)==10 && net.createplant.thermal.FluidState.pressure(read)==12,"The bucket keeps the picked temperature and pressure");
+        h.succeed();
+    }
 }
