@@ -6,6 +6,7 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import net.createplant.block.entity.PlantFluidTankBlockEntity;
+import net.createplant.item.StatefulBuckets;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.TankGrade;
 import net.minecraft.core.BlockPos;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
@@ -31,8 +33,11 @@ public class PlantFluidTankBlock extends FluidTankBlock {
 
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                                         Player player, InteractionHand hand, BlockHitResult hit) {
-        if (player.isCreative() || !state.is(CETransport.STAINLESS_STEEL_TANK.get())
-            || FluidUtil.getFluidContained(stack).filter(TankGrade.STAINLESS::accepts).isEmpty())
+        if (!state.is(CETransport.STAINLESS_STEEL_TANK.get()))
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
+        if (StatefulBuckets.emptyProcessBucket(stack))
+            return StatefulBuckets.fillFromTank(stack, player, hand, level.getCapability(Capabilities.FluidHandler.BLOCK, pos, hit.getDirection()));
+        if (player.isCreative() || FluidUtil.getFluidContained(stack).filter(TankGrade.STAINLESS::accepts).isEmpty())
             return super.useItemOn(stack, state, level, pos, player, hand, hit);
         if (level.getBlockEntity(pos) instanceof PlantFluidTankBlockEntity tank
             && FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, tank))

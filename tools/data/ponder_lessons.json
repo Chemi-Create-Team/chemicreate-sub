@@ -2025,9 +2025,9 @@
     "zh_cn": "不锈钢桶的做法与桶相同，只是把铁锭换成不锈钢锭。它能装不锈钢储罐可装的液体。"
   },
   "world_liquids.stainless_fill": {
-    "en_us": "Acids, halogens and bases up to very hot fit it, but no gas. Emptied, it stays a stainless bucket.",
-    "ja_jp": "酸・ハロゲン・塩基を高温まで入れられますが、気体は入りません。空にしてもステンレスバケツに戻ります。",
-    "zh_cn": "可装高温以下的酸、卤素和碱，但不能装气体。倒空后仍是不锈钢桶。"
+    "en_us": "Emptying returns a stainless bucket. Use an alloy bucket for hot acids.",
+    "ja_jp": "空にするとステンレスバケツに戻ります。硫酸ジルコニウム溶液などの熱酸は耐食合金バケツで汲みます。",
+    "zh_cn": "倒空后仍是不锈钢桶。热酸（如硫酸锆溶液）要用耐蚀合金桶。"
   },
   "world_liquids.pour": {
     "en_us": "Use a liquid bucket on the ground to pour it. Gas buckets release a cloud instead.",

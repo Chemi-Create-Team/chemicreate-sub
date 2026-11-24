@@ -241,6 +241,28 @@ public class ReactorGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "test_reactor")
+    public static void vesselBucketPickupConservesTheOutOfRatingSulfate(GameTestHelper h) {
+        var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
+        var sulfate=new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(),1500);
+        h.assertTrue(vessel.getTankInventory().fill(sulfate,EXECUTE)==1500,"The vessel contains the sulfate solution");
+        var player=h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
+        var hatch=BASE.offset(1,1,1);
+        h.useBlock(hatch,player);
+        player.setItemInHand(hand,new ItemStack(CEWorldFluids.STAINLESS_BUCKET.get(),2));
+        h.useBlock(hatch,player);
+        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.STAINLESS_BUCKET.get()) && player.getItemInHand(hand).getCount()==2
+            && vessel.getTankInventory().getFluidAmount()==1500 && vessel.itemPort().getStackInSlot(0).isEmpty(),
+            "A rejected scoop preserves both buckets and the whole charge: "+player.getItemInHand(hand)+", "+vessel.getTankInventory().getFluid());
+        player.setItemInHand(hand,CEWorldFluids.EMPTY_ALLOY_BUCKET.toStack());
+        h.useBlock(hatch,player);
+        var filled=net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(player.getItemInHand(hand)).orElse(FluidStack.EMPTY);
+        h.assertTrue(FluidStack.isSameFluidSameComponents(filled,sulfate) && filled.getAmount()==1000
+            && vessel.getTankInventory().getFluidAmount()==500,"An alloy bucket takes exactly one bucket of that solution");
+        h.succeed();
+    }
+
     private static boolean goggleItem(List<net.minecraft.network.chat.Component> lines,String role,ItemStack item) {
         return lines.stream().flatMap(line->line.getSiblings().stream()).anyMatch(label->label.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text
             && text.getKey().endsWith("."+role) && text.getArgs()[0].equals(item.getHoverName()) && text.getArgs()[1].equals(item.getCount()));

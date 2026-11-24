@@ -11,6 +11,7 @@ import com.simibubi.create.foundation.blockEntity.ComparatorUtil;
 import com.simibubi.create.foundation.fluid.FluidHelper;
 import net.createmod.catnip.data.Iterate;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
+import net.createplant.item.StatefulBuckets;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidState;
 import net.minecraft.core.BlockPos;
@@ -23,6 +24,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -45,6 +47,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
@@ -183,6 +186,8 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         if (owner == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
         if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == this || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (StatefulBuckets.emptyProcessBucket(stack))
+            return StatefulBuckets.fillFromTank(stack, player, hand, level.getCapability(Capabilities.FluidHandler.BLOCK, owner.getBlockPos(), Direction.DOWN));
         var fluid = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
         if (owner.stirred() && !fluid.isEmpty()) {
             if (level.isClientSide) return ItemInteractionResult.SUCCESS;
@@ -196,7 +201,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
             }
         }
         if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, owner) || FluidHelper.tryFillItemFromBE(level, player, hand, stack, owner)) return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        if (!fluid.isEmpty()) return ItemInteractionResult.FAIL;
+        if (!fluid.isEmpty() || stack.getItem() instanceof BucketItem) return ItemInteractionResult.FAIL;
         var inventory = owner.itemPort();
         if (inventory == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (!level.isClientSide) {

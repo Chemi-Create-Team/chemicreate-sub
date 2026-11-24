@@ -12,6 +12,7 @@
     "HighPressurePumpRangeMixin",
     "HazardBootsBeltMixin",
     "FluidBucketWrapperMixin",
+    "CreateBucketFillingMixin",
     "StatefulBucketItemMixin",
     "LegacyBucketStackMixin",
     "StatefulBucketFillMixin",

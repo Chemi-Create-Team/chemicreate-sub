@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -90,6 +91,40 @@ public final class TankGradeGameTests {
         var gas=tank(h,CETransport.GAS_RECEIVER.get());
         h.assertTrue(TankGrade.GAS.incompatibility(new FluidStack(Fluids.WATER,1000)).equals("liquid"),"A gas receiver is not rated for water");
         h.assertTrue(gas.getTankInventory().fill(steam,EXECUTE)==1000 && gas.getTankInventory().getFluid().is(CEFluids.STEAM.get()),"Steam stays steam rather than becoming water");
+        h.succeed();
+    }
+
+    @GameTest(template="test_fractionation")
+    public static void stainlessTankScoopsWithTheCorrectBucket(GameTestHelper h) {
+        var tank = tank(h, CETransport.STAINLESS_STEEL_TANK.get());
+        var sulfate = new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 1500);
+        h.assertTrue(tank.getTankInventory().fill(sulfate, EXECUTE) == 1500, "The tank contains the sulfate solution");
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        var hand = InteractionHand.MAIN_HAND;
+        player.setItemInHand(hand, new ItemStack(CEWorldFluids.STAINLESS_BUCKET.get(), 2));
+        h.useBlock(AT, player);
+        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.STAINLESS_BUCKET.get()) && player.getItemInHand(hand).getCount() == 2
+            && tank.getTankInventory().getFluidAmount() == 1500, "The stainless bucket and all sulfate stay put on rejection");
+        player.setItemInHand(hand, CEWorldFluids.EMPTY_ALLOY_BUCKET.toStack());
+        h.useBlock(AT, player);
+        var filled = net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(player.getItemInHand(hand)).orElse(FluidStack.EMPTY);
+        h.assertTrue(FluidStack.isSameFluidSameComponents(filled, sulfate) && filled.getAmount() == 1000
+            && tank.getTankInventory().getFluidAmount() == 500, "An alloy bucket takes 1000 mB and leaves the remaining sulfate");
+        player.setItemInHand(hand, CEWorldFluids.EMPTY_ALLOY_BUCKET.toStack());
+        h.useBlock(AT, player);
+        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get())
+            && tank.getTankInventory().getFluidAmount() == 500, "A partial bucketful stays in the tank");
+
+        var compatible = new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 1000);
+        tank.getTankInventory().setFluid(compatible.copy());
+        player.setItemInHand(hand, new ItemStack(CEWorldFluids.STAINLESS_BUCKET.get(), 2));
+        h.useBlock(AT, player);
+        var sample = player.getInventory().items.stream().filter(net.createplant.item.StainlessBuckets::marked).findFirst().orElse(ItemStack.EMPTY);
+        var sampledFluid = net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(sample).orElse(FluidStack.EMPTY);
+        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.STAINLESS_BUCKET.get()) && player.getItemInHand(hand).getCount() == 1
+            && sampledFluid.getFluid().isSame(compatible.getFluid()) && sampledFluid.getAmount() == 1000 && tank.getTankInventory().isEmpty(),
+            "A rated liquid fills one of the stacked stainless buckets: held " + player.getItemInHand(hand)
+                + ", sample " + sampledFluid + ", tank " + tank.getTankInventory().getFluid());
         h.succeed();
     }
 
