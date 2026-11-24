@@ -28,7 +28,12 @@ public final class TankHeating {
     private int steam, steamRoom=Integer.MAX_VALUE;
     private double steamCarry;
 
-    private boolean boilSolutions=true;
+    private boolean boilSolutions=true, boilWater;
+    /** Whether the last pass was boiling water off, so its owner should pass every tick instead of every {@link #INTERVAL}. */
+    private boolean boiling;
+    /** Plain liquid water at its boiling point gives off steam a mB at a time, as fast as the heat it takes allows, instead of flipping whole once. Off by default. */
+    public void boilWater(boolean allowed) { boilWater=allowed; }
+    public boolean boiling() { return boiling; }
     public void steamRoom(int room) { steamRoom=Math.max(0,room); }
     /** Whether a solution may boil its water off; a vessel with other feed or a charge in it is running a reaction instead. */
     public void boilSolutions(boolean allowed) { boilSolutions=allowed; }
@@ -59,9 +64,13 @@ public final class TankHeating {
     public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity) { return tick(fluids,watts,capacity,List.of()); }
 
     /** {@code external.get(i)}, where present, is the heat state of {@code fluids.get(i)} that its own inventory already keeps. */
-    public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity,List<HeatContent> external) {
+    public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity,List<HeatContent> external) { return tick(fluids,watts,capacity,external,INTERVAL); }
+
+    /** One pass standing for {@code ticks} ticks of the burners. */
+    public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity,List<HeatContent> external,int ticks) {
         while(own.size()<fluids.size())own.add(new HeatContent());
-        return watts<=0 ? NOTHING : give(fluids,joules(watts),capacity,external);
+        boiling=false;
+        return watts<=0 ? NOTHING : give(fluids,watts*ticks/20d,capacity,external);
     }
 
     /** Largest temperature change one reaction can make in the contents; the rest of its heat goes into the vessel walls. */
@@ -101,7 +110,8 @@ public final class TankHeating {
             var heat=i<external.size() && external.get(i)!=null ? external.get(i) : own.get(i);
             double before=heat.kelvin(fluid), beforeQuality=heat.quality(fluid);
             // A solution alone can only boil its water off: it warms to the boiling point and the rest of the heat takes water away.
-            boolean solution=boilSolutions && Concentration.applies(fluid);
+            boolean water=boilSolutions && boilWater && FluidState.liquidWater(fluid) && !TwoPhase.is(fluid);
+            boolean solution=water || boilSolutions && Concentration.applies(fluid);
             double ceiling=solution ? FluidState.boilingKelvin(fluid,FluidState.pressure(fluid)) : FluidState.kelvin(FluidState.MAX);
             var outcome=heat.add(fluid,joules*HeatContent.capacity(fluid)/total,0,Double.isFinite(ceiling) ? ceiling : FluidState.kelvin(FluidState.MAX),capacity);
             var next=outcome.stack();
@@ -114,19 +124,23 @@ public final class TankHeating {
                 heat.set(fluid,heat.kelvin(next),heat.quality(next));
                 result=CHANGED;
             } else if(result==NOTHING && (heat.kelvin(fluid)!=before || heat.quality(fluid)!=beforeQuality))result=KELVIN;
-            if(solution && outcome.left()>0 && heat.kelvin(fluid)>=ceiling-1e-6 && boilOff(fluid,outcome.left()))result=CHANGED;
+            if(solution && outcome.left()>0 && heat.kelvin(fluid)>=ceiling-1e-6) {
+                if(water)boiling=true;
+                if(boilOff(fluid,outcome.left(),water))result=CHANGED;
+            }
         }
         return result;
     }
 
-    private boolean boilOff(FluidStack fluid,double joules) {
+    private boolean boilOff(FluidStack fluid,double joules,boolean water) {
         double wanted=steamCarry+joules/Concentration.JOULES_PER_MB;
-        int limit=Math.min(Concentration.removable(fluid),steamRoom-steam);
+        int limit=Math.min(water ? fluid.getAmount() : Concentration.removable(fluid),steamRoom-steam);
         int taken=(int)Math.min(Math.floor(wanted),Math.max(0,limit));
         // What the strength or the room does not allow is lost to the air; what is only a part of a mB waits for the next pass.
         steamCarry=taken<Math.floor(wanted) ? 0 : wanted-taken;
         if(taken<=0)return false;
-        Concentration.boilOff(fluid,taken);
+        if(water)fluid.shrink(taken);
+        else Concentration.boilOff(fluid,taken);
         steam+=taken;
         return true;
     }

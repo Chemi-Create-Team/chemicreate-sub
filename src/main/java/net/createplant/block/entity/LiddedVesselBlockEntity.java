@@ -79,6 +79,9 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     private static final int STORAGE_GAS = -1, PASS_THROUGH_GAS = -2, ATMOSPHERIC = net.createplant.thermal.FluidState.pressureLevel(1);
     private record GasLayer(int bank, FluidStack fluid) { }
     private final net.createplant.thermal.TankHeating heating=new net.createplant.thermal.TankHeating();
+    { heating.boilWater(true); }
+    /** The game time of the last heating pass, so a pass made between the regular ones is charged only the ticks since. */
+    private long lastHeated=Long.MIN_VALUE;
 
     public LiddedVesselBlockEntity(BlockPos pos, BlockState state) {
         super(CETransport.LIDDED_VESSEL_ENTITY.get(), pos, state);
@@ -344,7 +347,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (level == null || !isController()) return;
         if (!level.isClientSide && !isRemoved() && module()==ReactorModule.NONE && ReactorStructure.loaded(level,worldPosition))
             tickHeatOnlyReactions(height,!tankInventory.isEmpty());
-        if (!level.isClientSide && isController() && Math.floorMod(level.getGameTime()+worldPosition.asLong(),net.createplant.thermal.TankHeating.INTERVAL)==0) heatContents();
+        if (!level.isClientSide && isController() && (heating.boiling() || Math.floorMod(level.getGameTime()+worldPosition.asLong(),net.createplant.thermal.TankHeating.INTERVAL)==0)) heatContents();
         if (!level.isClientSide && Math.floorMod(level.getGameTime()+worldPosition.asLong(),5)==0) updateDisplayedHeat();
         if (lastKnownPos == null) lastKnownPos = worldPosition;
         if (!lastKnownPos.equals(worldPosition)) { removeController(true);lastKnownPos = worldPosition; }
@@ -389,13 +392,16 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if(open())vent();
         heating.boilSolutions(canBoilSolutions());
         heating.steamRoom(open() ? Integer.MAX_VALUE : steamRoom());
-        int result=heating.tick(fluids,net.createplant.thermal.TankHeating.burnerWatts(level,base),ignored->Integer.MAX_VALUE,heat);
+        long now=level.getGameTime();
+        int ticks=lastHeated==Long.MIN_VALUE ? net.createplant.thermal.TankHeating.INTERVAL : (int)Math.clamp(now-lastHeated,1,net.createplant.thermal.TankHeating.INTERVAL);
+        lastHeated=now;
+        int result=heating.tick(fluids,net.createplant.thermal.TankHeating.burnerWatts(level,base),ignored->Integer.MAX_VALUE,heat,ticks);
         int steam=heating.takeSteam();
         if(steam>0) {
             if(open()) {
                 var top=top();
                 ((ServerLevel)level).sendParticles(ParticleTypes.CLOUD,top.getX()+.5,top.getY()+1,top.getZ()+.5,Math.min(12,1+steam/20),.3,.2,.3,.04);
-                level.playSound(null,top,SoundEvents.FIRE_EXTINGUISH,SoundSource.BLOCKS,.3f,1.4f);
+                if(now%10==0)level.playSound(null,top,SoundEvents.FIRE_EXTINGUISH,SoundSource.BLOCKS,.3f,1.4f);
             } else storeSteam(steam);
         }
         if(result==net.createplant.thermal.TankHeating.CHANGED) {

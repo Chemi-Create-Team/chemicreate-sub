@@ -140,4 +140,19 @@ public final class InternalTemperatureGameTests {
         h.assertTrue(Math.abs(Concentration.permille(mixed)*mixed.getAmount()-(solute+500*1000))<=1500 && Concentration.permille(mixed)<Concentration.MAXIMUM,"Pouring plain solution into a strong one dilutes it and keeps the solute");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty")
+    public static void boilingWaterInAVesselGivesOffSteamAMilliBucketAtATime(GameTestHelper h) {
+        var tank=new ThermalFluidTank(8000,ignored->{});
+        tank.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER,1000),EXECUTE);
+        var heater=new TankHeating();heater.boilWater(true);
+        int steam=0,biggest=0;
+        for(int tick=0;tick<4000 && tank.getFluidAmount()>0;tick++) {
+            heater.tick(java.util.List.of(tank.getFluid()),TankHeating.LIT_WATTS,tank::capacityFor,java.util.List.of(tank.heat()),1);
+            int made=heater.takeSteam();steam+=made;biggest=Math.max(biggest,made);
+        }
+        h.assertTrue(tank.getFluidAmount()==0 && steam==1000,"All the water leaves as steam, a mB of water for a mB of steam");
+        h.assertTrue(biggest<=(int)Math.ceil(TankHeating.LIT_WATTS/20/Concentration.JOULES_PER_MB)+1,"No tick gives off more steam than the heat of that tick can boil");
+        h.succeed();
+    }
 }
