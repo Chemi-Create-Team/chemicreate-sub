@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:protective_coat"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.suit_up"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.suit_up.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/gas_safety",
+  "criteria": {
+    "protective_coat": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:protective_coat"
+          }
+        ]
+      }
+    },
+    "protective_cap": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:protective_cap"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "protective_coat",
+      "protective_cap"
+    ]
+  ]
+}

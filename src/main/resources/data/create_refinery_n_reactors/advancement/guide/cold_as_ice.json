@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:cryogenic_cold_box_drive"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.cold_as_ice"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.cold_as_ice.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/air_separation",
+  "criteria": {
+    "cryogenic_cold_box_drive": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:cryogenic_cold_box_drive"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "cryogenic_cold_box_drive"
+    ]
+  ]
+}

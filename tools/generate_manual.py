@@ -262,6 +262,46 @@ STEPS = [
     ('sprayer', 'fertilizer', f'{NS}:agricultural_sprayer', 'task', [f'{NS}:agricultural_sprayer'],
      ("Sprayer", "散布機", "喷洒机"),
      ("Spread fertilizer over a field.", "畑に肥料をまく。", "向田地喷洒肥料。")),
+    # Milestones with a flavour of their own: a step in industrial history, a famous process, or a lesson learned the hard way.
+    ('industrial_revolution', 'boiler', f'{NS}:low_pressure_turbine_unit', 'goal', [f'{NS}:low_pressure_turbine_unit'],
+     ("Industrial Revolution", "産業革命", "工业革命"),
+     ("Steam turned a wheel, and the wheel never stopped. Next: feed it from a reactor.", "蒸気が車輪を回し、その車輪は二度と止まらなかった。次：炉から蒸気を送ろう。", "蒸汽推动了车轮，而车轮再也没有停下。下一步：用反应堆供汽。")),
+    ('bread_from_air', 'nitric_acid', f'{NS}:ammonium_nitrate', 'goal', [f'{NS}:ammonium_nitrate'],
+     ("Bread from Air", "空気からパンを", "空气变面包"),
+     ("Nitrogen from the sky now feeds the field.", "空の窒素が、畑を肥やす。", "天上的氮，如今养活了田地。")),
+    ('black_gold', 'vessel', 'createdieselgenerators:crude_oil_bucket', 'task', ['createdieselgenerators:crude_oil_bucket'],
+     ("Black Gold", "黒い黄金", "黑色黄金"),
+     ("Crude oil. Everything else in this plant starts as a barrel of it.", "原油。この工場の多くは、この一杯から始まる。", "原油。这座工厂的许多东西，都从这一桶开始。")),
+    ('transmutation', 'fusion', f'{NS}:irradiated_cartridge', 'challenge', [f'{NS}:irradiated_cartridge'],
+     ("The Philosopher's Neutron", "賢者の中性子", "贤者之中子"),
+     ("Alchemy, at last: a star turned one thing into another.", "ついに錬金術が完成した。星の力が、物質を別の物質に変えた。", "炼金术终于完成：恒星之力把一种物质变成了另一种。")),
+    ('cold_as_ice', 'air_separation', f'{NS}:cryogenic_cold_box_drive', 'task', [f'{NS}:cryogenic_cold_box_drive'],
+     ("Cold as Ice", "氷点下の世界", "冰点之下"),
+     ("Air, cooled until it becomes a liquid.", "空気を、液体になるまで冷やす。", "把空气冷却到变成液体。")),
+    ('chain_reaction', 'nuclear', f'{NS}:reactor_fuel_channel', 'goal', [f'{NS}:reactor_fuel_channel'],
+     ("Chain Reaction", "連鎖反応", "链式反应"),
+     ("One neutron leads to the next. Keep a hand near AZ-5.", "中性子が次の中性子を呼ぶ。AZ-5から手を離さないこと。", "一个中子引出下一个。手别离开AZ-5。")),
+    ('uranium_fever', 'steel', f'{NS}:uranium_ore', 'task', [f'{NS}:uranium_ore'],
+     ("Uranium Fever", "ウラン・フィーバー", "铀矿热"),
+     ("A rock that glows in the dark. Handle with care.", "暗闇で光る石。取り扱いには注意を。", "会在黑暗中发光的石头。小心处理。")),
+    ('eternal_flame', 'gas_safety', f'{NS}:flare_tip', 'task', [f'{NS}:flare_tip'],
+     ("The Eternal Flame", "不夜城", "不夜城"),
+     ("What cannot be used is burned, and the night stays bright.", "使えないものは燃やす。夜も明るいまま。", "用不上的就烧掉，夜晚依旧明亮。")),
+    ('suit_up', 'gas_safety', f'{NS}:protective_coat', 'task', [f'{NS}:protective_coat', f'{NS}:protective_cap'],
+     ("Suit Up", "完全装備", "全副武装"),
+     ("Coat, cap and a mask: the look of someone who plans to go home.", "防護服、帽子、マスク。無事に帰る人の装い。", "防护服、帽子和面具：打算平安回家之人的装束。")),
+    ('pressure_cooker', 'pumps', f'{NS}:pressure_tank', 'task', [f'{NS}:pressure_tank'],
+     ("Pressure Cooker", "圧力鍋", "高压锅"),
+     ("Everything gets faster under pressure. So do accidents.", "圧力をかければ何でも速くなる。事故も。", "压力之下一切都会加快。事故也是。")),
+    ('first_breath', 'root', 'minecraft:potion', 'task', ['effect:create_refinery_n_reactors:toxic_gas'],
+     ("Not That Breath", "その息、ちょっと待って", "这口气先别吸"),
+     ("You inhaled something poisonous. A gas mask would have helped.", "毒のあるものを吸ってしまった。ガスマスクがあれば…。", "你吸入了有毒气体。要是有防毒面具就好了。")),
+    ('sour_experience', 'sulfuric_acid', 'minecraft:potion', 'task', ['effect:create_refinery_n_reactors:acid_burn'],
+     ("A Sour Experience", "酸っぱい経験", "酸涩的经历"),
+     ("Acid burns. Now you know.", "酸は焼ける。身をもって知った。", "酸会灼伤。现在你知道了。")),
+    ('seeing_stars', 'steam_tools', 'minecraft:potion', 'task', ['effect:create_refinery_n_reactors:dazed'],
+     ("Seeing Stars", "目から火花", "眼冒金星"),
+     ("Steam hits harder than it looks.", "蒸気は、見た目より強く殴る。", "蒸汽比看上去更有力。")),
 ]
 
 # Glyph widths in book pixels, with the gap after each: Minecraft's font draws most letters 6 wide, narrow ones less, and CJK 9.
@@ -304,6 +344,13 @@ def book():
             'minecraft:custom_name': json.dumps({'translate': f'book.{NS}.manual', 'italic': False})}
 
 
+def criterion(item):
+    """An item held, or (written effect:id) a status effect gained."""
+    if item.startswith('effect:'):
+        return {'trigger': 'minecraft:effects_changed', 'conditions': {'effects': {item[7:]: {}}}}
+    return {'trigger': 'minecraft:inventory_changed', 'conditions': {'items': [{'items': item}]}}
+
+
 def data():
     for page in PAGES:
         for index, text in enumerate(page):
@@ -326,9 +373,8 @@ def data():
             advancement['rewards'] = {'loot': [f'{NS}:gameplay/manual']}
         else:
             advancement['parent'] = f'{NS}:guide/{parent}'
-            advancement['criteria'] = {item.split(':')[1]: {'trigger': 'minecraft:inventory_changed', 'conditions': {'items': [{'items': item}]}}
-                                       for item in items}
-            advancement['requirements'] = [[item.split(':')[1] for item in items]]
+            advancement['criteria'] = {item.split(':')[-1]: criterion(item) for item in items}
+            advancement['requirements'] = [[item.split(':')[-1] for item in items]]
         write(folder / f'{name}.json', advancement)
 
 

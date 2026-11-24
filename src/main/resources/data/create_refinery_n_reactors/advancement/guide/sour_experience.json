@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:potion"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.sour_experience"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.sour_experience.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/sulfuric_acid",
+  "criteria": {
+    "acid_burn": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "create_refinery_n_reactors:acid_burn": {}
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "acid_burn"
+    ]
+  ]
+}

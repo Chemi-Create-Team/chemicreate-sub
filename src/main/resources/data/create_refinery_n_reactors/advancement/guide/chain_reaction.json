@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:reactor_fuel_channel"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.chain_reaction"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.chain_reaction.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/nuclear",
+  "criteria": {
+    "reactor_fuel_channel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:reactor_fuel_channel"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "reactor_fuel_channel"
+    ]
+  ]
+}

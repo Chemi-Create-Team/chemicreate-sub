@@ -1,0 +1,32 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:potion"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.seeing_stars"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.seeing_stars.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/steam_tools",
+  "criteria": {
+    "dazed": {
+      "trigger": "minecraft:effects_changed",
+      "conditions": {
+        "effects": {
+          "create_refinery_n_reactors:dazed": {}
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "dazed"
+    ]
+  ]
+}

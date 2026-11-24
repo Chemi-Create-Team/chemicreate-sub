@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:ammonium_nitrate"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.bread_from_air"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.bread_from_air.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/nitric_acid",
+  "criteria": {
+    "ammonium_nitrate": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:ammonium_nitrate"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ammonium_nitrate"
+    ]
+  ]
+}
