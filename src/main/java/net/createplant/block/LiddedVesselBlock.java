@@ -12,6 +12,7 @@ import com.simibubi.create.foundation.fluid.FluidHelper;
 import net.createmod.catnip.data.Iterate;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.registry.CETransport;
+import net.createplant.thermal.FluidState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -44,6 +45,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
+import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
 
 /**
  * A vessel up to 3x3 across and four blocks high. Its top has a hinged hatch 22 px wide in the middle, opened and closed by hand: closed, the vessel
@@ -169,8 +173,8 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     }
 
     /**
-     * With the hatch open, buckets and other fluid containers fill from and empty into ordinary storage like a basin, and other items go into the
-     * stirred process's charge.
+     * With the hatch open, filled containers can feed the stirred process. The basin-style storage interaction also handles containers and other
+     * items go into the solid charge.
      */
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -179,6 +183,21 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         if (owner == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
         if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == this || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (owner.stirred()) {
+            var fluid = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
+            if (!fluid.isEmpty()) {
+                if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+                var inlet = owner.port(owner.inlet());
+                if (inlet != null && !FluidState.gas(fluid)) {
+                    var transfer = FluidUtil.tryEmptyContainerAndStow(stack, inlet, new PlayerMainInvWrapper(player.getInventory()), Integer.MAX_VALUE, player, true);
+                    if (transfer.isSuccess()) {
+                        player.setItemInHand(hand, transfer.getResult());
+                        return ItemInteractionResult.CONSUME;
+                    }
+                }
+                return FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, owner) ? ItemInteractionResult.CONSUME : ItemInteractionResult.FAIL;
+            }
+        }
         if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, owner) || FluidHelper.tryFillItemFromBE(level, player, hand, stack, owner)) return ItemInteractionResult.sidedSuccess(level.isClientSide);
         var inventory = owner.itemPort();
         if (inventory == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;

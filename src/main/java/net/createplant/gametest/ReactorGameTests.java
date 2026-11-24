@@ -185,6 +185,42 @@ public class ReactorGameTests {
         h.succeed();
     }
 
+    @GameTest(template = "test_reactor", timeoutTicks = 180)
+    public static void superheatedVesselCrystallizesSulfatePouredThroughTheHatch(GameTestHelper h) {
+        var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
+        var pos=vessel.getBlockPos();
+        h.assertTrue(vessel.getTankInventory().fill(new FluidStack(Fluids.WATER,1000),EXECUTE)==1000,
+            "The vessel still has water in the storage compartment from before the stirrer was fitted");
+        var player=h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+        var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
+        var hatch=BASE.offset(1,1,1);
+        h.useBlock(hatch,player);
+        h.assertTrue(vessel.open(),"The player opened the hatch");
+        var sulfate=CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
+        var bucket=net.neoforged.neoforge.fluids.FluidUtil.getFilledBucket(new FluidStack(sulfate,1000));
+        h.assertTrue(!bucket.isEmpty(),"The recipe feed has a filled bucket");
+        player.setItemInHand(hand,bucket);
+        h.useBlock(hatch,player);
+        h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.EMPTY_ALLOY_BUCKET.get())
+            && vessel.itemPort().getStackInSlot(0).isEmpty() && in(vessel).getFluidInTank(0).is(sulfate)
+            && in(vessel).getFluidInTank(0).getAmount()==1000 && vessel.getTankInventory().getFluid().is(Fluids.WATER),
+            "The bucket returns empty and its liquid goes into the reaction feed: held "+player.getItemInHand(hand)
+                +", solid input "+vessel.itemPort().getStackInSlot(0)+", fluid input "+in(vessel).getFluidInTank(0));
+        player.setItemInHand(hand,ItemStack.EMPTY);
+        h.useBlock(hatch,player);
+        h.assertTrue(!vessel.open(),"The player closed the hatch for processing");
+        heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
+        ((BlazeBurnerBlockEntity)h.getLevel().getBlockEntity(pos.below())).isCreative=true;
+        driveStirrer(h,BASE.offset(1,-1,1));
+        h.succeedWhen(()->{
+            var output=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,pos,Direction.WEST);
+            var crystals=output.getStackInSlot(vessel.inputItemSlots());
+            h.assertTrue(crystals.is(CEMetals.ZIRCONIUM_SULFATE_HYDRATE.get()) && crystals.getCount()==2 && gasProducts(vessel)==800,
+                "The superheated, rotating vessel produces two hydrate crystals and 800 mB of steam: "+crystals+", "+vessel.status());
+            h.assertTrue(output.extractItem(vessel.inputItemSlots(),2,false).getCount()==2,"The crystals can be taken from the normal item outlet");
+        });
+    }
+
     private static boolean goggleItem(List<net.minecraft.network.chat.Component> lines,String role,ItemStack item) {
         return lines.stream().flatMap(line->line.getSiblings().stream()).anyMatch(label->label.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text
             && text.getKey().endsWith("."+role) && text.getArgs()[0].equals(item.getHoverName()) && text.getArgs()[1].equals(item.getCount()));
