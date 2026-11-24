@@ -1,6 +1,8 @@
 package net.createplant.gametest;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlock;
@@ -178,6 +180,103 @@ public class RbmkGameTests {
                     + reactor.fuelChannels() + "/" + reactor.controlChannels());
         }
         h.succeed();
+    }
+
+    @GameTest(template = "test_rbmk")
+    public static void minimumCircularCoreShowsEightSpacedInteriorRodsOnTheBoard(GameTestHelper h) {
+        BlockPos base = new BlockPos(2, 2, 2);
+        core(h, base.getX(), base.getY(), base.getZ(), 5, true);
+        var result = form(h, base.east(2).south(2));
+        Set<Integer> active = new HashSet<>(), controls = new HashSet<>();
+        for (BlockPos bottom : result.fuel()) {
+            var channel = (FuelChannelBlockEntity) h.getLevel().getBlockEntity(bottom);
+            for (int slot = 0; slot < FuelChannelBlockEntity.RODS; slot++) if (channel.active(slot)) {
+                int index = fineIndex(result, bottom, slot);
+                active.add(index);
+                if (channel.control(slot)) {
+                    controls.add(index);
+                    h.assertTrue(channel.installControlRod(slot), "The physical rod can be loaded into its preset slot");
+                } else h.assertTrue(channel.topItems().insertItem(slot, CENuclear.FUEL_ROD.toStack(), false).isEmpty(),
+                    "Every other active channel accepts fuel");
+            }
+        }
+        h.assertTrue(active.size() == 52 && controls.size() == 8, "The circular minimum has 44 fuel slots and 8 control slots");
+        for (int index : controls) {
+            int x = index % 10, z = index / 10;
+            h.assertTrue(active.containsAll(List.of(index-1, index+1, index-10, index+10)), "Each rod lies inside the active perimeter: " + index);
+            h.assertTrue(controls.contains(10*x + 9-z), "Each rod has a corresponding rod after a quarter-turn: " + index);
+            for (int other : controls) if (other != index)
+                h.assertTrue(Math.max(Math.abs(x - other % 10), Math.abs(z - other / 10)) >= 2, "Control rods do not touch, even diagonally");
+        }
+        for (int inner = 2; inner <= 7; inner++) {
+            int coordinate = inner;
+            h.assertTrue(controls.stream().anyMatch(i -> i % 10 == coordinate) && controls.stream().anyMatch(i -> i / 10 == coordinate),
+                "Every interior row and column carries at least one rod");
+        }
+
+        ((FuelChannelBlockEntity) h.getLevel().getBlockEntity(result.controller())).adopt(result, null);
+        BlockPos desk = new BlockPos(13, 2, 4);
+        controlRoom(h, desk, Direction.NORTH);
+        var console = (ReactorControlConsoleBlockEntity) h.getBlockEntity(desk);
+        BlockPos source = base.offset(2, 0, 2);
+        upperTubes(h, source);
+        BlockPos cap = source.above(ReactorPhysics.FUEL_ASSEMBLY_LENGTH);
+        h.setBlock(cap, CENuclear.TOP_CAP.get());
+        var link = displayLink(h, cap.above(), Direction.UP, h.absolutePos(new BlockPos(11, 6, 5)), "reactor_coolant_temperature");
+        h.assertTrue(link.getSourcePosition().equals(h.absolutePos(cap)) && MachineReadings.reactorController(h.getBlockEntity(cap)) != null,
+            "The display link has the centre cap as its formed source: " + link.getSourcePosition() + " vs " + h.absolutePos(cap));
+        console.stationChanged();
+        Set<Integer> displayed = new HashSet<>();
+        for (int point : console.rodMap()) displayed.add(((255 - (point >>> 8 & 255)) * 10 / 256) * 10 + (point & 255) * 10 / 256);
+        h.assertTrue(console.linked() && displayed.equals(controls) && console.rodMap().length == 8 && console.fuelMap().length == 44,
+            "The physical display samples the new layout: " + console.linkStatus() + ", " + displayed + " vs " + controls
+                + ", fuel lamps=" + console.fuelMap().length);
+        h.succeed();
+    }
+
+    @GameTest(template = "test_rbmk")
+    public static void minimumCircularLegacyLayoutRefreshesOnlyWhenEmptyAndUnmodified(GameTestHelper h) {
+        BlockPos base = new BlockPos(3, 3, 3);
+        core(h, base.getX(), base.getY(), base.getZ(), 5, true);
+        var result = form(h, base.east(2).south(2));
+        var lead = (FuelChannelBlockEntity) h.getLevel().getBlockEntity(result.controller());
+        var moved = (FuelChannelBlockEntity) h.getBlockEntity(base.offset(2, 0, 1));
+        restoreLegacyMinimumLayout(h, result);
+        h.assertTrue(!moved.control(0), "The old empty layout uses this new preset position for fuel");
+        lead.adopt(result, null);
+        h.assertTrue(moved.control(0) && lead.core().controlChannels() == 8, "An empty old preset updates as a whole when the core forms");
+
+        restoreLegacyMinimumLayout(h, result);
+        h.assertTrue(moved.topItems().insertItem(0, CENuclear.FUEL_ROD.toStack(), false).isEmpty(), "Prepare an occupied old-layout slot");
+        lead.adopt(result, null);
+        h.assertTrue(!moved.control(0) && moved.topItems().getStackInSlot(0).is(CENuclear.FUEL_ROD.get()) && lead.core().controlChannels() == 8,
+            "An occupied old layout keeps every saved position and item");
+
+        restoreLegacyMinimumLayout(h, result);
+        h.assertTrue(moved.selectChannel(1, FuelChannelBlockEntity.CONTROL), "Prepare a player-edited but unoccupied layout");
+        lead.adopt(result, null);
+        h.assertTrue(!moved.control(0) && moved.control(1) && lead.core().controlChannels() == 9, "An empty custom layout retains the player's choice");
+        h.succeed();
+    }
+
+    private static int fineIndex(ReactorCoreStructure.Result result, BlockPos bottom, int slot) {
+        int x = 2*(bottom.getX() - result.box().minX()) + slot % 2;
+        int z = 2*(bottom.getZ() - result.box().minZ()) + slot / 2;
+        return z*10 + x;
+    }
+
+    private static void restoreLegacyMinimumLayout(GameTestHelper h, ReactorCoreStructure.Result result) {
+        Set<Integer> oldControls = Set.of(14, 41, 44, 45, 47, 54, 74, 77);
+        for (BlockPos bottom : result.fuel()) {
+            var channel = (FuelChannelBlockEntity) h.getLevel().getBlockEntity(bottom);
+            var saved = channel.saveWithoutMetadata(h.getLevel().registryAccess());
+            byte[] types = new byte[FuelChannelBlockEntity.RODS];
+            for (int slot = 0; slot < types.length; slot++)
+                if (oldControls.contains(fineIndex(result, bottom, slot))) types[slot] = FuelChannelBlockEntity.CONTROL;
+            saved.putByteArray("ChannelTypes", types);
+            saved.putByteArray("Holes", new byte[types.length]);
+            channel.loadWithComponents(saved, h.getLevel().registryAccess());
+        }
     }
 
     @GameTest(template = "test_rbmk")

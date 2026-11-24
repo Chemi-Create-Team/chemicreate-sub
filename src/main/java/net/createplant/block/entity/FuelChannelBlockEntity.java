@@ -246,8 +246,14 @@ public class FuelChannelBlockEntity extends SmartBlockEntity implements IHaveGog
         assemblyHeight = height;
     }
 
-    /** Applies the fine channel circle and, once for a new bundle, its default fuel/control layout. */
-    public void initializeLayout(int mask, int controls) {
+    public boolean matchesEmptyLayout(int mask, int controls) {
+        if (!layoutInitialized || activeMask != mask || hasAssemblyItems()) return false;
+        for (int i = 0; i < RODS; i++) if (controlDirect(i) != ((controls & 1 << i) != 0)) return false;
+        return true;
+    }
+
+    /** Applies the fine channel circle and initializes the control layout for new or upgradable empty bundles. */
+    public void initializeLayout(int mask, int controls, boolean refreshEmptyLayout) {
         var column = bottom();
         if (column == null || column != this) return;
         int removed = activeMask & ~mask;
@@ -263,7 +269,7 @@ public class FuelChannelBlockEntity extends SmartBlockEntity implements IHaveGog
         }
         activeMask = mask;
         if (coreHeight > 0 && coolant > coolantCapacity() && level != null && !level.isClientSide()) vent(coolant - coolantCapacity());
-        if (!layoutInitialized) {
+        if (!layoutInitialized || refreshEmptyLayout) {
             for (int i = 0; i < RODS; i++) channelTypes[i] = (controls & 1 << i) != 0 ? CONTROL : FUEL;
             layoutInitialized = true;
         }

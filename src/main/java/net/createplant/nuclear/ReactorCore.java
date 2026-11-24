@@ -459,11 +459,14 @@ public final class ReactorCore {
         var rodWeights = new java.util.ArrayList<Double>();
         var depths = new java.util.ArrayList<Float>();
         var wear = new java.util.ArrayList<Float>();
+        boolean refreshEmptyLayout = result.circular() && width == ReactorCoreStructure.MIN_WIDTH
+            && result.fuel().stream().allMatch(pos -> level.getBlockEntity(pos) instanceof FuelChannelBlockEntity channel
+                && channel.matchesEmptyLayout(ReactorCoreStructure.channelMask(result, pos), ReactorCoreStructure.legacyControlMask(result, pos)));
         for (int c = 0; c < fuel; c++) {
             BlockPos pos = result.fuel().get(c);
             if (level.getBlockEntity(pos) instanceof FuelChannelBlockEntity channel) {
                 channel.joinCore(owner.getBlockPos(), height);
-                channel.initializeLayout(ReactorCoreStructure.channelMask(result, pos), ReactorCoreStructure.defaultControlMask(result, pos));
+                channel.initializeLayout(ReactorCoreStructure.channelMask(result, pos), ReactorCoreStructure.defaultControlMask(result, pos), refreshEmptyLayout);
             }
             columnX[c] = (pos.getX() + 0.5 - (box.minX() + box.maxX() + 1) / 2d) / (width / 2d);
             columnZ[c] = (pos.getZ() + 0.5 - (box.minZ() + box.maxZ() + 1) / 2d) / (depth / 2d);

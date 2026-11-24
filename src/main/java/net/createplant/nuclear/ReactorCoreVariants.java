@@ -29,7 +29,7 @@ public final class ReactorCoreVariants {
                 int sx = slot % ReactorPhysics.CHANNEL_GRID, sz = slot / ReactorPhysics.CHANNEL_GRID;
                 if (!activeChannel(bx, bz, sx, sz, size)) continue;
                 active++;
-                if (defaultControlChannel(bx, bz, slot, size)) controls++;
+                if (defaultControlChannel(bx, bz, slot, size, true)) controls++;
             }
         }
         return new Variant(size, outerDiameter(size), bundles, active, active - controls, controls);
@@ -45,10 +45,20 @@ public final class ReactorCoreVariants {
         return square <= diameter * diameter;
     }
 
-    static boolean defaultControlChannel(int bx, int bz, int slot, int size) {
+    static boolean defaultControlChannel(int bx, int bz, int slot, int size, boolean circular) {
         int fine = size * ReactorPhysics.CHANNEL_GRID, c0 = fine / 2 - 1, c1 = fine / 2;
         int x = bx * ReactorPhysics.CHANNEL_GRID + slot % ReactorPhysics.CHANNEL_GRID;
         int z = bz * ReactorPhysics.CHANNEL_GRID + slot / ReactorPhysics.CHANNEL_GRID;
+        if (circular && size == MIN_WIDTH) {
+            // Eight interior channels in quarter-turn symmetry, with no shared edges or corners.
+            return switch (z) {
+                case 2 -> x == 4 || x == 6;
+                case 3, 5 -> x == 2;
+                case 4, 6 -> x == 7;
+                case 7 -> x == 3 || x == 5;
+                default -> false;
+            };
+        }
         return x % 3 == 1 && z % 3 == 1 || x == c1 && z == c0 || x == c0 && z == c1;
     }
 }

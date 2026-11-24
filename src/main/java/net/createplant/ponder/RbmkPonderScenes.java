@@ -54,8 +54,9 @@ public final class RbmkPonderScenes {
 
         scene.world().showSection(util.select().position(0, 6, CENTRE), Direction.EAST);
         scene.world().setKineticSpeed(util.select().fromTo(0, 6, CENTRE, 1, 6, CENTRE), 32);
-        scene.overlay().showControls(util.vector().topOf(new BlockPos(CENTRE, 12, CENTRE)), Pointing.DOWN, 60).rightClick().withItem(CENuclear.CONTROL_ROD.toStack());
-        text(scene, util, COMPACT, new BlockPos(CENTRE, 10, CENTRE), "rods");
+        BlockPos controlCap = new BlockPos(CENTRE + 1, 12, CENTRE - 1);
+        scene.overlay().showControls(util.vector().topOf(controlCap).add(-.25, 0, -.25), Pointing.DOWN, 60).rightClick().withItem(CENuclear.CONTROL_ROD.toStack());
+        text(scene, util, COMPACT, controlCap, "rods");
 
         PonderText.build(scene, util, CORE_MAX, 9, CORE_MIN, VAULT_SIZE - 1, 9, CORE_MIN, Direction.WEST);
         scene.overlay().showOutline(PonderPalette.INPUT, "compact_feed", util.select().fromTo(CENTRE, 1, CENTRE - 1, CENTRE, 1, CENTRE), 120);
