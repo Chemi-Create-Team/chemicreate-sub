@@ -975,24 +975,24 @@
     "zh_cn": "反应堆与燃料池间的燃料转运"
   },
   "crane_refuelling.layout": {
-    "en_us": "Build a reactor and an open fuel pool beside each other, under the same pair of rails. The rail ends may rest on building columns instead of girder legs.",
-    "ja_jp": "原子炉と開放型燃料プールを隣接させ、共通の走行レールで覆います。レールの両端は、ガーダーの脚の代わりに建屋の柱に載せることもできます。",
-    "zh_cn": "将反应堆和敞口燃料池并排建在同一对轨道下。轨道两端也可以放在建筑立柱上，代替金属梁支腿。"
+    "en_us": "Place the reactor and open pool under the same rails. Set the rails exactly 15 blocks above both the reactor caps and the top of the pool walls.",
+    "ja_jp": "炉と開放型プールを共通レールの下に置きます。レールは炉のキャップとプール壁上端の両方から15マス上です。",
+    "zh_cn": "将反应堆和敞口燃料池建在同一对轨道下。轨道应高于炉顶盖和池壁顶部各15格。"
   },
   "crane_refuelling.prepare": {
-    "en_us": "Form and fill the fuel pool before moving fuel with the crane. Keep the pool water level above the rods.",
-    "ja_jp": "燃料プールを組み立てて給水してから、クレーンで燃料を運びます。燃料棒を覆う水位を保ちます。",
-    "zh_cn": "先组装并注满燃料池，再用起重机搬运燃料。保持水位覆盖燃料棒。"
+    "en_us": "Supply at least 22,000 mB of water per rack and keep it below 90 °C. Insert compatible fresh rods through the bottom and leave an empty rack slot for spent fuel.",
+    "ja_jp": "ラック1枚につき水22,000 mB以上、水温90 ℃未満にします。下面から炉に合った新燃料棒を入れ、使用済み燃料の空き枠を残します。",
+    "zh_cn": "每个格架至少供水22,000 mB，水温低于90 ℃。从底部送入匹配的新燃料棒，并给乏燃料留一个空位。"
   },
   "crane_refuelling.take": {
-    "en_us": "With rotation and redstone, reactor service lifts a spent rod from a fuel channel and returns it to an empty rack place in the pool.",
-    "ja_jp": "回転とレッドストーン信号で原子炉保守を開始します。燃料列から使用済み燃料を1本ずつ引き抜き、プールの空きラックへ戻します。",
-    "zh_cn": "供给旋转动力和红石信号后，维护模式会从燃料通道抽出乏燃料棒，送入燃料池空格架位。"
+    "en_us": "Power the drive and turn on its redstone signal. With a linked console, set the crane button to AUTO. It finds and lifts a spent rod, then puts it in an empty rack slot.",
+    "ja_jp": "駆動部に回転とレッドストーンを入れます。制御盤と接続中はクレーンを「自動」にします。使用済み燃料棒を探し、プールの空き枠へ運びます。",
+    "zh_cn": "为驱动器提供旋转动力并接通红石。连接控制台时，将起重机切换到自动。它会取出乏燃料棒并放进池内空位。"
   },
   "crane_refuelling.load": {
-    "en_us": "The crane takes a fresh rod from the pool and loads the selected cap position.",
-    "ja_jp": "プールの新しい燃料棒を取り、選ばれたキャップの位置へ装荷します。",
-    "zh_cn": "起重机从池中取新燃料棒，装入选定顶盖位置。"
+    "en_us": "The crane picks up a compatible fresh rod and loads an empty fuel position. Check the operation and grapple contents with goggles at the drive.",
+    "ja_jp": "クレーンが対応する新燃料棒を取り出し、炉の空き区画へ装荷します。作業と吊り具の中身は駆動部のゴーグル表示で確認できます。",
+    "zh_cn": "起重机取出匹配的新燃料棒并装入空燃料通道。用护目镜查看驱动器的作业状态和抓具内容。"
   },
   "crane_refuelling.wait": {
     "en_us": "A full or unready pool pauses transfer with the rod retained. Restore its structure, water level and receiving space to resume.",

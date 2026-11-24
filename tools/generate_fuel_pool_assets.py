@@ -45,7 +45,7 @@ def models():
 TEXT = {
  'block.create_refinery_n_reactors.fuel_pool': ('Fuel Pool Rack', '燃料プールラック'),
  'fuel_pool.create_refinery_n_reactors.rods': ('Fuel rods: %s fresh, %s spent / %s', '燃料棒 新%s・使用済%s／%s本'),
- 'fuel_pool.create_refinery_n_reactors.water': ('Water %s / %s mB; %s °C', '冷却水 %s／%s mB・%s ℃'),
+ 'fuel_pool.create_refinery_n_reactors.water': ('Water %s / %s mB | %s', '水：%s / %s mB｜%s'),
  'fuel_pool.create_refinery_n_reactors.fault': ('Check structure at %s, %s, %s', '構造を確認：%s, %s, %s'),
  'fuel_pool.create_refinery_n_reactors.status.size': ('Arrange 2–9 by 2–9 rack tiles', 'ラックを縦横2～9枚の長方形に並べてください'),
  'fuel_pool.create_refinery_n_reactors.status.wall': ('Enclose with steel blocks, 23 blocks tall', '鋼鉄ブロックで高さ23の壁を囲んでください'),
@@ -59,6 +59,7 @@ TEXT = {
  'display.create_refinery_n_reactors.pool_spent': ('Pool: spent rods', '燃料プール：使用済み燃料棒'),
  'display.create_refinery_n_reactors.pool_cells': ('Pool: rack tiles', '燃料プール：ラック枚数'),
  'display.create_refinery_n_reactors.pool_heat': ('Pool: residual heat (W)', '燃料プール：残留熱（W）'),
+ 'display.create_refinery_n_reactors.pool_temperature': ('Pool water temperature (°C)', '燃料プール：水温（℃）'),
  'create_refinery_n_reactors.ponder.fuel_pool.header': ('An open spent fuel pool', '開放型の使用済み燃料プール'),
  'create_refinery_n_reactors.ponder.shared.fuel_pool.title': ('An open spent fuel pool', '開放型の使用済み燃料プール'),
  'create_refinery_n_reactors.ponder.shared.fuel_pool.structure': ('Lay 2–9 by 2–9 rack tiles. Enclose them in steel-block walls, 23 blocks high from the rack floor, leaving the 22 blocks above each rack empty.', 'ラックを縦横2～9枚の長方形に並べ、床と同じ高さから23段の鋼鉄ブロックで囲みます。ラックの上22ブロックは空けてください。'),

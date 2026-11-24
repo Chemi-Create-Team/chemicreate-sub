@@ -17,6 +17,7 @@ import net.createplant.nuclear.ReactorConsoleStructure;
 import net.createplant.nuclear.ReactorPhysics;
 import net.createplant.registry.CECrane;
 import net.createplant.registry.CENuclear;
+import net.createplant.registry.CERadiation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -184,6 +185,17 @@ public class CraneGameTests {
                 ((FuelChannelBlockEntity) h.getBlockEntity(CORE)).burn(FuelChannelBlockEntity.ROD_JOULES);
                 h.setBlock(drive.above(), Blocks.REDSTONE_BLOCK);
             })
+            .thenWaitUntil(() -> h.assertTrue(((CraneDriveBlockEntity) h.getBlockEntity(drive)).carried() == 2, "The crane lifts the spent fuel"))
+            .thenExecute(() -> {
+                var crane = (CraneDriveBlockEntity) h.getBlockEntity(drive);
+                var saved = crane.saveWithoutMetadata(h.getLevel().registryAccess());
+                var spent = ItemStack.parseOptional(h.getLevel().registryAccess(), saved.getCompound("CarriedSpentFuel"));
+                h.assertTrue(spent.is(CENuclear.SPENT_FUEL_ROD.get()) && spent.has(CERadiation.MATERIAL.get()), "The grapple saves the extracted rod's material data");
+                h.setBlock(drive.west(), Blocks.AIR);
+                crane.loadWithComponents(saved, h.getLevel().registryAccess());
+                h.setBlock(drive.west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
+                h.runAfterDelay(2, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(drive.west())).generatedSpeed.setValue(128));
+            })
             .thenWaitUntil(() -> {
                 var crane = (CraneDriveBlockEntity) h.getBlockEntity(drive);
                 var column = (FuelChannelBlockEntity) h.getBlockEntity(CORE);
@@ -192,7 +204,31 @@ public class CraneGameTests {
                     "Crane moves full 21 m assemblies between the 2 x 2 cap and deep pool without changing mast depth: " + crane.status());
                 h.assertTrue(Math.abs(crane.depth() - CraneDriveBlockEntity.SERVICE_MAST_DEPTH) < 1e-6,
                     "The 10 + 5 handling mast stays at its fixed service depth");
+                var rack = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(POOL), Direction.DOWN);
+                h.assertTrue(rack.getStackInSlot(2).has(CERadiation.MATERIAL.get()), "The pool receives the material data after crane save and reload");
             })
+            .thenSucceed();
+    }
+
+    @GameTest(template = "test_rbmk", batch = "crane_transfer", timeoutTicks = 1000)
+    public static void craneNeverLiftsFuelOutsideItsRailRange(GameTestHelper h) {
+        reactor(h);
+        pool(h);
+        BlockPos drive = crane(h, 5, 15, 3, 12, SERVICE_RAIL_Y, false);
+        var crane = (CraneDriveBlockEntity) h.getBlockEntity(drive);
+        var column = (FuelChannelBlockEntity) h.getBlockEntity(CORE);
+        var rack = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(POOL), Direction.DOWN);
+        h.startSequence()
+            .thenWaitUntil(() -> h.assertTrue(crane.structure() != null, "The narrow crane forms"))
+            .thenExecute(() -> {
+                var cap = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(CAP), Direction.UP);
+                h.assertTrue(cap.insertItem(2, CENuclear.FUEL_ROD.toStack(), false).isEmpty(), "The outer hole holds the spent-test rod");
+                column.burn(FuelChannelBlockEntity.ROD_JOULES);
+                h.assertTrue(rack.insertItem(0, CENuclear.FUEL_ROD.toStack(), false).isEmpty(), "Fresh fuel is ready in the pool");
+                h.setBlock(drive.above(), Blocks.REDSTONE_BLOCK);
+            })
+            .thenWaitUntil(() -> h.assertTrue(column.fresh() == 1 && column.spent() == 1 && crane.carried() == 0 && crane.status().equals("outside_range"),
+                "Only the reachable hole is served; the outer spent rod stays in its channel: " + crane.status()))
             .thenSucceed();
     }
 

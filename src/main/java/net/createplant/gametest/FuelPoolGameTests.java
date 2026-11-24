@@ -6,6 +6,7 @@ import net.createplant.block.entity.FuelPoolBlockEntity;
 import net.createplant.nuclear.FuelPoolStructure;
 import net.createplant.registry.CEMetals;
 import net.createplant.registry.CENuclear;
+import net.createplant.thermal.FluidState;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -118,8 +119,9 @@ public final class FuelPoolGameTests {
     public static void mixedWaterDrainsAtItsObservedTemperatureAcrossRackBoundaries(GameTestHelper h) {
         build(h, BASE, 2, 2);
         var water = water(h, BASE);
-        water.fill(FluidThermal.at(new FluidStack(Fluids.WATER, 32000), 293.15), EXECUTE);
-        water.fill(FluidThermal.at(new FluidStack(Fluids.WATER, 32000), 333.15), EXECUTE);
+        water.fill(new FluidStack(Fluids.WATER, 32000), EXECUTE);
+        h.assertTrue(water.fill(FluidState.with(new FluidStack(Fluids.WATER, 32000), 9, 4), EXECUTE) == 32000,
+            "Cold and warm water must mix through the same supply port");
         var observed = water.getFluidInTank(0);
         h.assertTrue(observed.is(Fluids.WATER), "The open basin mixes both water streams by their heat capacity");
         h.assertTrue(FluidStack.isSameFluidSameComponents(observed, water.drain(1, SIMULATE))
@@ -173,16 +175,35 @@ public final class FuelPoolGameTests {
     }
 
     @GameTest(template = "test_rbmk", timeoutTicks = 100)
-    public static void residualHeatIsConservedAndHotWaterStopsLoading(GameTestHelper h) {
-        build(h,BASE,2,2);var water=water(h,BASE);water.fill(new FluidStack(Fluids.WATER,POOL_CAPACITY),EXECUTE);rack(h,BASE).set(0,FuelPoolBlockEntity.SPENT);
+    public static void residualHeatWarmsColdWaterWithoutRemovingIt(GameTestHelper h) {
+        build(h,BASE,2,2);var water=water(h,BASE);var cold=new FluidStack(Fluids.WATER,POOL_CAPACITY);
+        double inletKelvin=FluidThermal.kelvin(cold);
+        water.fill(cold,EXECUTE);rack(h,BASE).set(0,FuelPoolBlockEntity.SPENT);
         h.runAfterDelay(45,()->{
-            double budget=0;for(int x=0;x<2;x++)for(int z=0;z<2;z++)budget+=h.getBlockEntity(BASE.offset(x,0,z)).saveWithoutMetadata(h.getLevel().registryAccess()).getDouble("PoolBoiling");
-            int held=water.getFluidInTank(0).getAmount();double paid=budget+(POOL_CAPACITY-held)*2260d;
-            h.assertTrue(paid>=1999 && paid<=3001 && held==POOL_CAPACITY,"Finite residual heat is retained as rounding credit before the first evaporation: "+paid+" / "+held);
+            double paid=0;for(int x=0;x<2;x++)for(int z=0;z<2;z++) {
+                var tag=h.getBlockEntity(BASE.offset(x,0,z)).saveWithoutMetadata(h.getLevel().registryAccess());
+                paid+=(tag.getCompound("PoolWater").getDouble("Kelvin")-inletKelvin)*FuelPoolBlockEntity.WATER_PER_CELL*4.18;
+            }
+            int held=water.getFluidInTank(0).getAmount();
+            h.assertTrue(paid>=1999 && paid<=3001 && held==POOL_CAPACITY,"Residual heat warms the pool before it boils away water: "+paid+" J / "+held+" mB");
             water.drain(POOL_CAPACITY,EXECUTE);h.assertTrue(!rack(h,BASE).ready(),"Dry racks stop loading");h.succeed();
         });
     }
 
+    @GameTest(template = "test_rbmk")
+    public static void hotPoolRejectsFuelUntilCoolWaterIsSupplied(GameTestHelper h) {
+        build(h, BASE, 2, 2);
+        var coolant = water(h, BASE);
+        var hot = FluidState.with(new FluidStack(Fluids.WATER, POOL_CAPACITY), 9, 4);
+        var items = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(BASE), Direction.DOWN);
+        var fresh = CENuclear.FUEL_ROD.toStack();
+        h.assertTrue(coolant.fill(hot, EXECUTE) == POOL_CAPACITY && !rack(h, BASE).ready()
+            && !items.insertItem(0, fresh, true).isEmpty(), "93.75 °C water is stored but prevents fuel handling");
+        coolant.drain(POOL_CAPACITY / 2, EXECUTE);
+        h.assertTrue(coolant.fill(new FluidStack(Fluids.WATER, POOL_CAPACITY / 2), EXECUTE) == POOL_CAPACITY / 2
+            && rack(h, BASE).ready() && items.insertItem(0, fresh, false).isEmpty(), "Partial cold refill makes the full pool ready again");
+        h.succeed();
+    }
     @GameTest(template = "test_rbmk")
     public static void destroyingARackDropsRodsOnceAndRetainsOtherTilesWater(GameTestHelper h) {
         build(h, BASE, 2, 2);
@@ -206,7 +227,13 @@ public final class FuelPoolGameTests {
     public static void boilingConsumesFiniteWaterInsteadOfCreatingSteamItems(GameTestHelper h) {
         build(h, BASE, 2, 2);
         var water = water(h, BASE);
-        water.fill(FluidThermal.at(new FluidStack(Fluids.WATER, POOL_CAPACITY), 373.14), EXECUTE);
+        water.fill(FluidState.with(new FluidStack(Fluids.WATER, POOL_CAPACITY), 9, 4), EXECUTE);
+        for (int x=0; x<2; x++) for (int z=0; z<2; z++) {
+            var rack = rack(h, BASE.offset(x, 0, z));
+            var saved = rack.saveWithoutMetadata(h.getLevel().registryAccess());
+            saved.getCompound("PoolWater").putDouble("Kelvin", 373.14);
+            rack.loadWithComponents(saved, h.getLevel().registryAccess());
+        }
         for (int i = 0; i < 4; i++) rack(h, BASE).set(i, FuelPoolBlockEntity.SPENT);
         // The 23,000 mB rack takes one more lazy-tick interval than the former deeper pool to cross the boiling threshold.
         h.runAfterDelay(81, () -> {

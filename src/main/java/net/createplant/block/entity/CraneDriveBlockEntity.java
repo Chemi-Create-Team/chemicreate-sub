@@ -85,6 +85,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     private int carried;
     private int carriedLength = ROD_LENGTH;
     private ReactorFuel carriedFuelKind = ReactorFuel.URANIUM;
+    private ItemStack carriedSpent = ItemStack.EMPTY;
     private int fusionComponent;
     private boolean lowering;
     /** How far the rod travels between the grapple and its place: from the cap to the core bottom, or into the pool. */
@@ -326,7 +327,14 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             }
         }
         working = true;
-        status(task.job() == Job.ROD ? "renewing" : task.job() == Job.FUSION ? "fusion_service" : "refuelling");
+        status(switch (task.job()) {
+            case EXTRACT -> "refuel_extract";
+            case PICK -> "refuel_pick";
+            case INSERT -> "refuel_insert";
+            case DROP -> "refuel_drop";
+            case ROD -> "renewing";
+            case FUSION -> "fusion_service";
+        });
         if (--remaining > 0) return;
         if (perform(task)) {
             task = null;
@@ -358,6 +366,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
 
     private void carry(int next, boolean down) {
         carried = next;
+        if (next != SPENT) carriedSpent = ItemStack.EMPTY;
         lowering = down;
         changed();
     }
@@ -509,12 +518,13 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             Task drop = poolTask(pools, Job.DROP, FuelPoolBlockEntity.EMPTY, tops);
             if (drop != null) return drop;
             if (!allPools.isEmpty()) return waitFor(poolWaitReason(allPools, pools));
-            if (!ItemHandlerHelper.insertItem(store, new ItemStack(CENuclear.SPENT_FUEL_ROD.get()), false).isEmpty()) {
+            if (!ItemHandlerHelper.insertItem(store, carriedItem(), false).isEmpty()) {
                 return waitFor("output");
             }
             carry(NONE, false);
         }
         int spent = -1, empty = -1, spentSlot = 0, emptySlot = 0;
+        boolean spentOutsideRange = false;
         ItemStack freshFuel = carried == FRESH ? carriedFuel() : new ItemStack(CENuclear.FUEL_ROD.get());
         for (int i = 0; i < tops.size(); i++) {
             int c = (fuelCursor + i) % tops.size();
@@ -522,6 +532,10 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             if (column == null) continue;
             for (int slot = 0; slot < column.getSlots(); slot++) {
                 var stack = column.getStackInSlot(slot);
+                if (!reachableSlot(tops.get(c), slot)) {
+                    spentOutsideRange |= stack.is(CENuclear.SPENT_FUEL_ROD.get());
+                    continue;
+                }
                 if (carried != FRESH && spent < 0 && stack.is(CENuclear.SPENT_FUEL_ROD.get())) { spent = c; spentSlot = slot; }
                 if (empty < 0 && stack.isEmpty() && column.isItemValid(slot, freshFuel)) { empty = c; emptySlot = slot; }
             }
@@ -538,14 +552,15 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             carry(NONE, false);
             return null;
         }
-        boolean room = pools.stream().anyMatch(p -> pool(p).find(FuelPoolBlockEntity.EMPTY) >= 0)
+        boolean room = poolTask(pools, Job.DROP, FuelPoolBlockEntity.EMPTY, tops) != null
             || allPools.isEmpty() && ItemHandlerHelper.insertItem(store, new ItemStack(CENuclear.SPENT_FUEL_ROD.get()), true).isEmpty();
         if (spent >= 0 && room) return holeTask(Job.EXTRACT, tops.get(fuelCursor = spent), spentSlot);
         if (empty < 0) return spent >= 0 ? waitFor(allPools.isEmpty() ? "output" : poolWaitReason(allPools, pools))
-            : waitFor(tops.isEmpty() ? (clearance ? "clearance" : "reactor") : "waiting");
+            : waitFor(tops.isEmpty() ? (clearance ? "clearance" : "reactor") : spentOutsideRange ? "outside_range" : "waiting");
         Task fetch = poolTask(pools, Job.PICK, FuelPoolBlockEntity.FRESH, tops);
         if (fetch != null) return fetch;
-        if (!allPools.isEmpty()) return waitFor(pools.isEmpty() ? poolWaitReason(allPools, pools) : "pool_fuel");
+        if (!allPools.isEmpty()) return waitFor(pools.isEmpty() || spent >= 0 && !room ? poolWaitReason(allPools, pools)
+            : spentOutsideRange ? "outside_range" : "pool_fuel");
         for (int slot = 0; slot < SLOTS; slot++)
             if (CENuclear.isFuel(store.getStackInSlot(slot)) && acceptsFuel(tops, store.getStackInSlot(slot))) {
                 carriedFuelKind = ReactorFuel.of(store.getStackInSlot(slot));
@@ -554,7 +569,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
                 carry(FRESH, false);
                 return null;
             }
-        return null;
+        return waitFor(spent >= 0 ? "output" : spentOutsideRange ? "outside_range" : "supply_fuel");
     }
 
     private String poolWaitReason(List<BlockPos> allPools, List<BlockPos> pools) {
@@ -570,7 +585,8 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             var pool = pool(pos);
             if (pool == null || !pool.ready() || !serviceAligned(pool.surface())) continue;
             for (int slot = 0; slot < FuelChannelBlockEntity.RODS; slot++)
-                if (pool.slot(slot) == state && (job != Job.PICK || acceptsFuel(tops, new ItemStack(pool.fuel(slot).item())))) return over(job, pos, slot);
+                if (pool.slot(slot) == state && reachableSlot(pos, slot)
+                    && (job != Job.PICK || acceptsFuel(tops, new ItemStack(pool.fuel(slot).item())))) return over(job, pos, slot);
         }
         return null;
     }
@@ -580,7 +596,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             var column = level.getCapability(Capabilities.ItemHandler.BLOCK, top, Direction.UP);
             if (column == null) continue;
             for (int slot = 0; slot < column.getSlots(); slot++)
-                if (column.getStackInSlot(slot).isEmpty() && column.isItemValid(slot, fuel)) return true;
+                if (reachableSlot(top, slot) && column.getStackInSlot(slot).isEmpty() && column.isItemValid(slot, fuel)) return true;
         }
         return false;
     }
@@ -588,10 +604,18 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     /** Over one of the four channel positions in an operating-floor cap. */
     private Task holeTask(Job job, BlockPos top, int slot) { return over(job, top, slot); }
 
+    private double slotOffset(int slot, Direction axis) {
+        float[] at = FuelChannelBlockEntity.HOLES[slot];
+        return at[0] * axis.getStepX() + at[1] * axis.getStepZ();
+    }
+
+    private boolean reachableSlot(BlockPos pos, int slot) {
+        return reachable(u(pos) + slotOffset(slot, structure.along()), v(pos) + slotOffset(slot, structure.across()));
+    }
+
     /** Over the centre of place {@code slot} of a column or pool cell, with the handling mast at its fixed height. */
     private Task over(Job job, BlockPos pos, int slot) {
-        float[] at = FuelChannelBlockEntity.HOLES[slot];
-        double du = at[0] * structure.along().getStepX() + at[1] * structure.along().getStepZ(), dv = at[0] * structure.across().getStepX() + at[1] * structure.across().getStepZ();
+        double du = slotOffset(slot, structure.along()), dv = slotOffset(slot, structure.across());
         return new Task(job, u(pos) + du, v(pos) + dv, SERVICE_MAST_DEPTH, SERVICE_MAST_DEPTH, FUEL_TICKS, pos, slot);
     }
 
@@ -618,8 +642,9 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         switch (task.job()) {
             case EXTRACT -> {
                 var column = level.getCapability(Capabilities.ItemHandler.BLOCK, task.target(), Direction.UP);
-                if (column == null || !column.extractItem(task.index(), 1, true).is(CENuclear.SPENT_FUEL_ROD.get())
-                    || column.extractItem(task.index(), 1, false).isEmpty()) return false;
+                if (column == null || !column.extractItem(task.index(), 1, true).is(CENuclear.SPENT_FUEL_ROD.get())) return false;
+                carriedSpent = column.extractItem(task.index(), 1, false);
+                if (carriedSpent.isEmpty()) return false;
                 carry(SPENT, false);
             }
             case PICK -> {
@@ -707,14 +732,15 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
     }
     private ItemStack carriedFuel() { return new ItemStack(carriedFuelKind.item()); }
 
+    private ItemStack carriedItem() {
+        return carried == FRESH ? carriedFuel() : carriedSpent.isEmpty() ? CENuclear.SPENT_FUEL_ROD.toStack() : carriedSpent.copy();
+    }
+
     /** The rod in the grapple goes into its place in the pool; if the place has been filled meanwhile it stays in the grapple. */
     private boolean drop(BlockPos pos, int slot) {
-        var pool = pool(pos);
-        if (pool != null && pool.ready() && pool.slot(slot) == FuelPoolBlockEntity.EMPTY) {
-            pool.setFuel(slot, carried == FRESH ? carriedFuelKind : ReactorFuel.URANIUM);
-            pool.set(slot, carried == SPENT ? FuelPoolBlockEntity.SPENT : FuelPoolBlockEntity.FRESH);
-            carry(NONE, false);
-        } else carry(carried, false);
+        var port = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, Direction.UP);
+        if (pool(pos) != null && port != null && port.insertItem(slot, carriedItem(), false).isEmpty()) carry(NONE, false);
+        else carry(carried, false);
         return true;
     }
 
@@ -790,8 +816,8 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             Containers.dropItemStack(level, x, y, z, store.getStackInSlot(slot));
             store.setStackInSlot(slot, ItemStack.EMPTY);
         }
-        if (carried != NONE) Containers.dropItemStack(level, x, y, z, carried == FRESH ? carriedFuel() : new ItemStack(CENuclear.SPENT_FUEL_ROD.get()));
-        carried = NONE;
+        if (carried != NONE) Containers.dropItemStack(level, x, y, z, carriedItem());
+        carry(NONE, false);
         cancelTask();
     }
 
@@ -810,8 +836,8 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
         tooltip.add(structure.legs() == 0
             ? Component.translatable(KEY + "frame_overhead", structure.length(), structure.span() + 1, work, head)
             : Component.translatable(KEY + "frame", structure.length(), structure.span() + 1, structure.legs(), work, head));
-        tooltip.add(Component.translatable(KEY + "hoist", String.format(Locale.ROOT, "%.1f", depth),
-            "--"));
+        if (fusion()) tooltip.add(Component.translatable(KEY + "hoist", String.format(Locale.ROOT, "%.1f", depth), "--"));
+        else tooltip.add(Component.translatable(KEY + "grapple_contents", carried == NONE ? Component.translatable(KEY + "grapple_empty") : carriedItem().getHoverName()));
         tooltip.add(Component.translatable(KEY + "store", supplies, outputs));
         return true;
     }
@@ -859,6 +885,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
             tag.putInt("Outputs", out);
         } else {
             tag.put("Store", store.serializeNBT(registries));
+            if (carried == SPENT && !carriedSpent.isEmpty()) tag.put("CarriedSpentFuel", carriedSpent.save(registries));
         }
     }
 
@@ -900,6 +927,7 @@ public class CraneDriveBlockEntity extends KineticBlockEntity implements IHaveGo
                 structure = null;
             }
             store.deserializeNBT(registries, tag.getCompound("Store"));
+            carriedSpent = carried == SPENT ? ItemStack.parseOptional(registries, tag.getCompound("CarriedSpentFuel")) : ItemStack.EMPTY;
         }
     }
 }

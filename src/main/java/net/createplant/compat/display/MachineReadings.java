@@ -40,7 +40,8 @@ public final class MachineReadings {
         "bell_travel","console_mode","console_bank_target","console_control_target","console_alarms",
         "console_trace_samples","console_total_flow","reactor_surface_temperature","electrolysis_voltage","electrolysis_current","electrolysis_plates",
         "electrolysis_limit","electrolysis_rate","electrolysis_cathode","electrolysis_anode","electrolysis_soda","cascade_units","cascade_stages","cascade_required","process_name","stress","superheated","electrolysis_metal","electrolysis_metal_storage","electrolysis_recovered_acid","separation","gasifier_temperature",
-        "production_fluid","production_fluid_max","production_items","production_items_max","production_power","production_power_max","production_bottleneck");
+        "production_fluid","production_fluid_max","production_items","production_items_max","production_power","production_power_max","production_bottleneck",
+        "pool_temperature");
     private MachineReadings() { }
 
     public static BlockEntity owner(BlockEntity be) {
@@ -358,6 +359,8 @@ public final class MachineReadings {
                 case "pool_fresh":return new Reading(pool.freshCount(),pool.cellCount()*FuelChannelBlockEntity.RODS);
                 case "pool_spent":return new Reading(pool.spentCount(),pool.cellCount()*FuelChannelBlockEntity.RODS);
                 case "pool_heat":return new Reading(pool.spentCount()*FuelPoolBlockEntity.HEAT_PER_ROD,0);
+                case "pool_temperature":return pool.waterAmount()>0 ? new Reading(pool.waterCelsius(),100) : null;
+                case "fluid_0":return new Reading(pool.waterAmount(),pool.cellCount()*FuelPoolBlockEntity.WATER_PER_CELL);
             }
         }
         if (be instanceof PipeGaugeBlockEntity gauge) return switch (key) {

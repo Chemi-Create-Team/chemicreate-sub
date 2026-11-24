@@ -1,6 +1,7 @@
 package net.createplant.block.entity;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -11,8 +12,10 @@ import net.createplant.nuclear.Finite;
 import net.createplant.nuclear.ReactorFuel;
 import net.createplant.nuclear.FuelPoolStructure;
 import net.createplant.registry.CENuclear;
+import net.createplant.thermal.FluidState;
 import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.ThermalFluidTank;
+import net.createplant.thermal.TwoPhase;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -33,16 +36,17 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public static final byte EMPTY = 0, FRESH = 1, SPENT = 2;
     public static final int WATER_PER_CELL = (FuelPoolStructure.DEPTH + 1) * 1000, COVER_PER_CELL = FuelPoolStructure.DEPTH * 1000;
     public static final double HEAT_PER_ROD = 1000;
+    private static final double HOT_KELVIN = 363.15, BOILING_KELVIN = 373.15, BOIL_JOULES_PER_MB = 2260;
     private static final Map<Level, Set<BlockPos>> LOADED = new WeakHashMap<>();
     private final byte[] slots = new byte[FuelChannelBlockEntity.RODS];
     private final byte[] fuels = new byte[FuelChannelBlockEntity.RODS];
     private final net.createplant.nuclear.Radionuclides[] activity = new net.createplant.nuclear.Radionuclides[FuelChannelBlockEntity.RODS];
     private final ThermalFluidTank water = new ThermalFluidTank(WATER_PER_CELL, f -> setChanged()) {
-        @Override public boolean isFluidValid(FluidStack stack) { return net.createplant.thermal.FluidState.liquidWater(stack) && FluidThermal.valid(stack); }
+        @Override public boolean isFluidValid(FluidStack stack) { return FluidState.liquidWater(stack) && !TwoPhase.is(stack) && FluidThermal.valid(stack); }
     };
     private double boilingJoules;
     private long lastHeated = Long.MIN_VALUE;
-    private int cells, amount, fresh, spent;
+    private int cells, amount, fresh, spent, waterDeciC;
     private int reducedFresh, reducedSpent;
     private String status = "size";
     private BlockPos fault;
@@ -113,8 +117,17 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
     }
 
     public boolean ready() {
-        if (level == null || level.isClientSide()) return cells > 0 && amount >= cells * COVER_PER_CELL;
-        return structure().formed() && coolant.getFluidInTank(0).getAmount() >= structure().cells().size() * COVER_PER_CELL;
+        if (level == null || level.isClientSide()) return cells > 0 && amount >= cells * COVER_PER_CELL && !status.equals("hot");
+        var shape = structure();
+        if (!shape.formed()) return false;
+        int volume = 0;
+        double volumeTemperature = 0;
+        for (var cell : shape.cells()) if (level.getBlockEntity(cell) instanceof FuelPoolBlockEntity pool) {
+            int held = pool.water.getFluidAmount();
+            volume += held;
+            volumeTemperature += held * pool.water.kelvin();
+        }
+        return volume >= shape.cells().size() * COVER_PER_CELL && volumeTemperature < volume * HOT_KELVIN;
     }
 
     public BlockPos surface() { return worldPosition.above(FuelPoolStructure.DEPTH); }
@@ -135,6 +148,7 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public void setFuel(int i, ReactorFuel value) { fuels[i] = (byte) value.ordinal();setChanged(); }
     public int cellCount() { return cells; }
     public int waterAmount() { return amount; }
+    public double waterCelsius() { return waterDeciC / 10d; }
     public int freshCount() { return fresh; }
     public int spentCount() { return spent; }
     public String status() { return status; }
@@ -181,26 +195,46 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
         @Override public boolean isItemValid(int i, ItemStack stack) { return CENuclear.isFuel(stack) || stack.is(CENuclear.SPENT_FUEL_ROD.get()); }
     };
 
+    private record PoolWater(FluidStack fluid, double kelvin) { }
+
+    private static PoolWater sharedWater(List<FuelPoolBlockEntity> parts) {
+        FluidStack total = FluidStack.EMPTY;
+        double volumeTemperature = 0;
+        for (var pool : parts) if (!pool.water.isEmpty()) {
+            var fluid = pool.water.getFluid();
+            volumeTemperature += pool.water.kelvin() * fluid.getAmount();
+            total = total.isEmpty() ? fluid.copy() : FluidThermal.mix(total, fluid, fluid.getAmount());
+        }
+        double kelvin = total.isEmpty() ? FluidState.kelvin(FluidState.AMBIENT) : volumeTemperature / total.getAmount();
+        if (!total.isEmpty()) FluidState.setTemperature(total, FluidState.levelFor(total, kelvin, FluidState.pressure(total), false));
+        return new PoolWater(total, kelvin);
+    }
+
+    private void storeWater(FluidStack fluid, double kelvin) {
+        if (!fluid.isEmpty()) FluidState.setTemperature(fluid, FluidState.levelFor(fluid, kelvin, FluidState.pressure(fluid), false));
+        water.setFluid(fluid);
+        water.heat().set(fluid, kelvin, 0);
+        if (fluid.isEmpty()) boilingJoules = 0;
+        setChanged();
+    }
+
     private final IFluidHandler coolant = new IFluidHandler() {
         @Override public int getTanks() { return 1; }
-        @Override public FluidStack getFluidInTank(int tank) {
-            if (tank != 0) return FluidStack.EMPTY;
-            FluidStack total = FluidStack.EMPTY;
-            for (var pool : members()) if (!pool.water.isEmpty()) {
-                var fluid = pool.water.getFluid();
-                total = total.isEmpty() ? fluid.copy() : FluidThermal.mix(total, fluid, fluid.getAmount());
-            }
-            return total.isEmpty() ? total : FluidThermal.at(total, FluidThermal.kelvin(total));
-        }
+        @Override public FluidStack getFluidInTank(int tank) { return tank == 0 ? sharedWater(members()).fluid() : FluidStack.EMPTY; }
         @Override public int getTankCapacity(int tank) { return tank == 0 ? members().size() * WATER_PER_CELL : 0; }
         @Override public boolean isFluidValid(int tank, FluidStack stack) { return tank == 0 && water.isFluidValid(stack); }
         @Override public int fill(FluidStack stack, FluidAction action) {
             if (isRemoved() || !isFluidValid(0, stack) || !structure().formed()) return 0;
-            var stored = getFluidInTank(0);
-            if (!stored.isEmpty() && !FluidThermal.compatible(stored, stack)) return 0;
-            int accepted = Math.min(stack.getAmount(), getTankCapacity(0) - stored.getAmount());
-            if (accepted > 0 && action.execute()) store(stored.isEmpty() ? FluidThermal.at(stack.copyWithAmount(accepted), FluidThermal.kelvin(stack))
-                : FluidThermal.mix(stored, stack, accepted));
+            var parts = members();
+            var shared = sharedWater(parts);
+            var stored = shared.fluid();
+            if (!stored.isEmpty() && !FluidThermal.mixable(stored, stack)) return 0;
+            int accepted = Math.max(0, Math.min(stack.getAmount(), parts.size() * WATER_PER_CELL - stored.getAmount()));
+            if (accepted > 0 && action.execute()) {
+                var mixed = stored.isEmpty() ? stack.copyWithAmount(accepted) : FluidThermal.mix(stored, stack, accepted);
+                double kelvin = (shared.kelvin() * stored.getAmount() + Math.min(BOILING_KELVIN, FluidThermal.kelvin(stack)) * accepted) / mixed.getAmount();
+                store(parts, mixed, kelvin);
+            }
             return accepted;
         }
         @Override public FluidStack drain(FluidStack stack, FluidAction action) {
@@ -209,20 +243,20 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
         }
         @Override public FluidStack drain(int maximum, FluidAction action) {
             if (maximum <= 0) return FluidStack.EMPTY;
-            var total = getFluidInTank(0);
+            var parts = members();
+            var shared = sharedWater(parts);
+            var total = shared.fluid();
             int amount = Math.min(maximum, total.getAmount());
             if (amount == 0) return FluidStack.EMPTY;
             var portion = total.copyWithAmount(amount);
-            if (action.execute()) store(total.copyWithAmount(total.getAmount() - amount));
+            if (action.execute()) store(parts, total.copyWithAmount(total.getAmount() - amount), shared.kelvin());
             return portion;
         }
-        private void store(FluidStack total) {
-            var parts = members();
+        private void store(List<FuelPoolBlockEntity> parts, FluidStack total, double kelvin) {
             if (parts.isEmpty()) return;
             int each = total.getAmount() / parts.size(), remainder = total.getAmount() % parts.size();
             for (var pool : parts) {
-                pool.water.setFluid(total.copyWithAmount(each + (remainder-- > 0 ? 1 : 0)));
-                pool.setChanged();
+                pool.storeWater(total.copyWithAmount(each + (remainder-- > 0 ? 1 : 0)), kelvin);
             }
         }
     };
@@ -238,26 +272,30 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
                 for (byte slot : pool.slots) if (slot == SPENT) rods++;
                 volume += pool.water.getFluidAmount();
             }
-            if (volume > 0) for (var pool : parts) if (!pool.water.isEmpty() && (pool.lastHeated == Long.MIN_VALUE || level.getGameTime() - pool.lastHeated >= 20)) {
+            if (rods > 0 && volume > 0) for (var pool : parts) if (!pool.water.isEmpty() && (pool.lastHeated == Long.MIN_VALUE || level.getGameTime() - pool.lastHeated >= 20)) {
                 pool.lastHeated = level.getGameTime();
-                double joules = rods * HEAT_PER_ROD * pool.water.getFluidAmount() / volume;
-                pool.boilingJoules += joules;
-                int evaporated = (int) Math.min(pool.water.getFluidAmount(), pool.boilingJoules / 2260);
-                if (evaporated > 0) {
-                    pool.water.drain(evaporated, IFluidHandler.FluidAction.EXECUTE);
-                    pool.boilingJoules -= evaporated * 2260d;
-                }
-                pool.setChanged();
+                double joules = rods * HEAT_PER_ROD * pool.water.getFluidAmount() / volume + pool.boilingJoules;
+                double kelvin = pool.water.kelvin(), capacity = FluidThermal.heatCapacity(pool.water.getFluid());
+                double warming = Math.min(joules, capacity * Math.max(0, BOILING_KELVIN - kelvin));
+                double latent = joules - warming;
+                int evaporated = (int) Math.min(pool.water.getFluidAmount(), latent / BOIL_JOULES_PER_MB);
+                pool.boilingJoules = latent - evaporated * BOIL_JOULES_PER_MB;
+                pool.storeWater(pool.water.getFluid().copyWithAmount(pool.water.getFluidAmount() - evaporated),
+                    Math.min(BOILING_KELVIN, kelvin + warming / capacity));
             }
         }
-        var fluid = coolant.getFluidInTank(0);
+        var shared = sharedWater(parts);
+        var fluid = shared.fluid();
+        int nextWaterDeciC = (int) Math.round((shared.kelvin() - 273.15) * 10);
         int nextCells = shape.formed() ? parts.size() : 0;
         int nextFresh = 0, nextSpent = 0;
         for (var pool : parts) for (byte slot : pool.slots) if (slot == FRESH) nextFresh++; else if (slot == SPENT) nextSpent++;
         String nextStatus = !shape.formed() ? shape.status() : fluid.getAmount() < nextCells * COVER_PER_CELL ? "water"
-            : nextSpent > 0 ? "cooling" : "ready";
-        if (cells != nextCells || amount != fluid.getAmount() || fresh != nextFresh || spent != nextSpent || !status.equals(nextStatus) || !shape.fault().equals(fault)) {
+            : shared.kelvin() >= HOT_KELVIN ? "hot" : nextSpent > 0 ? "cooling" : "ready";
+        if (cells != nextCells || amount != fluid.getAmount() || fresh != nextFresh || spent != nextSpent || waterDeciC != nextWaterDeciC
+            || !status.equals(nextStatus) || !shape.fault().equals(fault)) {
             cells = nextCells; amount = fluid.getAmount(); fresh = nextFresh; spent = nextSpent; status = nextStatus; fault = shape.fault();
+            waterDeciC = nextWaterDeciC;
             sendData();
         }
     }
@@ -288,7 +326,7 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
         tooltip.add(Component.translatable("fuel_pool.create_refinery_n_reactors.status." + status));
         tooltip.add(Component.translatable("fuel_pool.create_refinery_n_reactors.rods", fresh, spent, (cells == 0 ? 1 : cells) * slots.length));
         tooltip.add(Component.translatable("fuel_pool.create_refinery_n_reactors.water", amount, (cells == 0 ? 1 : cells) * WATER_PER_CELL,
-            amount > 0 ? net.createplant.thermal.Grade.Heat.AMBIENT.label() : Component.literal("--")));
+            amount > 0 ? Component.literal(String.format(Locale.ROOT, "%.1f °C", waterCelsius())) : Component.literal("--")));
         if (cells == 0 && fault != null) tooltip.add(Component.translatable("fuel_pool.create_refinery_n_reactors.fault", fault.getX(), fault.getY(), fault.getZ()));
         return true;
     }
@@ -306,6 +344,7 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
         if (reducedSpent > 0) tag.putInt("ReducedGridSpent", reducedSpent);
         if (clientPacket) {
             tag.putInt("PoolCells", cells); tag.putInt("PoolAmount", amount); tag.putInt("PoolFresh", fresh); tag.putInt("PoolSpent", spent);
+            tag.putInt("PoolWaterDeciC", waterDeciC);
             tag.putString("PoolStatus", status);
             if (fault != null) tag.putLong("PoolFault", fault.asLong());
         }
@@ -336,9 +375,10 @@ public class FuelPoolBlockEntity extends SmartBlockEntity implements IHaveGoggle
         }
         water.readFromNBT(registries, tag.getCompound("PoolWater"));
         if (!water.isEmpty() && (!net.createplant.thermal.FluidState.liquidWater(water.getFluid()) || !FluidThermal.valid(water.getFluid()))) water.setFluid(FluidStack.EMPTY);
-        boilingJoules = Double.isFinite(tag.getDouble("PoolBoiling")) ? Math.clamp(tag.getDouble("PoolBoiling"), 0, 2260) : 0;
+        boilingJoules = Double.isFinite(tag.getDouble("PoolBoiling")) ? Math.clamp(tag.getDouble("PoolBoiling"), 0, BOIL_JOULES_PER_MB) : 0;
         if (tag.contains("PoolCells")) {
             cells = tag.getInt("PoolCells"); amount = tag.getInt("PoolAmount"); fresh = tag.getInt("PoolFresh"); spent = tag.getInt("PoolSpent");
+            waterDeciC = tag.contains("PoolWaterDeciC") ? tag.getInt("PoolWaterDeciC") : 250;
             status = tag.getString("PoolStatus"); fault = tag.contains("PoolFault") ? BlockPos.of(tag.getLong("PoolFault")) : null;
         }
     }
