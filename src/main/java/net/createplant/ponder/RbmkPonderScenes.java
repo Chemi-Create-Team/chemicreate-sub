@@ -161,6 +161,7 @@ public final class RbmkPonderScenes {
         scene.overlay().showControls(util.vector().topOf(cap), Pointing.DOWN, 70).rightClick().withItem(CENuclear.CONTROL_ROD.toStack());
         text(scene, util, RODS, cap, "winch");
 
+        text(scene, util, RODS, cap, "seated");
         scene.world().modifyBlockEntity(cap, net.createplant.block.entity.RodCapBlockEntity.class,
             top -> top.previewPlugPressure(1.55f, .65f, 1.25f, .8f));
         scene.overlay().showOutline(PonderPalette.RED, "relief", util.select().position(cap), 120);

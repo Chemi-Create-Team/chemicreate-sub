@@ -61,6 +61,7 @@ public final class ReactorPhysics {
     public static double nominalChannelWatts(int height) { return NOMINAL_CHANNEL_WATTS * heightScale(height); }
     /** Rated feedwater and saturated outlet conditions of the pressure channels. */
     public static final double INLET_KELVIN = 543.15, SATURATION_KELVIN = 557.15;
+    public static final double COOLANT_ALARM_KELVIN = 575;
     /** Saturation pressure at 284 °C on the simplified water curve: about 67.5 bar, or 66.7 atmospheres. */
     public static final double CHANNEL_PASCALS = 6_753_770.36205875;
     /** The largest recommended 397-fuel-channel core is rated at about 765 MW thermal. */

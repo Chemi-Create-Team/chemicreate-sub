@@ -598,7 +598,8 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             controlTarget = -1;
     }
     private void updateAlarms() {
-        int next = (scram ? 1 : 0) | (hottestKelvin >= ReactorPhysics.ALARM_KELVIN ? 2 : 0) | (representativeOutletKelvin >= 575 ? 4 : 0)
+        int next = (scram ? 1 : 0) | (hottestKelvin >= ReactorPhysics.ALARM_KELVIN ? 2 : 0)
+            | (representativeOutletKelvin >= ReactorPhysics.COOLANT_ALARM_KELVIN ? 4 : 0)
             | (power > 1e6 && totalFlow / Math.max(1, bundles) < LOW_FLOW ? 8 : 0) | (mode != 0 && controlTarget < 0 ? 16 : 0);
         if ((next & ~alarms) != 0)
             acknowledged = false;

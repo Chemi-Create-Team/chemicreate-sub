@@ -1274,6 +1274,11 @@
     "ja_jp": "キャップの区画をレンチで制御用にし、制御棒を入れます。別のウインチは不要です。",
     "zh_cn": "用扳手将顶盖位置设为控制用途并放入控制棒，无需独立绞盘。"
   },
+  "rbmk_control_rods.seated": {
+    "en_us": "The caps stay seated while the reactor boils water during normal operation.",
+    "ja_jp": "通常運転で冷却水が沸騰して蒸気を作っている間も、キャップは閉じたままです。",
+    "zh_cn": "正常运行时，冷却水沸腾产生蒸汽，顶盖仍保持闭合。"
+  },
   "rbmk_control_rods.relief": {
     "en_us": "A jumping, steaming cap warns of overpressure. Lower power and check cooling and outlets.",
     "ja_jp": "キャップが跳ねて蒸気が漏れたら過圧の警告です。出力を下げ、冷却と出口を確認します。",

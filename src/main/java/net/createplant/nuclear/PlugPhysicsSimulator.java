@@ -7,7 +7,8 @@ public final class PlugPhysicsSimulator {
     public static final int PLUGS = ReactorPhysics.RODS_PER_BLOCK;
     public static final double PLUG_MASS_KG = 350;
     public static final float RELIEF_OPEN_METRES = .05f, MAX_LIFT_METRES = .35f;
-    private static final double WARM_KELVIN = ReactorPhysics.SATURATION_KELVIN - 20, WARM_RANGE = 20, MAX_HEAT = 2, PRESSURE_THRESHOLD = .85, FLOW_REFERENCE = 64;
+    private static final double OVERHEAT_RANGE = ReactorPhysics.COOLANT_ALARM_KELVIN - ReactorPhysics.SATURATION_KELVIN;
+    private static final double MAX_HEAT = 2, PRESSURE_THRESHOLD = .85, FLOW_REFERENCE = 64;
     private static final double ROD_HEAT_REDUCTION = .65, LIFT_AMPLITUDE = .18, NOISE_AMPLITUDE = .24;
     private static final double RELIEF_DECAY = .012, RELIEF_BASE = .08, RELIEF_LIFT = .18;
     private static final int SYNC_INTERVAL = 5;
@@ -48,10 +49,10 @@ public final class PlugPhysicsSimulator {
         return new Step(moving, venting, landed, stateChanged);
     }
 
-    /** Pseudo-pressure from the channel water nearing boiling minus local flow cooling, normalised so one is the lift threshold, about 3 K below the channel boil. */
+    /** Local overpressure proxy. With zero flow and no absorber, the plug can lift at the coolant alarm threshold. */
     public static double localPressure(boolean active, double waterKelvin, double flowMbPerTick, double rodInsertion) {
         if (!active || !Double.isFinite(waterKelvin) || !Double.isFinite(flowMbPerTick) || !Double.isFinite(rodInsertion)) return 0;
-        double thermal = Math.clamp((waterKelvin - WARM_KELVIN) / WARM_RANGE, 0, MAX_HEAT);
+        double thermal = Math.clamp((waterKelvin - ReactorPhysics.SATURATION_KELVIN) / OVERHEAT_RANGE * PRESSURE_THRESHOLD, 0, MAX_HEAT);
         double heatGeneration = thermal * (1 - ROD_HEAT_REDUCTION * Math.clamp(rodInsertion, 0, 1));
         double cooling = Math.max(0, flowMbPerTick) / FLOW_REFERENCE;
         return Math.max(0, (heatGeneration - cooling) / PRESSURE_THRESHOLD);

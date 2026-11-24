@@ -311,13 +311,18 @@ public class RbmkGameTests {
             "Full local insertion seats one plug while its withdrawn hot neighbour crosses the lift threshold: "
                 + cap.plugPressure(0) + "/" + cap.plugPressure(1));
 
-        var safe = column.saveWithoutMetadata(h.getLevel().registryAccess());
-        safe.putDouble("FuelKelvin", 340);
-        column.loadWithComponents(safe, h.getLevel().registryAccess());
+        var boiling = column.saveWithoutMetadata(h.getLevel().registryAccess());
+        boiling.putInt("Coolant", 3_000);
+        boiling.putDouble("Specific", net.createplant.nuclear.ReactorCoolant.CP * ReactorPhysics.SATURATION_KELVIN
+            + .2 * net.createplant.nuclear.ReactorCoolant.LATENT);
+        boiling.putDouble("FuelKelvin", ReactorPhysics.NOMINAL_FUEL_KELVIN);
+        column.loadWithComponents(boiling, h.getLevel().registryAccess());
+        h.assertTrue(column.coolantKelvin() == ReactorPhysics.SATURATION_KELVIN && column.flowRate() == 0,
+            "The fixture holds boiling water and steam with no measured coolant flow");
         cap.tick();
         for (int i = 0; i < ReactorPhysics.RODS_PER_BLOCK; i++)
-            h.assertTrue(cap.plugPressure(i) < 1 && cap.plugOffset(i, 0) == 0,
-                "A safe local channel keeps plug " + i + " exactly still");
+            h.assertTrue(cap.plugPressure(i) == 0 && cap.plugOffset(i, 0) == 0 && cap.plugOffset(i, .5f) == 0,
+                "Ordinary boiling keeps plug " + i + " exactly seated at server and render sample times");
 
         var simulator = new PlugPhysicsSimulator();
         double[] temperatures = {1800, 0, 0, 0}, flow = new double[4], insertion = new double[4];
