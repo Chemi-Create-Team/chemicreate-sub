@@ -125,7 +125,7 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
         private ThermalFluidTank output(){return mode==Mode.GAS ? root.recycle.isEmpty() ? root.steam : root.recycle : root.liquid.isEmpty() ? root.water : root.liquid;}
         private ThermalFluidTank input(int slot){return slot==0 ? root.feed : slot==1 ? root.water : root.steam;}
         public int getTanks(){return mode==Mode.INLET ? 3 : 1;}
-        public FluidStack getFluidInTank(int slot){return !live() || slot<0 || slot>=getTanks() ? FluidStack.EMPTY : (mode==Mode.INLET ? input(slot) : output()).getFluid().copy();}
+        public FluidStack getFluidInTank(int slot){return !live() || slot<0 || slot>=getTanks() ? FluidStack.EMPTY : (mode==Mode.INLET ? input(slot) : output()).getFluidInTank(0).copy();}
         public int getTankCapacity(int slot){return !live() || slot<0 || slot>=getTanks() ? 0 : (mode==Mode.INLET ? input(slot) : output()).getCapacity();}
         public boolean isFluidValid(int slot,FluidStack stack){
             if(!live() || mode!=Mode.INLET || slot<0 || slot>2 || stack.isEmpty())return false;

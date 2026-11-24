@@ -17,18 +17,17 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Creative-only picker: one bucket per substance, with its temperature and pressure chosen here. 2026-11-24 user-designated exception to the no-custom-GUI rule. */
 public final class FluidStatePickerScreen extends Screen {
     private static final String TEXT = "gui." + CreatePlant.MOD_ID + ".fluid_state.";
-    private final Screen parent;
+    private final CreativeModeInventoryScreen parent;
     private final ItemStack bucket;
     private final FluidStack nominal;
     private int temperature, pressure;
 
-    private FluidStatePickerScreen(Screen parent, ItemStack bucket, FluidStack contents) {
+    private FluidStatePickerScreen(CreativeModeInventoryScreen parent, ItemStack bucket, FluidStack contents) {
         super(Component.translatable(TEXT + "title"));
         this.parent = parent;
         this.bucket = bucket;
@@ -38,15 +37,13 @@ public final class FluidStatePickerScreen extends Screen {
     }
 
     /** Right-clicking a fluid bucket in the Create-Plant creative tab opens the picker. */
-    public static void open(ScreenEvent.MouseButtonPressed.Pre event) {
-        if (event.getButton() != 1 || !(event.getScreen() instanceof CreativeModeInventoryScreen screen)) return;
-        var slot = screen.getSlotUnderMouse();
-        if (slot == null || !(slot.getItem().getItem() instanceof BucketItem item) || item.content == Fluids.EMPTY
-            || item != Items.WATER_BUCKET && !BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID)) return;
-        var contents = StatefulBuckets.contents(slot.getItem(), item.content);
-        if (net.createplant.mixture.MixtureHelper.isMixture(contents)) return;
-        event.setCanceled(true);
-        Minecraft.getInstance().setScreen(new FluidStatePickerScreen(screen, slot.getItem(), contents));
+    public static boolean open(CreativeModeInventoryScreen screen, ItemStack stack) {
+        if (!(stack.getItem() instanceof BucketItem item) || item.content == Fluids.EMPTY
+            || item != Items.WATER_BUCKET && !BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID)) return false;
+        var contents = StatefulBuckets.contents(stack, item.content);
+        if (net.createplant.mixture.MixtureHelper.isMixture(contents) || net.createplant.thermal.TwoPhase.is(contents)) return false;
+        Minecraft.getInstance().setScreen(new FluidStatePickerScreen(screen, stack, contents));
+        return true;
     }
 
     private FluidStack chosen() { return FluidState.with(nominal, temperature, pressure); }
@@ -64,8 +61,8 @@ public final class FluidStatePickerScreen extends Screen {
         var fluid = chosen();
         stack.remove(CEWorldFluids.BUCKET_CONTENTS.get());
         StatefulBuckets.write(fluid, stack);
-        Minecraft.getInstance().player.containerMenu.setCarried(stack);
         onClose();
+        if (minecraft.screen == parent) parent.getMenu().setCarried(stack);
     }
 
     @Override public void onClose() { minecraft.setScreen(parent); }

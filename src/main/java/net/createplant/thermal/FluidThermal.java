@@ -85,6 +85,7 @@ public final class FluidThermal {
         product.remove(net.createplant.registry.CEThermal.EXPANDED_STEAM.get());
         product.remove(net.createplant.registry.CEThermal.CONDENSATE.get());
         product.remove(net.createplant.registry.CEThermal.CONCENTRATION.get());
+        product.remove(net.createplant.registry.CEThermal.VAPOUR.get());
     }
     public static boolean compatible(FluidStack a,FluidStack b) { return FluidStack.isSameFluidSameComponents(a,b); }
     public static boolean mixable(FluidStack a,FluidStack b) {

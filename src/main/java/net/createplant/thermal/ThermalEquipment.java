@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -64,7 +65,7 @@ public final class ThermalEquipment {
             private ThermalFluidTank storage() { return tanks[index]; }
             @Override public int getTanks() { return 1; }
             @Override public int getTankCapacity(int slot) { return slot==0 ? 8000 : 0; }
-            @Override public FluidStack getFluidInTank(int slot) { return slot==0 && generation==owner.portGeneration() && !owner.isRemoved() ? storage().getFluid().copy() : FluidStack.EMPTY; }
+            @Override public FluidStack getFluidInTank(int slot) { return slot==0 && generation==owner.portGeneration() && !owner.isRemoved() ? storage().getFluidInTank(0).copy() : FluidStack.EMPTY; }
             @Override public boolean isFluidValid(int slot,FluidStack stack) { return valid() && input && slot==0 && !stack.isEmpty() && supported(stack) && storage().isFluidValid(stack); }
             @Override public int fill(FluidStack stack,FluidAction action) { return valid() && input && supported(stack) ? storage().fill(stack,action) : 0; }
             @Override public FluidStack drain(int amount,FluidAction action) { return valid() && output ? storage().drain(amount,action) : FluidStack.EMPTY; }
@@ -84,8 +85,8 @@ public final class ThermalEquipment {
             @Override public int getTankCapacity(int slot) { return slot==0 ? tanks[index].getCapacity() : slot==1 ? condensate[row].getCapacity() : 0; }
             @Override public FluidStack getFluidInTank(int slot) {
                 if (!valid()) return FluidStack.EMPTY;
-                if (drainingWater()) return slot==0 ? condensate[row].getFluid().copy() : slot==1 ? tanks[index+1].getFluid().copy() : FluidStack.EMPTY;
-                return slot==0 ? tanks[index+(rowInlet[row]==end ? 0 : 1)].getFluid().copy() : FluidStack.EMPTY;
+                if (drainingWater()) return slot==0 ? condensate[row].getFluidInTank(0).copy() : slot==1 ? tanks[index+1].getFluidInTank(0).copy() : FluidStack.EMPTY;
+                return slot==0 ? tanks[index+(rowInlet[row]==end ? 0 : 1)].getFluidInTank(0).copy() : FluidStack.EMPTY;
             }
             @Override public boolean isFluidValid(int slot,FluidStack fluid) { return slot==0 && valid() && input() && supported(fluid) && tanks[index].isFluidValid(fluid); }
             @Override public int fill(FluidStack fluid,FluidAction action) {
@@ -113,24 +114,54 @@ public final class ThermalEquipment {
      * between the two inlet temperatures. For streams that keep their phase these are {@code C1C2/(C1+C2)·ΔT} and {@code 0.9·Cmin·ΔT}.
      */
     public static Exchange exchange(FluidStack first,double kelvinA,FluidStack second,double kelvinB,boolean counterflow) {
+        return exchange(first,kelvinA,TwoPhase.shareOrPhase(first),second,kelvinB,TwoPhase.shareOrPhase(second),counterflow);
+    }
+
+    private static Exchange exchange(FluidStack first,double kelvinA,double qualityA,FluidStack second,double kelvinB,double qualityB,boolean counterflow) {
         boolean firstHot=kelvinA>kelvinB;
         var hot=(firstHot ? first : second).copyWithAmount(1000);var cold=(firstHot ? second : first).copyWithAmount(1000);
-        double hotKelvin=Math.max(kelvinA,kelvinB), coldKelvin=Math.min(kelvinA,kelvinB), moved;
-        if(counterflow)moved=COUNTERFLOW_EFFICIENCY*Math.min(HeatContent.heatBetween(hot,hotKelvin,coldKelvin),HeatContent.heatBetween(cold,coldKelvin,hotKelvin));
-        else {
-            // The common outlet temperature: what the hot stream gives down to it equals what the cold one takes up to it.
+        double hotKelvin=Math.max(kelvinA,kelvinB), coldKelvin=Math.min(kelvinA,kelvinB);
+        double hotQuality=firstHot ? qualityA : qualityB, coldQuality=firstHot ? qualityB : qualityA;
+        double limit=Math.min(HeatContent.heatBetween(hot,hotKelvin,coldKelvin,hotQuality),HeatContent.heatBetween(cold,coldKelvin,hotKelvin,coldQuality));
+        double moved;
+        if(counterflow)moved=COUNTERFLOW_EFFICIENCY*limit;
+        else if(hotQuality>0 && boilingBetween(hot,coldKelvin,hotKelvin)
+                || coldQuality<1 && boilingBetween(cold,coldKelvin,hotKelvin)) {
+            // Search in joules because boiling and condensing can change quality at a constant temperature.
+            double low=0, high=limit;
+            for(int step=0;step<=32;step++) {
+                double middle=step==0 ? limit : (low+high)/2;
+                if(HeatContent.shift(hot,hotKelvin,hotQuality,-middle,FluidState.kelvin(0)).kelvin()
+                    >=HeatContent.shift(cold,coldKelvin,coldQuality,middle,FluidState.kelvin(0)).kelvin()) {
+                    low=middle;
+                    if(step==0)break;
+                }
+                else high=middle;
+            }
+            moved=low;
+        } else {
             double low=coldKelvin, high=hotKelvin;
             for(int step=0;step<32;step++) {
                 double middle=(low+high)/2;
-                if(HeatContent.heatBetween(hot,hotKelvin,middle)>HeatContent.heatBetween(cold,coldKelvin,middle))low=middle;
+                if(HeatContent.heatBetween(hot,hotKelvin,middle,hotQuality)>HeatContent.heatBetween(cold,coldKelvin,middle,coldQuality))low=middle;
                 else high=middle;
             }
-            moved=HeatContent.heatBetween(cold,coldKelvin,(low+high)/2);
+            moved=HeatContent.heatBetween(cold,coldKelvin,(low+high)/2,coldQuality);
         }
-        var shiftA=HeatContent.shift(first.copyWithAmount(1000),kelvinA,firstHot ? -moved : moved);
-        var shiftB=HeatContent.shift(second.copyWithAmount(1000),kelvinB,firstHot ? moved : -moved);
-        return new Exchange(shiftA,shiftB,FluidState.levelFor(first,shiftA.kelvin(),FluidState.pressure(first),shiftA.gas()),
-            FluidState.levelFor(second,shiftB.kelvin(),FluidState.pressure(second),shiftB.gas()),firstHot);
+        var shiftA=HeatContent.shift(first.copyWithAmount(1000),kelvinA,qualityA,firstHot ? -moved : moved,FluidState.kelvin(0));
+        var shiftB=HeatContent.shift(second.copyWithAmount(1000),kelvinB,qualityB,firstHot ? moved : -moved,FluidState.kelvin(0));
+        return new Exchange(shiftA,shiftB,outletLevel(first,shiftA),outletLevel(second,shiftB),firstHot);
+    }
+
+    private static int outletLevel(FluidStack stream,HeatContent.Shift shift) {
+        boolean gas=shift.quality()<=0 || shift.quality()>=1 ? shift.gas() : FluidState.gas(stream);
+        return FluidState.levelFor(stream,shift.kelvin(),FluidState.pressure(stream),gas);
+    }
+
+    private static boolean boilingBetween(FluidStack stack,double low,double high) {
+        if(!FluidState.phaseSensitive(stack))return false;
+        double boiling=FluidState.boilingKelvin(stack,FluidState.pressure(stack));
+        return boiling>=low && boiling<=high;
     }
 
     private static int gcd(int a,int b) {
@@ -153,7 +184,7 @@ public final class ThermalEquipment {
             owner.thermalStatus("temperature_delta",false);
             return;
         }
-        var exchange=exchange(first,kelvinA,second,kelvinB,counterflow());
+        var exchange=exchange(first,kelvinA,tanks[0].heat().quality(first),second,kelvinB,tanks[2].heat().quality(second),counterflow());
         boolean firstHot=exchange.firstHot();
         var shiftA=exchange.first();var shiftB=exchange.second();
         int outA=exchange.firstLevel(), outB=exchange.secondLevel();
@@ -175,8 +206,10 @@ public final class ThermalEquipment {
             return;
         }
         int unitA=quantum/changeA.consumed(), unitB=quantum/changeB.consumed();
-        int limitA=changeA.fitting(Math.min(changeA.batches(first.getAmount()),feed*unitA),tanks[1])/unitA;
-        int limitB=changeB.fitting(Math.min(changeB.batches(second.getAmount()),feed*unitB),tanks[3])/unitB;
+        int limitA=changeA.fitting(Math.min(changeA.batches(first.getAmount()),feed*unitA),
+            stack->tanks[1].fillAt(stack,shiftA.kelvin(),shiftA.quality(),SIMULATE))/unitA;
+        int limitB=changeB.fitting(Math.min(changeB.batches(second.getAmount()),feed*unitB),
+            stack->tanks[3].fillAt(stack,shiftB.kelvin(),shiftB.quality(),SIMULATE))/unitB;
         int batches=Math.min(limitA,limitB);
         if(batches==0) {
             owner.thermalStatus("output",false);

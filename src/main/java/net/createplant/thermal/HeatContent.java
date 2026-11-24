@@ -39,7 +39,7 @@ public final class HeatContent {
     }
     /** Share of the content that is gas: 0 to 1. Only a content at its boiling point holds a value between. */
     public double quality(FluidStack stack) {
-        return valid(stack) && !Double.isNaN(quality) ? quality : FluidState.gas(stack) ? 1 : 0;
+        return valid(stack) && !Double.isNaN(quality) ? quality : TwoPhase.shareOrPhase(stack);
     }
     public double residual() { return residual; }
     /** The real temperature and gas share the contents had when the last amount left them. */
@@ -52,6 +52,30 @@ public final class HeatContent {
     public void set(FluidStack stack,double newKelvin) { set(stack,newKelvin,Double.NaN); }
     public void forget() { kelvin=Double.NaN;quality=Double.NaN;level=-1;fluid=null;residual=0; }
     public static double capacity(FluidStack stack) { return FluidThermal.heatCapacity(stack); }
+
+    record BoilingBlend(double kelvin,double quality) { }
+
+    /** A partly changed phase contributes latent heat as well as sensible heat when another parcel joins it. */
+    BoilingBlend blendBoiling(FluidStack stored,FluidStack incoming,int amount,double incomingKelvin,double incomingQuality,int pressure) {
+        double storedQuality=quality(stored);
+        if(!partial(storedQuality) && !partial(incomingQuality))return null;
+        double boil=FluidState.boilingKelvin(stored,pressure);
+        if(!Double.isFinite(boil))return null;
+        var portion=incoming.copyWithAmount(amount);
+        double storedCapacity=capacity(stored), incomingCapacity=capacity(portion);
+        double storedLatent=latent(stored), incomingLatent=latent(portion);
+        double totalLatent=storedLatent+incomingLatent, totalCapacity=storedCapacity+incomingCapacity;
+        if(totalLatent<=0 || totalCapacity<=0)return null;
+        double incomingTemperature=Double.isNaN(incomingKelvin) ? FluidState.kelvin(FluidState.temperature(incoming)) : incomingKelvin;
+        double q=Double.isNaN(incomingQuality) ? (FluidState.gas(incoming) ? 1 : 0) : incomingQuality;
+        double energy=storedCapacity*(kelvin(stored)-boil)+incomingCapacity*(incomingTemperature-boil)
+            +storedLatent*storedQuality+incomingLatent*q;
+        if(energy<0)return new BoilingBlend(clampKelvin(boil+energy/totalCapacity),0);
+        if(energy>totalLatent)return new BoilingBlend(clampKelvin(boil+(energy-totalLatent)/totalCapacity),1);
+        return new BoilingBlend(boil,energy/totalLatent);
+    }
+
+    private static boolean partial(double quality) { return quality>EPSILON && quality<1-EPSILON; }
 
     /** Temperature after {@code amount} mB of {@code incoming} (at {@code incomingKelvin}, or its level's when NaN) joins {@code stored}. */
     public double enter(FluidStack stored,FluidStack incoming,int amount,double incomingKelvin,boolean commit) {
@@ -76,8 +100,7 @@ public final class HeatContent {
         double q=quality(before);
         // Part way through boiling or condensing, what leaves is the same mix of liquid and gas at the boiling point, so the rest
         // keeps its temperature and its share, and the share of the latent heat that leaves is the share of the amount.
-        boolean partial=q>EPSILON && q<1-EPSILON;
-        if(partial)tOut=tAll;
+        if(partial(q))tOut=tAll;
         lastOutKelvin=tAll;lastOutQuality=q;
         if(left.isEmpty()) {
             int own=FluidState.temperature(before);
@@ -138,7 +161,8 @@ public final class HeatContent {
             if(c<=0)break;
             boolean heating=joules>0;
             double boil=FluidState.phaseSensitive(stack) ? FluidState.boilingKelvin(stack,FluidState.pressure(stack)) : Double.POSITIVE_INFINITY;
-            boolean boiling=boil>floor && boil<ceiling && heating!=gas;
+            boolean returningToOwnPhase=heating ? gas && q<1-EPSILON : !gas && q>EPSILON;
+            boolean boiling=boil>floor && boil<ceiling && (heating!=gas || returningToOwnPhase);
             double stop=boiling ? boil : heating ? ceiling : floor;
             if(heating ? t<stop-EPSILON : t>stop+EPSILON) {
                 double step=Math.min(Math.abs(joules)/c,Math.abs(stop-t));
@@ -154,10 +178,12 @@ public final class HeatContent {
             q+=heating ? use/latent : -use/latent;
             joules-=Math.signum(joules)*use;
             if(Math.abs(goal-q)>EPSILON)break;
+            q=goal;
+            if(returningToOwnPhase)continue;
             // Without a room function nothing limits the converted amount; an amount that does not convert whole stays at its boiling point.
             var converted=convert(stack,t,heating,room==null ? ignored->Integer.MAX_VALUE : room);
             if(converted==null)break;
-            stack=converted;structural=true;q=goal;gas=heating;
+            stack=converted;structural=true;gas=heating;
         }
         set(stack,t,q);
         return new Outcome(stack,structural,joules);
@@ -168,21 +194,40 @@ public final class HeatContent {
     public static Shift shift(FluidStack sample,double kelvin,double joules) { return shift(sample,kelvin,joules,MINIMUM); }
     /** As above, but the stream is not cooled below {@code floor}. */
     public static Shift shift(FluidStack sample,double kelvin,double joules,double floor) {
+        return shift(sample,kelvin,TwoPhase.shareOrPhase(sample),joules,floor);
+    }
+
+    /** A calculation models a continuous stream, so use whole conversion batches and scale the heat to that amount. */
+    private static FluidStack simulationSample(FluidStack sample) {
+        if(!FluidState.phaseSensitive(sample) || !FluidState.gas(sample))return sample;
+        int ratio=PhaseChange.ratio(sample);
+        if(sample.getAmount()%ratio==0)return sample;
+        return sample.copyWithAmount(Math.max(1,sample.getAmount()/ratio)*ratio);
+    }
+
+    static Shift shift(FluidStack sample,double kelvin,double quality,double joules,double floor) {
+        var parcel=simulationSample(sample);
         var scratch=new HeatContent();
-        scratch.set(sample,kelvin);
-        var outcome=scratch.add(sample,joules,floor,MAXIMUM,null);
+        scratch.set(parcel,kelvin,quality);
+        var outcome=scratch.add(parcel,parcel==sample ? joules : joules*parcel.getAmount()/sample.getAmount(),floor,MAXIMUM,null);
         return new Shift(scratch.kelvin(outcome.stack()),scratch.quality(outcome.stack())>=.5,scratch.quality(outcome.stack()));
     }
 
     /** The heat (always positive) {@code sample} at {@code from} gives or takes on the way to {@code to}, latent heat included. */
     public static double heatBetween(FluidStack sample,double from,double to) {
+        return heatBetween(sample,from,to,TwoPhase.shareOrPhase(sample));
+    }
+
+    static double heatBetween(FluidStack sample,double from,double to,double quality) {
         if(Math.abs(to-from)<EPSILON)return 0;
         boolean heating=to>from;
         double big=1e9;
+        var parcel=simulationSample(sample);
         var scratch=new HeatContent();
-        scratch.set(sample,from);
-        var outcome=scratch.add(sample,heating ? big : -big,heating ? MINIMUM : to,heating ? to : MAXIMUM,null);
-        return big-Math.abs(outcome.left());
+        scratch.set(parcel,from,quality);
+        var outcome=scratch.add(parcel,heating ? big : -big,heating ? MINIMUM : to,heating ? to : MAXIMUM,null);
+        double moved=big-Math.abs(outcome.left());
+        return parcel==sample ? moved : moved*sample.getAmount()/parcel.getAmount();
     }
 
     public void write(CompoundTag tag) {

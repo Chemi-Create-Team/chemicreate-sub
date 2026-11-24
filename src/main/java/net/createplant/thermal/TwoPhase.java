@@ -12,6 +12,7 @@ public final class TwoPhase {
 
     public static boolean is(FluidStack stack) { return !stack.isEmpty() && stack.has(CEThermal.VAPOUR.get()); }
     public static double share(FluidStack stack) { return stack.getOrDefault(CEThermal.VAPOUR.get(),0)/8d; }
+    static double shareOrPhase(FluidStack stack) { return is(stack) ? share(stack) : FluidState.gas(stack) ? 1 : 0; }
 
     public static FluidStack plain(FluidStack stack) {
         if(!is(stack))return stack;
@@ -20,10 +21,10 @@ public final class TwoPhase {
         return result;
     }
 
-    /** Marks a stream that left a boiling or condensing content with the gas share it had, rounded to an eighth; a nearly pure phase stays single. */
+    /** Marks a stream that is still changing phase, with the nearest representable gas share. */
     public static FluidStack mark(FluidStack out,double quality) {
-        int eighths=(int)Math.round(quality*8);
-        if(out.isEmpty() || eighths<1 || eighths>7 || !FluidState.phaseSensitive(out))return out;
+        if(out.isEmpty() || !(quality>0 && quality<1) || !FluidState.phaseSensitive(out))return out;
+        int eighths=Math.clamp((int)Math.round(quality*8),1,7);
         var result=out.copy();
         result.set(CEThermal.VAPOUR.get(),eighths);
         return result;

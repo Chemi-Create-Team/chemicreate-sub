@@ -1199,6 +1199,11 @@
     "ja_jp": "高温冷却材12000 mBから給水11000 mBと蒸気1000 mBを作ります。RBMKの水と蒸気も別々に搬出できます。",
     "zh_cn": "12000 mB高温冷却剂生成11000 mB给水和1000 mB蒸汽。也可分别输送RBMK的水和蒸汽。"
   },
+  "ammonia_separator.two_phase": {
+    "en_us": "Feed a two-phase stream into the upper side. Gas leaves above and liquid leaves below, in the proportions carried by that stream.",
+    "ja_jp": "上段の側面へ気液二相の流体を供給します。流体に記録された割合に応じて、上から気体、下から液体が出ます。",
+    "zh_cn": "从上层侧面输入气液两相流。按流体记录的比例，气体从顶部排出，液体从底部排出。"
+  },
   "rbmk_core.title": {
     "en_us": "Building an RBMK core",
     "ja_jp": "RBMK炉心を組み立てる",
@@ -3105,9 +3110,9 @@
     "zh_cn": "建材制造1　水泥与防腐地板"
   },
   "guide.manufacturing_glass.step_1": {
-    "en_us": "Heat the brine batch in a stirred tank to recover borax and salt. Keep the salt for the brine loop.\n%s → %s",
-    "ja_jp": "撹拌槽で塩水のバッチを加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。\n%s → %s",
-    "zh_cn": "在搅拌槽中加热盐水批次，回收硼砂和盐，盐可返回制盐水。\n%s → %s"
+    "en_us": "Superheat the brine batch in a stirred tank to recover borax and salt. Keep the salt for the brine loop.\n%s → %s",
+    "ja_jp": "撹拌槽で塩水を超加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。\n%s → %s",
+    "zh_cn": "在搅拌槽中超加热盐水，回收硼砂和盐，盐可返回制盐水。\n%s → %s"
   },
   "guide.manufacturing_glass.step_2": {
     "en_us": "Superheat borax with quartz, glass and calcite under a Mechanical Mixer to make borosilicate frit.\n%s → %s",

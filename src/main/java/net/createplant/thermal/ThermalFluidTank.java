@@ -48,6 +48,9 @@ public class ThermalFluidTank extends SmartFluidTank {
         heat.read(tag);
         return this;
     }
+    @Override public FluidStack getFluidInTank(int slot) {
+        return slot==0 ? TwoPhase.mark(fluid,heat.quality(fluid)) : FluidStack.EMPTY;
+    }
     @Override public FluidStack drain(int maxDrain,FluidAction action) {
         if(fluid.isEmpty())return super.drain(maxDrain,action);
         double quality=heat.quality(fluid);
@@ -103,11 +106,12 @@ public class ThermalFluidTank extends SmartFluidTank {
         }
         if(action.execute()) {
             boolean wasEmpty=fluid.isEmpty();
-            double kelvin=heat.enter(fluid,resource,accepted,entryKelvin,true);
+            var blend=wasEmpty ? null : heat.blendBoiling(fluid,resource,accepted,entryKelvin,entryQuality,FluidState.pressure(result));
+            double kelvin=blend==null ? heat.enter(fluid,resource,accepted,entryKelvin,true) : blend.kelvin();
             fluid=result;
             int level=FluidState.levelFor(fluid,kelvin,FluidState.pressure(fluid),FluidState.gas(fluid));
             if(level!=FluidState.temperature(fluid))FluidState.setTemperature(fluid,level);
-            heat.set(fluid,kelvin,wasEmpty ? entryQuality : Double.NaN);
+            heat.set(fluid,kelvin,blend!=null ? blend.quality() : wasEmpty ? entryQuality : Double.NaN);
             net.createplant.nuclear.RadiationSources.stamp(fluid);
             onContentsChanged();
         }
@@ -119,9 +123,16 @@ public class ThermalFluidTank extends SmartFluidTank {
     }
 
     private int mixedState(FluidStack resource,int amount) {
-        int temperature=FluidState.temperatureLevel(heat.enter(fluid,resource,amount,entryKelvin,false));
         int pressure=FluidState.average(FluidState.pressure(fluid),getFluidAmount(),FluidState.pressure(resource),amount);
+        var blend=heat.blendBoiling(fluid,resource,amount,entryKelvin,entryQuality,pressure);
+        int temperature=blend==null ? FluidState.temperatureLevel(heat.enter(fluid,resource,amount,entryKelvin,false))
+            : boilingLevel(blend,pressure);
         return temperature*17+pressure;
+    }
+
+    private int boilingLevel(HeatContent.BoilingBlend blend,int pressure) {
+        boolean gas=blend.quality()>=1 || blend.quality()>0 && FluidState.gas(fluid);
+        return FluidState.levelFor(fluid,blend.kelvin(),pressure,gas);
     }
 
     // Over each interval with the same rounded levels, capacity and conversion units are fixed.
@@ -152,6 +163,9 @@ public class ThermalFluidTank extends SmartFluidTank {
 
     private FluidStack mixed(FluidStack resource,int amount) {
         var combined=FluidThermal.mix(fluid,resource,amount);
+        int pressure=FluidState.pressure(combined);
+        var blend=heat.blendBoiling(fluid,resource,amount,entryKelvin,entryQuality,pressure);
+        if(blend!=null)FluidState.setTemperature(combined,boilingLevel(blend,pressure));
         boolean before=storedGas(fluid), incoming=storedGas(resource), after=storedGas(combined);
         if(before==incoming && incoming==after)return combined;
         int ratio=PhaseChange.ratio(fluid);
@@ -183,8 +197,7 @@ public class ThermalFluidTank extends SmartFluidTank {
         return accepted;
     }
     @Override public FluidStack drain(FluidStack request,FluidAction action) {
-        request=TwoPhase.plain(request);
-        if (request.isEmpty() || !net.createplant.mixture.MixtureTransfer.matches(fluid,request)) return FluidStack.EMPTY;
+        if (request.isEmpty() || !net.createplant.mixture.MixtureTransfer.matches(getFluidInTank(0),request)) return FluidStack.EMPTY;
         return drain(request.getAmount(),action);
     }
 

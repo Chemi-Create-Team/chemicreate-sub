@@ -10,6 +10,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluids;
 
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +63,7 @@ public final class CreativeTabsClientCheck {
                 ready("search");
             }
             case 4 -> {
+                checkFluidPicker(mc);
                 select(CreativeModeTabs.getDefaultTab());
                 if (screen.getMenu().items.stream().anyMatch(ItemStack::isEmpty))
                     throw new IllegalStateException("Vanilla tabs must keep their original layout");
@@ -69,6 +72,8 @@ public final class CreativeTabsClientCheck {
                                 "search",
                                 "passed",
                                 "vanilla_tab",
+                                "passed",
+                                "fluid_picker",
                                 "passed",
                                 "native_scroll",
                                 "passed"));
@@ -80,6 +85,37 @@ public final class CreativeTabsClientCheck {
             }
         }
         return false;
+    }
+
+    private static void checkFluidPicker(Minecraft mc) {
+        select(CECreativeModeTabs.BASE.get());
+        var menu = screen.getMenu();
+        var water = menu.items.stream().filter(stack -> stack.is(Items.WATER_BUCKET)).findFirst().orElseThrow();
+        int row = menu.items.indexOf(water) / 9;
+        int scrollRows = (menu.items.size() + 8) / 9 - 5;
+        menu.scrollTo(Math.clamp(row / (float) scrollRows, 0, 1));
+        var slot = menu.slots.stream().filter(s -> s.getItem().is(Items.WATER_BUCKET)).findFirst().orElseThrow();
+        double x = screen.getGuiLeft() + slot.x + 7, y = screen.getGuiTop() + slot.y + 7;
+
+        menu.setCarried(new ItemStack(Items.STONE, 2));
+        screen.mouseClicked(x, y, 1);
+        screen.mouseReleased(x, y, 1);
+        if (mc.screen != screen || !menu.getCarried().is(Items.STONE))
+            throw new IllegalStateException("A carried item must keep the native right-click action");
+        menu.setCarried(ItemStack.EMPTY);
+
+        screen.mouseClicked(x, y, 1);
+        if (mc.screen == screen) screen.mouseReleased(x, y, 1);
+        if (!(mc.screen instanceof FluidStatePickerScreen picker))
+            throw new IllegalStateException("Right-clicking the catalog's water bucket did not open the picker");
+        picker.mouseClicked(picker.width / 2 + 70, picker.height / 2 - 30, 0);
+        picker.mouseReleased(picker.width / 2 + 70, picker.height / 2 - 30, 0);
+        picker.mouseClicked(picker.width / 2 - 40, picker.height / 2 + 40, 0);
+        var chosen = menu.getCarried();
+        if (mc.screen != screen || !chosen.is(Items.WATER_BUCKET)
+                || net.createplant.item.StatefulBuckets.defaultState(net.createplant.item.StatefulBuckets.contents(chosen, Fluids.WATER)))
+            throw new IllegalStateException("The picker did not return the chosen bucket and its state to the creative cursor");
+        menu.setCarried(ItemStack.EMPTY);
     }
 
     private static void ready(String name) {

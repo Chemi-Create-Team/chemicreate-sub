@@ -86,11 +86,15 @@ public class ThermalControlGameTests {
         tube(be,0).fill(gas.copyWithAmount(amount),EXECUTE);
         shell(be,0).fill(FluidState.with(new FluidStack(Fluids.WATER,amount),0,4),EXECUTE);
         for(int i=0;i<100;i++)be.tickProcess();
+        double difference=Math.abs(be.thermal().tank(1).kelvin()-be.thermal().tank(3).kelvin());
         var liquid=tube(be,1).drain(amount,EXECUTE);
-        h.assertTrue(liquid.getAmount()==2 && !FluidState.gas(liquid) && FluidState.temperature(liquid)==4
-            && shell(be,1).drain(amount,EXECUTE).getAmount()==2*ratio
+        var coolant=shell(be,1).drain(amount,EXECUTE);
+        h.assertTrue(liquid.getAmount()==2 && !FluidState.gas(liquid) && coolant.getAmount()==2*ratio
             && be.thermal().tank(0).getFluidAmount()==17 && be.thermal().tank(2).getFluidAmount()==17,
-            "Pairwise phase conversion retains both remainders and consumes only complete batches");
+            "Pairwise phase conversion retains both remainders and consumes only complete batches: "+liquid+" / "+coolant);
+        h.assertTrue(FluidState.temperature(liquid)==0 && difference<.01,
+            "The large cold stream cools the two condensed units past boiling to the common outlet temperature: level="
+                +FluidState.temperature(liquid)+", delta="+difference);
         h.succeed();
     }
 
@@ -117,7 +121,8 @@ public class ThermalControlGameTests {
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());be.loadWithComponents(saved,h.getLevel().registryAccess());be.validateStructure();near=tube(be,0);far=tube(be,1);
         h.assertTrue(near.drain(100,EXECUTE).getAmount()==83,"Reload retains direction and remaining output");shell(be,1).drain(100,EXECUTE);
         h.assertTrue(near.fill(fluid,EXECUTE)==100,"An empty row can reverse");shell(be,0).fill(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),100),EXECUTE);for(int i=0;i<5;i++)be.tickProcess();
-        var reversed=far.drain(100,EXECUTE);h.assertTrue(reversed.getAmount()==100 && FluidState.temperature(reversed)==8,"Reversal keeps the same recipe and amount");h.succeed();
+        var reversed=far.drain(100,EXECUTE);h.assertTrue(reversed.getAmount()==100 && FluidState.temperature(reversed)==8,
+            "Reversal keeps the same recipe and amount: "+reversed+" level="+FluidState.temperature(reversed)+" status="+be.status());h.succeed();
     }
     @GameTest(template="test_fractionation",timeoutTicks=600)
     public static void realPumpsOperateAllFourHorizontalExchangerPorts(GameTestHelper h) { rowPumpPlant(h,false,false,true); }

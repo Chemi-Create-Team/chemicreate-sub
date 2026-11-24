@@ -63,7 +63,6 @@ public class ElectrolysisClient {
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::renderGroundMist);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogColor);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.GasCloudRenderer::fogDistance);
-        NeoForge.EVENT_BUS.addListener(net.createplant.client.FluidStatePickerScreen::open);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.StructureGuideRenderer::tick);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.MachineSounds::tick);
         NeoForge.EVENT_BUS.addListener(net.createplant.client.StructureGuideRenderer::render);

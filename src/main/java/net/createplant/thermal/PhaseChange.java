@@ -40,11 +40,14 @@ public final class PhaseChange {
         }
         public int batches(int input) { return Math.min(input/consumed,Integer.MAX_VALUE/produced); }
         public int fitting(int batches,net.neoforged.neoforge.fluids.capability.IFluidHandler target) {
+            return fitting(batches,stack->target.fill(stack,net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE));
+        }
+        int fitting(int batches,java.util.function.ToIntFunction<FluidStack> accepted) {
             int low=0,high=batches;
             while(low<high) {
                 int middle=(int)((low+(long)high+1)/2);
                 FluidStack result=output(middle);
-                if(target.fill(result,net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE)==result.getAmount())low=middle;
+                if(accepted.applyAsInt(result)==result.getAmount())low=middle;
                 else high=middle-1;
             }
             return low;

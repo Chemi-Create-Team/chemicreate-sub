@@ -384,7 +384,7 @@ recipe('pressure_reaction', 'hydrogen_fluoride_from_depleted_uranium_hexafluorid
 recipe('mixing', 'mox_blending', [item('plutonium_dioxide')] + [item('depleted_uranium_dioxide')]*7, [result('mox_powder', count=8)])
 recipe('pressing', 'green_mox_pellet', [item('mox_powder')], [result('green_mox_pellet')], ticks=100)
 recipe('pressure_reaction', 'mox_sintering', [item('green_mox_pellet'), fluid('hydrogen_gas', 100)], [result('mox_pellet')], 'superheated', 300)
-recipe('pressure_reaction', 'borax_from_brine', [fluid('brine', 8000)], [result('borax'), result('salt', count=4)], 'heated', 400)
+recipe('pressure_reaction', 'borax_from_brine', [fluid('brine', 8000)], [result('borax'), result('salt', count=4)], 'superheated', 400)
 recipe('mixing', 'borosilicate_glass_frit', [item('minecraft:quartz')]*3 + [item('borax'), item('minecraft:glass'), item('minecraft:calcite')], [result('borosilicate_glass_frit', count=6)], 'superheated', 200)
 recipe('vitrification', 'high_level_waste_glass', [fluid('high_level_raffinate', 1600)] + [item('borosilicate_glass_frit')]*4 + [item('empty_waste_canister')], [result('vitrified_waste_canister')], ticks=1200)
 recipe('pressure_reaction', 'phosphate_acidulation', [item('minecraft:bone_meal')]*3 + [fluid('sulfuric_acid', 1000), fluid('minecraft:water', 250)], [result('phosphoric_acid', 1000), result('gypsum', count=3)], 'heated')

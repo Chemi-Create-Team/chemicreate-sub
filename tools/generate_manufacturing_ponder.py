@@ -601,7 +601,7 @@ route('concrete', ('Building materials 1 — cement and coated floors', '建材�
 
 route('glass', ('Building materials 2 — borax and glass frit', '建材の製造2　ホウ砂とガラス原料を作る', '建材制造2　硼砂与玻璃原料'),
     ['borax', 'borosilicate_glass_frit'], [
-    step('vessel', 'pressure_reaction/borax_from_brine', 'Heat the brine batch in an impeller vessel to recover borax and salt. Keep the salt for the brine loop.', '撹拌槽で塩水のバッチを加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。', '在搅拌槽中加热盐水批次，回收硼砂和盐，盐可返回制盐水。'),
+    step('vessel', 'pressure_reaction/borax_from_brine', 'Superheat the brine batch in an impeller vessel to recover borax and salt. Keep the salt for the brine loop.', '撹拌槽で塩水を超加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。', '在搅拌槽中超加热盐水，回收硼砂和盐，盐可返回制盐水。'),
     step('mixing', 'mixing/borosilicate_glass_frit', 'Superheat borax with quartz, glass and calcite under a Mechanical Mixer to make borosilicate frit.', '鉢とメカニカルミキサーで、ホウ砂・水晶・ガラス・方解石を超加熱してホウケイ酸ガラスフリットにします。', '在机械搅拌器下超加热硼砂、石英、玻璃与方解石，制成硼硅酸玻璃熔块。'),
 ], family='construction')
 

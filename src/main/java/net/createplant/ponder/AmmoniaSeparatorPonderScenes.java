@@ -71,6 +71,10 @@ public final class AmmoniaSeparatorPonderScenes {
         scene.overlay().showOutline(PonderPalette.BLUE, "reactor_water", liquid, 130);
         text(scene, util, util.grid().at(2, 3, 2), 130, "reactor_split");
         showWater(scene, controller, 8000);
+        scene.overlay().showOutline(PonderPalette.INPUT, "two_phase_feed", feed, 130);
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "separated_gas", gas, 130);
+        scene.overlay().showOutline(PonderPalette.BLUE, "separated_liquid", liquid, 130);
+        text(scene, util, target, 130, "two_phase");
         scene.idle(40);
         scene.markAsFinished();
     }
