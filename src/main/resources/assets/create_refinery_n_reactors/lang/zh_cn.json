@@ -12,6 +12,7 @@
   "fluid_state.create_refinery_n_reactors.jei.radiator": "每次通过降低一档温度，最低为常温",
   "fluid_state.create_refinery_n_reactors.jei.heating": "点燃的烈焰人燃烧室每50刻升高一档温度",
   "fluid_state.create_refinery_n_reactors.jei.exchange": "并流取两侧平均温度，逆流冷却或加热至距另一入口一档",
+  "fluid_state.create_refinery_n_reactors.two_phase": "气液两相",
   "fluid_state.create_refinery_n_reactors.gas": "气体",
   "fluid_state.create_refinery_n_reactors.conditions": "温度 %1$s ／ 压力 %2$s ／ %3$s",
   "fluid_state.create_refinery_n_reactors.bucket": "%1$s（%2$s・%3$s・%4$s）",

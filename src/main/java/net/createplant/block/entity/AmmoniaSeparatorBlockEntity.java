@@ -86,6 +86,30 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
             ProductionMonitor.produced(this,madeLiquid.getAmount()+madeGas.getAmount(),0,0);
         }changed();
     }
+    /** A stream that is both liquid and gas is split here: liquid to the bottom outlet, gas to the top. Returns the amount of the stream taken. */
+    private int separateStream(FluidStack stream,IFluidHandler.FluidAction action){
+        if(!ready() || !feed.isEmpty() || progress>0)return 0;
+        boolean isWater=stream.is(Fluids.WATER);
+        if(isWater ? chemicalContents() : !water.isEmpty() || !steam.isEmpty())return 0;
+        var liquidTank=isWater ? water : liquid;var gasTank=isWater ? steam : recycle;
+        int units=stream.getAmount();
+        for(int attempt=0;attempt<4 && units>0;attempt++){
+            var split=TwoPhase.split(stream,units);
+            int fitLiquid=split.liquid().isEmpty() ? 0 : liquidTank.fillAt(split.liquid(),split.kelvin(),0,IFluidHandler.FluidAction.SIMULATE);
+            int fitGas=split.gas().isEmpty() ? 0 : gasTank.fillAt(split.gas(),split.kelvin(),1,IFluidHandler.FluidAction.SIMULATE);
+            if(fitLiquid==split.liquid().getAmount() && fitGas==split.gas().getAmount()){
+                if(action.execute()){
+                    if(!split.liquid().isEmpty())liquidTank.fillAt(split.liquid(),split.kelvin(),0,IFluidHandler.FluidAction.EXECUTE);
+                    if(!split.gas().isEmpty())gasTank.fillAt(split.gas(),split.kelvin(),1,IFluidHandler.FluidAction.EXECUTE);
+                    changed();
+                }
+                return units;
+            }
+            double scale=Math.min(split.liquid().isEmpty() ? 1 : (double)fitLiquid/split.liquid().getAmount(),split.gas().isEmpty() ? 1 : (double)fitGas/split.gas().getAmount());
+            units=(int)(units*scale);
+        }
+        return 0;
+    }
     private void setSeparating(boolean active){if(separating!=active){separating=active;syncNeeded=true;}}
     @Override public void removeController(boolean keepFluids){front=front();portEpoch++;super.removeController(keepFluids);}
     public void vent(){
@@ -105,10 +129,11 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
         public int getTankCapacity(int slot){return !live() || slot<0 || slot>=getTanks() ? 0 : (mode==Mode.INLET ? input(slot) : output()).getCapacity();}
         public boolean isFluidValid(int slot,FluidStack stack){
             if(!live() || mode!=Mode.INLET || slot<0 || slot>2 || stack.isEmpty())return false;
+            if(slot==0 && TwoPhase.is(stack))return root.separateStream(stack,IFluidHandler.FluidAction.SIMULATE)>0;
             if(slot!=0)return !root.chemicalContents() && (slot==1 ? net.createplant.thermal.FluidState.liquidWater(stack) : SteamGrades.of(stack)!=null);
             var recipe=recipe(stack);return recipe!=null && root.water.isEmpty() && root.steam.isEmpty() && (root.liquid.isEmpty() || FluidThermal.compatible(root.liquid.getFluid(),root.product(recipe,0,1,stack))) && (root.recycle.isEmpty() || FluidThermal.compatible(root.recycle.getFluid(),root.product(recipe,1,1,stack)));
         }
-        public int fill(FluidStack stack,FluidAction action){for(int slot=0;slot<getTanks();slot++)if(isFluidValid(slot,stack))return input(slot).fill(stack,action);return 0;}
+        public int fill(FluidStack stack,FluidAction action){if(TwoPhase.is(stack))return live() && mode==Mode.INLET ? root.separateStream(stack,action) : 0;for(int slot=0;slot<getTanks();slot++)if(isFluidValid(slot,stack))return input(slot).fill(stack,action);return 0;}
         public FluidStack drain(int amount,FluidAction action){return !live() || mode==Mode.INLET ? FluidStack.EMPTY : output().drain(amount,action);}
         public FluidStack drain(FluidStack stack,FluidAction action){return FluidThermal.compatible(getFluidInTank(0),stack) ? drain(stack.getAmount(),action) : FluidStack.EMPTY;}
     }

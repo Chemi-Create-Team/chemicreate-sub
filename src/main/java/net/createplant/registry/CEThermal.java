@@ -23,6 +23,9 @@ public final class CEThermal {
         .persistent(Codec.intRange(0,1000)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
     public static final Supplier<DataComponentType<Boolean>> CONDENSATE=COMPONENTS.register("condensate",()->DataComponentType.<Boolean>builder()
         .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
+    /** The gas share of a stream that is both liquid and gas, in eighths. Absent means a single phase; a gas-liquid separator splits it. */
+    public static final Supplier<DataComponentType<Integer>> VAPOUR=COMPONENTS.register("vapour_eighths",()->DataComponentType.<Integer>builder()
+        .persistent(Codec.intRange(1,7)).networkSynchronized(ByteBufCodecs.VAR_INT).build());
     /** How concentrated a boiled-down solution is, in thousandths of its normal strength (1000 is the fluid as made). */
     public static final Supplier<DataComponentType<Integer>> CONCENTRATION=COMPONENTS.register("concentration",()->DataComponentType.<Integer>builder()
         .persistent(Codec.intRange(1000,4000)).networkSynchronized(ByteBufCodecs.VAR_INT).build());

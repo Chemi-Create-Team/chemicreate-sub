@@ -49,11 +49,13 @@ public class ThermalFluidTank extends SmartFluidTank {
         return this;
     }
     @Override public FluidStack drain(int maxDrain,FluidAction action) {
-        if(action.simulate() || fluid.isEmpty())return super.drain(maxDrain,action);
+        if(fluid.isEmpty())return super.drain(maxDrain,action);
+        double quality=heat.quality(fluid);
+        if(action.simulate())return TwoPhase.mark(super.drain(maxDrain,action),quality);
         var before=fluid.copy();
         var out=super.drain(maxDrain,action);
         if(!out.isEmpty() && heat.leave(before,out,fluid))onContentsChanged();
-        return out;
+        return TwoPhase.mark(out,quality);
     }
     public int volumeCapacity(){return capacity;}
     /** How much gas at 1 bar the tank holds when it holds gas. */
@@ -68,7 +70,19 @@ public class ThermalFluidTank extends SmartFluidTank {
     @Override public int getCapacity(){return storedGas(fluid) ? (int)Math.min(Integer.MAX_VALUE,(long)capacity*storageRatio(fluid)) : capacity;}
     @Override public int getSpace(){return Math.max(0,getCapacity()-getFluidAmount());}
     @Override public ThermalFluidTank setCapacity(int next){var kept=fluid.copy();super.setCapacity(next);if(storedGas(kept))fluid=kept;return this;}
+    /** A two-phase stream enters as its single phase and keeps its gas share as the content's boiling share, at its boiling point. */
     @Override public int fill(FluidStack resource,FluidAction action) {
+        if(!TwoPhase.is(resource))return fillSingle(resource,action);
+        double savedKelvin=entryKelvin, savedQuality=entryQuality;
+        var plain=TwoPhase.plain(resource);
+        if(Double.isNaN(entryQuality))entryQuality=TwoPhase.share(resource);
+        if(Double.isNaN(entryKelvin)) {
+            double boil=FluidState.boilingKelvin(plain,FluidState.pressure(plain));
+            if(Double.isFinite(boil))entryKelvin=boil;
+        }
+        try { return fillSingle(plain,action); } finally { entryKelvin=savedKelvin;entryQuality=savedQuality; }
+    }
+    private int fillSingle(FluidStack resource,FluidAction action) {
         if (mixesGases() && storedGas(resource) && (fluid.isEmpty() || storedGas(fluid)) && (net.createplant.mixture.MixtureHelper.isMixture(resource)
             || net.createplant.mixture.MixtureHelper.isMixture(fluid) || !fluid.isEmpty() && !FluidThermal.mixable(fluid,resource)))
             return fillGasMixture(resource,action);
@@ -169,6 +183,7 @@ public class ThermalFluidTank extends SmartFluidTank {
         return accepted;
     }
     @Override public FluidStack drain(FluidStack request,FluidAction action) {
+        request=TwoPhase.plain(request);
         if (request.isEmpty() || !net.createplant.mixture.MixtureTransfer.matches(fluid,request)) return FluidStack.EMPTY;
         return drain(request.getAmount(),action);
     }

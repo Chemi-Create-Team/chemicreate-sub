@@ -12,6 +12,7 @@
   "fluid_state.create_refinery_n_reactors.jei.radiator": "Lowers temperature one level per pass down to ambient",
   "fluid_state.create_refinery_n_reactors.jei.heating": "A lit Blaze Burner raises temperature one level every 50 ticks",
   "fluid_state.create_refinery_n_reactors.jei.exchange": "Parallel streams average their temperatures; counterflow approaches the opposite inlet within one level",
+  "fluid_state.create_refinery_n_reactors.two_phase": "Gas and liquid",
   "fluid_state.create_refinery_n_reactors.gas": "Gas",
   "fluid_state.create_refinery_n_reactors.conditions": "Temperature %1$s / Pressure %2$s / %3$s",
   "fluid_state.create_refinery_n_reactors.bucket": "%1$s (%2$s · %3$s · %4$s)",

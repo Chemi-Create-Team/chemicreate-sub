@@ -147,7 +147,7 @@ public final class FluidState {
     }
 
     public static Component phaseName(FluidStack stack) {
-        return Component.translatable(TEXT+(gas(stack) ? "gas" : "liquid"));
+        return Component.translatable(TEXT+(TwoPhase.is(stack) ? "two_phase" : gas(stack) ? "gas" : "liquid"));
     }
 
     public static Component temperatureName(int value) {

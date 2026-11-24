@@ -12,6 +12,7 @@
   "fluid_state.create_refinery_n_reactors.jei.radiator": "通過するたびに常温まで1段冷却する",
   "fluid_state.create_refinery_n_reactors.jei.heating": "ブレイズバーナーで50 tickごとに1段加熱する",
   "fluid_state.create_refinery_n_reactors.jei.exchange": "並行流は両側を平均温度へ、対向流は入口温度の1段手前まで近づける",
+  "fluid_state.create_refinery_n_reactors.two_phase": "気液二相",
   "fluid_state.create_refinery_n_reactors.gas": "気体",
   "fluid_state.create_refinery_n_reactors.conditions": "温度 %1$s ／ 圧力 %2$s ／ %3$s",
   "fluid_state.create_refinery_n_reactors.bucket": "%1$s（%2$s・%3$s・%4$s）",
