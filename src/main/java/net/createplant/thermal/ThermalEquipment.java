@@ -127,12 +127,12 @@ public final class ThermalEquipment {
         if(counterflow)moved=COUNTERFLOW_EFFICIENCY*limit;
         else if(hotQuality>0 && boilingBetween(hot,coldKelvin,hotKelvin)
                 || coldQuality<1 && boilingBetween(cold,coldKelvin,hotKelvin)) {
-            // Search in joules because boiling and condensing can change quality at a constant temperature.
+            // Search for the first thermal equilibrium. Two streams at the same boiling point have no driving difference.
             double low=0, high=limit;
             for(int step=0;step<=32;step++) {
                 double middle=step==0 ? limit : (low+high)/2;
                 if(HeatContent.shift(hot,hotKelvin,hotQuality,-middle,FluidState.kelvin(0)).kelvin()
-                    >=HeatContent.shift(cold,coldKelvin,coldQuality,middle,FluidState.kelvin(0)).kelvin()) {
+                    >HeatContent.shift(cold,coldKelvin,coldQuality,middle,FluidState.kelvin(0)).kelvin()) {
                     low=middle;
                     if(step==0)break;
                 }

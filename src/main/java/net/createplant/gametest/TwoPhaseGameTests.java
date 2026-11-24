@@ -73,6 +73,19 @@ public class TwoPhaseGameTests {
         h.succeed();
     }
 
+    @GameTest(template="test_reactor")
+    public static void parallelWaterStreamsStopExchangingAtTheirSharedBoilingPoint(GameTestHelper h) {
+        var steam=FluidState.with(water(1000),10,4);
+        var coldWater=FluidState.with(water(1000),7,4);
+        double hot=FluidState.kelvin(10), cold=FluidState.kelvin(7), boil=FluidState.boilingKelvin(steam,4);
+        double expectedQuality=1-(HeatContent.capacity(coldWater)*(boil-cold)-HeatContent.capacity(steam)*(hot-boil))/HeatContent.latent(steam);
+        var exchange=ThermalEquipment.exchange(steam,hot,coldWater,cold,false);
+        h.assertTrue(expectedQuality>0 && expectedQuality<1 && Math.abs(exchange.first().quality()-expectedQuality)<1e-6
+            && exchange.second().quality()==0 && Math.abs(exchange.second().kelvin()-boil)<1e-4,
+            "The steam partially condenses and the coolant stays liquid when their temperatures first match: "+exchange);
+        h.succeed();
+    }
+
     @GameTest(template="test_fractionation")
     public static void theSeparatorReturnsBothPhasesThroughItsNativePorts(GameTestHelper h) {
         var level=h.getLevel();
