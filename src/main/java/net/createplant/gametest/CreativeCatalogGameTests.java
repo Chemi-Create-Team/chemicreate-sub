@@ -10,11 +10,14 @@ import java.util.Set;
 import net.createplant.CreatePlant;
 import net.createplant.registry.CECreativeModeTabs;
 import net.createplant.registry.CEItems;
+import net.createplant.thermal.FluidState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -64,13 +67,32 @@ public class CreativeCatalogGameTests {
     }
 
     @GameTest(template="test_reactor")
+    public static void creativeCatalogListsOnlyTheDefaultBucketForEachFluid(GameTestHelper h) {
+        var tab = CECreativeModeTabs.BASE.get();
+        tab.buildContents(new CreativeModeTab.ItemDisplayParameters(h.getLevel().enabledFeatures(), true, h.getLevel().registryAccess()));
+        for (var catalogue : List.of(tab.getDisplayItems(), tab.getSearchTabDisplayItems())) {
+            var fluids = new HashSet<net.minecraft.world.level.material.Fluid>();
+            for (var stack : catalogue) {
+                if (!(stack.getItem() instanceof net.minecraft.world.item.BucketItem)) continue;
+                FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
+                    h.assertTrue(fluids.add(fluid.getFluid()), "Duplicate bucket for " + BuiltInRegistries.FLUID.getKey(fluid.getFluid()));
+                    h.assertTrue(net.createplant.item.StatefulBuckets.defaultState(fluid), "A catalogue bucket starts in its default state: " + fluid);
+                });
+            }
+            h.assertTrue(catalogue.stream().anyMatch(stack -> stack.is(Items.WATER_BUCKET)), "Water and steam use the water bucket");
+            h.assertTrue(catalogue.stream().anyMatch(stack -> stack.is(CEItems.NITROGEN_GAS_BUCKET.get())), "Liquid and gaseous nitrogen use the nitrogen bucket");
+        }
+        h.succeed();
+    }
+
+    @GameTest(template="test_reactor")
     public static void pickedFluidStateSurvivesTheBucket(GameTestHelper h) {
         var bucket=new net.minecraft.world.item.ItemStack(net.createplant.registry.CEItems.NITROGEN_GAS_BUCKET.get());
         var nominal=net.createplant.item.StatefulBuckets.contents(bucket,((net.minecraft.world.item.BucketItem)bucket.getItem()).content);
-        var picked=net.createplant.thermal.FluidState.with(nominal,10,12);
+        var picked=FluidState.with(nominal,1,12);
         net.createplant.item.StatefulBuckets.write(picked,bucket);
         var read=net.createplant.item.StatefulBuckets.contents(bucket,((net.minecraft.world.item.BucketItem)bucket.getItem()).content);
-        h.assertTrue(net.createplant.thermal.FluidState.temperature(read)==10 && net.createplant.thermal.FluidState.pressure(read)==12,"The bucket keeps the picked temperature and pressure");
+        h.assertTrue(FluidState.temperature(read)==1 && FluidState.pressure(read)==12 && !FluidState.gas(read),"The same nitrogen bucket holds liquid and keeps both chosen values");
         h.succeed();
     }
 }

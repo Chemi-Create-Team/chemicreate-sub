@@ -21,7 +21,7 @@ public final class StatefulBuckets {
 
     /** A bucket of a retired state entry: any stack of it loads as its substance's bucket, so it is never listed on its own. */
     public static boolean retired(net.minecraft.world.item.Item item) {
-        return item instanceof net.minecraft.world.item.BucketItem bucket && FluidIdentity.legacy(bucket.content) && new ItemStack(item).getItem()!=item;
+        return item instanceof net.minecraft.world.item.BucketItem bucket && FluidIdentity.legacy(bucket.content);
     }
 
     public static boolean defaultState(FluidStack stack) {

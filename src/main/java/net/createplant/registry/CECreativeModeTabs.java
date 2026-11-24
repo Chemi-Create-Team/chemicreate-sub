@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import net.createplant.CreatePlant;
 import net.createplant.item.GasBucketItem;
+import net.createplant.item.StatefulBuckets;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
@@ -126,7 +127,7 @@ public class CECreativeModeTabs {
         BuiltInRegistries.ITEM.stream()
             .filter(item -> BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID) && !listed.contains(item))
             .forEach(item -> {
-                if (item == CERadiation.DOSIMETER.get() || item == CERadiation.SURVEY_METER.get()) return;
+                if (item == CERadiation.DOSIMETER.get() || item == CERadiation.SURVEY_METER.get() || StatefulBuckets.retired(item)) return;
                 if (item instanceof GasBucketItem) gases.add(item);
                 else if (item instanceof BucketItem bucket && bucket.content != Fluids.EMPTY) liquids.add(item);
                 else if (!(item instanceof BlockItem) == materials) rest.add(item);

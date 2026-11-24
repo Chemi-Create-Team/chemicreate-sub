@@ -2,17 +2,25 @@ package net.createplant.client;
 
 import com.google.gson.GsonBuilder;
 
+import net.createplant.item.StatefulBuckets;
 import net.createplant.registry.CECreativeModeTabs;
+import net.createplant.registry.CEItems;
 import net.createplant.registry.SectionedCreativeTab;
+import net.createplant.thermal.FluidState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.material.Fluids;
 
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Files;
@@ -26,6 +34,7 @@ import java.util.Map;
  */
 public final class CreativeTabsClientCheck {
     private static CreativeModeInventoryScreen screen;
+    private static Slot waterSlot;
     private static int ticks, phase;
     private static final ArrayList<Map<String, Object>> results = new ArrayList<>();
 
@@ -63,6 +72,10 @@ public final class CreativeTabsClientCheck {
                 ready("search");
             }
             case 4 -> {
+                openWaterPicker(mc);
+                ready("water_state_picker");
+            }
+            case 5 -> {
                 checkFluidPicker(mc);
                 select(CreativeModeTabs.getDefaultTab());
                 if (screen.getMenu().items.stream().anyMatch(ItemStack::isEmpty))
@@ -87,14 +100,12 @@ public final class CreativeTabsClientCheck {
         return false;
     }
 
-    private static void checkFluidPicker(Minecraft mc) {
+    private static void openWaterPicker(Minecraft mc) {
         select(CECreativeModeTabs.BASE.get());
         var menu = screen.getMenu();
-        var water = menu.items.stream().filter(stack -> stack.is(Items.WATER_BUCKET)).findFirst().orElseThrow();
-        int row = menu.items.indexOf(water) / 9;
-        int scrollRows = (menu.items.size() + 8) / 9 - 5;
-        menu.scrollTo(Math.clamp(row / (float) scrollRows, 0, 1));
-        var slot = menu.slots.stream().filter(s -> s.getItem().is(Items.WATER_BUCKET)).findFirst().orElseThrow();
+        int row = menu.items.indexOf(menu.items.stream().filter(stack -> stack.is(Items.WATER_BUCKET)).findFirst().orElseThrow()) / 9;
+        screen.mouseScrolled(screen.getGuiLeft() + 20, screen.getGuiTop() + 45, 0, -row);
+        var slot = menu.slots.subList(0, 45).stream().filter(s -> s.getItem().is(Items.WATER_BUCKET)).findFirst().orElseThrow();
         double x = screen.getGuiLeft() + slot.x + 7, y = screen.getGuiTop() + slot.y + 7;
 
         menu.setCarried(new ItemStack(Items.STONE, 2));
@@ -103,19 +114,69 @@ public final class CreativeTabsClientCheck {
         if (mc.screen != screen || !menu.getCarried().is(Items.STONE))
             throw new IllegalStateException("A carried item must keep the native right-click action");
         menu.setCarried(ItemStack.EMPTY);
+        waterSlot = slot;
+        configure(mc, Items.WATER_BUCKET, 12, 12);
+    }
 
+    private static void checkFluidPicker(Minecraft mc) {
+        var menu = screen.getMenu();
+        take(mc, Items.WATER_BUCKET, 12, 12, true);
+        if (!waterSlot.getItem().is(Items.WATER_BUCKET)) throw new IllegalStateException("The picker lost the catalogue scroll position");
+        var hotbar = menu.slots.subList(45, 54).stream().filter(slot -> !slot.hasItem()).findFirst().orElseThrow();
+        double hotbarX = screen.getGuiLeft() + hotbar.x + 7, hotbarY = screen.getGuiTop() + hotbar.y + 7;
+        screen.mouseClicked(hotbarX, hotbarY, 0);
+        screen.mouseReleased(hotbarX, hotbarY, 0);
+        if (!hotbar.getItem().is(Items.WATER_BUCKET) || !menu.getCarried().isEmpty())
+            throw new IllegalStateException("The selected bucket did not reach the hotbar: slot=" + hotbar.getItem() + ", cursor=" + menu.getCarried());
+        assertState(hotbar.getItem(), 12, 12, true);
+
+        select(CreativeModeTabs.searchTab());
+        var nitrogen = CEItems.NITROGEN_GAS_BUCKET.get();
+        for (char c : Component.translatable(nitrogen.getDescriptionId()).getString().toCharArray()) screen.charTyped(c, 0);
+        if (menu.items.stream().filter(stack -> stack.is(nitrogen)).count() != 1)
+            throw new IllegalStateException("Search listed more than one nitrogen state or no nitrogen bucket");
+        var searchResults = new ArrayList<>(menu.items);
+        configure(mc, nitrogen, 1, 4);
+        take(mc, nitrogen, 1, 4, false);
+        if (!searchResults.equals(menu.items)) throw new IllegalStateException("The picker lost the creative search query");
+        menu.setCarried(ItemStack.EMPTY);
+    }
+
+    private static void configure(Minecraft mc, Item bucket, int temperature, int pressure) {
+        var menu = screen.getMenu();
+        var slot = menu.slots.subList(0, 45).stream().filter(s -> s.getItem().is(bucket)).findFirst().orElseThrow();
+        double x = screen.getGuiLeft() + slot.x + 7, y = screen.getGuiTop() + slot.y + 7;
         screen.mouseClicked(x, y, 1);
         if (mc.screen == screen) screen.mouseReleased(x, y, 1);
         if (!(mc.screen instanceof FluidStatePickerScreen picker))
-            throw new IllegalStateException("Right-clicking the catalog's water bucket did not open the picker");
-        picker.mouseClicked(picker.width / 2 + 70, picker.height / 2 - 30, 0);
-        picker.mouseReleased(picker.width / 2 + 70, picker.height / 2 - 30, 0);
-        picker.mouseClicked(picker.width / 2 - 40, picker.height / 2 + 40, 0);
-        var chosen = menu.getCarried();
-        if (mc.screen != screen || !chosen.is(Items.WATER_BUCKET)
-                || net.createplant.item.StatefulBuckets.defaultState(net.createplant.item.StatefulBuckets.contents(chosen, Fluids.WATER)))
-            throw new IllegalStateException("The picker did not return the chosen bucket and its state to the creative cursor");
-        menu.setCarried(ItemStack.EMPTY);
+            throw new IllegalStateException("Right-clicking " + bucket + " did not open the picker");
+        var sliders = picker.children().stream().filter(AbstractSliderButton.class::isInstance).map(AbstractSliderButton.class::cast).toList();
+        slide(picker, sliders.get(0), temperature - 1);
+        picker.keyPressed(GLFW.GLFW_KEY_RIGHT, 0, 0);
+        slide(picker, sliders.get(1), pressure);
+    }
+
+    private static void take(Minecraft mc, Item bucket, int temperature, int pressure, boolean gas) {
+        var picker = (FluidStatePickerScreen) mc.screen;
+        int x = picker.width / 2 - 40, y = picker.height / 2 + 45;
+        picker.mouseClicked(x, y, 0);
+        mc.screen.mouseReleased(x, y, 0);
+        var chosen = screen.getMenu().getCarried();
+        if (mc.screen != screen || !chosen.is(bucket)) throw new IllegalStateException("The picker did not return the bucket to the creative cursor");
+        assertState(chosen, temperature, pressure, gas);
+    }
+
+    private static void slide(FluidStatePickerScreen picker, AbstractSliderButton slider, int level) {
+        double x = slider.getX() + 4 + (slider.getWidth() - 8) * (level / (double) FluidState.MAX);
+        double y = slider.getY() + 10;
+        picker.mouseClicked(x, y, 0);
+        picker.mouseReleased(x, y, 0);
+    }
+
+    private static void assertState(ItemStack stack, int temperature, int pressure, boolean gas) {
+        var contents = StatefulBuckets.contents(stack, ((BucketItem) stack.getItem()).content);
+        if (FluidState.temperature(contents) != temperature || FluidState.pressure(contents) != pressure || FluidState.gas(contents) != gas)
+            throw new IllegalStateException("Unexpected picked fluid state: " + contents);
     }
 
     private static void ready(String name) {

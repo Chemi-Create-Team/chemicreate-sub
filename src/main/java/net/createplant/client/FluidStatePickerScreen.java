@@ -18,54 +18,75 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.FluidStack;
+import org.lwjgl.glfw.GLFW;
 
 /** Creative-only picker: one bucket per substance, with its temperature and pressure chosen here. 2026-11-24 user-designated exception to the no-custom-GUI rule. */
 public final class FluidStatePickerScreen extends Screen {
-    private static final String TEXT = "gui." + CreatePlant.MOD_ID + ".fluid_state.";
+    public static final String TEXT = "gui." + CreatePlant.MOD_ID + ".fluid_state.";
+    private static final int SLIDER_WIDTH = 244;
     private final CreativeModeInventoryScreen parent;
+    private final Runnable restoreCatalogue;
     private final ItemStack bucket;
     private final FluidStack nominal;
     private int temperature, pressure;
+    private ItemStack preview;
+    private Component phase;
 
-    private FluidStatePickerScreen(CreativeModeInventoryScreen parent, ItemStack bucket, FluidStack contents) {
+    private FluidStatePickerScreen(CreativeModeInventoryScreen parent, ItemStack bucket, FluidStack contents, Runnable restoreCatalogue) {
         super(Component.translatable(TEXT + "title"));
         this.parent = parent;
+        this.restoreCatalogue = restoreCatalogue;
         this.bucket = bucket;
         nominal = contents;
         temperature = FluidState.temperature(contents);
         pressure = FluidState.pressure(contents);
+        updatePreview();
     }
 
-    /** Right-clicking a fluid bucket in the Create-Plant creative tab opens the picker. */
-    public static boolean open(CreativeModeInventoryScreen screen, ItemStack stack) {
+    public static boolean canConfigure(ItemStack stack) {
+        return contents(stack) != null;
+    }
+
+    private static FluidStack contents(ItemStack stack) {
         if (!(stack.getItem() instanceof BucketItem item) || item.content == Fluids.EMPTY
-            || item != Items.WATER_BUCKET && !BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID)) return false;
+            || item != Items.WATER_BUCKET && item != com.jesz.createdieselgenerators.CDGFluids.CRUDE_OIL.getBucket().get()
+                && !BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID)) return null;
         var contents = StatefulBuckets.contents(stack, item.content);
-        if (net.createplant.mixture.MixtureHelper.isMixture(contents) || net.createplant.thermal.TwoPhase.is(contents)) return false;
-        Minecraft.getInstance().setScreen(new FluidStatePickerScreen(screen, stack, contents));
+        return net.createplant.mixture.MixtureHelper.isMixture(contents) || net.createplant.thermal.TwoPhase.is(contents) ? null : contents;
+    }
+
+    public static boolean open(CreativeModeInventoryScreen screen, ItemStack stack, Runnable restoreCatalogue) {
+        var contents = contents(stack);
+        if (contents == null) return false;
+        Minecraft.getInstance().setScreen(new FluidStatePickerScreen(screen, stack, contents, restoreCatalogue));
         return true;
     }
 
-    private FluidStack chosen() { return FluidState.with(nominal, temperature, pressure); }
-
     @Override protected void init() {
-        int x = width / 2 - 100, y = height / 2 - 40;
+        int x = width / 2 - SLIDER_WIDTH / 2, y = height / 2 - 40;
         addRenderableWidget(new StateSlider(x, y, true));
         addRenderableWidget(new StateSlider(x, y + 24, false));
-        addRenderableWidget(Button.builder(Component.translatable(TEXT + "give"), button -> give()).bounds(x, y + 72, 98, 20).build());
-        addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> onClose()).bounds(x + 102, y + 72, 98, 20).build());
+        addRenderableWidget(Button.builder(Component.translatable(TEXT + "give"), button -> give()).bounds(x, y + 78, 120, 20).build());
+        addRenderableWidget(Button.builder(Component.translatable("gui.cancel"), button -> onClose()).bounds(x + 124, y + 78, 120, 20).build());
+    }
+
+    private void updatePreview() {
+        var fluid = FluidState.with(nominal, temperature, pressure);
+        preview = bucket.copyWithCount(1);
+        preview.remove(CEWorldFluids.BUCKET_CONTENTS.get());
+        StatefulBuckets.write(fluid, preview);
+        phase = Component.translatable(TEXT + "phase", FluidState.phaseName(fluid));
     }
 
     private void give() {
-        var stack = new ItemStack(bucket.getItem());
-        var fluid = chosen();
-        stack.remove(CEWorldFluids.BUCKET_CONTENTS.get());
-        StatefulBuckets.write(fluid, stack);
         onClose();
-        if (minecraft.screen == parent) parent.getMenu().setCarried(stack);
+        if (minecraft.screen == parent) parent.getMenu().setCarried(preview.copy());
     }
 
-    @Override public void onClose() { minecraft.setScreen(parent); }
+    @Override public void onClose() {
+        minecraft.setScreen(parent);
+        if (minecraft.screen == parent) restoreCatalogue.run();
+    }
 
     @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -73,7 +94,9 @@ public final class FluidStatePickerScreen extends Screen {
         int y = height / 2 - 40;
         graphics.drawCenteredString(font, title, x, y - 28, 0xFFFFFFFF);
         graphics.drawCenteredString(font, nominal.getHoverName(), x, y - 16, 0xFFFFD27F);
-        graphics.drawCenteredString(font, Component.translatable(TEXT + "phase", FluidState.phaseName(chosen())), x, y + 52, 0xFFFFFFFF);
+        int phaseLeft = x - (font.width(phase) + 22) / 2;
+        graphics.renderItem(preview, phaseLeft, y + 50);
+        graphics.drawString(font, phase, phaseLeft + 22, y + 54, 0xFFFFFFFF);
     }
 
     @Override public boolean isPauseScreen() { return false; }
@@ -83,7 +106,7 @@ public final class FluidStatePickerScreen extends Screen {
         private final boolean heat;
 
         StateSlider(int x, int y, boolean heat) {
-            super(x, y, 200, 20, Component.empty(), (heat ? temperature : pressure) / (double) FluidState.MAX);
+            super(x, y, SLIDER_WIDTH, 20, Component.empty(), (heat ? temperature : pressure) / (double) FluidState.MAX);
             this.heat = heat;
             updateMessage();
         }
@@ -97,9 +120,19 @@ public final class FluidStatePickerScreen extends Screen {
         }
 
         @Override protected void applyValue() {
-            value = level() / (double) FluidState.MAX;
-            if (heat) temperature = level();
-            else pressure = level();
+            int level = level();
+            value = level / (double) FluidState.MAX;
+            if (heat) temperature = level;
+            else pressure = level;
+            updatePreview();
+        }
+
+        @Override public boolean keyPressed(int key, int scanCode, int modifiers) {
+            if (key != GLFW.GLFW_KEY_LEFT && key != GLFW.GLFW_KEY_RIGHT) return super.keyPressed(key, scanCode, modifiers);
+            value = FluidState.clamp(level() + (key == GLFW.GLFW_KEY_LEFT ? -1 : 1)) / (double) FluidState.MAX;
+            applyValue();
+            updateMessage();
+            return true;
         }
     }
 }
