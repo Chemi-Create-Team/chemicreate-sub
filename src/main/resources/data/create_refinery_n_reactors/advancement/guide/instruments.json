@@ -1,0 +1,78 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:pipe_thermometer"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.instruments"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.instruments.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/pipes",
+  "criteria": {
+    "pipe_thermometer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:pipe_thermometer"
+          }
+        ]
+      }
+    },
+    "pipe_pressure_gauge": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:pipe_pressure_gauge"
+          }
+        ]
+      }
+    },
+    "pipe_flow_meter": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:pipe_flow_meter"
+          }
+        ]
+      }
+    },
+    "flow_regulator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:flow_regulator"
+          }
+        ]
+      }
+    },
+    "pid_controller": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:pid_controller"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "pipe_thermometer",
+      "pipe_pressure_gauge",
+      "pipe_flow_meter",
+      "flow_regulator",
+      "pid_controller"
+    ]
+  ]
+}

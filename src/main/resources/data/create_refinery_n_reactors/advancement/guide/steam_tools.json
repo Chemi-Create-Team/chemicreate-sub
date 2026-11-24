@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:steam_gun"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.steam_tools"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.steam_tools.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/stainless_steel",
+  "criteria": {
+    "steam_gun": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:steam_gun"
+          }
+        ]
+      }
+    },
+    "steam_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:steam_hammer"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "steam_gun",
+      "steam_hammer"
+    ]
+  ]
+}

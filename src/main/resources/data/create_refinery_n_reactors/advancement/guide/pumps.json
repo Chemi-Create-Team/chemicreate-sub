@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:electric_pump"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.pumps"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.pumps.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/pipes",
+  "criteria": {
+    "electric_pump": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:electric_pump"
+          }
+        ]
+      }
+    },
+    "high_pressure_pump": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:high_pressure_pump"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "electric_pump",
+      "high_pressure_pump"
+    ]
+  ]
+}

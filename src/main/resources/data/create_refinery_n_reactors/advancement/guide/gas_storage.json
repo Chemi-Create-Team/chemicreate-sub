@@ -1,0 +1,56 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:gas_holder"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.gas_storage"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.gas_storage.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/compressor",
+  "criteria": {
+    "gas_holder": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:gas_holder"
+          }
+        ]
+      }
+    },
+    "gas_receiver": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:gas_receiver"
+          }
+        ]
+      }
+    },
+    "gas_tank_container": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:gas_tank_container"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "gas_holder",
+      "gas_receiver",
+      "gas_tank_container"
+    ]
+  ]
+}

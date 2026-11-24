@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:deuterium_gas_bucket"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fusion_fuel"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fusion_fuel.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/nuclear",
+  "criteria": {
+    "deuterium_gas_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:deuterium_gas_bucket"
+          }
+        ]
+      }
+    },
+    "tritium_gas_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:tritium_gas_bucket"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "deuterium_gas_bucket",
+      "tritium_gas_bucket"
+    ]
+  ]
+}

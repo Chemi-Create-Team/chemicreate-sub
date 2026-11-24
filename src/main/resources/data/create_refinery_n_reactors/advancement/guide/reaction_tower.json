@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:reaction_tower"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.reaction_tower"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.reaction_tower.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/vessel",
+  "criteria": {
+    "reaction_tower": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:reaction_tower"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "reaction_tower"
+    ]
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:naphtha_bucket"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.oil_products"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.oil_products.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/vessel",
+  "criteria": {
+    "naphtha_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:naphtha_bucket"
+          }
+        ]
+      }
+    },
+    "low_sulfur_diesel_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:low_sulfur_diesel_bucket"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "naphtha_bucket",
+      "low_sulfur_diesel_bucket"
+    ]
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:ammonia_separator"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.separator"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.separator.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/compressor",
+  "criteria": {
+    "ammonia_separator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:ammonia_separator"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ammonia_separator"
+    ]
+  ]
+}

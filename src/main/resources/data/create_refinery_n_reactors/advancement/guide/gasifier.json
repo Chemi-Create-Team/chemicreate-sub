@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:steam_gasifier"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.gasifier"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.gasifier.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/vessel",
+  "criteria": {
+    "steam_gasifier": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:steam_gasifier"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "steam_gasifier"
+    ]
+  ]
+}

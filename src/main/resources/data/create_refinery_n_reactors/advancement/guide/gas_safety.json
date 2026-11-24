@@ -1,0 +1,56 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:gas_mask"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.gas_safety"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.gas_safety.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/stainless_steel",
+  "criteria": {
+    "gas_mask": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:gas_mask"
+          }
+        ]
+      }
+    },
+    "gas_detector": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:gas_detector"
+          }
+        ]
+      }
+    },
+    "relief_scrubber": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:relief_scrubber"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "gas_mask",
+      "gas_detector",
+      "relief_scrubber"
+    ]
+  ]
+}

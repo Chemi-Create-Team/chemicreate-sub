@@ -1,0 +1,67 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:stainless_steel_pipe"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.pipes"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.pipes.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/stainless_steel",
+  "criteria": {
+    "stainless_steel_pipe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:stainless_steel_pipe"
+          }
+        ]
+      }
+    },
+    "nickel_alloy_pipe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:nickel_alloy_pipe"
+          }
+        ]
+      }
+    },
+    "zirconium_pipe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:zirconium_pipe"
+          }
+        ]
+      }
+    },
+    "ceramic_pipe": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:ceramic_pipe"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "stainless_steel_pipe",
+      "nickel_alloy_pipe",
+      "zirconium_pipe",
+      "ceramic_pipe"
+    ]
+  ]
+}

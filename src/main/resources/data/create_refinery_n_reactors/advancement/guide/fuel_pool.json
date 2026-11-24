@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:fuel_pool"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fuel_pool"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.fuel_pool.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/nuclear",
+  "criteria": {
+    "fuel_pool": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:fuel_pool"
+          }
+        ]
+      }
+    },
+    "spent_fuel_rod": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:spent_fuel_rod"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "fuel_pool",
+      "spent_fuel_rod"
+    ]
+  ]
+}

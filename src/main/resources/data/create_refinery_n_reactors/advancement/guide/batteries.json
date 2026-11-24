@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:lead_acid_battery_casing"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.batteries"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.batteries.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/power",
+  "criteria": {
+    "lead_acid_battery_casing": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:lead_acid_battery_casing"
+          }
+        ]
+      }
+    },
+    "lithium_ion_battery_casing": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:lithium_ion_battery_casing"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "lead_acid_battery_casing",
+      "lithium_ion_battery_casing"
+    ]
+  ]
+}

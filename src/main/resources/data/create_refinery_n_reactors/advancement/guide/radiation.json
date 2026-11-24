@@ -1,0 +1,45 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:survey_meter"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.radiation"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.radiation.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/nuclear",
+  "criteria": {
+    "survey_meter": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:survey_meter"
+          }
+        ]
+      }
+    },
+    "personal_dosimeter": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:personal_dosimeter"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "survey_meter",
+      "personal_dosimeter"
+    ]
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:stainless_steel_tank"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.tanks"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.tanks.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/stainless_steel",
+  "criteria": {
+    "stainless_steel_tank": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:stainless_steel_tank"
+          }
+        ]
+      }
+    },
+    "horizontal_fluid_tank": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:horizontal_fluid_tank"
+          }
+        ]
+      }
+    },
+    "cryogenic_tank": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:cryogenic_tank"
+          }
+        ]
+      }
+    },
+    "pressure_tank": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:pressure_tank"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "stainless_steel_tank",
+      "horizontal_fluid_tank",
+      "cryogenic_tank",
+      "pressure_tank"
+    ]
+  ]
+}

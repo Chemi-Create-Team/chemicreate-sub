@@ -1,0 +1,56 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:natural_draft_cooling_tower"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.cooling"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.cooling.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/power",
+  "criteria": {
+    "natural_draft_cooling_tower": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:natural_draft_cooling_tower"
+          }
+        ]
+      }
+    },
+    "cooler_radiator": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:cooler_radiator"
+          }
+        ]
+      }
+    },
+    "condenser_shell": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:condenser_shell"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "natural_draft_cooling_tower",
+      "cooler_radiator",
+      "condenser_shell"
+    ]
+  ]
+}
