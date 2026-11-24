@@ -183,7 +183,7 @@ public class RbmkGameTests {
     }
 
     @GameTest(template = "test_rbmk")
-    public static void minimumCircularCoreShowsEightSpacedInteriorRodsOnTheBoard(GameTestHelper h) {
+    public static void minimumCircularCoreShowsEightMirrorSymmetricInteriorRodsOnTheBoard(GameTestHelper h) {
         BlockPos base = new BlockPos(2, 2, 2);
         core(h, base.getX(), base.getY(), base.getZ(), 5, true);
         var result = form(h, base.east(2).south(2));
@@ -204,16 +204,11 @@ public class RbmkGameTests {
         for (int index : controls) {
             int x = index % 10, z = index / 10;
             h.assertTrue(active.containsAll(List.of(index-1, index+1, index-10, index+10)), "Each rod lies inside the active perimeter: " + index);
-            h.assertTrue(controls.contains(10*x + 9-z), "Each rod has a corresponding rod after a quarter-turn: " + index);
+            h.assertTrue(controls.contains(10*z + 9-x) && controls.contains(10*(9-z) + x),
+                "Each position has both left-right and top-bottom mirror partners: " + index);
             for (int other : controls) if (other != index)
-                h.assertTrue(Math.max(Math.abs(x - other % 10), Math.abs(z - other / 10)) >= 2, "Control rods do not touch, even diagonally");
+                h.assertTrue(Math.abs(x - other % 10) + Math.abs(z - other / 10) >= 2, "Control rods never share an edge");
         }
-        for (int inner = 2; inner <= 7; inner++) {
-            int coordinate = inner;
-            h.assertTrue(controls.stream().anyMatch(i -> i % 10 == coordinate) && controls.stream().anyMatch(i -> i / 10 == coordinate),
-                "Every interior row and column carries at least one rod");
-        }
-
         ((FuelChannelBlockEntity) h.getLevel().getBlockEntity(result.controller())).adopt(result, null);
         BlockPos desk = new BlockPos(13, 2, 4);
         controlRoom(h, desk, Direction.NORTH);
@@ -240,22 +235,26 @@ public class RbmkGameTests {
         core(h, base.getX(), base.getY(), base.getZ(), 5, true);
         var result = form(h, base.east(2).south(2));
         var lead = (FuelChannelBlockEntity) h.getLevel().getBlockEntity(result.controller());
-        var moved = (FuelChannelBlockEntity) h.getBlockEntity(base.offset(2, 0, 1));
-        restoreLegacyMinimumLayout(h, result);
-        h.assertTrue(!moved.control(0), "The old empty layout uses this new preset position for fuel");
-        lead.adopt(result, null);
-        h.assertTrue(moved.control(0) && lead.core().controlChannels() == 8, "An empty old preset updates as a whole when the core forms");
+        var moved = (FuelChannelBlockEntity) h.getBlockEntity(base.offset(1, 0, 1));
+        var original = Set.of(14, 41, 44, 45, 47, 54, 74, 77);
+        var previous = Set.of(24, 26, 32, 47, 52, 67, 73, 75);
+        for (var oldControls : List.of(original, previous)) {
+            restoreLegacyMinimumLayout(h, result, oldControls);
+            h.assertTrue(!moved.control(1), "The old empty layout uses this new preset position for fuel");
+            lead.adopt(result, null);
+            h.assertTrue(moved.control(1) && lead.core().controlChannels() == 8, "Both earlier empty presets update as a whole");
+        }
 
-        restoreLegacyMinimumLayout(h, result);
-        h.assertTrue(moved.topItems().insertItem(0, CENuclear.FUEL_ROD.toStack(), false).isEmpty(), "Prepare an occupied old-layout slot");
+        restoreLegacyMinimumLayout(h, result, previous);
+        h.assertTrue(moved.topItems().insertItem(1, CENuclear.FUEL_ROD.toStack(), false).isEmpty(), "Prepare an occupied old-layout slot");
         lead.adopt(result, null);
-        h.assertTrue(!moved.control(0) && moved.topItems().getStackInSlot(0).is(CENuclear.FUEL_ROD.get()) && lead.core().controlChannels() == 8,
+        h.assertTrue(!moved.control(1) && moved.topItems().getStackInSlot(1).is(CENuclear.FUEL_ROD.get()) && lead.core().controlChannels() == 8,
             "An occupied old layout keeps every saved position and item");
 
-        restoreLegacyMinimumLayout(h, result);
-        h.assertTrue(moved.selectChannel(1, FuelChannelBlockEntity.CONTROL), "Prepare a player-edited but unoccupied layout");
+        restoreLegacyMinimumLayout(h, result, original);
+        h.assertTrue(moved.selectChannel(0, FuelChannelBlockEntity.CONTROL), "Prepare a player-edited but unoccupied layout");
         lead.adopt(result, null);
-        h.assertTrue(!moved.control(0) && moved.control(1) && lead.core().controlChannels() == 9, "An empty custom layout retains the player's choice");
+        h.assertTrue(moved.control(0) && !moved.control(1) && lead.core().controlChannels() == 9, "An empty custom layout retains the player's choice");
         h.succeed();
     }
 
@@ -265,8 +264,7 @@ public class RbmkGameTests {
         return z*10 + x;
     }
 
-    private static void restoreLegacyMinimumLayout(GameTestHelper h, ReactorCoreStructure.Result result) {
-        Set<Integer> oldControls = Set.of(14, 41, 44, 45, 47, 54, 74, 77);
+    private static void restoreLegacyMinimumLayout(GameTestHelper h, ReactorCoreStructure.Result result, Set<Integer> oldControls) {
         for (BlockPos bottom : result.fuel()) {
             var channel = (FuelChannelBlockEntity) h.getLevel().getBlockEntity(bottom);
             var saved = channel.saveWithoutMetadata(h.getLevel().registryAccess());

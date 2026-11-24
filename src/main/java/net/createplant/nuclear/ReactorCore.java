@@ -421,6 +421,11 @@ public final class ReactorCore {
         }
     }
 
+    private static boolean matchesEmptyLegacyLayout(Level level, ReactorCoreStructure.Result result, boolean previousMinimum) {
+        return result.fuel().stream().allMatch(pos -> level.getBlockEntity(pos) instanceof FuelChannelBlockEntity channel
+            && channel.matchesEmptyLayout(ReactorCoreStructure.channelMask(result, pos), ReactorCoreStructure.legacyControlMask(result, pos, previousMinimum)));
+    }
+
     public void form(Level level, ReactorCoreStructure.Result result) {
         lastPowerTick = Long.MIN_VALUE;
         for (BlockPos pos : result.fuel()) if (level.getBlockEntity(pos) instanceof FuelChannelBlockEntity channel && !channel.acceptsAssemblyHeight(result.height())) {
@@ -460,8 +465,7 @@ public final class ReactorCore {
         var depths = new java.util.ArrayList<Float>();
         var wear = new java.util.ArrayList<Float>();
         boolean refreshEmptyLayout = result.circular() && width == ReactorCoreStructure.MIN_WIDTH
-            && result.fuel().stream().allMatch(pos -> level.getBlockEntity(pos) instanceof FuelChannelBlockEntity channel
-                && channel.matchesEmptyLayout(ReactorCoreStructure.channelMask(result, pos), ReactorCoreStructure.legacyControlMask(result, pos)));
+            && (matchesEmptyLegacyLayout(level, result, false) || matchesEmptyLegacyLayout(level, result, true));
         for (int c = 0; c < fuel; c++) {
             BlockPos pos = result.fuel().get(c);
             if (level.getBlockEntity(pos) instanceof FuelChannelBlockEntity channel) {

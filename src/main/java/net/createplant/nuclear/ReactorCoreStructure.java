@@ -66,17 +66,21 @@ public final class ReactorCoreStructure {
 
     /** The default control-channel positions among a bundle's active slots. */
     public static int defaultControlMask(Result result, BlockPos bottom) {
-        return controlMask(result, bottom, result.circular());
+        return controlMask(result, bottom, result.circular(), false);
     }
 
-    static int legacyControlMask(Result result, BlockPos bottom) { return controlMask(result, bottom, false); }
+    static int legacyControlMask(Result result, BlockPos bottom, boolean previousMinimum) {
+        return controlMask(result, bottom, false, previousMinimum);
+    }
 
-    private static int controlMask(Result result, BlockPos bottom, boolean circularPreset) {
+    private static int controlMask(Result result, BlockPos bottom, boolean circularPreset, boolean previousMinimum) {
         int active = channelMask(result, bottom), mask = 0;
         int bx = bottom.getX() - result.box().minX(), bz = bottom.getZ() - result.box().minZ();
         for (int slot = 0; slot < ReactorPhysics.RODS_PER_BLOCK; slot++) {
             if ((active & 1 << slot) == 0) continue;
-            if (ReactorCoreVariants.defaultControlChannel(bx, bz, slot, result.width(), circularPreset)) mask |= 1 << slot;
+            boolean control = previousMinimum ? ReactorCoreVariants.previousMinimumControlChannel(bx, bz, slot)
+                : ReactorCoreVariants.defaultControlChannel(bx, bz, slot, result.width(), circularPreset);
+            if (control) mask |= 1 << slot;
         }
         return mask;
     }

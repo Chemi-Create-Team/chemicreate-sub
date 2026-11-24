@@ -50,15 +50,25 @@ public final class ReactorCoreVariants {
         int x = bx * ReactorPhysics.CHANNEL_GRID + slot % ReactorPhysics.CHANNEL_GRID;
         int z = bz * ReactorPhysics.CHANNEL_GRID + slot / ReactorPhysics.CHANNEL_GRID;
         if (circular && size == MIN_WIDTH) {
-            // Eight interior channels in quarter-turn symmetry, with no shared edges or corners.
-            return switch (z) {
-                case 2 -> x == 4 || x == 6;
-                case 3, 5 -> x == 2;
-                case 4, 6 -> x == 7;
-                case 7 -> x == 3 || x == 5;
+            // Reflection across either axis maps every slot to another rod.
+            return switch (Math.min(z, fine - 1 - z)) {
+                case 2 -> x == 3 || x == 6;
+                case 3 -> x == 2 || x == 7;
                 default -> false;
             };
         }
         return x % 3 == 1 && z % 3 == 1 || x == c1 && z == c0 || x == c0 && z == c1;
+    }
+
+    static boolean previousMinimumControlChannel(int bx, int bz, int slot) {
+        int x = bx * ReactorPhysics.CHANNEL_GRID + slot % ReactorPhysics.CHANNEL_GRID;
+        int z = bz * ReactorPhysics.CHANNEL_GRID + slot / ReactorPhysics.CHANNEL_GRID;
+        return switch (z) {
+            case 2 -> x == 4 || x == 6;
+            case 3, 5 -> x == 2;
+            case 4, 6 -> x == 7;
+            case 7 -> x == 3 || x == 5;
+            default -> false;
+        };
     }
 }
