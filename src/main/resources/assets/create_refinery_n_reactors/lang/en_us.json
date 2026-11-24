@@ -6474,5 +6474,11 @@
   "advancement.create_refinery_n_reactors.guide.sour_experience": "A Sour Experience",
   "advancement.create_refinery_n_reactors.guide.sour_experience.description": "Acid burns. Now you know.",
   "advancement.create_refinery_n_reactors.guide.seeing_stars": "Seeing Stars",
-  "advancement.create_refinery_n_reactors.guide.seeing_stars.description": "Steam hits harder than it looks."
+  "advancement.create_refinery_n_reactors.guide.seeing_stars.description": "Steam hits harder than it looks.",
+  "advancement.create_refinery_n_reactors.fluid.liquids": "Liquid library",
+  "advancement.create_refinery_n_reactors.fluid.liquids.description": "Fill a bucket with every liquid in the plant.",
+  "advancement.create_refinery_n_reactors.fluid.gases": "Gas library",
+  "advancement.create_refinery_n_reactors.fluid.gases.description": "Bottle every gas in the plant.",
+  "advancement.create_refinery_n_reactors.fluid.liquid": "Fill a bucket with %s.",
+  "advancement.create_refinery_n_reactors.fluid.gas": "Bottle %s in a bucket."
 }

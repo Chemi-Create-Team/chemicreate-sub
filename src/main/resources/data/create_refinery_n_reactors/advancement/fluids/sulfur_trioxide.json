@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:sulfur_trioxide_bucket"
+    },
+    "title": {
+      "translate": "fluid.create_refinery_n_reactors.sulfur_trioxide"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.fluid.gas",
+      "with": [
+        {
+          "translate": "fluid.create_refinery_n_reactors.sulfur_trioxide"
+        }
+      ]
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:fluids/gass",
+  "criteria": {
+    "bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:sulfur_trioxide_bucket"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "bucket"
+    ]
+  ]
+}

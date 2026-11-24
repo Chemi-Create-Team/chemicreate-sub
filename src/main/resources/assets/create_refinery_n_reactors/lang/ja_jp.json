@@ -6474,5 +6474,11 @@
   "advancement.create_refinery_n_reactors.guide.sour_experience": "酸っぱい経験",
   "advancement.create_refinery_n_reactors.guide.sour_experience.description": "酸は焼ける。身をもって知った。",
   "advancement.create_refinery_n_reactors.guide.seeing_stars": "目から火花",
-  "advancement.create_refinery_n_reactors.guide.seeing_stars.description": "蒸気は、見た目より強く殴る。"
+  "advancement.create_refinery_n_reactors.guide.seeing_stars.description": "蒸気は、見た目より強く殴る。",
+  "advancement.create_refinery_n_reactors.fluid.liquids": "液体の図鑑",
+  "advancement.create_refinery_n_reactors.fluid.liquids.description": "工場のすべての液体を、バケツにくもう。",
+  "advancement.create_refinery_n_reactors.fluid.gases": "気体の図鑑",
+  "advancement.create_refinery_n_reactors.fluid.gases.description": "工場のすべての気体を、バケツに詰めよう。",
+  "advancement.create_refinery_n_reactors.fluid.liquid": "%sをバケツにくむ。",
+  "advancement.create_refinery_n_reactors.fluid.gas": "%sをバケツに詰める。"
 }

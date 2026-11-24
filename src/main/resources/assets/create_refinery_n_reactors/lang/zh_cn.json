@@ -6474,5 +6474,11 @@
   "advancement.create_refinery_n_reactors.guide.sour_experience": "酸涩的经历",
   "advancement.create_refinery_n_reactors.guide.sour_experience.description": "酸会灼伤。现在你知道了。",
   "advancement.create_refinery_n_reactors.guide.seeing_stars": "眼冒金星",
-  "advancement.create_refinery_n_reactors.guide.seeing_stars.description": "蒸汽比看上去更有力。"
+  "advancement.create_refinery_n_reactors.guide.seeing_stars.description": "蒸汽比看上去更有力。",
+  "advancement.create_refinery_n_reactors.fluid.liquids": "液体图鉴",
+  "advancement.create_refinery_n_reactors.fluid.liquids.description": "把工厂里的每种液体都装进桶里。",
+  "advancement.create_refinery_n_reactors.fluid.gases": "气体图鉴",
+  "advancement.create_refinery_n_reactors.fluid.gases.description": "把工厂里的每种气体都装进桶里。",
+  "advancement.create_refinery_n_reactors.fluid.liquid": "用桶装取%s。",
+  "advancement.create_refinery_n_reactors.fluid.gas": "把%s装进桶里。"
 }

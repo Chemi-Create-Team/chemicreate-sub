@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:diluted_pesticide_bucket"
+    },
+    "title": {
+      "translate": "fluid.create_refinery_n_reactors.diluted_pesticide"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.fluid.liquid",
+      "with": [
+        {
+          "translate": "fluid.create_refinery_n_reactors.diluted_pesticide"
+        }
+      ]
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:fluids/liquids",
+  "criteria": {
+    "bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:diluted_pesticide_bucket"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "bucket"
+    ]
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:nitrogen_gas_bucket"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.fluid.gases"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.fluid.gases.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/root",
+  "criteria": {
+    "nitrogen": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:nitrogen_gas_bucket"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "nitrogen"
+    ]
+  ]
+}
