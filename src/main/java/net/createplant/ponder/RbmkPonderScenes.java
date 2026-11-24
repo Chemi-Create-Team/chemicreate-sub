@@ -161,6 +161,7 @@ public final class RbmkPonderScenes {
         scene.overlay().showControls(util.vector().topOf(cap), Pointing.DOWN, 70).rightClick().withItem(CENuclear.CONTROL_ROD.toStack());
         text(scene, util, RODS, cap, "winch");
 
+        text(scene, util, RODS, cap, "seated");
         scene.world().modifyBlockEntity(cap, net.createplant.block.entity.RodCapBlockEntity.class,
             top -> top.previewPlugPressure(1.55f, .65f, 1.25f, .8f));
         scene.overlay().showOutline(PonderPalette.RED, "relief", util.select().position(cap), 120);
@@ -221,9 +222,18 @@ public final class RbmkPonderScenes {
         scene.overlay().showOutline(PonderPalette.GREEN, "rods", util.select().position(rodButtons), 100);
         text(scene, util, ROOM, rodButtons, "select");
 
-        scene.overlay().showControls(util.vector().topOf(console), Pointing.DOWN, 70).rightClick();
+        Vec3 az5 = console.getCenter().add(0, .32, -1 / 16d);
+        scene.overlay().showControls(az5, Pointing.DOWN, 25).rightClick();
+        scene.idle(25);
+        scene.world().modifyBlockEntity(console, net.createplant.block.entity.ReactorControlConsoleBlockEntity.class, be -> be.previewGuard(true));
+        scene.overlay().showControls(az5, Pointing.DOWN, 65).rightClick();
         scene.overlay().showOutline(PonderPalette.RED, "az5", util.select().position(console), 100);
         text(scene, util, ROOM, console, "az5");
+        scene.overlay().showControls(console.getCenter().add(0, .36, 5 / 16d), Pointing.DOWN, 65).rightClick();
+        text(scene, util, ROOM, console, "az5_reset");
+        scene.overlay().showControls(az5.add(3 / 16d, .24, 0), Pointing.LEFT, 25).rightClick();
+        scene.idle(25);
+        scene.world().modifyBlockEntity(console, net.createplant.block.entity.ReactorControlConsoleBlockEntity.class, be -> be.previewGuard(false));
 
         scene.overlay().showOutline(PonderPalette.BLUE, "readout", instrumentWall, 120);
         text(scene, util, ROOM, instruments, "readout");

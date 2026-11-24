@@ -174,10 +174,10 @@ public class ReactorControlConsoleRenderer extends SafeBlockEntityRenderer<React
         }
         ReactorConsoleButton az5 = ReactorConsoleButton.AZ5;
         transformToPanel(be.getBlockPos(), be.deskPos(az5.column), yaw, pose);
-        double hinge = (az5.v + az5.radius) / 16d, top = (surface(az5.v) + 1.6) / 16d;
-        pose.translate(0, top, hinge);
-        pose.mulPose(Axis.XP.rotationDegrees(be.guardOpen() ? 110 : 0));
-        pose.translate(0, -top, -hinge);
+        double hinge = 1 - ReactorConsoleButton.GUARD_HINGE_U / 16d, top = ReactorConsoleButton.GUARD_HINGE_Y / 16d;
+        pose.translate(hinge, top, 0);
+        pose.mulPose(Axis.ZP.rotationDegrees(be.guardOpen() ? -90 : 0));
+        pose.translate(-hinge, -top, 0);
         CachedBuffers.partial(GUARD, be.getBlockState()).light(light).renderInto(pose, buffers.getBuffer(RenderType.translucent()));
         pose.popPose();
         for (int i = 0; i < 3; i++) {

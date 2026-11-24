@@ -14,12 +14,12 @@ public final class ReactorAutomaticControl {
         if (scram || hottestKelvin >= ReactorPhysics.ALARM_KELVIN) return 100;
         if (hottestKelvin >= 1850 || outletKelvin >= 610 || powerWatts > 1e6 && flowMbPerTick < .25)
             return Math.min(100, current + 8);
-        if (hottestKelvin >= 1700 || outletKelvin >= 575) return Math.min(100, current + 3);
+        if (hottestKelvin >= 1700 || outletKelvin >= ReactorPhysics.COOLANT_ALARM_KELVIN) return Math.min(100, current + 3);
         double load = powerWatts / nominalWatts;
         double wanted = .003 * Math.clamp(1 - load, -1, 1);
         double step = Math.max(.1, Math.round(Math.min(1, Math.abs(reactivity - wanted) * 200) * 10) / 10d);
         if (load > 1.02 || reactivity > wanted + .0002) return Math.min(100, current + step);
-        if (load < .98 && reactivity < wanted - .0002 && hottestKelvin < 1650 && outletKelvin < 575 && flowMbPerTick >= .5)
+        if (load < .98 && reactivity < wanted - .0002 && hottestKelvin < 1650 && outletKelvin < ReactorPhysics.COOLANT_ALARM_KELVIN && flowMbPerTick >= .5)
             return Math.max(0, current - step);
         return current;
     }

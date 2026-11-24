@@ -132,8 +132,12 @@ public final class ReactorPhysicsTest {
         check(PlugPhysicsSimulator.localPressure(false, 2000, 0, 0) == 0
             && PlugPhysicsSimulator.localPressure(true, ReactorPhysics.SATURATION_KELVIN - 10, 0, 0) < 1,
             "inactive channels and water well below boiling keep their plugs exactly seated");
-        check(PlugPhysicsSimulator.localPressure(true, ReactorPhysics.SATURATION_KELVIN, 0, 0) > 1,
-            "water reaching the boil crosses the local pressure threshold");
+        check(PlugPhysicsSimulator.localPressure(true, ReactorPhysics.SATURATION_KELVIN, 0, 0) == 0
+            && PlugPhysicsSimulator.localPressure(true, ReactorPhysics.COOLANT_ALARM_KELVIN - .01, 0, 0) < 1,
+            "plugs stay seated during normal boiling and below the coolant alarm, even without measured flow");
+        check(PlugPhysicsSimulator.localPressure(true, ReactorPhysics.COOLANT_ALARM_KELVIN, 0, 0) == 1
+            && PlugPhysicsSimulator.localPressure(true, ReactorPhysics.COOLANT_ALARM_KELVIN + 5, 0, 0) > 1,
+            "a stagnant channel can lift its plug from the coolant alarm temperature");
         check(PlugPhysicsSimulator.localPressure(true, ReactorPhysics.CHANNEL_RUPTURE_KELVIN, 128, 0) < 1
             && PlugPhysicsSimulator.localPressure(true, ReactorPhysics.CHANNEL_RUPTURE_KELVIN, 0, 1) < 1,
             "local flow or full rod insertion suppresses cap lift in the pseudo-pressure binding");

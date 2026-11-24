@@ -75,9 +75,13 @@ public class ReactorConsoleGameTests {
                 h.assertTrue(click(h, ROOT, facing, button, false).consumesAction(), "Both halves of the " + button + " dial respond");
         }
         h.assertTrue(player.containerMenu == menu, "Console interaction never opens a menu");
-        h.assertTrue(!console.guardOpen() && console.acknowledged(), "RESET closes the AZ-5 cover and ACK operates on an unlinked station");
-        click(h, ROOT, facing, ReactorConsoleButton.AZ5);
-        h.assertTrue(console.guardOpen(), "The first AZ-5 press only opens the cover");
+        h.assertTrue(console.guardOpen() && console.acknowledged(), "RESET leaves the cover open and ACK operates on an unlinked station");
+        h.assertTrue(clickGuard(h, ROOT, facing).consumesAction() && !console.guardOpen(),
+            "A ray hitting the raised cover closes it in " + facing);
+        h.assertTrue(clickGuard(h, ROOT, facing).consumesAction() && console.guardOpen(),
+            "A ray hitting the closed cover opens it in " + facing);
+        h.assertTrue(clickDesk(h, ROOT, facing, 8, 13).consumesAction() && console.guardOpen(),
+            "RESET remains reachable when the cover is open in " + facing);
         click(h, ROOT, facing, ReactorConsoleButton.ACKNOWLEDGE, true, true);
         h.assertTrue(console.lampTest(), "Sneaking on ACK runs the lamp test");
         BlockPos deskUnit = ROOT.offset(desk.offset(2, facing));
@@ -159,6 +163,23 @@ public class ReactorConsoleGameTests {
         return click(h, root, facing, button, up, false);
     }
 
+    public static InteractionResult clickGuard(GameTestHelper h, BlockPos root, Direction facing) {
+        return clickDesk(h, root, facing, ReactorConsoleButton.GUARD_HINGE_U + .3, 6);
+    }
+
+    private static InteractionResult clickDesk(GameTestHelper h, BlockPos root, Direction facing, double u, double v) {
+        BlockPos pos = h.absolutePos(root);
+        var right = facing.getCounterClockWise();
+        Vec3 point = pos.getCenter().add(right.getStepX() * (u / 16 - .5) - facing.getStepX() * (v / 16 - .5),
+            0, right.getStepZ() * (u / 16 - .5) - facing.getStepZ() * (v / 16 - .5));
+        var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        var hit = h.getLevel().clip(new net.minecraft.world.level.ClipContext(point.add(0, 1.2, 0), point,
+            net.minecraft.world.level.ClipContext.Block.OUTLINE, net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+        h.assertTrue(hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK && hit.getBlockPos().equals(pos),
+            "The sight ray reaches the desk in " + facing);
+        return useDesk(h, player, pos, hit, false);
+    }
+
     private static InteractionResult click(GameTestHelper h, BlockPos root, Direction facing, ReactorConsoleButton button, boolean up, boolean sneaking) {
         BlockPos pos = h.absolutePos(root.offset(ReactorConsoleStructure.DESK.offset(button.column, facing)));
         var right = facing.getCounterClockWise();
@@ -166,11 +187,16 @@ public class ReactorConsoleGameTests {
         Vec3 point = Vec3.atLowerCornerOf(pos).add(.5 + right.getStepX() * u - facing.getStepX() * v,
             (11.25 + Math.min(3, button.v / 4)) / 16d, .5 + right.getStepZ() * u - facing.getStepZ() * v);
         var player = FakePlayerFactory.getMinecraft(h.getLevel());
+        return useDesk(h, player, pos, new BlockHitResult(point, Direction.UP, pos, false), sneaking);
+    }
+
+    private static InteractionResult useDesk(GameTestHelper h, net.minecraft.world.entity.player.Player player, BlockPos pos,
+        BlockHitResult hit, boolean sneaking) {
         var held = player.getMainHandItem();boolean wasSneaking = player.isShiftKeyDown();
         player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         player.setShiftKeyDown(sneaking);
         try {
-            return h.getLevel().getBlockState(pos).useWithoutItem(h.getLevel(), player, new BlockHitResult(point, Direction.UP, pos, false));
+            return h.getLevel().getBlockState(pos).useWithoutItem(h.getLevel(), player, hit);
         } finally {
             player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, held);
             player.setShiftKeyDown(wasSneaking);

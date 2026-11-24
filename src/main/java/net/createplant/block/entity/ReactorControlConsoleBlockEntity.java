@@ -468,7 +468,20 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
         }
     }
 
-    public void pressAz5(Player player, boolean reset) {
+    public void toggleGuard(Player player) {
+        if (!stationComplete()) {
+            player.displayClientMessage(Component.translatable(KEY + "incomplete"), true);
+            return;
+        }
+        guardOpen = !guardOpen;
+        level.playSound(null, worldPosition, guardOpen ? net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN
+            : net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_CLOSE, net.minecraft.sounds.SoundSource.BLOCKS, .4f, 1);
+        player.displayClientMessage(Component.translatable(KEY + (guardOpen ? "button.guard_open" : "button.guard_closed")), true);
+        setChanged();
+        sendData();
+    }
+
+    private void pressAz5(Player player, boolean reset) {
         boolean complete = stationComplete();
         ReactorCore core = complete ? linkedCore() : null;
         if (core == null) {
@@ -489,6 +502,7 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             player.displayClientMessage(Component.translatable(KEY + "incomplete"), true);
             return;
         }
+        if (button == ReactorConsoleButton.AZ5 && !guardOpen) return;
         boolean fine = player.isShiftKeyDown();
         lastButton = button.ordinal();
         buttonTick = level.getGameTime();
@@ -496,18 +510,8 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             net.minecraft.sounds.SoundSource.BLOCKS, .35f, .8f);
         switch (button) {
             case CRANE_MODE, CRANE_ALONG, CRANE_ACROSS -> pressCrane(player, button, up);
-            case AZ5 -> {
-                if (guardOpen)
-                    pressAz5(player, false);
-                else {
-                    guardOpen = true;
-                    player.displayClientMessage(Component.translatable(KEY + "button.guard_open"), true);
-                }
-            }
-            case AZ5_RESET -> {
-                guardOpen = false;
-                pressAz5(player, true);
-            }
+            case AZ5 -> pressAz5(player, false);
+            case AZ5_RESET -> pressAz5(player, true);
             case ACKNOWLEDGE -> {
                 if (fine)
                     lampTestUntil = level.getGameTime() + 40;
@@ -598,7 +602,8 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             controlTarget = -1;
     }
     private void updateAlarms() {
-        int next = (scram ? 1 : 0) | (hottestKelvin >= ReactorPhysics.ALARM_KELVIN ? 2 : 0) | (representativeOutletKelvin >= 575 ? 4 : 0)
+        int next = (scram ? 1 : 0) | (hottestKelvin >= ReactorPhysics.ALARM_KELVIN ? 2 : 0)
+            | (representativeOutletKelvin >= ReactorPhysics.COOLANT_ALARM_KELVIN ? 4 : 0)
             | (power > 1e6 && totalFlow / Math.max(1, bundles) < LOW_FLOW ? 8 : 0) | (mode != 0 && controlTarget < 0 ? 16 : 0);
         if ((next & ~alarms) != 0)
             acknowledged = false;
@@ -699,6 +704,10 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
     /** Ponder-only link to a display board, without the server-side range and formation checks. */
     public void previewDisplay(BlockPos board) {
         display = board;
+    }
+
+    public void previewGuard(boolean open) {
+        guardOpen = open;
     }
 
     public void previewCrane(BlockPos crane, CraneMode mode) {
