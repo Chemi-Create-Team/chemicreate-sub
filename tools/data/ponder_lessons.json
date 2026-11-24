@@ -1325,9 +1325,14 @@
     "zh_cn": "点击白色控制棒灯或PREV/NEXT选择控制棒。个别旋钮左侧拔出、右侧插入，每次5%，潜行时1%。"
   },
   "rbmk_control_room.az5": {
-    "en_us": "Press AZ-5 once to open the cover, then again to insert every rod. RESET releases the console latch; an external scram signal must also be removed.",
-    "ja_jp": "AZ-5は1回目でカバーを開き、2回目で全棒を挿入します。RESETで卓の指令を解除し、炉側の停止信号も切ります。",
-    "zh_cn": "第一次按AZ-5打开护盖，再按一次插入全部控制棒。RESET解除控制台锁定，外部停堆信号也需关闭。"
+    "en_us": "Open the cover, then press the exposed red AZ-5 button to insert all control rods.",
+    "ja_jp": "カバーを開けてから、露出した赤いAZ-5ボタンを押すと全制御棒が挿入されます。",
+    "zh_cn": "打开护盖，再按下露出的红色AZ-5按钮，插入全部控制棒。"
+  },
+  "rbmk_control_room.az5_reset": {
+    "en_us": "RESET clears the console latch. Click the raised cover to close it manually.",
+    "ja_jp": "RESETは卓の停止指令を解除します。カバーは立ち上がった部分を押して閉じます。",
+    "zh_cn": "RESET解除控制台的停堆锁定。点击竖起的护盖可手动关闭。"
   },
   "rbmk_control_room.readout": {
     "en_us": "Read power, reactivity, coolant temperature and flow on the meters. Flashing channels or alarm lamps need attention; goggles show the cause.",

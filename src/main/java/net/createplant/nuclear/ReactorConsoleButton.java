@@ -16,6 +16,8 @@ public enum ReactorConsoleButton {
     CRANE_ALONG(0, 2.15, 10.5, 1.55, "RAIL", "grey"),
     CRANE_ACROSS(0, 13.85, 10.5, 1.55, "CROSS", "grey");
 
+    public static final double GUARD_HINGE_U = AZ5.u - AZ5.radius, GUARD_HINGE_Y = 12.75;
+
     public final int column;
     public final double u, v, radius;
     public final String label, material;

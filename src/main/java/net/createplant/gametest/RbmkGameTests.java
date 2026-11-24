@@ -525,7 +525,9 @@ public class RbmkGameTests {
             "The dial's 5% and sneaking 1% steps set only the selected rod; its neighbour has no individual override");
 
         console.press(player, ReactorConsoleButton.AZ5, true);
-        h.assertTrue(console.guardOpen() && !reactor.consoleScram(), "The first AZ-5 press only opens the cover");
+        h.assertTrue(!console.guardOpen() && !reactor.consoleScram(), "The safety cover interlocks the switch");
+        ReactorConsoleGameTests.clickGuard(h, consolePos, north);
+        h.assertTrue(console.guardOpen() && !reactor.consoleScram(), "Opening the cover alone leaves the reactor running");
         console.press(player, ReactorConsoleButton.AZ5, true);
         for (int i = 0; i < 105; i++) reactor.tick();
         h.assertTrue(reactor.scram() && reactor.consoleScram()
@@ -535,8 +537,10 @@ public class RbmkGameTests {
                 + reactor.scram() + ", console=" + reactor.consoleScram() + ", depths="
                 + reactor.controlDepth(absoluteBottom, 0) + "/" + reactor.controlDepth(absoluteBottom, 1));
         console.press(player, ReactorConsoleButton.AZ5_RESET, true);
-        h.assertTrue(!reactor.scram() && !reactor.consoleScram() && !console.guardOpen(),
-            "The reset button closes the cover and resets the desk latch when no channel redstone remains");
+        h.assertTrue(!reactor.scram() && !reactor.consoleScram() && console.guardOpen(),
+            "RESET releases the desk latch while the cover stays open");
+        ReactorConsoleGameTests.clickGuard(h, consolePos, north);
+        h.assertTrue(!console.guardOpen() && !reactor.consoleScram(), "Closing the cover leaves the reactor running");
         ReactorConsoleGameTests.click(h, consolePos, north, ReactorConsoleButton.MODE);
         ReactorConsoleGameTests.click(h, consolePos, north, ReactorConsoleButton.MODE);
         ReactorConsoleGameTests.click(h, consolePos, north, ReactorConsoleButton.BANK_DIAL, false);
@@ -554,6 +558,8 @@ public class RbmkGameTests {
         h.assertTrue(console.guardOpen() && !reactor.consoleScram(), "A closed guard intercepts the first red-button click");
         ReactorConsoleGameTests.click(h, consolePos, north, ReactorConsoleButton.AZ5);
         h.assertTrue(reactor.consoleScram(), "A deliberate second red-button click latches scram");
+        ReactorConsoleGameTests.clickGuard(h, consolePos, north);
+        h.assertTrue(!console.guardOpen() && reactor.consoleScram(), "Closing the cover leaves AZ-5 latched");
         console.lazyTick();
         ReactorConsoleGameTests.click(h, consolePos, north, ReactorConsoleButton.ACKNOWLEDGE);
         h.assertTrue(console.acknowledged() && (console.alarms() & 1) != 0 && reactor.consoleScram(),

@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -35,22 +36,35 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class ReactorControlConsoleBlock extends Block implements IBE<ReactorControlConsoleBlockEntity>, IWrenchable {
     public static final DirectionProperty FACING = net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
     public static final IntegerProperty SECTION = IntegerProperty.create("section", 0, 4);
+    // Coordinates are measured in pixels from the operator's left and front edges.
+    private static final AABB CLOSED_GUARD = new AABB(4.5, 11.4, 3, 11.5, 13.15, 10.5);
+    private static final double HINGE_U = ReactorConsoleButton.GUARD_HINGE_U, HINGE_Y = ReactorConsoleButton.GUARD_HINGE_Y;
+    private static final AABB OPEN_GUARD = new AABB(HINGE_U + HINGE_Y - CLOSED_GUARD.maxY,
+        HINGE_Y + CLOSED_GUARD.minX - HINGE_U, CLOSED_GUARD.minZ, HINGE_U + HINGE_Y - CLOSED_GUARD.minY,
+        HINGE_Y + CLOSED_GUARD.maxX - HINGE_U, CLOSED_GUARD.maxZ);
     private static final VoxelShape[] DESKS = new VoxelShape[4];
+    private static final VoxelShape[] DESKS_CLOSED = new VoxelShape[4], DESKS_OPEN = new VoxelShape[4];
     static {
         for (var facing : Direction.Plane.HORIZONTAL) {
             VoxelShape shape = net.minecraft.world.phys.shapes.Shapes.empty();
             for (int step = 0; step < 4; step++) {
                 double start = step * 4, end = start + 4, h = 11.5 + step;
-                var part = switch (facing) {
-                    case SOUTH -> box(0, 0, 16 - end, 16, h, 16 - start);
-                    case EAST -> box(16 - end, 0, 0, 16 - start, h, 16);
-                    case WEST -> box(start, 0, 0, end, h, 16);
-                    default -> box(0, 0, start, 16, h, end);
-                };
-                shape = net.minecraft.world.phys.shapes.Shapes.or(shape, part);
+                shape = net.minecraft.world.phys.shapes.Shapes.or(shape, deskBox(facing, new AABB(0, 0, start, 16, h, end)));
             }
-            DESKS[facing.get2DDataValue()] = shape;
+            int index = facing.get2DDataValue();
+            DESKS[index] = shape;
+            DESKS_CLOSED[index] = net.minecraft.world.phys.shapes.Shapes.or(shape, deskBox(facing, CLOSED_GUARD));
+            DESKS_OPEN[index] = net.minecraft.world.phys.shapes.Shapes.or(shape, deskBox(facing, OPEN_GUARD));
         }
+    }
+
+    private static VoxelShape deskBox(Direction facing, AABB bounds) {
+        return switch (facing) {
+            case SOUTH -> box(bounds.minX, bounds.minY, 16 - bounds.maxZ, bounds.maxX, bounds.maxY, 16 - bounds.minZ);
+            case EAST -> box(16 - bounds.maxZ, bounds.minY, 16 - bounds.maxX, 16 - bounds.minZ, bounds.maxY, 16 - bounds.minX);
+            case WEST -> box(bounds.minZ, bounds.minY, bounds.minX, bounds.maxZ, bounds.maxY, bounds.maxX);
+            default -> box(16 - bounds.maxX, bounds.minY, bounds.minZ, 16 - bounds.minX, bounds.maxY, bounds.maxZ);
+        };
     }
     public ReactorControlConsoleBlock(Properties properties) {
         super(properties);
@@ -66,6 +80,14 @@ public class ReactorControlConsoleBlock extends Block implements IBE<ReactorCont
     }
     @Override
     protected VoxelShape getShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
+        int index = state.getValue(FACING).get2DDataValue();
+        if (state.getValue(SECTION) == ReactorConsoleButton.AZ5.column
+            && level.getBlockEntity(pos) instanceof ReactorControlConsoleBlockEntity console && console.assembled())
+            return (console.guardOpen() ? DESKS_OPEN : DESKS_CLOSED)[index];
+        return DESKS[index];
+    }
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos, CollisionContext context) {
         return DESKS[state.getValue(FACING).get2DDataValue()];
     }
     @Override
@@ -146,10 +168,18 @@ public class ReactorControlConsoleBlock extends Block implements IBE<ReactorCont
         double dx = hit.getLocation().x - pos.getX() - .5, dz = hit.getLocation().z - pos.getZ() - .5;
         double u = .5 + dx * right.getStepX() + dz * right.getStepZ(), v = .5 - dx * facing.getStepX() - dz * facing.getStepZ();
         int section = state.getValue(SECTION);
+        if (section == ReactorConsoleButton.AZ5.column) {
+            var guard = console.guardOpen() ? OPEN_GUARD : CLOSED_GUARD;
+            double y = (hit.getLocation().y - pos.getY()) * 16;
+            if (guard.inflate(1e-5).contains(u * 16, y, v * 16)) {
+                if (!level.isClientSide) console.toggleGuard(player);
+                return InteractionResult.SUCCESS;
+            }
+        }
         if (hit.getDirection() != Direction.UP && hit.getDirection() != facing)
             return InteractionResult.PASS;
         var button = ReactorConsoleButton.at(section, u, v);
-        if (button == null)
+        if (button == null || button == ReactorConsoleButton.AZ5 && !console.guardOpen())
             return InteractionResult.PASS;
         if (!level.isClientSide)
             console.press(player, button, u * 16 >= button.u);
