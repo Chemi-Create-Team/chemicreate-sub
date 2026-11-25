@@ -28,7 +28,10 @@
 
 - javac：クラスパスの揃わない環境で、変更前との差分を比較。新規のエラーは、変更前から出ていた種類（`getCapability`・`BlockEntitySupplier`）だけ。
 - `tools/validate_translations.py`は通過。
-- ビルドもGameTestも未実行（GradleがNeoForgeのパッチ適用で失敗するため）。追加・更新したGameTest：`HighPressureSeparatorGameTests`、`TwoPhaseGameTests`（通常の分離機が拒否）、`RbmkGameTests`、`CompactFuelLongGameTests`。
+- GameTestサーバーを実機で全件実行（765件、最終実行は全件通過）。新規の高圧気液分離機・RBMK湿り蒸気・通常分離機の拒否テストは通過。追加・更新したGameTest：`HighPressureSeparatorGameTests`、`TwoPhaseGameTests`、`RbmkGameTests`、`CompactFuelLongGameTests`。
+- この実行で、先行コミットの回帰を修正：削除した `preheat_water` レシピに依存していた撹拌容器系テスト5件（`ReactorGameTests`×2、`ReactionTemperatureGameTests`、`DriveLessVesselGameTests`×2）を、プロピレン＋合成ガス供給（ブチルアルデヒドのレシピ）に移行。
+- `leaching_oxidants` タグが `compressed_air` を `air_gas` に置き換えたため、加圧していない空気が浸出レシピの供給として丸ごと入り、`stirredGasProductLeavesBelowTheLighterGas` が失敗していた。タグを廃止し、浸出6レシピは `air_gas`（圧力レベル8以上）または `oxygen_gas` の複合材料にした。
+- 全件実行で `ReactionTowerGameTests.solidFeedFillsTheLowestTrayFirstAndKeepsCatalystsOut` が1回だけ失敗したが、単独実行では全11件通過し、全件の再実行では765件すべて通過（不安定なテストの可能性）。
 - テクスチャとモデルはゲーム内で未確認。
 
 ## 制約・次回の注意

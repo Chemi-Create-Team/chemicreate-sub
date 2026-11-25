@@ -134,12 +134,13 @@ public class DriveLessVesselGameTests {
 
     private static VesselStirrerBlockEntity stirrer(GameTestHelper h) { return (VesselStirrerBlockEntity) h.getBlockEntity(STIRRER); }
 
-    @GameTest(template = "test_reactor", timeoutTicks = 160)
+    @GameTest(template = "test_reactor", timeoutTicks = 400)
     public static void aCogwheelTurnsTheStirrerWhichRunsTheTankAndCarriesItsStress(GameTestHelper h) {
         var owner = vessel(h);
-        owner.port(Direction.NORTH).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
+        owner.port(Direction.NORTH).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000), EXECUTE);
+        owner.port(Direction.NORTH).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000), EXECUTE);
         drive(h);
-        h.runAfterDelay(90, () -> {
+        h.runAfterDelay(330, () -> {
             h.assertTrue(owner.formed() && Math.abs(owner.rotationSpeed()) == 128 && Math.abs(stirrer(h).getSpeed()) == 128,
                 "A cogwheel beside the stirrer turns it through Create's kinetic network, and the tank runs at its speed");
             h.assertTrue(stirrer(h).calculateStressApplied() == 32 && owner.calculateStressApplied() == 0, "The stirrer carries the two impellers' load; the tank none");
@@ -152,7 +153,8 @@ public class DriveLessVesselGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 180)
     public static void theTankTakesNoRotationOfItsOwn(GameTestHelper h) {
         var owner = vessel(h);
-        owner.port(Direction.NORTH).fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
+        owner.port(Direction.NORTH).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000), EXECUTE);
+        owner.port(Direction.NORTH).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000), EXECUTE);
         // Motors under every block but the stirrer and the corner burner.
         for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if ((x != 1 || z != 1) && (x != 0 || z != 0)) motor(h, BASE.offset(x, -1, z), Direction.UP);
         for (Direction side : Direction.Plane.HORIZONTAL) motor(h, BASE.offset(1, 0, 1).relative(side, 2), side.getOpposite());

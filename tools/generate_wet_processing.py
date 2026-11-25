@@ -76,16 +76,18 @@ def assets():
   path=R/f'src/main/resources/data/minecraft/tags/block/{tag}.json';data=json.loads(path.read_text());data['values']=list(dict.fromkeys(data['values']+[NS+n for n in PARTS]));write(path,data)
 
 def fluid(name,amount,tag=False):return {'type':'neoforge:tag' if tag else 'neoforge:single','tag' if tag else 'fluid':name,'amount':amount}
+def oxidant(amount):
+    # Compressed air or oxygen; unpressurised air must not feed a stirred vessel whole, so a tag (which carries no state) cannot name it.
+    return {'type':'neoforge:compound','children':[{'type':NS+'fluid_state','fluid':NS+'air_gas','min_pressure':8},{'type':'neoforge:single','fluid':NS+'oxygen_gas'}],'amount':amount}
 def recipes():
- write(D/'tags/fluid/leaching_oxidants.json',{'replace':False,'values':[NS+'air_gas',NS+'oxygen_gas']})
  for metal in ('copper','iron','zinc','tin'):
   crushed=NS+'crushed_raw_tin' if metal=='tin' else 'create:crushed_raw_'+metal
   write(D/f'recipe/pressure_reaction/{metal}_leaching.json',{'type':NS+'pressure_reaction','module':'stirred','heat_requirement':'heated','processing_time':200,
-   'ingredients':[{'item':crushed}]*3+[fluid(NS+'dilute_sulfuric_acid',750),fluid(NS+'leaching_oxidants',250,True)],
+   'ingredients':[{'item':crushed}]*3+[fluid(NS+'dilute_sulfuric_acid',750),oxidant(250)],
    'results':[{'id':NS+metal+'_leach_slurry','amount':4000}]})
   write(D/f'recipe/clarifying/{metal}.json',{'type':NS+'clarifying','processing_time':200,
    'ingredients':[fluid(NS+metal+'_leach_slurry',1000)],'results':[{'id':NS+metal+'_sulfate_solution','amount':750},{'id':NS+'tailings_mud','count':2}]})
- write(D/'recipe/pressure_reaction/wastewater_leaching.json',{'type':NS+'pressure_reaction','module':'stirred','processing_time':160,'ingredients':[{'item':'minecraft:clay_ball'},fluid(NS+'wastewater',1000),fluid(NS+'leaching_oxidants',125,True)],'results':[{'id':NS+'wastewater_slurry','amount':1000}]})
+ write(D/'recipe/pressure_reaction/wastewater_leaching.json',{'type':NS+'pressure_reaction','module':'stirred','processing_time':160,'ingredients':[{'item':'minecraft:clay_ball'},fluid(NS+'wastewater',1000),oxidant(125)],'results':[{'id':NS+'wastewater_slurry','amount':1000}]})
  write(D/'recipe/clarifying/wastewater.json',{'type':NS+'clarifying','processing_time':200,'ingredients':[fluid(NS+'wastewater_slurry',1000)],'results':[{'id':'minecraft:water','amount':750},{'id':NS+'tailings_mud','count':2}]})
  write(D/'recipe/mixing/flocculant.json',{'type':'create:mixing','ingredients':[{'item':NS+'polyethylene'},{'item':'minecraft:slime_ball'},fluid('minecraft:water',250)],'results':[{'id':NS+'flocculant','count':8}]})
  write(D/'recipe/pressing/tailings_dewatering.json',{'type':'create:pressing','ingredients':[{'item':NS+'tailings_mud'}],'results':[{'id':'minecraft:clay_ball'},{'id':'minecraft:sand','chance':.5}]})

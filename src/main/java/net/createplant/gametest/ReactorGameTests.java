@@ -472,17 +472,17 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void simulatedHandlersAndExactBatchConservation(GameTestHelper h) {
         var be=build(h,ReactorModule.STIRRED,1);var input=in(be);var output=out(be);
-        var feed=new FluidStack(Fluids.WATER,1000);
+        var feed=new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000);var gas=new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000);
         h.assertTrue(input.fill(feed,SIMULATE)==1000 && input.getFluidInTank(0).isEmpty(),"Simulating fill never stores feed");
         h.assertTrue(!input.isFluidValid(0,new FluidStack(CEFluids.ARGON_GAS.get(),250)),"A gas no stirred recipe uses is not an input to a stirred batch");
-        input.fill(feed,EXECUTE);run(be,120);
+        input.fill(feed,EXECUTE);input.fill(gas,EXECUTE);run(be,120);
         h.assertTrue(input.getFluidInTank(0).getAmount()==1000 && output.getFluidInTank(0).isEmpty(),"Heat is required before consuming inputs");
-        heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);run(be,100);
-        h.assertTrue(input.getFluidInTank(0).isEmpty() && output.getFluidInTank(0).getAmount()==1000,"One batch consumes 1000 mB and makes exactly 1000 mB of pressurised water");
+        heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);run(be,300);
+        h.assertTrue(input.getFluidInTank(0).isEmpty() && output.getFluidInTank(0).getAmount()==1000,"One batch consumes 1000 mB of each feed and makes exactly 1000 mB of butyraldehyde");
         FluidStack alias=output.getFluidInTank(0);alias.setAmount(1);
         h.assertTrue(output.getFluidInTank(0).getAmount()==1000 && output.drain(250,SIMULATE).getAmount()==250 && output.getFluidInTank(0).getAmount()==1000,"Queries and simulations cannot mutate owned buffers");
         h.assertTrue(input.drain(feed.copyWithAmount(1000),EXECUTE).isEmpty() && output.getFluidInTank(0).getAmount()==1000,"Feed can never be drained back out of any face");
-        input.fill(feed,EXECUTE);h.setBlock(BASE.below(),Blocks.REDSTONE_BLOCK);run(be,100);
+        input.fill(feed,EXECUTE);input.fill(gas,EXECUTE);h.setBlock(BASE.below(),Blocks.REDSTONE_BLOCK);run(be,100);
         h.assertTrue(input.getFluidInTank(0).getAmount()==1000 && be.status().equals("redstone"),"A redstone stop consumes no feed or progress");
         h.setBlock(BASE.below(),Blocks.AIR);speed(be,0);be.tickProcess();
         h.assertTrue(be.status().equals("speed") && input.getFluidInTank(0).getAmount()==1000,"Stopped rotation cannot advance a batch");
@@ -508,11 +508,11 @@ public class ReactorGameTests {
     public static void expandingIsBoundedAndOutputBackpressureIsAtomic(GameTestHelper h) {
         var be=build(h,ReactorModule.STIRRED,4);heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
         speed(be,32);h.assertTrue(be.sections()==2 && receiver(be).calculateStressApplied()==32 && be.calculateStressApplied()==0,"A four-layer tank still stirs with two impellers, charging 32 SU/RPM to its stirrer");
-        for (int i=0;i<8;i++) { in(be).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);run(be,100); }
+        for (int i=0;i<8;i++) { in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,300); }
         h.assertTrue(out(be).getFluidInTank(0).getAmount()==8000 && out(be).getTankCapacity(0)==8000,"Finite liquid output capacity holds exactly eight batches");
-        in(be).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);run(be,200);
+        in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,600);
         h.assertTrue(in(be).getFluidInTank(0).getAmount()==1000,"A full liquid product buffer consumes no feed");
-        out(be).drain(1000,EXECUTE);run(be,100);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==8000,"Making room permits exactly one further batch");
+        out(be).drain(1000,EXECUTE);run(be,300);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==8000,"Making room permits exactly one further batch");
         layer(h.getLevel(),h.absolutePos(BASE),5);
         be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==4,"A fifth layer cannot join a vessel four blocks high");h.succeed();
     }

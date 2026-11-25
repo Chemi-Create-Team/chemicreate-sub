@@ -19,8 +19,18 @@
       "fluid": "create_refinery_n_reactors:hydrochloric_acid"
     },
     {
-      "type": "neoforge:tag",
-      "tag": "create_refinery_n_reactors:leaching_oxidants",
+      "type": "neoforge:compound",
+      "children": [
+        {
+          "type": "create_refinery_n_reactors:fluid_state",
+          "fluid": "create_refinery_n_reactors:air_gas",
+          "min_pressure": 8
+        },
+        {
+          "type": "neoforge:single",
+          "fluid": "create_refinery_n_reactors:oxygen_gas"
+        }
+      ],
       "amount": 250
     }
   ],

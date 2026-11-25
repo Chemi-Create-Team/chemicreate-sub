@@ -119,6 +119,12 @@ def blocks():
     tag('minecraft/tags/block/mineable/pickaxe.json', ids)
 
 
+def oxidant(amount):
+    # Compressed air or oxygen; a tag cannot carry the pressure condition.
+    return {'type': 'neoforge:compound', 'children': [{'type': NS + 'fluid_state', 'fluid': NS + 'air_gas', 'min_pressure': 8},
+        {'type': 'neoforge:single', 'fluid': NS + 'oxygen_gas'}], 'amount': amount}
+
+
 def recipes():
     # Lead has no furnace shortcut: galena is roasted to sinter and reduced, or smelted directly in one self-heating step.
     for kind in ('smelting', 'blasting'): (D / f'recipe/{kind}/galena.json').unlink(missing_ok=True)
@@ -134,7 +140,7 @@ def recipes():
         'ingredients': [{'item': NS + 'galena'}, {'item': NS + 'galena'}, fluid(oxygen, 1000)], 'results': [item(NS + 'lead_ingot', 2), fluid_out(dioxide, 1000)]})
     # Wet route: 3 galena + 750 mB hydrochloric acid + 250 mB oxidant -> 4000 mB slurry; the clarifier gives 750 mB solution and 2 tailings; the electrolysis cell gives 3 ingots and 250 mB acid back.
     write(D / 'recipe/pressure_reaction/lead_leaching.json', {'type': NS + 'pressure_reaction', 'module': 'stirred', 'heat_requirement': 'heated', 'processing_time': 200,
-        'ingredients': [{'item': NS + 'galena'}] * 3 + [fluid(NS + 'hydrochloric_acid', 750), {'type': 'neoforge:tag', 'tag': NS + 'leaching_oxidants', 'amount': 250}],
+        'ingredients': [{'item': NS + 'galena'}] * 3 + [fluid(NS + 'hydrochloric_acid', 750), oxidant(250)],
         'results': [fluid_out(NS + 'lead_leach_slurry', 4000)]})
     write(D / 'recipe/clarifying/lead.json', {'type': NS + 'clarifying', 'processing_time': 200, 'ingredients': [fluid(NS + 'lead_leach_slurry', 1000)],
         'results': [fluid_out(NS + 'lead_chloride_solution', 750), {'id': NS + 'tailings_mud', 'count': 2}]})
