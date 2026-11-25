@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ISI",
+    "CAC"
+  ],
+  "key": {
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "S": {
+      "item": "create:shaft"
+    },
+    "C": {
+      "item": "create:andesite_casing"
+    },
+    "A": {
+      "item": "create:mechanical_arm"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:industrial_arm",
+    "count": 1
+  }
+}

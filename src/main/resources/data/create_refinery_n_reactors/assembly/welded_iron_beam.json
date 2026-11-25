@@ -1,0 +1,48 @@
+{
+  "size": [
+    2,
+    1,
+    1
+  ],
+  "stages": [
+    [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "action": "place",
+        "tool": "gripper",
+        "block": "minecraft:iron_block"
+      },
+      {
+        "pos": [
+          1,
+          0,
+          0
+        ],
+        "action": "place",
+        "tool": "gripper",
+        "block": "minecraft:iron_block"
+      }
+    ],
+    [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "action": "process",
+        "tool": "welding_torch",
+        "pattern": "seam_weld",
+        "time": 60
+      }
+    ]
+  ],
+  "result": {
+    "id": "create_refinery_n_reactors:welded_iron_beam",
+    "count": 1
+  }
+}

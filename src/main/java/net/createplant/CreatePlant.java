@@ -93,6 +93,7 @@ public class CreatePlant {
         net.createplant.registry.CECarbonization.register(modEventBus);
         net.createplant.registry.CEVault.register(modEventBus);
         net.createplant.registry.CEAssembly.register(modEventBus);
+        net.createplant.registry.CEArm.register(modEventBus);
         CECreativeModeTabs.register(modEventBus);
         modEventBus.addListener(CEItems::registerFluidCapabilities);
         modEventBus.addListener(net.createplant.registry.CEWorldFluids::registerCapabilities);

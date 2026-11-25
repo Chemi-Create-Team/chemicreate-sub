@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "P",
+    "A",
+    "I"
+  ],
+  "key": {
+    "P": {
+      "item": "create:fluid_pipe"
+    },
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "I": {
+      "item": "create:iron_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:spray_nozzle",
+    "count": 1
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "create_refinery_n_reactors:blocks/assembly_jig",
+  "pools": [
+    {
+      "rolls": 1,
+      "bonus_rolls": 0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "create_refinery_n_reactors:assembly_jig"
+        }
+      ]
+    }
+  ]
+}

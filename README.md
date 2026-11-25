@@ -14,6 +14,7 @@ Minecraft **1.21.1** / **NeoForge** 向けの **Create 6.0.10** アドオンで�
 - [金属の鉱石と精錬・溶融塩電解炉](docs/metals.md)
 - [電力（CEEの回路への接続と各設備の消費電力）](docs/electric-power.md)
 - [電動ポンプ](docs/electric-utilities.md)
+- [産業用アームと組立ジグ（工具・データパックのレシピ）](docs/industrial-arm.md)
 - [鉛蓄電池とリチウムイオン電池](docs/batteries.md)
 - [配管とタンク（材質・腐食・保冷）](docs/pipes-and-tanks.md)
 - [冷却塔・復水器・PID制御・核融合保守・MOXとガラス固化](docs/power-plant-expansion.md)
