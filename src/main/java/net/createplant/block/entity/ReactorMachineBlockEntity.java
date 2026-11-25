@@ -284,6 +284,12 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         for(int slot=0;slot<CHARGE_SLOTS;slot++)if(!charge.getStackInSlot(slot).isEmpty())return false;
         return tanks[0].isEmpty() && tanks[1].isEmpty() && tanks[THIRD_FEED].isEmpty();
     }
+    /** No feed but liquid water and no charge: heating it can only boil it, there is no recipe to wait for. */
+    protected boolean feedsWaterOnly() {
+        for(int slot=0;slot<CHARGE_SLOTS;slot++)if(!charge.getStackInSlot(slot).isEmpty())return false;
+        for(int feed:new int[]{0,1,THIRD_FEED})if(!tanks[feed].isEmpty() && !net.createplant.thermal.FluidState.liquidWater(tanks[feed]))return false;
+        return true;
+    }
     /** How much steam the gas space can still take. */
     protected int steamRoom() {
         var steam=new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),1);
@@ -294,10 +300,12 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     protected void storeSteam(int amount) {
         for(int i=2;i<7 && amount>0;i++) {
             if(!tanks[i].isEmpty() && !tanks[i].is(net.createplant.registry.CEFluids.STEAM.get()))continue;
-            var steam=tanks[i].isEmpty() ? new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),0) : tanks[i];
-            int add=Math.min(amount,Math.max(0,bufferCapacity(steam)-steam.getAmount()));
+            // An empty stack cannot be copied with an amount (it stays empty), so the first steam starts from a one mB sample.
+            var steam=tanks[i].isEmpty() ? new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),1) : tanks[i];
+            int held=tanks[i].getAmount();
+            int add=Math.min(amount,Math.max(0,bufferCapacity(steam)-held));
             if(add<=0)continue;
-            tanks[i]=steam.copyWithAmount(steam.getAmount()+add);amount-=add;
+            tanks[i]=steam.copyWithAmount(held+add);amount-=add;
         }
         changed();
     }

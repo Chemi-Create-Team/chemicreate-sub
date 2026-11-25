@@ -110,7 +110,7 @@ public final class TankHeating {
             var heat=i<external.size() && external.get(i)!=null ? external.get(i) : own.get(i);
             double before=heat.kelvin(fluid), beforeQuality=heat.quality(fluid);
             // A solution alone can only boil its water off: it warms to the boiling point and the rest of the heat takes water away.
-            boolean water=boilSolutions && boilWater && FluidState.liquidWater(fluid) && !TwoPhase.is(fluid);
+            boolean water=boilWater && FluidState.liquidWater(fluid) && !TwoPhase.is(fluid);
             boolean solution=water || boilSolutions && Concentration.applies(fluid);
             double ceiling=solution ? FluidState.boilingKelvin(fluid,FluidState.pressure(fluid)) : FluidState.kelvin(FluidState.MAX);
             var outcome=heat.add(fluid,joules*HeatContent.capacity(fluid)/total,0,Double.isFinite(ceiling) ? ceiling : FluidState.kelvin(FluidState.MAX),capacity);

@@ -79,7 +79,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     private static final int STORAGE_GAS = -1, PASS_THROUGH_GAS = -2, ATMOSPHERIC = net.createplant.thermal.FluidState.pressureLevel(1);
     private record GasLayer(int bank, FluidStack fluid) { }
     private final net.createplant.thermal.TankHeating heating=new net.createplant.thermal.TankHeating();
-    { heating.boilWater(true); }
     /** The game time of the last heating pass, so a pass made between the regular ones is charged only the ticks since. */
     private long lastHeated=Long.MIN_VALUE;
 
@@ -375,7 +374,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if(joules==0 || level==null)return;
         var heat=new java.util.ArrayList<net.createplant.thermal.HeatContent>();
         heat.add(tankInventory.heat());
-        heating.boilSolutions(canBoilSolutions());
+        heating.boilSolutions(canBoilSolutions());heating.boilWater(canBoilWater());
         int result=heating.react(heatFluids(),joules,ignored->Integer.MAX_VALUE,heat);
         if(result==net.createplant.thermal.TankHeating.CHANGED) { onFluidStackChanged(tankInventory.getFluid());changed(); }
         else if(result==net.createplant.thermal.TankHeating.KELVIN)setChanged();
@@ -390,7 +389,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         heat.add(tankInventory instanceof net.createplant.thermal.ThermalFluidTank thermal ? thermal.heat() : null);
         // Storage tanks can concentrate a solution. Stirred vessels use their recipes to process it.
         if(open())vent();
-        heating.boilSolutions(canBoilSolutions());
+        heating.boilSolutions(canBoilSolutions());heating.boilWater(canBoilWater());
         heating.steamRoom(open() ? Integer.MAX_VALUE : steamRoom());
         long now=level.getGameTime();
         int ticks=lastHeated==Long.MIN_VALUE ? net.createplant.thermal.TankHeating.INTERVAL : (int)Math.clamp(now-lastHeated,1,net.createplant.thermal.TankHeating.INTERVAL);
@@ -409,6 +408,8 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         } else if(result==net.createplant.thermal.TankHeating.KELVIN)setChanged();
     }
 
+    /** Water boils off a mB at a time unless a batch is running or another feed is waiting; a stirred vessel with only water in it is just a kettle. */
+    private boolean canBoilWater() { return !processingStirredBatch() && feedsWaterOnly(); }
     private boolean canBoilSolutions() { return !stirred() && !processingStirredBatch() && feedsEmpty(); }
 
     @Override public void notifyMultiUpdated() {
