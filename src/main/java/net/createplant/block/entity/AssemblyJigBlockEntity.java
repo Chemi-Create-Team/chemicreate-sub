@@ -28,8 +28,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
- * The jig knows which job is open, which arm has reserved it and how far it is. Reservations are never saved: every second the jig
- * checks that the arm still holds its step and lets the step go otherwise, so a removed or unloaded arm cannot block the assembly.
+ * The jig knows which job is open, which arm has reserved it and how far it is. Every second it checks that loaded arms still hold
+ * their steps so interrupted work can resume from a save and removed arms cannot block the assembly.
  * Everything, progress included, goes to the client in the update tag, which the overlay renderer reads.
  */
 public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleInformation {
@@ -129,11 +129,15 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
 
     /** The arm gives a step back unfinished. */
     public void release(BlockPos arm, int step) {
-        if (step < 0 || step >= status.length || status[step] != RESERVED || !arm.equals(reserved[step])) return;
+        if (!reservedBy(arm, step)) return;
         status[step] = PENDING;
         reserved[step] = null;
         progress[step] = 0;
         changed();
+    }
+
+    public boolean reservedBy(BlockPos arm, int step) {
+        return step >= 0 && step < status.length && status[step] == RESERVED && arm.equals(reserved[step]);
     }
 
     public void setProgress(int step, float p) {
@@ -197,7 +201,7 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         for (int i = 0; i < status.length; i++) {
             if (status[i] != RESERVED) continue;
             BlockPos a = reserved[i];
-            if (a == null || !(level.isLoaded(a) && level.getBlockEntity(a) instanceof IndustrialArmBlockEntity arm && arm.holds(worldPosition, i))) {
+            if (a == null || level.isLoaded(a) && !(level.getBlockEntity(a) instanceof IndustrialArmBlockEntity arm && arm.holds(worldPosition, i))) {
                 status[i] = PENDING;
                 reserved[i] = null;
                 progress[i] = 0;
@@ -256,6 +260,9 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         if (recipe == null) return;
         tag.put("recipe", recipe.toTag());
         tag.putByteArray("status", status);
+        long[] owners = new long[reserved.length];
+        for (int i = 0; i < reserved.length; i++) owners[i] = reserved[i] == null ? Long.MIN_VALUE : reserved[i].asLong();
+        tag.putLongArray("reserved", owners);
         ListTag p = new ListTag();
         for (float f : progress) p.add(net.minecraft.nbt.FloatTag.valueOf(f));
         tag.put("progress", p);
@@ -281,13 +288,20 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         long[] d = tag.getLongArray("doneAt");
         doneAt = d.length == n ? d : new long[n];
         lastDone = tag.getLong("lastDone");
-        if (reserved.length != n) reserved = new BlockPos[n];
+        reserved = new BlockPos[n];
+        long[] owners = tag.getLongArray("reserved");
+        if (owners.length == n) {
+            for (int i = 0; i < n; i++)
+                if (status[i] == RESERVED && owners[i] != Long.MIN_VALUE) reserved[i] = BlockPos.of(owners[i]);
+        }
         if (shown.length != n) shown = progress.clone();
     }
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider r) {
-        return saveWithoutMetadata(r);
+        CompoundTag tag = saveWithoutMetadata(r);
+        tag.remove("reserved");
+        return tag;
     }
 
     @Override

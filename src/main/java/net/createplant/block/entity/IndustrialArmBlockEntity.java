@@ -110,15 +110,21 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             return;
         }
         if (cooldown > 0) cooldown--;
+        if (phase != IDLE && jigPos != null && !level.isLoaded(jigPos)) return;
         switch (phase) {
             case IDLE -> {
-                if (cooldown == 0 && level.getGameTime() % 10 == (worldPosition.hashCode() & 7)) findJob();
+                if (!held.isEmpty()) abortJob(); // Old saves may have the material without its unfinished job.
+                else if (getSpeed() != 0 && cooldown == 0 && level.getGameTime() % 10 == (worldPosition.hashCode() & 7)) findJob();
             }
             case MOVE -> {
                 AssemblyJigBlockEntity jig = jig();
                 if (jig == null) { abortJob(); return; }
                 tip = worldTip(jig, 0);
-                if (speedFactor() > 0 && --moveLeft <= 0) { phase = WORK; progress = 0; }
+                if (speedFactor() > 0 && --moveLeft <= 0) {
+                    phase = WORK;
+                    progress = 0;
+                    setChanged();
+                }
             }
             case WORK -> work();
             default -> phase = IDLE;
@@ -131,7 +137,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
 
     private AssemblyJigBlockEntity jig() {
         if (jigPos == null || !level.isLoaded(jigPos) || !(level.getBlockEntity(jigPos) instanceof AssemblyJigBlockEntity j) || j.recipe == null
-                || step < 0 || step >= j.status.length || j.status[step] != AssemblyJigBlockEntity.RESERVED) return null;
+                || !j.reservedBy(worldPosition, step)) return null;
         return j;
     }
 
@@ -146,6 +152,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         if (tool == null) return;
         Vec3 me = Vec3.atCenterOf(worldPosition);
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE))) {
+            if (!level.isLoaded(p)) continue;
             if (!(level.getBlockEntity(p) instanceof AssemblyJigBlockEntity jig) || jig.recipe == null || Vec3.atCenterOf(p).distanceTo(me) > RANGE + .5) continue;
             int s = jig.reserve(worldPosition, tool, me);
             if (s < 0) continue;
@@ -170,6 +177,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             moveLeft = 12;
             progress = 0;
             tip = worldTip(jig, 0);
+            setChanged();
             sendData();
             return;
         }
@@ -191,7 +199,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     /** One item from a chest, depot, belt or whatever holds items around the arm; never from arms or jigs. */
     private ItemStack fetch(net.minecraft.world.item.Item item, BlockPos jigAt) {
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE))) {
-            if (p.equals(worldPosition) || p.equals(jigAt)) continue;
+            if (p.equals(worldPosition) || p.equals(jigAt) || !level.isLoaded(p)) continue;
             BlockEntity be = level.getBlockEntity(p);
             if (be == null || be instanceof IndustrialArmBlockEntity || be instanceof AssemblyJigBlockEntity) continue;
             IItemHandler h = level.getCapability(Capabilities.ItemHandler.BLOCK, p, null);
@@ -212,7 +220,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         Step s = jig.recipe.steps().get(step);
         double f = speedFactor();
         if (f <= 0) return;
-        if (progress < 1) progress = (float) Math.min(1, progress + f / s.time());
+        if (progress < 1) {
+            progress = (float) Math.min(1, progress + f / s.time());
+            if (level.getGameTime() % 20 == 0) setChanged();
+        }
         tip = worldTip(jig, progress);
         jig.setProgress(step, progress);
         if (level.getGameTime() % 4 == 0) sound(s.tool());
@@ -243,6 +254,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         step = -1;
         tip = null;
         cooldown = 4;
+        setChanged();
         sendData();
     }
 
@@ -259,14 +271,14 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
 
     private void toolChanged() {
         if (level == null || level.isClientSide) return;
-        if (phase != IDLE) abortJob();
+        if (phase != IDLE || !held.isEmpty()) abortJob();
         setChanged();
         sendData();
     }
 
     public void dropContents() {
         if (level == null || level.isClientSide) return;
-        if (phase != IDLE) abortJob();
+        if (phase != IDLE || !held.isEmpty()) abortJob();
         Containers.dropItemStack(level, worldPosition.getX() + .5, worldPosition.getY() + .5, worldPosition.getZ() + .5, tool());
         toolSlot.setStackInSlot(0, ItemStack.EMPTY);
     }
@@ -313,15 +325,17 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         tag.put("tools", toolSlot.serializeNBT(r));
         tag.put("tank", tank.writeToNBT(r, new CompoundTag()));
         tag.put("held", held.saveOptional(r));
-        if (clientPacket) {
+        if (phase != IDLE && jigPos != null) {
             tag.putByte("phase", phase);
             tag.putInt("step", step);
-            if (jigPos != null) tag.putLong("jig", jigPos.asLong());
-            if (tip != null) {
-                tag.putDouble("tx", tip.x);
-                tag.putDouble("ty", tip.y);
-                tag.putDouble("tz", tip.z);
-            }
+            tag.putLong("jig", jigPos.asLong());
+            tag.putInt("moveLeft", moveLeft);
+            tag.putFloat("jobProgress", progress);
+        }
+        if (clientPacket && tip != null) {
+            tag.putDouble("tx", tip.x);
+            tag.putDouble("ty", tip.y);
+            tag.putDouble("tz", tip.z);
         }
     }
 
@@ -331,10 +345,15 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         toolSlot.deserializeNBT(r, tag.getCompound("tools"));
         tank.readFromNBT(r, tag.getCompound("tank"));
         held = ItemStack.parseOptional(r, tag.getCompound("held"));
+        byte savedPhase = tag.getByte("phase");
+        boolean hasJob = (savedPhase == MOVE || savedPhase == WORK) && tag.contains("jig") && tag.contains("step");
+        phase = hasJob ? savedPhase : IDLE;
+        step = hasJob ? tag.getInt("step") : -1;
+        jigPos = hasJob ? BlockPos.of(tag.getLong("jig")) : null;
+        moveLeft = tag.getInt("moveLeft");
+        float savedProgress = tag.getFloat("jobProgress");
+        progress = hasJob && Float.isFinite(savedProgress) ? Math.clamp(savedProgress, 0, 1) : 0;
         if (clientPacket) {
-            phase = tag.getByte("phase");
-            step = tag.contains("step") ? tag.getInt("step") : -1;
-            jigPos = tag.contains("jig") ? BlockPos.of(tag.getLong("jig")) : null;
             aim(phase, tag.contains("tx") ? new Vec3(tag.getDouble("tx"), tag.getDouble("ty"), tag.getDouble("tz")) : null);
         }
     }
