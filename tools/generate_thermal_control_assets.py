@@ -57,4 +57,4 @@ for lang,index in [('en_us',0),('ja_jp',1)]:
  d['reactor.create_refinery_n_reactors.status.bypass']=('Flowing without heat transfer; check inlet temperatures','通液中・熱移動なし（入口温度を確認してください）')[index]
  d['process.create_refinery_n_reactors.status.bypass']=('Flowing; no additional heating required','通液中・追加の加熱は不要です')[index]
  write(path,d)
-print('Generated the flow regulator, the compact heater's states and the thermal-control names')
+print('Generated the flow regulator, the compact heater states and the thermal-control names')

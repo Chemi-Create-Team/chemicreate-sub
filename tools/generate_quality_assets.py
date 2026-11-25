@@ -44,7 +44,7 @@ BUCKETS={
  'gasoline':((211,204,153),'clear'), 'diesel':((184,158,91),'oil'),
  'hydrogen_gas':((220,225,224),'gas'),
  'oxygen_gas':((204,218,222),'gas'), 'nitrogen_gas':((218,218,210),'gas'),
- 'ammonia_gas':((217,225,204),'gas'), 'steam':((225,226,229),'gas'),
+ 'ammonia_gas':((217,225,204),'gas'),
  'nitric_oxide':((201,211,208),'gas'), 'nitrogen_dioxide':((153,89,49),'gas'),
  'ethylene':((211,220,213),'gas'), 'propylene':((217,212,203),'gas'), 'converter_gas':((174,183,169),'gas'),
  'argon_gas':((214,200,226),'gas'),

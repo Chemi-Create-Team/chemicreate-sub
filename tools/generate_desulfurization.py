@@ -45,7 +45,6 @@ def recipes():
 
 
 NAMES = {
-    'fluid.create_refinery_n_reactors.hot_hydrotreater_effluent': ('Hot Hydrotreater Effluent', '高温の脱硫反応液', '高温加氢脱硫产物'),
     'fluid.create_refinery_n_reactors.cooled_hydrotreater_effluent': ('Cooled Hydrotreater Effluent', '冷却した脱硫反応液', '冷却的加氢脱硫产物'),
     'fluid.create_refinery_n_reactors.low_sulfur_diesel': ('Low-Sulfur Diesel', '低硫黄軽油', '低硫柴油'),
     'fluid.create_refinery_n_reactors.hydrogen_sulfide': ('Hydrogen Sulfide', '硫化水素', '硫化氢'),

@@ -1462,17 +1462,17 @@
   "guide.spent_fuel_reprocessing.step_1": {
     "en_us": "Cool spent rods in the pool, shear them with a mechanical saw, then send the chopped fuel to this heated reaction plant.",
     "ja_jp": "使用済み燃料をプールで冷却し、メカニカルソーでせん断してから、この加熱反応プラントへ送ります。",
-    "zh_cn": "Cool spent rods in the pool, shear them with a mechanical saw, then send the chopped fuel to this heated reaction plant."
+    "zh_cn": "在水池中冷却乏燃料棒，用机械锯切碎，再把碎燃料送入这座加热反应装置。"
   },
   "guide.spent_fuel_reprocessing.step_2": {
     "en_us": "One chopped fuel batch and 4,000 mB nitric acid produce 4,000 mB dissolved spent fuel. Send it to the pulse extraction column.",
     "ja_jp": "せん断燃料1個と硝酸4,000 mBから燃料溶解液4,000 mBを作り、パルス抽出塔へ送ります。",
-    "zh_cn": "One chopped fuel batch and 4,000 mB nitric acid produce 4,000 mB dissolved spent fuel. Send it to the pulse extraction column."
+    "zh_cn": "一批碎燃料与 4,000 mB 硝酸可生成 4,000 mB 溶解乏燃料。把它送入脉冲萃取柱。"
   },
   "guide.spent_fuel_reprocessing.step_3": {
     "en_us": "The extraction column separates U, Pu and high-level waste. Recycle the solvent; fabricate MOX and vitrify the waste. See the fuel-cycle Ponder.",
     "ja_jp": "抽出塔でU・Pu・高レベル廃液を分離。溶媒を循環し、MOX製造と廃液ガラス固化へ進みます。燃料サイクルPonderを参照。",
-    "zh_cn": "The extraction column separates U, Pu and high-level waste. Recycle the solvent; fabricate MOX and vitrify the waste. See the fuel-cycle Ponder."
+    "zh_cn": "萃取柱会分离出 U、Pu 和高放废料。回收溶剂；制造 MOX 并将废料玻璃固化。参见燃料循环 Ponder。"
   },
   "guide.spent_fuel_reprocessing.step_4": {
     "en_us": "A spent control rod and 500 mB nitric acid return one reactor graphite. Its coal blocks and metal sheets are not recovered.",
@@ -1487,7 +1487,7 @@
   "fusion_tokamak.shell": {
     "en_us": "Build the 11 × 11 × 8 tokamak. Keep the central 3 × 3 opening clear above the foundation, and nothing above the top blanket.",
     "ja_jp": "11×11×8のトカマクを組みます。中央3×3マスは基礎より上を空け、上面のブランケットの上にも何も置きません。",
-    "zh_cn": "Build the 11 × 11 × 8 tokamak. Keep the central 3 × 3 opening clear above the foundation, and nothing above the top blanket."
+    "zh_cn": "建造 11 × 11 × 8 的托卡马克。基座上方中央 3 × 3 的开口要保持空着，顶部包层上方也不要放任何东西。"
   },
   "fusion_tokamak.magnets": {
     "en_us": "Build four coil pairs into the channel walls and the solenoid into the base. Leave the central hole open.",
@@ -1517,7 +1517,7 @@
   "fusion_tokamak.viewport": {
     "en_us": "Any vacuum vessel block may be swapped for a Fusion Viewport. Viewports side by side join into one pane, so the plasma can be watched.",
     "ja_jp": "真空容器は、どれでも核融合炉のぞき窓に置き換えられます。並べると1枚の窓になり、中のプラズマが見えます。",
-    "zh_cn": "Any vacuum vessel block may be swapped for a Fusion Viewport. Viewports side by side join into one pane, so the plasma can be watched."
+    "zh_cn": "任意真空室方块都可以换成聚变观察窗。并排的观察窗会连成一块玻璃，因此可以观察等离子体。"
   },
   "fusion_tokamak.safety": {
     "en_us": "If stopped, check vacuum, helium, coolant, fuel and power. Cool the coils before restarting.",
@@ -1527,7 +1527,7 @@
   "fusion_console.title": {
     "en_us": "Operating the electromechanical fusion desk",
     "ja_jp": "電気機械式核融合制御卓を操作する",
-    "zh_cn": "Operating the electromechanical fusion desk"
+    "zh_cn": "操作机电式聚变控制台"
   },
   "fusion_console.build": {
     "en_us": "Build the console 3 wide and 2 high. Locate the vacuum, cryogenic, magnet, plasma, output and emergency-dump panels.",
@@ -1547,7 +1547,7 @@
   "fusion_console.dump": {
     "en_us": "Right-click the guarded master switch for an emergency magnetic dump. Sneak-right-click it to reset only after the coils are cold and almost fully discharged.",
     "ja_jp": "中央の保護スイッチで緊急磁場ダンプを行います。コイルが低温でほぼ放電済みになってからスニーク右クリックで復帰できます。",
-    "zh_cn": "Right-click the guarded master switch for an emergency magnetic dump. Sneak-right-click it to reset only after the coils are cold and almost fully discharged."
+    "zh_cn": "右键带护罩的主开关，可触发紧急磁体泄放。只有在线圈冷却且几乎放完电后，才能潜行右键将其复位。"
   },
   "guide.toxic_gas.step_6": {
     "en_us": "Pipe toxic gas directly into a collection system. Keep its product outlet clear.",
@@ -1587,7 +1587,7 @@
   "fusion_motor_generator.title": {
     "en_us": "Powering a tokamak from its turbine shaft",
     "ja_jp": "タービン軸でトカマクへ給電する",
-    "zh_cn": "Powering a tokamak from its turbine shaft"
+    "zh_cn": "用汽轮机传动轴为托卡马克供电"
   },
   "fusion_motor_generator.assembly": {
     "en_us": "Align the motor-generator, magnet power panel and large flywheel on one axis. Attach both neighbors directly.",
@@ -1702,12 +1702,12 @@
   "natural_draft_tower.title": {
     "en_us": "Building a compact natural draft cooling tower",
     "ja_jp": "小型の自然通風冷却塔を組み立てる",
-    "zh_cn": "Building a compact natural draft cooling tower"
+    "zh_cn": "建造紧凑型自然通风冷却塔"
   },
   "natural_draft_tower.preview": {
     "en_us": "Place the controller first. Until the tower forms, faint boxes mark every block still to place, and red ones mark blocks in the way.",
     "ja_jp": "先に制御部を置きます。形成するまで、まだ置いていない場所が薄い箱で表示され、通風を塞ぐブロックは赤で示されます。",
-    "zh_cn": "Place the controller first. Until the tower forms, faint boxes mark every block still to place, and red ones mark blocks in the way."
+    "zh_cn": "先放置控制器。塔成型之前，淡色方框标出所有尚待放置的方块，红色方框标出挡路的方块。"
   },
   "natural_draft_tower.size": {
     "en_us": "Build a 36-high tower with diameters 25 at the base, 14 at the throat and 17 at the top. Keep the interior clear.",
@@ -1717,7 +1717,7 @@
   "natural_draft_tower.fill": {
     "en_us": "The basin, open air intake, fill packs and spray distributors are working parts, not optional decoration.",
     "ja_jp": "集水槽・開放吸気口・充填材・散水樋が必要です。内部の通風を塞がないでください。",
-    "zh_cn": "The basin, open air intake, fill packs and spray distributors are working parts, not optional decoration."
+    "zh_cn": "水池、敞开的进风口、填料包和喷淋分配器都是工作部件，不是可有可无的装饰。"
   },
   "natural_draft_tower.water": {
     "en_us": "Connect warm water at the north and collect ordinary water at the south. The east port can top up the return with fresh water.",
@@ -1737,17 +1737,17 @@
   "condenser_loop.title": {
     "en_us": "Rejecting turbine condenser heat",
     "ja_jp": "タービン復水熱を冷却塔へ捨てる",
-    "zh_cn": "Rejecting turbine condenser heat"
+    "zh_cn": "排出汽轮机冷凝器的热量"
   },
   "condenser_loop.build": {
     "en_us": "Build a 3 × 3 × 7 m condenser tube shell. Put its waterbox against a radial LP turbine casing port, facing the turbine.",
     "ja_jp": "3×3×7 mの復水器管束を組み、水箱を低圧タービンの半径方向ケーシングへ向けて隣接させます。",
-    "zh_cn": "Build a 3 × 3 × 7 m condenser tube shell. Put its waterbox against a radial LP turbine casing port, facing the turbine."
+    "zh_cn": "建造 3 × 3 × 7 m 的冷凝器管壳。将其水箱贴在径向低压汽轮机外壳的端口上，朝向汽轮机。"
   },
   "condenser_loop.loop": {
     "en_us": "Pump tower cold water into the left-side inlet and drain warmed water at the right-side outlet back to the tower. Use parallel pumps and pressure mains for station flow.",
     "ja_jp": "塔の冷水を左側入口へ送り、右側出口の温水を塔へ戻します。発電所の大流量には並列ポンプとステンレス鋼主管を使います。",
-    "zh_cn": "Pump tower cold water into the left-side inlet and drain warmed water at the right-side outlet back to the tower. Use parallel pumps and pressure mains for station flow."
+    "zh_cn": "把塔内冷水泵入左侧入口，并把右侧出口的温水排回塔内。电站流量请使用并联水泵和压力干管。"
   },
   "condenser_loop.heat": {
     "en_us": "Ordinary water enters the cooling circuit and leaves as warm water. Turbine condensate stays in its separate circuit.",
@@ -1772,17 +1772,17 @@
   "process_pid.rack": {
     "en_us": "Stack the instrument rack above the PID controller, facing the same way. Standard Display Links carry the measured percentage to this rack.",
     "ja_jp": "PID調節器の上に同じ向きの計器ラックを重ね、標準Display Linkで伝送器の測定信号を接続します。",
-    "zh_cn": "Stack the instrument rack above the PID controller, facing the same way. Standard Display Links carry the measured percentage to this rack."
+    "zh_cn": "把仪表架叠放在 PID 控制器上方，朝向一致。标准显示链接会把测得的百分比传到这个仪表架。"
   },
   "process_pid.knobs": {
     "en_us": "Upper left / middle / right: setpoint, P, Ti. Lower: Td, reverse action, auto/manual. Click increases, Shift-click decreases.",
     "ja_jp": "上段左から設定値・P・Ti、下段はTd・逆作用・自動/手動。クリックで増、Shiftクリックで減です。",
-    "zh_cn": "Upper left / middle / right: setpoint, P, Ti. Lower: Td, reverse action, auto/manual. Click increases, Shift-click decreases."
+    "zh_cn": "左上 / 中 / 右上：设定值、P、Ti。下方：Td、反向动作、自动/手动。点击增加，Shift 点击减少。"
   },
   "process_pid.valve": {
     "en_us": "Mount the actuator on the flow regulator pointer face. Its 0–15 redstone input opens the valve from zero to 262,144 mB/t.",
     "ja_jp": "流量調節器の指針面にアクチュエータを取り付け、0～15のレッドストーン信号で0～262,144 mB/tを調節します。",
-    "zh_cn": "Mount the actuator on the flow regulator pointer face. Its 0–15 redstone input opens the valve from zero to 262,144 mB/t."
+    "zh_cn": "把执行器装在流量调节器的指针面上。它的 0–15 红石输入会让阀门从 0 开到 262,144 mB/t。"
   },
   "process_pid.loops": {
     "en_us": "Use a controller for each level or flow loop. Loss of signal closes the valve.",
@@ -1792,27 +1792,27 @@
   "fuel_cycle.title": {
     "en_us": "Closing the nuclear fuel cycle",
     "ja_jp": "再処理・MOX・ガラス固化で燃料サイクルを閉じる",
-    "zh_cn": "Closing the nuclear fuel cycle"
+    "zh_cn": "闭合核燃料循环"
   },
   "fuel_cycle.feed": {
     "en_us": "Cool spent assemblies in the pool, shear them with a mechanical saw, and dissolve the chopped fuel with nitric acid in the existing heated reaction plant.",
     "ja_jp": "使用済み燃料をプールで冷却し、メカニカルソーでせん断。既存の加熱反応プラントで硝酸溶解します。",
-    "zh_cn": "Cool spent assemblies in the pool, shear them with a mechanical saw, and dissolve the chopped fuel with nitric acid in the existing heated reaction plant."
+    "zh_cn": "在水池中冷却乏燃料组件，用机械锯切碎，再用硝酸在现有的加热反应装置中溶解碎燃料。"
   },
   "fuel_cycle.column": {
     "en_us": "Each storey is made in Mechanical Crafters and placed as a whole 3 × 3 octagon. Stack twelve behind the drive: two settlers, eight pulse storeys, two settlers. The drive takes at least 32 RPM at its front, dissolved fuel on top and 30 percent TBP solvent on its right.",
     "ja_jp": "各段はメカニカルクラフターで作り、置くとそのまま3×3の八角形になります。駆動部の後ろに分離段2・脈動段8・分離段2の12段を積みます。駆動部の正面に32 RPM以上、上に燃料溶解液、右側に30パーセントTBP溶媒を供給します。",
-    "zh_cn": "Each storey is made in Mechanical Crafters and placed as a whole 3 × 3 octagon. Stack twelve behind the drive: two settlers, eight pulse storeys, two settlers. The drive takes at least 32 RPM at its front, dissolved fuel on top and 30 percent TBP solvent on its right."
+    "zh_cn": "每一层都在机械合成器中制作，并整体放置为 3 × 3 的八边形。在驱动器后方叠放十二层：两层沉降层、八层脉冲层、两层沉降层。驱动器正面需要至少 32 RPM，顶部供应溶解燃料，右侧供应 30% TBP 溶剂。"
   },
   "fuel_cycle.outlets": {
     "en_us": "Four of the pulse storeys are product storeys. From bottom to top they deliver uranium solution, plutonium solution, high-level waste and recycled solvent on any side. Pipe every output away.",
     "ja_jp": "脈動段のうち4段は生成物出口段で、下からU溶液・Pu溶液・高レベル廃液・循環溶媒をどの側面からも取り出せます。全出口を搬出してください。",
-    "zh_cn": "Four of the pulse storeys are product storeys. From bottom to top they deliver uranium solution, plutonium solution, high-level waste and recycled solvent on any side. Pipe every output away."
+    "zh_cn": "八层脉冲层中有四层是产品层。自下而上，它们会从任意一侧输出铀溶液、钚溶液、高放废料和回收溶剂。请把每个输出都用管道引走。"
   },
   "fuel_cycle.mox": {
     "en_us": "Recover PuO₂, mix it with depleted UO₂, press the powder, sinter in hydrogen and assemble MOX rods using zircaloy tubes.",
     "ja_jp": "PuO₂を回収し、劣化UO₂と混合・プレス成形・水素雰囲気焼結。ジルカロイ管でMOX燃料棒に組み立てます。",
-    "zh_cn": "Recover PuO₂, mix it with depleted UO₂, press the powder, sinter in hydrogen and assemble MOX rods using zircaloy tubes."
+    "zh_cn": "回收 PuO₂，与贫化 UO₂ 混合，压制粉末，在氢气中烧结，再用锆合金管组装 MOX 燃料棒。"
   },
   "fuel_cycle.melter": {
     "en_us": "Power the vitrification melter and supply waste, glass frit and an empty canister. Collect the sealed canister.",
@@ -1822,22 +1822,22 @@
   "fuel_cycle.glass": {
     "en_us": "Feed waste liquid from above, frit and empty canisters through funnels, and extract sealed canisters below. Each placed canister stands 3 m tall.",
     "ja_jp": "上から廃液、ファンネルからフリットと空容器を投入し、下から密封固化体を搬出。設置した容器は高さ3 mです。",
-    "zh_cn": "Feed waste liquid from above, frit and empty canisters through funnels, and extract sealed canisters below. Each placed canister stands 3 m tall."
+    "zh_cn": "从上方送入废液，通过漏斗送入玻璃料和空罐，并从下方取出已封装的罐。每个放置的罐高 3 m。"
   },
   "fuel_cycle.stop": {
     "en_us": "Blocked outlets stop the batch without consuming feed. Goggles show state; Display Links expose all six fluid inventories, items, heat and progress.",
     "ja_jp": "出口閉塞では原料を消費せず停止。状態はゴーグル、6流体槽・アイテム・温度・進捗はDisplay Linkで確認します。",
-    "zh_cn": "Blocked outlets stop the batch without consuming feed. Goggles show state; Display Links expose all six fluid inventories, items, heat and progress."
+    "zh_cn": "出口堵塞时，批次会停止且不消耗进料。护目镜显示状态；显示链接可读取全部六个流体库存、物品、热量和进度。"
   },
   "fusion_maintenance.title": {
     "en_us": "Remote blanket and divertor maintenance",
     "ja_jp": "クレーンでブランケットとダイバータを遠隔交換する",
-    "zh_cn": "Remote blanket and divertor maintenance"
+    "zh_cn": "远程维护包层与偏滤器"
   },
   "fusion_maintenance.build": {
     "en_us": "Span the 11 m tokamak with a Fusion Maintenance Crane. The top of the reactor must be within 15 m below the rails.",
     "ja_jp": "核融合炉保守クレーンで11 mのトカマクを跨ぎます。炉の上面からレールまでを15 m以内にします。",
-    "zh_cn": "Span the 11 m tokamak with a Fusion Maintenance Crane. The top of the reactor must be within 15 m below the rails."
+    "zh_cn": "用聚变维护起重机横跨 11 m 的托卡马克。反应堆顶部必须位于轨道下方 15 m 以内。"
   },
   "fusion_maintenance.safe": {
     "en_us": "Switch off the plasma and magnets. Wait for the field to fall below 1% and the blanket to cool to 100 °C or below.",
@@ -1847,17 +1847,17 @@
   "fusion_maintenance.supply": {
     "en_us": "Feed fresh blanket cartridges and tungsten divertor cassettes to the drive using a funnel.",
     "ja_jp": "駆動部へファンネルで新品ブランケットとタングステンダイバータを搬入します。",
-    "zh_cn": "Feed fresh blanket cartridges and tungsten divertor cassettes to the drive using a funnel."
+    "zh_cn": "用漏斗把新的包层卡匣和钨偏滤器卡带送入驱动器。"
   },
   "fusion_maintenance.exchange": {
     "en_us": "Apply rotation and redstone. The bridge and trolley travel to the nearest point on top of the reactor, lower the handling tool and exchange components with more than 25 percent wear.",
     "ja_jp": "回転とレッドストーンを供給すると、橋桁と台車が炉の上面の最寄りの位置へ移動し、吊具を下ろして25パーセント以上損耗した部品を交換します。",
-    "zh_cn": "Apply rotation and redstone. The bridge and trolley travel to the nearest point on top of the reactor, lower the handling tool and exchange components with more than 25 percent wear."
+    "zh_cn": "提供旋转和红石信号。桥架和小车会移动到反应堆顶部最近的位置，放下操作工具，并更换磨损超过 25% 的部件。"
   },
   "fusion_maintenance.damage": {
     "en_us": "Ordinary operation wears both parts; an unplanned plasma trip damages them further. Used components leave through the drive output funnel.",
     "ja_jp": "通常運転で両部品が損耗し、プラズマ異常停止で追加損傷。使用済み部品は駆動部の搬出ファンネルから回収します。",
-    "zh_cn": "Ordinary operation wears both parts; an unplanned plasma trip damages them further. Used components leave through the drive output funnel."
+    "zh_cn": "正常运行会磨损这两种部件；意外的等离子体跳闸会造成更大损伤。用过的部件会从驱动器的输出漏斗送出。"
   },
   "lidded_vessel.title": {
     "en_us": "Stainless Tank",
@@ -2087,7 +2087,7 @@
   "guide.lithium_target_irradiation.step_1": {
     "en_us": "Build a complete operating RBMK, including coolant and controls. Insert a lithium target through a top cap into an empty fuel position. Control-rod holes do not take targets.",
     "ja_jp": "冷却・制御を含むRBMK炉を組みます。上蓋から空いた燃料位置へリチウムターゲット棒を入れてください。制御棒の孔には入りません。",
-    "zh_cn": "Build a complete operating RBMK, including coolant and controls. Insert a lithium target through a top cap into an empty fuel position. Control-rod holes do not take targets."
+    "zh_cn": "建造一座完整运行的 RBMK，包括冷却剂和控制系统。通过顶盖把锂靶插入空的燃料位。控制棒孔不能放靶。"
   },
   "guide.lithium_target_irradiation.step_2": {
     "en_us": "Run the reactor to irradiate the target. It takes 600 rated-power seconds and pauses when stopped.",
@@ -2107,7 +2107,7 @@
   "guide.lithium_target_irradiation.title": {
     "en_us": "Starting the tritium fuel supply",
     "ja_jp": "初回の三重水素を作る",
-    "zh_cn": "Starting the tritium fuel supply"
+    "zh_cn": "启动氚燃料供应"
   },
   "guide.helium_recovery.step_1": {
     "en_us": "Superheat uranium ore and water in a stirred vessel to obtain helium-recovery gas and uranium trioxide.",
@@ -2122,12 +2122,12 @@
   "guide.helium_recovery.step_3": {
     "en_us": "During fusion operation, collect helium ash and magnet boil-off separately and return them to the cold-box inlet. They are clean helium streams and need no new purification recipe.",
     "ja_jp": "核融合の運転後はHe灰と磁石の蒸発ガスを回収し、コールドボックス入口へ戻します。どちらも純ヘリウムなので再精製は不要です。",
-    "zh_cn": "During fusion operation, collect helium ash and magnet boil-off separately and return them to the cold-box inlet. They are clean helium streams and need no new purification recipe."
+    "zh_cn": "聚变运行期间，分别收集氦灰和磁体蒸发气，并送回冷箱入口。它们都是纯净的氦气，不需要新的提纯配方。"
   },
   "guide.helium_recovery.title": {
     "en_us": "Recovering helium for the first startup",
     "ja_jp": "初回のヘリウムを回収する",
-    "zh_cn": "Recovering helium for the first startup"
+    "zh_cn": "为首次启动回收氦气"
   },
   "guide.industrial_dispatch.title": {
     "en_us": "Deliver industrial products",

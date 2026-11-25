@@ -150,7 +150,6 @@ MAINTENANCE_TEXTS = {
 RUNTIME_TEXTS = {
     'jei.create_refinery_n_reactors.note.air_separation_nitrogen': ('Filter liquid nitrogen at layer 14.\n%s gas mB = 1 mB; keep residue.','14層の出口で液体窒素をフィルター。\n気体%s mBで液体1 mB。端数保持。'),
     'fluid.create_refinery_n_reactors.wastewater': ('Wash Wastewater','洗浄排水'),
-    'fluid.create_refinery_n_reactors.liquid_nitrogen': ('Liquid Nitrogen','液体窒素'),
     'lidded_vessel.create_refinery_n_reactors.storage': ('Storage','貯蔵'),
     'lidded_vessel.create_refinery_n_reactors.summary': ('%s | %s | %s x %s','%s | %s | %s×%s'),
     'lidded_vessel.create_refinery_n_reactors.operation': ('%s RPM | %s%% | %s mB','%s RPM | %s%% | %s mB'),

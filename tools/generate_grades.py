@@ -61,11 +61,6 @@ for index, code in enumerate(('en_us', 'ja_jp', 'zh_cn')):
     for key in list(strings):
         if key.startswith(('pressure.create_refinery_n_reactors.', 'thermal.create_refinery_n_reactors.')) or key.startswith('display.create_refinery_n_reactors.') and (key.rsplit('.',1)[-1] in retired_metrics or key.rsplit('.',1)[-1].startswith('temperature_')) or key.startswith('death.attack.create_refinery_n_reactors.') and any(name in key for name in ('hot_surface','cold_surface')): del strings[key]
     for key, names in NAMES.items(): strings[P + key] = names[index]
-    for fluid, names in {'high_pressure_steam': ('High-pressure Steam','高圧蒸気','高压蒸汽'), 'superheated_steam': ('Superheated Steam','過熱蒸気','过热蒸汽'), 'hot_reactor_coolant': ('Hot Reactor Coolant','高温炉冷却材','高温反应堆冷却剂'), 'pressurised_water': ('Pressurised Feedwater','加圧給水','加压给水'), 'preheated_crude_oil': ('Preheated Crude Oil', '予熱した原油', '预热原油'), 'compressed_air': ('Compressed Air', '加圧空気', '加压空气'), 'pressurised_hydrogen': ('Pressurised Hydrogen', '加圧水素', '加压氢气'), 'compressed_hydrogen': ('High-pressure Hydrogen', '高圧水素', '高压氢气')}.items():
-        strings['fluid.create_refinery_n_reactors.'+fluid] = names[index]
-        if fluid in ('hot_reactor_coolant','pressurised_water'):
-            strings['block.create_refinery_n_reactors.'+fluid]=names[index]
-            strings['item.create_refinery_n_reactors.'+fluid+'_bucket']=(names[index]+' Bucket' if index==0 else names[index]+'入りバケツ' if index==1 else names[index]+'桶')
     for key, names in {
         'steam_generation': ('Steam Generation','蒸気の生成','蒸汽生成'),
         'steam_turbine': ('Steam Turbine','蒸気タービン','蒸汽轮机'),

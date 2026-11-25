@@ -539,7 +539,7 @@ for scene, captions in CAPTIONS.items():
         EN[f'create_refinery_n_reactors.ponder.shared.{scene}.{key}'], JA[f'create_refinery_n_reactors.ponder.shared.{scene}.{key}'] = en, ja
     EN[f'create_refinery_n_reactors.ponder.{scene}.header'], JA[f'create_refinery_n_reactors.ponder.{scene}.header'] = captions['title']
 
-for locale, additions in [('en_us', EN), ('ja_jp', JA), ('zh_cn', EN)]:
+for locale, additions in [('en_us', EN), ('ja_jp', JA), ('zh_cn', {**EN, **json.loads((Path(__file__).parent / 'data/zh_cn_overrides.json').read_text())})]:
     path = A / 'lang' / (locale + '.json');data = json.loads(path.read_text())
     if locale == 'zh_cn':
         additions = {key: data.get(key, value) if '.ponder.' in key else value for key, value in additions.items()}

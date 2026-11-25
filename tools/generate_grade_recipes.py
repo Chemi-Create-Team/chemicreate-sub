@@ -12,6 +12,11 @@ def fluid(name, amount):
     return {'type': 'neoforge:single', 'fluid': name if ':' in name else NS + name, 'amount': amount}
 
 
+def liquid(name, amount):
+    """The liquid state of a gas substance: one fluid, told apart by phase, since there is no separate liquid fluid."""
+    return {'type': NS + 'fluid_state', 'fluid': NS + name, 'phase': 'liquid', 'amount': amount}
+
+
 def product(name, amount):
     return {'id': name if ':' in name else NS + name, 'amount': amount}
 
@@ -23,11 +28,11 @@ def write(name, recipe):
 
 
 for name, source, target, amount, result in (
-    ('evaporate_ammonia', 'liquid_ammonia', 'ammonia_gas', 1, 934),
+    ('evaporate_ammonia', 'ammonia_gas', 'ammonia_gas', 1, 934),
 ):
-    write('mixing/' + name, {'type': 'create:mixing', 'ingredients': [fluid(source, amount)],
+    write('mixing/' + name, {'type': 'create:mixing', 'ingredients': [liquid(source, amount)],
                            'results': [product(target, result)], 'heat_requirement': 'heated', 'processing_time': 100})
 
 write('pressure_reaction/freeze_water', {'type': NS + 'pressure_reaction',
-      'ingredients': [fluid('minecraft:water', 1000), fluid('liquid_nitrogen', 50)],
+      'ingredients': [fluid('minecraft:water', 1000), liquid('nitrogen_gas', 50)],
       'results': [{'id': 'minecraft:ice'}, product('nitrogen_gas', 32300)], 'processing_time': 100})

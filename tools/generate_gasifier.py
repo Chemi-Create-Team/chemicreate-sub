@@ -296,13 +296,12 @@ def assets():
 def recipes():
     write(D / f'recipe/{BLOCK}.json', {'type': 'minecraft:crafting_shaped', 'pattern': ['SSS', 'BBB', 'SSS'],
         'key': {'S': {'item': 'create:iron_sheet'}, 'B': {'item': 'minecraft:bricks'}}, 'result': {'id': NS + BLOCK, 'count': 6}})
-    write(D / 'tags/fluid/gasifier_steam.json', {'values': ['minecraft:water']})
     # Carbon powder from before the furnace took lump fuel stays usable.
     write(D / 'tags/item/gasifier_fuels.json', {'values': ['minecraft:coal', 'minecraft:charcoal', NS + 'carbon_powder',
         {'id': '#c:coal_coke', 'required': False}]})
     write(D / 'recipe/entrained_gasification/carbon_steam.json', {
         'type': NS + 'entrained_gasification', 'ingredient': {'tag': NS + 'gasifier_fuels'},
-        'steam': {'tag': NS + 'gasifier_steam', 'amount': 250},
+        'steam': {'type': NS + 'fluid_state', 'fluid': 'minecraft:water', 'phase': 'gas', 'amount': 250},
         'duration': 40, 'gas_result': {'fluid': NS + 'water_gas', 'amount': 500}})
 
 

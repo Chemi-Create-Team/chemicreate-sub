@@ -745,7 +745,7 @@ for names in (EN, JA):
     for fluid in ('deuterium_gas', 'tritium_gas', 'helium_gas'):
         for kind in ('block', 'fluid_type'): names[f'{kind}.create_refinery_n_reactors.{fluid}'] = names[f'fluid.create_refinery_n_reactors.{fluid}']
 
-for locale, additions in [('en_us', EN), ('ja_jp', JA), ('zh_cn', EN)]:
+for locale, additions in [('en_us', EN), ('ja_jp', JA), ('zh_cn', {**EN, **json.loads((Path(__file__).parent / 'data/zh_cn_overrides.json').read_text())})]:
     path = A / 'lang' / f'{locale}.json'
     language = json.loads(path.read_text())
     if locale == 'zh_cn':

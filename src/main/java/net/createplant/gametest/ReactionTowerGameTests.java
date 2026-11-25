@@ -256,8 +256,10 @@ public class ReactionTowerGameTests {
         h.assertTrue(ReactionTowerBlockEntity.tray(owner.takeTop()) && !owner.layer(2).hasTray() && owner.takeTop().getCount()==4 && owner.layer(1).load().isEmpty() && owner.layer(1).hasTray(),
             "Through the hatch the highest tray comes out first; the next tray gives its feed before itself");
         h.setBlock(CENTRE,net.minecraft.world.level.block.Blocks.AIR);
-        h.assertTrue(!h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(h.absolutePos(CENTRE)).inflate(2),
-            e->e.getItem().is(net.createplant.registry.CEUranium.YELLOWCAKE.get()) && e.getItem().getCount()==ReactionTowerBlockEntity.TRAY_LOAD).isEmpty(),"Breaking a layer's centre drops the feed on its tray");
+        // Containers.dropItemStack splits a drop into random pieces of 10 to 30, so the sixteen may come as one stack or as two.
+        int dropped=h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(h.absolutePos(CENTRE)).inflate(2),
+            e->e.getItem().is(net.createplant.registry.CEUranium.YELLOWCAKE.get())).stream().mapToInt(e->e.getItem().getCount()).sum();
+        h.assertTrue(dropped==ReactionTowerBlockEntity.TRAY_LOAD,"Breaking a layer's centre drops the feed on its tray: "+dropped);
         h.succeed();
     }
 }

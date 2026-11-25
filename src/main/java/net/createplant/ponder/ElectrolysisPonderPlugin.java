@@ -170,6 +170,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("nuclear/rbmk_core", RbmkPonderScenes::core);
         helper.forComponents(CreatePlant.location("reactor_fuel_channel"), CreatePlant.location("reactor_top_cap"),
                 CreatePlant.location("reactor_feed_bundle"), CreatePlant.location("biological_shield"),
+                CreatePlant.location("biological_shield_drive"), CreatePlant.location("reactor_fuel_channel_tube"),
                 CreatePlant.location("compact_enriched_fuel_rod"),
                 CreatePlant.location("compact_uranium_dioxide"), CreatePlant.location("green_compact_uranium_pellet"), CreatePlant.location("compact_uranium_pellet"))
             .addStoryBoard("nuclear/rbmk_compact_core", RbmkPonderScenes::compactCore);

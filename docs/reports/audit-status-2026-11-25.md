@@ -20,15 +20,15 @@
 
 ## 残っている項目
 
-- **加熱と反応。** `preheat_water` は、バーナーによる温度計算と並行して、ゲーム内で水を163℃・8 barの給水にするレシピとして残っている。アンモニア合成、FT合成、メタノール合成、水性ガスシフトは、`ProcessRecipe` 共通の反応熱データに未対応。
-- **沸騰。** 20℃・水8,000 mBで最初の更新に143 mBがまとめて蒸発する。蒸発熱の端数は保存・読み込みで失われる。Createタンク・タンクケーシングはふた付き槽と異なる経路。蒸気の粒子と音のクライアント確認は未実施。 [実測値](lidded-vessel-water-boiling-recheck-2026-11-25.md)
-- **中国語。** 中国語ファイルにキーの欠落はなかった。英語と値が完全一致し、英単語が2語以上続く値は291キーだった。この基準では `fusion_reactor` が46、`plant_systems` と `display` が各25キー。翻訳の要否を手作業で精査した件数ではない。
+- **加熱と反応。** 反応熱が未対応なのは `ProcessRecipe` の固定レシピ（メタノール合成など）。アンモニア合成は出口を「高温の合成混合物」の状態で出すことで熱を表している。フィッシャー・トロプシュ合成と水性ガスシフトは反応塔の経路で、別の実装。どれも反応ごとの反応熱データを足す設計が要る。
+- **沸騰。** 蒸発熱の端数は保存・読み込みで失われなくなった（[2026-11-25の対応](remaining-issues-2026-11-25.md)）。Createタンク・タンクケーシングはふた付き槽と異なる経路のまま。蒸気の粒子と音のクライアント確認は未実施。
+- **中国語。** 英語と同じ値が残る件数は、2語以上の英単語が続く基準で0になった（[対応](remaining-issues-2026-11-25.md)）。1語だけの値や数式は数えていない。
 - **構造判定と施設実績。** 設備ごとの判定を使っている。`FormationEffects.formed` には `Announcer.update` からの呼び出しがあり、`ReactorMachineBlockEntity` がその通知を使う。施設実績は引き続きプレイヤー周辺を40 tickごとに走査する。
 - **クラスとテスト。** `ReactorMachineBlockEntity` は1,121行、`QuarryDriveBlockEntity` は964行、`CraneDriveBlockEntity` は934行。確認対象の `src/test` には3ファイルがあり、`HeatContent`、`PhaseChange`、`TwoPhase` の独立したJUnitテストは見つからなかった。
-- **文書と生成スクリプト。** 確認対象には報告書のMarkdownが407本ある。`generate_manual.py` には既存のガイド実績JSONを削除して再生成し、言語ファイル全体を書き直す処理が残っている。コードの確認に留め、実際のリポジトリには実行していない。
+- **文書と生成スクリプト。** 確認対象には報告書のMarkdownが407本ある。`generate_manual.py` は、手作りのガイド実績JSONを消さなくなった（言語ファイルは今も書き換える）。`validate_ponder_language.py` と `validate_plant_tutorials.py` は、この作業の前から失敗している（古い `manufacturing_pvc.step_4` のページキーと、構造NBTのタグ種別）。
 
 ## 今回の再検証
 
-Java 21で `check` は成功した。全GameTestは762件中760件が合格、関連する5クラスの再実行では64件中62件が合格した。両方で失敗したのは、`DriveLessVesselGameTests` の `aCogwheelTurnsTheStirrerWhichRunsTheTankAndCarriesItsStress` と `theTankTakesNoRotationOfItsOwn`。後者は加熱中に回転が止まっている槽の水が1,000 mBのままという前提で、現在の水だけの槽は停止中でも蒸発する。前者は給水1回から1,000 mBの加圧給水が得られるという検証で失敗した。どちらもホウ砂や反応塔のテストとは別件。
+Java 21で `check` は成功した。全GameTestは762件中760件が合格、関連する5クラスの再実行では64件中62件が合格した。両方で失敗したのは、`DriveLessVesselGameTests` の `aCogwheelTurnsTheStirrerWhichRunsTheTankAndCarriesItsStress` と `theTankTakesNoRotationOfItsOwn`。後者は加熱中に回転が止まっている槽の水が1,000 mBのままという前提で、現在の水だけの槽は停止中でも蒸発する。前者は給水1回から1,000 mBの加圧給水が得られるという検証で失敗した。どちらもホウ砂や反応塔のテストとは別件。その後 `c3fa98f` で、この2件を含む全765件が合格した（`preheat_water` レシピと旧IDの整理に伴うテストの移行）。
 
 Create標準タンクの追加試験は、上記の受け入れ量、乾き度、照会値、取り出し結果を実機能のポートで確認した。

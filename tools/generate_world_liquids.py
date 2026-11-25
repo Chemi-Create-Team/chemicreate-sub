@@ -33,7 +33,7 @@ def fluid_entries():
         colors[name] = (0xFF382E24 if 'crude' in name else 0xFFCAC3A0 if 'naphtha' in name
             else 0xFFDBD8BC if 'molten_' in name else 0xFFD9C77E if 'diesel' in name or 'hydrotreater' in name
             else 0xFF3A3026 if 'heavy_oil' in name else 0xFFB9A05A if 'hydrocracker' in name
-            else 0xFF6F7357 if name == 'wastewater' else 0xBBD4E4EA if name == 'liquid_nitrogen'
+            else 0xFF6F7357 if name == 'wastewater'
             else 0xEE5FD38A if name == 'antifreeze' else 0xEEE6EEF0 if 'glycol' in name else 0xBBD3DFDB)
     hazards = {name: (acid == 'true', gas == 'true') for name, acid, gas in re.findall(
         r'entry\("([a-z_]+)",\s*[\d.]+,\s*[\d.]+,\s*(true|false),\s*(true|false)\)',
@@ -177,11 +177,8 @@ CHINESE = {
     'cooled_olefins': '冷却烯烃混合物', 'dissolved_spent_fuel': '溶解乏燃料',
     'ethylene_dichloride': '二氯乙烷', 'ethylene_glycol': '乙二醇',
     'heavy_oil': '重油',
-    'high_level_raffinate': '高放射性萃余液', 'hot_hydrocracker_effluent': '高温加氢裂化产物',
-    'hot_hydrotreater_effluent': '高温加氢精制产物', 'hydrochloric_acid': '盐酸',
-    'liquid_ammonia': '液氨', 'liquid_chlorine': '液氯', 'liquid_helium': '液氦',
-    'liquid_nitrogen': '液氮', 'liquid_oxygen': '液氧', 'liquid_propylene': '液态丙烯',
-    'liquid_sulfur_dioxide': '液态二氧化硫', 'liquid_vinyl_chloride': '液态氯乙烯',
+    'high_level_raffinate': '高放射性萃余液',
+    'hydrochloric_acid': '盐酸',
     'low_sulfur_diesel': '低硫柴油', 'lubricating_oil': '润滑油', 'molten_polyethylene': '熔融聚乙烯',
     'molten_polypropylene': '熔融聚丙烯', 'naphtha': '石脑油', 'nitric_acid': '硝酸',
     'phosphoric_acid': '磷酸', 'plutonium_nitrate_solution': '硝酸钚溶液',
@@ -189,7 +186,7 @@ CHINESE = {
     'sulfuric_acid': '硫酸', 'tbp_extraction_solvent': '磷酸三丁酯萃取剂',
     'titanyl_sulfate_solution': '硫酸氧钛溶液', 'tributyl_phosphate': '磷酸三丁酯',
     'uranyl_nitrate_solution': '硝酸铀酰溶液',
-    'warm_water': '温水', 'wastewater': '洗涤废水', 'zirconium_sulfate_solution': '硫酸锆溶液',
+    'wastewater': '洗涤废水', 'zirconium_sulfate_solution': '硫酸锆溶液',
 }
 
 

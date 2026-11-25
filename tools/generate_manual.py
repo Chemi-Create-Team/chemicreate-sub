@@ -361,7 +361,7 @@ def data():
                                      'ingredients': [{'item': 'minecraft:book'}, {'item': 'minecraft:iron_ingot'}],
                                      'result': {'id': 'minecraft:written_book', 'count': 1, 'components': book()}})
     folder = D / 'advancement/guide'
-    for old in folder.glob('*.json'): old.unlink()
+    # Only the steps below are written; guide advancements made by other generators stay.
     for name, parent, icon, frame, items, _, _ in STEPS:
         display = {'icon': {'id': icon}, 'title': {'translate': f'advancement.{NS}.guide.{name}'},
                    'description': {'translate': f'advancement.{NS}.guide.{name}.description'}, 'frame': frame,

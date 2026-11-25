@@ -33,7 +33,6 @@ def catalyst():
 
 
 NAMES = {
-    'fluid.create_refinery_n_reactors.hot_hydrocracker_effluent': ('Hot Hydrocracker Effluent', '高温の分解反応液', '高温加氢裂化产物'),
     'fluid.create_refinery_n_reactors.cooled_hydrocracker_effluent': ('Cooled Hydrocracker Effluent', '冷却した分解反応液', '冷却的加氢裂化产物'),
     'item.create_refinery_n_reactors.hydrocracking_catalyst': ('Hydrocracking Catalyst', '水素化分解触媒', '加氢裂化催化剂'),
 }

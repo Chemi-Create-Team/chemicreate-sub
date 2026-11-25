@@ -19,7 +19,7 @@ TEXT={
 ALIASES={
  'hydrogen_gas':('Hydrogen','水素','氢气'),'oxygen_gas':('Oxygen','酸素','氧气'),'nitrogen_gas':('Nitrogen','窒素','氮气'),'argon_gas':('Argon','アルゴン','氩气'),
  'converter_gas':('Converter Gas','転炉ガス','转炉煤气'),'air_gas':('Air','空気','空气'),'ammonia_gas':('Ammonia','アンモニア','氨气'),
- 'steam':('Steam','蒸気','蒸汽'),'liquid_oxygen':('Liquid Oxygen','液体酸素','液氧'),'nitric_acid':('Nitric Acid','硝酸','硝酸')}
+ 'nitric_acid':('Nitric Acid','硝酸','硝酸')}
 CDG={'crude_oil':('Crude Oil','原油','原油'),'gasoline':('Gasoline','ガソリン','汽油'),'diesel':('Diesel','軽油','柴油'),'ethanol':('Ethanol','エタノール','乙醇'),'biodiesel':('Biodiesel','バイオディーゼル','生物柴油'),'plant_oil':('Plant Oil','植物油','植物油')}
 COLOURS={'white':('White','白色','白色'),'orange':('Orange','橙色','橙色'),'magenta':('Magenta','赤紫色','品红色'),'light_blue':('Light Blue','空色','淡蓝色'),'yellow':('Yellow','黄色','黄色'),'lime':('Lime','黄緑色','黄绿色'),'pink':('Pink','桃色','粉红色'),'gray':('Gray','灰色','灰色'),'light_gray':('Light Gray','薄灰色','淡灰色'),'cyan':('Cyan','青緑色','青色'),'purple':('Purple','紫色','紫色'),'blue':('Blue','青色','蓝色'),'brown':('Brown','茶色','棕色'),'green':('Green','緑色','绿色'),'red':('Red','赤色','红色'),'black':('Black','黒色','黑色')}
 for name,values in ALIASES.items():TEXT['fluid.create_refinery_n_reactors.'+name]=values

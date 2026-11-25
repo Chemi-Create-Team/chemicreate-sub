@@ -4,7 +4,9 @@
     "tag": "create_refinery_n_reactors:gasifier_fuels"
   },
   "steam": {
-    "tag": "create_refinery_n_reactors:gasifier_steam",
+    "type": "create_refinery_n_reactors:fluid_state",
+    "fluid": "minecraft:water",
+    "phase": "gas",
     "amount": 250
   },
   "duration": 40,

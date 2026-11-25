@@ -155,4 +155,47 @@ public final class InternalTemperatureGameTests {
         h.assertTrue(biggest<=(int)Math.ceil(TankHeating.LIT_WATTS/20/Concentration.JOULES_PER_MB)+1,"No tick gives off more steam than the heat of that tick can boil");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty")
+    public static void waterWarmedFromColdBoilsOffWithoutAFirstLump(GameTestHelper h) {
+        // The vessel's own schedule: a pass every INTERVAL ticks, and every tick once the heater says the water is boiling or about to.
+        var tank=new ThermalFluidTank(16000,ignored->{});
+        tank.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER,8000),EXECUTE);
+        var heater=new TankHeating();heater.boilWater(true);
+        int steam=0,biggest=0,last=0;
+        for(int tick=1;tick<=400;tick++) {
+            if(!heater.boiling() && tick%TankHeating.INTERVAL!=0)continue;
+            heater.tick(java.util.List.of(tank.getFluid()),TankHeating.LIT_WATTS,tank::capacityFor,java.util.List.of(tank.heat()),tick-last);
+            last=tick;
+            int made=heater.takeSteam();steam+=made;biggest=Math.max(biggest,made);
+        }
+        int steady=(int)Math.ceil(TankHeating.LIT_WATTS/20/Concentration.JOULES_PER_MB);
+        h.assertTrue(steam>0 && tank.getFluidAmount()+steam==8000,"The water boils, a mB of water for a mB of steam");
+        h.assertTrue(biggest<=steady+1,"No pass gives off more steam than one tick of the burner can boil, even the one that reaches 100 C: "+biggest+" vs "+steady);
+        h.succeed();
+    }
+
+    @GameTest(template = "test_empty")
+    public static void theFractionOfSteamStillOwedSurvivesASaveAndLoad(GameTestHelper h) {
+        var lookup=h.getLevel().registryAccess();
+        var water=new FluidStack(net.minecraft.world.level.material.Fluids.WATER,4000);
+        var heater=new TankHeating();heater.boilWater(true);
+        // Bring it to the boil, then turn the burner down so a tick makes a small fraction of a mB and the rest waits in the carry.
+        for(int tick=0;tick<400 && !(heater.boiling() && water.getAmount()<4000);tick++)heater.tick(java.util.List.of(water),TankHeating.LIT_WATTS,ignored->Integer.MAX_VALUE,java.util.List.of(),1);
+        for(int tick=0;tick<100;tick++) {
+            heater.tick(java.util.List.of(water),TankHeating.LIT_WATTS*0.0007,ignored->Integer.MAX_VALUE,java.util.List.of(),1);
+            heater.takeSteam();
+        }
+        var saved=new net.minecraft.nbt.CompoundTag();heater.write(saved,lookup);
+        var restored=new TankHeating();restored.boilWater(true);restored.read(saved,lookup);
+        var copy=water.copy();
+        int original=0,reloaded=0;
+        for(int tick=0;tick<400;tick++) {
+            heater.tick(java.util.List.of(water),TankHeating.LIT_WATTS*0.0007,ignored->Integer.MAX_VALUE,java.util.List.of(),1);
+            restored.tick(java.util.List.of(copy),TankHeating.LIT_WATTS*0.0007,ignored->Integer.MAX_VALUE,java.util.List.of(),1);
+            original+=heater.takeSteam();reloaded+=restored.takeSteam();
+        }
+        h.assertTrue(original>0 && original==reloaded && water.getAmount()==copy.getAmount(),"A heater loaded from its save makes the same steam as the one that was saved: "+original+" vs "+reloaded);
+        h.succeed();
+    }
 }

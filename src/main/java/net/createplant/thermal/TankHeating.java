@@ -70,7 +70,25 @@ public final class TankHeating {
     public int tick(List<FluidStack> fluids,double watts,ToIntFunction<FluidStack> capacity,List<HeatContent> external,int ticks) {
         while(own.size()<fluids.size())own.add(new HeatContent());
         boiling=false;
-        return watts<=0 ? NOTHING : give(fluids,watts*ticks/20d,capacity,external);
+        if(watts<=0)return NOTHING;
+        int result=give(fluids,watts*ticks/20d,capacity,external);
+        // Water one ordinary pass from its boiling point is passed tick by tick from now on, so the pass that crosses it holds at most one tick of surplus heat, not ten.
+        if(!boiling && boilWater)boiling=nearBoiling(fluids,watts*INTERVAL/20d,external);
+        return result;
+    }
+
+    private boolean nearBoiling(List<FluidStack> fluids,double nextJoules,List<HeatContent> external) {
+        double total=0;
+        for(var fluid:fluids)if(!fluid.isEmpty())total+=HeatContent.capacity(fluid);
+        if(total<=0)return false;
+        for(int i=0;i<fluids.size();i++) {
+            var fluid=fluids.get(i);
+            if(fluid.isEmpty() || !FluidState.liquidWater(fluid) || TwoPhase.is(fluid))continue;
+            var heat=i<external.size() && external.get(i)!=null ? external.get(i) : i<own.size() ? own.get(i) : null;
+            double ceiling=FluidState.boilingKelvin(fluid,FluidState.pressure(fluid));
+            if(heat!=null && Double.isFinite(ceiling) && heat.kelvin(fluid)+nextJoules/total>=ceiling)return true;
+        }
+        return false;
     }
 
     /** Largest temperature change one reaction can make in the contents; the rest of its heat goes into the vessel walls. */
@@ -153,6 +171,9 @@ public final class TankHeating {
             saved.add(entry);
         }
         tag.put("HeatContents",saved);
+        // The part of a mB of steam the boil has taken heat for and the steam not yet handed to the vessel are real matter and heat.
+        tag.putDouble("SteamCarry",steamCarry);
+        tag.putInt("SteamPending",steam);
     }
 
     public void read(CompoundTag tag,HolderLookup.Provider lookup) {
@@ -163,5 +184,8 @@ public final class TankHeating {
             heat.read(saved.getCompound(i));
             own.add(heat);
         }
+        double carry=tag.getDouble("SteamCarry");
+        steamCarry=Double.isFinite(carry) ? Math.clamp(carry,0,1) : 0;
+        steam=Math.max(0,tag.getInt("SteamPending"));
     }
 }

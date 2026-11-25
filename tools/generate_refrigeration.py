@@ -65,14 +65,9 @@ SCENES = {
     ]),
 }
 NAMES = {
-    'fluid.create_refinery_n_reactors.liquid_ammonia': ('Liquid Ammonia', '液体アンモニア', '液氨'),
     'fluid.create_refinery_n_reactors.ethylene_oxide': ('Ethylene Oxide', '酸化エチレン', '环氧乙烷'),
     'fluid.create_refinery_n_reactors.ethylene_glycol': ('Ethylene Glycol', 'エチレングリコール', '乙二醇'),
     'fluid.create_refinery_n_reactors.antifreeze': ('Antifreeze', '不凍液', '防冻液'),
-    'fluid.create_refinery_n_reactors.liquid_chlorine': ('Liquid Chlorine', '液体塩素', '液氯'),
-    'fluid.create_refinery_n_reactors.liquid_sulfur_dioxide': ('Liquid Sulfur Dioxide', '液体二酸化硫黄', '液态二氧化硫'),
-    'fluid.create_refinery_n_reactors.liquid_vinyl_chloride': ('Liquid Vinyl Chloride', '液体塩化ビニル', '液态氯乙烯'),
-    'fluid.create_refinery_n_reactors.liquid_propylene': ('Liquid Propylene', '液体プロピレン', '液态丙烯'),
 }
 OTHER = {
     'process.create_refinery_n_reactors.recipe.oxidize_ethylene': ('Catalytic oxidation of ethylene to ethylene oxide', '触媒によるエチレンの酸化（酸化エチレン）'),

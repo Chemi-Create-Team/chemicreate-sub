@@ -39,7 +39,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
      * (so one lit burner settles at 1000 C), and the body warms by its heat capacity. A batch takes 480 kJ for the endothermic gasification.
      */
     private static final double THERMAL_MASS = 8000, BURNER_WATTS = 1e6, WALL_WATTS_PER_KELVIN = 1020, BATCH_JOULES = 480_000, TICK_SECONDS = .05;
-    /** The gasifier takes water only as steam, in any of the three steam grades; liquid water stays out. The gasifier_steam tag lists plain water for the recipe ingredient. */
+    /** The gasifier takes water only as steam, in any of the three steam grades; liquid water stays out. The recipe asks for water in its gas phase, which is the same three states. */
     private static boolean isSteam(FluidStack stack) {
         return net.createplant.thermal.FluidForm.STEAM.matches(stack) || net.createplant.thermal.FluidForm.HIGH_PRESSURE_STEAM.matches(stack)
             || net.createplant.thermal.FluidForm.SUPERHEATED_STEAM.matches(stack);

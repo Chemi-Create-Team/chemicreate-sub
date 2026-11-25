@@ -38,7 +38,6 @@ if __name__ == '__main__':
     cartridge('zsm5_catalyst_core', '#725176', '#c3a4c6', '#b9b18a')
     wax()
     bucket('purified_syngas', '#86b0b2', '#c2dbd9')
-    bucket('pressurised_carbon_monoxide', '#78878f', '#b2bec4')
     bucket('synthetic_crude_oil', '#524333', '#9e8364')
     bucket('ft_offgas', '#9aa673', '#cdd3a8')
     bucket('synthetic_naphtha', '#cfb173', '#f0d694')
