@@ -46,11 +46,8 @@
 | 出荷中の全配置データ | 未登録の自MODブロックを含むものがないことを機械的に確認 |
 | 実画面のPonder（日本語） | 全84シーンの品質チェックに合格。新しい4シーンを撮影 |
 
-## 確認が必要な残りの問題（未対応）
+## その後の対応（2026-11-25 時点）
 
-- **ガスホルダー球の Ponder がない。** 原稿は `generate_plant_tutorials.py` にある。ただしガスホルダーは Create の鋼材ブロックで組む設備で、自MODのアイテムがないため、思案を紐付ける先がない。
-- **横型流体タンクの Ponder がない。** 連結した見た目を出すには、Java側でタンクを形成させる処理が必要。
-- **空気を液化する手段がない。**
-  - エアーフィルターの空気の行き先がなく、液体空気を作るレシピも処理もない。
-  - そのため空気分離塔が動かせず、窒素が得られない。アンモニア・硝酸のラインがサバイバルで始められない。
-- 原子炉の部品4種（`biological_shield_coolant_outlet`・`biological_shield_drive`・`reactor_feed_bundle`・`reactor_fuel_channel_tube`）も思案に紐付いていない。原子炉は他メンバーの担当なので報告のみ。
+- **ガスホルダー球と横型流体タンクのPonderは修正済み。** 両方のシーンが登録され、実画面も後続の検証で確認した。 [Ponderの修正報告](ponder-and-air-liquefaction.md)
+- **窒素の入手経路は修正済み。** 空気を圧縮・冷却し、分離塔で窒素を回収できる。現在の吸気にはCreateのノズルを使う。 [空気の分離](../distillation-plant.md) · [吸気の仕様](../material-pumps.md)
+- **原子炉部品の紐付けは4種中2種を確認。** `biological_shield_coolant_outlet` と `reactor_feed_bundle` には炉心のPonderが登録済み。`biological_shield_drive` と `reactor_fuel_channel_tube` は、個別の紐付けが見つからなかった。
