@@ -6,6 +6,7 @@ import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import net.createplant.block.entity.AmmoniaSeparatorBlockEntity;
 import net.createplant.block.entity.GasHolderBlockEntity;
 import net.createplant.block.entity.GasTankContainerBlockEntity;
+import net.createplant.block.entity.HighPressureSeparatorBlockEntity;
 import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.registry.CETransport;
 import net.createplant.transport.FluidHazards;
@@ -21,7 +22,8 @@ public enum TankGrade {
     STAINLESS(Grade.Heat.COLD, Grade.Heat.VERY_HOT, Grade.Pressure.PRESSURISED, Kind.LIQUID, FluidHazards.Corrosion.ACID, FluidHazards.Corrosion.HALOGEN, FluidHazards.Corrosion.BASE),
     CRYOGENIC(Grade.Heat.CRYOGENIC, Grade.Heat.AMBIENT, Grade.Pressure.PRESSURISED, Kind.LIQUID),
     OPEN(Grade.Heat.COLD, Grade.Heat.AMBIENT, Grade.Pressure.ATMOSPHERIC, Kind.LIQUID),
-    HOLDER(Grade.Heat.COLD, Grade.Heat.AMBIENT, Grade.Pressure.ATMOSPHERIC, Kind.GAS);
+    HOLDER(Grade.Heat.COLD, Grade.Heat.AMBIENT, Grade.Pressure.ATMOSPHERIC, Kind.GAS),
+    SEPARATOR(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.HIGH, Kind.ALL);
 
     private enum Kind { ALL, LIQUID, GAS }
     public final Grade.Heat coldest, hottest;
@@ -76,6 +78,7 @@ public enum TankGrade {
     public static TankGrade of(com.simibubi.create.foundation.blockEntity.SmartBlockEntity owner) {
         if (owner instanceof AmmoniaSeparatorBlockEntity) return null;
         if (owner instanceof GasHolderBlockEntity) return HOLDER;
+        if (owner instanceof HighPressureSeparatorBlockEntity) return SEPARATOR;
         if (owner instanceof GasTankContainerBlockEntity) return GAS;
         if (owner instanceof HorizontalTankBlockEntity) return LIQUID;
         if (!(owner instanceof FluidTankBlockEntity)) return null;
@@ -87,6 +90,7 @@ public enum TankGrade {
     public static TankGrade of(Block block) {
         if (block==com.simibubi.create.AllBlocks.FLUID_TANK.get() || block==CETransport.HORIZONTAL_FLUID_TANK.get()) return LIQUID;
         if (block==CETransport.GAS_RECEIVER.get() || block==CETransport.GAS_TANK_CONTAINER.get()) return GAS;
+        if (block==CETransport.HIGH_PRESSURE_SEPARATOR.get()) return SEPARATOR;
         if (block==CETransport.PRESSURE_TANK.get()) return PRESSURE;
         if (block==CETransport.STAINLESS_STEEL_TANK.get()) return STAINLESS;
         if (block==CETransport.CRYOGENIC_TANK.get()) return CRYOGENIC;

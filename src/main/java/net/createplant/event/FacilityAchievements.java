@@ -23,6 +23,7 @@ public final class FacilityAchievements {
     private static final List<Facility> ALL = List.of(
         of("fractionating_column", FractionatingColumnBlockEntity.class, FractionatingColumnBlockEntity::ready),
         of("ammonia_separator", AmmoniaSeparatorBlockEntity.class, AmmoniaSeparatorBlockEntity::ready),
+        of("high_pressure_separator", HighPressureSeparatorBlockEntity.class, separator -> separator.isController() && separator.complete()),
         of("reaction_tower", ReactionTowerBlockEntity.class, tower -> tower.owner() == tower),
         of("gas_holder", GasHolderBlockEntity.class, GasHolderBlockEntity::formed),
         of("lidded_vessel", LiddedVesselBlockEntity.class, LiddedVesselBlockEntity::formed),

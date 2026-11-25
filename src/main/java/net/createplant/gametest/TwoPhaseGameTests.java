@@ -107,6 +107,18 @@ public class TwoPhaseGameTests {
         h.succeed();
     }
 
+    @GameTest(template="test_fractionation")
+    public static void theOrdinarySeparatorRefusesAHighPressureWetStream(GameTestHelper h) {
+        var level=h.getLevel();
+        var at=h.absolutePos(new BlockPos(4,2,4));
+        var separator=HaberBoschGameTests.separator(level,at);
+        var inlet=level.getCapability(Capabilities.FluidHandler.BLOCK,at.above(),Direction.NORTH);
+        var wet=net.createplant.block.entity.FuelChannelBlockEntity.outletStack(1000,.5,0);
+        h.assertTrue(inlet!=null && TwoPhase.is(wet) && inlet.fill(wet,SIMULATE)==0 && inlet.fill(wet,EXECUTE)==0 && separator.water().isEmpty() && separator.steam().isEmpty(),
+            "A pressurised-rated separator takes no RBMK wet steam");
+        h.succeed();
+    }
+
     @GameTest(template="test_fractionation",timeoutTicks=180)
     public static void createPumpCarriesAnExchangerStreamToTheSeparator(GameTestHelper h) {
         var level=h.getLevel();

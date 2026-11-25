@@ -3112,6 +3112,51 @@
     ]
   },
   {
+    "id": "high_pressure_separator",
+    "size": 11,
+    "height": 5,
+    "scale": 0.55,
+    "formed": "step_1",
+    "components": [
+      "high_pressure_separator"
+    ],
+    "steps": [
+      {
+        "key": "step_0",
+        "target": [
+          2,
+          1,
+          3
+        ],
+        "reveal": [
+          2,
+          1,
+          1,
+          8,
+          3,
+          8
+        ],
+        "item": "create_refinery_n_reactors:high_pressure_separator"
+      },
+      {
+        "key": "step_1",
+        "target": [
+          8,
+          2,
+          7
+        ]
+      },
+      {
+        "key": "step_2",
+        "target": [
+          3,
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
     "id": "gas_tank_container",
     "size": 11,
     "height": 5,

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "frame": "create_refinery_n_reactors:block/high_pressure_separator/frame",
+    "casting": "create_refinery_n_reactors:block/high_pressure_separator/casting",
+    "shell": "create_refinery_n_reactors:block/high_pressure_separator/shell",
+    "head": "create_refinery_n_reactors:block/high_pressure_separator/head",
+    "particle": "create_refinery_n_reactors:block/high_pressure_separator/frame"
+  },
+  "elements": []
+}

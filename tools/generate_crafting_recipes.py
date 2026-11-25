@@ -36,6 +36,8 @@ MIDDLE = {
     'jacketed_pipe': (['ICI', 'I I', 'ICI'], {'I': IRON_SHEET, 'C': item('create:copper_sheet')}, 3),
     # A gas receiver's shell in a steel container frame.
     'gas_tank_container': (['SIS', 'IGI', 'SIS'], {'S': STEEL_INGOT, 'I': IRON_SHEET, 'G': item('gas_receiver')}, 4),
+    # Two gas tank containers and a pressure tank, braced for the RBMK's wet steam.
+    'high_pressure_separator': (['SIS', 'GPG', 'SIS'], {'S': STEEL_INGOT, 'I': IRON_SHEET, 'G': item('gas_tank_container'), 'P': item('pressure_tank')}, 1),
     'relief_scrubber': (['SPS', 'GTG', 'SVS'], {'S': STAINLESS, 'P': item('create:fluid_pipe'), 'G': item('industrial_glass'),
         'T': item('create:fluid_tank'), 'V': item('create:fluid_valve')}, 1),
     'flow_regulator': ([' R ', 'PMP', 'S S'], {'R': item('industrial_resin'), 'S': STAINLESS, 'P': item('create:fluid_pipe'), 'M': PRECISION}, 1),

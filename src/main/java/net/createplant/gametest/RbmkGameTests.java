@@ -321,11 +321,10 @@ public class RbmkGameTests {
         var channel=lead;var lookup=h.getLevel().registryAccess();var tag=channel.saveWithoutMetadata(lookup);
         tag.putInt("Coolant",1000);tag.putDouble("Specific",net.createplant.nuclear.ReactorCoolant.CP*ReactorPhysics.SATURATION_KELVIN+net.createplant.nuclear.ReactorCoolant.LATENT/2);channel.loadWithComponents(tag,lookup);
         var outlet=lead.core().outlet();
-        var steam=FluidForm.HIGH_PRESSURE_STEAM.stack(1000);
-        h.assertTrue(outlet.drain(steam,IFluidHandler.FluidAction.SIMULATE).getAmount()==500 && channel.coolantAmount()==1000,"Preview exposes only the steam fraction without mutation");
-        int gas=outlet.drain(steam,IFluidHandler.FluidAction.EXECUTE).getAmount();
-        int liquid=outlet.drain(FluidForm.PRESSURISED_WATER.stack(1000),IFluidHandler.FluidAction.EXECUTE).getAmount();
-        h.assertTrue(gas==500 && liquid==500 && channel.coolantAmount()==0,"Graded ports export both finite phases exactly once");h.succeed();
+        var preview=outlet.drain(1000,IFluidHandler.FluidAction.SIMULATE);
+        h.assertTrue(preview.getAmount()==1000 && channel.coolantAmount()==1000 && net.createplant.thermal.TwoPhase.is(preview) && net.createplant.thermal.TwoPhase.share(preview)==.5,"The outlet previews one wet parcel, half steam, without mutation");
+        var wet=outlet.drain(1000,IFluidHandler.FluidAction.EXECUTE);
+        h.assertTrue(wet.getAmount()==1000 && net.createplant.thermal.TwoPhase.share(wet)==.5 && channel.coolantAmount()==0 && outlet.drain(1,IFluidHandler.FluidAction.EXECUTE).isEmpty(),"The wet parcel leaves exactly once, as one stream of both phases");h.succeed();
     }
 
     @GameTest(template = "test_rbmk", timeoutTicks = 20)

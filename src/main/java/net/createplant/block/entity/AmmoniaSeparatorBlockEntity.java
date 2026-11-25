@@ -88,28 +88,16 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     }
     /** A stream that is both liquid and gas is split here: liquid to the bottom outlet, gas to the top. Returns the amount of the stream taken. */
     private int separateStream(FluidStack stream,IFluidHandler.FluidAction action){
-        if(!ready() || !feed.isEmpty() || progress>0)return 0;
+        if(!ready() || !ratedFor(stream) || !feed.isEmpty() || progress>0)return 0;
         boolean isWater=stream.is(Fluids.WATER);
         if(isWater ? chemicalContents() : !water.isEmpty() || !steam.isEmpty())return 0;
         var liquidTank=isWater ? water : liquid;var gasTank=isWater ? steam : recycle;
-        int units=stream.getAmount();
-        for(int attempt=0;attempt<4 && units>0;attempt++){
-            var split=TwoPhase.split(stream,units);
-            int fitLiquid=split.liquid().isEmpty() ? 0 : liquidTank.fillAt(split.liquid(),split.kelvin(),0,IFluidHandler.FluidAction.SIMULATE);
-            int fitGas=split.gas().isEmpty() ? 0 : gasTank.fillAt(split.gas(),split.kelvin(),1,IFluidHandler.FluidAction.SIMULATE);
-            if(fitLiquid==split.liquid().getAmount() && fitGas==split.gas().getAmount()){
-                if(action.execute()){
-                    if(!split.liquid().isEmpty())liquidTank.fillAt(split.liquid(),split.kelvin(),0,IFluidHandler.FluidAction.EXECUTE);
-                    if(!split.gas().isEmpty())gasTank.fillAt(split.gas(),split.kelvin(),1,IFluidHandler.FluidAction.EXECUTE);
-                    changed();
-                }
-                return units;
-            }
-            double scale=Math.min(split.liquid().isEmpty() ? 1 : (double)fitLiquid/split.liquid().getAmount(),split.gas().isEmpty() ? 1 : (double)fitGas/split.gas().getAmount());
-            units=(int)(units*scale);
-        }
-        return 0;
+        int taken=TwoPhase.divide(stream,liquidTank,gasTank,action);
+        if(taken>0 && action.execute())changed();
+        return taken;
     }
+    /** An ordinary separator is rated for pressurised streams only; high-pressure ones such as the RBMK's go to the high-pressure separator. */
+    private static boolean ratedFor(FluidStack stream){return Grade.Pressure.of(FluidState.bar(FluidState.pressure(stream))).compareTo(Grade.Pressure.PRESSURISED)<=0;}
     private void setSeparating(boolean active){if(separating!=active){separating=active;syncNeeded=true;}}
     @Override public void removeController(boolean keepFluids){front=front();portEpoch++;super.removeController(keepFluids);}
     public void vent(){

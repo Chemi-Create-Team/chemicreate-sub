@@ -13,6 +13,9 @@ import net.createplant.nuclear.ReactorCores;
 import net.createplant.nuclear.ReactorFuel;
 import net.createplant.nuclear.ReactorPhysics;
 import net.createplant.registry.CEFluids;
+import net.createplant.thermal.FluidForm;
+import net.createplant.thermal.FluidState;
+import net.createplant.thermal.TwoPhase;
 import net.createplant.registry.CENuclear;
 import net.createplant.registry.CEUranium;
 import net.createplant.nuclear.ReactorCoolant;
@@ -532,30 +535,35 @@ public class FuelChannelBlockEntity extends SmartBlockEntity implements IHaveGog
     private int coolantCapacity() { return coreHeight * activeChannels() * COOLANT_PER_CHANNEL; }
 
     /**
-     * Takes a bulk wet parcel. Its specific energy encodes the equilibrium water/steam ratio, so neither phase can be selected at
-     * the reactor outlet; a gas-liquid separator must split it downstream.
+     * The coolant leaves as one wet parcel: water at the channel's pressure whose share of steam is the channel's own, so neither phase
+     * can be chosen at the outlet and a high-pressure gas-liquid separator has to split it downstream.
      */
-
-
-    /** The four outlets of the coolant, by slot: pressurised water, steam, warm water and plain water. */
-    public static FluidStack outletStack(int slot,int amount){
-        return switch(slot){case 0->net.createplant.thermal.FluidForm.PRESSURISED_WATER.stack(amount);case 1->net.createplant.thermal.FluidForm.HIGH_PRESSURE_STEAM.stack(amount);
-            case 2->net.createplant.thermal.FluidForm.WARM_WATER.stack(amount);default->new FluidStack(Fluids.WATER,amount);};
+    public static FluidStack outletStack(int amount,double quality,int liquidSlot){
+        if(amount<=0)return FluidStack.EMPTY;
+        if(quality>=1)return FluidForm.HIGH_PRESSURE_STEAM.stack(amount);
+        if(quality<=0)return liquidStack(liquidSlot,amount);
+        var base=FluidForm.HIGH_PRESSURE_STEAM.stack(1);
+        int pressure=FluidState.pressure(base);
+        var liquid=FluidState.with(base,FluidState.levelFor(base,FluidState.boilingKelvin(base,pressure),pressure,false),pressure).copyWithAmount(amount);
+        return TwoPhase.mark(liquid,quality);
     }
-    private int liquidSlot(){double kelvin=waterKelvin();return kelvin>=ReactorCoolant.OPERATING_INLET_KELVIN ? 0 : kelvin>=330 ? 2 : 3;}
-    public int phaseAvailable(int slot){
-        if(coolant<=0)return 0;double quality=ReactorPhysics.quality(specific);
-        return slot==1 ? (int)Math.floor(coolant*quality) : slot==liquidSlot() ? (int)Math.floor(coolant*(1-quality)) : 0;
+    /** Water that has not started to boil, by slot: pressurised water, warm water or plain water. */
+    private static FluidStack liquidStack(int slot,int amount){
+        return slot==0 ? FluidForm.PRESSURISED_WATER.stack(amount) : slot==2 ? FluidForm.WARM_WATER.stack(amount) : new FluidStack(Fluids.WATER,amount);
     }
-    public FluidStack takePhase(int slot,int requested,boolean execute){
-        int amount=Math.min(Math.max(0,requested),phaseAvailable(slot));if(amount<=0)return FluidStack.EMPTY;
-        if(execute){double perKilogram=ReactorCoolant.CP*(slot==1 ? ReactorPhysics.SATURATION_KELVIN : waterKelvin())+(slot==1 ? ReactorCoolant.LATENT : 0);remove(amount,perKilogram);outletWindow+=amount;}
-        return outletStack(slot,amount);
+    public int liquidSlot(){double kelvin=waterKelvin();return kelvin>=ReactorCoolant.OPERATING_INLET_KELVIN ? 0 : kelvin>=330 ? 2 : 3;}
+    /** The share of this column's coolant that is steam, by mass. */
+    public double steamShare(){return coolant>0 ? ReactorPhysics.quality(specific) : 0;}
+    /** Takes wet coolant as it is: the column keeps the specific energy of what stays, so both phases leave in their own proportion. */
+    public int takeWet(int requested,boolean execute){
+        int amount=Math.min(Math.max(0,requested),coolant);
+        if(amount>0 && execute){remove(amount,specific);outletWindow+=amount;}
+        return amount;
     }
     private double waterKelvin() { return Math.min(ReactorPhysics.SATURATION_KELVIN, ReactorPhysics.coolantKelvin(specific)); }
 
     private FluidStack water(int amount) {
-        return amount<=0 ? FluidStack.EMPTY : outletStack(liquidSlot(),amount);
+        return amount<=0 ? FluidStack.EMPTY : liquidStack(liquidSlot(),amount);
     }
 
     /** Removes {@code amount} mB that carry {@code perKilogram} J/kg, keeping the energy of what stays. */

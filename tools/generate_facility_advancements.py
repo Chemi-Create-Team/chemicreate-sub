@@ -21,6 +21,7 @@ HUB = (('Plant manager', 'Finish a multiblock facility. Each one you build here 
 FACILITIES = {
     'fractionating_column': ('fractionating_column', 'task', (('Layer cake', 'Stack a fractionating column.'), ('層になった原油', '分留塔を組み上げよう。'), ('千层原油', '建成一座分馏塔。'))),
     'ammonia_separator': ('ammonia_separator', 'task', (('Cold and clear', 'Build a gas-liquid separator.'), ('気と液のさかいめ', '気液分離器を組み上げよう。'), ('气液分界', '建成一台气液分离器。'))),
+    'high_pressure_separator': ('high_pressure_separator', 'task', (('Steam drum', 'Build a high-pressure separator for wet steam.'), ('スチームドラム', '湿り蒸気用の高圧気液分離機を組み上げよう。'), ('汽包', '建成一台处理湿蒸汽的高压气液分离器。'))),
     'reaction_tower': ('reaction_tower', 'task', (('Tower of trays', 'Build a reaction tower with at least three layers.'), ('棚段の塔', '3段以上の反応塔を組み上げよう。'), ('塔盘之塔', '建成至少三层的反应塔。'))),
     'gas_holder': ('gas_holder', 'task', (('A lung for the plant', 'Raise a gas holder.'), ('工場の肺', 'ガスホルダーを建てよう。'), ('工厂之肺', '建起一座储气柜。'))),
     'lidded_vessel': ('lidded_vessel', 'task', (('Lid on', 'Close a lidded vessel.'), ('ふたをしめて', '蓋付き容器を完成させよう。'), ('盖上盖子', '建成一个带盖容器。'))),

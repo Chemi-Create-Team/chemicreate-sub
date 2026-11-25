@@ -67,6 +67,7 @@ public class CreatePlant {
         net.createplant.registry.CEElectrolysis.register(modEventBus);
         modEventBus.addListener(net.createplant.block.entity.HorizontalTankBlockEntity::registerCapabilities);
         modEventBus.addListener(net.createplant.block.entity.GasTankContainerBlockEntity::registerCapabilities);
+        modEventBus.addListener(net.createplant.block.entity.HighPressureSeparatorBlockEntity::registerCapabilities);
         net.createplant.registry.CEHighStressMachines.register(modEventBus);
         net.createplant.registry.CEReactor.register(modEventBus);
         net.createplant.registry.CEHeating.register(modEventBus);

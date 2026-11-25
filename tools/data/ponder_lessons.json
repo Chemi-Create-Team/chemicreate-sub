@@ -1195,9 +1195,9 @@
     "zh_cn": "用另一台分离器处理高温反应堆冷却剂。底部输出加压给水，顶部输出高压蒸汽。"
   },
   "ammonia_separator.reactor_split": {
-    "en_us": "12,000 mB of hot coolant yields 11,000 mB of feedwater and 1,000 mB of steam. RBMK water and steam can also pass through separate buffers.",
-    "ja_jp": "高温冷却材12000 mBから給水11000 mBと蒸気1000 mBを作ります。RBMKの水と蒸気も別々に搬出できます。",
-    "zh_cn": "12000 mB高温冷却剂生成11000 mB给水和1000 mB蒸汽。也可分别输送RBMK的水和蒸汽。"
+    "en_us": "12,000 mB of hot coolant yields 11,000 mB of feedwater and 1,000 mB of steam. The RBMK's wet steam is too high in pressure for this separator; use the high-pressure separator.",
+    "ja_jp": "高温冷却材12000 mBから給水11000 mBと蒸気1000 mBを作ります。RBMKの湿り蒸気は圧力が高すぎてこの分離器では受けられないので、高圧気液分離機を使います。",
+    "zh_cn": "12000 mB高温冷却剂生成11000 mB给水和1000 mB蒸汽。RBMK的湿蒸汽压力过高，本分离器不接收，请使用高压气液分离器。"
   },
   "ammonia_separator.two_phase": {
     "en_us": "Feed a two-phase stream into the upper side. Gas leaves above and liquid leaves below, in the proportions carried by that stream.",
@@ -1235,9 +1235,9 @@
     "zh_cn": "堆芯宽5至13格，周围屏蔽厚两格。52通道的圆形堆芯在外圈以内设有8个上下与左右对称的控制棒位。"
   },
   "rbmk_core.water": {
-    "en_us": "Pump water or pressurised feedwater into the bottom feed bundles. Take high-pressure steam and returned water from the outlet.",
-    "ja_jp": "底の給水束へ水か加圧給水を送ります。出口から高圧蒸気と戻り水を取り出します。",
-    "zh_cn": "向底部给水束泵入水或加压给水。从出口取出高压蒸汽和回流水。"
+    "en_us": "Pump water or pressurised feedwater into the bottom feed bundles. The outlet gives one wet stream of water and steam: pipe it into a high-pressure separator.",
+    "ja_jp": "底の給水束へ水か加圧給水を送ります。出口からは水と蒸気が混ざった湿り蒸気が出るので、高圧気液分離機へ送ります。",
+    "zh_cn": "向底部给水束泵入水或加压给水。出口排出水汽混合的湿蒸汽，需接入高压气液分离器。"
   },
   "rbmk_core.drive": {
     "en_us": "Drive the biological-shield input to move the control rods.",
@@ -2070,9 +2070,9 @@
     "zh_cn": "将旋转动力接入生物屏蔽输入端。52通道的圆形堆芯在外圈以内的8个上下与左右对称的位置装入控制棒。"
   },
   "rbmk_compact_core.cooling": {
-    "en_us": "Supply water continuously and pipe the upper side outlet to a separator. Keep both return and steam outlets clear.",
-    "ja_jp": "給水を保ち、上部側面の気水出口を分離器へつなぎます。水の戻りと蒸気の出口を確保します。",
-    "zh_cn": "保持供水，将上部侧面的汽水出口连接分离器。确保回水与蒸汽出口畅通。"
+    "en_us": "Supply water continuously and pipe the upper side outlet, which gives wet steam, to a high-pressure separator. Keep both return and steam outlets clear.",
+    "ja_jp": "給水を保ち、湿り蒸気が出る上部側面の出口を高圧気液分離機へつなぎます。水の戻りと蒸気の出口を確保します。",
+    "zh_cn": "保持供水，将排出湿蒸汽的上部侧面出口连接高压气液分离器。确保回水与蒸汽出口畅通。"
   },
   "rbmk_compact_core.scaling": {
     "en_us": "With the same footprint, output is 3/7 of a seven-layer core. Check the rating with goggles.",

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SIS",
+    "GPG",
+    "SIS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:steel_ingot"
+    },
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:gas_tank_container"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:pressure_tank"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:high_pressure_separator",
+    "count": 1
+  }
+}

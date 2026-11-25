@@ -188,28 +188,25 @@ public final class ReactorCore {
     public net.neoforged.neoforge.fluids.capability.IFluidHandler outlet() { return outlet; }
 
     private final net.neoforged.neoforge.fluids.capability.IFluidHandler outlet=new net.neoforged.neoforge.fluids.capability.IFluidHandler(){
-        public int getTanks(){return 4;}
-        public FluidStack getFluidInTank(int tank){return tank>=0 && tank<4 ? takePhase(tank,Integer.MAX_VALUE,false) : FluidStack.EMPTY;}
-        public int getTankCapacity(int tank){return structure==null || tank<0 || tank>=4 ? 0 : (fuelChannels+controlChannels)*structure.height()*FuelChannelBlockEntity.COOLANT_PER_CHANNEL;}
+        public int getTanks(){return 1;}
+        public FluidStack getFluidInTank(int tank){return tank==0 ? takeWet(Integer.MAX_VALUE,false) : FluidStack.EMPTY;}
+        public int getTankCapacity(int tank){return structure==null || tank!=0 ? 0 : (fuelChannels+controlChannels)*structure.height()*FuelChannelBlockEntity.COOLANT_PER_CHANNEL;}
         public boolean isFluidValid(int tank,FluidStack stack){return false;}
         public int fill(FluidStack stack,FluidAction action){return 0;}
-        // A request names the substance and its state, so it is matched against each phase's entry rather than by fluid id alone.
-        public FluidStack drain(FluidStack stack,FluidAction action){
-            if(stack.isEmpty())return FluidStack.EMPTY;
-            for(int slot=0;slot<4;slot++)if(FluidStack.isSameFluidSameComponents(FuelChannelBlockEntity.outletStack(slot,1),stack))return takePhase(slot,stack.getAmount(),action.execute());
-            return FluidStack.EMPTY;
-        }
-        public FluidStack drain(int amount,FluidAction action){for(int slot:new int[]{1,0,2,3}){var result=takePhase(slot,amount,action.execute());if(!result.isEmpty())return result;}return FluidStack.EMPTY;}
+        // The parcel is wet water at the channel pressure, so a request is matched by substance and not by the share of steam it carried a tick ago.
+        public FluidStack drain(FluidStack stack,FluidAction action){return stack.is(net.minecraft.world.level.material.Fluids.WATER) ? takeWet(stack.getAmount(),action.execute()) : FluidStack.EMPTY;}
+        public FluidStack drain(int amount,FluidAction action){return takeWet(amount,action.execute());}
     };
     private int outletCursor;
-    private FluidStack takePhase(int slot,int requested,boolean execute){
+    /** Wet coolant from every column, shared evenly; its steam share is the amount-weighted mean of the columns', to the nearest eighth. */
+    private FluidStack takeWet(int requested,boolean execute){
         if(structure==null || owner.getLevel()==null || requested<=0)return FluidStack.EMPTY;
         int columns=structure.fuel().size();var channels=new FuelChannelBlockEntity[columns];int[] room=new int[columns];
-        for(int i=0;i<columns;i++)if(owner.getLevel().getBlockEntity(structure.fuel().get(i)) instanceof FuelChannelBlockEntity channel){channels[i]=channel;room[i]=channel.phaseAvailable(slot);}
-        int[] share=EvenShare.split(requested,room,outletCursor%Math.max(1,columns));int taken=0;
-        for(int i=0;i<columns;i++)if(share[i]>0)taken+=channels[i].takePhase(slot,share[i],execute).getAmount();
+        for(int i=0;i<columns;i++)if(owner.getLevel().getBlockEntity(structure.fuel().get(i)) instanceof FuelChannelBlockEntity channel){channels[i]=channel;room[i]=channel.coolantAmount();}
+        int[] share=EvenShare.split(requested,room,outletCursor%Math.max(1,columns));int taken=0,slot=0;double steam=0;
+        for(int i=0;i<columns;i++)if(share[i]>0){slot=Math.max(slot,channels[i].liquidSlot());double quality=channels[i].steamShare();int amount=channels[i].takeWet(share[i],execute);taken+=amount;steam+=quality*amount;}
         if(execute && columns>0)outletCursor=Math.floorMod(outletCursor+taken,columns);
-        return taken==0 ? FluidStack.EMPTY : FuelChannelBlockEntity.outletStack(slot,taken);
+        return FuelChannelBlockEntity.outletStack(taken,taken>0 ? steam/taken : 0,slot);
     }
     public void fuelChanged() { fuelDirty = true; }
 

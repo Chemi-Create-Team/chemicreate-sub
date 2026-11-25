@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -28,7 +29,9 @@ public class GasTankContainerBlockEntity extends HorizontalTankBlockEntity {
         if (level != null && !level.isClientSide) sendData();
     });
 
-    public GasTankContainerBlockEntity(BlockPos pos, BlockState state) { super(CETransport.GAS_TANK_CONTAINER_ENTITY.get(), pos, state); }
+    public GasTankContainerBlockEntity(BlockPos pos, BlockState state) { this(CETransport.GAS_TANK_CONTAINER_ENTITY.get(), pos, state); }
+
+    protected GasTankContainerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) { super(type, pos, state); }
 
     @Override public int getMaxWidth() { return 3; }
 

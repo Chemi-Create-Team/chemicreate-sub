@@ -76,6 +76,12 @@ public final class CETransport {
     static { ITEMS.registerSimpleBlockItem(GAS_TANK_CONTAINER); }
     public static final Supplier<BlockEntityType<net.createplant.block.entity.GasTankContainerBlockEntity>> GAS_TANK_CONTAINER_ENTITY=TYPES.register("gas_tank_container",()->
         BlockEntityType.Builder.of(net.createplant.block.entity.GasTankContainerBlockEntity::new,GAS_TANK_CONTAINER.get()).build(null));
+    // The gas tank container's frame around a high-pressure separator shell: splits the RBMK's wet steam into water and steam.
+    public static final DeferredBlock<net.createplant.block.HighPressureSeparatorBlock> HIGH_PRESSURE_SEPARATOR=BLOCKS.registerBlock("high_pressure_separator",net.createplant.block.HighPressureSeparatorBlock::new,
+        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().sound(SoundType.NETHERITE_BLOCK));
+    static { ITEMS.registerSimpleBlockItem(HIGH_PRESSURE_SEPARATOR); }
+    public static final Supplier<BlockEntityType<net.createplant.block.entity.HighPressureSeparatorBlockEntity>> HIGH_PRESSURE_SEPARATOR_ENTITY=TYPES.register("high_pressure_separator",()->
+        BlockEntityType.Builder.of(net.createplant.block.entity.HighPressureSeparatorBlockEntity::new,HIGH_PRESSURE_SEPARATOR.get()).build(null));
     // A riveted iron-grey Create-style tank body for the separator.
     public static final DeferredBlock<net.createplant.block.AmmoniaSeparatorBlock> AMMONIA_SEPARATOR=BLOCKS.registerBlock("ammonia_separator",p->new net.createplant.block.AmmoniaSeparatorBlock(p,()->CETransport.AMMONIA_SEPARATOR_ENTITY.get()),
         BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK).noOcclusion());

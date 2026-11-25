@@ -168,6 +168,7 @@
     "create_refinery_n_reactors:lead_acid_battery_casing",
     "create_refinery_n_reactors:lead_acid_battery_terminal",
     "create_refinery_n_reactors:lithium_ion_battery_casing",
-    "create_refinery_n_reactors:lithium_ion_battery_terminal"
+    "create_refinery_n_reactors:lithium_ion_battery_terminal",
+    "create_refinery_n_reactors:high_pressure_separator"
   ]
 }

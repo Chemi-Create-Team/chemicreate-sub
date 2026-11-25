@@ -2,6 +2,7 @@ package net.createplant.thermal;
 
 import net.createplant.registry.CEThermal;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 /** A stream that is partly liquid and partly gas (docs/two-phase-flow.md). Temperature and pressure stay rounded to their levels; the phase mix does not. */
 public final class TwoPhase {
@@ -46,5 +47,28 @@ public final class TwoPhase {
         var change=PhaseChange.transfer(base,liquidLevel,pressure);
         int batches=change.batches((int)(units*(1-gasShare)));
         return new Split(change.output(batches),FluidState.with(base,gasLevel,pressure).copyWithAmount(units-batches*change.consumed()),boil);
+    }
+
+    /**
+     * Pours a two-phase stream into a liquid and a gas buffer: the liquid part into one, the gas part into the other, scaled down until both fit.
+     * Returns the amount of the stream taken; nothing changes unless {@code action} executes.
+     */
+    public static int divide(FluidStack stream,ThermalFluidTank liquidTank,ThermalFluidTank gasTank,IFluidHandler.FluidAction action) {
+        int units=stream.getAmount();
+        for(int attempt=0;attempt<4 && units>0;attempt++){
+            var split=split(stream,units);
+            int fitLiquid=split.liquid().isEmpty() ? 0 : liquidTank.fillAt(split.liquid(),split.kelvin(),0,IFluidHandler.FluidAction.SIMULATE);
+            int fitGas=split.gas().isEmpty() ? 0 : gasTank.fillAt(split.gas(),split.kelvin(),1,IFluidHandler.FluidAction.SIMULATE);
+            if(fitLiquid==split.liquid().getAmount() && fitGas==split.gas().getAmount()){
+                if(action.execute()){
+                    if(!split.liquid().isEmpty())liquidTank.fillAt(split.liquid(),split.kelvin(),0,IFluidHandler.FluidAction.EXECUTE);
+                    if(!split.gas().isEmpty())gasTank.fillAt(split.gas(),split.kelvin(),1,IFluidHandler.FluidAction.EXECUTE);
+                }
+                return units;
+            }
+            double scale=Math.min(split.liquid().isEmpty() ? 1 : (double)fitLiquid/split.liquid().getAmount(),split.gas().isEmpty() ? 1 : (double)fitGas/split.gas().getAmount());
+            units=(int)(units*scale);
+        }
+        return 0;
     }
 }
