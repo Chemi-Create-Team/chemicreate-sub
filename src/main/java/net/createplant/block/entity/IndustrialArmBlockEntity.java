@@ -1,12 +1,21 @@
 package net.createplant.block.entity;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
+import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour.TransportedResult;
+import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.List;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.createplant.arm.ArmBeltRecipe;
 import net.createplant.arm.ArmEffects;
+import net.createplant.arm.ArmPattern;
 import net.createplant.arm.ArmPose;
 import net.createplant.arm.ArmRecipe.Step;
 import net.createplant.arm.ArmRecipe;
+import net.createplant.arm.ArmRecipes;
 import net.createplant.arm.ArmTool;
 import net.createplant.arm.Trajectory;
 import net.createplant.item.ArmToolItem;
@@ -41,6 +50,8 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     public static final byte IDLE = 0, MOVE = 1, WORK = 2, FETCH = 3;
     /** How far a tool hovers above the surface it works. */
     public static final double HOVER = .12;
+    /** How wide the tool's path is over an item on a belt, in blocks. */
+    private static final double BELT_PATH = .45;
     /** Rotation speed at which a step takes its recipe time. */
     public static final float BASE_RPM = 16;
 
@@ -75,6 +86,12 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     public float progress;
     /** Server side: the top of the container the material came from, while the arm reaches over to it. */
     private Vec3 fetchFrom;
+    /** Server side: the belt or depot item being worked, which the arm holds still every tick, and what it becomes. Not saved. */
+    private BlockPos beltPos;
+    private TransportedItemStack beltItem;
+    private ArmBeltRecipe beltRecipe;
+    /** Belt items some arm is working, so two arms never take the same one. Weak, so lost items drop out by themselves. */
+    private static final Map<TransportedItemStack, BlockPos> CLAIMED = new WeakHashMap<>();
     public final LerpedFloat baseAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[0]);
     public final LerpedFloat lowerArmAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[1]);
     public final LerpedFloat upperArmAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[2]);
@@ -129,6 +146,14 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
                 }
             }
             case MOVE -> {
+                if (beltPos != null) {
+                    if (!holdBeltItem()) { endJob(); return; }
+                    if (speedFactor() > 0 && --moveLeft <= 0) {
+                        phase = WORK;
+                        progress = 0;
+                    }
+                    break;
+                }
                 AssemblyJigBlockEntity jig = jig();
                 if (jig == null) { abortJob(); return; }
                 tip = worldTip(jig, 0);
@@ -201,15 +226,101 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             sendData();
             return;
         }
+        findBeltJob(tool);
+    }
+
+    // ------------------------------------------------------------- belt work
+
+    private static TransportedItemStackHandlerBehaviour belt(net.minecraft.world.level.Level level, BlockPos pos) {
+        return level.isLoaded(pos) ? BlockEntityBehaviour.get(level, pos, TransportedItemStackHandlerBehaviour.TYPE) : null;
+    }
+
+    /** With no jig work, an item near the middle of a belt segment or on a depot in reach that this tool has belt work for. */
+    private void findBeltJob(ArmTool tool) {
+        if (tool == ArmTool.GRIPPER) return;
+        for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE))) {
+            TransportedItemStackHandlerBehaviour belt = belt(level, p);
+            if (belt == null) continue;
+            TransportedItemStack[] found = {null};
+            ArmBeltRecipe[] recipe = {null};
+            belt.handleCenteredProcessingOnAllItems(.5f, t -> {
+                ArmBeltRecipe r = found[0] == null && !CLAIMED.containsKey(t) ? ArmRecipes.belt(tool, t.stack) : null;
+                if (r != null && ArmPose.reaches(worldPosition, belt.getWorldPositionOf(t).add(0, HOVER, 0))) {
+                    found[0] = t;
+                    recipe[0] = r;
+                }
+                return TransportedResult.doNothing();
+            });
+            if (found[0] == null) continue;
+            ArmBeltRecipe r = recipe[0];
+            if (r.fluid() != null && !(drawFluid(new FluidTank[] {tank}, r.fluid(), r.fluidAmount(), true) && drawFluid(new FluidTank[] {tank}, r.fluid(), r.fluidAmount(), false))) {
+                cooldown = 60;
+                return;
+            }
+            CLAIMED.put(found[0], worldPosition.immutable());
+            beltPos = p.immutable();
+            beltItem = found[0];
+            beltRecipe = r;
+            phase = MOVE;
+            moveLeft = 12;
+            progress = 0;
+            holdBeltItem();
+            sendData();
+            return;
+        }
+    }
+
+    /** Stops the claimed item for this tick, as Create's own arm does, and aims at it. False once the item is gone. */
+    private boolean holdBeltItem() {
+        TransportedItemStackHandlerBehaviour belt = belt(level, beltPos);
+        if (belt == null) return false;
+        boolean[] present = {false};
+        belt.handleProcessingOnAllItems(t -> {
+            if (t == beltItem) {
+                present[0] = true;
+                t.lockedExternally = true;
+            }
+            return TransportedResult.doNothing();
+        });
+        if (!present[0] || !beltItem.stack.is(beltRecipe.input())) return false;
+        Vec3 path = Trajectory.of(ArmPattern.defaultFor(beltRecipe.tool()), null).tip(phase == WORK ? progress : 0);
+        tip = belt.getWorldPositionOf(beltItem).add((path.x - .5) * BELT_PATH, HOVER, (path.z - .5) * BELT_PATH);
+        return true;
+    }
+
+    private void beltWork() {
+        if (toolType() != beltRecipe.tool() || !holdBeltItem()) { endJob(); return; }
+        double f = speedFactor();
+        if (f <= 0) return;
+        progress = (float) Math.min(1, progress + f / beltRecipe.time());
+        if (level.getGameTime() % 4 == 0) sound(beltRecipe.tool());
+        if (progress < 1) return;
+        TransportedItemStack worked = beltItem;
+        belt(level, beltPos).handleProcessingOnAllItems(t -> {
+            if (t != worked) return TransportedResult.doNothing();
+            TransportedItemStack out = t.copy();
+            out.stack = beltRecipe.resultStack();
+            out.lockedExternally = false;
+            if (t.stack.getCount() == 1) return TransportedResult.convertTo(out);
+            TransportedItemStack rest = t.copy();
+            rest.stack = t.stack.copyWithCount(t.stack.getCount() - 1);
+            rest.lockedExternally = false;
+            return TransportedResult.convertTo(List.of(out, rest));
+        });
+        endJob();
     }
 
     /** Spray fluid comes from the arm's own tank, or from the jig's when the arm has none; a pipe can feed either. */
     private boolean drawFluid(AssemblyJigBlockEntity jig, Step s, boolean simulate) {
+        return drawFluid(new FluidTank[] {tank, jig.tank}, s.fluid(), s.fluidAmount(), simulate);
+    }
+
+    private static boolean drawFluid(FluidTank[] tanks, net.minecraft.resources.ResourceLocation fluid, int amount, boolean simulate) {
         var action = simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
-        for (FluidTank t : new FluidTank[] {tank, jig.tank}) {
+        for (FluidTank t : tanks) {
             FluidStack in = t.getFluid();
-            if (!in.isEmpty() && net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(in.getFluid()).equals(s.fluid()) && in.getAmount() >= s.fluidAmount()) {
-                t.drain(s.fluidAmount(), action);
+            if (!in.isEmpty() && net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(in.getFluid()).equals(fluid) && in.getAmount() >= amount) {
+                t.drain(amount, action);
                 return true;
             }
         }
@@ -239,6 +350,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     }
 
     private void work() {
+        if (beltPos != null) {
+            beltWork();
+            return;
+        }
         AssemblyJigBlockEntity jig = jig();
         if (jig == null) { abortJob(); return; }
         Step s = jig.recipe.steps().get(step);
@@ -273,6 +388,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     }
 
     private void endJob() {
+        if (beltItem != null) CLAIMED.remove(beltItem);
+        beltPos = null;
+        beltItem = null;
+        beltRecipe = null;
         phase = IDLE;
         jigPos = null;
         step = -1;
@@ -314,6 +433,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         String state = tool == null ? "no_tool" : phase == IDLE ? "idle" : phase == FETCH ? "fetch" : phase == MOVE ? "move" : getSpeed() == 0 ? "stalled" : "work";
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.status." + state));
         if (tool != null) tooltip.add(Component.translatable("arm.create_refinery_n_reactors.tool", tool().getHoverName()));
+        if (phase != IDLE && beltItem != null) tooltip.add(Component.translatable("arm.create_refinery_n_reactors.belt_job", beltItem.stack.getHoverName()));
         if (phase != IDLE && jigPos != null) tooltip.add(Component.translatable("arm.create_refinery_n_reactors.job", jigPos.getX(), jigPos.getY(), jigPos.getZ(), step + 1));
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.tank", tank.getFluidAmount(), tank.getCapacity()));
         return true;
@@ -356,6 +476,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             tag.putInt("moveLeft", moveLeft);
             tag.putFloat("jobProgress", progress);
         }
+        if (clientPacket) tag.putByte("shownPhase", phase);
         if (clientPacket && tip != null) {
             tag.putDouble("tx", tip.x);
             tag.putDouble("ty", tip.y);
@@ -378,7 +499,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         float savedProgress = tag.getFloat("jobProgress");
         progress = hasJob && Float.isFinite(savedProgress) ? Math.clamp(savedProgress, 0, 1) : 0;
         if (clientPacket) {
-            aim(phase, tag.contains("tx") ? new Vec3(tag.getDouble("tx"), tag.getDouble("ty"), tag.getDouble("tz")) : null);
+            aim(tag.getByte("shownPhase"), tag.contains("tx") ? new Vec3(tag.getDouble("tx"), tag.getDouble("ty"), tag.getDouble("tz")) : null);
         }
     }
 

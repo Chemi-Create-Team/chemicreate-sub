@@ -27,7 +27,7 @@ public final class ArmPonderScenes {
         + "{\"pos\":[1,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
         + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"welding_torch\",\"pattern\":\"seam_weld\",\"time\":60}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:welded_iron_beam\"}}";
-    private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6);
+    private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6), DEPOT = new BlockPos(5, 1, 2);
     private static final int FRAMES = 24;
     private ArmPonderScenes() { }
 
@@ -73,6 +73,25 @@ public final class ArmPonderScenes {
         scene.world().createItemEntity(top.add(.5, .2, 0), new Vec3(0, .1, 0), new ItemStack(CEArm.WELDED_IRON_BEAM.get()));
         scene.effects().emitParticles(top.add(.5, .3, 0), scene.effects().simpleParticleEmitter(ParticleTypes.CLOUD, new Vec3(0, .05, 0)), 6, 20);
         text(scene, util, JIG, "done");
+
+        // Belt work: the same arm welds a damaged anvil on a depot back to a chipped one, holding it still like Create's arm does.
+        scene.world().setBlock(DEPOT, com.simibubi.create.AllBlocks.DEPOT.getDefaultState(), false);
+        scene.world().showSection(util.select().position(DEPOT), Direction.DOWN);
+        scene.idle(10);
+        scene.world().createItemOnBeltLike(DEPOT, Direction.UP, new ItemStack(Blocks.DAMAGED_ANVIL));
+        text(scene, util, DEPOT, "belt");
+        Trajectory path = Trajectory.of(net.createplant.arm.ArmPattern.defaultFor(ArmTool.WELDING_TORCH), null);
+        Vec3 item = Vec3.atLowerCornerOf(DEPOT).add(.5, 13 / 16f + IndustrialArmBlockEntity.HOVER, .5);
+        for (int frame = 1; frame <= FRAMES; frame++) {
+            Vec3 p = path.tip(frame / (float) FRAMES);
+            Vec3 tip = item.add((p.x - .5) * .45, 0, (p.z - .5) * .45);
+            scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.WORK, tip));
+            scene.idle(frame == 1 ? 12 : 3);
+        }
+        scene.world().removeItemsFromBelt(DEPOT);
+        scene.world().createItemOnBeltLike(DEPOT, Direction.UP, new ItemStack(Blocks.CHIPPED_ANVIL));
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
+        scene.idle(30);
         scene.markAsFinished();
     }
 

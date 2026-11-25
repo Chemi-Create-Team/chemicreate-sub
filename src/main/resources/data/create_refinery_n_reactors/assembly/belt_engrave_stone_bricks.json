@@ -1,0 +1,6 @@
+{
+  "tool": "laser_cutter",
+  "input": "minecraft:stone_bricks",
+  "result": { "id": "minecraft:chiseled_stone_bricks" },
+  "time": 40
+}

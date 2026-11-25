@@ -1,0 +1,7 @@
+{
+  "tool": "spray_nozzle",
+  "input": "minecraft:white_concrete_powder",
+  "result": { "id": "minecraft:white_concrete" },
+  "fluid": { "id": "minecraft:water", "amount": 50 },
+  "time": 30
+}

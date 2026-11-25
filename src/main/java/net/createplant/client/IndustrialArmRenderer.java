@@ -31,7 +31,6 @@ import net.minecraft.world.phys.AABB;
  * and the tool at the claw tell it apart. Plain block entity rendering: no Flywheel instancing.
  */
 public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmBlockEntity> {
-    private static final int TINT = 0xFFC060;
     /** A tool is drawn this large in the claw's frame and ends where the claw aims, half a block past the wrist. */
     private static final float TOOL_SIZE = .375f, TOOL_REACH = .5f;
 
@@ -46,7 +45,7 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
     public void render(IndustrialArmBlockEntity be, float partial, PoseStack ps, MultiBufferSource buffers, int light, int overlay) {
         BlockState state = be.getBlockState();
         VertexConsumer vb = buffers.getBuffer(RenderType.solid());
-        CachedBuffers.partial(AllPartialModels.ARM_COG, state).color(TINT).rotateCentered(KineticBlockEntityRenderer.getAngleForBe(be, be.getBlockPos(), Direction.Axis.Y), Direction.UP).light(light).renderInto(ps, vb);
+        CachedBuffers.partial(AllPartialModels.ARM_COG, state).rotateCentered(KineticBlockEntityRenderer.getAngleForBe(be, be.getBlockPos(), Direction.Axis.Y), Direction.UP).light(light).renderInto(ps, vb);
 
         PoseStack local = new PoseStack();
         PoseTransformStack msr = TransformStack.of(local);
@@ -90,7 +89,7 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
     }
 
     private static void part(PartialModel model, BlockState state, int light, PoseStack local, PoseStack ps, VertexConsumer vb) {
-        SuperByteBuffer b = CachedBuffers.partial(model, state).color(TINT).light(light);
+        SuperByteBuffer b = CachedBuffers.partial(model, state).light(light);
         b.transform(local);
         b.renderInto(ps, vb);
     }

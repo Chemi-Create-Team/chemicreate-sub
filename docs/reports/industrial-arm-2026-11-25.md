@@ -47,4 +47,10 @@
 - 材料はこれまで瞬時に取っていた。取り出した入れ物へ腕を伸ばす段階（`FETCH`）を加えた。保存したワールドでは移動段階として読み込む。
 - Ponderで、置いた鉄ブロックが表示されず、グリッパーが何も持っていなかったのを直した。アームの位置を1マスジグへ寄せた。
 
-確認: `ArmAssemblyGameTests`（角度の取得と到達範囲の試験を追加、6件）と `MagneticMemoryLineGameTests` が成功。Xvfbとソフトウェア描画の実クライアントでPonderを撮影し、腕がジグの各マスまで届くこと、爪にブロックをはさんで運ぶこと、ジグの上に鉄ブロックが並ぶことを確認した（`docs/quality/industrial-arm/gripper-front.png`）。溶接ビード・配線・レーザーの描画は撮影の解像度では細部を判別できず未確認。実ワールドでの通し運転も未確認。
+確認: `ArmAssemblyGameTests`（角度の取得と到達範囲の試験を追加、6件）と `MagneticMemoryLineGameTests` が成功。Xvfbとソフトウェア描画の実クライアントでPonderを撮影し、腕がジグの各マスまで届くこと、爪にブロックをはさんで運ぶこと、ジグの上に鉄ブロックが並ぶことを確認した。溶接ビード・配線・レーザーの描画は撮影の解像度では細部を判別できず未確認。実ワールドでの通し運転も未確認。
+
+## 追加（Createの色、ベルト作業、溶接の撮影）
+
+- 色: 描画の黄色の着色をやめ、ブロックとアイテムのモデルはCreateの `create:block/mechanical_arm/block` と `.../item` をそのまま使う。独自のアーム用テクスチャとブロックモデルは削除した。
+- ベルト: `IndustrialArmBlockEntity.findBeltJob` / `holdBeltItem` / `beltWork`。レシピは `ArmBeltRecipe`（`assembly/` で `input` を持つJSON）。取り合いは `CLAIMED`（WeakHashMap）で防ぐ。クライアントへは `shownPhase` で作業状態を送る（ベルト作業はジグ位置を持たないため）。Ponderの最後にデポで金床を溶接修理する場面を追加。
+- 確認: `ArmAssemblyGameTests`（デポ上の欠けた金床が溶接されて少し欠けた金床になる試験を追加、7件）、`MagneticMemoryLineGameTests`、`SurvivalReachabilityGameTests` の11件が成功。実クライアントでPonderを撮影し、Createと同じ色のアーム、ジグの継ぎ目とデポの金床での溶接の火花を確認した（`docs/quality/industrial-arm/weld-jig.png`, `weld-jig-side.png`, `weld-depot.png`）。ベルト（デポ以外）での動作は同じ `TransportedItemStackHandlerBehaviour` を使うが、実機では未確認。溶接ビードの色の変化は、トーチの頭に隠れて撮影でははっきり確認できていない。

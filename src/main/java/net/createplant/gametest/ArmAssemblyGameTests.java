@@ -112,4 +112,16 @@ public class ArmAssemblyGameTests {
         h.assertTrue(net.createplant.arm.ArmPose.reaches(arm, near) && !net.createplant.arm.ArmPose.reaches(arm, far), "steps two blocks away are in reach, five blocks away are not");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty", timeoutTicks = 600)
+    public static void aWeldingArmRepairsTheAnvilOnADepot(GameTestHelper h) {
+        BlockPos arm = new BlockPos(1, 2, 1), depot = new BlockPos(3, 2, 1);
+        h.setBlock(arm.below(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.UP));
+        h.setBlock(arm, CEArm.ARM.get().defaultBlockState());
+        ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm)).toolSlot.setStackInSlot(0, new net.minecraft.world.item.ItemStack(CEArm.TOOLS.get(ArmTool.WELDING_TORCH).get()));
+        h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
+        var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
+        h.assertTrue(items != null && items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.DAMAGED_ANVIL), false).isEmpty(), "the depot takes the anvil");
+        h.succeedWhen(() -> h.assertTrue(items.getStackInSlot(0).is(Blocks.CHIPPED_ANVIL.asItem()), "the arm welds the anvil one stage back, and the depot holds the result"));
+    }
 }

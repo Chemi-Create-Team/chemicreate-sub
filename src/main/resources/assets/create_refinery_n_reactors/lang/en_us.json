@@ -6516,6 +6516,7 @@
   "arm.create_refinery_n_reactors.status.work": "Working",
   "arm.create_refinery_n_reactors.tool": "Tool: %s",
   "arm.create_refinery_n_reactors.job": "Jig at %s, %s, %s - step %s",
+  "arm.create_refinery_n_reactors.belt_job": "Working on %s on a belt",
   "arm.create_refinery_n_reactors.tank": "Spray fluid: %s / %s mB",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.title": "Industrial arm assembly",
   "create_refinery_n_reactors.ponder.industrial_arm.header": "Industrial arm assembly",
@@ -6525,5 +6526,6 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.supply": "Put the materials in a chest, depot or belt within 5 blocks of the arm. It fetches what its step needs.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.grip": "The gripper takes the open step nearest to it and sets the block. Several arms share one jig; a step goes to one arm only.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "The next stage starts when the stage before is done. The welding torch draws a bead along the seam that cools from white to silver.",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "When every step is done the temporary blocks vanish, the product drops and steam rises. Recipes are data packs under assembly/."
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "When every step is done the temporary blocks vanish, the product drops and steam rises. Recipes are data packs under assembly/.",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "Without jig work, the arm also works items on belts and depots in reach: it holds the item still and turns it into the belt recipe result, such as a weld repair. Belt recipes are assembly/ JSONs with an input."
 }
