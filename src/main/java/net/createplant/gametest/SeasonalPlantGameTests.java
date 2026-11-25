@@ -71,7 +71,7 @@ public class SeasonalPlantGameTests {
             var centre = h.absolutePos(new BlockPos(20, 2, 20));int index = 0;var control = centre.offset(0, 1, -CoolingTowerStructure.SIZES.get(index).radius());
             for (var cell : CoolingTowerStructure.cells(index)) h.getLevel().setBlock(centre.offset(cell.offset()), cell.block().defaultBlockState(), 2);
             var tower = (CoolingTowerBlockEntity) h.getLevel().getBlockEntity(control);for (int n = 0; n < 200 && !tower.formed(); n++) tower.validateSlice();
-            h.assertTrue(tower.formed(), "Actual seasonal cooling tower forms");tower.tank(0).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 2_000_000), EXECUTE);tower.process();
+            h.assertTrue(tower.formed(), "Actual seasonal cooling tower forms");tower.tank(0).fill(FluidForm.WARM_WATER.stack(2_000_000), EXECUTE);tower.process();
             h.assertTrue(tower.tank(1).getFluidAmount() == Math.round(CoolingTowerBlockEntity.MAX_FLOW * 1.2) && tower.tank(0).getFluidAmount() + tower.tank(1).getFluidAmount() == 2_000_000 && tower.steaming(), "Winter changes real throughput while conserving both tanks and enables the plume only for cooling");
             tower.tank(0).setFluid(FluidStack.EMPTY);tower.process();h.assertTrue(!tower.steaming(), "No cooling work means no new steam");
             h.getLevel().getServer().getCommands().performPrefixedCommand(h.getLevel().getServer().createCommandSourceStack().withLevel(h.getLevel()), "season set mid_summer");

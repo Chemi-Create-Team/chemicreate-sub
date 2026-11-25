@@ -9,6 +9,7 @@ import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createplant.block.entity.ReactionTowerBlockEntity;
 import net.createplant.registry.CEItems;
+import net.createplant.thermal.FluidForm;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CEReactor;
 import net.minecraft.core.BlockPos;
@@ -139,8 +140,8 @@ public final class ReactionTowerPonderScenes {
         caption(scene, util, SEPARATOR, util.grid().at(2, 2, 4), "feed");
         // A separating tower holds a little liquid ammonia under the recycled feed gas.
         scene.world().modifyBlockEntityNBT(util.select().position(centre), ReactionTowerBlockEntity.class, tag -> {
-            tag.put("TowerTank2", fluid(CEProcessFluids.LIQUID_AMMONIA.get(), 4000));
-            tag.put("TowerTank3", fluid(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(), 64000));
+            tag.put("TowerTank2", fluid(FluidForm.LIQUID_AMMONIA, 4000));
+            tag.put("TowerTank3", fluid(FluidForm.COMPRESSED_SYNTHESIS_FEED, 64000));
         });
         PonderText.build(scene, util, 6, 2, 4, 8, 2, 4, Direction.WEST);
         caption(scene, util, SEPARATOR, util.grid().at(6, 2, 4), "liquid");
@@ -240,6 +241,9 @@ public final class ReactionTowerPonderScenes {
     }
 
     /** A fluid stack as it is saved, for block entity data written without a registry lookup. */
+    private static CompoundTag fluid(FluidForm form, int amount) {
+        return (CompoundTag) net.neoforged.neoforge.fluids.FluidStack.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, form.stack(amount)).getOrThrow();
+    }
     private static CompoundTag fluid(Fluid fluid, int amount) {
         var tag = new CompoundTag();
         tag.putString("id", BuiltInRegistries.FLUID.getKey(fluid).toString());tag.putInt("amount", amount);

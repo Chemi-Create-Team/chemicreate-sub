@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import net.createplant.CreatePlant;
@@ -96,6 +97,6 @@ public final class ModularPortsGameTests {
         h.setBlock(at,CEBlocks.HIGH_PRESSURE_STEAM_TURBINE.get());var high=(SteamTurbineBlockEntity)h.getBlockEntity(at);
         high.loadWithComponents(tag,h.getLevel().registryAccess());h.assertTrue(high.getSteamCapability().drain(5000,EXECUTE).getAmount()==5000,"A high-pressure stage exposes its finite exhaust for standard inter-stage pipes");h.succeed();
     }
-    private static net.minecraft.nbt.CompoundTag steamTank(int amount,GameTestHelper h){var tank=new net.createplant.thermal.ThermalFluidTank(64000,f->{});tank.fill(net.createplant.thermal.FluidThermal.at(new FluidStack(CEFluids.STEAM.get(),amount),450),EXECUTE);return tank.writeToNBT(h.getLevel().registryAccess(),new net.minecraft.nbt.CompoundTag());}
+    private static net.minecraft.nbt.CompoundTag steamTank(int amount,GameTestHelper h){var tank=new net.createplant.thermal.ThermalFluidTank(64000,f->{});tank.fill(net.createplant.thermal.FluidThermal.at(FluidForm.STEAM.stack(amount),450),EXECUTE);return tank.writeToNBT(h.getLevel().registryAccess(),new net.minecraft.nbt.CompoundTag());}
 
 }

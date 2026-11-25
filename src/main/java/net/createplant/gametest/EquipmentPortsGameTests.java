@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import net.createplant.CreatePlant;
 import net.createplant.block.CoolerRadiatorBlock;
 import net.createplant.block.entity.*;
@@ -41,7 +42,7 @@ public class EquipmentPortsGameTests {
             var b=(RadiatorBlockEntity)h.getLevel().getBlockEntity(fan.below(2).relative(facing.getOpposite()));
             var inlet=a.port(facing);var outlet=b.port(facing.getOpposite());
             h.assertTrue(inlet!=null && outlet!=null && master.port(Direction.UP)==null,"Only central horizontal endpoints accept pipes");
-            var fluid=FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),100),400);
+            var fluid=FluidThermal.at(FluidForm.WARM_WATER.stack(100),400);
             h.assertTrue(inlet.fill(fluid,SIMULATE)==100 && outlet.fill(fluid,SIMULATE)==100,"Simulation cannot select a permanent direction");
             inlet.fill(fluid,EXECUTE);h.assertTrue(outlet.fill(fluid,EXECUTE)==0,"Opposing pumps cannot mix raw feed into the output");
             ((CoolingFanBlockEntity)h.getLevel().getBlockEntity(fan)).setSpeed(128);
@@ -57,7 +58,7 @@ public class EquipmentPortsGameTests {
     public static void radiatorExtensionRotatesTheCentralLineWithoutLosingHeldFluid(GameTestHelper h) {
         var fan=h.absolutePos(new BlockPos(8,5,8));var master=cell(h.getLevel(),fan,Direction.NORTH);
         var old=((RadiatorBlockEntity)h.getLevel().getBlockEntity(fan.below(2).north())).port(Direction.NORTH);
-        old.fill(FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),50),400),EXECUTE);
+        old.fill(FluidThermal.at(FluidForm.WARM_WATER.stack(50),400),EXECUTE);
         cell(h.getLevel(),fan.east(3),Direction.NORTH);master.lazyTick();master=master.owner();
         h.assertTrue(master.fanCount()==2 && master.port(null).getFluidInTank(0).getAmount()==50,"Lateral extension retains the occupied controller and buffer");
         h.assertTrue(old.fill(new FluidStack(Fluids.WATER,1),EXECUTE)==0,"Cached old-axis ports retire after expansion");

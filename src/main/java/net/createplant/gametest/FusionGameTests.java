@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlock;
@@ -58,7 +59,7 @@ public class FusionGameTests {
         helper.assertTrue(fuel > .1 && fuel < .2, "400 MW consumes a finite ideal-gas D2/T2 inventory: " + fuel + " mB/t each");
         helper.assertTrue(coolant < FusionPhysics.RATED_COOLANT_MB_PER_TICK,
             "The 200-250 C coolant rating removes the default 400 MW setpoint and 40 MW house load: " + coolant + " mB/t");
-        helper.assertTrue(PhaseChange.ofLiquid(new FluidStack(CEFusion.LIQUID_HELIUM.get(), 1)).ratio()
+        helper.assertTrue(PhaseChange.ofLiquid(FluidForm.LIQUID_HELIUM.stack(1)).ratio()
             == FusionReactorControllerBlockEntity.HELIUM_VOLUME_RATIO, "One liquid-helium mB expands to 753 gas mB");
         helper.assertTrue(FusionStructure.count(FusionStructure.Role.CASING) > 20
             && FusionStructure.count(FusionStructure.Role.COIL) == 48
@@ -242,12 +243,12 @@ public class FusionGameTests {
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM,
             new FluidStack(CEFusion.TRITIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.HELIUM_IN,
-            FluidThermal.at(new FluidStack(CEFusion.LIQUID_HELIUM.get(), FusionReactorControllerBlockEntity.LIQUID_HELIUM_CAPACITY), 4.2));
+            FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(FusionReactorControllerBlockEntity.LIQUID_HELIUM_CAPACITY), 4.2));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
-            new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(), FusionReactorControllerBlockEntity.COOLANT_CAPACITY));
+            FluidForm.PRESSURISED_WATER.stack(FusionReactorControllerBlockEntity.COOLANT_CAPACITY));
         controller.tick();
         helper.assertTrue(controller.coolantOut().isEmpty()
-                && controller.coolantIn().is(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get()),
+                && FluidForm.PRESSURISED_WATER.matches(controller.coolantIn()),
             "An unlit ambient blanket cannot heat 200 C coolant from nothing");
         controller.blanketPort().insertItem(0, new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()), false);
         controller.blanketPort().insertItem(1, new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()), false);
@@ -260,7 +261,7 @@ public class FusionGameTests {
             var outlet = controller.port(net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_OUT);
             outlet.drain(FusionReactorControllerBlockEntity.COOLANT_CAPACITY, FluidAction.EXECUTE);
             fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
-                new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(), FusionPhysics.RATED_COOLANT_MB_PER_TICK));
+                FluidForm.PRESSURISED_WATER.stack(FusionPhysics.RATED_COOLANT_MB_PER_TICK));
         }
         helper.assertTrue(Math.abs(controller.fusionWatts() - 400_000_000) < 1,
             "The default physical desk setpoint is a steady 400 MW");
@@ -337,9 +338,9 @@ public class FusionGameTests {
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM,
             new FluidStack(CEFusion.TRITIUM_GAS.get(), 8_000));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.HELIUM_IN,
-            FluidThermal.at(new FluidStack(CEFusion.LIQUID_HELIUM.get(), 60_000), 4.2));
+            FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(60_000), 4.2));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
-            new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(), FusionReactorControllerBlockEntity.COOLANT_CAPACITY));
+            FluidForm.PRESSURISED_WATER.stack(FusionReactorControllerBlockEntity.COOLANT_CAPACITY));
         controller.blanketPort().insertItem(0, new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()), false);
         controller.blanketPort().insertItem(1, new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()), false);
         controller.commissionForTest();
@@ -351,7 +352,7 @@ public class FusionGameTests {
             controller.port(net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_OUT)
                 .drain(FusionReactorControllerBlockEntity.COOLANT_CAPACITY, FluidAction.EXECUTE);
             fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
-                new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(), FusionPhysics.RATED_COOLANT_MB_PER_TICK));
+                FluidForm.PRESSURISED_WATER.stack(FusionPhysics.RATED_COOLANT_MB_PER_TICK));
             if (tick < 20 || tick >= 30) controller.supplyElectrical(50_000_000, 20_000);
         });
         helper.runAfterDelay(29, () -> helper.assertTrue(controller.fusionWatts() == 0
@@ -380,9 +381,9 @@ public class FusionGameTests {
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM,
             new FluidStack(CEFusion.TRITIUM_GAS.get(), 8_000));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.HELIUM_IN,
-            FluidThermal.at(new FluidStack(CEFusion.LIQUID_HELIUM.get(), 60_000), 4.2));
+            FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(60_000), 4.2));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
-            new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(), FusionReactorControllerBlockEntity.COOLANT_CAPACITY));
+            FluidForm.PRESSURISED_WATER.stack(FusionReactorControllerBlockEntity.COOLANT_CAPACITY));
         controller.blanketPort().insertItem(0, new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()), false);
         controller.blanketPort().insertItem(1, new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()), false);
         controller.commissionForTest();
@@ -452,7 +453,7 @@ public class FusionGameTests {
         helper.assertTrue(console.stationComplete() && console.linked() && console.target()==80,"The linked physical desk reads the reactor's 80 percent target");
         fill(controller,FusionFluidPortBlock.Kind.DEUTERIUM,new FluidStack(CEFusion.DEUTERIUM_GAS.get(),60000));
         fill(controller,FusionFluidPortBlock.Kind.TRITIUM,new FluidStack(CEFusion.TRITIUM_GAS.get(),60000));
-        fill(controller,FusionFluidPortBlock.Kind.HELIUM_IN,new FluidStack(CEFusion.LIQUID_HELIUM.get(),60000));
+        fill(controller,FusionFluidPortBlock.Kind.HELIUM_IN,FluidForm.LIQUID_HELIUM.stack(60000));
         controller.blanketPort().insertItem(0,new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()),false);controller.blanketPort().insertItem(1,new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()),false);
         controller.commissionForTest();controller.preheatBlanketForTest(523.15);
         var pair=TurbineThermalGameTests.build(level,helper.absolutePos(BlockPos.ZERO));
@@ -462,7 +463,7 @@ public class FusionGameTests {
         var inlet=level.getCapability(Capabilities.FluidHandler.BLOCK,at.above(5),Direction.NORTH);var gas=level.getCapability(Capabilities.FluidHandler.BLOCK,at.above(5),Direction.UP);var liquid=level.getCapability(Capabilities.FluidHandler.BLOCK,at,Direction.DOWN);
         long supplied=0,returned=0,condensate=0,hot=0;double work=0,rejected=0;
         for(int tick=0;tick<4000;tick++){
-            supplied+=controller.port(FusionFluidPortBlock.Kind.COOLANT_IN).fill(new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(),200000),FluidAction.EXECUTE);
+            supplied+=controller.port(FusionFluidPortBlock.Kind.COOLANT_IN).fill(FluidForm.PRESSURISED_WATER.stack(200000),FluidAction.EXECUTE);
             controller.supplyElectrical(50000000,400);pump.setSpeed(64);controller.tick();
             var out=controller.port(FusionFluidPortBlock.Kind.COOLANT_OUT);var preview=out.drain(200000,FluidAction.SIMULATE);int n=inlet.fill(preview,FluidAction.SIMULATE);inlet.fill(out.drain(n,FluidAction.EXECUTE),FluidAction.EXECUTE);hot+=n;
             separator.process(.25);returned+=liquid.drain(Integer.MAX_VALUE,FluidAction.EXECUTE).getAmount();

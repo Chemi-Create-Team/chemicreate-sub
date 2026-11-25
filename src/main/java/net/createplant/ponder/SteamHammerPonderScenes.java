@@ -1,5 +1,6 @@
 package net.createplant.ponder;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createplant.block.entity.PulsationTubeBlockEntity;
@@ -32,10 +33,10 @@ public final class SteamHammerPonderScenes {
         scene.world().showSection(util.select().fromTo(0, 1, 0, 6, 3, 6), Direction.DOWN);
         var hammer = CEPortableTools.STEAM_HAMMER.toStack();
         scene.world().modifyBlockEntity(RECEIVER, PulsationTubeBlockEntity.class,
-            receiver -> receiver.getTankInventory().setFluid(new FluidStack(CEFluids.STEAM.get(), 6000)));
+            receiver -> receiver.getTankInventory().setFluid(FluidForm.STEAM.stack(6000)));
         scene.overlay().showControls(util.vector().topOf(RECEIVER), Pointing.DOWN, 95).whileSneaking().rightClick().withItem(hammer.copy());
         PonderText.caption(scene, util.vector().topOf(RECEIVER), KEY + "charge", 100);
-        new PortableToolFluidHandler(hammer).fill(new FluidStack(CEFluids.STEAM.get(), SteamHammerItem.CAPACITY), FluidAction.EXECUTE);
+        new PortableToolFluidHandler(hammer).fill(FluidForm.STEAM.stack(SteamHammerItem.CAPACITY), FluidAction.EXECUTE);
         scene.world().modifyBlockEntity(DEPOT, DepotBlockEntity.class, depot -> depot.setHeldItem(hammer.copy()));
         scene.overlay().showControls(util.vector().topOf(DEPOT), Pointing.DOWN, 95).leftClick().withItem(hammer.copy());
         scene.effects().emitParticles(new Vec3(4.5, 2.3, 3.4), scene.effects().simpleParticleEmitter(ParticleTypes.CLOUD, new Vec3(0, 0, -.14)), 6, 10);

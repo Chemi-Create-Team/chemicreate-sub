@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -113,7 +114,7 @@ public class FlareGameTests {
         });
         h.runAfterDelay(155,()->{
             h.assertTrue(tip.vented()==20000 && tip.burnt()==0 && !tip.burning() && clouds(h,at).isEmpty(),"Nitrogen vents without combustible cloud or a false flame");
-            port(h,at).fill(FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),10000),320),EXECUTE);
+            port(h,at).fill(FluidThermal.at(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(10000),320),EXECUTE);
         });
         h.runAfterDelay(235,()->{h.assertTrue(tip.burnt()==10000 && tip.vented()==20000,"The existing compressed Haber-Bosch feed burns as real fuel");h.succeed();});
     }

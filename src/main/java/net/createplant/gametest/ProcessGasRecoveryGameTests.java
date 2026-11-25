@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -101,7 +102,7 @@ public final class ProcessGasRecoveryGameTests {
             h.setBlock(barrier, Blocks.AIR);
         }).thenExecute(() -> {
             var cloud = onlyCloud(h, site);
-            var differentGrade = new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 150);
+            var differentGrade = FluidForm.HIGH_PRESSURE_STEAM.stack(150);
             int before = cloud.amount();
             h.assertTrue(GasClouds.collect(h.getLevel(), site, differentGrade, 250).isEmpty() && cloud.amount() == before,
                 "A nonempty buffer cannot recover a different steam grade");
@@ -109,7 +110,7 @@ public final class ProcessGasRecoveryGameTests {
             h.assertTrue(recovered.getAmount() == 10 && cloud.amount() == before - 10, "Recovery debits water steam once");
         }).thenWaitUntil(() -> {
             var stored = ductPort.getFluidInTank(0);
-            h.assertTrue(stored.is(CEFluids.STEAM.get()) && stored.getAmount() > 250 && stored.getAmount() <= 990
+            h.assertTrue(FluidForm.STEAM.matches(stored) && stored.getAmount() > 250 && stored.getAmount() <= 990
                 && GasClouds.in(h.getLevel(), new AABB(site)).isEmpty(), "The powered duct collects the remaining finite charge");
         }).thenExecute(() -> {
             var blockEntity = h.getBlockEntity(duct);
@@ -126,7 +127,7 @@ public final class ProcessGasRecoveryGameTests {
             pumpMotor.generatedSpeed.setValue(64);
         }).thenWaitUntil(() -> {
             var recovered = destination.getTankInventory().getFluid();
-            h.assertTrue(recovered.is(CEFluids.STEAM.get()) && recovered.getAmount() == captured[0] && ductPort.getFluidInTank(0).isEmpty(),
+            h.assertTrue(FluidForm.STEAM.matches(recovered) && recovered.getAmount() == captured[0] && ductPort.getFluidInTank(0).isEmpty(),
                 "The native pump delivers the entire charge (" + captured[0] + " mB) to the gas receiver. Received " + recovered.getAmount());
         }).thenSucceed();
     }
@@ -138,7 +139,7 @@ public final class ProcessGasRecoveryGameTests {
         var source = receiver(h, sourceAt);
         var destination = receiver(h, sourceAt.east(3));
         h.setBlock(pipe, AllBlocks.FLUID_PIPE.getDefaultState().setValue(FluidPipeBlock.EAST, true).setValue(FluidPipeBlock.WEST, true));
-        h.assertTrue(source.getTankInventory().fill(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 10000), EXECUTE) == 10000,
+        h.assertTrue(source.getTankInventory().fill(FluidForm.HIGH_PRESSURE_STEAM.stack(10000), EXECUTE) == 10000,
             "The pipe uses a finite charge of steam");
         pump(h, sourceAt.east()).generatedSpeed.setValue(64);
         var level = h.getLevel();
@@ -149,7 +150,7 @@ public final class ProcessGasRecoveryGameTests {
             h.assertTrue(GasClouds.in(level, new AABB(incident)).isEmpty(), "An intact pipe produces no residue");
             h.setBlock(pipe, Blocks.AIR);
         }).thenWaitUntil(() ->
-            h.assertTrue(onlyCloud(h, incident).content().is(CEFluids.STEAM.get()), "The removed pipe leaves a water steam cloud")
+            h.assertTrue(FluidForm.STEAM.matches(onlyCloud(h, incident).content()), "The removed pipe leaves a water steam cloud")
         ).thenSucceed();
     }
 
@@ -162,7 +163,7 @@ public final class ProcessGasRecoveryGameTests {
         for (int y = 1; y <= 3; y++) level.setBlockAndUpdate(tip.below(y), pipe);
         level.setBlockAndUpdate(tip, CEFlare.TIP.get().defaultBlockState());
         var flare = (FlareTipBlockEntity) level.getBlockEntity(tip);
-        h.assertTrue(port(h, tip, Direction.DOWN).fill(new FluidStack(CEFluids.STEAM.get(), 600), EXECUTE) == 600, "A clear chimney accepts steam");
+        h.assertTrue(port(h, tip, Direction.DOWN).fill(FluidForm.STEAM.stack(600), EXECUTE) == 600, "A clear chimney accepts steam");
         h.succeedWhen(() -> {
             h.assertTrue(flare.vented() == 600 && flare.gas().isEmpty(), "The existing flare has vented the charge");
             int collected = GasClouds.collect(level, tip.above(), FluidStack.EMPTY, 1000).getAmount();
@@ -216,7 +217,7 @@ public final class ProcessGasRecoveryGameTests {
         h.assertTrue(cloud.lifetime() == 100 && cloud.volume().size() == 58, "Open sky shortens 600 ticks to 100 and 1000 mB has 58 cells");
         GasClouds.release(level, origin, stack.copyWithAmount(2000));
         h.assertTrue(onlyCloud(h, origin) == cloud && cloud.amount() == 3000 && cloud.lifetime() == 166, "Matching steam merges into a single cloud");
-        GasClouds.release(level, origin, new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(), 100));
+        GasClouds.release(level, origin, FluidForm.SUPERHEATED_STEAM.stack(100));
         h.assertTrue(GasClouds.in(level, new AABB(origin)).size() == 2, "Steam grades keep distinct clouds");
         h.runAfterDelay(105, () -> {
             var saved = cloud.saveWithoutId(new net.minecraft.nbt.CompoundTag());
@@ -259,7 +260,7 @@ public final class ProcessGasRecoveryGameTests {
         });
     }
 
-    private static FluidStack steam(int amount) { return new FluidStack(CEFluids.STEAM.get(), amount); }
+    private static FluidStack steam(int amount) { return FluidForm.STEAM.stack(amount); }
 
     private static GasCloud onlyCloud(GameTestHelper h, BlockPos pos) {
         var clouds = GasClouds.in(h.getLevel(), new AABB(pos));

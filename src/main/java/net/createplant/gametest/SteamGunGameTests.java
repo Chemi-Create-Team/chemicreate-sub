@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.createplant.CreatePlant;
@@ -50,7 +51,7 @@ public final class SteamGunGameTests {
         h.setBlock(receiver, CETransport.GAS_RECEIVER.get());
         var at = h.absolutePos(receiver);
         var tank = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, at, Direction.UP);
-        var steam = new FluidStack(CEFluids.STEAM.get(), 2500);
+        var steam = FluidForm.STEAM.stack(2500);
         h.assertTrue(tank != null && tank.fill(steam, EXECUTE) == 2500, "The standard gas receiver stores steam");
         var empty = FluidUtil.getFluidHandler(player.getMainHandItem()).orElseThrow();
         h.assertTrue(empty.fill(new FluidStack(Fluids.WATER, 1000), EXECUTE) == 0
@@ -59,9 +60,9 @@ public final class SteamGunGameTests {
         var hit = new BlockHitResult(Vec3.atCenterOf(at).add(0, .5, 0), Direction.UP, at, false);
         h.assertTrue(player.getMainHandItem().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, hit)).consumesAction(), "Sneaking use charges the gun");
         var loaded = FluidUtil.getFluidHandler(player.getMainHandItem()).orElseThrow();
-        h.assertTrue(loaded.getFluidInTank(0).is(CEFluids.STEAM.get()) && loaded.getFluidInTank(0).getAmount() == 2000
+        h.assertTrue(FluidForm.STEAM.matches(loaded.getFluidInTank(0)) && loaded.getFluidInTank(0).getAmount() == 2000
             && tank.getFluidInTank(0).getAmount() == 500, "The gun's charge and the receiver's remaining steam balance");
-        h.assertTrue(loaded.fill(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 1000), SIMULATE) == 0, "Different steam grades stay separate");
+        h.assertTrue(loaded.fill(FluidForm.HIGH_PRESSURE_STEAM.stack(1000), SIMULATE) == 0, "Different steam grades stay separate");
         h.succeed();
     }
 
@@ -72,7 +73,7 @@ public final class SteamGunGameTests {
         var behind = h.spawn(EntityType.IRON_GOLEM, new BlockPos(2, 2, 10));
         var held = player.getMainHandItem();
         var tank = FluidUtil.getFluidHandler(held).orElseThrow();
-        tank.fill(new FluidStack(CEFluids.STEAM.get(), 750), EXECUTE);
+        tank.fill(FluidForm.STEAM.stack(750), EXECUTE);
         var shot = new SteamGunAction(false);
         shot.handle(player);
         shot.handle(player);

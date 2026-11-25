@@ -127,7 +127,7 @@ public class CECreativeModeTabs {
         BuiltInRegistries.ITEM.stream()
             .filter(item -> BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID) && !listed.contains(item))
             .forEach(item -> {
-                if (item == CERadiation.DOSIMETER.get() || item == CERadiation.SURVEY_METER.get() || StatefulBuckets.retired(item)) return;
+                if (item == CERadiation.DOSIMETER.get() || item == CERadiation.SURVEY_METER.get()) return;
                 if (item instanceof GasBucketItem) gases.add(item);
                 else if (item instanceof BucketItem bucket && bucket.content != Fluids.EMPTY) liquids.add(item);
                 else if (!(item instanceof BlockItem) == materials) rest.add(item);

@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueSettingsBehaviour.ValueSettings;
@@ -36,7 +37,7 @@ public class ThermalAssemblyGameTests {
             for(var port:ports) h.assertTrue(port!=null,"Tube and shell each have a real inlet and outlet: "+kind+" "+along);
             var cold=net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER,100),300);
             // A gas that stays a gas at the water's temperature (olefins would condense, and 100 mB is less than one liquid unit).
-            var hot=net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.createplant.registry.CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),100),360);
+            var hot=net.createplant.thermal.FluidThermal.at(FluidForm.HOT_SYNTHESIS_MIXTURE.stack(100),360);
             var execute=net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
             var tubeSide=index%2==0 ? cold : hot;var shellSide=index%2==0 ? hot : cold;
             ports[0].fill(tubeSide,execute);ports[2].fill(shellSide,execute);

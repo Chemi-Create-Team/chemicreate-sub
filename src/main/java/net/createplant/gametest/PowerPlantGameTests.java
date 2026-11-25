@@ -91,7 +91,7 @@ h.assertTrue(tower.formed(), "The compact 25 x 25 x 36 tower forms");
         }
         int flow=CoolingTowerBlockEntity.MAX_FLOW;long entered=0,returned=0;
         for(int tick=0;tick<100;tick++){
-            entered+=tower.port(0).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(),flow),EXECUTE);tower.process();var product=tower.port(1).drain(Integer.MAX_VALUE,EXECUTE);
+            entered+=tower.port(0).fill(FluidForm.WARM_WATER.stack(flow),EXECUTE);tower.process();var product=tower.port(1).drain(Integer.MAX_VALUE,EXECUTE);
             h.assertTrue(product.is(Fluids.WATER),"The tower turns warm water into ordinary water");returned+=product.getAmount();
         }
         h.assertTrue(entered==returned && tower.tank(0).isEmpty(),"A long fixed-grade run preserves all water without evaporation state");
@@ -180,10 +180,10 @@ h.assertTrue(tower.formed(), "The compact 25 x 25 x 36 tower forms");
         for(var cell:CondenserWaterboxBlockEntity.cells(box,Direction.NORTH))h.getLevel().setBlock(cell.pos(),cell.state(),2);
         var condenser=(CondenserWaterboxBlockEntity)h.getLevel().getBlockEntity(box);condenser.tick();h.assertTrue(condenser.formed() && condenser.rotor()==low,"The waterbox joins the radial LP casing");
         var state=new net.minecraft.nbt.CompoundTag();low.thermodynamics().write(state,h.getLevel().registryAccess());state.putDouble("RotorPendingCondenserJoules",1000000);low.thermodynamics().read(state,h.getLevel().registryAccess());
-        condenser.cold().fill(new FluidStack(Fluids.WATER,1000),EXECUTE);condenser.hot().fill(new FluidStack(CEProcessFluids.WARM_WATER.get(),CondenserWaterboxBlockEntity.CAPACITY),EXECUTE);condenser.tick();
+        condenser.cold().fill(new FluidStack(Fluids.WATER,1000),EXECUTE);condenser.hot().fill(FluidForm.WARM_WATER.stack(CondenserWaterboxBlockEntity.CAPACITY),EXECUTE);condenser.tick();
         near(h,low.thermodynamics().pendingCondenserJoules(),1000000,"A blocked warm outlet consumes no condenser budget");h.assertTrue(condenser.cold().getFluidAmount()==1000,"A blocked outlet keeps all cooling water");
         condenser.hot().drain(1000,EXECUTE);condenser.tick();
-        h.assertTrue(condenser.cold().isEmpty() && condenser.hot().getFluid().is(CEProcessFluids.WARM_WATER.get()) && condenser.hot().getFluidAmount()==CondenserWaterboxBlockEntity.CAPACITY,"Freeing output space converts exactly 1000 water into warm water");
+        h.assertTrue(condenser.cold().isEmpty() && FluidForm.WARM_WATER.matches(condenser.hot().getFluid()) && condenser.hot().getFluidAmount()==CondenserWaterboxBlockEntity.CAPACITY,"Freeing output space converts exactly 1000 water into warm water");
         near(h,low.thermodynamics().pendingCondenserJoules(),980000,"The fixed cooling-water work is debited exactly once");h.succeed();
     }
 
@@ -207,7 +207,7 @@ h.assertTrue(tower.formed(), "The compact 25 x 25 x 36 tower forms");
         h.runAfterDelay(180, () -> {
             var feed = ((FluidTankBlockEntity)level.getBlockEntity(feedTank)).getControllerBE().getTankInventory();
             var product = ((FluidTankBlockEntity)level.getBlockEntity(productTank)).getControllerBE().getTankInventory();
-            h.assertTrue(product.getFluidAmount() > 0 && product.getFluid().is(CEProcessFluids.WARM_WATER.get()),
+            h.assertTrue(product.getFluidAmount() > 0 && FluidForm.WARM_WATER.matches(product.getFluid()),
                 "Actual Create pipes and pumps carry coolant through the side waterboxes and extract warmed water");
             h.assertTrue(feed.getFluidAmount() + product.getFluidAmount() + condenser.cold().getFluidAmount() + condenser.hot().getFluidAmount() == 8000,
                 "The secondary circuit conserves every mB through the two native pumps");h.succeed();

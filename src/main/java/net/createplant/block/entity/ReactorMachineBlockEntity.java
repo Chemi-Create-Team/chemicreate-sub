@@ -292,16 +292,16 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     }
     /** How much steam the gas space can still take. */
     protected int steamRoom() {
-        var steam=new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),1);
+        var steam=FluidForm.STEAM.stack(1);
         long room=0;
         for(int i=2;i<7;i++)if(tanks[i].isEmpty() || tanks[i].is(steam.getFluid()))room+=Math.max(0,bufferCapacity(steam)-tanks[i].getAmount());
         return (int)Math.min(room,gasRoom());
     }
     protected void storeSteam(int amount) {
         for(int i=2;i<7 && amount>0;i++) {
-            if(!tanks[i].isEmpty() && !tanks[i].is(net.createplant.registry.CEFluids.STEAM.get()))continue;
+            if(!tanks[i].isEmpty() && !FluidForm.STEAM.matches(tanks[i]))continue;
             // An empty stack cannot be copied with an amount (it stays empty), so the first steam starts from a one mB sample.
-            var steam=tanks[i].isEmpty() ? new FluidStack(net.createplant.registry.CEFluids.STEAM.get(),1) : tanks[i];
+            var steam=tanks[i].isEmpty() ? FluidForm.STEAM.stack(1) : tanks[i];
             int held=tanks[i].getAmount();
             int add=Math.min(amount,Math.max(0,bufferCapacity(steam)-held));
             if(add<=0)continue;

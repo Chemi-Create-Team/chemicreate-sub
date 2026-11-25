@@ -60,11 +60,6 @@ public final class CEFusion {
         fluid -> fluid.block(CEFusion.HELIUM_BLOCK).bucket(CEFusion.HELIUM_BUCKET)
             .slopeFindDistance(8).levelDecreasePerBlock(1).tickRate(2));
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HELIUM_GAS = HELIUM.source;
-    private static final PlantFluid LIQUID_HELIUM_FLUID = new PlantFluid(FLUID_TYPES, FLUIDS, "liquid_helium", 0xCC8FE7F2,
-        () -> FluidType.Properties.create().density(125).viscosity(4).temperature(4).supportsBoating(false),
-        fluid -> fluid.bucket(CEFusion.LIQUID_HELIUM_BUCKET)
-            .slopeFindDistance(3).levelDecreasePerBlock(1).tickRate(2));
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIQUID_HELIUM = LIQUID_HELIUM_FLUID.source;
 
     private static final DeferredBlock<LiquidBlock> DEUTERIUM_BLOCK = fluidBlock("deuterium_gas", DEUTERIUM);
     private static final DeferredBlock<LiquidBlock> TRITIUM_BLOCK = fluidBlock("tritium_gas", TRITIUM);
@@ -127,8 +122,6 @@ public final class CEFusion {
         () -> new GasBucketItem(TRITIUM_GAS.get(), bucket()));
     public static final DeferredItem<GasBucketItem> HELIUM_BUCKET = ITEMS.register("helium_gas_bucket",
         () -> new GasBucketItem(HELIUM_GAS.get(), bucket()));
-    public static final DeferredItem<BucketItem> LIQUID_HELIUM_BUCKET = ITEMS.register("liquid_helium_bucket",
-        () -> new net.createplant.item.ProcessBucketItem(LIQUID_HELIUM.get(), bucket()));
 
     public static final Supplier<BlockEntityType<FusionReactorControllerBlockEntity>> CONTROLLER_ENTITY = TYPES.register("fusion_reactor_controller",
         () -> BlockEntityType.Builder.of(FusionReactorControllerBlockEntity::new, CONTROLLER.get()).build(null));

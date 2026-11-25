@@ -13,8 +13,12 @@
       "id": "create_refinery_n_reactors:uranyl_nitrate_hydrate"
     },
     {
-      "id": "create_refinery_n_reactors:steam",
-      "amount": 200
+      "id": "minecraft:water",
+      "amount": 200,
+      "components": {
+        "create_refinery_n_reactors:temperature_level": 12,
+        "create_refinery_n_reactors:pressure_level": 4
+      }
     }
   ]
 }

@@ -117,7 +117,7 @@ public final class ConverterGameTests {
         insert(raw, Items.IRON_INGOT, 48);
         insert(raw, Items.RAW_IRON, 24);
         IFluidHandler lance = fluids(helper, ConverterStructure.lance(ORIGIN, FACING), Direction.UP);
-        FluidStack oxygen = new FluidStack(liquid ? CEFluids.LIQUID_OXYGEN.get() : CEFluids.OXYGEN_GAS.get(), liquid ? 92 : 64_000);
+        FluidStack oxygen = liquid ? net.createplant.thermal.FluidForm.LIQUID_OXYGEN.stack(92) : new FluidStack(CEFluids.OXYGEN_GAS.get(), 64_000);
         if (lance.fill(oxygen, EXECUTE) != oxygen.getAmount()) throw new IllegalStateException("Converter rejected oxygen charge");
     }
 

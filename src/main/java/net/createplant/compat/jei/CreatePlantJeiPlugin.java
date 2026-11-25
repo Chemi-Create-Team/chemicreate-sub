@@ -1,5 +1,6 @@
 package net.createplant.compat.jei;
 
+import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,6 +92,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
 
     private static Component note(String key, Object... args) { return Component.translatable("jei." + CreatePlant.MOD_ID + ".note." + key, args); }
     private static FluidStack f(Fluid fluid, int amount) { return new FluidStack(fluid, amount); }
+    private static FluidStack f(FluidForm form, int amount) { return form.stack(amount); }
 
     @Override public void registerCategories(IRecipeCategoryRegistration registration) {
         for (Kind kind : kinds()) registration.addRecipeCategories(new PlantProcessCategory(kind.type(), kind.icon(), kind.storyboard(), registration.getJeiHelpers().getGuiHelper()));
@@ -192,11 +194,11 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         registration.addRecipes(type("electrolysis_furnace"), ElectrolysisFurnaceBlockEntity.reductions().entrySet().stream().map(entry -> new PlantProcess(
             List.of(List.of(new ItemStack(entry.getKey())), List.of(new ItemStack(Items.COAL), new ItemStack(Items.CHARCOAL))), List.of(), List.of(),
             List.of(new ItemStack(entry.getValue().metal())), List.of(), note("electrolysis_furnace", Math.round(entry.getValue().joules() / 1000)))).toList());
-        registration.addRecipes(type("gas_compression"), net.createplant.thermal.Compression.steps().entrySet().stream().map(step -> {
-            boolean air = step.getKey() == CEFluids.AIR_GAS.get();
+        registration.addRecipes(type("gas_compression"), net.createplant.thermal.Compression.steps().stream().map(step -> {
+            boolean air = step.low().is(CEFluids.AIR_GAS.get());
             int amount = air ? 1600 : 1000;
             int speed = net.createplant.block.entity.ReciprocatingCompressorBlockEntity.MIN_RPM;
-            return PlantProcess.fluids(List.of(f(step.getKey(), amount)), List.of(f(step.getValue(), amount)),
+            return PlantProcess.fluids(List.of(step.low().copyWithAmount(amount)), List.of(step.high().copyWithAmount(amount)),
                 air ? note("air_compression", speed, amount, amount / net.createplant.thermal.Grade.Pressure.PRESSURISED.storageRatio())
                     : note("compression", speed));
         }).toList());
@@ -208,7 +210,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         var liquefaction=new ArrayList<PlantProcess>();
         for(var gas:List.of(CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEFusion.HELIUM_GAS.get())){
             var conversion=ThermalStreams.liquefaction(f(gas,1));int water=gas==CEFusion.HELIUM_GAS.get() ? 200 : 50;
-            liquefaction.add(PlantProcess.fluids(List.of(f(gas,conversion.inputAmount()),f(Fluids.WATER,water)),List.of(conversion.result(1),f(CEProcessFluids.WARM_WATER.get(),water)),note("helium_refrigeration")));
+            liquefaction.add(PlantProcess.fluids(List.of(f(gas,conversion.inputAmount()),f(Fluids.WATER,water)),List.of(conversion.result(1),f(FluidForm.WARM_WATER,water)),note("helium_refrigeration")));
         }
         registration.addRecipes(type("helium_refrigeration"),liquefaction);
         registration.addRecipes(type("cell_electrolysis"), List.of(PlantProcess.fluids(List.of(f(CEFusionFuel.HEAVY_WATER.get(), ElectrolysisProcess.WATER_PER_PLATE * ticks)),
@@ -237,7 +239,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             int slot = DistillationProfile.PRODUCT[i], amount = DistillationProfile.PRODUCT_AMOUNT[i] * airBatches;
             fractions.add(slot == DistillationProfile.OXYGEN ? f(DistillationProfile.liquid(slot), amount / perLiquid) : f(DistillationProfile.fluid(slot), amount));
         }
-        var air=List.of(f(CEProcessFluids.COMPRESSED_AIR.get(),DistillationProfile.AIR_BATCH*airBatches));
+        var air=List.of(f(FluidForm.COMPRESSED_AIR,DistillationProfile.AIR_BATCH*airBatches));
         registration.addRecipes(type("fractionating_column"),List.of(PlantProcess.fluids(air,fractions,note("air_separation",DistillationProfile.CYCLE_TICKS,perLiquid))));
         List<PlantProcess> heating=new ArrayList<>(), cooling=new ArrayList<>(), exchanges=new ArrayList<>();
         for(var fluid:List.of(Fluids.WATER,CEPetroFluids.CRUDE_OIL.get(),CEProcessFluids.SLIME_COOLANT.get())) {
@@ -247,9 +249,9 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             if(batches>0)heating.add(PlantProcess.fluids(List.of(sample.copyWithAmount(batches*transfer.consumed())),
                 List.of(transfer.output(batches)),Component.translatable("fluid_state.create_refinery_n_reactors.jei.heating")));
         }
-        for(var hot:List.of(f(CEProcessFluids.WARM_WATER.get(),1000),f(CEFluids.STEAM.get(),1000),
-            f(CEProcessFluids.HIGH_PRESSURE_STEAM.get(),1000),f(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),
-            f(CEProcessFluids.WARM_SLIME_COOLANT.get(),1000))) {
+        for(var hot:List.of(f(FluidForm.WARM_WATER,1000),f(FluidForm.STEAM,1000),
+            f(FluidForm.HIGH_PRESSURE_STEAM,1000),f(FluidForm.HOT_NITRIC_OXIDE_MIXTURE,1000),
+            f(FluidForm.WARM_SLIME_COOLANT,1000))) {
             int temperature=net.createplant.thermal.FluidState.temperature(hot), pressure=net.createplant.thermal.FluidState.pressure(hot);
             var coolingStep=net.createplant.thermal.PhaseChange.transfer(hot,net.createplant.block.entity.RadiatorBlockEntity.cooling(hot,net.createplant.thermal.FluidState.kelvin(temperature)).level(),pressure);
             int batches=coolingStep.batches(hot.getAmount());
@@ -381,11 +383,11 @@ public class CreatePlantJeiPlugin implements IModPlugin {
     private static void verifyRecipeTrace(mezz.jei.api.runtime.IJeiRuntime runtime) {
         var manager=runtime.getRecipeManager();
         var focus=runtime.getJeiHelpers().getFocusFactory();
-        var feedFocus=focus.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.INPUT,mezz.jei.api.neoforge.NeoForgeTypes.FLUID_STACK,f(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000));
+        var feedFocus=focus.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.INPUT,mezz.jei.api.neoforge.NeoForgeTypes.FLUID_STACK,f(FluidForm.COMPRESSED_SYNTHESIS_FEED,1000));
         var synthesis=manager.createRecipeLookup(type("haber_bosch")).limitFocus(List.of(feedFocus)).get().toList();
         if(synthesis.isEmpty() || synthesis.stream().noneMatch(r->r.kept().stream().anyMatch(i->i.is(CEItems.IRON_CATALYST.get()))))throw new IllegalStateException("JEI cannot trace the compressed feed into Haber-Bosch with iron catalyst");
         var gasFocus=focus.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.INPUT,mezz.jei.api.neoforge.NeoForgeTypes.FLUID_STACK,f(CEProcessFluids.SYNTHESIS_GAS.get(),1000));
-        if(manager.createRecipeLookup(type("gas_compression")).limitFocus(List.of(gasFocus)).get().noneMatch(r->r.fluidResults().stream().anyMatch(f->f.is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()))))
+        if(manager.createRecipeLookup(type("gas_compression")).limitFocus(List.of(gasFocus)).get().noneMatch(r->r.fluidResults().stream().anyMatch(f->FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(f))))
             throw new IllegalStateException("JEI cannot trace synthesis gas through the compressor");
         var productFocus=focus.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT,mezz.jei.api.neoforge.NeoForgeTypes.FLUID_STACK,f(CEProcessFluids.SYNTHESIS_GAS.get(),1000));
         if(manager.createRecipeLookup(type("stirred_reactor")).limitFocus(List.of(productFocus)).get().noneMatch(r->r.fluids().stream().anyMatch(f->f.is(CEFluids.HYDROGEN_GAS.get())) && r.fluids().stream().anyMatch(f->f.is(CEFluids.NITROGEN_GAS.get()))))throw new IllegalStateException("JEI has no H2/N2 recipe for synthesis gas");

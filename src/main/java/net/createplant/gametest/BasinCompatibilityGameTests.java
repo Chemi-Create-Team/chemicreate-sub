@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import net.createplant.CreatePlant;
@@ -101,7 +102,7 @@ public final class BasinCompatibilityGameTests {
             int warm = 0, left = 0;
             for (int tank = 0; tank < port.getTanks(); tank++) {
                 var stack = port.getFluidInTank(tank);
-                if (stack.is(net.createplant.registry.CEProcessFluids.WARM_WATER.get())) warm += stack.getAmount();
+                if (FluidForm.WARM_WATER.matches(stack)) warm += stack.getAmount();
                 else if (stack.is(net.createplant.registry.CEProcessFluids.MOLTEN_POLYETHYLENE.get()) || stack.is(Fluids.WATER)) left += stack.getAmount();
             }
             helper.assertTrue(pellets == 2 && warm == 100 && left == 0, "250 mB melt and 100 mB water give two polyethylene and 100 mB warm water: " + pellets + " / " + warm + " / " + left);

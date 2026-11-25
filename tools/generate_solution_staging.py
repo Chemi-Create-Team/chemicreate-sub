@@ -66,6 +66,9 @@ def out_item(name, count=1):
 
 
 def out_fluid(name, amount):
+    if name == 'steam':  # steam is water at a raised temperature, not a registered fluid
+        return {'id': 'minecraft:water', 'amount': amount,
+                'components': {NS + 'temperature_level': 12, NS + 'pressure_level': 4}}
     return {'id': NS + name, 'amount': amount}
 
 

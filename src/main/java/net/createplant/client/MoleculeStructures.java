@@ -11,7 +11,6 @@ import java.util.Map;
 import net.createplant.CreatePlant;
 import net.createplant.chemistry.FluidChemicalRegistry;
 import net.createplant.mixture.MixtureHelper;
-import net.createplant.thermal.FluidIdentity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +31,7 @@ final class MoleculeStructures {
     static Model forFluid(FluidStack stack) {
         if (stack.isEmpty() || MixtureHelper.isMixture(stack)) return null;
         var source = stack.getFluid() instanceof FlowingFluid flowing ? flowing.getSource() : stack.getFluid();
-        var fluid = FluidIdentity.canonical(source);
+        var fluid = source;
         var info = FluidChemicalRegistry.base(fluid);
         var model = CATALOG.fluids.get(BuiltInRegistries.FLUID.getKey(fluid));
         return info != null && model != null && info.structureFormula().equals(model.formula()) ? model : null;

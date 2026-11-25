@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import net.createplant.CreatePlant;
@@ -119,10 +120,10 @@ public class ReciprocatingCompressorGameTests {
         var engine=build(h);var cylinder=(ReciprocatingCylinderBlockEntity)h.getLevel().getBlockEntity(h.absolutePos(BASE));
         cylinder.inlet().fill(gas(1000),FluidAction.EXECUTE);drive(h,engine);
         h.runAfterDelay(60,()-> {
-            h.assertTrue(cylinder.outlet().getFluid().is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()),"Native shaft produces the mapped gas type");
+            h.assertTrue(FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(cylinder.outlet().getFluid()),"Native shaft produces the mapped gas type");
             h.assertTrue(cylinder.inlet().getFluidAmount()+cylinder.outlet().getFluidAmount()==1000,"No gas is lost to compression");
             cylinder.inlet().fill(gas(1000),FluidAction.EXECUTE);
-            cylinder.outlet().setFluid(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),cylinder.outlet().getCapacity()));engine.tick();
+            cylinder.outlet().setFluid(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(cylinder.outlet().getCapacity()));engine.tick();
             h.assertTrue(engine.flow()==0 && engine.status().equals("output"),"A full outlet pauses without locking the engine");
             cylinder.outlet().drain(cylinder.outlet().getFluidAmount(),FluidAction.EXECUTE);
         });
@@ -137,7 +138,7 @@ public class ReciprocatingCompressorGameTests {
         drive(h, engine);
         h.runAfterDelay(90, () -> {
             var output = cylinder.outlet().getFluid();
-            h.assertTrue(cylinder.inlet().isEmpty() && output.is(CEProcessFluids.COMPRESSED_AIR.get())
+            h.assertTrue(cylinder.inlet().isEmpty() && FluidForm.COMPRESSED_AIR.matches(output)
                 && output.getAmount() == 1000 && net.createplant.thermal.Compression.airVolume(output) == 62.5,
                 "The real shaft converts all 1000 mB of raw air into 62.5 mB of physical compressed volume");
             h.succeed();

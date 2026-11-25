@@ -249,21 +249,9 @@ public class CEItems {
             .craftRemainder(Items.BUCKET)
             .stacksTo(1))
     );
-    public static final DeferredItem<BucketItem> LIQUID_OXYGEN_BUCKET = ITEMS.register(
-        "liquid_oxygen_bucket",
-        () -> new net.createplant.item.ProcessBucketItem(CEFluids.LIQUID_OXYGEN.get(), new Item.Properties()
-            .craftRemainder(Items.BUCKET)
-            .stacksTo(1))
-    );
     public static final DeferredItem<GasBucketItem> AMMONIA_GAS_BUCKET = ITEMS.register(
         "ammonia_gas_bucket",
         () -> new GasBucketItem(CEFluids.AMMONIA_GAS.get(), new Item.Properties()
-            .craftRemainder(Items.BUCKET)
-            .stacksTo(1))
-    );
-    public static final DeferredItem<GasBucketItem> STEAM_BUCKET = ITEMS.register(
-        "steam_bucket",
-        () -> new GasBucketItem(CEFluids.STEAM.get(), new Item.Properties()
             .craftRemainder(Items.BUCKET)
             .stacksTo(1))
     );

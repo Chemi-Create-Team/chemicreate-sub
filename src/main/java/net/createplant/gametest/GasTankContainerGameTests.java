@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import net.createplant.CreatePlant;
 import net.createplant.block.GasTankContainerBlock;
@@ -82,7 +83,7 @@ public class GasTankContainerGameTests {
         var side=world.getCapability(Capabilities.FluidHandler.BLOCK,at,Direction.NORTH);
         var drain=world.getCapability(Capabilities.FluidHandler.BLOCK,at,Direction.DOWN);
         var wet=net.createplant.mixture.MixtureHelper.merge(new FluidStack(CEFluids.NITROGEN_GAS.get(),500),
-            new FluidStack(CEFluids.STEAM.get(),100),true);
+            FluidForm.STEAM.stack(100),true);
         h.assertTrue(side!=null && drain!=null && side.fill(wet,FluidAction.EXECUTE)==600,"Wet gas enters the tank as one mixture");
         h.runAfterDelay(24,()-> {
             var water=new FluidStack(net.minecraft.world.level.material.Fluids.WATER,100);

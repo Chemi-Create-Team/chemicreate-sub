@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.AmmoniaSeparatorBlockEntity;
@@ -23,10 +24,10 @@ public class HaberBoschGameTests {
     public static void coldMixtureProducesFixedLiquidAmmoniaAndRecycleWithoutASimulationMutation(GameTestHelper h){
         var at=h.absolutePos(new BlockPos(4,2,4));var be=separator(h.getLevel(),at);var inlet=port(h.getLevel(),at.above(),Direction.NORTH);var before=be.saveWithoutMetadata(h.getLevel().registryAccess());var feed=new FluidStack(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get(),9000);
         h.assertTrue(inlet.fill(feed,SIMULATE)==9000 && before.equals(be.saveWithoutMetadata(h.getLevel().registryAccess())),"A separator simulation has no pressure or inventory side effects");
-        h.assertTrue(inlet.fill(new FluidStack(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get(),9000),EXECUTE)==0,"Hot gas must pass a cooler first");
+        h.assertTrue(inlet.fill(FluidForm.HOT_SYNTHESIS_MIXTURE.stack(9000),EXECUTE)==0,"Hot gas must pass a cooler first");
         inlet.fill(feed,EXECUTE);for(int i=0;i<12;i++)be.process(.25);
         var liquid=port(h.getLevel(),at,Direction.DOWN).drain(100000,EXECUTE);var recycle=port(h.getLevel(),at.above(),Direction.UP).drain(100000,EXECUTE);
-        h.assertTrue(liquid.is(CEProcessFluids.LIQUID_AMMONIA.get()) && liquid.getAmount()==1 && recycle.is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()) && recycle.getAmount()==8000 && be.feed().isEmpty(),"9000 mB cold mixture produces 1 mB liquid ammonia and 8000 mB reusable pressurised feed");h.succeed();
+        h.assertTrue(FluidForm.LIQUID_AMMONIA.matches(liquid) && liquid.getAmount()==1 && FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(recycle) && recycle.getAmount()==8000 && be.feed().isEmpty(),"9000 mB cold mixture produces 1 mB liquid ammonia and 8000 mB reusable pressurised feed");h.succeed();
     }
     @GameTest(template="test_fractionation")
     public static void savedPartialSeparationKeepsItsFeedAndCannotDuplicateProducts(GameTestHelper h){

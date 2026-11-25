@@ -4109,8 +4109,6 @@
       "air_gas_bucket",
       "argon_gas_bucket",
       "stainless_steel_pump",
-      "liquid_nitrogen_bucket",
-      "liquid_oxygen_bucket",
       "nitrogen_gas_bucket",
       "oxygen_gas_bucket"
     ],
@@ -4275,7 +4273,7 @@
           2,
           3
         ],
-        "item": "create_refinery_n_reactors:liquid_nitrogen_bucket",
+        "item": "create_refinery_n_reactors:nitrogen_gas_bucket",
         "process": {
           "kind": "cold_box",
           "recipe": "operation:liquefy_nitrogen",
@@ -4308,7 +4306,7 @@
     "height": 6,
     "components": [
       "hydrogen_gas_bucket",
-      "warm_water_bucket"
+      "minecraft:water_bucket"
     ],
     "steps": [
       {
@@ -4412,8 +4410,7 @@
     "height": 9,
     "components": [
       "ammonia_gas_bucket",
-      "iron_catalyst",
-      "liquid_ammonia_bucket"
+      "iron_catalyst"
     ],
     "steps": [
       {
@@ -6114,8 +6111,6 @@
       "cooled_hydrotreater_effluent_bucket",
       "createdieselgenerators:diesel_bucket",
       "heavy_oil_bucket",
-      "hot_hydrocracker_effluent_bucket",
-      "hot_hydrotreater_effluent_bucket",
       "low_sulfur_diesel_bucket"
     ],
     "steps": [
@@ -6342,10 +6337,10 @@
     "components": [
       "antifreeze_bucket",
       "ethylene_glycol_bucket",
-      "liquid_chlorine_bucket",
-      "liquid_propylene_bucket",
-      "liquid_sulfur_dioxide_bucket",
-      "liquid_vinyl_chloride_bucket"
+      "chlorine_bucket",
+      "propylene_bucket",
+      "sulfur_dioxide_bucket",
+      "vinyl_chloride_bucket"
     ],
     "steps": [
       {
@@ -6448,10 +6443,10 @@
     "components": [
       "antifreeze_bucket",
       "ethylene_glycol_bucket",
-      "liquid_chlorine_bucket",
-      "liquid_propylene_bucket",
-      "liquid_sulfur_dioxide_bucket",
-      "liquid_vinyl_chloride_bucket"
+      "chlorine_bucket",
+      "propylene_bucket",
+      "sulfur_dioxide_bucket",
+      "vinyl_chloride_bucket"
     ],
     "steps": [
       {
@@ -6461,7 +6456,7 @@
           3,
           3
         ],
-        "item": "create_refinery_n_reactors:liquid_ammonia_bucket",
+        "item": "create_refinery_n_reactors:ammonia_gas_bucket",
         "process": {
           "kind": "cooling",
           "recipe": "operation:cool_ammonia",
@@ -6523,7 +6518,7 @@
           3,
           3
         ],
-        "item": "create_refinery_n_reactors:liquid_ammonia_bucket",
+        "item": "create_refinery_n_reactors:ammonia_gas_bucket",
         "process": {
           "kind": "cooling",
           "recipe": "operation:cool_ammonia",
@@ -6554,7 +6549,7 @@
           1,
           5
         ],
-        "item": "create_refinery_n_reactors:liquid_chlorine_bucket",
+        "item": "create_refinery_n_reactors:chlorine_bucket",
         "process": {
           "kind": "heat_exchanger",
           "recipe": "operation:exchange_chlorine_ammonia",
@@ -9297,8 +9292,7 @@
     "size": 8,
     "height": 7,
     "components": [
-      "helium_gas_bucket",
-      "liquid_helium_bucket"
+      "helium_gas_bucket"
     ],
     "steps": [
       {
@@ -9369,7 +9363,7 @@
           2,
           3
         ],
-        "item": "create_refinery_n_reactors:liquid_helium_bucket",
+        "item": "create_refinery_n_reactors:helium_gas_bucket",
         "process": {
           "kind": "cold_box",
           "recipe": null,
@@ -9864,8 +9858,7 @@
     "height": 7,
     "components": [
       "slime_coolant_bucket",
-      "slime_coolant_feed_bucket",
-      "warm_slime_coolant_bucket"
+      "slime_coolant_feed_bucket"
     ],
     "steps": [
       {

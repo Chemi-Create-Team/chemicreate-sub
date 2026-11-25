@@ -38,7 +38,7 @@ public final class TankGradeGameTests {
         for(var block:List.of(AllBlocks.FLUID_TANK.get(),CETransport.HORIZONTAL_FLUID_TANK.get(),CETransport.GAS_RECEIVER.get(),CETransport.GAS_TANK_CONTAINER.get(),CETransport.PRESSURE_TANK.get(),CETransport.CRYOGENIC_TANK.get())) {
             var be=tank(h,block);var inventory=be.getTankInventory();
             // A gas-only tank holds no liquid at all, so it is worn by a corrosive gas instead.
-            var acid=TankGrade.of(be)==TankGrade.GAS ? new FluidStack(CEChlorAlkali.CHLORINE.get(),1000) : new FluidStack(CEFluids.NITRIC_ACID.get(),1000);var hot=FluidState.with(new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),16,4);
+            var acid=TankGrade.of(be)==TankGrade.GAS ? new FluidStack(CEChlorAlkali.CHLORINE.get(),1000) : new FluidStack(CEFluids.NITRIC_ACID.get(),1000);var hot=FluidState.with(FluidForm.HOT_NITRIC_OXIDE_MIXTURE.stack(1000),16,4);
             h.assertTrue(!TankGrade.of(be).accepts(acid) && inventory.fill(acid,EXECUTE)==1000,"A non-resistant tank still takes a corrosive fluid, which wears it: "+block);
             inventory.setFluid(FluidStack.EMPTY);
             h.assertTrue(!TankGrade.of(be).accepts(hot) && inventory.fill(hot,EXECUTE)==1000,"A tank still takes a very hot gas, which wears it: "+block);
@@ -70,7 +70,7 @@ public final class TankGradeGameTests {
             && contents.stream().anyMatch(stack->stack.is(alkali.getFluid()) && stack.getAmount()==1000),"The tank retains both full charges");
         int tested=0;
         for (var fluid:net.minecraft.core.registries.BuiltInRegistries.FLUID) {
-            if (fluid instanceof net.minecraft.world.level.material.FlowingFluid flowing && flowing.getSource()!=fluid || FluidIdentity.legacy(fluid)) continue;
+            if (fluid instanceof net.minecraft.world.level.material.FlowingFluid flowing && flowing.getSource()!=fluid) continue;
             var info=net.createplant.chemistry.FluidChemicalRegistry.base(fluid);
             var solution=new FluidStack(fluid,1000);
             if (info==null || !info.aqueous() || !TankGrade.STAINLESS.accepts(solution)) continue;
@@ -86,11 +86,11 @@ public final class TankGradeGameTests {
     @GameTest(template="test_fractionation")
     public static void waterAndSteamNeverBypassTheMaterialOrFluidFilter(GameTestHelper h) {
         var liquid=tank(h,AllBlocks.FLUID_TANK.get());var port=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(AT),Direction.UP);
-        var steam=new FluidStack(CEFluids.STEAM.get(),1000);
+        var steam=FluidForm.STEAM.stack(1000);
         h.assertTrue(port.isFluidValid(0,steam) && port.fill(steam,EXECUTE)==1000 && TankGrade.LIQUID.incompatibility(steam).equals("gas"),"A liquid-only tank takes steam at its real port, and is worn by it");
         var gas=tank(h,CETransport.GAS_RECEIVER.get());
         h.assertTrue(TankGrade.GAS.incompatibility(new FluidStack(Fluids.WATER,1000)).equals("liquid"),"A gas receiver is not rated for water");
-        h.assertTrue(gas.getTankInventory().fill(steam,EXECUTE)==1000 && gas.getTankInventory().getFluid().is(CEFluids.STEAM.get()),"Steam stays steam rather than becoming water");
+        h.assertTrue(gas.getTankInventory().fill(steam,EXECUTE)==1000 && FluidForm.STEAM.matches(gas.getTankInventory().getFluid()),"Steam stays steam rather than becoming water");
         h.succeed();
     }
 
@@ -145,7 +145,7 @@ public final class TankGradeGameTests {
         var be = (CreativeFluidTankBlockEntity) tank(h, AllBlocks.CREATIVE_FLUID_TANK.get());
         var level = h.getLevel();
         var at = h.absolutePos(AT);
-        var gas = new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(), 1000);
+        var gas = FluidForm.COMPRESSED_HYDROGEN.stack(1000);
         var port = level.getCapability(Capabilities.FluidHandler.BLOCK, at, Direction.UP);
         h.assertTrue(port != null && port.isFluidValid(0, gas), "The creative tank's actual fluid port validates gas");
         h.assertTrue(port.fill(gas, SIMULATE) == 1000 && port.fill(gas, EXECUTE) == 1000 && port.getFluidInTank(0).isEmpty(),
@@ -181,12 +181,12 @@ public final class TankGradeGameTests {
 
     @GameTest(template="test_fractionation")
     public static void cryogenicLiquidsRequireCryogenicStorage(GameTestHelper h) {
-        var liquid=new FluidStack(CEFusion.LIQUID_HELIUM.get(),1000);
+        var liquid=FluidForm.LIQUID_HELIUM.stack(1000);
         h.assertTrue(TankGrade.LIQUID.incompatibility(liquid).equals("cold"),"An ordinary tank is not rated for cryogenic helium");
         var cold=tank(h,CETransport.CRYOGENIC_TANK.get());
         h.assertTrue(cold.getTankInventory().fill(liquid,EXECUTE)==1000,"Cryogenic tank accepts helium");
         cold.getTankInventory().setFluid(FluidStack.EMPTY);
-        h.assertTrue(TankGrade.CRYOGENIC.incompatibility(new FluidStack(CEFluids.STEAM.get(),1000)).equals("gas"),"A cryogenic tank is not rated for steam");h.succeed();
+        h.assertTrue(TankGrade.CRYOGENIC.incompatibility(FluidForm.STEAM.stack(1000)).equals("gas"),"A cryogenic tank is not rated for steam");h.succeed();
     }
 
     @GameTest(template="test_fractionation")
@@ -224,7 +224,7 @@ public final class TankGradeGameTests {
         // Create attaches behaviours when the block entity first ticks.
         h.runAfterDelay(2,()->{
             var wear=com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour.get(be,net.createplant.transport.ContainmentWear.TYPE);
-            var hot=FluidState.with(new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),1000),16,4);
+            var hot=FluidState.with(FluidForm.HOT_NITRIC_OXIDE_MIXTURE.stack(1000),16,4);
             h.assertTrue(be.getTankInventory().fill(hot,EXECUTE)==1000,"The pressure tank takes the very hot gas");
             for(int i=0;i<600;i++)wear.tick();
             h.assertTrue(wear.wear()==600 && wear.reason().equals("gas") && net.createplant.transport.ContainmentWear.warning(be)!=null && h.getBlockState(AT).is(CETransport.PRESSURE_TANK.get()),

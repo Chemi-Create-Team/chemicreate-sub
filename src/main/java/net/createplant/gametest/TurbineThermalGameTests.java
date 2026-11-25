@@ -18,7 +18,7 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public final class TurbineThermalGameTests {
-    private static FluidStack steam(int n,double ignored){return new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(),n);}
+    private static FluidStack steam(int n,double ignored){return FluidForm.HIGH_PRESSURE_STEAM.stack(n);}
     private static void near(GameTestHelper h,double a,double b,String why){h.assertTrue(Double.isFinite(a) && Math.abs(a-b)<Math.max(.001,Math.abs(b)*1e-9),why+": "+a+" / "+b);}
 
     @GameTest(template="test_fractionation")
@@ -63,7 +63,7 @@ public final class TurbineThermalGameTests {
     @GameTest(template="test_fractionation")
     public static void bothStagesKeepEveryMillibucketAndJouleIncludingSavedExhaust(GameTestHelper h){
         var pair=build(h.getLevel(),h.absolutePos(BlockPos.ZERO));var high=pair[0].thermodynamics();var low=pair[1].thermodynamics();
-        high.input().fill(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000),EXECUTE);high.step(true,1000);
+        high.input().fill(FluidForm.SUPERHEATED_STEAM.stack(1000),EXECUTE);high.step(true,1000);
         low.input().fill(high.exhaust().drain(1000,EXECUTE),EXECUTE);low.step(true,1000);
         near(h,high.work()+low.work(),1250000,"Fixed two-stage superheated work");
         near(h,low.pendingCondenserJoules(),1758000,"Finite condenser heat");
@@ -77,7 +77,7 @@ public final class TurbineThermalGameTests {
     @GameTest(template="test_fractionation")
     public static void fullOutletAndSimulationNeverSpendFeedOrCreateWork(GameTestHelper h){
         var pair=build(h.getLevel(),h.absolutePos(BlockPos.ZERO));var be=pair[0];var handler=be.getSteamCapability();
-        h.assertTrue(handler.fill(steam(1000,700),SIMULATE)==1000 && be.thermodynamics().input().isEmpty(),"Native preview cannot prime the rotor");handler.fill(steam(1000,700),EXECUTE);be.thermodynamics().exhaust().setFluid(new FluidStack(CEFluids.STEAM.get(),TurbineThermal.CAPACITY));double before=FluidThermal.energy(be.thermodynamics().input().getFluid());
+        h.assertTrue(handler.fill(steam(1000,700),SIMULATE)==1000 && be.thermodynamics().input().isEmpty(),"Native preview cannot prime the rotor");handler.fill(steam(1000,700),EXECUTE);be.thermodynamics().exhaust().setFluid(FluidForm.STEAM.stack(TurbineThermal.CAPACITY));double before=FluidThermal.energy(be.thermodynamics().input().getFluid());
         h.assertTrue(be.thermodynamics().step(true,64)==0 && be.thermodynamics().work()==0,"A full exhaust stops work");near(h,FluidThermal.energy(be.thermodynamics().input().getFluid()),before,"Blocked exhaust retains input energy");
         h.getLevel().destroyBlock(be.getBlockPos().above(),false);h.assertTrue(handler.fill(steam(1,700),EXECUTE)==0,"A removed casing immediately disables cached inlet use");h.succeed();
     }
@@ -239,7 +239,7 @@ public final class TurbineThermalGameTests {
     }
 
 
-    private static FluidStack reactorSteam(int n){return new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(),n);}
+    private static FluidStack reactorSteam(int n){return FluidForm.HIGH_PRESSURE_STEAM.stack(n);}
     /** Joins the HP end ring to the first LP rotor alone, as a set is piped when each stage has one working rotor. */
     private static void singleInterstageMain(Level l,BlockPos base){
         var pipe=CETransport.STAINLESS_PIPE.get().defaultBlockState();
@@ -277,11 +277,11 @@ public final class TurbineThermalGameTests {
         l.setBlock(pump.above().east(),AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.WEST),3);
         ((com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity)l.getBlockEntity(pump.above().east())).generatedSpeed.setValue(128);
         int[] tankMass={-1};
-        hp.thermodynamics().exhaust().setFluid(new FluidStack(CEFluids.STEAM.get(),TurbineThermal.CAPACITY));
+        hp.thermodynamics().exhaust().setFluid(FluidForm.STEAM.stack(TurbineThermal.CAPACITY));
         h.runAfterDelay(20,()->{
             var tank=(com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)l.getBlockEntity(tankPos);
             com.simibubi.create.api.connectivity.ConnectivityHandler.formMulti(tank);
-            tank.getControllerBE().getTankInventory().fill(new FluidStack(CEFluids.STEAM.get(),16000),EXECUTE);
+            tank.getControllerBE().getTankInventory().fill(FluidForm.STEAM.stack(16000),EXECUTE);
             tankMass[0]=16000;
         });
         // Held ten mB short of full at a low pressure, the rotor takes ten mB a tick however many faces offer it.
@@ -290,7 +290,7 @@ public final class TurbineThermalGameTests {
             int now=((com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)l.getBlockEntity(tankPos)).getControllerBE().getTankInventory().getFluidAmount();
             h.assertTrue(tankMass[0]-now<=10,"A line touching two casing faces of one rotor drains only what the rotor takes: "+(tankMass[0]-now)+" mB");
             tankMass[0]=now;
-            hp.thermodynamics().input().setFluid(new FluidStack(CEFluids.STEAM.get(),hp.thermodynamics().input().getCapacity()-10));
+            hp.thermodynamics().input().setFluid(FluidForm.STEAM.stack(hp.thermodynamics().input().getCapacity()-10));
         });
         h.runAfterDelay(150,()->{
             h.assertTrue(tankMass[0]<16000,"The rotor did take steam through the line");
@@ -303,7 +303,7 @@ public final class TurbineThermalGameTests {
         var level=h.getLevel();var base=h.absolutePos(BlockPos.ZERO);var pair=build(level,base);var hp=pair[0];var lp=pair[1];
         singleInterstageMain(level,base);
         h.onEachTick(()->h.assertTrue(!hp.thermodynamics().status().equals("wet"),"Dry steam is never reported as wet"));
-        h.runAfterDelay(20,()->hp.thermodynamics().input().fill(new FluidStack(CEFluids.STEAM.get(),TurbineThermal.CAPACITY),EXECUTE));
+        h.runAfterDelay(20,()->hp.thermodynamics().input().fill(FluidForm.STEAM.stack(TurbineThermal.CAPACITY),EXECUTE));
         h.runAfterDelay(80,()->{
             h.assertTrue(hp.thermodynamics().input().isEmpty() && hp.thermodynamics().totalWork()==4_000_000 && lp.thermodynamics().totalWork()>0,
                 "Atmospheric steam produces 250 J/mB at the high stage and its exhaust works in the low stage");
@@ -355,7 +355,7 @@ public final class TurbineThermalGameTests {
         long[] start={0};
         h.onEachTick(()->keepFed(hp,lp));
         // One surge is enough: the LP inlet no longer empties between transfers.
-        h.runAfterDelay(30,()->lp.thermodynamics().input().fill(new FluidStack(CEFluids.STEAM.get(),14000),EXECUTE));
+        h.runAfterDelay(30,()->lp.thermodynamics().input().fill(FluidForm.STEAM.stack(14000),EXECUTE));
         h.runAfterDelay(60,()->start[0]=lp.thermodynamics().totalCondensate());
         h.runAfterDelay(140,()->{
             double flow=(lp.thermodynamics().totalCondensate()-start[0])/80d;

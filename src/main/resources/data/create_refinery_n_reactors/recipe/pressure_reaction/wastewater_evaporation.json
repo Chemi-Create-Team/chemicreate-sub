@@ -13,8 +13,12 @@
       "id": "create_refinery_n_reactors:treatment_sludge"
     },
     {
-      "id": "create_refinery_n_reactors:steam",
-      "amount": 800
+      "id": "minecraft:water",
+      "amount": 800,
+      "components": {
+        "create_refinery_n_reactors:temperature_level": 12,
+        "create_refinery_n_reactors:pressure_level": 4
+      }
     }
   ]
 }

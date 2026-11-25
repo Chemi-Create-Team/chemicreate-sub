@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
@@ -51,7 +52,7 @@ public final class RotationalEquipmentGameTests {
         BlockPos outputShaft = endCenter.east();
         level.setBlock(outputShaft, AllBlocks.SHAFT.getDefaultState()
             .setValue(BlockStateProperties.AXIS, Direction.Axis.X), 3);
-        FluidStack steam = FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 4_000), 750);
+        FluidStack steam = FluidThermal.at(FluidForm.HIGH_PRESSURE_STEAM.stack(4_000), 750);
         IFluidHandler casingInlet = level.getCapability(Capabilities.FluidHandler.BLOCK,
             highPressureRotor.above(), Direction.UP);
         helper.assertTrue(casingInlet != null

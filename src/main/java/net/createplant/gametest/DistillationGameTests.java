@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import net.createplant.CreatePlant;
 import net.createplant.block.*;
@@ -34,7 +35,7 @@ public class DistillationGameTests {
     /** Fills compressed, cooled air as a pump from an 8 bar vessel would. */
     private static int fill(IFluidHandler feed,int amount,IFluidHandler.FluidAction action) {
         try {
-            return feed.fill(net.createplant.thermal.FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.COMPRESSED_AIR.get(),amount),300),action);
+            return feed.fill(net.createplant.thermal.FluidThermal.at(FluidForm.COMPRESSED_AIR.stack(amount),300),action);
         } finally { }
     }
     @GameTest(template="test_fractionation",timeoutTicks=100)
@@ -92,7 +93,7 @@ public class DistillationGameTests {
         // 4 x 210 mB of oxygen is held as gas; liquid oxygen leaves 1 mB for every gasPerLiquid mB, and the rest waits.
         int per=DistillationProfile.gasPerLiquid(DistillationProfile.OXYGEN);
         var oxygen=outlet(owner,0).drain(1000,EXECUTE);
-        h.assertTrue(oxygen.is(CEFluids.LIQUID_OXYGEN.get()) && oxygen.getAmount()==840/per && owner.stock(DistillationProfile.OXYGEN)==840%per,
+        h.assertTrue(FluidForm.LIQUID_OXYGEN.matches(oxygen) && oxygen.getAmount()==840/per && owner.stock(DistillationProfile.OXYGEN)==840%per,
             "Layer 1 gives liquid oxygen with the mass of the oxygen in the air: "+oxygen+", "+owner.stock(DistillationProfile.OXYGEN)+" mB of gas left");
         var argon=outlet(owner,9).drain(1000,EXECUTE);
         h.assertTrue(argon.is(CEFluids.ARGON_GAS.get()) && argon.getAmount()==40,"Layer 10 gives crude argon: "+argon);
@@ -117,7 +118,7 @@ public class DistillationGameTests {
         h.setBlock(new BlockPos(7,4,6),com.simibubi.create.AllBlocks.COGWHEEL.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,Direction.Axis.X));
         h.setBlock(motor,com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,Direction.WEST));
         var stored=((com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)h.getBlockEntity(tank)).getTankInventory();
-        stored.fill(net.createplant.thermal.FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.COMPRESSED_AIR.get(),80000),300),EXECUTE);
+        stored.fill(net.createplant.thermal.FluidThermal.at(FluidForm.COMPRESSED_AIR.stack(80000),300),EXECUTE);
         h.runAfterDelay(5,()->((com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity)h.getBlockEntity(motor)).generatedSpeed.setValue(64));
         h.succeedWhen(()->{
             var nitrogen=outlet(owner,13);

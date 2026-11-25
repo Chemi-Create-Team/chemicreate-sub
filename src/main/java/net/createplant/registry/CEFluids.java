@@ -69,13 +69,6 @@ public class CEFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> AIR_GAS = AIR.source;
     private static final DeferredBlock<LiquidBlock> AIR_GAS_BLOCK = block("air_gas", AIR);
 
-    private static final PlantFluid LIQUID_OXYGEN_FLUID = new PlantFluid(FLUID_TYPES, FLUIDS, "liquid_oxygen", 0xCCA8C8E8,
-        () -> FluidType.Properties.create().density(1000).viscosity(950).temperature(90).supportsBoating(false),
-        fluid -> fluid.bucket(CEItems.LIQUID_OXYGEN_BUCKET)
-            .slopeFindDistance(4).levelDecreasePerBlock(1).tickRate(5));
-    public static final DeferredHolder<FluidType, FluidType> LIQUID_OXYGEN_TYPE = LIQUID_OXYGEN_FLUID.type;
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LIQUID_OXYGEN = LIQUID_OXYGEN_FLUID.source;
-
     private static final PlantFluid AMMONIA = new PlantFluid(FLUID_TYPES, FLUIDS, "ammonia_gas", 0xAAEFD57A,
         () -> gas(-4, 18, 0.03D).canPushEntity(false),
         fluid -> fluid.block(CEFluids.AMMONIA_GAS_BLOCK).bucket(CEItems.AMMONIA_GAS_BUCKET)
@@ -83,14 +76,6 @@ public class CEFluids {
     public static final DeferredHolder<FluidType, FluidType> AMMONIA_GAS_TYPE = AMMONIA.type;
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> AMMONIA_GAS = AMMONIA.source;
     private static final DeferredBlock<LiquidBlock> AMMONIA_GAS_BLOCK = block("ammonia_gas", AMMONIA);
-
-    private static final PlantFluid STEAM_FLUID = new PlantFluid(FLUID_TYPES, FLUIDS, "steam", 0xAAE9F4FF,
-        () -> gas(-20, 10, 0.05D).temperature(373).canPushEntity(false),
-        fluid -> fluid.block(CEFluids.STEAM_BLOCK).bucket(CEItems.STEAM_BUCKET)
-            .slopeFindDistance(4).levelDecreasePerBlock(1).tickRate(2));
-    public static final DeferredHolder<FluidType, FluidType> STEAM_TYPE = STEAM_FLUID.type;
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> STEAM = STEAM_FLUID.source;
-    private static final DeferredBlock<LiquidBlock> STEAM_BLOCK = block("steam", STEAM_FLUID);
 
     private static final PlantFluid NITRIC_ACID_FLUID = new PlantFluid(FLUID_TYPES, FLUIDS, "nitric_acid", 0xDDE6E54A,
         () -> FluidType.Properties.create().density(1500).viscosity(1200).supportsBoating(false),

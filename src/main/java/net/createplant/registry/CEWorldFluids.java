@@ -61,9 +61,7 @@ public final class CEWorldFluids {
             case "heavy_oil" -> () -> CEItems.HEAVY_OIL_BUCKET.get();
             case "naphtha" -> () -> CEItems.NAPHTHA_BUCKET.get();
             case "lubricating_oil" -> () -> CEItems.LUBRICATING_OIL_BUCKET.get();
-            case "liquid_oxygen" -> () -> CEItems.LIQUID_OXYGEN_BUCKET.get();
             case "nitric_acid" -> () -> CEItems.NITRIC_ACID_BUCKET.get();
-            case "liquid_helium" -> () -> CEFusion.LIQUID_HELIUM_BUCKET.get();
             default -> ITEMS.register(name + "_bucket", () -> new ProcessBucketItem(fluid.get(), bucketProperties()));
         };
         var block = BLOCKS.register(name, () -> new WorldLiquidBlock((net.minecraft.world.level.material.FlowingFluid) fluid.get(),

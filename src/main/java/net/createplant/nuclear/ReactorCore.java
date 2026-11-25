@@ -187,30 +187,29 @@ public final class ReactorCore {
 
     public net.neoforged.neoforge.fluids.capability.IFluidHandler outlet() { return outlet; }
 
-    private net.minecraft.world.level.material.Fluid outletFluid(int slot){return switch(slot){case 0->net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get();case 1->net.createplant.registry.CEProcessFluids.HIGH_PRESSURE_STEAM.get();case 2->net.createplant.registry.CEProcessFluids.WARM_WATER.get();default->net.minecraft.world.level.material.Fluids.WATER;};}
     private final net.neoforged.neoforge.fluids.capability.IFluidHandler outlet=new net.neoforged.neoforge.fluids.capability.IFluidHandler(){
         public int getTanks(){return 4;}
-        public FluidStack getFluidInTank(int tank){return tank>=0 && tank<4 ? takePhase(outletFluid(tank),Integer.MAX_VALUE,false) : FluidStack.EMPTY;}
+        public FluidStack getFluidInTank(int tank){return tank>=0 && tank<4 ? takePhase(tank,Integer.MAX_VALUE,false) : FluidStack.EMPTY;}
         public int getTankCapacity(int tank){return structure==null || tank<0 || tank>=4 ? 0 : (fuelChannels+controlChannels)*structure.height()*FuelChannelBlockEntity.COOLANT_PER_CHANNEL;}
         public boolean isFluidValid(int tank,FluidStack stack){return false;}
         public int fill(FluidStack stack,FluidAction action){return 0;}
         // A request names the substance and its state, so it is matched against each phase's entry rather than by fluid id alone.
         public FluidStack drain(FluidStack stack,FluidAction action){
             if(stack.isEmpty())return FluidStack.EMPTY;
-            for(int slot=0;slot<4;slot++)if(FluidStack.isSameFluidSameComponents(new FluidStack(outletFluid(slot),1),stack))return takePhase(outletFluid(slot),stack.getAmount(),action.execute());
+            for(int slot=0;slot<4;slot++)if(FluidStack.isSameFluidSameComponents(FuelChannelBlockEntity.outletStack(slot,1),stack))return takePhase(slot,stack.getAmount(),action.execute());
             return FluidStack.EMPTY;
         }
-        public FluidStack drain(int amount,FluidAction action){for(int slot:new int[]{1,0,2,3}){var result=takePhase(outletFluid(slot),amount,action.execute());if(!result.isEmpty())return result;}return FluidStack.EMPTY;}
+        public FluidStack drain(int amount,FluidAction action){for(int slot:new int[]{1,0,2,3}){var result=takePhase(slot,amount,action.execute());if(!result.isEmpty())return result;}return FluidStack.EMPTY;}
     };
     private int outletCursor;
-    private FluidStack takePhase(net.minecraft.world.level.material.Fluid type,int requested,boolean execute){
+    private FluidStack takePhase(int slot,int requested,boolean execute){
         if(structure==null || owner.getLevel()==null || requested<=0)return FluidStack.EMPTY;
         int columns=structure.fuel().size();var channels=new FuelChannelBlockEntity[columns];int[] room=new int[columns];
-        for(int i=0;i<columns;i++)if(owner.getLevel().getBlockEntity(structure.fuel().get(i)) instanceof FuelChannelBlockEntity channel){channels[i]=channel;room[i]=channel.phaseAvailable(type);}
+        for(int i=0;i<columns;i++)if(owner.getLevel().getBlockEntity(structure.fuel().get(i)) instanceof FuelChannelBlockEntity channel){channels[i]=channel;room[i]=channel.phaseAvailable(slot);}
         int[] share=EvenShare.split(requested,room,outletCursor%Math.max(1,columns));int taken=0;
-        for(int i=0;i<columns;i++)if(share[i]>0)taken+=channels[i].takePhase(type,share[i],execute).getAmount();
+        for(int i=0;i<columns;i++)if(share[i]>0)taken+=channels[i].takePhase(slot,share[i],execute).getAmount();
         if(execute && columns>0)outletCursor=Math.floorMod(outletCursor+taken,columns);
-        return taken==0 ? FluidStack.EMPTY : new FluidStack(type,taken);
+        return taken==0 ? FluidStack.EMPTY : FuelChannelBlockEntity.outletStack(slot,taken);
     }
     public void fuelChanged() { fuelDirty = true; }
 

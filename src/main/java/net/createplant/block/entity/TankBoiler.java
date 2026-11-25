@@ -102,7 +102,7 @@ public final class TankBoiler {
         if (!net.createplant.thermal.FluidState.liquidWater(water)) { status = "water"; return; }
         // An unheated tank looks under itself again once a second.
         if (status.equals("heat") && Math.floorMod(level.getGameTime() + owner.getBlockPos().asLong(), 20) != 0) return;
-        var sample = new FluidStack(SteamGrades.ORDINARY.fluid(), 1);
+        var sample = SteamGrades.ORDINARY.stack(1);
         FluidThermal.processComponents(water, sample);
         if (steam.fill(sample, IFluidHandler.FluidAction.SIMULATE) != 1) { status = "output"; return; }
         double[] provided = {0};

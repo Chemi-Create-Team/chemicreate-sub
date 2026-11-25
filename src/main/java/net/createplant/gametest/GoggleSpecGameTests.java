@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
@@ -53,7 +54,7 @@ public class GoggleSpecGameTests {
         var level = helper.getLevel();
         var vessel = (LiddedVesselBlockEntity) ReactorGameTests.assemble(level, helper.absolutePos(new BlockPos(4, 2, 4)), ReactorModule.STIRRED, 2);
         var saved = vessel.saveWithoutMetadata(level.registryAccess());
-        var fluids = new FluidStack[] {new FluidStack(Fluids.WATER, 101), new FluidStack(CEFluids.STEAM.get(), 102),
+        var fluids = new FluidStack[] {new FluidStack(Fluids.WATER, 101), FluidForm.STEAM.stack(102),
             new FluidStack(CEFluids.OXYGEN_GAS.get(), 103), new FluidStack(CEFluids.NITROGEN_GAS.get(), 104),
             new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 105), new FluidStack(CEUranium.SULFURIC_ACID.get(), 106),
             new FluidStack(CEFluids.HYDROGEN_GAS.get(), 107)};

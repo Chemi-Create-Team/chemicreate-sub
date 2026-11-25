@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.google.gson.GsonBuilder;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
@@ -112,7 +113,7 @@ public class CompactFuelLongGameTests {
         private final boolean automatic;
         private final String name;
         private final int flow;
-        private final FluidStack feed = new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(), Integer.MAX_VALUE);
+        private final FluidStack feed = FluidForm.PRESSURISED_WATER.stack(Integer.MAX_VALUE);
         private final List<Map<String, Object>> samples = new ArrayList<>();
         private final Map<String, Object> report = new LinkedHashMap<>();
         private int elapsed;
@@ -155,7 +156,7 @@ public class CompactFuelLongGameTests {
                 h.succeed();return;
             }
             fixture.inlet().fill(feed, EXECUTE);
-            int remainingFlow=flow;for(var fluid:java.util.List.of(net.createplant.registry.CEProcessFluids.HIGH_PRESSURE_STEAM.get(),net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(),net.createplant.registry.CEProcessFluids.WARM_WATER.get(),Fluids.WATER))remainingFlow-=core.outlet().drain(new FluidStack(fluid,remainingFlow),EXECUTE).getAmount();
+            int remainingFlow=flow;for(var phase:java.util.List.of(net.createplant.thermal.FluidForm.HIGH_PRESSURE_STEAM.stack(1),net.createplant.thermal.FluidForm.PRESSURISED_WATER.stack(1),net.createplant.thermal.FluidForm.WARM_WATER.stack(1),new FluidStack(Fluids.WATER,1)))remainingFlow-=core.outlet().drain(phase.copyWithAmount(remainingFlow),EXECUTE).getAmount();
             if (elapsed % 10 == 0) {
                 if (automatic) target = ReactorAutomaticControl.nextTarget(target, core.hottestKelvin(), core.averageCoolantKelvin(), flow, core.power(), core.nominalWatts(), core.reactivity(), core.scram());
                 else if (elapsed < SCRAM_TICK) {

@@ -2,7 +2,7 @@ package net.createplant.cloud;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import net.createplant.thermal.FluidIdentity;
+import net.createplant.thermal.FluidForm;
 import net.createplant.thermal.SteamGrades;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
@@ -22,7 +22,7 @@ public final class GasCloudStyles {
         private static Map<String, Style> defaults() {
             var result = new ConcurrentHashMap<String, Style>();
             var steam = new Style(true, 0xF5F8FF, 6);
-            for (var grade : SteamGrades.values()) result.put(id(grade.fluid()), steam);
+            for (var grade : SteamGrades.values()) result.put(id(grade.form()), steam);
             return result;
         }
     }
@@ -41,10 +41,11 @@ public final class GasCloudStyles {
     }
     /** A substance in a state it once had its own entry for keeps that entry's style, so gaseous water clouds as steam. */
     static String id(FluidStack stack) {
-        for (var variant : FluidIdentity.variants(stack.getFluid()))
-            if (find(id(variant)) != null && FluidIdentity.matches(stack, variant)) return id(variant);
+        for (var form : FluidForm.of(stack.getFluid()))
+            if (find(id(form)) != null && form.matches(stack)) return id(form);
         return id(stack.getFluid());
     }
+    static String id(FluidForm form) { return net.createplant.CreatePlant.MOD_ID + ":" + form.id(); }
     static Style find(String fluidId) {
         var style = Styles.BY_ID.get(fluidId);
         return style != null ? style : NAMED.get(fluidId);

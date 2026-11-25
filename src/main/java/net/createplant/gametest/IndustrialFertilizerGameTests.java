@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.content.processing.basin.BasinRecipe;
@@ -49,7 +50,7 @@ public final class IndustrialFertilizerGameTests {
         var co = drain(h, DistillationGameTests.outlet(column, 0), CEProcessFluids.CARBON_MONOXIDE.get(), 1000);
         var hydrogen = drain(h, DistillationGameTests.outlet(column, 1), CEFluids.HYDROGEN_GAS.get(), 1000);
         var compressed = Compression.convert(Compression.convert(hydrogen, true), true);
-        h.assertTrue(compressed.is(CEProcessFluids.COMPRESSED_HYDROGEN.get()), "Both existing compressor stages prepare the hydrogen");
+        h.assertTrue(FluidForm.COMPRESSED_HYDROGEN.matches(compressed), "Both existing compressor stages prepare the hydrogen");
 
         var tower = ReactionTowerGameTests.tower(h.getLevel(), h.absolutePos(BASE.east(8)), 3, CEItems.HYDROTREATING_CATALYST.toStack());
         var towerPort = ReactionTowerGameTests.port(tower);
@@ -109,7 +110,7 @@ public final class IndustrialFertilizerGameTests {
     public static void stirredVesselAndCreateBasinSupplyAllThreeNpkIngredients(GameTestHelper h) {
         var vessel = vessel(h, HeatCondition.HEATED);
         var port = vessel.port(Direction.NORTH);
-        fill(h, port, CEProcessFluids.LIQUID_AMMONIA.get(), 100);
+        fill(h, port, net.createplant.thermal.FluidForm.LIQUID_AMMONIA, 100);
         fill(h, port, CEProcessFluids.CARBON_DIOXIDE.get(), 500);
         run(vessel);
         var urea = take(h, vessel.itemPort(), CEItems.UREA.get(), 2);
@@ -158,6 +159,10 @@ public final class IndustrialFertilizerGameTests {
     private static void mix(GameTestHelper h, BasinBlockEntity basin, String id) {
         var recipe = h.getLevel().getRecipeManager().byKey(CreatePlant.location("mixing/" + id)).orElseThrow().value();
         h.assertTrue(BasinRecipe.apply(basin, recipe), "Create's basin performs " + id);
+    }
+
+    private static void fill(GameTestHelper h, IFluidHandler port, net.createplant.thermal.FluidForm form, int amount) {
+        fill(h, port, form.stack(amount));
     }
 
     private static void fill(GameTestHelper h, IFluidHandler port, Fluid fluid, int amount) {

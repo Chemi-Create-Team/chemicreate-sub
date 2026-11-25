@@ -2,7 +2,6 @@ package net.createplant.item;
 
 import net.createplant.cloud.GasClouds;
 import net.createplant.registry.CEWorldFluids;
-import net.createplant.thermal.FluidIdentity;
 import net.createplant.thermal.FluidState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -41,12 +40,7 @@ public final class StatefulBuckets {
 
     public static FluidStack contents(ItemStack container,Fluid nominal) {
         var saved=container.get(CEWorldFluids.BUCKET_CONTENTS.get());
-        return saved!=null && FluidIdentity.canonical(nominal).isSame(saved.fluid().value()) ? saved.stack() : new FluidStack(nominal,1000);
-    }
-
-    /** A bucket of a retired state entry: any stack of it loads as its substance's bucket, so it is never listed on its own. */
-    public static boolean retired(net.minecraft.world.item.Item item) {
-        return item instanceof net.minecraft.world.item.BucketItem bucket && FluidIdentity.legacy(bucket.content);
+        return saved!=null && nominal.isSame(saved.fluid().value()) ? saved.stack() : new FluidStack(nominal,1000);
     }
 
     public static boolean defaultState(FluidStack stack) {

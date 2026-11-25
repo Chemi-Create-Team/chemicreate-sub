@@ -116,11 +116,11 @@ public class ThermalControlGameTests {
     public static void rowDirectionSimulationReloadAndReversalPreserveFluid(GameTestHelper h) {
         var be=build(h.getLevel(),h.absolutePos(new BlockPos(5,2,5)),Direction.NORTH,2);var near=tube(be,0);var far=tube(be,1);var fluid=new FluidStack(Fluids.WATER,100);
         var before=be.saveWithoutMetadata(h.getLevel().registryAccess());h.assertTrue(near.fill(fluid,SIMULATE)==100 && before.equals(be.saveWithoutMetadata(h.getLevel().registryAccess())),"Simulation does not claim direction");
-        h.assertTrue(far.fill(fluid,EXECUTE)==100 && near.fill(fluid,EXECUTE)==0,"An executed fill claims only this row");shell(be,0).fill(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),100),EXECUTE);
+        h.assertTrue(far.fill(fluid,EXECUTE)==100 && near.fill(fluid,EXECUTE)==0,"An executed fill claims only this row");shell(be,0).fill(FluidForm.WARM_WATER.stack(100),EXECUTE);
         for(int i=0;i<5;i++)be.tickProcess();h.assertTrue(near.drain(17,EXECUTE).getAmount()==17,"Partial withdrawal returns its exact debit");
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());be.loadWithComponents(saved,h.getLevel().registryAccess());be.validateStructure();near=tube(be,0);far=tube(be,1);
         h.assertTrue(near.drain(100,EXECUTE).getAmount()==83,"Reload retains direction and remaining output");shell(be,1).drain(100,EXECUTE);
-        h.assertTrue(near.fill(fluid,EXECUTE)==100,"An empty row can reverse");shell(be,0).fill(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),100),EXECUTE);for(int i=0;i<5;i++)be.tickProcess();
+        h.assertTrue(near.fill(fluid,EXECUTE)==100,"An empty row can reverse");shell(be,0).fill(FluidForm.WARM_WATER.stack(100),EXECUTE);for(int i=0;i<5;i++)be.tickProcess();
         var reversed=far.drain(100,EXECUTE);h.assertTrue(reversed.getAmount()==100 && FluidState.temperature(reversed)==8,
             "Reversal keeps the same recipe and amount: "+reversed+" level="+FluidState.temperature(reversed)+" status="+be.status());h.succeed();
     }
@@ -171,7 +171,7 @@ public class ThermalControlGameTests {
         h.runAfterDelay(5,()->{
             for(var entry:motors.entrySet()) ((CreativeMotorBlockEntity)level.getBlockEntity(entry.getKey())).generatedSpeed.setValue(entry.getValue());
             ((FluidTankBlockEntity)level.getBlockEntity(coldFeed)).getTankInventory().fill(FluidThermal.at(new FluidStack(Fluids.WATER,1000),300),EXECUTE);
-            ((FluidTankBlockEntity)level.getBlockEntity(hotFeed)).getTankInventory().fill(new FluidStack(net.createplant.registry.CEProcessFluids.WARM_WATER.get(),1000),EXECUTE);
+            ((FluidTankBlockEntity)level.getBlockEntity(hotFeed)).getTankInventory().fill(FluidForm.WARM_WATER.stack(1000),EXECUTE);
         });
         if (pipesFirst) h.runAfterDelay(30,()->exchanger(level,base,Direction.EAST,3,ExchangerStructure.Kind.SHELL));
         h.runAfterDelay(400,()->{

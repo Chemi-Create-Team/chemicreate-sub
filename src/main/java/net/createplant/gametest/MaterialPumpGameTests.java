@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import java.util.List;
 import com.simibubi.create.AllBlocks;
@@ -94,7 +95,7 @@ public final class MaterialPumpGameTests {
         }
         h.setBlock(pump.west(), CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(PulsationTubeBlock.AXIS, Direction.Axis.X));
         var source = (FluidTankBlockEntity) h.getBlockEntity(pump.west());
-        h.assertTrue(source.getTankInventory().fill(new FluidStack(CEFluids.STEAM.get(), 500), EXECUTE) == 500, "The source receiver accepts its steam charge");
+        h.assertTrue(source.getTankInventory().fill(FluidForm.STEAM.stack(500), EXECUTE) == 500, "The source receiver accepts its steam charge");
         h.setBlock(pump, AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(PumpBlock.FACING, Direction.EAST));
         h.setBlock(pump.south(), AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS, Direction.Axis.X));
         h.setBlock(pump.south().west(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.EAST));
@@ -109,14 +110,14 @@ public final class MaterialPumpGameTests {
             var end = new OpenEndedPipe(new BlockFace(worldOutlet.west(), Direction.EAST));
             end.manageSource(h.getLevel(), null);
             var handler = end.provideHandler().getCapability();
-            h.assertTrue(handler.fill(new FluidStack(CEFluids.STEAM.get(), 500), SIMULATE) == 500
+            h.assertTrue(handler.fill(FluidForm.STEAM.stack(500), SIMULATE) == 500
                 && handler.getFluidInTank(0).isEmpty() && GasClouds.in(h.getLevel(), new AABB(worldOutlet)).isEmpty(),
                 "Simulating a steam outlet produces no clouds or inventory changes");
         });
         h.succeedWhen(() -> {
             var clouds = GasClouds.in(h.getLevel(), new AABB(worldOutlet));
             h.assertTrue(source.getTankInventory().isEmpty() && h.getLevel().getBlockState(worldOutlet).isAir()
-                && clouds.stream().anyMatch(cloud -> cloud.blockPosition().equals(worldOutlet) && cloud.content().is(CEFluids.STEAM.get()) && cloud.amount() <= 500),
+                && clouds.stream().anyMatch(cloud -> cloud.blockPosition().equals(worldOutlet) && FluidForm.STEAM.matches(cloud.content()) && cloud.amount() <= 500),
                 "The native pump vents finite steam at the air block without placing a fluid source, remaining=" + source.getTankInventory().getFluidAmount());
         });
     }

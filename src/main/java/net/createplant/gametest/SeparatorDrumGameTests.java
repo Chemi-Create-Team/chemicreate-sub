@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import java.util.HashSet;
@@ -58,7 +59,7 @@ public final class SeparatorDrumGameTests {
         for(int i=0;i<11;i++)root.process(.25);
         h.assertTrue(root.liquid().isEmpty() && root.feed().getAmount()==18000,"No batch completes before 60 ticks");root.process(.25);
         var liquid=port(level,at,Direction.DOWN).drain(100000,EXECUTE);var gas=port(level,at.above(),Direction.UP).drain(100000,EXECUTE);
-        h.assertTrue(root.feed().isEmpty() && liquid.is(CEProcessFluids.LIQUID_AMMONIA.get()) && liquid.getAmount()==2 && gas.is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()) && gas.getAmount()==16000,"Two layers process exactly two batches in 60 ticks");
+        h.assertTrue(root.feed().isEmpty() && FluidForm.LIQUID_AMMONIA.matches(liquid) && liquid.getAmount()==2 && FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(gas) && gas.getAmount()==16000,"Two layers process exactly two batches in 60 ticks");
         for(var side:Direction.Plane.HORIZONTAL)h.assertTrue(port(level,at.above(),side)!=null && port(level,at,side)==null,"Only the upper side exposes feed");
         h.assertTrue(port(level,at,Direction.UP)==null && port(level,at.above(),Direction.DOWN)==null,"The interior top and bottom are not ports");
         var single=column(level,at.east(4),1);single.process(1);

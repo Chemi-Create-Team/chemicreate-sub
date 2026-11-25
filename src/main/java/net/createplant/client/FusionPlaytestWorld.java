@@ -1,5 +1,6 @@
 package net.createplant.client;
 
+import net.createplant.thermal.FluidForm;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -297,7 +298,7 @@ public final class FusionPlaytestWorld {
         fill(level, front.below(2).west(3), new FluidStack(CEFusion.DEUTERIUM_GAS.get(), 1_000));
         fill(level, front.below().east(3), new FluidStack(CEFusion.TRITIUM_GAS.get(), 1_000));
         fill(level, centre.south(half + 2).below(),
-            FluidThermal.at(new FluidStack(CEFusion.LIQUID_HELIUM.get(), 1_000), FusionPhysics.LIQUID_HELIUM_KELVIN));
+            FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(1_000), FusionPhysics.LIQUID_HELIUM_KELVIN));
         fill(level, centre.east(half + 3).below(), new FluidStack(Fluids.WATER, 1_000));
         var blanket = ((FusionReactorControllerBlockEntity) level.getBlockEntity(CONTROLLER)).blanketPort();
         require(blanket.insertItem(0, new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()), false).isEmpty(), "The blanket cartridge installs");

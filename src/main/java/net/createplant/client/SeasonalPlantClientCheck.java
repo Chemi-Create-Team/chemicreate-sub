@@ -1,5 +1,6 @@
 package net.createplant.client;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllItems;
 import net.createplant.CreatePlant;
 import net.createplant.block.CoolingTowerStructure;
@@ -31,7 +32,7 @@ public final class SeasonalPlantClientCheck {
             if (built && ++ticks % 4 == 0) mc.getSingleplayerServer().execute(() -> {
                 var level = mc.getSingleplayerServer().overworld();
                 for (var at : ROOTS) if (level.getBlockEntity(at) instanceof CoolingTowerBlockEntity tower && tower.formed()) {
-                    tower.tank(0).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 16_000_000), EXECUTE);tower.tank(1).drain(16_000_000, EXECUTE);
+                    tower.tank(0).fill(FluidForm.WARM_WATER.stack(16_000_000), EXECUTE);tower.tank(1).drain(16_000_000, EXECUTE);
                 }
             });
             if (mc.screen == null && com.mojang.blaze3d.platform.InputConstants.isKeyDown(mc.getWindow().getWindow(), org.lwjgl.glfw.GLFW.GLFW_KEY_P)) phase = 3;
@@ -52,7 +53,7 @@ public final class SeasonalPlantClientCheck {
                     for (var cell : CoolingTowerStructure.cells(0)) level.setBlock(centre.offset(cell.offset()), cell.block().defaultBlockState(), 2);
                     var tower = (CoolingTowerBlockEntity) level.getBlockEntity(root);for (int n = 0; n < 200 && !tower.formed(); n++) tower.validateSlice();
                     if (!tower.formed()) throw new IllegalStateException("Seasonal tower fixture did not form");
-                    tower.tank(0).fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 16_000_000), EXECUTE);tower.process();tower.sendData();
+                    tower.tank(0).fill(FluidForm.WARM_WATER.stack(16_000_000), EXECUTE);tower.process();tower.sendData();
                 }
                 if (net.createplant.thermal.SeasonalThermal.available()) level.getServer().getCommands().performPrefixedCommand(level.getServer().createCommandSourceStack().withLevel(level), "season set mid_winter");
                 var player = level.getServer().getPlayerList().getPlayer(mc.player.getUUID());player.getAbilities().flying = true;player.onUpdateAbilities();player.connection.teleport(19, 90, -45, 0, -10);

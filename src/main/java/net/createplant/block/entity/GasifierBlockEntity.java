@@ -39,7 +39,11 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
      * (so one lit burner settles at 1000 C), and the body warms by its heat capacity. A batch takes 480 kJ for the endothermic gasification.
      */
     private static final double THERMAL_MASS = 8000, BURNER_WATTS = 1e6, WALL_WATTS_PER_KELVIN = 1020, BATCH_JOULES = 480_000, TICK_SECONDS = .05;
-    private static final TagKey<Fluid> STEAM_INPUTS = TagKey.create(Registries.FLUID, CreatePlant.location("gasifier_steam"));
+    /** The gasifier takes water only as steam, in any of the three steam grades; liquid water stays out. The gasifier_steam tag lists plain water for the recipe ingredient. */
+    private static boolean isSteam(FluidStack stack) {
+        return net.createplant.thermal.FluidForm.STEAM.matches(stack) || net.createplant.thermal.FluidForm.HIGH_PRESSURE_STEAM.matches(stack)
+            || net.createplant.thermal.FluidForm.SUPERHEATED_STEAM.matches(stack);
+    }
     // Tank indices are part of the saved inventory and include recovery-only slots.
     private static final int OXIDIZER = 0, STEAM = 1, GAS = 2, COOLANT_IN = 3, COOLANT_OUT = 4, QUENCH = 5;
 
@@ -284,7 +288,7 @@ public final class GasifierBlockEntity extends SmartBlockEntity implements IHave
             @Override public int getTanks() { return count; }
             @Override public FluidStack getFluidInTank(int index) { return slot(index) ? fluid(bank(index)) : FluidStack.EMPTY; }
             @Override public int getTankCapacity(int index) { return slot(index) ? capacity(bank(index)) : 0; }
-            @Override public boolean isFluidValid(int index, FluidStack stack) { return slot(index) && index == 0 && first == STEAM && stack.is(STEAM_INPUTS); }
+            @Override public boolean isFluidValid(int index, FluidStack stack) { return slot(index) && index == 0 && first == STEAM && isSteam(stack); }
             @Override public int fill(FluidStack stack, FluidAction action) {
                 return isFluidValid(0, stack) ? inventory.tanks[STEAM].fill(stack, action) : 0;
             }

@@ -1,5 +1,6 @@
 package net.createplant.block.entity;
 
+import net.createplant.thermal.FluidForm;
 import java.util.List;
 
 import com.simibubi.create.AllBlockEntityTypes;
@@ -56,7 +57,7 @@ public final class PipeGasFlow extends BlockEntityBehaviour {
         // which excludes chunk unloads and replacements such as adding casing.
         if (getWorld() instanceof ServerLevel level && level.getGameTime() - steamObserved < SILENCE_DELAY
             && level.hasChunkAt(getPos()) && level.getBlockState(getPos()).isAir())
-            GasClouds.release(level, getPos(), new FluidStack(CEFluids.STEAM.get(), 250));
+            GasClouds.release(level, getPos(), FluidForm.STEAM.stack(250));
     }
 
     @Override public void tick() {

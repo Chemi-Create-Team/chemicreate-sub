@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -320,10 +321,10 @@ public class RbmkGameTests {
         var channel=lead;var lookup=h.getLevel().registryAccess();var tag=channel.saveWithoutMetadata(lookup);
         tag.putInt("Coolant",1000);tag.putDouble("Specific",net.createplant.nuclear.ReactorCoolant.CP*ReactorPhysics.SATURATION_KELVIN+net.createplant.nuclear.ReactorCoolant.LATENT/2);channel.loadWithComponents(tag,lookup);
         var outlet=lead.core().outlet();
-        var steam=new FluidStack(net.createplant.registry.CEProcessFluids.HIGH_PRESSURE_STEAM.get(),1000);
+        var steam=FluidForm.HIGH_PRESSURE_STEAM.stack(1000);
         h.assertTrue(outlet.drain(steam,IFluidHandler.FluidAction.SIMULATE).getAmount()==500 && channel.coolantAmount()==1000,"Preview exposes only the steam fraction without mutation");
         int gas=outlet.drain(steam,IFluidHandler.FluidAction.EXECUTE).getAmount();
-        int liquid=outlet.drain(new FluidStack(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get(),1000),IFluidHandler.FluidAction.EXECUTE).getAmount();
+        int liquid=outlet.drain(FluidForm.PRESSURISED_WATER.stack(1000),IFluidHandler.FluidAction.EXECUTE).getAmount();
         h.assertTrue(gas==500 && liquid==500 && channel.coolantAmount()==0,"Graded ports export both finite phases exactly once");h.succeed();
     }
 

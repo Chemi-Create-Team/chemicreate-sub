@@ -67,7 +67,6 @@ public class AuditGameTests {
         var hidden=new TreeSet<String>();for (var e:BuiltInRegistries.ITEM.entrySet()) if (e.getKey().location().getNamespace().equals(CreatePlant.MOD_ID) && !shown.contains(e.getValue())) hidden.add(e.getKey().location().getPath());
         // Hidden legacy gas and steam buckets keep their registered assets.
         hidden.removeAll(Set.of("steam_bucket", "raw_process_gas_bucket"));hidden.removeIf(path->path.endsWith("_large_flywheel"));
-        hidden.removeIf(path->net.createplant.item.StatefulBuckets.retired(BuiltInRegistries.ITEM.get(CreatePlant.location(path))));
         h.assertTrue(hidden.isEmpty(),"Items missing from the creative tab: "+hidden);
         h.assertTrue(problems.isEmpty(),"Missing assets, translations or loot: "+problems);
         h.succeed();

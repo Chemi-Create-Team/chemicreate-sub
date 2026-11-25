@@ -1,5 +1,6 @@
 package net.createplant.block.entity;
 
+import net.createplant.thermal.FluidForm;
 import java.util.*;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -161,7 +162,7 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
     public int requiredHeight() { return DistillationProfile.requiredHeight(activeRecipe); }
     public int cycleTicks() { var fraction=DistillationProfile.fraction(activeRecipe);return fraction==null ? DistillationProfile.CYCLE_TICKS : fraction.ticks(); }
     private static FluidStack template(String recipe,int slot) {
-        if(recipe.equals("air"))return slot<=DistillationProfile.NITROGEN ? new FluidStack(DistillationProfile.fluid(slot),1) : FluidStack.EMPTY;
+        if(recipe.equals("air"))return slot<=DistillationProfile.NITROGEN ? DistillationProfile.stack(slot,1) : FluidStack.EMPTY;
         var fraction=DistillationProfile.fraction(recipe);
         return fraction==null || slot<0 || slot>fraction.outputs().size() ? FluidStack.EMPTY : slot==0 ? fraction.input() : fraction.outputs().get(slot-1);
     }
@@ -354,7 +355,7 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
      * Air pumped in compressed and cooled is liquefied in the column's own cold box, as in a real air separation unit; 1000 mB of it
      * is one batch. The pressure is that of the vessel it is pumped from.
      */
-    public static boolean compressedAir(FluidStack stack) { return stack.is(CEProcessFluids.COMPRESSED_AIR.get()); }
+    public static boolean compressedAir(FluidStack stack) { return FluidForm.COMPRESSED_AIR.matches(stack); }
     public static final double COLD_BOX_KELVIN=313.15, COLD_BOX_PA=6e5;
     private class Port implements IFluidHandler {
         private final FractionatingColumnBlockEntity owner;
@@ -367,13 +368,13 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
         @Override public FluidStack getFluidInTank(int tank) {
             if (isRemoved() || generation!=owner.epoch || tank<0 || tank>=getTanks()) return FluidStack.EMPTY;
             if (owner.airMode() && slot==DistillationProfile.NITROGEN && tank==1) {
-                int amount=owner.stock(slot)/nitrogenRatio();return amount==0 ? FluidStack.EMPTY : net.createplant.thermal.FluidThermal.at(new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),amount),77.36);
+                int amount=owner.stock(slot)/nitrogenRatio();return amount==0 ? FluidStack.EMPTY : net.createplant.thermal.FluidThermal.at(FluidForm.LIQUID_NITROGEN.stack(amount),77.36);
             }
             int index=slot<0 ? tank : slot,amount=owner.stock(index);
             // Oxygen is held as gas but leaves as liquid: only whole liquid mB show, the rest waits in the column.
             if (owner.airMode() && index==DistillationProfile.OXYGEN) amount/=DistillationProfile.gasPerLiquid(index);
             var template=template(owner.activeRecipe,index);
-            return amount==0 || template.isEmpty() ? FluidStack.EMPTY : owner.airMode() && index==DistillationProfile.OXYGEN ? new FluidStack(DistillationProfile.liquid(index),amount) : template.copyWithAmount(amount);
+            return amount==0 || template.isEmpty() ? FluidStack.EMPTY : owner.airMode() && index==DistillationProfile.OXYGEN ? DistillationProfile.liquid(index).stack(amount) : template.copyWithAmount(amount);
         }
         private String recipeFor(FluidStack stack) { var fraction=DistillationProfile.fraction(stack);return compressedAir(stack) ? "air" : fraction==null ? "" : fraction.id(); }
         @Override public boolean isFluidValid(int tank,FluidStack stack) {
@@ -385,22 +386,22 @@ public class FractionatingColumnBlockEntity extends SmartBlockEntity implements 
             int n=Math.min(stack.getAmount(),Math.max(0,owner.capacity()-owner.stock(slot)));
             if (n>0 && action.execute() && !level.isClientSide()) {owner.adoptRecipe(recipeFor(stack));owner.move(slot,n);}return n;
         }
-        private net.minecraft.world.level.material.Fluid leaving() { return owner.airMode() && slot==DistillationProfile.OXYGEN ? DistillationProfile.liquid(slot) : template(owner.activeRecipe,slot).getFluid(); }
+        private boolean leaves(FluidStack request) { return owner.airMode() && slot==DistillationProfile.OXYGEN ? DistillationProfile.liquid(slot).matches(request) : request.is(template(owner.activeRecipe,slot).getFluid()); }
         @Override public FluidStack drain(FluidStack request,FluidAction action) {
-            if (output && owner.airMode() && slot==DistillationProfile.NITROGEN && request.is(CEProcessFluids.LIQUID_NITROGEN.get())) {
+            if (output && owner.airMode() && slot==DistillationProfile.NITROGEN && FluidForm.LIQUID_NITROGEN.matches(request)) {
                 if (!live() || request.isEmpty()) return FluidStack.EMPTY;
                 int amount=Math.min(request.getAmount(),owner.stock(slot)/nitrogenRatio());if (amount==0) return FluidStack.EMPTY;
                 if (action.execute() && !level.isClientSide()) owner.move(slot,-amount*nitrogenRatio());
-                return net.createplant.thermal.FluidThermal.at(new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),amount),77.36);
+                return net.createplant.thermal.FluidThermal.at(FluidForm.LIQUID_NITROGEN.stack(amount),77.36);
             }
-            return output && request.is(leaving()) ? drain(request.getAmount(),action) : FluidStack.EMPTY;
+            return output && leaves(request) ? drain(request.getAmount(),action) : FluidStack.EMPTY;
         }
-        private int nitrogenRatio() { return net.createplant.thermal.PhaseChange.ofLiquid(new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),1)).ratio(); }
+        private int nitrogenRatio() { return net.createplant.thermal.PhaseChange.ofLiquid(FluidForm.LIQUID_NITROGEN.stack(1)).ratio(); }
         @Override public FluidStack drain(int amount,FluidAction action) {
             if (!output || !live() || amount<=0) return FluidStack.EMPTY;
             int per=owner.airMode() && slot==DistillationProfile.OXYGEN ? DistillationProfile.gasPerLiquid(slot) : 1;
             int n=Math.min(amount,owner.stock(slot)/per);if (n==0) return FluidStack.EMPTY;
-            if (action.execute() && !level.isClientSide()) owner.move(slot,-n*per);return new FluidStack(leaving(),n);
+            if (action.execute() && !level.isClientSide()) owner.move(slot,-n*per);return owner.airMode() && slot==DistillationProfile.OXYGEN ? DistillationProfile.liquid(slot).stack(n) : new FluidStack(template(owner.activeRecipe,slot).getFluid(),n);
         }
     }
 }

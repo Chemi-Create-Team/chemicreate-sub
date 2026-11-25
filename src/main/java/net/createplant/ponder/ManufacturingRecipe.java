@@ -1,5 +1,6 @@
 package net.createplant.ponder;
 
+import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,8 +76,8 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
 
     private static ManufacturingRecipe operation(String name) {
         if (name.equals("cool_ammonia") || name.equals("condense_high_pressure_steam") || name.startsWith("exchange_")) {
-            var source = new FluidStack(name.startsWith("exchange_olefins_") ? CEProcessFluids.HOT_OLEFINS.get()
-                : name.equals("exchange_chlorine_ammonia") ? CEChlorAlkali.CHLORINE.get() : name.equals("condense_high_pressure_steam") ? CEProcessFluids.HIGH_PRESSURE_STEAM.get() : CEFluids.AMMONIA_GAS.get(), 1);
+            var source = name.startsWith("exchange_olefins_") ? FluidForm.HOT_OLEFINS.stack(1)
+                : name.equals("exchange_chlorine_ammonia") ? new FluidStack(CEChlorAlkali.CHLORINE.get(), 1) : name.equals("condense_high_pressure_steam") ? FluidForm.HIGH_PRESSURE_STEAM.stack(1) : new FluidStack(CEFluids.AMMONIA_GAS.get(), 1);
             if(name.equals("cool_ammonia") || name.equals("condense_high_pressure_steam")) {
                 boolean high=name.equals("condense_high_pressure_steam");
                 source=net.createplant.thermal.FluidState.with(new FluidStack(Fluids.WATER,1000),high ? 12 : 10,high ? 12 : 4);
@@ -84,7 +85,7 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
                 return new ManufacturingRecipe(List.of(),List.of(source),List.of(),List.of(step.output(step.batches(1000))),
                     ItemStack.EMPTY,ReactorModule.NONE,HeatCondition.NONE);
             }
-            var coolant=new FluidStack(name.endsWith("_oxygen") ? CEFluids.LIQUID_OXYGEN.get() : CEProcessFluids.LIQUID_AMMONIA.get(),1);
+            var coolant=name.endsWith("_oxygen") ? FluidForm.LIQUID_OXYGEN.stack(1) : FluidForm.LIQUID_AMMONIA.stack(1);
             if(name.equals("exchange_chlorine_ammonia"))coolant=net.createplant.thermal.FluidState.with(coolant,1,4);
             int a=net.createplant.thermal.FluidState.temperature(source), b=net.createplant.thermal.FluidState.temperature(coolant);
             if(!name.startsWith("exchange_olefins")) {
@@ -102,10 +103,10 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
             var source = new FluidStack(CEFluids.NITROGEN_GAS.get(), 1);
             var conversion = net.createplant.thermal.ThermalStreams.liquefaction(source);source.setAmount(conversion.inputAmount());
             return new ManufacturingRecipe(List.of(), List.of(source, new FluidStack(Fluids.WATER, 50)), List.of(),
-                List.of(conversion.result(source, 1), new FluidStack(CEProcessFluids.WARM_WATER.get(), 50)), ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
+                List.of(conversion.result(source, 1), FluidForm.WARM_WATER.stack(50)), ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
         }
         if (name.equals("tube_steam")) return new ManufacturingRecipe(List.of(), List.of(new FluidStack(Fluids.WATER, 1000)),
-            List.of(), List.of(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 1000)), ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.HEATED);
+            List.of(), List.of(FluidForm.HIGH_PRESSURE_STEAM.stack(1000)), ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.HEATED);
         if (name.equals("haber_bosch")) {
             var display=net.createplant.compat.jei.PlantProcess.ammoniaSynthesis().getFirst();
             return new ManufacturingRecipe(List.of(),display.fluids(),List.of(),display.fluidResults(),
@@ -119,8 +120,8 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
                 ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
         }
         if (name.equals("air_separation")) {
-            return new ManufacturingRecipe(List.of(), List.of(new FluidStack(CEProcessFluids.COMPRESSED_AIR.get(), DistillationProfile.AIR_BATCH)), List.of(),
-                List.of(new FluidStack(CEFluids.LIQUID_OXYGEN.get(), DistillationProfile.PRODUCT_AMOUNT[0]),
+            return new ManufacturingRecipe(List.of(), List.of(FluidForm.COMPRESSED_AIR.stack(DistillationProfile.AIR_BATCH)), List.of(),
+                List.of(FluidForm.LIQUID_OXYGEN.stack(DistillationProfile.PRODUCT_AMOUNT[0]),
                     new FluidStack(CEFluids.ARGON_GAS.get(), DistillationProfile.PRODUCT_AMOUNT[1]), new FluidStack(CEFluids.NITROGEN_GAS.get(), DistillationProfile.PRODUCT_AMOUNT[2])),
                 ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
         }

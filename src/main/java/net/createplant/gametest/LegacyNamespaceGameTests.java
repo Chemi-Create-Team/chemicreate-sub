@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import net.createplant.CreatePlant;
 import net.createplant.registry.CEBlockEntityTypes;
 import net.createplant.registry.CEBlocks;
@@ -28,7 +29,6 @@ public final class LegacyNamespaceGameTests {
     public static void oldIdsLoadAsTheCurrentObjects(GameTestHelper h) {
         h.assertTrue(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(old("tank_casing"))) == CEBlocks.TANK_CASING.get()
             && BuiltInRegistries.ITEM.get(ResourceLocation.parse(old("steel_ingot"))) == CEItems.STEEL_INGOT.get()
-            && BuiltInRegistries.FLUID.get(ResourceLocation.parse(old("steam"))) == CEFluids.STEAM.get()
             && BuiltInRegistries.BLOCK_ENTITY_TYPE.get(ResourceLocation.parse(old("tank_casing"))) == CEBlockEntityTypes.TANK_CASING.get(),
             "Old block, item, fluid and block entity ids resolve to the current ones");
         var boiler = ResourceLocation.fromNamespaceAndPath(CreatePlant.MOD_ID, "tubular_boiler");
@@ -42,9 +42,9 @@ public final class LegacyNamespaceGameTests {
         var item = new CompoundTag();item.putString("id", old("steel_ingot"));item.putInt("count", 5);
         var stack = ItemStack.parseOptional(lookup, item);
         h.assertTrue(stack.is(CEItems.STEEL_INGOT.get()) && stack.getCount() == 5, "A saved stack with the old id keeps its item and count: " + stack);
-        var fluid = new CompoundTag();fluid.putString("id", old("steam"));fluid.putInt("amount", 250);
+        var fluid = new CompoundTag();fluid.putString("id", old("nitrogen_gas"));fluid.putInt("amount", 250);
         var saved = FluidStack.parseOptional(lookup, fluid);
-        h.assertTrue(saved.is(CEFluids.STEAM.get()) && saved.getAmount() == 250, "A saved fluid with the old id keeps its fluid and amount: " + saved);
+        h.assertTrue(saved.is(net.createplant.registry.CEFluids.NITROGEN_GAS.get()) && saved.getAmount() == 250, "A saved fluid with the old id keeps its fluid and amount: " + saved);
         h.succeed();
     }
 }

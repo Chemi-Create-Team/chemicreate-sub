@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.kinetics.steamEngine.SteamEngineBlock;
@@ -181,7 +182,7 @@ public final class IndustrialExpansionGameTests {
         var root = boiler(h, BASE, Direction.Axis.X, 3);burner(h, BASE, true);burner(h, BASE.east(), true);burner(h, BASE.east(2), true);
         var boiler = (HorizontalTankBlockEntity) h.getBlockEntity(BASE.east(2));
         port(h, BASE, Direction.NORTH).fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE);
-        boiler.steam().fill(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000),FluidAction.EXECUTE);
+        boiler.steam().fill(FluidForm.SUPERHEATED_STEAM.stack(1000),FluidAction.EXECUTE);
         boiler.generateSteam();
         var mixed = boiler.steam().getFluid();
         // Steam is water in its gas state, so leftover superheated steam and new steam share the buffer at their weighted average.

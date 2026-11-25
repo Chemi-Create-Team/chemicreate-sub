@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
@@ -98,7 +99,7 @@ public final class HorizontalTankBoilerFlowGameTests {
         h.runAfterDelay(175, () -> {
             h.assertTrue(source.getFluidAmount() < charge && outlet.steam().getFluidAmount() > 0 && stored.isEmpty(),
                 "The stock feed pump supplies finite water while the stopped steam pump exports nothing");
-            h.assertTrue(outlet.steam().getFluid().is(CEFluids.STEAM.get()), "A normally fired burner creates atmospheric steam");
+            h.assertTrue(FluidForm.STEAM.matches(outlet.steam().getFluid()), "A normally fired burner creates atmospheric steam");
         });
         h.runAfterDelay(180, () -> steamMotor.generatedSpeed.setValue(128));
         h.runAfterDelay(192, () -> steamMotor.generatedSpeed.setValue(0));
@@ -118,12 +119,12 @@ public final class HorizontalTankBoilerFlowGameTests {
         h.runAfterDelay(210, () -> steamMotor.generatedSpeed.setValue(128));
         h.runAfterDelay(222, () -> steamMotor.generatedSpeed.setValue(0));
         h.runAfterDelay(240, () -> {
-            h.assertTrue(stored.getFluidAmount() > pausedAmount[0] && stored.getFluid().is(CEFluids.STEAM.get()),
+            h.assertTrue(stored.getFluidAmount() > pausedAmount[0] && FluidForm.STEAM.matches(stored.getFluid()),
                 "Restarting the same native pump resumes steam export without replacing the pipe or boiler");
             int converted = charge - source.getFluidAmount() - root.getTankInventory().getFluidAmount();
             h.assertTrue(converted == outlet.steam().getFluidAmount() + stored.getFluidAmount(),
                 "Feedwater reduction equals the boiler's steam plus the complete receiver water/steam mass");
-            h.assertTrue((outlet.steam().isEmpty() || outlet.steam().getFluid().is(CEFluids.STEAM.get())) && !outlet.isRemoved() && !receiverOwner.isRemoved(),
+            h.assertTrue((outlet.steam().isEmpty() || FluidForm.STEAM.matches(outlet.steam().getFluid())) && !outlet.isRemoved() && !receiverOwner.isRemoved(),
                 "The fired boiler maintains its atmospheric outlet and the heat-resistant receiver remains intact");
             h.succeed();
         });

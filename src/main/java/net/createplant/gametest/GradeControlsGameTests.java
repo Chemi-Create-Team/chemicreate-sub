@@ -24,7 +24,7 @@ public final class GradeControlsGameTests {
         var valve = (PressureValveBlockEntity) h.getBlockEntity(at);
         var in = valve.port(Direction.WEST);
         var out = valve.port(Direction.EAST);
-        var compressed = new FluidStack(CEProcessFluids.COMPRESSED_AIR.get(), 3200);
+        var compressed = FluidForm.COMPRESSED_AIR.stack(3200);
         FluidState.setTemperature(compressed, 12);
         h.assertTrue(in.fill(compressed, EXECUTE) == 3200 && Compression.airVolume(compressed) == 200, "Compressed stock occupies 200 mB");
         valve.tick();
@@ -50,21 +50,21 @@ public final class GradeControlsGameTests {
     @GameTest(template="test_petrochemical")
     public static void reducingValveHasSeparateDirectionalPortsAndRetainsSavedContents(GameTestHelper h) {
         var at=new BlockPos(2,2,2);h.setBlock(at,CEPressure.REDUCER.get().defaultBlockState().setValue(PressureValveBlock.FACING,Direction.EAST).setValue(PressureValveBlock.AXIS,Direction.Axis.X));
-        var valve=(PressureValveBlockEntity)h.getBlockEntity(at);var feed=new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),1300);
+        var valve=(PressureValveBlockEntity)h.getBlockEntity(at);var feed=FluidForm.COMPRESSED_HYDROGEN.stack(1300);
         var before=valve.saveWithoutMetadata(h.getLevel().registryAccess());
         h.assertTrue(valve.port(Direction.WEST).fill(feed,SIMULATE)==1300 && before.equals(valve.saveWithoutMetadata(h.getLevel().registryAccess())),"Simulation never changes stock");
         h.assertTrue(valve.port(Direction.EAST).fill(feed,EXECUTE)==0 && valve.port(Direction.UP)==null,"No reverse filling or side port");
         h.assertTrue(valve.port(Direction.WEST).fill(feed,EXECUTE)==1300,"Receive high pressure gas");valve.tick();
         var tag=valve.saveWithoutMetadata(h.getLevel().registryAccess());valve.loadWithComponents(tag,h.getLevel().registryAccess());
         var out=valve.port(Direction.EAST).drain(4000,EXECUTE);
-        h.assertTrue(out.is(CEProcessFluids.PRESSURISED_HYDROGEN.get()) && out.getAmount()==1300 && valve.port(Direction.WEST).drain(1,EXECUTE).isEmpty(),"Reload and conversion preserve amount and direction");h.succeed();
+        h.assertTrue(FluidForm.PRESSURISED_HYDROGEN.matches(out) && out.getAmount()==1300 && valve.port(Direction.WEST).drain(1,EXECUTE).isEmpty(),"Reload and conversion preserve amount and direction");h.succeed();
     }
     @GameTest(template="test_petrochemical")
     public static void reducingValveWaitsWhileItsOutletIsFullAndResumesWhenDrained(GameTestHelper h) {
         var at=new BlockPos(2,2,2);h.setBlock(at,CEPressure.REDUCER.get().defaultBlockState().setValue(PressureValveBlock.FACING,Direction.EAST).setValue(PressureValveBlock.AXIS,Direction.Axis.X));
         var valve=(PressureValveBlockEntity)h.getBlockEntity(at);var inlet=valve.port(Direction.WEST);var outlet=valve.port(Direction.EAST);
-        inlet.fill(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),4000),EXECUTE);valve.tick();
-        inlet.fill(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),1000),EXECUTE);valve.tick();valve.tick();
+        inlet.fill(FluidForm.COMPRESSED_HYDROGEN.stack(4000),EXECUTE);valve.tick();
+        inlet.fill(FluidForm.COMPRESSED_HYDROGEN.stack(1000),EXECUTE);valve.tick();valve.tick();
         h.assertTrue(valve.waiting() && outlet.getFluidInTank(0).getAmount()==4000 && inlet.getFluidInTank(0).getAmount()==1000,"A full outlet parks the valve");
         h.assertTrue(outlet.drain(600,EXECUTE).getAmount()==600 && !valve.waiting(),"Draining the outlet wakes it");valve.tick();
         h.assertTrue(outlet.getFluidInTank(0).getAmount()==4000 && inlet.getFluidInTank(0).getAmount()==400,"It converts again without losing gas");h.succeed();
@@ -73,9 +73,9 @@ public final class GradeControlsGameTests {
     public static void gaugeThresholdAndComparatorUseFluidGradeInsteadOfStoredAmount(GameTestHelper h) {
         var at=new BlockPos(2,2,2);h.setBlock(at,CETransport.PIPE_PRESSURE_GAUGE.get().defaultBlockState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
         var gauge=(PipeGaugeBlockEntity)h.getBlockEntity(at);gauge.threshold.setValue(1);
-        var fluids=java.util.List.of(CEFluids.HYDROGEN_GAS,CEProcessFluids.PRESSURISED_HYDROGEN,CEProcessFluids.COMPRESSED_HYDROGEN);
+        var fluids=java.util.List.of(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1),net.createplant.thermal.FluidForm.PRESSURISED_HYDROGEN.stack(1),net.createplant.thermal.FluidForm.COMPRESSED_HYDROGEN.stack(1));
         int[] signals={4,8,11};
-        for(int i=0;i<3;i++){gauge.observe(new FluidStack(fluids.get(i).get(),1));gauge.tick();h.assertTrue(gauge.reading()==i+1 && gauge.analogSignal()==signals[i] && gauge.alarm()==(i>0),"Grade controls needle, comparator and alarm across the five pressure grades");}
+        for(int i=0;i<3;i++){gauge.observe(fluids.get(i).copy());gauge.tick();h.assertTrue(gauge.reading()==i+1 && gauge.analogSignal()==signals[i] && gauge.alarm()==(i>0),"Grade controls needle, comparator and alarm across the five pressure grades");}
         h.succeed();
     }
     @GameTest(template="test_petrochemical")

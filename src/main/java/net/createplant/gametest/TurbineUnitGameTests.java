@@ -91,10 +91,7 @@ public final class TurbineUnitGameTests {
                                         && first.getSteamCapability()
                                                         .fill(
                                                                 FluidThermal.at(
-                                                                        new FluidStack(
-                                                                                CEFluids.STEAM
-                                                                                        .get(),
-                                                                                1),
+                                                                        net.createplant.thermal.FluidForm.STEAM.stack(1),
                                                                         700),
                                                                 SIMULATE)
                                                 == 0,
@@ -219,7 +216,7 @@ public final class TurbineUnitGameTests {
     public static void splitPreservesNeighborsAndStopsPower(GameTestHelper h) {
         var units = stage(h, TurbineUnit.Stage.HIGH, Direction.Axis.X, new BlockPos(5, 6, 10));
         var port = rotor(h, units.getFirst()).getSteamCapability();
-        var feed = FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 80000), 700);
+        var feed = FluidThermal.at(FluidForm.HIGH_PRESSURE_STEAM.stack(80000), 700);
         h.assertTrue(
                 port == rotor(h, units.getLast()).getSteamCapability()
                         && port.getTankCapacity(0) == 80000,
@@ -304,7 +301,7 @@ public final class TurbineUnitGameTests {
                                 .getSteamCapability()
                                 .fill(
                                         FluidThermal.at(
-                                                new FluidStack(net.createplant.registry.CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 40000), 700),
+                                                FluidForm.HIGH_PRESSURE_STEAM.stack(40000), 700),
                                         EXECUTE)
                         == 40000,
                 "The completed HP takes steam");

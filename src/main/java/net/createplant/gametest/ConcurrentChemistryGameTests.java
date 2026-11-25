@@ -133,7 +133,7 @@ public class ConcurrentChemistryGameTests {
                         () ->
                                 ((RadiatorBlockEntity) level.getBlockEntity(fan.below(2).north()))
                                         .port(Direction.NORTH),
-                        f.apply("hot_nitric_oxide_mixture")));
+                        f.apply("cold_nitric_oxide_mixture")));
         links.add(
                 new Link(
                         () ->

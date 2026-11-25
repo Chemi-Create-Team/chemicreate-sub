@@ -56,19 +56,6 @@ public final class MixtureHelper {
         } catch (IllegalArgumentException error) { return false; }
     }
 
-    public static void migrateContents(FluidStack stack) {
-        if(!isMixture(stack) || stack.isEmpty())return;
-        var contents=stack.get(CEMixtures.MIXTURE_CONTENTS.get());
-        if(contents==null)return;
-        var patches=stack.getOrDefault(CEMixtures.MIXTURE_DATA.get(),MixtureData.EMPTY);
-        boolean oldKey=false;
-        for(var id:contents.amounts().keySet())if(FluidIdentity.legacy(BuiltInRegistries.FLUID.get(id))) { oldKey=true;break; }
-        if(!oldKey)return;
-        var migrated=parts(contents,patches);
-        writeComponents(stack,migrated);
-        applyAverageState(stack,migrated);
-    }
-
     private static Map<ResourceLocation,FluidStack> parts(MixtureContents contents,MixtureData data) {
         var parts=new TreeMap<ResourceLocation,FluidStack>();
         for(var entry:contents.amounts().entrySet()) {

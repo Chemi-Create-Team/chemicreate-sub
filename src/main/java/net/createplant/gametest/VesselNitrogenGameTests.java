@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.jesz.createdieselgenerators.CDGBlocks;
 import com.jesz.createdieselgenerators.content.tools.FueledToolItem;
 import com.simibubi.create.AllBlocks;
@@ -36,7 +37,7 @@ public class VesselNitrogenGameTests {
         BlockPos base = new BlockPos(8, 2, 8);
         var owner = DistillationGameTests.build(h.getLevel(), h.absolutePos(base), 2, 14);
         try {
-            h.assertTrue(DistillationGameTests.inlet(owner, 2).fill(FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.COMPRESSED_AIR.get(), 10000), 300), EXECUTE) == 10000,
+            h.assertTrue(DistillationGameTests.inlet(owner, 2).fill(FluidThermal.at(FluidForm.COMPRESSED_AIR.stack(10000), 300), EXECUTE) == 10000,
                 "Ten real compressed-air batches enter the fourteen-layer air separator");
         } finally { }
         DistillationGameTests.run(owner, 10 * DistillationProfile.CYCLE_TICKS + 5);
@@ -44,11 +45,11 @@ public class VesselNitrogenGameTests {
         var outlet = DistillationGameTests.outlet(owner, 13);
         h.assertTrue(initial == 7800 && owner.stock(DistillationProfile.AIR) == 0 && outlet.getTanks() == 2
             && outlet.getFluidInTank(0).is(CEFluids.NITROGEN_GAS.get()) && outlet.getFluidInTank(0).getAmount() == initial
-            && outlet.getFluidInTank(1).is(CEProcessFluids.LIQUID_NITROGEN.get()) && outlet.getFluidInTank(1).getAmount() == 12,
+            && FluidForm.LIQUID_NITROGEN.matches(outlet.getFluidInTank(1)) && outlet.getFluidInTank(1).getAmount() == 12,
             "The nitrogen outlet advertises gas and floor(stock / 646) liquid without duplicating its stored material");
-        var liquidRequest = new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(), 3);
+        var liquidRequest = FluidForm.LIQUID_NITROGEN.stack(3);
         var preview = outlet.drain(liquidRequest, SIMULATE);
-        h.assertTrue(preview.getAmount() == 3 && preview.is(CEProcessFluids.LIQUID_NITROGEN.get())
+        h.assertTrue(preview.getAmount() == 3 && FluidForm.LIQUID_NITROGEN.matches(preview)
             && owner.stock(DistillationProfile.NITROGEN) == initial && outlet.drain(100, SIMULATE).getAmount() == 100,
             "Simulating either phase leaves their shared finite gas-equivalent stock untouched");
         var liquid = outlet.drain(liquidRequest, EXECUTE);
@@ -69,7 +70,7 @@ public class VesselNitrogenGameTests {
         // A native canister supplies an ordinary fluid filter sample; the sample is independent of the plant inventory.
         var sample = new ItemStack(CDGBlocks.CANISTER.asItem());
         var sampleContainer = ((FueledToolItem) sample.getItem()).getFluidHandler(sample);
-        h.assertTrue(sampleContainer.fill(FluidThermal.at(new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(), 1000), 77.36), EXECUTE) == 1000,
+        h.assertTrue(sampleContainer.fill(FluidThermal.at(FluidForm.LIQUID_NITROGEN.stack(1000), 77.36), EXECUTE) == 1000,
             "A real fluid container can hold the liquid-nitrogen filter sample");
         h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(motor)).generatedSpeed.setValue(128));
         h.runAfterDelay(40, () -> {
@@ -78,7 +79,7 @@ public class VesselNitrogenGameTests {
             boolean accepted = selection.setFilter(sample);
             var current = DistillationGameTests.outlet(owner, 13);
             var actualLiquid = current.getFluidInTank(1);var actualGas = current.getFluidInTank(0);
-            boolean untrackedMatch = selection.test(new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(), 1));
+            boolean untrackedMatch = selection.test(FluidForm.LIQUID_NITROGEN.stack(1));
             boolean actualMatch = selection.test(actualLiquid), gasMatch = selection.test(actualGas);
             var resolved = FilterItemStack.of(sample).fluid(h.getLevel());
             h.assertTrue(accepted && actualMatch && !gasMatch,
@@ -92,7 +93,7 @@ public class VesselNitrogenGameTests {
             var received = stored.getFluid();
             var live = DistillationGameTests.outlet(owner, 13);
             int remaining = owner.stock(DistillationProfile.NITROGEN);
-            h.assertTrue(received.is(CEProcessFluids.LIQUID_NITROGEN.get()) && received.getAmount() == 8 && remaining == 594
+            h.assertTrue(FluidForm.LIQUID_NITROGEN.matches(received) && received.getAmount() == 8 && remaining == 594
                 && live.getFluidInTank(1).isEmpty() && live.getFluidInTank(0).getAmount() == 594,
                 "An outlet-mounted smart pipe and real Create pump extract only whole liquid mB and retain the gas remainder: stock=" + remaining
                     + ", destination=" + received + ", filter=" + selection.getFilter());

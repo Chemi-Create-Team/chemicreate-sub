@@ -323,7 +323,7 @@ public final class SteamAcidPlaytestWorld {
 
     private static void nitric(ServerLevel level, long ticks) {
         var reaction = ReactionTowerGameTests.port(nitricReactor);
-        if (nitricStep == 0 && move(reaction, port(level, FAN.below(2).north(), Direction.NORTH), CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(), 750)) {
+        if (nitricStep == 0 && move(reaction, port(level, FAN.below(2).north(), Direction.NORTH), net.createplant.thermal.FluidForm.HOT_NITRIC_OXIDE_MIXTURE, 750)) {
             RESULTS.put("ammonia_oxidation_tick", ticks);
             nitricStep = 1;
         }
@@ -492,12 +492,19 @@ public final class SteamAcidPlaytestWorld {
 
     /** One measured transfer between exposed ports, acting as the operator carrying an intermediate to the next station. */
     private static boolean move(IFluidHandler source, IFluidHandler target, Fluid fluid, int amount) {
-        var request = stack(fluid, amount);
+        return move(source, target, stack(fluid, amount), stored -> stored.is(fluid), amount);
+    }
+
+    private static boolean move(IFluidHandler source, IFluidHandler target, net.createplant.thermal.FluidForm form, int amount) {
+        return move(source, target, form.stack(amount), form::matches, amount);
+    }
+
+    private static boolean move(IFluidHandler source, IFluidHandler target, FluidStack request, java.util.function.Predicate<FluidStack> wanted, int amount) {
         var sample = source.drain(request, SIMULATE);
         if (sample.isEmpty()) {
             for (int slot = 0; slot < source.getTanks(); slot++) {
                 var stored = source.getFluidInTank(slot);
-                if (stored.is(fluid)) {
+                if (wanted.test(stored)) {
                     sample = source.drain(stored.copyWithAmount(amount), SIMULATE);
                     if (!sample.isEmpty()) break;
                 }

@@ -24,7 +24,6 @@ public class ProcessRemovalGameTests {
             // Carriers and air's trace gases exist only as parts of a mixture, with no container of their own.
             if (fluid instanceof net.createplant.mixture.MixtureFluid || fluid == net.createplant.registry.CEMixtures.OTHER_GASES.get()) continue;
             // Retired state entries fill their substance's bucket with the matching state.
-            if (net.createplant.thermal.FluidIdentity.legacy(fluid)) continue;
             var stack = FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
             boolean listed = tab.getDisplayItems().stream().anyMatch(entry -> entry.is(stack.getItem()));
             if (id.equals(CreatePlant.location("raw_process_gas"))) {

@@ -21,7 +21,6 @@ public final class CEGasBuckets {
             case "converter_gas" -> () -> CEItems.CONVERTER_GAS_BUCKET.get();
             case "air_gas" -> () -> CEItems.AIR_GAS_BUCKET.get();
             case "ammonia_gas" -> () -> CEItems.AMMONIA_GAS_BUCKET.get();
-            case "steam" -> () -> CEItems.STEAM_BUCKET.get();
             case "ethylene" -> () -> CEItems.ETHYLENE_BUCKET.get();
             case "propylene" -> () -> CEItems.PROPYLENE_BUCKET.get();
             case "nitric_oxide" -> () -> CEItems.NITRIC_OXIDE_BUCKET.get();

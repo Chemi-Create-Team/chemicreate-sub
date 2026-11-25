@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.content.fluids.pipes.valve.FluidValveBlock;
@@ -36,10 +37,10 @@ public final class TransportQualityGameTests {
         h.assertTrue(PipeMaterial.COPPER.incompatibility(acid).equals("corrosion") && PipeMaterial.CERAMIC.incompatibility(acid).equals("safe"),"Cool nitric acid requires a corrosion-resistant material");
         h.assertTrue(PipeMaterial.COPPER.incompatibility(FluidHazards.named("pressurised_water")).equals("pressure"),"Liquid pressure still matters for copper");
         // Gases obey the same temperature, pressure and corrosion ratings as liquids.
-        h.assertTrue(PipeMaterial.COPPER.carries(new FluidStack(CEFluids.STEAM.get(),1000)),"Ordinary steam fits copper's hot, atmospheric rating");
-        h.assertTrue(PipeMaterial.COPPER.problem(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000)).equals("overheat")
-            && PipeMaterial.STAINLESS.carries(new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(),1000)),"Superheated steam needs stainless steel");
-        h.assertTrue(PipeMaterial.COPPER.problem(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),1000)).equals("pressure"),"High-pressure hydrogen exceeds copper");
+        h.assertTrue(PipeMaterial.COPPER.carries(FluidForm.STEAM.stack(1000)),"Ordinary steam fits copper's hot, atmospheric rating");
+        h.assertTrue(PipeMaterial.COPPER.problem(FluidForm.SUPERHEATED_STEAM.stack(1000)).equals("overheat")
+            && PipeMaterial.STAINLESS.carries(FluidForm.SUPERHEATED_STEAM.stack(1000)),"Superheated steam needs stainless steel");
+        h.assertTrue(PipeMaterial.COPPER.problem(FluidForm.COMPRESSED_HYDROGEN.stack(1000)).equals("pressure"),"High-pressure hydrogen exceeds copper");
         h.assertTrue(PipeMaterial.STAINLESS.problem(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),1000)).equals("corrosion")
             && PipeMaterial.NICKEL_ALLOY.carries(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),1000)),"Hydrogen fluoride gas needs nickel alloy");
         h.succeed();
@@ -206,7 +207,7 @@ public final class TransportQualityGameTests {
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void nativeSmartFluidFilterAcceptsTheAddonBucket(GameTestHelper h) {
-        transfer(h,AllBlocks.SMART_FLUID_PIPE.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING,Direction.EAST),CEProcessFluids.COMPRESSED_HYDROGEN.get(),true,true);
+        transfer(h,AllBlocks.SMART_FLUID_PIPE.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING,Direction.EAST),net.createplant.thermal.FluidForm.COMPRESSED_HYDROGEN,true,true);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void aReallyDrivenCreateValveOpensTheAddonLine(GameTestHelper h) {
@@ -215,11 +216,11 @@ public final class TransportQualityGameTests {
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void reinforcedPipeCarriesCompressedGasIntoCreateStorage(GameTestHelper h) {
-        transfer(h,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()),CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),false,false);
+        transfer(h,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()),net.createplant.thermal.FluidForm.COMPRESSED_SYNTHESIS_FEED,false,false);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void stainlessMainCarriesHighPressureGasWithoutWear(GameTestHelper h) {
-        transfer(h,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()),CEProcessFluids.COMPRESSED_HYDROGEN.get(),false,false);
+        transfer(h,straight(CETransport.STAINLESS_PIPE.get().defaultBlockState()),net.createplant.thermal.FluidForm.COMPRESSED_HYDROGEN,false,false);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void resinPipeCarriesNitricAcidWithNoUnnecessaryDamage(GameTestHelper h) {
@@ -236,8 +237,14 @@ public final class TransportQualityGameTests {
         h.setBlock(p,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,facing));
         h.runAfterDelay(5,()->((CreativeMotorBlockEntity)h.getBlockEntity(p)).generatedSpeed.setValue(256));
     }
+    private static void transfer(GameTestHelper h,BlockState pipe,net.createplant.thermal.FluidForm form,boolean addon,boolean filter) {
+        transfer(h,pipe,form.fluid(),form.stack(1000),addon,filter);
+    }
     private static void transfer(GameTestHelper h,BlockState pipe,Fluid fluid,boolean addon,boolean filter) {
-        boolean gas=FluidHazards.of(new FluidStack(fluid,1000)).gas();
+        transfer(h,pipe,fluid,new FluidStack(fluid,1000),addon,filter);
+    }
+    private static void transfer(GameTestHelper h,BlockState pipe,Fluid fluid,FluidStack sample,boolean addon,boolean filter) {
+        boolean gas=FluidHazards.of(sample).gas();
         var storage=gas ? CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.X) : CETransport.STAINLESS_STEEL_TANK.get().defaultBlockState();
         h.setBlock(SOURCE,storage);h.setBlock(TARGET,storage);
         h.setBlock(PIPE,pipe);h.setBlock(PUMP,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(BlockStateProperties.FACING,Direction.EAST));
@@ -252,11 +259,11 @@ public final class TransportQualityGameTests {
             selection.setFilter(new ItemStack(net.minecraft.world.item.Items.WATER_BUCKET));
             h.runAfterDelay(40,()->{
                 h.assertTrue(fluids(h,TARGET).getFluidInTank(0).isEmpty(),"A mismatched native filter must reject the addon fluid");
-                selection.setFilter(fluid.getFluidType().getBucket(new FluidStack(fluid,1000)));
+                selection.setFilter(fluid.getFluidType().getBucket(sample.copy()));
             });
         }
         IFluidHandler source=fluids(h,SOURCE),dest=fluids(h,TARGET);
-        h.assertTrue(source!=null && dest!=null && source.fill(new FluidStack(fluid,1000),IFluidHandler.FluidAction.EXECUTE)==1000,"A finite source and actual exposed destination must exist");
+        h.assertTrue(source!=null && dest!=null && source.fill(sample.copy(),IFluidHandler.FluidAction.EXECUTE)==1000,"A finite source and actual exposed destination must exist");
         h.succeedWhen(()->{
             var at=h.getBlockEntity(PIPE);
             String detail=at instanceof com.simibubi.create.content.kinetics.base.KineticBlockEntity kinetic?" speed="+kinetic.getSpeed():"";

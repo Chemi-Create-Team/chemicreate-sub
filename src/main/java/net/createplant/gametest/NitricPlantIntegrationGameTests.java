@@ -52,7 +52,7 @@ public final class NitricPlantIntegrationGameTests {
         var air=FluidStack.EMPTY;
         for(int i=0;i<AIR_BATCHES;i++){var parcel=atmosphere.drain(1000,EXECUTE);if(air.isEmpty())air=parcel;else air.grow(parcel.getAmount());}
         var compressedAir=compress(h,airCompressor,air);
-        h.assertTrue(compressedAir.is(CEProcessFluids.COMPRESSED_AIR.get()) && compressedAir.getAmount()==14000,"One compressor raises air by one grade without a pressure reserve");
+        h.assertTrue(FluidForm.COMPRESSED_AIR.matches(compressedAir) && compressedAir.getAmount()==14000,"One compressor raises air by one grade without a pressure reserve");
         var column=DistillationGameTests.build(level,h.absolutePos(new BlockPos(2,2,2)),2,14);
         h.assertTrue(DistillationGameTests.inlet(column,2).fill(compressedAir,EXECUTE)==14000,"The air column accepts compressed air");
         for(int i=0;i<5;i++)DistillationGameTests.run(column,105);
@@ -66,12 +66,12 @@ public final class NitricPlantIntegrationGameTests {
         for(int i=0;i<10;i++){run(mixer,105);var parcel=mixing.drain(new FluidStack(CEProcessFluids.SYNTHESIS_GAS.get(),4000),EXECUTE);h.assertTrue(parcel.getAmount()==4000 && synthesis.fill(parcel,EXECUTE)==4000,"Four stages mix four real batches");}
         var feedCompressor=compressor(level,h.absolutePos(new BlockPos(15,3,3)));
         var feed=compress(h,feedCompressor,synthesis.drain(SYNTHESIS,EXECUTE));
-        h.assertTrue(feed.is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()) && feed.getAmount()==SYNTHESIS,"Synthesis compression preserves amount and changes grade");
+        h.assertTrue(FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(feed) && feed.getAmount()==SYNTHESIS,"Synthesis compression preserves amount and changes grade");
         var tower=ReactionTowerGameTests.tower(level,h.absolutePos(new BlockPos(16,2,18)),4,CEItems.IRON_CATALYST.toStack());ReactionTowerGameTests.heat(tower);
         h.assertTrue(ReactionTowerGameTests.port(tower).fill(feed,EXECUTE)==40000,"The reaction tower accepts four compressed batches");
         tower.process(100);
         var hot=ReactionTowerGameTests.port(tower).drain(Integer.MAX_VALUE,EXECUTE);
-        h.assertTrue(hot.is(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get()) && hot.getAmount()==36000 && tower.layer(0).catalystStack().getDamageValue()==1 && tower.layer(3).catalystStack().getDamageValue()==1,"Four layers run four fixed reactions, each paying one use of its catalyst");
+        h.assertTrue(FluidForm.HOT_SYNTHESIS_MIXTURE.matches(hot) && hot.getAmount()==36000 && tower.layer(0).catalystStack().getDamageValue()==1 && tower.layer(3).catalystStack().getDamageValue()==1,"Four layers run four fixed reactions, each paying one use of its catalyst");
         var radiator=radiator(level,h.absolutePos(new BlockPos(17,5,3)));
         var cold=cool(h,radiator,hot);h.assertTrue(cold.is(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get()) && cold.getAmount()==36000,"Fan cooling converts the full hot stream to its cold type");
         var separator=HaberBoschGameTests.separator(level,h.absolutePos(new BlockPos(22,2,18)));
@@ -79,14 +79,14 @@ public final class NitricPlantIntegrationGameTests {
         h.assertTrue(sepIn.fill(cold,EXECUTE)==36000,"The separator stores the cooled finite feed");for(int i=0;i<24;i++)separator.process(.25);
         var liquid=capability(level,separator.getBlockPos(),Direction.DOWN,"liquid ammonia").drain(Integer.MAX_VALUE,EXECUTE);
         var recycle=capability(level,separator.getBlockPos().above(),Direction.UP,"recycle gas").drain(Integer.MAX_VALUE,EXECUTE);
-        h.assertTrue(liquid.is(CEProcessFluids.LIQUID_AMMONIA.get()) && liquid.getAmount()==4 && recycle.is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()) && recycle.getAmount()==32000,"The separator yields four liquid ammonia and 32000 recycle, without equilibrium calculations");
+        h.assertTrue(FluidForm.LIQUID_AMMONIA.matches(liquid) && liquid.getAmount()==4 && FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(recycle) && recycle.getAmount()==32000,"The separator yields four liquid ammonia and 32000 recycle, without equilibrium calculations");
         var evaporator=ReactorGameTests.assemble(level,h.absolutePos(new BlockPos(11,2,25)),ReactorModule.STIRRED,1);ReactorGameTests.heat(evaporator,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);var evaporation=evaporator.port(Direction.NORTH);
         h.assertTrue(evaporation.fill(liquid,EXECUTE)==4,"Liquid ammonia enters the native heated mixing recipe");run(evaporator,420);
         var ammonia=evaporation.drain(new FluidStack(CEFluids.AMMONIA_GAS.get(),Integer.MAX_VALUE),EXECUTE);
         h.assertTrue(ammonia.getAmount()==3736,"Heated evaporation produces four finite 934 mB parcels");
         var oxidizer=ReactionTowerGameTests.tower(level,h.absolutePos(new BlockPos(26,2,19)),3,CEItems.OXIDATION_CATALYST.toStack());var port=ReactionTowerGameTests.port(oxidizer);
         h.assertTrue(port.fill(ammonia.copyWithAmount(300),EXECUTE)==300 && port.fill(oxygen.drain(375,EXECUTE),EXECUTE)==375,"Ostwald oxidation accepts real ammonia and electrolytic oxygen");ammonia.shrink(300);oxidizer.process(100);
-        var hotNitric=port.drain(new FluidStack(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get(),750),EXECUTE);h.assertTrue(hotNitric.getAmount()==750,"Three oxidation batches produce 750 hot mixture");
+        var hotNitric=port.drain(FluidForm.HOT_NITRIC_OXIDE_MIXTURE.stack(750),EXECUTE);h.assertTrue(hotNitric.getAmount()==750,"Three oxidation batches produce 750 hot mixture");
         var coldNitric=cool(h,radiator,hotNitric);h.assertTrue(coldNitric.is(CEProcessFluids.COLD_NITRIC_OXIDE_MIXTURE.get()),"The same radiator converts the next stream after draining");
         var nitricColumn=DistillationGameTests.build(level,h.absolutePos(new BlockPos(27,2,27)),2,14);DistillationGameTests.inlet(nitricColumn,2).fill(coldNitric,EXECUTE);DistillationGameTests.run(nitricColumn,65);
         var nitricOxide=DistillationGameTests.outlet(nitricColumn,13).drain(300,EXECUTE);var reactionWater=DistillationGameTests.outlet(nitricColumn,9).drain(450,EXECUTE);

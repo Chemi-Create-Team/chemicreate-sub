@@ -1,5 +1,6 @@
 package net.createplant.block.entity;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -421,7 +422,7 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
     private void transferBlanketHeat() {
         coolantFlow=0;if(coolantGraceTicks>0)coolantGraceTicks--;
         if(coolantIn.isEmpty() || coolantOut.getAmount()>=COOLANT_CAPACITY)return;
-        var preview=new FluidStack(net.createplant.registry.CEProcessFluids.HOT_REACTOR_COOLANT.get(),1);FluidThermal.processComponents(coolantIn,preview);if(!coolantOut.isEmpty() && !FluidThermal.compatible(coolantOut,preview))return;
+        var preview=FluidForm.HOT_REACTOR_COOLANT.stack(1);FluidThermal.processComponents(coolantIn,preview);if(!coolantOut.isEmpty() && !FluidThermal.compatible(coolantOut,preview))return;
         double inlet=FusionPhysics.COOLANT_INLET_KELVIN,outlet=Math.min(FusionPhysics.COOLANT_OUTLET_KELVIN,blanketKelvin-5);if(outlet<=inlet)return;
         double perMb=FusionPhysics.WATER_JOULES_PER_MB_KELVIN*(outlet-inlet);
         double cost=FusionPhysics.WATER_JOULES_PER_MB_KELVIN*(FusionPhysics.COOLANT_OUTLET_KELVIN-inlet);
@@ -429,7 +430,7 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
         double removable=Math.max(0,blanketKelvin-inlet-5)*BLANKET_HEAT_CAPACITY;
         double joules=Math.min(removable,Math.min(amount*perMb,Math.max(0,room*cost-coolantHeatJoules)));if(joules<=0)return;
         coolantHeatJoules+=joules;int produced=Math.min(room,(int)Math.floor(coolantHeatJoules/cost));
-        if(produced>0){var heated=new FluidStack(net.createplant.registry.CEProcessFluids.HOT_REACTOR_COOLANT.get(),produced);FluidThermal.processComponents(coolantIn,heated);coolantIn=shrink(coolantIn,produced);coolantOut=FluidThermal.add(coolantOut,heated,produced);coolantHeatJoules-=produced*cost;}
+        if(produced>0){var heated=FluidForm.HOT_REACTOR_COOLANT.stack(produced);FluidThermal.processComponents(coolantIn,heated);coolantIn=shrink(coolantIn,produced);coolantOut=FluidThermal.add(coolantOut,heated,produced);coolantHeatJoules-=produced*cost;}
         blanketKelvin=Math.max(inlet+5,blanketKelvin-joules/BLANKET_HEAT_CAPACITY);coolantFlow=amount;coolantGraceTicks=COOLANT_FLOW_GRACE_TICKS;setChanged();
     }
 
@@ -771,8 +772,8 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
             return switch (kind) {
                 case DEUTERIUM -> stack.is(CEFusion.DEUTERIUM_GAS.get());
                 case TRITIUM -> stack.is(CEFusion.TRITIUM_GAS.get());
-                case HELIUM_IN -> stack.is(CEFusion.LIQUID_HELIUM.get());
-                case COOLANT_IN -> stack.is(net.createplant.registry.CEProcessFluids.PRESSURISED_WATER.get());
+                case HELIUM_IN -> FluidForm.LIQUID_HELIUM.matches(stack);
+                case COOLANT_IN -> FluidForm.PRESSURISED_WATER.matches(stack);
                 default -> false;
             };
         }

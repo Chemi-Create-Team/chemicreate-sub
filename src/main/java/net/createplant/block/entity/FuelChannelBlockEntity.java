@@ -537,20 +537,25 @@ public class FuelChannelBlockEntity extends SmartBlockEntity implements IHaveGog
      */
 
 
-    private net.minecraft.world.level.material.Fluid liquidType(){double kelvin=waterKelvin();return kelvin>=ReactorCoolant.OPERATING_INLET_KELVIN ? CEProcessFluids.PRESSURISED_WATER.get() : kelvin>=330 ? CEProcessFluids.WARM_WATER.get() : Fluids.WATER;}
-    public int phaseAvailable(net.minecraft.world.level.material.Fluid type){
-        if(coolant<=0)return 0;double quality=ReactorPhysics.quality(specific);
-        return type==CEProcessFluids.HIGH_PRESSURE_STEAM.get() ? (int)Math.floor(coolant*quality) : type==liquidType() ? (int)Math.floor(coolant*(1-quality)) : 0;
+    /** The four outlets of the coolant, by slot: pressurised water, steam, warm water and plain water. */
+    public static FluidStack outletStack(int slot,int amount){
+        return switch(slot){case 0->net.createplant.thermal.FluidForm.PRESSURISED_WATER.stack(amount);case 1->net.createplant.thermal.FluidForm.HIGH_PRESSURE_STEAM.stack(amount);
+            case 2->net.createplant.thermal.FluidForm.WARM_WATER.stack(amount);default->new FluidStack(Fluids.WATER,amount);};
     }
-    public FluidStack takePhase(net.minecraft.world.level.material.Fluid type,int requested,boolean execute){
-        int amount=Math.min(Math.max(0,requested),phaseAvailable(type));if(amount<=0)return FluidStack.EMPTY;
-        if(execute){double perKilogram=ReactorCoolant.CP*(type==CEProcessFluids.HIGH_PRESSURE_STEAM.get() ? ReactorPhysics.SATURATION_KELVIN : waterKelvin())+(type==CEProcessFluids.HIGH_PRESSURE_STEAM.get() ? ReactorCoolant.LATENT : 0);remove(amount,perKilogram);outletWindow+=amount;}
-        return new FluidStack(type,amount);
+    private int liquidSlot(){double kelvin=waterKelvin();return kelvin>=ReactorCoolant.OPERATING_INLET_KELVIN ? 0 : kelvin>=330 ? 2 : 3;}
+    public int phaseAvailable(int slot){
+        if(coolant<=0)return 0;double quality=ReactorPhysics.quality(specific);
+        return slot==1 ? (int)Math.floor(coolant*quality) : slot==liquidSlot() ? (int)Math.floor(coolant*(1-quality)) : 0;
+    }
+    public FluidStack takePhase(int slot,int requested,boolean execute){
+        int amount=Math.min(Math.max(0,requested),phaseAvailable(slot));if(amount<=0)return FluidStack.EMPTY;
+        if(execute){double perKilogram=ReactorCoolant.CP*(slot==1 ? ReactorPhysics.SATURATION_KELVIN : waterKelvin())+(slot==1 ? ReactorCoolant.LATENT : 0);remove(amount,perKilogram);outletWindow+=amount;}
+        return outletStack(slot,amount);
     }
     private double waterKelvin() { return Math.min(ReactorPhysics.SATURATION_KELVIN, ReactorPhysics.coolantKelvin(specific)); }
 
     private FluidStack water(int amount) {
-        return amount<=0 ? FluidStack.EMPTY : new FluidStack(liquidType(),amount);
+        return amount<=0 ? FluidStack.EMPTY : outletStack(liquidSlot(),amount);
     }
 
     /** Removes {@code amount} mB that carry {@code perKilogram} J/kg, keeping the energy of what stays. */

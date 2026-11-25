@@ -85,8 +85,8 @@ public final class SyntheticFuelsGameTests {
         fill(h, port(h, H2_COMPRESSOR, Direction.UP), hydrogen);
         fill(h, port(h, H2_COMPRESSOR, Direction.UP), shiftedHydrogen);
         h.runAfterDelay(80, () -> {
-            var compressedCo = drain(h, port(h, CO_COMPRESSOR, Direction.DOWN), CEProcessFluids.PRESSURISED_CARBON_MONOXIDE.get(), 250);
-            var compressedH2 = drain(h, port(h, H2_COMPRESSOR, Direction.DOWN), CEProcessFluids.PRESSURISED_HYDROGEN.get(), 750);
+            var compressedCo = drain(h, port(h, CO_COMPRESSOR, Direction.DOWN), net.createplant.thermal.FluidForm.PRESSURISED_CARBON_MONOXIDE, 250);
+            var compressedH2 = drain(h, port(h, H2_COMPRESSOR, Direction.DOWN), net.createplant.thermal.FluidForm.PRESSURISED_HYDROGEN, 750);
 
             var ft = tower(h, new BlockPos(20, 3, 11), CEItems.COBALT_FT_CATALYST_CORE.toStack());
             var ftPort = ReactionTowerGameTests.port(ft);
@@ -157,8 +157,8 @@ public final class SyntheticFuelsGameTests {
         var ft = tower(h, new BlockPos(5, 3, 5), CEItems.IRON_FT_CATALYST_CORE.toStack());
         ReactionTowerGameTests.heat(ft);
         var ftPort = ReactionTowerGameTests.port(ft);
-        fill(h, ftPort, stack(CEProcessFluids.PRESSURISED_CARBON_MONOXIDE.get(), 250));
-        fill(h, ftPort, stack(CEProcessFluids.PRESSURISED_HYDROGEN.get(), 500));
+        fill(h, ftPort, stack(net.createplant.thermal.FluidForm.PRESSURISED_CARBON_MONOXIDE, 250));
+        fill(h, ftPort, stack(net.createplant.thermal.FluidForm.PRESSURISED_HYDROGEN, 500));
         ft.process(139);
         h.assertTrue(ft.tank(0).getAmount() < 250 && ft.tank(0).getAmount() > 0, "Iron FT converts its feed over the cycle: " + ft.tank(0).getAmount());
         ft.process(1);
@@ -204,6 +204,18 @@ public final class SyntheticFuelsGameTests {
 
     private static IFluidHandler port(GameTestHelper h, BlockPos pos, Direction side) {
         return h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(pos), side);
+    }
+
+    private static FluidStack stack(net.createplant.thermal.FluidForm form, int amount) {
+        return form.stack(amount);
+    }
+
+    private static FluidStack drain(GameTestHelper h, IFluidHandler port, net.createplant.thermal.FluidForm form, int amount) {
+        h.assertTrue(port != null, "No port for " + form.id());
+        var output = port.drain(amount + 1, SIMULATE);
+        if (!form.matches(output)) output = port.drain(form.stack(amount + 1), SIMULATE);
+        h.assertTrue(form.matches(output) && output.getAmount() == amount, "Expected " + amount + " of " + form.id() + ", got " + output);
+        return port.drain(output, EXECUTE);
     }
 
     private static FluidStack stack(Fluid fluid, int amount) {

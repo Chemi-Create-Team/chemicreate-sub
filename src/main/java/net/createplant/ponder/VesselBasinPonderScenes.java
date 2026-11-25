@@ -1,5 +1,6 @@
 package net.createplant.ponder;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
@@ -84,7 +85,7 @@ public final class VesselBasinPonderScenes {
         scene.rotateCameraY(90);
         scene.world().showSection(util.select().fromTo(0,1,0,8,3,8).substract(util.select().fromTo(3,1,2,3,2,2)),Direction.DOWN);
         windows(scene,true);speed(scene,util,false);coldContents(scene,250,0);
-        storedFluid(scene,new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(),20000));gauge(scene,2,true);
+        storedFluid(scene,FluidForm.HIGH_PRESSURE_STEAM.stack(20000));gauge(scene,2,true);
         text(scene,util,GAUGE,MAINTENANCE,"pressure",140);
         text(scene,util,OWNER,MAINTENANCE,"boiling",180);
         scene.overlay().showControls(util.vector().topOf(TOP),Pointing.DOWN,50).rightClick();
@@ -95,7 +96,7 @@ public final class VesselBasinPonderScenes {
         scene.overlay().showControls(util.vector().centerOf(OWNER.below()),Pointing.RIGHT,45).rightClick().withItem(new ItemStack(Items.ICE));
         PonderText.build(scene, util, 3,1,2,3,2,2, Direction.SOUTH);
         scene.world().modifyBlockEntity(COOLANT,FluidTankBlockEntity.class,be->be.getTankInventory().fill(
-            new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),6000),FluidAction.EXECUTE));
+            FluidForm.LIQUID_NITROGEN.stack(6000),FluidAction.EXECUTE));
         coldContents(scene,250,0);gauge(scene,0,false);
         text(scene,util,OWNER,MAINTENANCE,"cooling",140);
         coldContents(scene,0,0,true);
@@ -148,7 +149,7 @@ public final class VesselBasinPonderScenes {
             var lookup=be.getLevel().registryAccess();var tag=be.writeClient(new CompoundTag(),lookup);
             var items=new ItemStackHandler(13);items.setStackInSlot(0,new ItemStack(Items.ICE,2));tag.put("Charge",items.serializeNBT(lookup));
             for(int i=0;i<7;i++)tag.remove("Tank"+i);
-            tag.put("TankContent",storage(FluidThermal.at(cryogenic ? new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),6000)
+            tag.put("TankContent",storage(FluidThermal.at(cryogenic ? FluidForm.LIQUID_NITROGEN.stack(6000)
                 : new FluidStack(Fluids.WATER,10000-wastewater),cryogenic ? 77.36 : 293.15),lookup));
             tag.remove("Internal");tag.putBoolean("Stirrer",true);
             tag.putBoolean("Windows",true);tag.putBoolean("Formed",true);tag.putBoolean("Running",false);tag.putInt("Sections",LiddedVesselBlockEntity.IMPELLER_LAYERS);

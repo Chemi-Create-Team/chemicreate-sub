@@ -2,31 +2,29 @@ package net.createplant.thermal;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.function.Supplier;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEProcessFluids;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /** One pressure-grade step, shared by compressors and reducing valves. Gas quantities are stored in atmospheric-equivalent mB. */
 public final class Compression {
-    private record Pair(Supplier<? extends Fluid> low, Supplier<? extends Fluid> high) { }
-    private static final List<Pair> PAIRS=List.of(
-        new Pair(CEFluids.AIR_GAS,CEProcessFluids.COMPRESSED_AIR),
-        new Pair(CEProcessFluids.SYNTHESIS_GAS,CEProcessFluids.COMPRESSED_SYNTHESIS_FEED),
-        new Pair(CEFluids.HYDROGEN_GAS,CEProcessFluids.PRESSURISED_HYDROGEN),
-        new Pair(CEProcessFluids.PRESSURISED_HYDROGEN,CEProcessFluids.COMPRESSED_HYDROGEN),
-        new Pair(CEProcessFluids.CARBON_MONOXIDE,CEProcessFluids.PRESSURISED_CARBON_MONOXIDE));
+    /** One compression step: 1 mB of the fluid at the lower state and at the state the compressor makes of it. */
+    public record Step(FluidStack low, FluidStack high) { }
+    private static List<Step> steps;
     private Compression() { }
-    /** Each low-pressure fluid with the fluid one compression step makes of it, in compressor order. */
-    public static java.util.Map<Fluid,Fluid> steps() {
-        var steps=new java.util.LinkedHashMap<Fluid,Fluid>();
-        for(var pair:PAIRS) steps.put(pair.low().get(),pair.high().get());
+    /** Each low-pressure state with the state one compression step makes of it, in compressor order. */
+    public static synchronized List<Step> steps() {
+        if(steps==null)steps=List.of(
+            new Step(new FluidStack(CEFluids.AIR_GAS.get(),1),FluidForm.COMPRESSED_AIR.stack(1)),
+            new Step(new FluidStack(CEProcessFluids.SYNTHESIS_GAS.get(),1),FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(1)),
+            new Step(new FluidStack(CEFluids.HYDROGEN_GAS.get(),1),FluidForm.PRESSURISED_HYDROGEN.stack(1)),
+            new Step(FluidForm.PRESSURISED_HYDROGEN.stack(1),FluidForm.COMPRESSED_HYDROGEN.stack(1)),
+            new Step(new FluidStack(CEProcessFluids.CARBON_MONOXIDE.get(),1),FluidForm.PRESSURISED_CARBON_MONOXIDE.stack(1)));
         return steps;
     }
     public static boolean isAir(FluidStack stack) {
-        return stack.is(CEFluids.AIR_GAS.get()) || stack.is(CEProcessFluids.COMPRESSED_AIR.get());
+        return stack.is(CEFluids.AIR_GAS.get());
     }
 
     public static int airVolumeRatio(FluidStack stack) {

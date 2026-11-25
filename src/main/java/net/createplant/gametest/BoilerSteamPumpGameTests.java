@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -82,7 +83,7 @@ public final class BoilerSteamPumpGameTests {
     private static void horizontalBoiler(GameTestHelper h, Block pipe, boolean stainless) {
         BlockPos base = new BlockPos(6, 3, 8), hot = base.east(3);
         var block = stainless ? CETransport.STAINLESS_BOILER.get() : CETransport.HORIZONTAL_FLUID_TANK.get();
-        var steam = stainless ? CEProcessFluids.HIGH_PRESSURE_STEAM.get() : CEFluids.STEAM.get();
+        var steam = stainless ? net.createplant.thermal.FluidForm.HIGH_PRESSURE_STEAM : net.createplant.thermal.FluidForm.STEAM;
         var boilerState = block.defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
         for (int section = 0; section < 4; section++) { h.setBlock(base.east(section), boilerState);firedBurner(h, base.east(section).below()); }
         var root = (HorizontalTankBlockEntity) ((HorizontalTankBlockEntity) h.getBlockEntity(base)).getControllerBE();
@@ -90,7 +91,7 @@ public final class BoilerSteamPumpGameTests {
         var outlet = (HorizontalTankBlockEntity) h.getBlockEntity(hot);
         var stored = roofLine(h, hot, pipe);
         h.runAfterDelay(200, () -> {
-            h.assertTrue(stored.getFluid().is(steam) && stored.getFluidAmount() > 0,
+            h.assertTrue(steam.matches(stored.getFluid()) && stored.getFluidAmount() > 0,
                 "The roof pump sends the boiler's steam along a pipe lying on the boiler: received=" + stored.getFluidAmount() + " boiler=" + outlet.status());
             h.assertTrue(root.boiler.attachedEngines == 0 && !outlet.status().equals("engines"), "A pipe on the boiler is not counted as a steam engine");
             h.assertTrue(stored.getFluidAmount() + outlet.steam().getFluidAmount() + root.getTankInventory().getFluidAmount() == 8000, "The steam keeps the mass of the water it came from");
@@ -124,7 +125,7 @@ public final class BoilerSteamPumpGameTests {
         var boiler = TankBoiler.of(controller);
         var stored = roofLine(h, corner.offset(1, 0, 0), CETransport.STAINLESS_PIPE.get());
         h.runAfterDelay(200, () -> {
-            h.assertTrue(stored.getFluid().is(CEFluids.STEAM.get()) && stored.getFluidAmount() > 0,
+            h.assertTrue(FluidForm.STEAM.matches(stored.getFluid()) && stored.getFluidAmount() > 0,
                 "A pump on the roof of Create's tank boiler moves ordinary steam through a gas pipe lying on the roof: received=" + stored.getFluidAmount());
             h.assertTrue(!controller.boiler.isActive(), "Pipes on the tank are never counted as steam engines");
             h.assertTrue(stored.getFluidAmount() + boiler.steam().getFluidAmount() + controller.getTankInventory().getFluidAmount() == 8000,
@@ -141,7 +142,7 @@ public final class BoilerSteamPumpGameTests {
         var roof = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(at), Direction.UP);
         h.runAfterDelay(60, () -> {
             int held = boiler.steam().getFluidAmount();
-            h.assertTrue(held > 0 && roof.getFluidInTank(0).is(CEFluids.STEAM.get()) && roof.fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0,
+            h.assertTrue(held > 0 && FluidForm.STEAM.matches(roof.getFluidInTank(0)) && roof.fill(new FluidStack(Fluids.WATER, 100), SIMULATE) == 0,
                 "While it boils the roof gives steam and takes no water: held=" + held);
             h.assertTrue(roof.drain(1, SIMULATE).getAmount() == 1 && boiler.steam().getFluidAmount() == held, "Simulated draining changes nothing");
             var saved = controller.saveWithoutMetadata(h.getLevel().registryAccess());

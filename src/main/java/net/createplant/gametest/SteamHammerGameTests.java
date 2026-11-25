@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.createplant.CreatePlant;
@@ -43,7 +44,7 @@ public final class SteamHammerGameTests {
         player.moveTo(eye.x, eye.y - player.getEyeHeight(), eye.z, 0, 0);
         var hammer = CEPortableTools.STEAM_HAMMER.toStack();
         player.setItemInHand(InteractionHand.MAIN_HAND, hammer);
-        if (steam > 0) h.assertTrue(FluidUtil.getFluidHandler(hammer).orElseThrow().fill(new FluidStack(CEFluids.STEAM.get(), steam), EXECUTE) == steam,
+        if (steam > 0) h.assertTrue(FluidUtil.getFluidHandler(hammer).orElseThrow().fill(FluidForm.STEAM.stack(steam), EXECUTE) == steam,
             "The hammer uses the normal portable steam capability");
         return player;
     }
@@ -91,7 +92,7 @@ public final class SteamHammerGameTests {
         SteamHammerAction.SWING.handle(player);
         h.assertTrue(!player.swinging && player.getDeltaMovement().lengthSqr() == 0, "An empty hammer does not boost or swing");
         var tank = FluidUtil.getFluidHandler(player.getMainHandItem()).orElseThrow();
-        tank.fill(new FluidStack(CEFluids.STEAM.get(), 250), EXECUTE);
+        tank.fill(FluidForm.STEAM.stack(250), EXECUTE);
         player.addEffect(new MobEffectInstance(CEPortableTools.DAZED, 14));
         SteamHammerAction.SWING.handle(player);
         h.assertTrue(!player.swinging && tank.getFluidInTank(0).getAmount() == 250, "A stunned player cannot swing the hammer");

@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import java.util.*;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import net.createplant.CreatePlant;
@@ -64,16 +65,19 @@ public final class SurvivalReachabilityGameTests {
         }
         return true;
     }
-    private static boolean fluidInputs(ProcessingRecipe<?, ?> recipe, Set<Fluid> reached) {
+    private static boolean fluidInputs(ProcessingRecipe<?, ?> recipe, Set<Object> reached) {
         for (var ingredient : recipe.getFluidIngredients()) {
             boolean found = false;
-            for (FluidStack choice : ingredient.getFluids()) if (reached.contains(choice.getFluid())) { found = true;break; }
+            for (FluidStack choice : ingredient.getFluids()) if (has(reached, choice)) { found = true;break; }
             if (!found) return false;
         }
         return true;
     }
-    private static boolean gasInput(ConverterRecipe recipe, Set<Fluid> reached) {
-        for (FluidStack choice : recipe.gasIngredient().getFluids()) if (reached.contains(choice.getFluid())) return true;
+    private static boolean has(Set<Object> reached, FluidStack choice) {
+        return reached.contains(choice.getFluid()) || FluidForm.of(choice.getFluid()).stream().anyMatch(form -> reached.contains(form) && form.matches(choice));
+    }
+    private static boolean gasInput(ConverterRecipe recipe, Set<Object> reached) {
+        for (FluidStack choice : recipe.gasIngredient().getFluids()) if (has(reached, choice)) return true;
         return false;
     }
     private static boolean equipmentFor(Recipe<?> recipe, Set<Item> reached) {
@@ -91,7 +95,7 @@ public final class SurvivalReachabilityGameTests {
                 "vitrification_melter", "vitrification_refractory_shell", "vitrification_electrode");
         return true;
     }
-    private static boolean addRecipe(RecipeHolder<?> holder, Set<Item> items, Set<Fluid> fluids,
+    private static boolean addRecipe(RecipeHolder<?> holder, Set<Item> items, Set<Object> fluids,
         net.minecraft.core.HolderLookup.Provider registries) {
         Recipe<?> recipe = holder.value();
         if (!equipmentFor(recipe, items) || !itemInputs(recipe, items)) return false;
@@ -132,7 +136,7 @@ public final class SurvivalReachabilityGameTests {
         if (module == ProcessModule.REACTION_VESSEL || module == ProcessModule.CATALYST_UNIT) return has(reached, "reaction_tower", "reactor_separator_core");
         return module == ProcessModule.STIRRED_REACTOR && has(reached, "lidded_vessel", "vessel_stirrer");
     }
-    private static boolean addFixedProcesses(Set<Item> items, Set<Fluid> fluids) {
+    private static boolean addFixedProcesses(Set<Item> items, Set<Object> fluids) {
         boolean changed = false;
         for (ProcessRecipe process : ProcessRecipe.all()) {
             if (!processEquipment(process.module(), items) || process.catalyst() != Items.AIR && !items.contains(process.catalyst())
@@ -156,60 +160,62 @@ public final class SurvivalReachabilityGameTests {
                 if (items.contains(reduction.getKey()) && items.contains(Items.COAL)) changed |= items.add(reduction.getValue().metal());
         if (has(items, "stainless_steel_pipe") && items.contains(com.simibubi.create.AllBlocks.NOZZLE.asItem())
             && items.contains(com.simibubi.create.AllBlocks.MECHANICAL_PUMP.asItem())) changed |= fluids.add(CEFluids.AIR_GAS.get());
-        if (has(items, "fractionating_column") && fluids.contains(CEProcessFluids.COMPRESSED_AIR.get())) {
-            changed |= fluids.add(CEFluids.LIQUID_OXYGEN.get());
+        if (has(items, "fractionating_column") && fluids.contains(FluidForm.COMPRESSED_AIR)) {
+            changed |= fluids.add(FluidForm.LIQUID_OXYGEN);
             changed |= fluids.add(CEFluids.ARGON_GAS.get());
             changed |= fluids.add(CEFluids.NITROGEN_GAS.get());
         }
         if (has(items, "cooler_radiator", "cooling_fan")) for (var stream : ThermalStreams.cooledStreams().entrySet())
             if (fluids.contains(stream.getKey())) changed |= fluids.add(stream.getValue());
-        if (has(items, "tube_piped_tank") && fluids.contains(CEFluids.STEAM.get()) && fluids.contains(CEProcessFluids.SLIME_COOLANT.get()))
-            changed |= fluids.add(CEProcessFluids.WARM_SLIME_COOLANT.get());
+        if (has(items, "tube_piped_tank") && fluids.contains(FluidForm.STEAM) && fluids.contains(CEProcessFluids.SLIME_COOLANT.get()))
+            changed |= fluids.add(FluidForm.WARM_SLIME_COOLANT);
         if(has(items,"reciprocating_compressor","reciprocating_cylinder"))for(var fluid:new ArrayList<>(fluids)){
-            changed|=fluids.addAll(stateEntries(net.createplant.thermal.Compression.convert(new FluidStack(fluid,1),true)));
+            if(fluid instanceof Fluid substance)changed|=fluids.addAll(stateEntries(net.createplant.thermal.Compression.convert(new FluidStack(substance,1),true)));
+            else if(fluid instanceof FluidForm form)changed|=fluids.addAll(stateEntries(net.createplant.thermal.Compression.convert(form.stack(1),true)));
         }
-        if(has(items,"stainless_boiler") && fluids.contains(Fluids.WATER))changed|=fluids.add(CEProcessFluids.HIGH_PRESSURE_STEAM.get());
-        if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(CEProcessFluids.PRESSURISED_WATER.get()) && fluids.contains(CEFusion.DEUTERIUM_GAS.get()) && fluids.contains(CEFusion.TRITIUM_GAS.get()) && fluids.contains(CEFusion.LIQUID_HELIUM.get()))changed|=fluids.add(CEProcessFluids.HOT_REACTOR_COOLANT.get());
+        if(has(items,"stainless_boiler") && fluids.contains(Fluids.WATER))changed|=fluids.add(FluidForm.HIGH_PRESSURE_STEAM);
+        if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.PRESSURISED_WATER) && fluids.contains(CEFusion.DEUTERIUM_GAS.get()) && fluids.contains(CEFusion.TRITIUM_GAS.get()) && fluids.contains(FluidForm.LIQUID_HELIUM))changed|=fluids.add(FluidForm.HOT_REACTOR_COOLANT);
         if (has(items, "fuel_rod", "reactor_fuel_channel", "reactor_graphite", "biological_shield") && fluids.contains(Fluids.WATER))
             changed |= items.add(CENuclear.SPENT_FUEL_ROD.get());
         if(has(items,"control_rod","reactor_fuel_channel"))changed|=items.add(CENuclear.SPENT_CONTROL_ROD.get());
-        if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(CEProcessFluids.HOT_REACTOR_COOLANT.get()))changed|=items.add(CEFusion.SPENT_BLANKET.get()) | items.add(CEFusion.SPENT_DIVERTOR.get());
-        if(has(items,"fusion_reactor_controller","irradiation_cartridge","tungsten_divertor_cassette") && fluids.contains(CEProcessFluids.HOT_REACTOR_COOLANT.get()))changed|=items.add(CEFusion.IRRADIATED_CARTRIDGE.get());
+        if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.HOT_REACTOR_COOLANT))changed|=items.add(CEFusion.SPENT_BLANKET.get()) | items.add(CEFusion.SPENT_DIVERTOR.get());
+        if(has(items,"fusion_reactor_controller","irradiation_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.HOT_REACTOR_COOLANT))changed|=items.add(CEFusion.IRRADIATED_CARTRIDGE.get());
         if (has(items, "lithium_target_rod", "fuel_rod", "control_rod", "reactor_fuel_channel", "reactor_top_cap", "reactor_graphite", "biological_shield")
             && fluids.contains(Fluids.WATER)) changed |= items.add(CEFusionFuel.IRRADIATED_TARGET.get());
         if (has(items, "ammonia_separator") && fluids.contains(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get())) {
-            changed |= fluids.add(CEProcessFluids.LIQUID_AMMONIA.get());
-            changed |= fluids.add(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get());
+            changed |= fluids.add(FluidForm.LIQUID_AMMONIA);
+            changed |= fluids.add(FluidForm.COMPRESSED_SYNTHESIS_FEED);
         }
         // Create boilers and the thermal plant can change physical phase without changing the chemical feedstock.
-        if (fluids.contains(Fluids.WATER)) changed |= fluids.add(CEFluids.STEAM.get());
+        if (fluids.contains(Fluids.WATER)) changed |= fluids.add(FluidForm.STEAM);
         if (has(items, "cooler_radiator", "cooling_fan") && fluids.contains(CEFluids.AMMONIA_GAS.get()))
-            changed |= fluids.add(CEProcessFluids.LIQUID_AMMONIA.get());
+            changed |= fluids.add(FluidForm.LIQUID_AMMONIA);
         if (has(items, "tube_piped_tank", "pressure_reducing_valve", "reciprocating_compressor", "reciprocating_cylinder")
-            && fluids.contains(CEFluids.LIQUID_OXYGEN.get())) {
-            for (Fluid vapour : new ArrayList<>(fluids)) {
+            && fluids.contains(FluidForm.LIQUID_OXYGEN)) {
+            for (Object entry : new ArrayList<>(fluids)) {
+                if (!(entry instanceof Fluid vapour)) continue;
                 var pair = net.createplant.thermal.PhaseChange.ofVapour(new FluidStack(vapour, 1));
-                if (pair != null && pair.liquid().get() != CEFusion.LIQUID_HELIUM.get()) changed |= fluids.add(pair.liquid().get());
+                if (pair != null && pair.liquid() != FluidForm.LIQUID_HELIUM) changed |= fluids.add(pair.liquid());
             }
         }
         if (has(items, "cryogenic_cold_box_drive", "cryogenic_regenerator")
             && items.contains(CEMetals.STEEL_BLOCK.get())
             && items.contains(com.simibubi.create.AllBlocks.SHAFT.asItem())
             && fluids.contains(Fluids.WATER) && fluids.contains(CEFusion.HELIUM_GAS.get()))
-            changed |= fluids.add(CEFusion.LIQUID_HELIUM.get());
+            changed |= fluids.add(FluidForm.LIQUID_HELIUM);
         if (has(items, "lidded_vessel", "vessel_stirrer") && items.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
             && fluids.contains(Fluids.WATER) && fluids.contains(CEUranium.SULFURIC_ACID.get()))
             changed |= fluids.add(CEProcessFluids.WASTEWATER.get());
         return changed;
     }
     /** The registered entries that name a stack's state, such as compressed air for air at a raised pressure, so this audit can follow them by id. */
-    private static List<Fluid> stateEntries(FluidStack stack) {
-        var entries = new ArrayList<Fluid>(List.of(stack.getFluid()));
-        for (var variant : net.createplant.thermal.FluidIdentity.variants(stack.getFluid()))
-            if (net.createplant.thermal.FluidIdentity.matches(stack, variant)) entries.add(variant);
+    private static List<Object> stateEntries(FluidStack stack) {
+        var entries = new ArrayList<Object>(List.of(stack.getFluid()));
+        for (var form : FluidForm.of(stack.getFluid()))
+            if (form.matches(stack)) entries.add(form);
         return entries;
     }
-    private static boolean addFilledBuckets(Set<Item> items, Set<Fluid> fluids) {
+    private static boolean addFilledBuckets(Set<Item> items, Set<Object> fluids) {
         boolean changed = false;
         for (Item item : BuiltInRegistries.ITEM) {
             if (!(item instanceof BucketItem) || items.contains(item)) continue;
@@ -227,7 +233,7 @@ public final class SurvivalReachabilityGameTests {
                 && !BuiltInRegistries.ITEM.containsKey(CreatePlant.location("liquid_air_bucket")),
             "Liquid air, which no survival process made, is no longer registered");
         Set<Item> items = new HashSet<>();
-        Set<Fluid> fluids = new HashSet<>();
+        Set<Object> fluids = new HashSet<>();
         for (Item item : BuiltInRegistries.ITEM) if (!ours(BuiltInRegistries.ITEM.getKey(item))) items.add(item);
         for (Fluid fluid : BuiltInRegistries.FLUID) if (!ours(BuiltInRegistries.FLUID.getKey(fluid))) fluids.add(fluid);
         items.remove(Items.DIAMOND);

@@ -8,7 +8,6 @@ import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEPetroFluids;
 import net.createplant.registry.CEWorldFluids;
 import net.createplant.thermal.FluidThermal;
-import net.createplant.thermal.FluidIdentity;
 import net.createplant.thermal.FluidState;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.core.BlockPos;
@@ -37,7 +36,6 @@ public class WorldLiquidGameTests {
     public static void everyRegisteredLiquidHasAPlaceableFullBucket(GameTestHelper h) {
         BlockPos pos = h.absolutePos(new BlockPos(2, 3, 2));
         for (var entry : CEWorldFluids.entries()) {
-            if(FluidIdentity.legacy(entry.fluid().get()))continue;
             FluidStack fluid = new FluidStack(entry.fluid().get(), 1000);
             h.assertTrue(!FluidHazards.of(fluid).gas(), entry.name() + " is a liquid");
             ItemStack bucket = FluidUtil.getFilledBucket(fluid);

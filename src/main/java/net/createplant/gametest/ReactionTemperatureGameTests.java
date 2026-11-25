@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 
 import com.simibubi.create.AllBlocks;
@@ -29,7 +30,7 @@ public class ReactionTemperatureGameTests {
             var recipe=ProcessRecipe.all().stream().filter(r->r.id().equals(entry.getKey())).findFirst().orElseThrow();
             h.assertTrue(recipe.requiredHeat()==entry.getValue() && !recipe.heatAllowed(HeatLevel.NONE) && recipe.heatAllowed(HeatLevel.SEETHING),"Native heat condition in "+entry.getKey());
             h.assertTrue(recipe.heatAllowed(HeatLevel.KINDLED)==(entry.getValue()==HeatCondition.HEATED),"Superheating boundary in "+entry.getKey());
-            if(entry.getKey().startsWith("hydro"))h.assertTrue(recipe.inputs().get(1).is(CEProcessFluids.COMPRESSED_HYDROGEN.get()),"Hydrogen grade is part of fluid identity");
+            if(entry.getKey().startsWith("hydro"))h.assertTrue(FluidForm.COMPRESSED_HYDROGEN.matches(recipe.inputs().get(1)),"Hydrogen grade is part of fluid identity");
         }
         for(String name:new String[]{"heated_naphtha","heated_diesel","heated_heavy_oil","heated_ethylene","heated_propylene","heated_synthesis_feed"})h.assertTrue(!BuiltInRegistries.FLUID.containsKey(CreatePlant.location(name)),"No temperature-only fluid: "+name);
         h.succeed();

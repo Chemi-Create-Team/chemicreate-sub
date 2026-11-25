@@ -1,5 +1,6 @@
 package net.createplant.client;
 
+import net.createplant.thermal.FluidForm;
 import com.google.gson.GsonBuilder;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
@@ -71,7 +72,7 @@ final class SoundClientCheck {
             bank.lazyTick();
             if (bank.owner() != bank || bank.fanCount() != 1) throw new IllegalStateException("The real fan bank did not form");
             var inlet = ((RadiatorBlockEntity) level.getBlockEntity(owner.above().north())).port(Direction.NORTH);
-            if (inlet == null || inlet.fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 1000), FluidAction.EXECUTE) != 1000)
+            if (inlet == null || inlet.fill(FluidForm.WARM_WATER.stack(1000), FluidAction.EXECUTE) != 1000)
                 throw new IllegalStateException("The fan bank did not accept its finite water inventory");
             level.setBlock(motor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.UP), Block.UPDATE_ALL);
             ((CreativeMotorBlockEntity) level.getBlockEntity(motor)).generatedSpeed.setValue(0);
@@ -232,7 +233,7 @@ final class SoundClientCheck {
         level.setBlock(gasMotor, AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
         ((CreativeMotorBlockEntity) level.getBlockEntity(gasMotor)).generatedSpeed.setValue(0);
         var storageEntity = (FluidTankBlockEntity) level.getBlockEntity(gasSource);
-        require(storageEntity.getTankInventory().fill(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(), 16000), FluidAction.EXECUTE) >= 6000,
+        require(storageEntity.getTankInventory().fill(FluidForm.COMPRESSED_HYDROGEN.stack(16000), FluidAction.EXECUTE) >= 6000,
             "The source holds a finite gas supply long enough to confirm audio");
     }
 

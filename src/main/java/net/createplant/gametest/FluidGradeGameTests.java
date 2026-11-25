@@ -43,7 +43,7 @@ public final class FluidGradeGameTests {
         var result=FluidThermal.mix(a,b,500);
         h.assertTrue(result.getAmount()==800 && a.getAmount()==300 && b.getAmount()==1000 && FluidState.temperature(result)==9
             && FluidState.pressure(result)==7,"Mixing weights both levels by the accepted quantities");
-        var liquid=new FluidStack(net.createplant.registry.CEProcessFluids.LIQUID_NITROGEN.get(),1000);
+        var liquid=FluidForm.LIQUID_NITROGEN.stack(1000);
         var gas=new FluidStack(net.createplant.registry.CEFluids.NITROGEN_GAS.get(),PhaseChange.ratio(liquid)+1);
         var tank=new ThermalFluidTank(2000,ignored->{});
         tank.fill(liquid,EXECUTE);
@@ -55,13 +55,13 @@ public final class FluidGradeGameTests {
     }
 
     @GameTest(template="test_petrochemical")
-    public static void legacyStacksBucketsAndMixturesMigrateTheirData(GameTestHelper h) {
+    public static void legacyStacksAndMixturesMigrateTheirData(GameTestHelper h) {
         var lookup=h.getLevel().registryAccess();
         var encoded=new net.minecraft.nbt.CompoundTag();
         encoded.putString("id",CreatePlant.location("steam").toString());
         encoded.putInt("amount",1001);
-        var steam=FluidStack.parseOptional(lookup,encoded);
-        h.assertTrue(steam.is(Fluids.WATER) && FluidState.gas(steam) && FluidState.temperature(steam)==12,"Old steam loads as gaseous water");
+        h.assertTrue(FluidStack.parseOptional(lookup,encoded).isEmpty(),"The retired steam id is gone: steam is water carrying temperature and pressure");
+        encoded.putString("id","minecraft:water");
         var oldGrade=new net.minecraft.nbt.CompoundTag();
         oldGrade.putInt(CreatePlant.location("heat_grade").toString(),3);
         encoded.put("components",oldGrade);
@@ -71,13 +71,10 @@ public final class FluidGradeGameTests {
         var oldBucket=new net.minecraft.nbt.CompoundTag();
         oldBucket.putString("id",CreatePlant.location("liquid_nitrogen_bucket").toString());
         oldBucket.putInt("count",1);
-        var bucket=net.minecraft.world.item.ItemStack.parseOptional(lookup,oldBucket);
-        var contents=net.neoforged.neoforge.fluids.FluidUtil.getFluidContained(bucket).orElseThrow();
-        h.assertTrue(contents.is(net.createplant.registry.CEFluids.NITROGEN_GAS.get()) && !FluidState.gas(contents) && FluidState.temperature(contents)==1
-            && bucket.is(net.createplant.registry.CEItems.NITROGEN_GAS_BUCKET.get()),"Old liquid bucket becomes the canonical nitrogen bucket");
+        h.assertTrue(net.minecraft.world.item.ItemStack.parseOptional(lookup,oldBucket).isEmpty(),"The retired liquid nitrogen bucket id is gone");
         var carrier=new FluidStack(net.createplant.registry.CEMixtures.GAS_MIXTURE.get(),1200);
         carrier.set(net.createplant.registry.CEMixtures.MIXTURE_CONTENTS.get(),new net.createplant.mixture.MixtureContents(java.util.Map.of(
-            CreatePlant.location("steam"),1000,CreatePlant.location("compressed_hydrogen"),200)));
+            net.minecraft.resources.ResourceLocation.withDefaultNamespace("water"),1000,CreatePlant.location("hydrogen_gas"),200)));
         var mixture=FluidStack.parseOptional(lookup,(net.minecraft.nbt.CompoundTag)carrier.save(lookup));
         var parts=net.createplant.mixture.MixtureHelper.extractContents(mixture);
         h.assertTrue(parts.amounts().getOrDefault(net.minecraft.resources.ResourceLocation.withDefaultNamespace("water"),0)==1000
@@ -95,8 +92,8 @@ public final class FluidGradeGameTests {
     }
     @GameTest(template="test_petrochemical",timeoutTicks=100)
     public static void tankContentsKeepTheirGradeAcrossWeatherDaytimeAndSaveReload(GameTestHelper h){
-        var at=new BlockPos(2,2,2);h.setBlock(at,AllBlocks.FLUID_TANK.get());var tank=(FluidTankBlockEntity)h.getBlockEntity(at);tank.getTankInventory().fill(new FluidStack(CEProcessFluids.WARM_WATER.get(),1700),EXECUTE);
+        var at=new BlockPos(2,2,2);h.setBlock(at,AllBlocks.FLUID_TANK.get());var tank=(FluidTankBlockEntity)h.getBlockEntity(at);tank.getTankInventory().fill(FluidForm.WARM_WATER.stack(1700),EXECUTE);
         var saved=tank.saveWithoutMetadata(h.getLevel().registryAccess());long oldTime=h.getLevel().getDayTime();h.getLevel().setDayTime(18000);
-        h.runAfterDelay(45,()-> {h.getLevel().setDayTime(oldTime);tank.loadWithComponents(saved,h.getLevel().registryAccess());var fluid=tank.getTankInventory().getFluid();h.assertTrue(fluid.is(CEProcessFluids.WARM_WATER.get()) && fluid.getAmount()==1700 && FluidState.temperature(fluid)==9 && FluidState.pressure(fluid)==4,"No ambient cooling or regenerated energy occurs in storage");h.succeed();});
+        h.runAfterDelay(45,()-> {h.getLevel().setDayTime(oldTime);tank.loadWithComponents(saved,h.getLevel().registryAccess());var fluid=tank.getTankInventory().getFluid();h.assertTrue(FluidForm.WARM_WATER.matches(fluid) && fluid.getAmount()==1700 && FluidState.temperature(fluid)==9 && FluidState.pressure(fluid)==4,"No ambient cooling or regenerated energy occurs in storage");h.succeed();});
     }
 }

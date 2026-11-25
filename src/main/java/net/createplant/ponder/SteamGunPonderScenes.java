@@ -1,5 +1,6 @@
 package net.createplant.ponder;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createplant.block.entity.PulsationTubeBlockEntity;
@@ -32,10 +33,10 @@ public final class SteamGunPonderScenes {
         scene.world().showSection(util.select().fromTo(0, 1, 0, 6, 3, 6), Direction.DOWN);
         var gun = CEPortableTools.STEAM_GUN.toStack();
         scene.world().modifyBlockEntity(RECEIVER, PulsationTubeBlockEntity.class,
-            receiver -> receiver.getTankInventory().setFluid(new FluidStack(CEFluids.STEAM.get(), 6000)));
+            receiver -> receiver.getTankInventory().setFluid(FluidForm.STEAM.stack(6000)));
         scene.overlay().showControls(util.vector().topOf(RECEIVER), Pointing.DOWN, 95).whileSneaking().rightClick().withItem(gun.copy());
         PonderText.caption(scene, util.vector().topOf(RECEIVER), KEY + "refill", 100);
-        new PortableToolFluidHandler(gun).fill(new FluidStack(CEFluids.STEAM.get(), SteamGunItem.CAPACITY), FluidAction.EXECUTE);
+        new PortableToolFluidHandler(gun).fill(FluidForm.STEAM.stack(SteamGunItem.CAPACITY), FluidAction.EXECUTE);
         scene.world().modifyBlockEntity(DEPOT, DepotBlockEntity.class, depot -> depot.setHeldItem(gun.copy()));
         scene.overlay().showControls(util.vector().topOf(DEPOT), Pointing.DOWN, 95).rightClick().withItem(gun.copy());
         PonderText.caption(scene, util.vector().topOf(DEPOT), KEY + "aim", 90);

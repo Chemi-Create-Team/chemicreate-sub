@@ -1,7 +1,5 @@
 package net.createplant.thermal;
 
-import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CEThermal;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -26,14 +24,14 @@ public enum SteamGrades {
         if(FluidState.pressure(stack)>=12)return FluidState.temperature(stack)==FluidState.MAX ? SUPERHEATED : HIGH_PRESSURE;
         return ORDINARY;
     }
-    public Fluid fluid(){return switch(this){case ORDINARY,EXHAUST->CEFluids.STEAM.get();case HIGH_PRESSURE->CEProcessFluids.HIGH_PRESSURE_STEAM.get();case SUPERHEATED->CEProcessFluids.SUPERHEATED_STEAM.get();};}
+    public FluidForm form(){return switch(this){case ORDINARY,EXHAUST->FluidForm.STEAM;case HIGH_PRESSURE->FluidForm.HIGH_PRESSURE_STEAM;case SUPERHEATED->FluidForm.SUPERHEATED_STEAM;};}
     public FluidStack stack(int amount) {
-        var stack = new FluidStack(fluid(), amount);
+        var stack = form().stack(amount);
         if (this == EXHAUST && !stack.isEmpty()) stack.set(CEThermal.EXPANDED_STEAM.get(), true);
         return stack;
     }
     public static FluidStack outlet(FluidStack input, int amount, boolean lowPressure) {
-        var result = new FluidStack(lowPressure ? Fluids.WATER : CEFluids.STEAM.get(), amount);
+        var result = lowPressure ? new FluidStack(Fluids.WATER, amount) : FluidForm.STEAM.stack(amount);
         if (result.isEmpty()) return result;
         FluidThermal.processComponents(input, result);
         if (!lowPressure) result.set(CEThermal.EXPANDED_STEAM.get(), true);

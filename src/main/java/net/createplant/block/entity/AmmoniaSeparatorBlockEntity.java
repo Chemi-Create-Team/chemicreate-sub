@@ -66,7 +66,7 @@ public class AmmoniaSeparatorBlockEntity extends PlantFluidTankBlockEntity {
     }
     @Override public void tick(){super.tick();if(level==null || level.isClientSide || !ready())return;if(++clock%5==0)process(.25);if(syncNeeded && clock%10==0){syncNeeded=false;sendData();}}
     private FluidStack product(ProcessRecipe recipe,int slot,int count){return product(recipe,slot,count,feed.getFluid());}
-    private FluidStack product(ProcessRecipe recipe,int slot,int count,FluidStack source){var result=recipe.outputs().get(slot).copyWithAmount(recipe.outputs().get(slot).getAmount()*count);if(!result.isEmpty() && source.is(CEProcessFluids.HOT_REACTOR_COOLANT.get()))FluidThermal.processComponents(source,result);return result;}
+    private FluidStack product(ProcessRecipe recipe,int slot,int count,FluidStack source){var result=recipe.outputs().get(slot).copyWithAmount(recipe.outputs().get(slot).getAmount()*count);if(!result.isEmpty() && FluidForm.HOT_REACTOR_COOLANT.matches(source))FluidThermal.processComponents(source,result);return result;}
     public void process(double seconds){
         if(!ready() || !Double.isFinite(seconds) || seconds<=0)return;
         var recipe=water.isEmpty() && steam.isEmpty() ? recipe(feed.getFluid()) : null;

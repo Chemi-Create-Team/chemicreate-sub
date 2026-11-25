@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import net.createplant.CreatePlant;
 import net.createplant.chemistry.ProcessRecipe;
 import net.createplant.compat.jei.PlantProcess;
@@ -65,7 +66,7 @@ public final class RecipeVisibilityGameTests {
                 .forEach(
                         (hot, cold) ->
                                 add.accept(
-                                        List.of(new FluidStack(hot, 1)),
+                                        List.of(hot.stack(1)),
                                         List.of(new FluidStack(cold, 1))));
         var visited = Collections.newSetFromMap(new IdentityHashMap<Fluid, Boolean>());
         var pending = new ArrayDeque<Fluid>();
@@ -123,7 +124,7 @@ public final class RecipeVisibilityGameTests {
                                     + recipe.id());
                 }
         for (var pair : ThermalStreams.cooledStreams().entrySet()) {
-            var hot = new net.neoforged.neoforge.fluids.FluidStack(pair.getKey(), 100);
+            var hot = pair.getKey().stack(100);
             var cooled = ThermalStreams.cooling(hot).result(hot, 100);
             var next = ProcessRecipe.all().stream().flatMap(process -> process.inputs().stream())
                 .filter(feed -> feed.is(pair.getValue())).findFirst().orElseThrow();
@@ -134,7 +135,7 @@ public final class RecipeVisibilityGameTests {
         var haber = ManufacturingRecipe.resolve(h.getLevel(), "operation:haber_bosch");
         var ammonia = PlantProcess.ammoniaSynthesis().getFirst();
         h.assertTrue(haber.fluids().equals(ammonia.fluids())
-                && haber.fluids().getFirst().is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get())
+                && FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(haber.fluids().getFirst())
                 && haber.catalyst().is(CEItems.IRON_CATALYST.get()),
             "Ponder and JEI both show the live compressed feed and iron catalyst");
         h.succeed();

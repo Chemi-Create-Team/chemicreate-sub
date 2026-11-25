@@ -285,7 +285,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
         if (!(heatBelow(worldPosition) > 0)) { status = "heat"; return; }
         var grade = steamGrade();
         double joulesPerBurnerTick = ratedSteamPerHeatLevel() * grade.joulesPerMb() / 20;
-        var sample = new FluidStack(grade.fluid(), 1);
+        var sample = grade.stack(1);
         FluidThermal.processComponents(water, sample);
         if (steam.fill(sample, IFluidHandler.FluidAction.SIMULATE) != 1) { status = "output"; return; }
         double provided = 0;

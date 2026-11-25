@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
@@ -44,7 +45,7 @@ public class OreLeachingGameTests {
             var crushed = item(metal.equals("tin") ? "crushed_raw_tin" : "create:crushed_raw_" + metal);
             h.assertTrue(inputs.insertItem(0, new ItemStack(crushed, 3), false).isEmpty(), "Ore enters through the vessel funnel face");
             h.assertTrue(fluids.fill(new FluidStack(CEMetals.DILUTE_SULFURIC_ACID.get(), 750), EXECUTE) == 750, "Acid enters the process tank");
-            h.assertTrue(oxidant.fill(new FluidStack(CEProcessFluids.COMPRESSED_AIR.get(), 250), EXECUTE)==250,"The upper process face accepts the finite gas reagent");
+            h.assertTrue(oxidant.fill(FluidForm.COMPRESSED_AIR.stack(250), EXECUTE)==250,"The upper process face accepts the finite gas reagent");
             for (int n = 0; n < 200; n++) leach.tickProcess();
             var slurry = output.drain(new FluidStack(fluid(metal + "_leach_slurry"),4000), EXECUTE);
             h.assertTrue(slurry.getAmount() == 4000 && slurry.is(fluid(metal + "_leach_slurry")) && fluids.getFluidInTank(0).isEmpty() && fluids.getFluidInTank(1).isEmpty(), "Leaching consumes the exact finite ore, acid and gas batch");

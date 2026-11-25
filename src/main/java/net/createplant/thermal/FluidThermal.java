@@ -37,7 +37,10 @@ public final class FluidThermal {
     private FluidThermal() { }
     public static synchronized Properties properties(FluidStack stack) {
         if (net.createplant.chemistry.WasteGas.contaminated(stack)) {var gas=net.createplant.chemistry.WasteGas.of(stack);return new Properties(293.15,gas.density(),gas.heatCapacity());}
-        if(!FluidState.gas(stack))return nominalProperties(FluidIdentity.liquidVariant(stack.getFluid()));
+        if(!FluidState.gas(stack)) {
+            var liquid=FluidForm.liquidOf(stack.getFluid());
+            return liquid==null ? nominalProperties(stack.getFluid()) : nominalProperties(liquid);
+        }
         var type=stack.getFluid();
         if(FluidMaterials.gas(type) || stack.is(net.minecraft.world.level.material.Fluids.WATER) || net.createplant.mixture.MixtureHelper.isMixture(stack))return nominalProperties(type);
         // A substance that is a liquid at its own state, boiled here: the same mass spread over its gas volume, as the phase change counts it.
@@ -53,11 +56,20 @@ public final class FluidThermal {
             double initial=Math.clamp(fluid.getFluidType().getTemperature(),1,10000);
             if (id.getNamespace().equals(net.createplant.CreatePlant.MOD_ID) && initial==293) initial=293.15;
             if (id.getNamespace().equals("minecraft") && (name.equals("water") || name.equals("flowing_water"))) return new Properties(293.15,1,4180);
-            if (fluid==net.createplant.registry.CEFluids.STEAM.get()) return new Properties(373.15,1,4180);
             double[] material=(id.getNamespace().equals(net.createplant.CreatePlant.MOD_ID) || id.getNamespace().equals("createdieselgenerators")) ? MATERIALS.get(name.startsWith("flowing_") ? name.substring(8) : name) : null;
             if (material!=null) return new Properties(initial,material[0],material[1]);
             if (FluidMaterials.gas(fluid)) return new Properties(initial,FluidMaterials.referenceDensity(fluid,initial),1000);
             return new Properties(initial,Math.clamp(Math.abs(fluid.getFluidType().getDensity())/1000d,.000001,100),1000);
+        });
+    }
+    private static final Map<FluidForm,Properties> FORM_PROPERTIES=new java.util.EnumMap<>(FluidForm.class);
+    /** The material of a named liquid state, such as liquid nitrogen, which has its own row in the tables. */
+    static synchronized Properties nominalProperties(FluidForm form) {
+        return FORM_PROPERTIES.computeIfAbsent(form,state->{
+            double initial=net.createplant.transport.FluidHazards.named(state.id()).kelvin();
+            if(initial==293)initial=293.15;
+            double[] material=MATERIALS.get(state.id());
+            return material!=null ? new Properties(initial,material[0],material[1]) : new Properties(initial,1,1000);
         });
     }
     public static synchronized void register(Fluid fluid,Properties properties) {

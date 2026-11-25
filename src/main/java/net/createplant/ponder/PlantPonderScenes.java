@@ -1,5 +1,6 @@
 package net.createplant.ponder;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.WorldSectionElement;
@@ -117,13 +118,13 @@ public final class PlantPonderScenes {
                 }
             }
             if(tutorial.id().startsWith("turbine_") && step.key().equals("step_2")){
-                scene.world().modifyBlockEntity(new BlockPos(17,5,10),net.createplant.block.entity.SteamTurbineBlockEntity.class,rotor->{rotor.thermodynamics().input().fill(net.createplant.thermal.FluidThermal.at(new net.neoforged.neoforge.fluids.FluidStack(net.createplant.registry.CEFluids.STEAM.get(),1000),750),net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);rotor.thermodynamics().step(true,64);});
+                scene.world().modifyBlockEntity(new BlockPos(17,5,10),net.createplant.block.entity.SteamTurbineBlockEntity.class,rotor->{rotor.thermodynamics().input().fill(net.createplant.thermal.FluidThermal.at(FluidForm.STEAM.stack(1000),750),net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);rotor.thermodynamics().step(true,64);});
                 scene.world().setKineticSpeed(util.select().fromTo(2,5,10,19,5,10),256);
             }
             if (tutorial.id().equals("process_gas_recovery")) steamRecovery(scene, util, step.key(), target);
             if (tutorial.id().equals("gas_pipes") && step.key().equals("step_5")) {
                 scene.world().destroyBlock(target);
-                scene.world().createEntity(world -> GasCloud.preview(world, target, new FluidStack(CEFluids.STEAM.get(), 1000)));
+                scene.world().createEntity(world -> GasCloud.preview(world, target, FluidForm.STEAM.stack(1000)));
             }
             if (tutorial.id().equals("toxic_gas")) toxicGas(scene, step.key(), target);
             if (step.speed() != null) {
@@ -166,7 +167,7 @@ public final class PlantPonderScenes {
         switch (step) {
             case "step_1" -> {
                 scene.world().destroyBlock(target);
-                scene.world().createEntity(world -> GasCloud.preview(world, target, new FluidStack(CEFluids.STEAM.get(), 1100)));
+                scene.world().createEntity(world -> GasCloud.preview(world, target, FluidForm.STEAM.stack(1100)));
             }
             case "step_3" -> {
                 scene.world().modifyBlocks(util.select().fromTo(target, target.above()),

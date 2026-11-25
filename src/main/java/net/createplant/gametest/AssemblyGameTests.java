@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllDataComponents;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
@@ -291,7 +292,7 @@ public class AssemblyGameTests {
                 if (cell.role() == CoolingTowerStructure.Role.COLD) cold = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, at, Direction.SOUTH);
             }
             h.assertTrue(hot != null && cold != null, "Each size exposes real Create-compatible hot and cold ports");
-            h.assertTrue(hot.fill(new FluidStack(CEProcessFluids.WARM_WATER.get(), 1000), IFluidHandler.FluidAction.EXECUTE) == 1000, "Sized tower accepts warm water");
+            h.assertTrue(hot.fill(FluidForm.WARM_WATER.stack(1000), IFluidHandler.FluidAction.EXECUTE) == 1000, "Sized tower accepts warm water");
             tower.process();
             var water = cold.drain(1000, IFluidHandler.FluidAction.EXECUTE);
             h.assertTrue(water.getAmount() == 1000 && water.is(Fluids.WATER), "Sized tower cools without losing water");

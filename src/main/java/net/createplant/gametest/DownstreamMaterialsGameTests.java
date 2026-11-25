@@ -62,7 +62,7 @@ public final class DownstreamMaterialsGameTests {
         var port = ReactionTowerGameTests.port(tower);
         ReactionTowerGameTests.heat(tower);
         fill(h, port, wax);
-        fill(h, port, stack(CEProcessFluids.COMPRESSED_HYDROGEN.get(), 250));
+        fill(h, port, stack(net.createplant.thermal.FluidForm.COMPRESSED_HYDROGEN, 250));
         tower.process(125);
         h.assertTrue(tower.status().equals("heat") && tower.tank(0).getAmount() == wax.getAmount(),
             "Normal heat keeps the wax in the feed");
@@ -73,7 +73,7 @@ public final class DownstreamMaterialsGameTests {
         h.assertTrue(tower.layer(2).catalystStack().getDamageValue() == 1, "One working bed pays one wear");
 
         fill(h, port, stack(CEPetroFluids.HEAVY_OIL.get(), 500));
-        fill(h, port, stack(CEProcessFluids.COMPRESSED_HYDROGEN.get(), 500));
+        fill(h, port, stack(net.createplant.thermal.FluidForm.COMPRESSED_HYDROGEN, 500));
         tower.process(155);
         var moreNaphtha = take(h, port, CEProcessFluids.SYNTHETIC_NAPHTHA.get(), 350);
         take(h, port, CEProcessFluids.FT_OFFGAS.get(), 150);
@@ -140,7 +140,7 @@ public final class DownstreamMaterialsGameTests {
         fill(h, port, phenol);
         fill(h, port, formaldehyde);
         tick(vessel);
-        take(h, port, CEProcessFluids.WARM_WATER.get(), 100);
+        take(h, port, net.createplant.thermal.FluidForm.WARM_WATER, 100);
         var resin = take(h, vessel.itemPort(), CEItems.PHENOLIC_RESIN.get(), 4);
         var pressing = recipe(h, "pressing/phenolic_board");
         h.assertTrue(pressing.getIngredients().getFirst().test(resin)
@@ -213,7 +213,7 @@ public final class DownstreamMaterialsGameTests {
         insert(h, vessel.itemPort(), CEItems.UREA.toStack());
         insert(h, vessel.itemPort(), CEItems.POTASH.toStack());
         var port = vessel.port(Direction.NORTH);
-        fill(h, port, stack(CEProcessFluids.LIQUID_AMMONIA.get(), 100));
+        fill(h, port, stack(net.createplant.thermal.FluidForm.LIQUID_AMMONIA, 100));
         fill(h, port, stack(Fluids.WATER, 400));
         tick(vessel);
         var fertilizer = take(h, port, CEProcessFluids.LIQUID_FERTILIZER.get(), 500);
@@ -295,6 +295,25 @@ public final class DownstreamMaterialsGameTests {
 
     private static void tick(ReactorMachineBlockEntity vessel) {
         for (int tick = 0; tick < 200; tick++) vessel.tickProcess();
+    }
+
+    private static FluidStack stack(net.createplant.thermal.FluidForm form, int amount) {
+        return form.stack(amount);
+    }
+
+    private static FluidStack take(GameTestHelper h, IFluidHandler port, net.createplant.thermal.FluidForm form, int amount) {
+        var made = port.drain(form.stack(amount + 1), SIMULATE);
+        if (made.isEmpty()) {
+            for (int tank = 0; tank < port.getTanks(); tank++) {
+                var stored = port.getFluidInTank(tank);
+                if (!form.matches(stored)) continue;
+                made = port.drain(stored.copyWithAmount(amount + 1), SIMULATE);
+                if (!made.isEmpty()) break;
+            }
+        }
+        if (made.isEmpty()) made = port.drain(amount + 1, SIMULATE);
+        h.assertTrue(form.matches(made) && made.getAmount() == amount, "Expected " + amount + " of " + form.id() + "; got " + made);
+        return port.drain(made, EXECUTE);
     }
 
     private static FluidStack stack(Fluid fluid, int amount) {

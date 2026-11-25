@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -46,7 +47,7 @@ public final class GasPipeGameTests {
         h.setBlock(SOURCE.east(3),AllBlocks.GLASS_FLUID_PIPE.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.X));
         h.setBlock(SOURCE.east(4),CETransport.CERAMIC_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true));
         h.setBlock(SOURCE.east(5),CETransport.CERAMIC_PIPE.get().defaultBlockState().setValue(FluidPipeBlock.EAST,true).setValue(FluidPipeBlock.WEST,true));
-        var gas=new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),2000);
+        var gas=FluidForm.COMPRESSED_HYDROGEN.stack(2000);
         source.getTankInventory().fill(gas,EXECUTE);
         pump(h,SOURCE.east()).generatedSpeed.setValue(64);
         h.succeedWhen(()->{
@@ -61,8 +62,8 @@ public final class GasPipeGameTests {
         h.setBlock(SOURCE.east(2),pipe(true));h.setBlock(SOURCE.east(4),pipe(false));
         h.setBlock(SOURCE.east(3),CEPressure.REDUCER.get().defaultBlockState().setValue(PressureValveBlock.FACING,Direction.EAST).setValue(PressureValveBlock.AXIS,Direction.Axis.X));
         pump(h,SOURCE.east()).generatedSpeed.setValue(64);pump(h,SOURCE.east(5)).generatedSpeed.setValue(64);
-        source.getTankInventory().fill(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),2000),EXECUTE);
-        h.runAfterDelay(130,()-> {var out=dest.getTankInventory().getFluid();h.assertTrue(out.is(CEProcessFluids.PRESSURISED_HYDROGEN.get()) && out.getAmount()==2000 && source.getTankInventory().isEmpty(),"Native pump -> reducer -> native pump preserves 2000 mB and lowers one grade: "+out.getAmount());h.succeed();});
+        source.getTankInventory().fill(FluidForm.COMPRESSED_HYDROGEN.stack(2000),EXECUTE);
+        h.runAfterDelay(130,()-> {var out=dest.getTankInventory().getFluid();h.assertTrue(FluidForm.PRESSURISED_HYDROGEN.matches(out) && out.getAmount()==2000 && source.getTankInventory().isEmpty(),"Native pump -> reducer -> native pump preserves 2000 mB and lowers one grade: "+out.getAmount());h.succeed();});
     }
 
     @GameTest(template="test_petrochemical",timeoutTicks=200)
@@ -73,7 +74,7 @@ public final class GasPipeGameTests {
         h.setBlock(SOURCE.east(3),CEPressure.REDUCER.get().defaultBlockState().setValue(PressureValveBlock.FACING,Direction.EAST).setValue(PressureValveBlock.AXIS,Direction.Axis.X));
         var inlet=pump(h,SOURCE.east());var outlet=pump(h,SOURCE.east(5));
         int charge=2048;
-        source.getTankInventory().fill(new FluidStack(CEProcessFluids.COMPRESSED_HYDROGEN.get(),charge),EXECUTE);
+        source.getTankInventory().fill(FluidForm.COMPRESSED_HYDROGEN.stack(charge),EXECUTE);
         h.startSequence().thenIdle(24).thenExecute(()->{
             h.assertTrue(flow(h,2).flowBand()==0 && flow(h,4).flowBand()==0,"Stored pressure alone is silent");
             inlet.generatedSpeed.setValue(64);outlet.generatedSpeed.setValue(64);

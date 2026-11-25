@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
@@ -53,7 +54,7 @@ public class FusionFuelGameTests {
             be.gas().setFluid(FluidStack.EMPTY);be.liquid().setFluid(FluidStack.EMPTY);be.water().setFluid(new FluidStack(Fluids.WATER,32000));be.warm().setFluid(FluidStack.EMPTY);
             var conversion=net.createplant.thermal.ThermalStreams.liquefaction(new FluidStack(type,1));int amount=conversion.inputAmount()*10;
             be.port(Direction.UP).fill(new FluidStack(type,amount),EXECUTE);be.step();
-            h.assertTrue(be.gas().isEmpty() && be.liquid().getFluid().is(conversion.output()) && be.liquid().getFluidAmount()==10,"The fixed liquefaction table processes "+type);
+            h.assertTrue(be.gas().isEmpty() && be.liquid().getFluid().is(conversion.output().getFluid()) && be.liquid().getFluidAmount()==10,"The fixed liquefaction table processes "+type);
             int coolant=type==CEFusion.HELIUM_GAS.get() ? 2000 : 500;
             // The discharge carries the gas's heat and the shaft work, so it is warmer than the supply but never boils.
             var warm=be.warm().getFluid();
@@ -71,7 +72,7 @@ public class FusionFuelGameTests {
         be.port(Direction.UP).fill(preview, EXECUTE);be.water().fill(new FluidStack(Fluids.WATER, 32000), EXECUTE);
         be.setSpeed(0);be.step();
         h.assertTrue(be.gas().getFluidAmount() == 10000 && be.watts() == 0, "A stationary shaft cannot prime or refrigerate");
-        be.setSpeed(256);be.liquid().fill(FluidThermal.at(new FluidStack(CEFusion.LIQUID_HELIUM.get(), 16000), 4.2), EXECUTE);be.step();
+        be.setSpeed(256);be.liquid().fill(FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(16000), 4.2), EXECUTE);be.step();
         int gas = be.gas().getFluidAmount();
         h.assertTrue(be.watts() == 0 && be.water().getFluidAmount() == 32000, "A full liquid outlet consumes no shaft work or cooling water");
         var saved = be.saveWithoutMetadata(h.getLevel().registryAccess());be.loadWithComponents(saved, h.getLevel().registryAccess());be.setSpeed(256);
@@ -87,7 +88,7 @@ public class FusionFuelGameTests {
     public static void aPartialGasBatchWaitsAndRemovedHandlersCannotDrain(GameTestHelper h) {
         var be=box(h);var inlet=be.port(Direction.UP);var outlet=be.port(Direction.DOWN);inlet.fill(new FluidStack(CEFusion.HELIUM_GAS.get(),1),EXECUTE);be.water().fill(new FluidStack(Fluids.WATER,32000),EXECUTE);be.step();be.step();
         h.assertTrue(be.gas().getFluidAmount()==1 && be.liquid().isEmpty() && be.watts()==0,"Less than one conversion batch waits without consuming gas, water or work");
-        be.liquid().fill(new FluidStack(CEFusion.LIQUID_HELIUM.get(),1),EXECUTE);h.setBlock(BOX,Blocks.AIR);
+        be.liquid().fill(FluidForm.LIQUID_HELIUM.stack(1),EXECUTE);h.setBlock(BOX,Blocks.AIR);
         h.assertTrue(outlet.drain(1,EXECUTE).isEmpty() && inlet.fill(new FluidStack(CEFusion.HELIUM_GAS.get(),1),EXECUTE)==0 && outlet.getFluidInTank(0).isEmpty(),"Removed handlers cannot resurrect feed or drain destroyed stock");h.succeed();
     }
 

@@ -16,12 +16,12 @@ public class RefrigerationGameTests {
     @GameTest(template="test_fractionation")
     public static void anExchangerCondensesAWorkingGasOnlyAgainstAFiniteCoolant(GameTestHelper h){
         var be=ThermalControlGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(6,3,6)),Direction.NORTH,2);var heat=be.thermal();
-        int ratio=PhaseChange.ratio(new FluidStack(CEProcessFluids.LIQUID_AMMONIA.get(),1));
+        int ratio=PhaseChange.ratio(FluidForm.LIQUID_AMMONIA.stack(1));
         heat.rowPort(0,0).fill(new FluidStack(CEFluids.AMMONIA_GAS.get(),ratio*3),EXECUTE);for(int i=0;i<10;i++)be.tickProcess();h.assertTrue(heat.tank(1).isEmpty(),"No coolant creates no liquid");
         // Ammonia boils at -33 degrees C, so only a coolant colder than that condenses it. The gas gives up its latent heat, which barely warms the liquid coolant.
         heat.rowPort(1,1).fill(FluidState.with(new FluidStack(CEProcessFluids.SLIME_COOLANT.get(),ratio*3),3,FluidState.NORMAL_PRESSURE),EXECUTE);for(int i=0;i<200;i++)be.tickProcess();
         var coolant=heat.tank(3).getFluid();
-        h.assertTrue(heat.tank(0).isEmpty() && heat.tank(1).getFluid().is(CEProcessFluids.LIQUID_AMMONIA.get()) && heat.tank(1).getFluidAmount()==3 && heat.tank(2).isEmpty()
+        h.assertTrue(heat.tank(0).isEmpty() && FluidForm.LIQUID_AMMONIA.matches(heat.tank(1).getFluid()) && heat.tank(1).getFluidAmount()==3 && heat.tank(2).isEmpty()
             && coolant.is(CEProcessFluids.SLIME_COOLANT.get()) && coolant.getAmount()==ratio*3 && FluidState.temperature(coolant)==3,
             "Three whole condensation batches pay for the same volume of cold coolant: "+heat.tank(1).getFluidAmount()+" / "+coolant.getAmount()+" at "+FluidState.temperature(coolant));h.succeed();
     }
@@ -29,8 +29,8 @@ public class RefrigerationGameTests {
     public static void liquidNitrogenLeavesAsTheRegisteredGasAmountAndCannotBeCreatedByAFan(GameTestHelper h){
         var be=ThermalControlGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(6,3,6)),Direction.NORTH,2);var heat=be.thermal();
         // Both streams pass in equal mB, so the hot one must be a liquid: a gas carries far too little heat to boil the same volume of liquid nitrogen.
-        heat.rowPort(0,0).fill(new FluidStack(Fluids.WATER,10),EXECUTE);heat.rowPort(1,1).fill(new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),10),EXECUTE);for(int i=0;i<5;i++)be.tickProcess();
-        int ratio=ThermalStreams.coolant(new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(),1)).outputAmount();
+        heat.rowPort(0,0).fill(new FluidStack(Fluids.WATER,10),EXECUTE);heat.rowPort(1,1).fill(FluidForm.LIQUID_NITROGEN.stack(10),EXECUTE);for(int i=0;i<5;i++)be.tickProcess();
+        int ratio=ThermalStreams.coolant(FluidForm.LIQUID_NITROGEN.stack(1)).outputAmount();
         h.assertTrue(heat.tank(1).getFluid().is(Fluids.WATER) && heat.tank(1).getFluidAmount()==10 && FluidState.temperature(heat.tank(1).getFluid())<FluidState.AMBIENT
             && heat.tank(3).getFluid().is(CEFluids.NITROGEN_GAS.get()) && heat.tank(3).getFluidAmount()==10*ratio,"The common table preserves the nitrogen liquid/gas recipe ratio: "
             +heat.tank(3).getFluid().getAmount()+" "+heat.tank(3).getFluid().getHoverName().getString());
@@ -40,8 +40,8 @@ public class RefrigerationGameTests {
     public static void aClosedAmmoniaCoolantLoopReturnsItsExactStartingLiquid(GameTestHelper h){
         var exchanger=ThermalControlGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(6,3,6)),Direction.NORTH,2);var heat=exchanger.thermal();
         // Hot pressurised water, still liquid at 231 C, carries enough heat to boil the same volume of liquid ammonia.
-        heat.rowPort(0,0).fill(FluidState.with(new FluidStack(Fluids.WATER,10),11,12),EXECUTE);heat.rowPort(1,1).fill(new FluidStack(CEProcessFluids.LIQUID_AMMONIA.get(),10),EXECUTE);for(int i=0;i<5;i++)exchanger.tickProcess();
-        var vapour=heat.rowPort(1,0).drain(Integer.MAX_VALUE,EXECUTE);int ratio=ThermalStreams.coolant(new FluidStack(CEProcessFluids.LIQUID_AMMONIA.get(),1)).outputAmount();
+        heat.rowPort(0,0).fill(FluidState.with(new FluidStack(Fluids.WATER,10),11,12),EXECUTE);heat.rowPort(1,1).fill(FluidForm.LIQUID_AMMONIA.stack(10),EXECUTE);for(int i=0;i<5;i++)exchanger.tickProcess();
+        var vapour=heat.rowPort(1,0).drain(Integer.MAX_VALUE,EXECUTE);int ratio=ThermalStreams.coolant(FluidForm.LIQUID_AMMONIA.stack(1)).outputAmount();
         h.assertTrue(vapour.is(CEFluids.AMMONIA_GAS.get()) && vapour.getAmount()==10*ratio,"All ten liquid units leave as their finite gas equivalent: "+vapour.getAmount()+" "+vapour.getHoverName().getString());
         var fan=new BlockPos(18,5,6);var radiator=RadiatorTemperatureGameTests.cell(h,fan);((net.createplant.block.entity.CoolingFanBlockEntity)h.getBlockEntity(fan)).setSpeed(64);
         var inlet=((net.createplant.block.entity.RadiatorBlockEntity)h.getBlockEntity(fan.below(2).north())).port(Direction.NORTH);var outlet=((net.createplant.block.entity.RadiatorBlockEntity)h.getBlockEntity(fan.below(2).south())).port(Direction.SOUTH);inlet.fill(vapour,EXECUTE);for(int i=0;i<2000 && !inlet.getFluidInTank(0).isEmpty();i++)radiator.tick();

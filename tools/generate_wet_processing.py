@@ -77,7 +77,7 @@ def assets():
 
 def fluid(name,amount,tag=False):return {'type':'neoforge:tag' if tag else 'neoforge:single','tag' if tag else 'fluid':name,'amount':amount}
 def recipes():
- write(D/'tags/fluid/leaching_oxidants.json',{'replace':False,'values':[NS+'compressed_air',NS+'oxygen_gas']})
+ write(D/'tags/fluid/leaching_oxidants.json',{'replace':False,'values':[NS+'air_gas',NS+'oxygen_gas']})
  for metal in ('copper','iron','zinc','tin'):
   crushed=NS+'crushed_raw_tin' if metal=='tin' else 'create:crushed_raw_'+metal
   write(D/f'recipe/pressure_reaction/{metal}_leaching.json',{'type':NS+'pressure_reaction','module':'stirred','heat_requirement':'heated','processing_time':200,

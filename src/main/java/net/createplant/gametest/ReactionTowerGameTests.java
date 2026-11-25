@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
@@ -86,7 +87,7 @@ public class ReactionTowerGameTests {
             h.assertTrue(fluid(h,BASE.offset(0,1,1),Direction.WEST)==null && fluid(h,BASE,Direction.DOWN)==null && fluid(h,BASE.offset(0,0,1),Direction.EAST)==null,"The middle layer, the rest of the underside and inner faces connect nothing");
             h.assertTrue(items(h,CENTRE.above(2),Direction.UP)!=null && items(h,CENTRE,Direction.UP)==null,"Catalysts go in through the top");
             owner.process(5);
-            h.assertTrue(owner.status().equals("no_feed") && fluid(h,BASE.offset(0,0,1),Direction.WEST).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0,"Without trays the tower takes only what it can separate: "+owner.status());
+            h.assertTrue(owner.status().equals("no_feed") && fluid(h,BASE.offset(0,0,1),Direction.WEST).fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(1000),SIMULATE)==0,"Without trays the tower takes only what it can separate: "+owner.status());
             h.setBlock(BASE.offset(0,2,0),net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
             h.runAfterDelay(10,()->{h.assertTrue(owner(h)==null && fluid(h,BASE.offset(0,0,1),Direction.WEST)==null,"A broken tower closes its ports");h.succeed();});
         });
@@ -112,14 +113,14 @@ public class ReactionTowerGameTests {
         h.runAfterDelay(10,()->{
             var owner=owner(h);load(owner,3,new ItemStack(CEItems.IRON_CATALYST.get()));
             var feed=fluid(h,BASE.offset(2,0,1),Direction.EAST);var product=fluid(h,BASE.offset(0,0,1),Direction.WEST);
-            h.assertTrue(fluid(h,BASE.offset(2,2,1),Direction.EAST).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0 && fluid(h,CENTRE,Direction.DOWN).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0,"A reactor takes its feed only at the bottom layer's sides");
-            h.assertTrue(feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),30000),EXECUTE)==30000,"Three batches of feed fit");
+            h.assertTrue(fluid(h,BASE.offset(2,2,1),Direction.EAST).fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(1000),SIMULATE)==0 && fluid(h,CENTRE,Direction.DOWN).fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(1000),SIMULATE)==0,"A reactor takes its feed only at the bottom layer's sides");
+            h.assertTrue(feed.fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(30000),EXECUTE)==30000,"Three batches of feed fit");
             owner.process(100);h.assertTrue(owner.status().equals("heat") && owner.tank(0).getAmount()==30000,"Without heat nothing reacts: "+owner.status());
             heat(h);owner.process(99);h.assertTrue(owner.status().equals("running") && owner.tank(0).getAmount()<30000 && owner.tank(0).getAmount()>0,"A batch converts over its cycle: "+owner.status()+" "+owner.tank(0).getAmount());
             owner.process(1);var made=product.drain(1000000,EXECUTE);
-            h.assertTrue(owner.tank(0).isEmpty() && made.is(CEProcessFluids.HOT_SYNTHESIS_MIXTURE.get()) && made.getAmount()==27000,"Three layers run three batches, drawn from another bottom side: "+made.getAmount());
+            h.assertTrue(owner.tank(0).isEmpty() && FluidForm.HOT_SYNTHESIS_MIXTURE.matches(made) && made.getAmount()==27000,"Three layers run three batches, drawn from another bottom side: "+made.getAmount());
             h.assertTrue(owner.layer(0).catalystStack().getDamageValue()==1 && owner.layer(2).catalystStack().getDamageValue()==1,"Each layer wears its own catalyst");
-            feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),15000),EXECUTE);owner.process(100);
+            feed.fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(15000),EXECUTE);owner.process(100);
             int wear=0;for(int layer=0;layer<3;layer++)wear+=owner.layer(layer).catalystStack().getDamageValue();
             // Conversion is continuous: one and a half batches of feed go straight through, and only the batch that completes wears a bed.
             h.assertTrue(owner.tank(0).isEmpty() && fluid(h,CENTRE,Direction.DOWN).drain(1000000,SIMULATE).getAmount()==13500 && wear==4,
@@ -134,11 +135,11 @@ public class ReactionTowerGameTests {
         h.runAfterDelay(10,()->{
             var owner=owner(h);load(owner,2,new ItemStack(CEItems.OXIDATION_CATALYST.get()));
             var feed=fluid(h,BASE.offset(1,0,0),Direction.NORTH);
-            h.assertTrue(feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),1000),SIMULATE)==0,"A feed the oxidation catalyst cannot use is refused");
+            h.assertTrue(feed.fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(1000),SIMULATE)==0,"A feed the oxidation catalyst cannot use is refused");
             h.assertTrue(feed.fill(new FluidStack(CEFluids.AMMONIA_GAS.get(),200),EXECUTE)==200 && feed.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(),250),EXECUTE)==250,"Both feeds of the reaction share one port");
             owner.process(100);
             var made=fluid(h,BASE.offset(1,0,2),Direction.SOUTH).drain(1000000,EXECUTE);
-            h.assertTrue(made.is(CEProcessFluids.HOT_NITRIC_OXIDE_MIXTURE.get()) && made.getAmount()==500 && owner.tank(0).isEmpty() && owner.tank(1).isEmpty(),"Two trays oxidise two batches of ammonia: "+made.getAmount()+" "+owner.status());
+            h.assertTrue(FluidForm.HOT_NITRIC_OXIDE_MIXTURE.matches(made) && made.getAmount()==500 && owner.tank(0).isEmpty() && owner.tank(1).isEmpty(),"Two trays oxidise two batches of ammonia: "+made.getAmount()+" "+owner.status());
             h.succeed();
         });
     }
@@ -147,7 +148,7 @@ public class ReactionTowerGameTests {
         build(h,3);
         h.runAfterDelay(10,()->{
             heat(h);var owner=owner(h);load(owner,3,new ItemStack(CEItems.IRON_CATALYST.get()));var feed=fluid(h,BASE.offset(2,0,1),Direction.EAST);
-            for(int i=0;i<40 && !owner.status().equals("output");i++){feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),30000-owner.tank(0).getAmount()),EXECUTE);owner.process(100);}
+            for(int i=0;i<40 && !owner.status().equals("output");i++){feed.fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(30000-owner.tank(0).getAmount()),EXECUTE);owner.process(100);}
             int product=owner.tank(2).getAmount(),left=owner.tank(0).getAmount();owner.process(100);
             h.assertTrue(owner.status().equals("output") && left>=10000 && owner.tank(0).getAmount()==left && owner.tank(2).getAmount()==product,"A full outlet keeps the feed: "+owner.status()+" "+left+" "+product);
             h.succeed();
@@ -158,7 +159,7 @@ public class ReactionTowerGameTests {
         build(h,3);
         h.runAfterDelay(10,()->{
             heat(h);var owner=owner(h);var worn=new ItemStack(CEItems.IRON_CATALYST.get());worn.setDamageValue(worn.getMaxDamage()-1);load(owner,1,worn);
-            fluid(h,BASE.offset(2,0,1),Direction.EAST).fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),20000),EXECUTE);
+            fluid(h,BASE.offset(2,0,1),Direction.EAST).fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(20000),EXECUTE);
             owner.process(100);owner.process(100);
             h.assertTrue(owner.tank(0).getAmount()==10000 && owner.status().equals("catalyst"),"The last batch spends the catalyst and the tower stops: "+owner.status());
             var spent=items(h,CENTRE.above(2),Direction.UP).extractItem(0,1,false);
@@ -181,7 +182,7 @@ public class ReactionTowerGameTests {
             h.assertTrue(!owner.canInsert(tray()),"No tray goes into a separator that holds fluid");
             owner.process(1);
             h.assertTrue(owner.tank(0).isEmpty() && owner.tank(2).getAmount()==3 && owner.tank(3).getAmount()==24000,"Three layers separate three batches: "+owner.tank(2).getAmount()+" "+owner.tank(3).getAmount());
-            h.assertTrue(top.drain(1,SIMULATE).is(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get()) && bottom.drain(1000,SIMULATE).is(CEProcessFluids.LIQUID_AMMONIA.get()),"The gas leaves at the top and the liquid at the bottom");
+            h.assertTrue(FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(top.drain(1,SIMULATE)) && FluidForm.LIQUID_AMMONIA.matches(bottom.drain(1000,SIMULATE)),"The gas leaves at the top and the liquid at the bottom");
             h.assertTrue(bottom.drain(1000,EXECUTE).getAmount()==3 && top.drain(1000000,EXECUTE).getAmount()==24000 && bottom.drain(1000,SIMULATE).isEmpty(),"Each outlet gives only its own phase");
             owner.process(5);
             h.assertTrue(h.getBlockState(BASE.offset(1,1,0)).getValue(ReactionTowerBlock.WINDOW) && owner.canInsert(tray()),"Empty, it keeps its sight glasses and takes a tray again");
@@ -217,7 +218,7 @@ public class ReactionTowerGameTests {
     }
     /** Runs the synthesis long enough for the gauges to settle, keeping the feed topped up and the product drawn off; returns the temperatures from the top layer down. */
     private static float[] settle(ReactionTowerBlockEntity owner,IFluidHandler feed,IFluidHandler product){
-        for(int i=0;i<12;i++){feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),30000),EXECUTE);owner.process(100);product.drain(1000000,EXECUTE);}
+        for(int i=0;i<12;i++){feed.fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(30000),EXECUTE);owner.process(100);product.drain(1000000,EXECUTE);}
         return new float[]{owner.layerTemperature(2),owner.layerTemperature(1),owner.layerTemperature(0)};
     }
     @GameTest(template="test_fractionation")
@@ -228,7 +229,7 @@ public class ReactionTowerGameTests {
             var feed=fluid(h,BASE.offset(2,0,1),Direction.EAST);var product=fluid(h,BASE.offset(0,0,1),Direction.WEST);
             var fresh=settle(owner,feed,product);
             h.assertTrue(fresh[0]>fresh[1] && fresh[1]>fresh[2] && fresh[2]>=380,"Fresh catalyst runs hottest in the upper stage: "+java.util.Arrays.toString(fresh));
-            feed.fill(new FluidStack(CEProcessFluids.COMPRESSED_SYNTHESIS_FEED.get(),ReactionTowerBlockEntity.VOLUME_PER_LAYER*64*3*4/5),EXECUTE);
+            feed.fill(FluidForm.COMPRESSED_SYNTHESIS_FEED.stack(ReactionTowerBlockEntity.VOLUME_PER_LAYER*64*3*4/5),EXECUTE);
             for(int i=0;i<6;i++)owner.process(5);
             h.assertTrue(owner.pressure()>=15 && owner.pressure()<=25,"A well-filled loop reads 15 to 25 MPa: "+owner.pressure());
             for(int i=0;i<3;i++)owner.takeTop();

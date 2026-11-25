@@ -1,5 +1,6 @@
 package net.createplant.client;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllSpriteShifts;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -154,7 +155,7 @@ final class VesselWorldClientCheck {
         var fluids = level.getCapability(Capabilities.FluidHandler.BLOCK, origin, Direction.NORTH);
         var items = level.getCapability(Capabilities.ItemHandler.BLOCK, origin, Direction.NORTH);
         if (fluids == null || items == null) throw new IllegalStateException("Missing real vessel capability");
-        var content = index == 2 ? new FluidStack(CEProcessFluids.LIQUID_NITROGEN.get(), CONTENTS) : new FluidStack(Fluids.WATER, CONTENTS);
+        var content = index == 2 ? FluidForm.LIQUID_NITROGEN.stack(CONTENTS) : new FluidStack(Fluids.WATER, CONTENTS);
         content = FluidThermal.at(content, index == 2 ? 77.36 : 293.15);
         if (fluids.fill(content, FluidAction.EXECUTE) != CONTENTS)
             throw new IllegalStateException("Vessel capability did not accept its complete display inventory");
@@ -221,7 +222,7 @@ final class VesselWorldClientCheck {
             }
             if (windowed) VesselClientCheck.verifyWindowQuads(mc, mc.level, owner);
             var liquid = owner.displayedFluid(7);
-            if (!liquid.is(i == 2 ? CEProcessFluids.LIQUID_NITROGEN.get() : Fluids.WATER) || liquid.isEmpty()
+            if (!(i == 2 ? net.createplant.thermal.FluidForm.LIQUID_NITROGEN.matches(liquid) : liquid.is(Fluids.WATER)) || liquid.isEmpty()
                 || owner.getTankInventory().getFluidAmount() != CONTENTS)
                 throw new IllegalStateException("Client is missing the actual stored liquid for vessel " + i);
             if (!owner.displayedItem(0).is(Items.IRON_INGOT) || owner.displayedItem(0).getCount() != 8

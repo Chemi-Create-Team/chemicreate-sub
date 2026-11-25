@@ -54,12 +54,12 @@ public final class DistillationProfile {
         return 0;
     }
     /** The liquid that crosses a port of the slot in place of its gas: liquid oxygen leaves. */
-    public static Fluid liquid(int slot) {
-        return slot==OXYGEN ? CEFluids.LIQUID_OXYGEN.get() : null;
+    public static net.createplant.thermal.FluidForm liquid(int slot) {
+        return slot==OXYGEN ? net.createplant.thermal.FluidForm.LIQUID_OXYGEN : null;
     }
     /** Gas mB that carry the mass of one mB of the slot's liquid. */
     public static int gasPerLiquid(int slot) {
-        double liquid=FluidThermal.properties(new FluidStack(liquid(slot),1)).kilogramsPerLitre(),gas=FluidThermal.properties(new FluidStack(fluid(slot),1)).kilogramsPerLitre();
+        double liquid=FluidThermal.properties(liquid(slot).stack(1)).kilogramsPerLitre(),gas=FluidThermal.properties(stack(slot,1)).kilogramsPerLitre();
         return (int)Math.round(liquid/gas);
     }
     /** The 1-based outlet number of a layer, or 0 when it has none. */
@@ -71,10 +71,14 @@ public final class DistillationProfile {
         for (int i=0;i<layers.length;i++) if (layers[i]==layer) return i+1;
         return 0;
     }
+    /** {@code amount} mB of what the slot holds in air mode; oxygen is the liquid. */
+    public static FluidStack stack(int slot,int amount) {
+        return slot==OXYGEN ? net.createplant.thermal.FluidForm.LIQUID_OXYGEN.stack(amount) : new FluidStack(fluid(slot),amount);
+    }
     public static Fluid fluid(int slot) {
         return switch (slot) {
             case AIR -> CEFluids.AIR_GAS.get();
-            case OXYGEN -> CEFluids.LIQUID_OXYGEN.get();
+            case OXYGEN -> CEFluids.OXYGEN_GAS.get();
             case ARGON -> CEFluids.ARGON_GAS.get();
             case NITROGEN -> CEFluids.NITROGEN_GAS.get();
             default -> net.minecraft.world.level.material.Fluids.EMPTY;

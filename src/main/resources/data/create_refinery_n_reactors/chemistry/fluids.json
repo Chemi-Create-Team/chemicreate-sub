@@ -135,18 +135,6 @@
     "formula": "UF₆",
     "hazards": []
   },
-  "compressed_air": {
-    "formula": "N₂ + O₂ + Ar",
-    "hazards": []
-  },
-  "compressed_hydrogen": {
-    "formula": "H₂",
-    "hazards": []
-  },
-  "compressed_synthesis_feed": {
-    "formula": "N₂ + H₂",
-    "hazards": []
-  },
   "contaminated_gas": {
     "formula": "…",
     "hazards": []
@@ -445,38 +433,6 @@
     "hazards": [],
     "aqueous": true
   },
-  "high_pressure_steam": {
-    "formula": "H₂O",
-    "hazards": []
-  },
-  "hot_hydrocracker_effluent": {
-    "formula": "CₙHₘ + H₂ + H₂S",
-    "hazards": [
-      "FLAMMABLE"
-    ]
-  },
-  "hot_hydrotreater_effluent": {
-    "formula": "CₙHₘ + H₂ + H₂S",
-    "hazards": [
-      "FLAMMABLE"
-    ]
-  },
-  "hot_nitric_oxide_mixture": {
-    "formula": "NO + H₂O",
-    "hazards": []
-  },
-  "hot_olefins": {
-    "formula": "C₂H₄ + C₃H₆",
-    "hazards": []
-  },
-  "hot_reactor_coolant": {
-    "formula": "H₂O",
-    "hazards": []
-  },
-  "hot_synthesis_mixture": {
-    "formula": "NH₃ + N₂ + H₂",
-    "hazards": []
-  },
   "hydrochloric_acid": {
     "formula": "HCl + H₂O",
     "hazards": [],
@@ -509,57 +465,10 @@
     "hazards": [],
     "aqueous": true
   },
-  "liquid_ammonia": {
-    "formula": "NH₃",
-    "hazards": [
-      "REFRIGERANT"
-    ]
-  },
-  "liquid_chlorine": {
-    "formula": "Cl₂",
-    "hazards": [
-      "CORROSIVE",
-      "OXIDIZER"
-    ]
-  },
   "liquid_fertilizer": {
     "formula": "H₂O + CO(NH₂)₂ + NH₃ + PO₄³⁻ + K⁺",
     "hazards": [],
     "aqueous": true
-  },
-  "liquid_helium": {
-    "formula": "He",
-    "hazards": [
-      "REFRIGERANT"
-    ]
-  },
-  "liquid_nitrogen": {
-    "formula": "N₂",
-    "hazards": [
-      "REFRIGERANT"
-    ]
-  },
-  "liquid_oxygen": {
-    "formula": "O₂",
-    "hazards": [
-      "OXIDIZER"
-    ]
-  },
-  "liquid_propylene": {
-    "formula": "C₃H₆",
-    "hazards": [
-      "FLAMMABLE"
-    ]
-  },
-  "liquid_sulfur_dioxide": {
-    "formula": "SO₂",
-    "hazards": []
-  },
-  "liquid_vinyl_chloride": {
-    "formula": "C₂H₃Cl",
-    "hazards": [
-      "FLAMMABLE"
-    ]
   },
   "low_sulfur_diesel": {
     "formula": "C₁₀H₂₂–C₂₂H₄₆",
@@ -665,24 +574,6 @@
     "hazards": [],
     "aqueous": true
   },
-  "preheated_crude_oil": {
-    "formula": "CₙHₘ",
-    "hazards": [
-      "FLAMMABLE"
-    ]
-  },
-  "pressurised_carbon_monoxide": {
-    "formula": "CO",
-    "hazards": []
-  },
-  "pressurised_hydrogen": {
-    "formula": "H₂",
-    "hazards": []
-  },
-  "pressurised_water": {
-    "formula": "H₂O",
-    "hazards": []
-  },
   "propylene": {
     "formula": "C₃H₆",
     "hazards": []
@@ -729,10 +620,6 @@
     ],
     "aqueous": true
   },
-  "steam": {
-    "formula": "H₂O",
-    "hazards": []
-  },
   "styrene": {
     "formula": "C₈H₈",
     "hazards": [
@@ -759,10 +646,6 @@
   },
   "sulfurous_acid": {
     "formula": "H₂SO₃",
-    "hazards": []
-  },
-  "superheated_steam": {
-    "formula": "H₂O",
     "hazards": []
   },
   "synthesis_gas": {
@@ -848,16 +731,6 @@
   },
   "vinyl_chloride": {
     "formula": "C₂H₃Cl",
-    "hazards": []
-  },
-  "warm_slime_coolant": {
-    "formula": "H₂O + …",
-    "hazards": [
-      "REFRIGERANT"
-    ]
-  },
-  "warm_water": {
-    "formula": "H₂O",
     "hazards": []
   },
   "wastewater": {

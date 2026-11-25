@@ -13,8 +13,12 @@
       "id": "create_refinery_n_reactors:lead_chloride_crystals"
     },
     {
-      "id": "create_refinery_n_reactors:steam",
-      "amount": 400
+      "id": "minecraft:water",
+      "amount": 400,
+      "components": {
+        "create_refinery_n_reactors:temperature_level": 12,
+        "create_refinery_n_reactors:pressure_level": 4
+      }
     }
   ]
 }

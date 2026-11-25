@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "create_refinery_n_reactors:compressed_air",
+    "create_refinery_n_reactors:air_gas",
     "create_refinery_n_reactors:oxygen_gas"
   ]
 }

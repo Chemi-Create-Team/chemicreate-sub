@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import net.createplant.CreatePlant;
 import net.createplant.block.FractionatingColumnBlock;
 import net.createplant.block.entity.FractionatingColumnBlockEntity;
@@ -42,7 +43,7 @@ public class ColumnConsolidationGameTests {
         h.setBlock(cog,com.simibubi.create.AllBlocks.COGWHEEL.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.AXIS,Direction.Axis.X));
         h.setBlock(motor,com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,Direction.EAST));
         var tank=((com.simibubi.create.content.fluids.tank.FluidTankBlockEntity)h.getBlockEntity(source)).getTankInventory();
-        tank.fill(new FluidStack(net.createplant.registry.CEProcessFluids.PREHEATED_CRUDE_OIL.get(),2000),EXECUTE);
+        tank.fill(FluidForm.PREHEATED_CRUDE_OIL.stack(2000),EXECUTE);
         h.runAfterDelay(5,()->((com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity)h.getBlockEntity(motor)).generatedSpeed.setValue(64));
         h.succeedWhen(()->{
             h.assertTrue(owner.recipeId().equals("distill_crude") && owner.stock(1)>0,"Native pumped crude selects chemical mode and completes a real batch");
@@ -154,7 +155,7 @@ public class ColumnConsolidationGameTests {
         var owner=DistillationGameTests.build(h.getLevel(),h.absolutePos(new BlockPos(5,2,5)),2,14);
         var inlet=DistillationGameTests.inlet(owner,2);
         h.assertTrue(inlet.fill(new FluidStack(CEPetroFluids.CRUDE_OIL.get(),1000),EXECUTE)==0,"Cold crude cannot bypass its existing 620 K heating requirement");
-        h.assertTrue(inlet.fill(FluidThermal.at(new FluidStack(net.createplant.registry.CEProcessFluids.PREHEATED_CRUDE_OIL.get(),1000),650),EXECUTE)==1000,"Heated crude selects distillation");
+        h.assertTrue(inlet.fill(FluidThermal.at(FluidForm.PREHEATED_CRUDE_OIL.stack(1000),650),EXECUTE)==1000,"Heated crude selects distillation");
         DistillationGameTests.run(owner,110);
         h.assertTrue(DistillationGameTests.inlet(owner,2).fill(new FluidStack(CEProcessFluids.COOLED_OLEFINS.get(),200),EXECUTE)==0,"Residual fractions keep another feed from changing the outputs");
         for(int layer:LAYERS)DistillationGameTests.outlet(owner,layer).drain(Integer.MAX_VALUE,EXECUTE);

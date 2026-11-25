@@ -1,5 +1,6 @@
 package net.createplant.block.entity;
 
+import net.createplant.thermal.FluidForm;
 import java.util.List;
 import java.util.Map;
 
@@ -434,7 +435,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
 
     private boolean acceptsGas(FluidStack stack) {
         if (stack.isEmpty() || !FluidThermal.valid(stack)) return false;
-        if (stack.is(CEFluids.LIQUID_OXYGEN.get())) return true;
+        if (FluidForm.LIQUID_OXYGEN.matches(stack)) return true;
         for (RecipeHolder<ConverterRecipe> holder : recipes())
             if (holder.value().gasIngredient().ingredient().test(stack)) return true;
         return false;

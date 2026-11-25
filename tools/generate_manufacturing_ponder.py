@@ -376,23 +376,23 @@ def generate(selected=None):
     print('Generated', len(entries), 'manufacturing storyboards in', len({entry['family'] for entry in entries}), 'families')
 # Shared utilities and bulk chemicals.
 route('air', ('Separating industrial gases from air', '空気から工業用ガスを分離する', '从空气分离工业气体'),
-    ['stainless_steel_pump', 'air_gas_bucket', 'nitrogen_gas_bucket', 'oxygen_gas_bucket', 'liquid_oxygen_bucket', 'argon_gas_bucket', 'liquid_nitrogen_bucket'], [
+    ['stainless_steel_pump', 'air_gas_bucket', 'nitrogen_gas_bucket', 'oxygen_gas_bucket', 'oxygen_gas_bucket', 'argon_gas_bucket', 'nitrogen_gas_bucket'], [
     step('crafting', 'stainless_steel_pump', 'Fit a Create Nozzle facing open air and run a pump into the top of the compressor.', 'Createのノズルを空気に向け、回転するポンプで圧縮機の上面へ空気を送ります。', '让 Create 喷嘴的开口朝向空气，再用泵从压缩机顶部送入空气。'),
     step('compressor', None, 'Mount the engine on the cylinder and drive its crank shaft two blocks out. Air enters the cylinder top and compressed gas leaves the bottom. Set pressure with a wrench.', 'シリンダーに駆動部を付け、2マス先のクランク軸へ回転を入力します。空気はシリンダー上面から入り、圧縮後は下面へ出ます。レンチで圧力を設定します。', '把驱动部装在气缸上，驱动两格外的曲轴。空气从气缸顶面进入，压缩后从底面排出，用扳手设定压力。', 'air_gas_bucket'),
     step('compressor', None, 'Cool the hot compressor discharge in a driven radiator. The fractionation feed must remain at least 6 bar and no warmer than 40 °C.', '圧縮後の熱い空気を駆動したラジエーターで冷やします。分留塔へ6 bar以上・40℃以下で送ります。', '用有动力的散热器冷却压缩后的空气，以至少6 bar、最高40℃送入分馏塔。', 'air_gas_bucket'),
     step('column', 'operation:air_separation', 'Build 2×2×14 and feed the east side of layer three. North outlets: liquid oxygen at 1, Ar at 10, N2 at 14. Amounts are gas-equivalent.', '2×2・14段に組み、東面3段目から給気します。北面出口は1段目が液体酸素、10段目がAr、14段目がN2です。量は気体換算です。', '搭建2×2×14塔，第三层东面进气，北面第一层出液氧、第十层Ar、第十四层N2，数量为气体当量。'),
     step('heat_exchanger', 'operation:exchange_olefins_oxygen', 'Warm the collected liquid oxygen in a heat exchanger when gaseous oxygen is required. Store cold products in cryogenic tanks and pipes. Keep every tower outlet available.', '酸素の気体が必要なら、液体酸素を熱交換器で温めて気化させます。低温の製品は極低温タンクと配管へ送り、分留塔の全出口を確保します。', '需要氧气时用换热器加热液氧使其气化，低温产品使用低温储罐与管道，保持塔的全部出口畅通。', 'oxygen_gas_bucket'),
-    step('cold_box', 'operation:liquefy_nitrogen', 'Run nitrogen and cold He through the tube side and the shell side of the exchanger. Use cryogenic pipes for liquid nitrogen and return the He for recovery.', '熱交換器の管側と胴側へ窒素と低温Heを分けて流します。液体窒素は保冷配管へ、Heは回収側へ戻します。', '换热器管程与壳程分别通氮气和低温He，液氮用低温管线回收，He送回回收侧。', 'liquid_nitrogen_bucket'),
+    step('cold_box', 'operation:liquefy_nitrogen', 'Run nitrogen and cold He through the tube side and the shell side of the exchanger. Use cryogenic pipes for liquid nitrogen and return the He for recovery.', '熱交換器の管側と胴側へ窒素と低温Heを分けて流します。液体窒素は保冷配管へ、Heは回収側へ戻します。', '换热器管程与壳程分别通氮气和低温He，液氮用低温管线回收，He送回回收侧。', 'nitrogen_gas_bucket'),
 ])
 
-route('hydrogen', ('Making hydrogen by water electrolysis', '水の電解で水素を作る', '电解水制取氢气'), ['hydrogen_gas_bucket', 'warm_water_bucket'], [
+route('hydrogen', ('Making hydrogen by water electrolysis', '水の電解で水素を作る', '电解水制取氢气'), ['hydrogen_gas_bucket', 'minecraft:water_bucket'], [
     step('electrolyzer', None, 'Build vertical 2x2 electrolysis cells, one to eight blocks long, with a 2x2 controller at one end. Load electrodes through the tops of its upper units, close the cell hatches and wire both upper-right terminals.', '縦2×2の電解セルを長さ1～8マスに組み、片端に2×2制御盤を付けます。制御盤上段の上面から極板を入れ、セルのハッチを閉じて右上の2端子へ給電します。', '搭建竖直2×2、长1～8格的电解单元，在一端安装2×2控制器。从控制器上排顶部装入电极，关闭单元检修口并给右上两个端子供电。', 'asbestos_wrapped_electrode'),
     step('electrolyzer', 'operation:water_electrolysis', 'Supply water at the lower side, close the hatches and press START. Amounts below are per plate over 100 ticks.', '下段側面へ給水し、STARTを押します。ハッチは閉じます。下の量は極板1枚・100 tick分です。', '下层侧面供水，关盖后按START，下方数量按每块极板100 tick计算。'),
     step('electrolyzer', None, 'The upper low-X column gives hydrogen, and the opposite column oxygen. Use separate pumped pipes and receivers. A full output buffer stops consumption of feed and electricity.', '上段のX座標が小さい列から水素、反対の列から酸素を回収します。別々のポンプと貯槽につなぎ、製品が満杯なら材料と電力の消費を止めます。', '上层较小X列输出氢气，另一列输出氧气。分别接泵与储罐；产物满载时停止消耗原料和电力。', 'hydrogen_gas_bucket'),
 ])
 
 route('ammonia', ('From hydrogen and nitrogen to ammonia', '水素と窒素からアンモニアを作る', '由氢氮制取氨'),
-    ['iron_catalyst', 'ammonia_gas_bucket', 'liquid_ammonia_bucket'], [
+    ['iron_catalyst', 'ammonia_gas_bucket', 'ammonia_gas_bucket'], [
     step('vessel', 'pressure_reaction/synthesis_gas', 'Install impellers in every layer of a 3×3 vessel, close the hatch and drive only its bottom centre at 32 RPM or more. Combine the hydrogen and nitrogen supplies.', '3×3槽の各段に撹拌翼を入れ、ハッチを閉じ、底面中央へ32 RPM以上を入力します。水素と窒素を合成ガスにします。', '在3×3槽每层装入搅拌叶并关盖，仅从底部中心输入至少32 RPM，将氢氮混合成合成气。'),
     step('heating', None, 'Compress, cool and preheat synthesis gas. Check temperature and pressure on the gauges.', '合成ガスを圧縮・冷却・予熱し、計器で温度と圧力を確認します。', '合成气依次压缩、冷却、预热，用仪表检查温度和压力。', None),
     step('catalytic', 'operation:haber_bosch', "Open a reaction tower's roof hatch, fill its baskets with iron catalyst and close it. Pump the compressed feed into a bottom-layer side, heat it from below and collect the hot mixture from the other bottom side.", '反応塔の天井ハッチを開けてバスケットに鉄触媒を入れ、閉じます。加圧原料を最下段の側面へ送り、下から加熱して、反対側の最下段側面から高温混合ガスを取り出します。', '打开反应塔顶部舱口，向篮中装入铁催化剂后关闭。将加压原料泵入底层侧面，从下方加热，并从另一侧底层侧面取出高温混合气。', 'iron_catalyst'),
@@ -476,7 +476,7 @@ route('pvc', ('From chlorine and ethylene to PVC', '塩素とエチレンからP
 ])
 
 route('fuel_refining', ('Refining diesel and cracking heavy oil', '軽油を脱硫し重油から燃料を回収する', '柴油脱硫与重油加氢裂化'),
-    ['createdieselgenerators:diesel_bucket', 'heavy_oil_bucket', 'createdieselgenerators:diesel_bucket', 'hot_hydrotreater_effluent_bucket', 'cooled_hydrotreater_effluent_bucket', 'low_sulfur_diesel_bucket', 'heavy_oil_bucket', 'hot_hydrocracker_effluent_bucket', 'cooled_hydrocracker_effluent_bucket'], [
+    ['createdieselgenerators:diesel_bucket', 'heavy_oil_bucket', 'createdieselgenerators:diesel_bucket', 'cooled_hydrotreater_effluent_bucket', 'low_sulfur_diesel_bucket', 'heavy_oil_bucket', 'cooled_hydrocracker_effluent_bucket'], [
     step('heating', None, 'Heat ordinary diesel to 623 K or heavy oil to 673 K in a lidded vessel.', '通常の軽油は623 K、重油は673 Kまでふた付き槽で加熱します。', '在带盖槽内将普通柴油加热至623 K，或将重油加热至673 K。', 'createdieselgenerators:diesel_bucket'),
     step('catalytic', 'process:hydrotreat_diesel', 'Load the hydrotreating catalyst into a reaction tower and supply high-pressure hydrogen with the diesel.', '反応塔に水素化処理触媒を入れ、軽油と高圧水素を供給します。', '向反应塔装入加氢处理催化剂，与柴油一起供给高压氢。'),
     step('cooling', None, 'Cool the hot hydrotreater effluent before fractionation. Keep cooling and all product outlets available.', '高温の脱硫反応液を分留前に冷やし、冷却と全生成物の出口を維持します。', '分馏前冷却高温脱硫反应液，保持冷却与全部产物出口畅通。', 'cooled_hydrotreater_effluent_bucket'),
@@ -494,11 +494,11 @@ route('antifreeze', ('Coolants 1 — making antifreeze', '冷媒の製造1　不
 ], family='coolants')
 
 route('refrigeration', ('Coolants 2 — refrigeration and ice', '冷媒の製造2　冷凍サイクルと製氷', '冷媒制造2　制冷循环与制冰'),
-    ['liquid_chlorine_bucket', 'liquid_sulfur_dioxide_bucket', 'liquid_vinyl_chloride_bucket', 'liquid_propylene_bucket'], [
-    step('cooling', 'operation:cool_ammonia', 'Compress ammonia, reject the compression heat and condense it in the radiator. Observe the actual high-side pressure with a gauge.', 'アンモニアを圧縮し、圧縮熱を捨ててラジエーターで液化します。高圧側の実際の圧力を計器で確認します。', '压缩氨，排出压缩热并在散热器中液化，用仪表查看高压侧实际压力。', 'liquid_ammonia_bucket'),
+    ['chlorine_bucket', 'sulfur_dioxide_bucket', 'vinyl_chloride_bucket', 'propylene_bucket'], [
+    step('cooling', 'operation:cool_ammonia', 'Compress ammonia, reject the compression heat and condense it in the radiator. Observe the actual high-side pressure with a gauge.', 'アンモニアを圧縮し、圧縮熱を捨ててラジエーターで液化します。高圧側の実際の圧力を計器で確認します。', '压缩氨，排出压缩热并在散热器中液化，用仪表查看高压侧实际压力。', 'ammonia_gas_bucket'),
     step('heat_exchanger', 'operation:exchange_olefins_ammonia', 'Pass the liquid through the pressure-reducing valve. Expansion lowers its boiling point. The cold side evaporates in a heat exchanger while cooling the separate antifreeze loop.', '液体を減圧弁へ通すと、圧力低下で沸点が下がります。冷媒を熱交換器で蒸発させ、別系統の不凍液から熱を奪います。', '液体经减压阀降压后沸点下降，在换热器中蒸发，吸收独立防冻液回路的热量。', 'cooled_olefins_bucket'),
-    step('cooling', 'operation:cool_ammonia', 'Return ammonia vapour to the compressor and warm antifreeze to the exchanger. Use separate pipes so the two fluids keep their identities.', 'アンモニア蒸気を圧縮機へ、温まった不凍液を熱交換器へ戻します。2つの流体は別配管で循環させます。', '氨蒸气返回压缩机，升温的防冻液返回换热器，两种流体分别循环。', 'liquid_ammonia_bucket'),
-    step('heat_exchanger', 'operation:exchange_chlorine_ammonia', 'Send cold antifreeze through one side of the exchanger and the gas through the other. If it does not liquefy, check pressure and coolant temperature.', '冷やした不凍液を熱交換器の片側へ、液化したいガスをもう片側へ流します。液化しなければ圧力と冷媒温度を確認します。', '换热器一侧通冷防冻液，另一侧通待液化气，未液化时检查压力与冷媒温度。', 'liquid_chlorine_bucket'),
+    step('cooling', 'operation:cool_ammonia', 'Return ammonia vapour to the compressor and warm antifreeze to the exchanger. Use separate pipes so the two fluids keep their identities.', 'アンモニア蒸気を圧縮機へ、温まった不凍液を熱交換器へ戻します。2つの流体は別配管で循環させます。', '氨蒸气返回压缩机，升温的防冻液返回换热器，两种流体分别循环。', 'ammonia_gas_bucket'),
+    step('heat_exchanger', 'operation:exchange_chlorine_ammonia', 'Send cold antifreeze through one side of the exchanger and the gas through the other. If it does not liquefy, check pressure and coolant temperature.', '冷やした不凍液を熱交換器の片側へ、液化したいガスをもう片側へ流します。液化しなければ圧力と冷媒温度を確認します。', '换热器一侧通冷防冻液，另一侧通待液化气，未液化时检查压力与冷媒温度。', 'chlorine_bucket'),
     step('vessel', 'pressure_reaction/freeze_water', 'Cool a water-filled stirred vessel with a cooling source to make ice.', '水入りの撹拌槽を、冷熱源で冷やして氷を作ります。', '用冷源冷却盛水搅拌槽以制冰。'),
 ], family='coolants')
 
@@ -644,10 +644,10 @@ route('deuterium', ('From water to deuterium fuel', '水から重水素燃料を
 ])
 
 route('liquid_helium', ('From recovered helium to liquid-helium circulation', '回収ヘリウムから液体ヘリウムの循環へ', '从回收氦到液氦循环'),
-    ['helium_gas_bucket', 'liquid_helium_bucket'], [
+    ['helium_gas_bucket'], [
     step('centrifuge', 'process:recover_helium', 'Feed the recovered helium stream through a gas centrifuge driven at 32 RPM or more. Recover helium at the top and the separated nitrogen at a side.', '回収ヘリウム原料を32 RPM以上で回るガス遠心分離機へ送り、上面からヘリウム、側面から分離した窒素を回収します。', '把回收氦原料送入至少32 RPM的气体离心机，顶部取氦，侧面取分离出的氮。'),
     step('cold_box', None, 'Place a regenerator inside a 3×3×3 shell and the drive at the front centre. Connect He above, 32 RPM to the shaft, coolant left and warm water right.', '3×3×3の外殻中央へ再生器、正面中央へ駆動部を置きます。上面にHe、軸に32 RPM以上、左に冷却水、右に温水出口をつなぎます。', '3×3×3外壳中央放再生器、正面中央放驱动端，上面接He、轴接至少32 RPM、左接冷却水、右排温水。', 'helium_gas_bucket'),
-    step('cold_box', None, 'Collect the liquid helium only after the cold box reaches its working temperature. Return boil-off gas through the recovery loop and keep the liquid in cryogenic pipes and tanks.', 'コールドボックスが動作温度に達してから液体ヘリウムを回収します。蒸発した気体を回収ループへ戻し、液体は極低温配管とタンクで運びます。', '冷箱达到工作温度后收集液氦，蒸发气体返回回收循环，液体使用低温管道与储罐运输。', 'liquid_helium_bucket'),
+    step('cold_box', None, 'Collect the liquid helium only after the cold box reaches its working temperature. Return boil-off gas through the recovery loop and keep the liquid in cryogenic pipes and tanks.', 'コールドボックスが動作温度に達してから液体ヘリウムを回収します。蒸発した気体を回収ループへ戻し、液体は極低温配管とタンクで運びます。', '冷箱达到工作温度后收集液氦，蒸发气体返回回收循环，液体使用低温管道与储罐运输。', 'helium_gas_bucket'),
 ])
 
 route('carbon_oxides', ('Recover carbon monoxide and make carbon dioxide', '一酸化炭素を回収して二酸化炭素を作る', '回收一氧化碳并制取二氧化碳'),
@@ -673,7 +673,7 @@ route('methylphosphonate', ('Making dimethyl methylphosphonate', 'メチルホ�
 ])
 
 route('slime_coolant', ('Making slime coolant', 'スライム冷却液を作る', '制备史莱姆冷却液'),
-    ['slime_coolant_feed_bucket', 'slime_coolant_bucket', 'warm_slime_coolant_bucket'], [
+    ['slime_coolant_feed_bucket', 'slime_coolant_bucket'], [
     step('vessel', 'pressure_reaction/prepare_slime_coolant'),
     step('column', 'process:distill_slime_coolant'),
 ])

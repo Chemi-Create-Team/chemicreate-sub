@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.pump.PumpBlock;
@@ -78,7 +79,7 @@ public final class GasifierGameTests {
     static FluidStack makeWaterGas(GameTestHelper h, int batches) {
         var gasifier = build(h);
         h.assertTrue(gasifier.rebuild(), "The 3x3x6 gasifier forms before feeding the synthesis line");
-        charge(h, batches, new FluidStack(CEFluids.STEAM.get(), 250 * batches));
+        charge(h, batches, FluidForm.STEAM.stack(250 * batches));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
         for (int tick = 0; tick < 4000 && gasifier.fluid(2).getAmount() < 600 * batches; tick++) gasifier.tick();
         return fluid(h, OUTLET, Direction.UP).drain(600 * batches + 1, EXECUTE);
@@ -103,7 +104,7 @@ public final class GasifierGameTests {
             "The front of the roof is a 16000 mB output only");
         var input = fluid(h, INLET, Direction.NORTH);
         h.assertTrue(input.fill(new FluidStack(Fluids.WATER, 250), EXECUTE) == 0
-            && fluid(h, BASE.west(), Direction.WEST).fill(new FluidStack(CEFluids.STEAM.get(), 250), EXECUTE) == 250,
+            && fluid(h, BASE.west(), Direction.WEST).fill(FluidForm.STEAM.stack(250), EXECUTE) == 250,
             "Every base inlet takes steam and rejects liquid water");
         var feed = items(h, TOP.south().west(), Direction.UP);
         h.assertTrue(feed.insertItem(0, new ItemStack(Items.CHARCOAL), true).isEmpty() && feed.insertItem(0, CEItems.CARBON_POWDER.toStack(), true).isEmpty()
@@ -143,11 +144,11 @@ public final class GasifierGameTests {
         var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
         var inlet = fluid(h, INLET, Direction.NORTH);
-        var steam = new FluidStack(CEFluids.STEAM.get(), 9000);
+        var steam = FluidForm.STEAM.stack(9000);
         h.assertTrue(inlet.getTanks() == 1 && inlet.fill(steam, SIMULATE) == 8000 && inlet.getFluidInTank(0).isEmpty(),
             "The steam tank holds 8000 mB and simulation leaves it empty");
         h.assertTrue(inlet.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(), 250), EXECUTE) == 0
-                && inlet.fill(new FluidStack(CEProcessFluids.COMPRESSED_AIR.get(), 250), EXECUTE) == 0,
+                && inlet.fill(FluidForm.COMPRESSED_AIR.stack(250), EXECUTE) == 0,
             "The inlet rejects both former oxidizers");
         charge(h, 2, steam.copyWithAmount(500));
         h.assertTrue(inlet.drain(250, SIMULATE).isEmpty() && fluid(h, BASE.west(), Direction.WEST).drain(250, SIMULATE).isEmpty(),
@@ -179,7 +180,7 @@ public final class GasifierGameTests {
     public static void lossOfExternalHeatPausesBatch(GameTestHelper h) {
         var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
-        charge(h, 1, new FluidStack(CEProcessFluids.SUPERHEATED_STEAM.get(), 250));
+        charge(h, 1, FluidForm.SUPERHEATED_STEAM.stack(250));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
         heatUp(h, be);
         ticks(be, 12);
@@ -202,10 +203,10 @@ public final class GasifierGameTests {
     public static void blockedOutputPreservesFeed(GameTestHelper h) {
         var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
-        charge(h, 33, new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 8000));
+        charge(h, 33, FluidForm.HIGH_PRESSURE_STEAM.stack(8000));
         burner(h, BlazeBurnerBlock.HeatLevel.KINDLED);
         for (int tick = 0; tick < 12000 && !be.status().equals("gas_output"); tick++) be.tick();
-        fluid(h, INLET, Direction.NORTH).fill(new FluidStack(CEProcessFluids.HIGH_PRESSURE_STEAM.get(), 250), EXECUTE);
+        fluid(h, INLET, Direction.NORTH).fill(FluidForm.HIGH_PRESSURE_STEAM.stack(250), EXECUTE);
         ticks(be, 40);
         h.assertTrue(be.status().equals("gas_output") && be.fluid(2).getAmount() == 15600
             && be.itemCount(0) == 7 && be.fluid(1).getAmount() == 1750, "A full tank pauses with feed intact");
@@ -220,7 +221,7 @@ public final class GasifierGameTests {
     public static void pumpedOutputCanBeCooledAndStored(GameTestHelper h) {
         var gasifier = build(h);
         h.assertTrue(gasifier.rebuild(), "Gasifier forms");
-        charge(h, 1, new FluidStack(CEFluids.STEAM.get(), 250));
+        charge(h, 1, FluidForm.STEAM.stack(250));
         burner(h, BlazeBurnerBlock.HeatLevel.SMOULDERING);
         var furnace = BASE.below();
         h.assertTrue(BlazeBurnerBlock.tryInsert(h.getBlockState(furnace), h.getLevel(), h.absolutePos(furnace),
@@ -279,7 +280,7 @@ public final class GasifierGameTests {
     public static void pipedGasSuperheatsABlazeBurner(GameTestHelper h) {
         var gasifier = build(h);
         h.assertTrue(gasifier.rebuild(), "Gasifier forms");
-        charge(h, 2, new FluidStack(CEFluids.STEAM.get(), 500));
+        charge(h, 2, FluidForm.STEAM.stack(500));
         burner(h, BlazeBurnerBlock.HeatLevel.SMOULDERING);
         h.assertTrue(BlazeBurnerBlock.tryInsert(h.getBlockState(BASE.below()), h.getLevel(), h.absolutePos(BASE.below()),
             Items.COAL.getDefaultInstance(), false, false, false).getResult().consumesAction(), "The furnace's own burner lights with coal");
@@ -314,14 +315,14 @@ public final class GasifierGameTests {
     public static void preservedControllerAndLegacyRecovery(GameTestHelper h) {
         var be = build(h);
         h.assertTrue(be.rebuild(), "Gasifier forms");
-        charge(h, 1, new FluidStack(CEFluids.STEAM.get(), 250));
+        charge(h, 1, FluidForm.STEAM.stack(250));
         var lookup = h.getLevel().registryAccess();
         var saved = be.saveWithoutMetadata(lookup);
         var data = saved.getCompound("Gasifier");
         saveTank(h, data, 0, new FluidStack(CEFluids.OXYGEN_GAS.get(), 900));
         saveTank(h, data, 2, new FluidStack(CEProcessFluids.SYNTHESIS_GAS.get(), 2000));
         saveTank(h, data, 3, new FluidStack(Fluids.WATER, 300));
-        saveTank(h, data, 4, new FluidStack(CEProcessFluids.WARM_WATER.get(), 150));
+        saveTank(h, data, 4, FluidForm.WARM_WATER.stack(150));
         saveTank(h, data, 5, new FluidStack(Fluids.WATER, 50));
         data.put("HotSlag", CEGasifier.SLAG.toStack().save(lookup));
         be.invalidateStructure(false);

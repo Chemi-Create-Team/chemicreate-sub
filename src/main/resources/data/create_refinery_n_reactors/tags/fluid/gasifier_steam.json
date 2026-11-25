@@ -1,7 +1,5 @@
 {
   "values": [
-    "create_refinery_n_reactors:steam",
-    "create_refinery_n_reactors:high_pressure_steam",
-    "create_refinery_n_reactors:superheated_steam"
+    "minecraft:water"
   ]
 }

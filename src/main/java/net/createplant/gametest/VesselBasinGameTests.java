@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import java.util.HashSet;
 import com.simibubi.create.AllBlocks;
@@ -439,13 +440,13 @@ public class VesselBasinGameTests {
         // Seed one finite wet product hold-up; no motor or heat source can change it during the lifecycle assertions.
         var saved = owner.saveWithoutMetadata(h.getLevel().registryAccess());
         var wet = new FluidStack(Fluids.WATER,1000);
-        saved.put("Tank3",new FluidStack(CEFluids.STEAM.get(),100).save(h.getLevel().registryAccess()));
+        saved.put("Tank3",FluidForm.STEAM.stack(100).save(h.getLevel().registryAccess()));
         saved.put("Tank2", wet.save(h.getLevel().registryAccess()));
         owner.loadWithComponents(saved, h.getLevel().registryAccess());owner.validateStructure();
         BlockPos member = BASE.offset(1, 0, 1);
         var oldTop = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(member), Direction.UP);
         var oldSide = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(member), Direction.EAST);
-        h.assertTrue(oldTop != null && oldSide != null && oldTop.drain(1, SIMULATE).is(CEFluids.STEAM.get())
+        h.assertTrue(oldTop != null && oldSide != null && FluidForm.STEAM.matches(oldTop.drain(1, SIMULATE))
             && oldSide.drain(1, SIMULATE).is(Fluids.WATER), "A live member exposes separate real steam and liquid product phases");
         int generation = owner.portGeneration();
         h.getLevel().removeBlock(owner.stirrerPos(), false);owner.validateStructure();
@@ -454,11 +455,11 @@ public class VesselBasinGameTests {
         h.assertTrue(owner.formed() && owner.portGeneration() != generation, "Putting the stirrer back forms a new process lifetime on the same owner");
         var top = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(member), Direction.UP);
         var side = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(member), Direction.EAST);
-        h.assertTrue(top != null && side != null && top.drain(1, SIMULATE).is(CEFluids.STEAM.get())
+        h.assertTrue(top != null && side != null && FluidForm.STEAM.matches(top.drain(1, SIMULATE))
             && side.drain(1, SIMULATE).is(Fluids.WATER), "Fresh member capabilities reach both retained phases after reformation");
         var before = owner.saveWithoutMetadata(h.getLevel().registryAccess());
         for (var action : IFluidHandler.FluidAction.values()) {
-            h.assertTrue(oldTop.drain(1, action).isEmpty() && oldTop.drain(new FluidStack(CEFluids.STEAM.get(), 1), action).isEmpty()
+            h.assertTrue(oldTop.drain(1, action).isEmpty() && oldTop.drain(FluidForm.STEAM.stack(1), action).isEmpty()
                 && oldSide.drain(1, action).isEmpty() && oldSide.drain(new FluidStack(Fluids.WATER, 1), action).isEmpty(),
                 "Cached phase-aware member ports cannot simulate or execute either typed or untyped extraction after reformation: " + action);
         }
