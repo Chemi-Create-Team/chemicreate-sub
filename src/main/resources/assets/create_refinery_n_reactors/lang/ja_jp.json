@@ -6511,6 +6511,7 @@
   "arm.create_refinery_n_reactors.status.no_tool": "工具が未装着",
   "arm.create_refinery_n_reactors.status.idle": "作業待ち",
   "arm.create_refinery_n_reactors.status.move": "作業位置へ移動中",
+  "arm.create_refinery_n_reactors.status.fetch": "材料を取りに移動中",
   "arm.create_refinery_n_reactors.status.stalled": "停止中: 回転がありません",
   "arm.create_refinery_n_reactors.status.work": "作業中",
   "arm.create_refinery_n_reactors.tool": "工具: %s",

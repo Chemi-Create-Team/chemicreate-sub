@@ -10,6 +10,7 @@ import dev.engine_room.flywheel.lib.transform.PoseTransformStack;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createplant.arm.ArmPose;
 import net.createplant.arm.ArmTool;
 import net.createplant.block.entity.IndustrialArmBlockEntity;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,8 @@ import net.minecraft.world.phys.AABB;
  */
 public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmBlockEntity> {
     private static final int TINT = 0xFFC060;
+    /** A tool is drawn this large in the claw's frame and ends where the claw aims, half a block past the wrist. */
+    private static final float TOOL_SIZE = .375f, TOOL_REACH = .5f;
 
     public IndustrialArmRenderer(BlockEntityRendererProvider.Context ctx) {}
 
@@ -51,12 +54,13 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
         float base = be.baseAngle.getValue(partial), lower = be.lowerArmAngle.getValue(partial) - 135, upper = be.upperArmAngle.getValue(partial) - 90, head = be.headAngle.getValue(partial);
 
         ArmTool tool = be.toolType();
-        ItemStack shown = tool == null ? ItemStack.EMPTY : tool == ArmTool.GRIPPER ? be.held : be.tool();
+        ItemStack shown = tool == null ? ItemStack.EMPTY : tool != ArmTool.GRIPPER ? be.tool() : be.phase == IndustrialArmBlockEntity.FETCH ? ItemStack.EMPTY : be.held;
         boolean has = !shown.isEmpty(), block = has && shown.getItem() instanceof BlockItem;
 
         ArmRenderer.transformBase(msr, base);
         part(AllPartialModels.ARM_BASE, state, light, local, ps, vb);
         ArmRenderer.transformLowerArm(msr, lower);
+        msr.scale(ArmPose.SCALE);
         part(AllPartialModels.ARM_LOWER_BODY, state, light, local, ps, vb);
         ArmRenderer.transformUpperArm(msr, upper);
         part(AllPartialModels.ARM_UPPER_BODY, state, light, local, ps, vb);
@@ -73,11 +77,12 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
             }
         }
         if (has) {
+            // As Create's arm: the item hangs off the claw in the claw's own frame, so the offsets come after the joints.
+            msr.rotateXDegrees(90);
+            local.translate(0, block ? -.5625 : -(TOOL_REACH - TOOL_SIZE / 2), 0);
+            float s = block ? .5f : TOOL_SIZE;
+            local.scale(s, s, s);
             ps.pushPose();
-            TransformStack.of(ps).rotateXDegrees(90);
-            ps.translate(0, block ? -.5625 : -.625, 0);
-            float s = block ? .5f : .625f;
-            ps.scale(s, s, s);
             ps.last().pose().mul(local.last().pose());
             Minecraft.getInstance().getItemRenderer().renderStatic(shown, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
             ps.popPose();

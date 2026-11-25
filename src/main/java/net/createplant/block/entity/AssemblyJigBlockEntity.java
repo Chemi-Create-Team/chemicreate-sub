@@ -108,13 +108,18 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
 
     /** Gives the arm the open step of its tool that is nearest to it, or -1. A step is given to one arm only. */
     public int reserve(BlockPos arm, ArmTool tool, Vec3 armCenter) {
+        return reserve(arm, tool, armCenter, step -> true);
+    }
+
+    /** As {@link #reserve(BlockPos, ArmTool, Vec3)}, among the steps {@code reachable} accepts. */
+    public int reserve(BlockPos arm, ArmTool tool, Vec3 armCenter, java.util.function.IntPredicate reachable) {
         int stage = currentStage();
         if (stage < 0) return -1;
         int best = -1;
         double bestDistance = Double.MAX_VALUE;
         for (int i = 0; i < status.length; i++) {
             Step s = recipe.steps().get(i);
-            if (status[i] != PENDING || s.stage() != stage || s.tool() != tool) continue;
+            if (status[i] != PENDING || s.stage() != stage || s.tool() != tool || !reachable.test(i)) continue;
             double d = armCenter.distanceToSqr(Vec3.atCenterOf(cell(i)));
             if (d < bestDistance) { bestDistance = d; best = i; }
         }

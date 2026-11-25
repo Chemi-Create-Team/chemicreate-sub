@@ -6511,6 +6511,7 @@
   "arm.create_refinery_n_reactors.status.no_tool": "No tool fitted",
   "arm.create_refinery_n_reactors.status.idle": "Waiting for work",
   "arm.create_refinery_n_reactors.status.move": "Moving to the work",
+  "arm.create_refinery_n_reactors.status.fetch": "Fetching material",
   "arm.create_refinery_n_reactors.status.stalled": "Stopped: no rotation",
   "arm.create_refinery_n_reactors.status.work": "Working",
   "arm.create_refinery_n_reactors.tool": "Tool: %s",

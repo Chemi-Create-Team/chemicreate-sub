@@ -101,4 +101,15 @@ public class ArmAssemblyGameTests {
         h.assertTrue(h.getBlockState(JIG.above()).is(Blocks.DIRT), "the dirt is still there");
         h.succeed();
     }
+
+    @GameTest(template = "test_empty")
+    public static void theArmAimsWithCreatesAnglesWithinItsReach(GameTestHelper h) {
+        BlockPos arm = h.absolutePos(JIG);
+        Vec3 near = Vec3.atCenterOf(arm).add(2, .5, 1), far = Vec3.atCenterOf(arm).add(5, .5, 0);
+        float[] a = net.createplant.arm.ArmPose.toward(arm, near), b = net.createplant.arm.ArmPose.toward(arm, Vec3.atCenterOf(arm).add(-2, .5, 1));
+        h.assertTrue(!java.util.Arrays.equals(a, net.createplant.arm.ArmPose.REST), "Create's arm angles are read, so the arm leaves its rest pose");
+        h.assertTrue(Math.abs(a[0] - b[0]) > 1, "a target on the other side turns the base");
+        h.assertTrue(net.createplant.arm.ArmPose.reaches(arm, near) && !net.createplant.arm.ArmPose.reaches(arm, far), "steps two blocks away are in reach, five blocks away are not");
+        h.succeed();
+    }
 }

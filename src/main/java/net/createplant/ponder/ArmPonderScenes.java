@@ -27,7 +27,7 @@ public final class ArmPonderScenes {
         + "{\"pos\":[1,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
         + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"welding_torch\",\"pattern\":\"seam_weld\",\"time\":60}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:welded_iron_beam\"}}";
-    private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(6, 3, 4), CHEST = new BlockPos(6, 3, 6);
+    private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6);
     private static final int FRAMES = 24;
     private ArmPonderScenes() { }
 
@@ -43,8 +43,8 @@ public final class ArmPonderScenes {
         scene.world().modifyBlockEntity(JIG, AssemblyJigBlockEntity.class, be -> be.setRecipe(recipe));
         text(scene, util, JIG, "jig");
 
-        scene.world().showSection(util.select().fromTo(6, 1, 4, 6, 3, 4), Direction.DOWN);
-        scene.world().setKineticSpeed(util.select().fromTo(6, 1, 4, 6, 3, 4), 64);
+        scene.world().showSection(util.select().fromTo(5, 1, 4, 5, 3, 4), Direction.DOWN);
+        scene.world().setKineticSpeed(util.select().fromTo(5, 1, 4, 5, 3, 4), 64);
         text(scene, util, ARM, "arm");
         scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 50).rightClick().withItem(tool(ArmTool.GRIPPER));
         scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.GRIPPER)));
@@ -56,7 +56,8 @@ public final class ArmPonderScenes {
         for (int step = 0; step < 2; step++) {
             work(scene, recipe, step);
             BlockPos cell = JIG.above().offset(recipe.steps().get(step).rel());
-            scene.world().setBlock(cell, Blocks.IRON_BLOCK.defaultBlockState(), true);
+            scene.world().setBlock(cell, Blocks.IRON_BLOCK.defaultBlockState(), false);
+            scene.world().showSection(util.select().position(cell), Direction.DOWN);
             finish(scene, step);
         }
         scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 50).rightClick().withItem(tool(ArmTool.WELDING_TORCH));
@@ -87,12 +88,16 @@ public final class ArmPonderScenes {
                 be.status[step] = AssemblyJigBlockEntity.RESERVED;
                 be.progress[step] = progress;
             });
-            scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.WORK, tip));
+            scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> {
+                be.held = s.place() ? new ItemStack(s.block()) : ItemStack.EMPTY;
+                be.aim(IndustrialArmBlockEntity.WORK, tip);
+            });
             scene.idle(frame == 1 ? 12 : 2);
         }
     }
 
     private static void finish(CreateSceneBuilder scene, int step) {
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.held = ItemStack.EMPTY);
         scene.world().modifyBlockEntity(JIG, AssemblyJigBlockEntity.class, be -> {
             be.status[step] = AssemblyJigBlockEntity.DONE;
             be.progress[step] = 1;

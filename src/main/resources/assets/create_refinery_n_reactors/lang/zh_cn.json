@@ -6511,6 +6511,7 @@
   "arm.create_refinery_n_reactors.status.no_tool": "未装配工具",
   "arm.create_refinery_n_reactors.status.idle": "等待工作",
   "arm.create_refinery_n_reactors.status.move": "正在前往作业位置",
+  "arm.create_refinery_n_reactors.status.fetch": "正在取材料",
   "arm.create_refinery_n_reactors.status.stalled": "已停止：没有旋转",
   "arm.create_refinery_n_reactors.status.work": "作业中",
   "arm.create_refinery_n_reactors.tool": "工具：%s",

@@ -38,7 +38,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  */
 public class IndustrialArmBlockEntity extends KineticBlockEntity {
     public static final int RANGE = 5;
-    public static final byte IDLE = 0, MOVE = 1, WORK = 2;
+    public static final byte IDLE = 0, MOVE = 1, WORK = 2, FETCH = 3;
     /** How far a tool hovers above the surface it works. */
     public static final double HOVER = .12;
     /** Rotation speed at which a step takes its recipe time. */
@@ -73,6 +73,8 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     /** Where the tool tip is headed; the client aims its joints at it. */
     public Vec3 tip;
     public float progress;
+    /** Server side: the top of the container the material came from, while the arm reaches over to it. */
+    private Vec3 fetchFrom;
     public final LerpedFloat baseAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[0]);
     public final LerpedFloat lowerArmAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[1]);
     public final LerpedFloat upperArmAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[2]);
@@ -116,6 +118,16 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
                 if (!held.isEmpty()) abortJob(); // Old saves may have the material without its unfinished job.
                 else if (getSpeed() != 0 && cooldown == 0 && level.getGameTime() % 10 == (worldPosition.hashCode() & 7)) findJob();
             }
+            case FETCH -> {
+                if (jig() == null) { abortJob(); return; }
+                tip = fetchFrom;
+                if (fetchFrom == null || speedFactor() > 0 && --moveLeft <= 0) {
+                    phase = MOVE;
+                    moveLeft = 12;
+                    fetchFrom = null;
+                    setChanged();
+                }
+            }
             case MOVE -> {
                 AssemblyJigBlockEntity jig = jig();
                 if (jig == null) { abortJob(); return; }
@@ -147,6 +159,14 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         return jig.cellOrigin(step).add(t).add(0, s.tool() == ArmTool.GRIPPER ? 0 : HOVER, 0);
     }
 
+    /** Every point the tool passes on the step lies within the arm's reach. */
+    private boolean reaches(AssemblyJigBlockEntity jig, int step) {
+        Step s = jig.recipe.steps().get(step);
+        Vec3 origin = jig.cellOrigin(step).add(0, s.tool() == ArmTool.GRIPPER ? 0 : HOVER, 0);
+        for (Vec3 p : Trajectory.of(s.pattern(), s.seamDirection()).points) if (!ArmPose.reaches(worldPosition, origin.add(p))) return false;
+        return true;
+    }
+
     private void findJob() {
         ArmTool tool = toolType();
         if (tool == null) return;
@@ -154,7 +174,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE))) {
             if (!level.isLoaded(p)) continue;
             if (!(level.getBlockEntity(p) instanceof AssemblyJigBlockEntity jig) || jig.recipe == null || Vec3.atCenterOf(p).distanceTo(me) > RANGE + .5) continue;
-            int s = jig.reserve(worldPosition, tool, me);
+            int s = jig.reserve(worldPosition, tool, me, step -> reaches(jig, step));
             if (s < 0) continue;
             Step st = jig.recipe.steps().get(s);
             ItemStack material = ItemStack.EMPTY;
@@ -173,10 +193,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             jigPos = p.immutable();
             step = s;
             held = material;
-            phase = MOVE;
+            phase = fetchFrom != null ? FETCH : MOVE;
             moveLeft = 12;
             progress = 0;
-            tip = worldTip(jig, 0);
+            tip = fetchFrom != null ? fetchFrom : worldTip(jig, 0);
             setChanged();
             sendData();
             return;
@@ -198,6 +218,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
 
     /** One item from a chest, depot, belt or whatever holds items around the arm; never from arms or jigs. */
     private ItemStack fetch(net.minecraft.world.item.Item item, BlockPos jigAt) {
+        fetchFrom = null;
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE))) {
             if (p.equals(worldPosition) || p.equals(jigAt) || !level.isLoaded(p)) continue;
             BlockEntity be = level.getBlockEntity(p);
@@ -208,7 +229,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             for (int slot = 0; slot < h.getSlots(); slot++) {
                 if (!h.getStackInSlot(slot).is(item)) continue;
                 ItemStack got = h.extractItem(slot, 1, false);
-                if (!got.isEmpty()) return got;
+                if (got.isEmpty()) continue;
+                Vec3 top = Vec3.atBottomCenterOf(p).add(0, 1, 0);
+                if (ArmPose.reaches(worldPosition, top)) fetchFrom = top;
+                return got;
             }
         }
         return ItemStack.EMPTY;
@@ -287,7 +311,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
         super.addToGoggleTooltip(tooltip, sneaking);
         ArmTool tool = toolType();
-        String state = tool == null ? "no_tool" : phase == IDLE ? "idle" : phase == MOVE ? "move" : getSpeed() == 0 ? "stalled" : "work";
+        String state = tool == null ? "no_tool" : phase == IDLE ? "idle" : phase == FETCH ? "fetch" : phase == MOVE ? "move" : getSpeed() == 0 ? "stalled" : "work";
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.status." + state));
         if (tool != null) tooltip.add(Component.translatable("arm.create_refinery_n_reactors.tool", tool().getHoverName()));
         if (phase != IDLE && jigPos != null) tooltip.add(Component.translatable("arm.create_refinery_n_reactors.job", jigPos.getX(), jigPos.getY(), jigPos.getZ(), step + 1));
@@ -346,8 +370,8 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         tank.readFromNBT(r, tag.getCompound("tank"));
         held = ItemStack.parseOptional(r, tag.getCompound("held"));
         byte savedPhase = tag.getByte("phase");
-        boolean hasJob = (savedPhase == MOVE || savedPhase == WORK) && tag.contains("jig") && tag.contains("step");
-        phase = hasJob ? savedPhase : IDLE;
+        boolean hasJob = (savedPhase == FETCH || savedPhase == MOVE || savedPhase == WORK) && tag.contains("jig") && tag.contains("step");
+        phase = !hasJob ? IDLE : savedPhase == FETCH && !clientPacket ? MOVE : savedPhase;
         step = hasJob ? tag.getInt("step") : -1;
         jigPos = hasJob ? BlockPos.of(tag.getLong("jig")) : null;
         moveLeft = tag.getInt("moveLeft");
