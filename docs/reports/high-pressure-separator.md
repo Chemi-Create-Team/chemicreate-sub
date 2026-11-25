@@ -2,6 +2,16 @@
 
 2026-11-25のユーザー指定：「RBMK型炉からは液体交じりの蒸気が出てくるようにしてください。専用の高圧に耐えられる気液分離機を必要とするようにしてください。ガスタンクがありますが現在の実装上ではタンクで代替できて必要ないのでこのガスタンクのテクスチャを改造して気液分離機っぽくしてこれを高圧用の気液分離機としてください」
 
+## ゲーム内画像
+
+断面3×3、長さ7ブロックで組み上げた高圧気液分離機。
+
+![ゲーム内に設置した高圧気液分離機](images/high-pressure-separator/in-game.png)
+
+3サイズを並べた日本語Ponder。
+
+![1×1×2、2×2×5、3×3×7を並べたPonder](images/high-pressure-separator/ponder-ja.png)
+
 ## 実装内容
 
 - RBMKの出口（`ReactorCore.outlet()`）は、全チャネルの冷却材を1本の気液二相の流れで出す。
@@ -32,7 +42,7 @@
 - この実行で、先行コミットの回帰を修正：削除した `preheat_water` レシピに依存していた撹拌容器系テスト5件（`ReactorGameTests`×2、`ReactionTemperatureGameTests`、`DriveLessVesselGameTests`×2）を、プロピレン＋合成ガス供給（ブチルアルデヒドのレシピ）に移行。
 - `leaching_oxidants` タグが `compressed_air` を `air_gas` に置き換えたため、加圧していない空気が浸出レシピの供給として丸ごと入り、`stirredGasProductLeavesBelowTheLighterGas` が失敗していた。タグを廃止し、浸出6レシピは `air_gas`（圧力レベル8以上）または `oxygen_gas` の複合材料にした。
 - 全件実行で `ReactionTowerGameTests.solidFeedFillsTheLowestTrayFirstAndKeepsCatalystsOut` が1回だけ失敗したが、単独実行では全11件通過し、全件の再実行では765件すべて通過（不安定なテストの可能性）。
-- テクスチャとモデルはゲーム内で未確認。
+- 実装コミット `7df64c6` のMinecraftクライアントで、3×3×7の組み上がった外観と、3サイズを並べた日本語Ponderを撮影した。
 
 ## 制約・次回の注意
 
