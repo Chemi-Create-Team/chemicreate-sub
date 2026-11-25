@@ -70,7 +70,8 @@
       }
     ],
     "catalyst": "create_refinery_n_reactors:shift_catalyst_core",
-    "heat": "HEATED"
+    "heat": "HEATED",
+    "reaction_heat": 460
   },
   {
     "id": "iron_ft_synthesis",
@@ -80,12 +81,18 @@
       {
         "fluid": "create_refinery_n_reactors:carbon_monoxide",
         "amount": 250,
-        "condition": {"phase": "gas", "min_pressure": 8}
+        "condition": {
+          "phase": "gas",
+          "min_pressure": 8
+        }
       },
       {
         "fluid": "create_refinery_n_reactors:hydrogen_gas",
         "amount": 500,
-        "condition": {"phase": "gas", "min_pressure": 8}
+        "condition": {
+          "phase": "gas",
+          "min_pressure": 8
+        }
       }
     ],
     "outputs": [
@@ -99,7 +106,8 @@
       }
     ],
     "catalyst": "create_refinery_n_reactors:iron_ft_catalyst_core",
-    "heat": "HEATED"
+    "heat": "HEATED",
+    "reaction_heat": 1840
   },
   {
     "id": "cobalt_ft_synthesis",
@@ -109,12 +117,18 @@
       {
         "fluid": "create_refinery_n_reactors:carbon_monoxide",
         "amount": 250,
-        "condition": {"phase": "gas", "min_pressure": 8}
+        "condition": {
+          "phase": "gas",
+          "min_pressure": 8
+        }
       },
       {
         "fluid": "create_refinery_n_reactors:hydrogen_gas",
         "amount": 750,
-        "condition": {"phase": "gas", "min_pressure": 8}
+        "condition": {
+          "phase": "gas",
+          "min_pressure": 8
+        }
       }
     ],
     "outputs": [
@@ -128,7 +142,8 @@
       }
     ],
     "catalyst": "create_refinery_n_reactors:cobalt_ft_catalyst_core",
-    "heat": "HEATED"
+    "heat": "HEATED",
+    "reaction_heat": 1840
   },
   {
     "id": "distill_synthetic_crude",

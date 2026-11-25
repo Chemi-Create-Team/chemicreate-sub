@@ -53,6 +53,8 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
     public static final int VOLUME_PER_LAYER = 2000;
     /** Gauge scales: a full feed buffer reads 25 MPa; beds stand at the heat source's temperature and rise by the reaction heat, at most 600 degrees. */
     public static final float FULL_PRESSURE = 25, MAX_PRESSURE = 30, AMBIENT = 20, BED_RISE = 150, MAX_TEMPERATURE = 600;
+    /** The heat per mB of feed (J) at which the beds rise by {@link #BED_RISE}: ammonia synthesis, 10,305 J for a 10,000 mB batch. */
+    private static final double REFERENCE_JOULES_PER_MB = 1.0305;
     /** Rate constant of a fresh third of the tower: most of a fresh tower's conversion, and so its heat, comes in the first beds the gas meets. */
     private static final float FRESH_THIRD_RATE = 1.6f;
     private static List<ProcessRecipe> recipes;
@@ -572,13 +574,16 @@ public class ReactionTowerBlockEntity extends PlantFluidTankBlockEntity {
         java.util.Arrays.fill(targets, inlet);
         if (running != null) {
             double remaining = 1, rate = FRESH_THIRD_RATE * 3.0 / layers;
+            // A recipe with a heat of reaction heats its beds in proportion to the heat each mB of its feed gives; one without keeps the standard rise.
+            double feed = running.inputs().stream().mapToInt(FluidStack::getAmount).sum();
+            double rise = running.reactionHeat() > 0 && feed > 0 ? BED_RISE * running.reactionHeat() / feed / REFERENCE_JOULES_PER_MB : BED_RISE;
             for (int y = layers - 1; y >= 0; y--) {
                 var layer = layer(y);
                 double activity = layer == null || !layer.tray ? 0 : running.catalyst() == Items.AIR ? 1 : !layer.catalyst.is(running.catalyst()) || spent(layer.catalyst) ? 0
                     : 1 - (double) layer.catalyst.getDamageValue() / layer.catalyst.getMaxDamage();
                 double converted = remaining * (1 - Math.exp(-rate * activity));
                 remaining -= converted;
-                targets[y] = (float) Math.min(MAX_TEMPERATURE, inlet + BED_RISE * converted * layers / 3);
+                targets[y] = (float) Math.min(MAX_TEMPERATURE, inlet + rise * converted * layers / 3);
             }
         }
         float settle = 1 - (float) Math.exp(-ticks / 60.0), quick = 1 - (float) Math.exp(-ticks / 20.0);

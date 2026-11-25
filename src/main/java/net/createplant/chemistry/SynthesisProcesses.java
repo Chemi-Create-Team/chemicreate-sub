@@ -68,7 +68,7 @@ final class SynthesisProcesses {
         };
         if (!valid || duration < 1 || inputs.isEmpty() || outputs.isEmpty())
             throw new IllegalArgumentException("Invalid machine, duration or ports for " + id);
-        return new ProcessRecipe(id, module, duration, inputs, outputs, catalyst, heat,conditions);
+        return new ProcessRecipe(id, module, duration, inputs, outputs, catalyst, heat,conditions,GsonHelper.getAsDouble(object, "reaction_heat", 0));
     }
 
     private static FluidRequirement requirement(JsonObject entry) {

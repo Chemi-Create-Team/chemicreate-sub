@@ -880,6 +880,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             tanks[i+2]=tanks[i+2].isEmpty() ? portion : FluidThermal.mix(tanks[i+2],portion,give);
             total+=give;
         }
+        releaseHeat(r.reactionHeat()*f);
         double next=flow+f;flow=next-Math.floor(next);
         ProductionMonitor.produced(this, total, 0, 0);
         displayDirty=true;

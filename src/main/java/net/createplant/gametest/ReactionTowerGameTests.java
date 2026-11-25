@@ -262,4 +262,17 @@ public class ReactionTowerGameTests {
         h.assertTrue(dropped==ReactionTowerBlockEntity.TRAY_LOAD,"Breaking a layer's centre drops the feed on its tray: "+dropped);
         h.succeed();
     }
+
+    @GameTest(template="test_empty")
+    public static void synthesisRecipesCarryTheirHeatOfReaction(GameTestHelper h){
+        // J per batch = moles of the key gas (mB / 22,414) times the enthalpy of reaction per mole.
+        var expected=java.util.Map.of("synthesize_ammonia",10000/22414d/4*92400,"synthesize_methanol",500/22414d*90600,"oxidize_carbon_monoxide",1000/22414d*283000,
+            "water_gas_shift",250/22414d*41200,"iron_ft_synthesis",250/22414d*165000,"oxidize_sulfur_dioxide",100/22414d*98900);
+        for(var entry:expected.entrySet()){
+            var recipe=net.createplant.chemistry.ProcessRecipe.all().stream().filter(r->r.id().equals(entry.getKey())).findFirst().orElse(null);
+            h.assertTrue(recipe!=null && Math.abs(recipe.reactionHeat()-entry.getValue())<=entry.getValue()*.01+1,entry.getKey()+" gives its enthalpy of reaction: "+(recipe==null ? "missing" : recipe.reactionHeat())+" vs "+entry.getValue());
+        }
+        h.assertTrue(net.createplant.chemistry.ProcessRecipe.all().stream().filter(r->r.id().equals("distill_crude")).allMatch(r->r.reactionHeat()==0),"A separation has no heat of reaction");
+        h.succeed();
+    }
 }

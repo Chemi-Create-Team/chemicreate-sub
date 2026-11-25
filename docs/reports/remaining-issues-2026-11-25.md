@@ -20,9 +20,29 @@
 - GameTestサーバーを全件実行：変更を入れた状態で、上記の不安定なテスト1件だけが失敗し、他の全件は合格した。そのテストを直して、クラス単位で再実行し全11件が合格した。全件を最後にもう一度実行してはいない。
 - `build`（GameTestを除く）は成功。`validate_translations.py` は通過。
 
+## 反応熱（ProcessRecipe）を追加した
+
+`ProcessRecipe` に1バッチあたりの反応熱（J）を足した。値は、鍵になるガスの物質量（mB÷22,414）に反応エンタルピーを掛けた。既存の `pressure_reaction` レシピの `reaction_heat` と同じ考え方。
+
+| レシピ | 値 (J/バッチ) | 根拠 |
+| --- | ---: | --- |
+| `synthesize_ammonia` | 10,305 | N₂ + 3H₂ → 2NH₃、−92.4 kJ/mol N₂ |
+| `synthesize_methanol` | 2,021 | CO + 2H₂ → CH₃OH、−90.6 kJ/mol |
+| `oxidize_carbon_monoxide` | 12,626 | −283 kJ/mol |
+| `oxidize_ammonia` | 1,008 | −226 kJ/mol NH₃ |
+| `oxidize_ethylene` | 937 | −105 kJ/mol |
+| `oxidize_sulfur_dioxide` | 441 | −98.9 kJ/mol |
+| `oxidize_nitric_oxide` | 254 | −57 kJ/mol NO |
+| `water_gas_shift` | 460 | −41.2 kJ/mol CO（`synthetic_fuels.json` の `reaction_heat`） |
+| `iron_ft_synthesis`、`cobalt_ft_synthesis` | 1,840 | −165 kJ/mol CO（同上） |
+
+- 反応塔は、これまで全レシピで床の上昇を150 Kとしていた。今は「原料1 mBあたりの反応熱」に比例させる。基準はアンモニア合成（1.03 J/mB）で、150 Kのまま変わらない。反応熱を持たないレシピも150 Kのまま。上限は600℃のまま。
+- 触媒なしの固定レシピを動かす反応機械は、1バッチごとに反応熱を中身へ入れる（`oxidize_nitric_oxide`）。
+- 水素化処理・水素化分解・ナフサ分解は、どれも反応熱を入れていない。水素の消費量やクラッキングの吸熱が、このレシピの量の取り方では決めにくいため。
+- 新テスト `synthesisRecipesCarryTheirHeatOfReaction` が、6つのレシピの値を上の式と照合する。
+
 ## 直さなかった項目と理由
 
-- **反応熱（ProcessRecipe）。** メタノール合成などの固定レシピに反応熱を足すには、反応ごとの熱量と、槽の温度上限との釣り合いの設計が要る。アンモニア合成は出口を高温の状態で出す形で熱を表しているので、足すと二重に数える。着手していない。
 - **Create標準タンクの乾き度。** 在庫照会に乾き度が載らない。Create側のタンクの内部を差し替える変更になるので、保留。
 - **JUnit。** `HeatContent`、`PhaseChange`、`TwoPhase` は `FluidStack` とレジストリが要るため、GameTestで検証している。
 - **クラスの大きさ。** `ReactorMachineBlockEntity` などの分割は、動作を変えない大きな差分になるので、この作業では扱わない。
