@@ -126,7 +126,7 @@ class ValidatorTests(unittest.TestCase):
         self.validate('validate_visual_identity.py', 'registered_buckets')
 
     def test_changed_liquid_bucket_body_fails(self):
-        self.change_bucket_body('liquid_oxygen_bucket')
+        self.change_bucket_body('oxygen_gas_bucket')
         self.validate('validate_visual_identity.py', 'Container metal changed')
 
     def test_changed_alloy_bucket_body_fails(self):
@@ -134,7 +134,7 @@ class ValidatorTests(unittest.TestCase):
         self.validate('validate_visual_identity.py', 'Container metal changed')
 
     def test_ordinary_body_cannot_replace_alloy_bucket_body(self):
-        self.copy_input(ASSETS / 'textures/item/liquid_oxygen_bucket.png', ASSETS / 'textures/item/sulfuric_acid_bucket.png')
+        self.copy_input(ASSETS / 'textures/item/oxygen_gas_bucket.png', ASSETS / 'textures/item/sulfuric_acid_bucket.png')
         self.validate('validate_visual_identity.py', 'Container metal changed')
 
     def test_missing_powder_tint_fails(self):

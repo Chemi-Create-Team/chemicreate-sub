@@ -457,7 +457,7 @@ write(A / 'blockstates/fusion_console_panel.json', {'variants': {
 write(A / 'models/item/fusion_console_panel.json', {'parent': NS + 'block/fusion/console_0_off'})
 
 fluid_state = {'variants': {f'level={level}': {'model': 'minecraft:block/water'} for level in range(16)}}
-for fluid in ('deuterium_gas', 'tritium_gas', 'helium_gas', 'liquid_helium'):
+for fluid in ('deuterium_gas', 'tritium_gas', 'helium_gas'):
     write(A / 'blockstates' / f'{fluid}.json', fluid_state)
 
 
@@ -584,11 +584,9 @@ EN = {
     'item.create_refinery_n_reactors.deuterium_gas_bucket': 'Bucket of Deuterium',
     'item.create_refinery_n_reactors.tritium_gas_bucket': 'Bucket of Tritium',
     'item.create_refinery_n_reactors.helium_gas_bucket': 'Bucket of Helium',
-    'item.create_refinery_n_reactors.liquid_helium_bucket': 'Bucket of Liquid Helium',
     'fluid.create_refinery_n_reactors.deuterium_gas': 'Deuterium',
     'fluid.create_refinery_n_reactors.tritium_gas': 'Tritium',
     'fluid.create_refinery_n_reactors.helium_gas': 'Helium',
-    'fluid.create_refinery_n_reactors.liquid_helium': 'Liquid Helium',
 }
 JA = {
     'block.create_refinery_n_reactors.fusion_reinforced_casing': '強化安山岩トカマク支持材',
@@ -614,11 +612,9 @@ JA = {
     'item.create_refinery_n_reactors.deuterium_gas_bucket': '重水素入りバケツ',
     'item.create_refinery_n_reactors.tritium_gas_bucket': '三重水素入りバケツ',
     'item.create_refinery_n_reactors.helium_gas_bucket': 'ヘリウム入りバケツ',
-    'item.create_refinery_n_reactors.liquid_helium_bucket': '液体ヘリウム入りバケツ',
     'fluid.create_refinery_n_reactors.deuterium_gas': '重水素',
     'fluid.create_refinery_n_reactors.tritium_gas': '三重水素',
     'fluid.create_refinery_n_reactors.helium_gas': 'ヘリウム',
-    'fluid.create_refinery_n_reactors.liquid_helium': '液体ヘリウム',
 }
 
 statuses = {
@@ -746,7 +742,7 @@ JA['create_refinery_n_reactors.ponder.fusion_motor_generator.header'] = motor_ge
 
 # The fluid block and the fluid type each show the fluid's own name.
 for names in (EN, JA):
-    for fluid in ('deuterium_gas', 'tritium_gas', 'helium_gas', 'liquid_helium'):
+    for fluid in ('deuterium_gas', 'tritium_gas', 'helium_gas'):
         for kind in ('block', 'fluid_type'): names[f'{kind}.create_refinery_n_reactors.{fluid}'] = names[f'fluid.create_refinery_n_reactors.{fluid}']
 
 for locale, additions in [('en_us', EN), ('ja_jp', JA), ('zh_cn', EN)]:
