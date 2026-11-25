@@ -70,8 +70,7 @@ public class LargeFlywheelBlockEntity extends GeneratingKineticBlockEntity {
     private float chargingStressPerRpm;
     private float lastGeneratedSpeed;
     private float clientAngle;
-    private float lastPublishedCapacityPerRpm;
-    private float lastPublishedStressPerRpm;
+    private float lastPublishedCapacitySu;
     private double lastSyncedRotorRpm = Double.NaN;
     private long lastRotationUpdateTick = Long.MIN_VALUE;
     private double displayedEnergyJ;
@@ -182,15 +181,11 @@ public class LargeFlywheelBlockEntity extends GeneratingKineticBlockEntity {
 
     private void tickPhysics(Assembly assembly) {
         int flywheelCount = assembly.members().size();
+        double balanceW = externalPowerBalance(assembly);
         synchronizeCoupledRotors(assembly);
 
         double networkRpm = Math.abs(getTheoreticalSpeed());
         int networkDirection = directionSign(getTheoreticalSpeed());
-        double previousSuppliedSu = suppliedCapacityPerRpm * networkRpm * flywheelCount;
-        double previousChargingSu = chargingStressPerRpm * networkRpm * flywheelCount;
-        double externalCapacityW = suToWatts(Math.max(0, capacity - previousSuppliedSu));
-        double externalLoadW = suToWatts(Math.max(0, stress - previousChargingSu));
-        double balanceW = externalCapacityW - externalLoadW;
 
         chargePowerW = 0;
         dischargePowerW = 0;
@@ -252,6 +247,25 @@ public class LargeFlywheelBlockEntity extends GeneratingKineticBlockEntity {
             lastSyncedRotorRpm = rotorRpm;
             sendAssemblyData(assembly);
         }
+    }
+
+    private double externalPowerBalance(Assembly assembly) {
+        if (!hasNetwork()) {
+            return 0;
+        }
+
+        KineticNetwork network = getOrCreateNetwork();
+        double ownCapacitySu = 0;
+        double ownStressSu = 0;
+        for (LargeFlywheelBlockEntity member : assembly.members()) {
+            if (network.sources.getOrDefault(member, 0f) != 0) {
+                ownCapacitySu += network.getActualCapacityOf(member);
+            }
+            if (network.members.getOrDefault(member, 0f) != 0) {
+                ownStressSu += network.getActualStressOf(member);
+            }
+        }
+        return suToWatts(Math.max(0, capacity - ownCapacitySu) - Math.max(0, stress - ownStressSu));
     }
 
     private void applyBearingLoss(int flywheelCount) {
@@ -443,24 +457,31 @@ public class LargeFlywheelBlockEntity extends GeneratingKineticBlockEntity {
             if (!member.hasNetwork()) {
                 continue;
             }
-            boolean capacityChanged =
-                Math.abs(member.suppliedCapacityPerRpm - member.lastPublishedCapacityPerRpm) >= 0.01f;
-            boolean stressChanged =
-                Math.abs(member.chargingStressPerRpm - member.lastPublishedStressPerRpm) >= 0.01f;
             KineticNetwork network = member.getOrCreateNetwork();
+            float registeredCapacity = network.sources.getOrDefault(member, 0f);
+            float registeredStress = network.members.getOrDefault(member, 0f);
+            boolean capacityChanged = networkValueChanged(registeredCapacity, member.suppliedCapacityPerRpm);
+            boolean stressChanged = networkValueChanged(registeredStress, member.chargingStressPerRpm);
             if (capacityChanged) {
-                network.updateCapacityFor(member, member.suppliedCapacityPerRpm);
-                member.lastPublishedCapacityPerRpm = member.suppliedCapacityPerRpm;
+                registeredCapacity = member.calculateAddedStressCapacity();
+                network.sources.put(member, registeredCapacity);
             }
             if (stressChanged) {
-                network.updateStressFor(member, member.chargingStressPerRpm);
-                member.lastPublishedStressPerRpm = member.chargingStressPerRpm;
+                network.members.put(member, member.calculateStressApplied());
             }
-            if (capacityChanged || stressChanged) {
+
+            // The registered capacity is per RPM, and Create totals it using the rotor's generated speed.
+            float actualCapacitySu = registeredCapacity == 0 ? 0 : network.getActualCapacityOf(member);
+            if (capacityChanged || stressChanged || actualCapacitySu != member.lastPublishedCapacitySu) {
                 changedNetworks.add(network);
+                member.lastPublishedCapacitySu = actualCapacitySu;
             }
         }
         changedNetworks.forEach(KineticNetwork::updateNetwork);
+    }
+
+    private static boolean networkValueChanged(float previous, float current) {
+        return (previous == 0) != (current == 0) || Math.abs(previous - current) >= 0.01f;
     }
 
     private void updateDistributedRotation(Assembly assembly) {

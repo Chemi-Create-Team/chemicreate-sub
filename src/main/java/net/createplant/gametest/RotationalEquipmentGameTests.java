@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -99,6 +100,60 @@ public final class RotationalEquipmentGameTests {
                     && Math.abs(shaft.getSpeed()) > 1,
                 "Charged flywheels must become the source and keep the output shaft turning");
             helper.succeed();
+        });
+    }
+
+    @GameTest(template = "test_fractionation", timeoutTicks = 480)
+    public static void coupledFlywheelsReachDriveSpeedAndKeepTheFanRunningAfterClutchOpens(GameTestHelper helper) {
+        BlockPos start = FLYWHEEL_START;
+        BlockPos motorPos = start.west(2);
+        BlockPos clutchPos = start.west();
+        BlockPos fanPos = start.east(4);
+        helper.setBlock(motorPos, AllBlocks.CREATIVE_MOTOR.getDefaultState()
+            .setValue(BlockStateProperties.FACING, Direction.EAST));
+        helper.setBlock(clutchPos, AllBlocks.CLUTCH.getDefaultState()
+            .setValue(BlockStateProperties.AXIS, Direction.Axis.X));
+        for (int i = 0; i < 3; i++) {
+            helper.setBlock(start.east(i), CEBlocks.LARGE_FLYWHEEL.get().defaultBlockState()
+                .setValue(BlockStateProperties.AXIS, Direction.Axis.X));
+        }
+        helper.setBlock(start.east(3), AllBlocks.SHAFT.getDefaultState()
+            .setValue(BlockStateProperties.AXIS, Direction.Axis.X));
+        helper.setBlock(fanPos, AllBlocks.ENCASED_FAN.getDefaultState()
+            .setValue(BlockStateProperties.FACING, Direction.EAST));
+        helper.runAfterDelay(5, () ->
+            ((CreativeMotorBlockEntity) helper.getBlockEntity(motorPos)).generatedSpeed.setValue(64));
+
+        helper.runAfterDelay(120, () -> {
+            var flywheel = (LargeFlywheelBlockEntity) helper.getBlockEntity(start);
+            helper.assertTrue(flywheel.rotorRpm() > 32 && flywheel.displayedAccelerationPowerW() > 0,
+                "The coupled rotors must keep charging while the motor spins the loaded shaft faster than they spin");
+        });
+        helper.runAfterDelay(260, () -> {
+            var flywheel = (LargeFlywheelBlockEntity) helper.getBlockEntity(start);
+            var fan = (KineticBlockEntity) helper.getBlockEntity(fanPos);
+            double storedEnergyJ = flywheel.storedEnergyJ();
+            double fullEnergyJ = 0.5 * flywheel.displayedInertiaKgM2() * Math.pow(64 * 2 * Math.PI / 60, 2);
+            helper.assertTrue(flywheel.displayedFlywheelCount() == 3
+                    && flywheel.rotorRpm() >= 63.9 && flywheel.rotorRpm() <= 64.01
+                    && 3 * storedEnergyJ >= fullEnergyJ * 0.997 && 3 * storedEnergyJ <= fullEnergyJ * 1.001,
+                "The three rotors must reach the motor's 64 RPM and the corresponding stored energy");
+            helper.assertTrue(fan.getSpeed() == 64 && !fan.isOverStressed() && fan.calculateStressApplied() > 0,
+                "The powered network must keep the fan running under load during charging");
+
+            helper.setBlock(clutchPos.above(), Blocks.REDSTONE_BLOCK);
+            helper.assertTrue(helper.getBlockState(clutchPos).getValue(BlockStateProperties.POWERED),
+                "The clutch must disconnect the motor from the rotors and the fan");
+            helper.runAfterDelay(1, () -> helper.assertTrue(fan.getSpeed() > 63 && !fan.isOverStressed(),
+                "The loaded fan must keep turning on the first tick after the motor is disconnected"));
+            helper.runAfterDelay(160, () -> {
+                assertFlywheelsRemain(helper, helper.absolutePos(start), 3);
+                helper.assertTrue(fan.getSpeed() > 63 && !fan.isOverStressed()
+                        && flywheel.rotorRpm() > 63 && flywheel.storedEnergyJ() < storedEnergyJ
+                        && flywheel.displayedDischargePowerW() > 0,
+                    "The three flywheels must use their stored energy to keep driving the loaded fan");
+                helper.succeed();
+            });
         });
     }
 
