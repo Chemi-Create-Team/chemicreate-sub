@@ -44,6 +44,62 @@ public class GroundGasGameTests {
         });
     }
 
+    @GameTest(template = "test_rbmk", batch = "ground_gas_pit", timeoutTicks = 440)
+    public static void aSmallReleaseStaysInThePitUntilMoreGasReachesIt(GameTestHelper h) {
+        var base = new BlockPos(5, 4, 5);
+        for (int z = -3; z <= 3; z++)
+            for (int x = -3; x <= 3; x++) h.setBlock(base.offset(x, -1, z), Blocks.STONE);
+        for (int y = 0; y < 3; y++)
+            for (int z = -1; z <= 1; z++)
+                for (int x = -1; x <= 1; x++)
+                    if (x != 0 || z != 0) h.setBlock(base.offset(x, y, z), Blocks.STONE);
+
+        var origin = h.absolutePos(base);
+        GasClouds.release(h.getLevel(), origin, new FluidStack(CEPetroFluids.PROPYLENE.get(), 250));
+        h.runAfterDelay(92, () -> {
+            h.assertTrue(concentration(h, base) > .2f, "The small release collects in the bottom of the pit");
+            h.assertTrue(concentration(h, base.above()) == 0 && concentration(h, base.above(3)) == 0
+                    && concentration(h, base.east(2)) == 0,
+                "A dilute release cannot climb or produce a second cloud outside the pit");
+        });
+        for (int tick : new int[] {100, 130, 210, 240})
+            h.runAfterDelay(tick, () -> GasClouds.release(h.getLevel(), origin,
+                new FluidStack(CEPetroFluids.PROPYLENE.get(), 750)));
+        h.runAfterDelay(190, () -> h.assertTrue(concentration(h, base.above(2)) == 0 && concentration(h, base.east(2)) == 0,
+            "The first two additional releases still cannot fill the second level"));
+        h.runAfterDelay(355, () -> {
+            h.assertTrue(concentration(h, base.above(3)) > 0 && concentration(h, base.east(2)) > .1f,
+                "Later releases fill the shaft and the gas reaches the outside by crossing the rim");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_rbmk", batch = "ground_gas_wide_pit", timeoutTicks = 240)
+    public static void aWidePitNeedsEnoughGasAcrossTheWholeLayerBeforeSpilling(GameTestHelper h) {
+        var base = new BlockPos(5, 4, 5);
+        for (int z = -3; z <= 4; z++)
+            for (int x = -3; x <= 4; x++) h.setBlock(base.offset(x, -1, z), Blocks.STONE);
+        for (int z = -1; z <= 2; z++)
+            for (int x = -1; x <= 2; x++)
+                if (x == -1 || x == 2 || z == -1 || z == 2) h.setBlock(base.offset(x, 0, z), Blocks.STONE);
+
+        var origin = h.absolutePos(base);
+        GasClouds.release(h.getLevel(), origin, gas());
+        h.runAfterDelay(85, () -> {
+            h.assertTrue(concentration(h, base.south().east()) > .4f, "The gas settles across the bottom of the wide pit");
+            h.assertTrue(concentration(h, base.above()) == 0 && concentration(h, base.east(3)) == 0,
+                "The pit cannot overflow from one corner while gas is still missing elsewhere in the layer");
+        });
+        h.runAfterDelay(90, () -> GasClouds.release(h.getLevel(), origin, new FluidStack(CEPetroFluids.PROPYLENE.get(), 600)));
+        h.runAfterDelay(165, () -> {
+            for (int z = 0; z < 2; z++)
+                for (int x = 0; x < 2; x++) h.assertTrue(concentration(h, base.offset(x, 1, z)) > .1f,
+                    "The next level fills across the whole opening");
+            h.assertTrue(concentration(h, base.east(3)) > .1f, "The full pit spills over the rim");
+            h.succeed();
+        });
+    }
+
     @GameTest(template = "test_pressure_infrastructure", batch = "ground_gas_corridor", timeoutTicks = 650)
     public static void dilutionUsesElapsedTimeAndShelter(GameTestHelper h) {
         var outdoors = new BlockPos(6, 20, 4);

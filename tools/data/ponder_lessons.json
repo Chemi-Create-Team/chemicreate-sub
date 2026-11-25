@@ -1410,9 +1410,9 @@
     "zh_cn": "氯气、硫化氢等有毒气体须使用适合的管道与储罐。"
   },
   "guide.toxic_gas.step_2": {
-    "en_us": "Heavy gas spreads as a low mist along the floor and down steps. Light gas gathers higher up. Walls and closed doors contain both.",
-    "ja_jp": "重いガスは床を這うもやとなり、段差を下って低い所にたまります。 軽いガスは上に集まります。どちらも壁や閉じたドアで止まります。",
-    "zh_cn": "重气体形成贴地薄雾，沿台阶向下流动并在低处聚集。 轻气体聚集在高处。墙壁和关闭的门会挡住这两种气体。"
+    "en_us": "Heavy gas settles in low areas and spills out when it reaches the rim. Light gas gathers higher up. Walls and closed doors contain both.",
+    "ja_jp": "重いガスは低い所にたまり、縁まで満たされるとあふれます。 軽いガスは上に集まります。どちらも壁や閉じたドアで止まります。",
+    "zh_cn": "重气体在低处聚集，达到边缘后才溢出。 轻气体聚集在高处。墙壁和关闭的门会挡住这两种气体。"
   },
   "guide.toxic_gas.step_3": {
     "en_us": "Breathing inside a toxic cloud poisons you. Coloured gases show as mist; colourless ones such as carbon monoxide are unseen, so check with a gas detector.",

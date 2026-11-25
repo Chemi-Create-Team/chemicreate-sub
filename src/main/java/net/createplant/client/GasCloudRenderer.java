@@ -1,9 +1,8 @@
 package net.createplant.client;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,8 +34,10 @@ import org.joml.Vector3f;
 
 public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
     private static final ResourceLocation PLUME_TEXTURE = CreatePlant.location("textures/entity/gas_plume.png");
-    private static final RenderType PLUME_LAYER = MistRenderType.layer("gas_plume", PLUME_TEXTURE);
-    private static final RenderType MIST_LAYER = MistRenderType.layer("gas_mist", CreatePlant.location("textures/entity/gas_mist.png"));
+    private static final RenderType PLUME_LAYER = RenderType.entityTranslucentEmissive(PLUME_TEXTURE, false);
+    private static final RenderType MIST_LAYER = RenderType.entityTranslucentEmissive(CreatePlant.location("textures/entity/gas_mist.png"), false);
+    // The shared entity buffer can defer draws under shader packs, after this render stage has passed.
+    private static final MultiBufferSource.BufferSource GROUND_BUFFER = MultiBufferSource.immediate(new ByteBufferBuilder(1536));
     private static final WeakHashMap<GasCloud, Mist> MISTS = new WeakHashMap<>();
     private static final WeakHashMap<ClientLevel, Map<UUID, GroundDraw>> GROUND = new WeakHashMap<>();
 
@@ -80,26 +81,6 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
                 chargeChangedAt = time;
             }
             return charge;
-        }
-    }
-
-    private static final class MistRenderType extends RenderType {
-        private static RenderType layer(String name, ResourceLocation texture) {
-            return create(CreatePlant.MOD_ID + "_" + name, DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1536, false, true,
-                CompositeState.builder()
-                .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-                .setTextureState(new TextureStateShard(texture, true, false))
-                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                .setCullState(NO_CULL)
-                .setLightmapState(LIGHTMAP)
-                .setOverlayState(OVERLAY)
-                .setWriteMaskState(COLOR_WRITE)
-                .createCompositeState(false));
-        }
-
-        private MistRenderType(String name, VertexFormat format, VertexFormat.Mode mode, int size, boolean crumbling, boolean sort,
-            Runnable setup, Runnable clear) {
-            super(name, format, mode, size, crumbling, sort, setup, clear);
         }
     }
 
@@ -157,7 +138,6 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
         var camera = event.getCamera().getPosition();
         var frustum = event.getFrustum();
         var pose = event.getPoseStack();
-        var buffers = minecraft.renderBuffers().bufferSource();
         var ground = GROUND.computeIfAbsent(level, ignored -> new HashMap<>());
         float partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
         long gameTime = level.getGameTime();
@@ -182,14 +162,14 @@ public final class GasCloudRenderer extends EntityRenderer<GasCloud> {
                 continue;
             }
             if (draw.field.sections().isEmpty()) continue;
-            if (buffer == null) buffer = buffers.getBuffer(MIST_LAYER);
+            if (buffer == null) buffer = GROUND_BUFFER.getBuffer(MIST_LAYER);
             var anchor = Vec3.atCenterOf(draw.field.origin());
             pose.pushPose();
             pose.translate(anchor.x - camera.x, anchor.y - camera.y, anchor.z - camera.z);
             draw.mist.render(buffer, pose.last(), camera, frustum, null, tick + partial, 0, draw.color, (gameTime % 24000 + partial) / 24000);
             pose.popPose();
         }
-        if (buffer != null) buffers.endBatch(MIST_LAYER);
+        if (buffer != null) GROUND_BUFFER.endBatch(MIST_LAYER);
     }
 
     static void vertex(VertexConsumer buffer, PoseStack.Pose matrix, float x, float y, float z, float u, float v, int color, int alpha) {

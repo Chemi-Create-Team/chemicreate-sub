@@ -1,12 +1,14 @@
 package net.createplant.cloud;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.function.LongConsumer;
 import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
@@ -23,7 +25,7 @@ public final class GroundGasField {
     };
     private static final int UP = 32;
     private static final int OPEN_AIR_TICKS = 480, SHELTERED_TICKS = 1560, POOL_FILL_TICKS = 24;
-    private static final int POOL_AREA_LIMIT = 64;
+    private static final int POOL_AREA_LIMIT = 64, POOL_LAYER_CELL_MB = 1_000;
     public static final float MIN_CONCENTRATION = .018f;
     private final Map<BlockPos, Cell> cells = new HashMap<>();
     private final Map<Long, Section> sections = new HashMap<>();
@@ -35,7 +37,9 @@ public final class GroundGasField {
     private final LongConsumer sectionOpened;
     private final LongConsumer sectionClosed;
     private final PriorityQueue<Expiry> expiries = new PriorityQueue<>(Comparator.comparingInt(Expiry::tick));
+    private final PriorityQueue<Rise> rises = new PriorityQueue<>(Comparator.comparingInt(Rise::tick));
     private long lastRelease = Long.MIN_VALUE;
+    private long observedReleaseAmount, remainingPoolAmount;
     private float lastCharge;
 
     public static final class Cell {
@@ -45,7 +49,7 @@ public final class GroundGasField {
         final boolean canFall;
         int openings, arrivedAt, dilutionTicks;
         float density, previousDensity;
-        boolean pooled;
+        boolean pooled, riseQueued;
         int expiresAt;
 
         public BlockPos pos() { return pos; }
@@ -99,6 +103,8 @@ public final class GroundGasField {
 
     private record Expiry(Cell cell, int tick) { }
 
+    private record Rise(Cell cell, int tick) { }
+
     public GroundGasField(BlockPos origin, long startedAt, LongConsumer sectionOpened, LongConsumer sectionClosed) {
         this.origin = origin.immutable();
         this.startedAt = startedAt;
@@ -126,7 +132,11 @@ public final class GroundGasField {
     public void observeRelease(Level level, GasCloud source) {
         long tick = source.releasedAt();
         float charge = (float) source.charge();
-        if (tick == Long.MIN_VALUE || lastRelease != Long.MIN_VALUE && tick - lastRelease < 60 && charge < lastCharge + .08f) return;
+        long amount = source.releasedAmount();
+        if (tick == Long.MIN_VALUE || amount <= observedReleaseAmount) return;
+        remainingPoolAmount += amount - observedReleaseAmount;
+        observedReleaseAmount = amount;
+        if (lastRelease != Long.MIN_VALUE && tick - lastRelease < 60 && charge < lastCharge + .08f) return;
         lastRelease = tick;
         lastCharge = charge;
         long now = level.getGameTime();
@@ -185,20 +195,33 @@ public final class GroundGasField {
                 continue;
             }
             if (direction != null && !CloudVolume.canFlow(level, from, direction)) continue;
-            if (density <= MIN_CONCENTRATION) continue;
-            var cell = cells.get(next.pos());
-            if (cell != null && !improves(cell, direction, time, density)) continue;
-            if (cell == null) cell = add(level, next.pos());
-            cell.previousDensity = cell.opacity(time);
-            cell.density = Math.max(density, cell.remaining(time));
-            cell.arrivedAt = time;
-            cell.dilutionTicks = dilutionTicks(level, cell.pos);
-            cell.pooled |= !cell.canFall || direction == Direction.UP;
-            cell.expiresAt = time + Mth.ceil((cell.density - MIN_CONCENTRATION) * cell.dilutionTicks);
-            expiries.add(new Expiry(cell, cell.expiresAt));
-            extend(level, cell);
+            arrive(level, next.pos(), direction, time, density);
+        }
+        for (; work < budget && !rises.isEmpty(); work++) {
+            var next = rises.peek();
+            var cell = next.cell();
+            boolean active = cells.get(cell.pos) == cell && cell.remaining(time) >= .28f;
+            if (active && (next.tick() > time || remainingPoolAmount < POOL_LAYER_CELL_MB)) break;
+            rises.remove();
+            cell.riseQueued = false;
+            if (active) fillNextLayer(level, cell, time);
         }
         return work;
+    }
+
+    private void arrive(Level level, BlockPos pos, Direction direction, int time, float density) {
+        if (density <= MIN_CONCENTRATION) return;
+        var cell = cells.get(pos);
+        if (cell != null && !improves(cell, direction, time, density)) return;
+        if (cell == null) cell = add(level, pos);
+        cell.previousDensity = cell.opacity(time);
+        cell.density = Math.max(density, cell.remaining(time));
+        cell.arrivedAt = time;
+        cell.dilutionTicks = dilutionTicks(level, pos);
+        cell.pooled |= !cell.canFall || direction == Direction.UP;
+        cell.expiresAt = time + Mth.ceil((cell.density - MIN_CONCENTRATION) * cell.dilutionTicks);
+        expiries.add(new Expiry(cell, cell.expiresAt));
+        extend(level, cell);
     }
 
     private static boolean improves(Cell cell, Direction direction, int time, float density) {
@@ -248,8 +271,41 @@ public final class GroundGasField {
             }
         }
         if (cell.canFall) queueStep(level, cell, Direction.DOWN, 4);
-        if (cell.pooled && walls >= 2 && cell.density >= .28f && CloudVolume.canFlow(level, cell.pos, Direction.UP)
-            && enclosed(level, cell.pos)) queueStep(level, cell, Direction.UP, POOL_FILL_TICKS);
+        if (walls >= 2 && !cell.riseQueued && cell.density >= .28f && CloudVolume.canFlow(level, cell.pos, Direction.UP)
+            && !enclosedLayer(level, cell.pos).isEmpty()) {
+            queueRise(cell, cell.arrivedAt + POOL_FILL_TICKS);
+        }
+    }
+
+    private void queueRise(Cell cell, int tick) {
+        cell.riseQueued = true;
+        rises.add(new Rise(cell, tick));
+    }
+
+    private void fillNextLayer(Level level, Cell cell, int time) {
+        var footprint = enclosedLayer(level, cell.pos);
+        if (footprint.isEmpty()) return;
+        var openings = new ArrayList<Cell>();
+        for (var pos : footprint) {
+            var current = cells.get(pos);
+            if (current == null || !current.pooled || current.remaining(time) < .28f) {
+                queueRise(cell, time + POOL_FILL_TICKS);
+                return;
+            }
+            var next = pos.above();
+            var above = cells.get(next);
+            var pending = leading.get(next);
+            if ((above == null || !above.pooled) && (pending == null || pending.direction() != Direction.UP)
+                && CloudVolume.canFlow(level, pos, Direction.UP)) openings.add(current);
+        }
+        long cost = (long) openings.size() * POOL_LAYER_CELL_MB;
+        if (remainingPoolAmount < cost) {
+            queueRise(cell, time + POOL_FILL_TICKS);
+            return;
+        }
+        remainingPoolAmount -= cost;
+        for (var opening : openings)
+            offer(opening.pos.above(), Direction.UP, time + 1, opening.remaining(time), opening.dilutionTicks);
     }
 
     private boolean queueStep(Level level, Cell cell, Direction side, int travel) {
@@ -265,13 +321,14 @@ public final class GroundGasField {
         var cell = cells.get(pos);
         if (cell != null && !improves(cell, direction, tick, density)) return;
         var old = leading.get(pos);
-        if (old != null && (old.tick() < tick || old.tick() == tick && old.density() >= density)) return;
+        if (old != null && (old.direction() == Direction.UP
+            || direction != Direction.UP && (old.tick() < tick || old.tick() == tick && old.density() >= density))) return;
         var arrival = new Arrival(pos, direction, tick, density, dilutionTicks);
         leading.put(pos, arrival);
         arrivals.add(arrival);
     }
 
-    private static boolean enclosed(Level level, BlockPos origin) {
+    private static Set<BlockPos> enclosedLayer(Level level, BlockPos origin) {
         var seen = new HashSet<BlockPos>();
         var queue = new ArrayDeque<BlockPos>();
         seen.add(origin);
@@ -281,14 +338,14 @@ public final class GroundGasField {
             for (int i = 0; i < 4; i++) {
                 var side = SIDES[i];
                 var next = pos.relative(side);
-                if (!level.hasChunkAt(next)) return false;
+                if (!level.hasChunkAt(next)) return Set.of();
                 if (seen.contains(next) || !CloudVolume.canFlow(level, pos, side)) continue;
-                if (seen.size() == POOL_AREA_LIMIT) return false;
+                if (seen.size() == POOL_AREA_LIMIT) return Set.of();
                 seen.add(next);
                 queue.add(next);
             }
         }
-        return true;
+        return seen;
     }
 
     private static float fade(float t) {
