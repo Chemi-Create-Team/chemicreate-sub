@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * The path a tool follows over one cell, in cell coordinates (0..1 on every axis, y up). The server aims the arm along it and the
- * client draws the weld bead, wires, grooves and paint along it, so the overlay always lies where the tool went.
+ * The path a tool follows over the item it works, in path units (0..1 across, y up, the item's top at 1). The server aims the arm
+ * along it and the client draws the weld bead and the wires along it, so the overlay always lies where the tool went.
  * A path is a polyline; strokes are where the tool works, hops are where it only repositions. Each stroke has a kind; only the
  * core-memory grid uses more than one ({@link #CORES}, {@link #X_WIRE}, {@link #Y_WIRE}, {@link #SENSE}).
  */
@@ -44,30 +43,17 @@ public final class Trajectory {
         length = cumulative[points.length - 1];
     }
 
-    /** The path of a pattern; {@code seam} is the horizontal direction of the neighbouring block of a seam weld, or null. */
-    public static Trajectory of(ArmPattern pattern, Direction seam) {
-        return CACHE.computeIfAbsent((long) pattern.ordinal() * 8 + (seam == null ? 7 : seam.get3DDataValue()), k -> build(pattern, seam));
+    /** The path of a pattern over one item, in path units (an item lies on the middle of the 0..1 square, its top at y = 1). */
+    public static Trajectory of(ArmPattern pattern) {
+        return CACHE.computeIfAbsent((long) pattern.ordinal(), k -> build(pattern));
     }
 
-    private static Trajectory build(ArmPattern pattern, Direction seam) {
+    private static Trajectory build(ArmPattern pattern) {
         List<Vec3> p = new ArrayList<>();
         List<Integer> s = new ArrayList<>();
         switch (pattern) {
-            case PLACE -> line(p, s, new Vec3(.5, 1.5, .5), new Vec3(.5, .56, .5), true);
-            case LAY -> line(p, s, new Vec3(.5, 1.0, .5), new Vec3(.5, .1, .5), true);
-            case SEAM_WELD -> {
-                if (seam == null || seam.getAxis().isVertical()) perimeter(p, s);
-                else {
-                    Vec3 a = switch (seam) {
-                        case EAST -> new Vec3(1, 1, 0);
-                        case WEST -> new Vec3(0, 1, 0);
-                        case SOUTH -> new Vec3(0, 1, 1);
-                        default -> new Vec3(0, 1, 0);
-                    };
-                    Vec3 b = seam.getAxis() == Direction.Axis.X ? a.add(0, 0, 1) : a.add(1, 0, 0);
-                    line(p, s, a, b, true);
-                }
-            }
+            case PLACE -> line(p, s, new Vec3(.5, 1.5, .5), new Vec3(.5, 1.05, .5), true);
+            case SEAM_WELD -> perimeter(p, s);
             case CORE_SET -> grid(p, s, true, false);
             case WIRE_THREAD -> grid(p, s, false, true);
         }

@@ -1,200 +1,139 @@
 package net.createplant.arm;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import java.util.ArrayList;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import java.util.Optional;
+import net.createplant.registry.CERecipeTypes;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 /**
- * A staged 3D assembly. Cells are counted from the block above the jig. A stage opens when every step of the stages before it is
- * done; steps of one stage may run in parallel on different arms.
+ * An assembly the industrial arms do on an item lying on a depot or belt they take from, like Create's sequenced assembly but by
+ * arms: the steps are done in order, each by an arm with the step's tool, using up the step's parts. Between steps the item is the
+ * transitional item (or stays the input) and carries its progress; after the last step it becomes the result.
  */
-public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> steps, Item result, int resultCount) {
-    public static final int MAX_SIZE = 3;
+public record ArmRecipe(Item input, Optional<Item> transitional, List<Step> steps, ItemStack result) implements Recipe<RecipeInput> {
     /** Most parts one step may use up; a core memory plane takes 144 cores. */
     public static final int MAX_CONSUME = 1024;
+    private static final String TAG = "create_refinery_n_reactors:arm_assembly";
 
-    /**
-     * One job. {@code place}: the bare arm sets {@code block} (or lays {@code consume}). Otherwise the {@code tool} works the cell, using up
-     * {@code count} of {@code consume} (a wire or part, may be null), with {@code helpers} more bare arms helping. {@code time} is ticks at 16 rpm. {@code seam} is the 2D data value
-     * of the horizontal direction of the neighbouring placed block, or -1.
-     */
-    public record Step(int stage, BlockPos rel, boolean place, ArmTool tool, Block block, Item consume, int count, int helpers,
-                       int time, ArmPattern pattern, int seam) {
-        public Direction seamDirection() {
-            return seam < 0 ? null : Direction.from2DDataValue(seam);
-        }
+    /** Parts a step uses up. */
+    public record Part(Item item, int count) {
+        static final Codec<Part> CODEC = RecordCodecBuilder.create(i -> i.group(
+            BuiltInRegistries.ITEM.byNameCodec().fieldOf("id").forGetter(Part::item),
+            Codec.intRange(1, MAX_CONSUME).optionalFieldOf("count", 1).forGetter(Part::count)
+        ).apply(i, Part::new));
+    }
 
-        /** The item an arm must fetch before starting, or null. */
-        public Item material() {
-            return place && block != null ? block.asItem() : consume;
-        }
+    /** One step: {@code tool} works the item along {@code pattern} for {@code time} ticks at 16 rpm, using up {@code consume}, with {@code helpers} more bare arms. */
+    public record Step(ArmTool tool, ArmPattern pattern, Optional<Part> consume, int helpers, int time) {
+        static final Codec<Step> CODEC = RecordCodecBuilder.<Step>create(i -> i.group(
+            ArmTool.CODEC.optionalFieldOf("tool", ArmTool.HAND).forGetter(Step::tool),
+            ArmPattern.CODEC.optionalFieldOf("pattern").forGetter(s -> Optional.of(s.pattern)),
+            Part.CODEC.optionalFieldOf("consume").forGetter(Step::consume),
+            Codec.intRange(0, 1).optionalFieldOf("helpers", 0).forGetter(Step::helpers),
+            Codec.intRange(1, 72000).optionalFieldOf("time", 40).forGetter(Step::time)
+        ).apply(i, (tool, pattern, consume, helpers, time) -> new Step(tool, pattern.orElse(ArmPattern.defaultFor(tool)), consume, helpers, time)))
+            .validate(s -> (s.tool == ArmTool.WELDING_TORCH) == (s.pattern == ArmPattern.SEAM_WELD) ? DataResult.success(s)
+                : DataResult.error(() -> "welding needs the welding torch, and the torch only welds"));
+    }
 
-        /** A bare-arm step that lays an item (such as an iron sheet) flat on the cell instead of setting a block. */
-        public boolean lay() {
-            return place && block == null;
-        }
+    public static final MapCodec<ArmRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+        BuiltInRegistries.ITEM.byNameCodec().fieldOf("input").forGetter(ArmRecipe::input),
+        BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("transitional").forGetter(ArmRecipe::transitional),
+        ExtraCodecs.nonEmptyList(Step.CODEC.listOf()).fieldOf("steps").forGetter(ArmRecipe::steps),
+        ItemStack.CODEC.fieldOf("result").forGetter(ArmRecipe::result)
+    ).apply(i, ArmRecipe::new));
+    private static final StreamCodec<RegistryFriendlyByteBuf, ArmRecipe> STREAM = ByteBufCodecs.fromCodecWithRegistries(CODEC.codec());
 
-        /** How many of {@link #material()} the arm fetches. */
-        public int materialCount() {
-            return place ? 1 : count;
+    /** The item between steps. */
+    public Item between() {
+        return transitional.orElse(input);
+    }
+
+    public static List<RecipeHolder<ArmRecipe>> all(Level level) {
+        return level.getRecipeManager().getAllRecipesFor(CERecipeTypes.ARM_ASSEMBLY.<RecipeInput, ArmRecipe>getType());
+    }
+
+    /** A recipe and the step of it to do next. */
+    public record Next(RecipeHolder<ArmRecipe> recipe, int step) {
+        public Step get() {
+            return recipe.value().steps.get(step);
         }
     }
 
-    /** Thickness of a laid item: work on a cell with one is done on its top instead of a block's. */
-    public static final double LAID = 1 / 16.0;
-
-    /** How far below a full block's top the work surface of the step's cell is: on a laid sheet, almost a block. */
-    public double base(Step s) {
-        if (s.lay()) return 0;
-        for (Step o : steps) if (o.lay() && o.rel.equals(s.rel)) return LAID - 1;
-        return 0;
-    }
-
-    public int stages() {
-        int n = 0;
-        for (Step s : steps) n = Math.max(n, s.stage + 1);
-        return n;
-    }
-
-    public ItemStack resultStack() {
-        return new ItemStack(result, resultCount);
-    }
-
-    // ---------------------------------------------------------------- json
-
-    public static ArmRecipe fromJson(ResourceLocation id, JsonObject json) {
-        JsonArray size = GsonHelper.getAsJsonArray(json, "size");
-        int sx = size.get(0).getAsInt(), sy = size.get(1).getAsInt(), sz = size.get(2).getAsInt();
-        if (sx < 1 || sy < 1 || sz < 1 || sx > MAX_SIZE || sy > MAX_SIZE || sz > MAX_SIZE) throw new IllegalArgumentException("size must be 1 to 3 on each axis");
-        List<Step> steps = new ArrayList<>();
-        int stage = 0;
-        for (JsonElement stageJson : GsonHelper.getAsJsonArray(json, "stages")) {
-            for (JsonElement e : stageJson.getAsJsonArray()) steps.add(step(stage, e.getAsJsonObject(), sx, sy, sz));
-            stage++;
+    /** What may be done next on this stack: a stack partway carries its recipe and step; a fresh one may start any recipe it is the input of. */
+    @SuppressWarnings("unchecked")
+    public static List<Next> next(Level level, ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        if (data != null && data.contains(TAG)) {
+            CompoundTag t = data.copyTag().getCompound(TAG);
+            ResourceLocation id = ResourceLocation.tryParse(t.getString("recipe"));
+            int step = t.getInt("step");
+            var holder = id == null ? Optional.<RecipeHolder<?>>empty() : level.getRecipeManager().byKey(id);
+            if (holder.isPresent() && holder.get().value() instanceof ArmRecipe r && step > 0 && step < r.steps.size() && stack.is(r.between()))
+                return List.of(new Next((RecipeHolder<ArmRecipe>) holder.get(), step));
+            return List.of(); // a recipe that is gone or changed leaves the item as it is
         }
-        if (steps.isEmpty()) throw new IllegalArgumentException("no steps");
-        JsonObject res = GsonHelper.getAsJsonObject(json, "result");
-        Item result = item(GsonHelper.getAsString(res, "id"));
-        List<Step> withSeams = new ArrayList<>();
-        for (Step s : steps) withSeams.add(withSeam(s, steps));
-        return new ArmRecipe(id, sx, sy, sz, List.copyOf(withSeams), result, GsonHelper.getAsInt(res, "count", 1));
+        return all(level).stream().filter(h -> stack.is(h.value().input)).map(h -> new Next(h, 0)).toList();
     }
 
-    private static Step step(int stage, JsonObject o, int sx, int sy, int sz) {
-        JsonArray p = GsonHelper.getAsJsonArray(o, "pos");
-        BlockPos rel = new BlockPos(p.get(0).getAsInt(), p.get(1).getAsInt(), p.get(2).getAsInt());
-        if (rel.getX() < 0 || rel.getY() < 0 || rel.getZ() < 0 || rel.getX() >= sx || rel.getY() >= sy || rel.getZ() >= sz) throw new IllegalArgumentException("step outside the work area: " + rel);
-        String action = GsonHelper.getAsString(o, "action");
-        boolean lay = action.equals("lay");
-        boolean place = switch (action) {
-            case "place", "lay" -> true;
-            case "process" -> false;
-            default -> throw new IllegalArgumentException("unknown action " + action);
-        };
-        ArmTool tool = ArmTool.byId(GsonHelper.getAsString(o, "tool", "hand"));
-        if (tool == null) throw new IllegalArgumentException("unknown tool");
-        if (place && tool != ArmTool.HAND) throw new IllegalArgumentException("only the bare arm places blocks");
-        Block block = null;
-        if (place && !lay) {
-            Item i = item(GsonHelper.getAsString(o, "block"));
-            if (!(i instanceof net.minecraft.world.item.BlockItem bi)) throw new IllegalArgumentException("not a block");
-            block = bi.getBlock();
-        }
-        Item consume = lay ? item(GsonHelper.getAsString(o, "item")) : null;
-        int count = 1;
-        if (!lay && o.has("consume")) {
-            // "consume": "id", or {"id": ..., "count": n} for many of one part
-            if (o.get("consume").isJsonObject()) {
-                JsonObject c = GsonHelper.getAsJsonObject(o, "consume");
-                consume = item(GsonHelper.getAsString(c, "id"));
-                count = GsonHelper.getAsInt(c, "count", 1);
-                if (count < 1 || count > MAX_CONSUME) throw new IllegalArgumentException("consume count must be 1 to " + MAX_CONSUME);
-            } else consume = item(GsonHelper.getAsString(o, "consume"));
-        }
-        ArmPattern pattern = lay ? ArmPattern.LAY : place ? ArmPattern.PLACE : o.has("pattern") ? ArmPattern.byId(GsonHelper.getAsString(o, "pattern")) : ArmPattern.defaultFor(tool);
-        if (pattern == null) throw new IllegalArgumentException("unknown pattern");
-        if (!place && (pattern == ArmPattern.PLACE || pattern == ArmPattern.LAY)) throw new IllegalArgumentException("work by the bare arm needs a pattern, such as core_set");
-        if (!place && (tool == ArmTool.WELDING_TORCH) != (pattern == ArmPattern.SEAM_WELD)) throw new IllegalArgumentException("welding needs the welding torch, and the torch only welds");
-        int helpers = GsonHelper.getAsInt(o, "helpers", 0);
-        if (helpers < 0 || helpers > 1) throw new IllegalArgumentException("helpers must be 0 or 1");
-        return new Step(stage, rel, place, tool, block, consume, count, helpers, Math.max(1, GsonHelper.getAsInt(o, "time", 40)), pattern, -1);
-    }
-
-    private static Step withSeam(Step s, List<Step> all) {
-        if (s.pattern != ArmPattern.SEAM_WELD) return s;
-        for (Direction d : Direction.Plane.HORIZONTAL) {
-            BlockPos n = s.rel.relative(d);
-            for (Step o : all) if (o.place && o.rel.equals(n)) return new Step(s.stage, s.rel, s.place, s.tool, s.block, s.consume, s.count, s.helpers, s.time, s.pattern, d.get2DDataValue());
-        }
+    /** One item after {@code step} is done: the result after the last step, otherwise the transitional item carrying the next step. */
+    public ItemStack after(ResourceLocation id, int step) {
+        if (step + 1 >= steps.size()) return result.copy();
+        ItemStack s = new ItemStack(between());
+        CompoundTag t = new CompoundTag();
+        t.putString("recipe", id.toString());
+        t.putInt("step", step + 1);
+        CompoundTag root = new CompoundTag();
+        root.put(TAG, t);
+        s.set(DataComponents.CUSTOM_DATA, CustomData.of(root));
         return s;
     }
 
-    private static Item item(String id) {
-        ResourceLocation rl = ResourceLocation.parse(id);
-        if (!BuiltInRegistries.ITEM.containsKey(rl)) throw new IllegalArgumentException("unknown item " + id);
-        return BuiltInRegistries.ITEM.get(rl);
+    public boolean usesTorch() {
+        return steps.stream().anyMatch(s -> s.tool == ArmTool.WELDING_TORCH);
     }
 
-    // ----------------------------------------------------------------- nbt
-
-    public CompoundTag toTag() {
-        CompoundTag t = new CompoundTag();
-        t.putString("id", id.toString());
-        t.putIntArray("size", new int[] {sx, sy, sz});
-        t.putString("result", BuiltInRegistries.ITEM.getKey(result).toString());
-        t.putInt("count", resultCount);
-        ListTag l = new ListTag();
-        for (Step s : steps) {
-            CompoundTag c = new CompoundTag();
-            c.putInt("stage", s.stage);
-            c.putIntArray("rel", new int[] {s.rel.getX(), s.rel.getY(), s.rel.getZ()});
-            c.putBoolean("place", s.place);
-            c.putString("tool", s.tool.id());
-            if (s.block != null) c.putString("block", BuiltInRegistries.BLOCK.getKey(s.block).toString());
-            if (s.consume != null) {
-                c.putString("consume", BuiltInRegistries.ITEM.getKey(s.consume).toString());
-                c.putInt("consumeCount", s.count);
-            }
-            if (s.helpers > 0) c.putInt("helpers", s.helpers);
-            c.putInt("time", s.time);
-            c.putString("pattern", s.pattern.id());
-            c.putInt("seam", s.seam);
-            l.add(c);
-        }
-        t.put("steps", l);
-        return t;
+    @Override
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> list = NonNullList.create();
+        list.add(Ingredient.of(input));
+        for (Step s : steps) s.consume.ifPresent(p -> list.add(Ingredient.of(p.item())));
+        return list;
     }
 
-    /** The recipe as saved, or null if it uses tools or patterns that no longer exist. */
-    public static ArmRecipe fromTag(CompoundTag t) {
-        int[] size = t.getIntArray("size");
-        List<Step> steps = new ArrayList<>();
-        for (Tag e : t.getList("steps", Tag.TAG_COMPOUND)) {
-            CompoundTag c = (CompoundTag) e;
-            int[] r = c.getIntArray("rel");
-            boolean place = c.getBoolean("place");
-            Block block = place && c.contains("block") ? BuiltInRegistries.BLOCK.get(ResourceLocation.parse(c.getString("block"))) : null;
-            Item consume = c.contains("consume") ? BuiltInRegistries.ITEM.get(ResourceLocation.parse(c.getString("consume"))) : null;
-            ArmTool tool = ArmTool.byId(c.getString("tool"));
-            ArmPattern pattern = ArmPattern.byId(c.getString("pattern"));
-            if (tool == null || pattern == null) return null; // saved before the gripper and the other tools were retired
-            steps.add(new Step(c.getInt("stage"), new BlockPos(r[0], r[1], r[2]), place, tool, block, consume, Math.max(1, c.getInt("consumeCount")),
-                    c.getInt("helpers"), c.getInt("time"), pattern, c.getInt("seam")));
-        }
-        return new ArmRecipe(ResourceLocation.parse(t.getString("id")), size[0], size[1], size[2], List.copyOf(steps),
-                BuiltInRegistries.ITEM.get(ResourceLocation.parse(t.getString("result"))), Math.max(1, t.getInt("count")));
+    @Override public boolean matches(RecipeInput input, Level level) { return false; }
+    @Override public ItemStack assemble(RecipeInput input, HolderLookup.Provider lookup) { return result.copy(); }
+    @Override public boolean canCraftInDimensions(int width, int height) { return false; }
+    @Override public ItemStack getResultItem(HolderLookup.Provider lookup) { return result; }
+    @Override public boolean isSpecial() { return true; }
+    @Override public RecipeSerializer<?> getSerializer() { return CERecipeTypes.ARM_ASSEMBLY.getSerializer(); }
+    @Override public RecipeType<?> getType() { return CERecipeTypes.ARM_ASSEMBLY.getType(); }
+
+    public static final class Serializer implements RecipeSerializer<ArmRecipe> {
+        @Override public MapCodec<ArmRecipe> codec() { return CODEC; }
+        @Override public StreamCodec<RegistryFriendlyByteBuf, ArmRecipe> streamCodec() { return STREAM; }
     }
 }

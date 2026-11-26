@@ -1,0 +1,6 @@
+{
+  "type": "create_refinery_n_reactors:arm_assembly",
+  "input": "minecraft:chipped_anvil",
+  "steps": [ { "tool": "welding_torch", "time": 80 } ],
+  "result": { "id": "minecraft:anvil" }
+}

@@ -28,7 +28,8 @@ public enum CERecipeTypes implements IRecipeTypeInfo, StringRepresentable {
     FORGING_BLASTING("forging_blasting", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.ForgingBlastingRecipe::new)),
     CUBIC_PRESSING("cubic_pressing", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.CubicPressRecipe::new)),
     CONVERTER("converter", ConverterRecipe.Serializer::new),
-    INDUSTRIAL_DELIVERY("industrial_delivery", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.IndustrialDeliveryRecipe::new));
+    INDUSTRIAL_DELIVERY("industrial_delivery", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.IndustrialDeliveryRecipe::new)),
+    ARM_ASSEMBLY("arm_assembly", net.createplant.arm.ArmRecipe.Serializer::new);
 
     public static final java.util.function.Supplier<RecipeSerializer<?>> FORGING_PRESSING_SERIALIZER = Registers.SERIALIZERS.register("forging_pressing",
         () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.ForgingPressingRecipe::new));

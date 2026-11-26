@@ -1,6 +1,0 @@
-{
-  "tool": "welding_torch",
-  "input": "minecraft:damaged_anvil",
-  "result": { "id": "minecraft:chipped_anvil" },
-  "time": 80
-}

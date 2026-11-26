@@ -2,7 +2,6 @@ package net.createplant.arm;
 
 import java.util.List;
 import net.createplant.CreatePlant;
-import net.createplant.block.entity.AssemblyJigBlockEntity;
 import net.createplant.block.entity.IndustrialArmBlockEntity;
 import net.createplant.registry.CEArm;
 import net.minecraft.core.BlockPos;
@@ -67,7 +66,7 @@ public record ArmPoints(BlockPos arm, List<BlockPos> inputs, List<BlockPos> outp
     /** Anything an arm could take from or put to: a container, a belt or a depot. Range is checked when the arm is placed. */
     public static boolean candidate(Level level, BlockPos p) {
         var be = level.getBlockEntity(p);
-        if (be == null || be instanceof IndustrialArmBlockEntity || be instanceof AssemblyJigBlockEntity) return false;
+        if (be == null || be instanceof IndustrialArmBlockEntity) return false;
         return com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour.get(level, p,
                 com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour.TYPE) != null
                 || level.getCapability(Capabilities.ItemHandler.BLOCK, p, null) != null

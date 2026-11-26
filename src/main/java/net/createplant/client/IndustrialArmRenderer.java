@@ -38,13 +38,16 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
 
     @Override
     public AABB getRenderBoundingBox(IndustrialArmBlockEntity be) {
-        return new AABB(be.getBlockPos()).inflate(2);
+        return new AABB(be.getBlockPos()).inflate(IndustrialArmBlockEntity.RANGE + 1);
     }
 
     @Override
     public void render(IndustrialArmBlockEntity be, float partial, PoseStack ps, MultiBufferSource buffers, int light, int overlay) {
         BlockState state = be.getBlockState();
         VertexConsumer vb = buffers.getBuffer(RenderType.solid());
+        if (be.phase == IndustrialArmBlockEntity.MOVE || be.phase == IndustrialArmBlockEntity.WORK)
+            ArmWorkDraw.draw(be, ps, buffers, light, be.getLevel().getGameTime() + partial);
+        vb = buffers.getBuffer(RenderType.solid());
         CachedBuffers.partial(AllPartialModels.ARM_COG, state).rotateCentered(KineticBlockEntityRenderer.getAngleForBe(be, be.getBlockPos(), Direction.Axis.Y), Direction.UP).light(light).renderInto(ps, vb);
 
         PoseStack local = new PoseStack();

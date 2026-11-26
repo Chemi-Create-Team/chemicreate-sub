@@ -7,21 +7,19 @@ import net.createplant.arm.ArmPattern;
 import net.createplant.arm.ArmRecipe.Step;
 import net.createplant.arm.ArmRecipe;
 import net.createplant.arm.Trajectory;
-import net.createplant.block.entity.AssemblyJigBlockEntity;
+import net.createplant.block.entity.IndustrialArmBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Draws the work as it happens: the weld bead cooling behind the torch, wires and ferrite cores, the laser and its groove, the
- * paint film. Everything is cut from the same {@link Trajectory} the arm follows, at the jig's smoothed progress.
+ * Draws the work on the item an arm is busy with: the weld bead cooling behind the torch, the ferrite cores and the wires. Everything
+ * is cut from the same {@link Trajectory} the arm follows, at the synced progress; the steps done before are drawn finished.
  */
-public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlockEntity> {
+public final class ArmWorkDraw {
     private static final ResourceLocation WHITE = CreatePlant.location("textures/misc/white.png");
     private static final int FULL = LightTexture.FULL_BRIGHT;
     /** White hot, yellow, orange, dark red, then cold silver. */
@@ -29,48 +27,31 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
     private static final double[] HEAT_AT = {0, .2, .45, .75, 1};
     private static final int COPPER = 0xC8733A, ENAMEL = 0x9E2F26, GOLD = 0xD4A84A, FERRITE = 0x3C3C42;
 
-    public AssemblyJigRenderer(BlockEntityRendererProvider.Context ctx) {}
+    private ArmWorkDraw() {}
 
-    @Override
-    public AABB getRenderBoundingBox(AssemblyJigBlockEntity be) {
-        return AABB.encapsulatingFullBlocks(be.getBlockPos().offset(-1, 0, -1), be.getBlockPos().offset(3, 4, 3));
-    }
-
-    @Override
-    public void render(AssemblyJigBlockEntity be, float partial, PoseStack ps, MultiBufferSource buffers, int light, int overlay) {
-        if (be.recipe == null || be.shown.length != be.status.length) return;
-        // laid items first: they use other buffers, which would end the overlay's batch below
-        for (int i = 0; i < be.status.length; i++)
-            if (be.recipe.steps().get(i).lay() && be.status[i] == AssemblyJigBlockEntity.DONE) laid(be, be.recipe.steps().get(i), ps, buffers, light);
+    /** In the arm's block frame. */
+    public static void draw(IndustrialArmBlockEntity be, PoseStack ps, MultiBufferSource buffers, int light, float time) {
+        ArmRecipe r = be.workRecipe;
+        if (r == null || be.workAt == null) return;
         VertexConsumer q = buffers.getBuffer(RenderType.entityTranslucent(WHITE));
-        PoseStack.Pose pose = ps.last();
-        long now = be.getLevel().getGameTime();
-        float time = now + partial;
-        for (int i = 0; i < be.status.length; i++) {
-            Step s = be.recipe.steps().get(i);
-            if (s.place()) continue;
-            boolean done = be.status[i] == AssemblyJigBlockEntity.DONE;
-            float p = done ? 1 : be.shown[i];
-            if (p <= 0.001f) continue;
-            boolean live = !done && be.status[i] == AssemblyJigBlockEntity.RESERVED && p < .999f;
-            Vec3 o = new Vec3(s.rel().getX(), s.rel().getY() + 1 + be.recipe.base(s), s.rel().getZ());
-            Trajectory t = Trajectory.of(s.pattern(), s.seamDirection());
-            switch (s.pattern()) {
-                case SEAM_WELD -> weld(q, pose, o, t, p, live, done ? (now - be.doneAt[i] + partial) / 40f : 0, time);
-                case CORE_SET, WIRE_THREAD -> wires(q, pose, light, o, t, p);
-                default -> {}
-            }
+        BlockPos at = be.getBlockPos();
+        for (int i = 0; i <= be.workStep && i < r.steps().size(); i++) {
+            Step s = r.steps().get(i);
+            if (s.pattern() == ArmPattern.PLACE) continue;
+            boolean current = i == be.workStep;
+            float p = current ? be.progress : 1;
+            if (p <= .001f) continue;
+            float scale = (float) s.pattern().scale();
+            ps.pushPose();
+            // path units onto the item, as IndustrialArmBlockEntity.on does for the tool tip
+            ps.translate(be.workAt.x - at.getX(), be.workAt.y - at.getY(), be.workAt.z - at.getZ());
+            ps.scale(scale, scale, scale);
+            ps.translate(-.5, -1, -.5);
+            Trajectory t = Trajectory.of(s.pattern());
+            if (s.pattern() == ArmPattern.SEAM_WELD) weld(q, ps.last(), Vec3.ZERO, t, p, current && be.phase == IndustrialArmBlockEntity.WORK && p < .999f, current ? 0 : 1, time);
+            else wires(q, ps.last(), light, Vec3.ZERO, t, p);
+            ps.popPose();
         }
-    }
-
-    /** A laid item (an iron sheet) lies flat over its whole cell, as thick as {@link net.createplant.arm.ArmRecipe#LAID}. */
-    private static void laid(AssemblyJigBlockEntity be, Step s, PoseStack ps, MultiBufferSource buffers, int light) {
-        ps.pushPose();
-        ps.translate(s.rel().getX() + .5, s.rel().getY() + 1 + net.createplant.arm.ArmRecipe.LAID / 2, s.rel().getZ() + .5);
-        ps.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90));
-        net.minecraft.client.Minecraft.getInstance().getItemRenderer().renderStatic(new net.minecraft.world.item.ItemStack(s.material()),
-                net.minecraft.world.item.ItemDisplayContext.FIXED, light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
-        ps.popPose();
     }
 
     private static int heat(double h) {

@@ -1,0 +1,11 @@
+{
+  "type": "create_refinery_n_reactors:arm_assembly",
+  "input": "create:iron_sheet",
+  "transitional": "create_refinery_n_reactors:incomplete_magnetic_core_memory",
+  "steps": [
+    { "pattern": "core_set", "consume": { "id": "create_refinery_n_reactors:ferrite_core", "count": 144 }, "time": 60 },
+    { "pattern": "wire_thread", "helpers": 1, "consume": { "id": "create_refinery_n_reactors:enamelled_copper_wire", "count": 25 }, "time": 120 },
+    { "tool": "welding_torch", "time": 50 }
+  ],
+  "result": { "id": "create_refinery_n_reactors:magnetic_core_memory" }
+}

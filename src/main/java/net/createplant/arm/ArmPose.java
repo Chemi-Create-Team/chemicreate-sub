@@ -15,7 +15,7 @@ import net.minecraft.world.phys.Vec3;
 public final class ArmPose {
     /** base, lower arm, upper arm, head, as Create's arm block entity chases them. */
     public static final float[] REST = {0, 135, 45, 0};
-    /** The two arm segments are this many times longer than Create's, so the arm reaches across a 3 x 3 jig. */
+    /** The two arm segments are this many times longer than Create's, so the arm reaches the depots and belts around it. */
     public static final float SCALE = 2;
     /** Create's shoulder above the arm block's centre, the lengths of its two arm segments and its shortest reach. */
     public static final double SHOULDER = .375, LOWER = .875, UPPER = .9375, NEAREST = .125;

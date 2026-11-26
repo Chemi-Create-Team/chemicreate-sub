@@ -82,6 +82,8 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("ammonia_separator", "chemistry/ammonia_separator", CETransport.AMMONIA_SEPARATOR.get(), CETransport.AMMONIA_SEPARATOR.get(), CETransport.REACTION_TOWER.get()),
             new Kind("process_heating", "plant/ore_recovery", AllBlocks.BLAZE_BURNER.get(), CETransport.LIDDED_VESSEL.get(), AllBlocks.BASIN.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("heat_exchange", "plant/heat_exchanger", CEHeating.TUBE_TANK.get(), CEHeating.TUBE_TANK.get(), CEHeating.JACKET.get()),
+            new Kind("arm_assembly", "plant/industrial_arm", net.createplant.registry.CEArm.ARM_ITEM.get(), net.createplant.registry.CEArm.ARM_ITEM.get(),
+                net.createplant.registry.CEArm.WELDING_TORCH.get(), AllBlocks.DEPOT.get()),
             new Kind("process_cooling", "plant/module_cooling", CEProcessBlocks.COOLER_RADIATOR.get(), CEProcessBlocks.COOLER_RADIATOR.get(), CEProcessBlocks.COOLING_FAN.get()));
         return kinds;
     }
@@ -108,6 +110,22 @@ public class CreatePlantJeiPlugin implements IModPlugin {
 
     private static ItemStack stack(String name) { return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(CreatePlant.location(name)).getDefaultInstance(); }
     private static PlantProcess service(String input, String output, String key) { return new PlantProcess(List.of(List.of(stack(input))), List.of(), List.of(), List.of(stack(output)), List.of(), note(key)); }
+    /** The item put on the depot and every part the steps use up go in; the torch is kept; the note lists the steps in order. */
+    private static PlantProcess armAssembly(net.createplant.arm.ArmRecipe recipe) {
+        List<List<ItemStack>> in = new java.util.ArrayList<>();
+        in.add(List.of(new ItemStack(recipe.input())));
+        var steps = Component.empty();
+        for (int i = 0; i < recipe.steps().size(); i++) {
+            var step = recipe.steps().get(i);
+            step.consume().ifPresent(part -> in.add(List.of(new ItemStack(part.item(), part.count()))));
+            if (i > 0) steps.append(" > ");
+            steps.append(Component.translatable("jei." + CreatePlant.MOD_ID + ".arm_step." + step.pattern().id()));
+            if (step.helpers() > 0) steps.append(Component.translatable("jei." + CreatePlant.MOD_ID + ".arm_step.helped"));
+        }
+        List<ItemStack> kept = recipe.usesTorch() ? List.of(net.createplant.registry.CEArm.WELDING_TORCH.toStack()) : List.of();
+        return new PlantProcess(in, List.of(), kept, List.of(recipe.result().copy()), List.of(), note("arm_assembly", steps));
+    }
+
     @Override public void registerRecipes(IRecipeRegistration registration) {
         var world = Minecraft.getInstance().level;
         if (world != null) registration.addRecipes(type("spraying"), SprayingRecipe.available(world).stream().flatMap(holder -> {
@@ -127,6 +145,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
                     List.of(steam.getFirst()), List.of(), List.of(), List.of(recipe.hotGasResult()),
                     note("entrained_gasification", recipe.duration())).withFluidOptions(List.of(steam)));
             }).toList());
+        if (world != null) registration.addRecipes(type("arm_assembly"), net.createplant.arm.ArmRecipe.all(world).stream().map(holder -> armAssembly(holder.value())).toList());
         registration.addRecipes(type("clarifying"), ordinaryRoutesFirst(wetReactions(CERecipeTypes.CLARIFYING)));
         registration.addRecipes(type("irradiation_products"), List.of(
             new PlantProcess(List.of(List.of(stack("fuel_rod"), stack("compact_enriched_fuel_rod"), stack("mox_fuel_rod"))), List.of(), List.of(), List.of(stack("spent_fuel_rod")), List.of(), note("spent_fuel")),

@@ -152,7 +152,6 @@ public class ElectrolysisClient {
         event.registerBlockEntityRenderer(net.createplant.registry.CENuclear.SHIELD_DRIVE_ENTITY.get(), com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CECrane.DRIVE_ENTITY.get(), net.createplant.client.CraneRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CECrane.QUARRY_DRIVE_ENTITY.get(), net.createplant.client.QuarryRenderer::new);
-        event.registerBlockEntityRenderer(net.createplant.registry.CEArm.JIG_ENTITY.get(), net.createplant.client.AssemblyJigRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEArm.ARM_ENTITY.get(), net.createplant.client.IndustrialArmRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEConverter.TRUNNION_ENTITY.get(), com.simibubi.create.content.contraptions.bearing.BearingRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEReciprocating.COMPRESSOR_ENTITY.get(), net.createplant.client.ReciprocatingCompressorRenderer::new);

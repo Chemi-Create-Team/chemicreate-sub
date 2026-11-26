@@ -1,17 +1,21 @@
 package net.createplant.arm;
 
+import com.mojang.serialization.Codec;
 import java.util.Locale;
+import net.minecraft.util.StringRepresentable;
 
 /** What the industrial arm works with: its own claw with nothing fitted, or the welding torch, its only tool. */
-public enum ArmTool {
+public enum ArmTool implements StringRepresentable {
     HAND, WELDING_TORCH;
+
+    public static final Codec<ArmTool> CODEC = StringRepresentable.fromEnum(ArmTool::values);
 
     public String id() {
         return name().toLowerCase(Locale.ROOT);
     }
 
-    public static ArmTool byId(String id) {
-        for (ArmTool t : values()) if (t.id().equals(id)) return t;
-        return null;
+    @Override
+    public String getSerializedName() {
+        return id();
     }
 }

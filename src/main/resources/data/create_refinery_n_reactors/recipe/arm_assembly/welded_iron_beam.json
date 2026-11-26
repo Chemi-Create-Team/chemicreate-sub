@@ -1,0 +1,9 @@
+{
+  "type": "create_refinery_n_reactors:arm_assembly",
+  "input": "minecraft:iron_block",
+  "steps": [
+    { "pattern": "place", "consume": { "id": "minecraft:iron_block" }, "time": 40 },
+    { "tool": "welding_torch", "time": 60 }
+  ],
+  "result": { "id": "create_refinery_n_reactors:welded_iron_beam" }
+}
