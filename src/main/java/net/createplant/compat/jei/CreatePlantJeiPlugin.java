@@ -424,12 +424,17 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         for (RecipeHolder<ConverterRecipe> holder : level.getRecipeManager().getAllRecipesFor(
             CERecipeTypes.CONVERTER.<net.minecraft.world.item.crafting.RecipeInput, ConverterRecipe>getType())) {
             ConverterRecipe recipe = holder.value();
+            if (recipe.legacy()) continue;
             List<List<ItemStack>> items = recipe.itemIngredients().stream()
                 .map(ingredient -> Arrays.asList(ingredient.getItems())).toList();
-            List<FluidStack> fluids = List.of(recipe.gasIngredient().getFluids()[0]);
-            List<FluidStack> byproducts = recipe.byproduct().isEmpty() ? List.of() : List.of(recipe.byproduct());
-            list.add(new PlantProcess(items, fluids, List.of(), List.of(recipe.result()), byproducts,
-                note("converter", recipe.duration())).withFluidOptions(List.of(Arrays.asList(recipe.gasIngredient().getFluids()))));
+            List<List<FluidStack>> options = new ArrayList<>();
+            options.add(Arrays.asList(recipe.gasIngredient().getFluids()));
+            recipe.metalIngredient().ifPresent(ingredient -> options.add(Arrays.asList(ingredient.getFluids())));
+            List<FluidStack> fluids = options.stream().map(List::getFirst).toList();
+            List<FluidStack> fluidResults = java.util.stream.Stream.of(recipe.metalResult(), recipe.byproduct())
+                .filter(fluid -> !fluid.isEmpty()).toList();
+            list.add(new PlantProcess(items, fluids, List.of(), List.of(recipe.result()), fluidResults,
+                note("converter", recipe.duration())).withFluidOptions(options));
         }
         return list;
     }

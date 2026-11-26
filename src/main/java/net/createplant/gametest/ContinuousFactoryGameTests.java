@@ -109,7 +109,7 @@ public class ContinuousFactoryGameTests {
     @GameTest(template = "test_wet_processing", timeoutTicks = 165)
     public static void tandemMillMakesAPlateWithCounterRotatingColliders(GameTestHelper h) {
         var machine = mill(h, 30, 40);
-        insert(h, machine, Direction.UP, CEMetals.STEEL_BLOCK.toStack());
+        insert(h, machine, Direction.UP, net.createplant.registry.CEConverter.CAST_STEEL_SLAB.toStack());
         h.runAfterDelay(43, () -> {
             var rolls = bodies(h).stream().filter(body -> body.geometry() == FactoryGeometry.ROLLER).toList();
             h.assertTrue(rolls.size() == 4, "Two stands each create both roller contraptions");

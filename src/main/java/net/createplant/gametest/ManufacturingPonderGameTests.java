@@ -130,9 +130,9 @@ public final class ManufacturingPonderGameTests {
         var alloy = ManufacturingRecipe.resolve(level, CreatePlant.MOD_ID + ":mixing/stainless_steel_ingot");
         helper.assertTrue(alloy.items().stream().mapToInt(net.minecraft.world.item.ItemStack::getCount).sum() == 10
             && alloy.products().getFirst().getCount() == 10, "Repeated ingredients retain alloy batch quantities");
-        var converter = ManufacturingRecipe.resolve(level, CreatePlant.MOD_ID + ":converter/oxygen_steel");
+        var converter = ManufacturingRecipe.resolve(level, CreatePlant.MOD_ID + ":converter/refine_hot_metal");
         var actual = (net.createplant.recipe.ConverterRecipe) level.getRecipeManager().byKey(
-            CreatePlant.location("converter/oxygen_steel")).orElseThrow().value();
+            CreatePlant.location("converter/refine_hot_metal")).orElseThrow().value();
         helper.assertTrue(converter.items().getFirst().getCount() == actual.itemIngredients().getFirst().count(),
             "Bulk converter charges retain sized ingredient quantities");
         helper.succeed();

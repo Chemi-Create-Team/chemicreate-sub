@@ -132,7 +132,7 @@ public final class ConverterStructure {
                 .setValue(PipeBlock.UP, true).setValue(PipeBlock.DOWN, true);
             case CHUTE -> AllBlocks.CHUTE.getDefaultState();
             case STEEL -> CEMetals.STEEL_BLOCK.get().getBlock().defaultBlockState();
-            case REFRACTORY -> CEConverter.REFRACTORY_BRICKS.get().defaultBlockState();
+            case REFRACTORY -> CEConverter.SILICA_BRICKS.get().defaultBlockState();
             case BLACKSTONE -> Blocks.POLISHED_BLACKSTONE_BRICKS.defaultBlockState();
         };
     }
@@ -146,9 +146,13 @@ public final class ConverterStructure {
             case FLUID_PIPE -> state.is(AllBlocks.FLUID_PIPE.get());
             case CHUTE -> state.is(AllBlocks.CHUTE.get());
             case STEEL -> state.is(CEMetals.STEEL_BLOCK.get().getBlock());
-            case REFRACTORY -> state.is(CEConverter.REFRACTORY_BRICKS.get());
+            case REFRACTORY -> state.is(CEConverter.SILICA_BRICKS.get()) || state.is(CEConverter.REFRACTORY_BRICKS.get());
             case BLACKSTONE -> state.is(Blocks.POLISHED_BLACKSTONE_BRICKS);
         };
+    }
+
+    public static boolean matchesMovingState(BlockState state, BlockState expected) {
+        return state.equals(expected) || expected.is(CEConverter.SILICA_BRICKS.get()) && state.is(CEConverter.REFRACTORY_BRICKS.get());
     }
 
     private static BlockState girder(Direction.Axis axis, boolean worldX, boolean worldZ, boolean bottom) {

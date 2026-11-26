@@ -20,6 +20,9 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> COOLED_OLEFINS = stream("cooled_olefins");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_POLYETHYLENE = stream("molten_polyethylene");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_POLYPROPYLENE = stream("molten_polypropylene");
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_PIG_IRON = stream("molten_pig_iron", 0xFFF98235, 6900);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DESULFURIZED_HOT_METAL = stream("desulfurized_hot_metal", 0xFFFFA454, 6900);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_STEEL = stream("molten_steel", 0xFFFFC579, 7000);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> COOLED_HYDROTREATER_EFFLUENT = stream("cooled_hydrotreater_effluent");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LOW_SULFUR_DIESEL = stream("low_sulfur_diesel");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HYDROGEN_SULFIDE = stream("hydrogen_sulfide");
@@ -71,9 +74,12 @@ public final class CEProcessFluids {
         return stream(name, color);
     }
     private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name, int color) {
+        return stream(name, color, name.equals("liquid_nitrogen") ? 808 : 1000);
+    }
+    private static DeferredHolder<Fluid, BaseFlowingFluid.Source> stream(String name, int color, int density) {
         return new PlantFluid(TYPES, FLUIDS, name, color, () -> FluidType.Properties.create()
             .descriptionId("fluid." + CreatePlant.MOD_ID + "." + name).supportsBoating(false)
             .temperature((int) Math.round(net.createplant.transport.FluidHazards.named(name).kelvin()))
-            .density(net.createplant.transport.FluidHazards.named(name).gas()?-1:name.equals("liquid_nitrogen")?808:1000), UnaryOperator.identity()).source;
+            .density(net.createplant.transport.FluidHazards.named(name).gas() ? -1 : density), UnaryOperator.identity()).source;
     }
 }

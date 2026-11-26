@@ -3257,9 +3257,10 @@
     "formed": "step_1",
     "components": [
       "converter_trunnion_bearing",
-      "zirconia_refractory_bricks",
+      "silica_refractory_bricks",
       "converter_shell",
-      "steel_block"
+      "steel_block",
+      "molten_steel_bucket"
     ],
     "steps": [
       {
@@ -3285,7 +3286,7 @@
           6
         ],
         "key": "step_2",
-        "item": "create_refinery_n_reactors:zirconia_refractory_bricks"
+        "item": "create_refinery_n_reactors:silica_refractory_bricks"
       },
       {
         "target": [
@@ -3313,7 +3314,7 @@
         ],
         "key": "step_5",
         "speed": 32,
-        "item": "create_refinery_n_reactors:steel_ingot"
+        "item": "create_refinery_n_reactors:molten_steel_bucket"
       },
       {
         "target": [
@@ -7887,7 +7888,7 @@
         ],
         "process": {
           "kind": "converter",
-          "recipe": "create_refinery_n_reactors:converter/oxygen_steel",
+          "recipe": "create_refinery_n_reactors:converter/refine_hot_metal",
           "offset": 128,
           "width": 16,
           "height": 13,

@@ -17,6 +17,7 @@ import net.createplant.registry.CEConverter;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEMetals;
+import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CERecipeTypes;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.ThermalEquipment;
@@ -112,10 +113,23 @@ public final class ConverterGameTests {
         return count;
     }
 
+    private static IFluidHandler metalFeed(GameTestHelper helper) {
+        return fluids(helper, ConverterStructure.rawPort(ORIGIN, FACING), FACING.getClockWise());
+    }
+
+    private static IFluidHandler metalTap(GameTestHelper helper) {
+        return fluids(helper, ConverterStructure.tap(ORIGIN, FACING), FACING);
+    }
+
+    private static FluidStack desulfurized() {
+        return new FluidStack(CEProcessFluids.DESULFURIZED_HOT_METAL.get(), 6_400);
+    }
+
     private static void oxygenCharge(GameTestHelper helper, boolean liquid) {
         IItemHandler raw = items(helper, ConverterStructure.rawPort(ORIGIN, FACING), Direction.UP);
-        insert(raw, Items.IRON_INGOT, 48);
-        insert(raw, Items.RAW_IRON, 24);
+        insert(raw, Items.IRON_INGOT, 8);
+        insert(raw, CEItems.QUICKLIME.get(), 4);
+        if (metalFeed(helper).fill(desulfurized(), EXECUTE) != 6_400) throw new IllegalStateException("The liquid inlet rejected hot metal");
         IFluidHandler lance = fluids(helper, ConverterStructure.lance(ORIGIN, FACING), Direction.UP);
         FluidStack oxygen = liquid ? net.createplant.thermal.FluidForm.LIQUID_OXYGEN.stack(92) : new FluidStack(CEFluids.OXYGEN_GAS.get(), 64_000);
         if (lance.fill(oxygen, EXECUTE) != oxygen.getAmount()) throw new IllegalStateException("Converter rejected oxygen charge");
@@ -170,25 +184,29 @@ public final class ConverterGameTests {
     }
 
     @GameTest(template = "test_fractionation", timeoutTicks = 120)
-    public static void oxygenAndLiquidOxygenMakeSixtyFourSteelAndFullOffgasBatch(GameTestHelper helper) {
+    public static void oxygenAndLiquidOxygenMakeMoltenSteelSlagAndOffgas(GameTestHelper helper) {
         ConverterTrunnionBearingBlockEntity converter = build(helper, true, true);
         helper.assertTrue(helper.getBlockState(ConverterStructure.lance(ORIGIN, FACING)).getValue(ConverterShellBlock.PART) == Part.LANCE
             && helper.getBlockState(ConverterStructure.tap(ORIGIN, FACING)).getValue(ConverterShellBlock.PART) == Part.TAP,
             "Formation assigns the stationary lance and tapping port");
         oxygenCharge(helper, false);
         converter.runProcess(800);
-        helper.assertTrue(products(converter) == 64 && converter.inventory().getStackInSlot(ConverterTrunnionBearingBlockEntity.INPUT_SLOTS)
-            .is(CEItems.STEEL_INGOT.get()), "One oxygen charge makes exactly 64 steel ingots");
+        helper.assertTrue(products(converter) == 8 && converter.inventory().getStackInSlot(ConverterTrunnionBearingBlockEntity.INPUT_SLOTS)
+            .is(CEItems.STEEL_SLAG.get()) && metalTap(helper).getFluidInTank(0).getAmount() == 6_400,
+            "One oxygen charge makes 6,400 mB of molten steel and 8 slag");
         helper.assertTrue(converter.gasOutput().getFluidAmount() == 128_000
             && converter.gasOutput().getFluid().is(CEFluids.CONVERTER_GAS.get()),
             "One oxygen charge retains exactly 128,000 mB converter gas");
-        IItemHandler tap = items(helper, ConverterStructure.tap(ORIGIN, FACING), FACING);
-        helper.assertTrue(tap.extractItem(0, 64, true).isEmpty(), "The upright converter cannot tap steel");
+        IItemHandler tap = items(helper, ConverterStructure.tap(ORIGIN, FACING), Direction.DOWN);
+        helper.assertTrue(tap.extractItem(0, 64, true).isEmpty() && metalTap(helper).drain(6_400, EXECUTE).isEmpty(),
+            "The upright converter keeps both products in the furnace");
 
         drive(converter, 32, 10);
         int tapped = 0;
         for (int slot = 0; slot < tap.getSlots(); slot++) tapped += tap.extractItem(slot, 64, false).getCount();
-        helper.assertTrue(tapped == 64, "A 60-degree real contraption taps all 64 steel ingots");
+        var molten = metalTap(helper).drain(6_400, EXECUTE);
+        helper.assertTrue(tapped == 8 && molten.is(CEProcessFluids.MOLTEN_STEEL.get()) && molten.getAmount() == 6_400,
+            "The tilted outlet supplies all steel through the fluid port and slag through the chute");
         helper.assertTrue(items(helper, ConverterStructure.rawPort(ORIGIN, FACING), Direction.UP)
             .insertItem(0, new ItemStack(Items.IRON_INGOT), true).getCount() == 1
             && fluids(helper, ConverterStructure.lance(ORIGIN, FACING), Direction.UP)
@@ -198,7 +216,8 @@ public final class ConverterGameTests {
         drive(converter, -32, 10);
         oxygenCharge(helper, true);
         converter.runProcess(800);
-        helper.assertTrue(products(converter) == 64 && converter.gasOutput().getFluidAmount() == 128_000
+        helper.assertTrue(products(converter) == 8 && metalTap(helper).getFluidInTank(0).getAmount() == 6_400
+            && converter.gasOutput().getFluidAmount() == 128_000
             && converter.gasInput().isEmpty(), "92 mB liquid oxygen supplies the same charge without duplication");
         helper.succeed();
     }
@@ -237,7 +256,8 @@ public final class ConverterGameTests {
             && converter.getMovedContraption() != null, "Reload keeps contents, angle and the attached contraption");
         drive(converter, -32, 10);
         converter.runProcess(700);
-        helper.assertTrue(products(converter) == 64 && converter.gasOutput().getFluidAmount() == 128_000,
+        helper.assertTrue(products(converter) == 8 && metalTap(helper).getFluidInTank(0).getAmount() == 6_400
+            && converter.gasOutput().getFluidAmount() == 128_000,
             "The paused charge completes once after the vessel returns upright");
         helper.succeed();
     }
@@ -279,13 +299,13 @@ public final class ConverterGameTests {
         var saved = converter.saveWithoutMetadata(helper.getLevel().registryAccess());
         converter.loadWithComponents(saved, helper.getLevel().registryAccess());
         helper.setBlock(ConverterStructure.bearing(ORIGIN, FACING), Blocks.AIR);
-        int iron = 0, raw = 0;
+        int iron = 0, lime = 0;
         for (ItemEntity entity : helper.getLevel().getEntitiesOfClass(ItemEntity.class, helper.getBounds())) {
             if (entity.getItem().is(Items.IRON_INGOT)) iron += entity.getItem().getCount();
-            if (entity.getItem().is(Items.RAW_IRON)) raw += entity.getItem().getCount();
+            if (entity.getItem().is(CEItems.QUICKLIME.get())) lime += entity.getItem().getCount();
         }
-        helper.assertTrue(iron == 48 && raw == 24,
-            "Breaking a saved active converter returns all reserved iron and raw iron once: " + iron + "/" + raw);
+        helper.assertTrue(iron == 8 && lime == 4,
+            "Breaking a saved active converter returns all reserved iron and lime once: " + iron + "/" + lime);
         helper.succeed();
     }
 
@@ -293,17 +313,20 @@ public final class ConverterGameTests {
     public static void blockedOrDisconnectedChargesConsumeNothing(GameTestHelper helper) {
         ConverterTrunnionBearingBlockEntity converter = build(helper, true, true);
         IItemHandler raw = items(helper, ConverterStructure.rawPort(ORIGIN, FACING), Direction.UP);
-        insert(raw, Items.IRON_INGOT, 47);
-        insert(raw, Items.RAW_IRON, 24);
+        insert(raw, Items.IRON_INGOT, 7);
+        insert(raw, CEItems.QUICKLIME.get(), 4);
+        helper.assertTrue(metalFeed(helper).fill(new FluidStack(CEProcessFluids.MOLTEN_PIG_IRON.get(), 6_400), EXECUTE) == 0,
+            "Unpretreated pig iron cannot start a converter charge");
+        helper.assertTrue(metalFeed(helper).fill(desulfurized(), EXECUTE) == 6_400, "The correct liquid feed fills the inlet");
         fluids(helper, ConverterStructure.lance(ORIGIN, FACING), Direction.UP)
             .fill(new FluidStack(CEFluids.OXYGEN_GAS.get(), 64_000), EXECUTE);
         converter.runProcess(800);
-        helper.assertTrue(inputs(converter) == 71 && converter.gasInput().getFluidAmount() == 64_000,
+        helper.assertTrue(inputs(converter) == 11 && converter.gasInput().getFluidAmount() == 64_000,
             "An incomplete charge consumes neither items nor oxygen");
         insert(raw, Items.IRON_INGOT, 1);
         converter.gasOutput().fill(new FluidStack(CEFluids.CONVERTER_GAS.get(), 128_000), EXECUTE);
         converter.runProcess(800);
-        helper.assertTrue(inputs(converter) == 72 && converter.gasInput().getFluidAmount() == 64_000,
+        helper.assertTrue(inputs(converter) == 12 && converter.gasInput().getFluidAmount() == 64_000,
             "A full offgas buffer consumes nothing");
         converter.gasOutput().setFluid(FluidStack.EMPTY);
         helper.setBlock(ConverterStructure.gasPort(ORIGIN, FACING).relative(FACING.getOpposite()), Blocks.AIR);
@@ -317,7 +340,8 @@ public final class ConverterGameTests {
     public static void converterRecipesLoadAndGasIsARealHeaterFuel(GameTestHelper helper) {
         var recipes = helper.getLevel().getRecipeManager().getAllRecipesFor(
             CERecipeTypes.CONVERTER.<RecipeInput, ConverterRecipe>getType());
-        helper.assertTrue(recipes.size() == 2, "Both oxygen steel and AOD converter recipes load: " + recipes.size());
+        helper.assertTrue(recipes.stream().filter(recipe -> !recipe.value().legacy()).count() == 2,
+            "The current steel and AOD charges both load");
         helper.assertTrue(helper.getLevel().getRecipeManager().byKey(CreatePlant.location("pressure_reaction/stainless_steel_ingot_aod")).isEmpty(),
             "The retired stirred-reactor AOD recipe remains absent");
         double value = ThermalEquipment.fuelValue(new FluidStack(CEFluids.CONVERTER_GAS.get(), 1));

@@ -2,7 +2,7 @@
   "machine": "rolling_mill",
   "type": "create_refinery_n_reactors:continuous_processing",
   "feed": {
-    "item": "create_refinery_n_reactors:steel_block",
+    "tag": "create_refinery_n_reactors:plate_rolling_stock",
     "count": 1
   },
   "result": {

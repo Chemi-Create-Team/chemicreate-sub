@@ -1,0 +1,7 @@
+{
+  "values": [
+    "create_refinery_n_reactors:molten_pig_iron",
+    "create_refinery_n_reactors:desulfurized_hot_metal",
+    "create_refinery_n_reactors:molten_steel"
+  ]
+}

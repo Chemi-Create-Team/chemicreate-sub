@@ -8,6 +8,7 @@
     "GradePipeMixin",
     "GradeTankMixin",
     "GradeConnectivityMixin",
+    "TorpedoContraptionMixin",
     "NativeFluidNetworkMixin",
     "HighPressurePumpRangeMixin",
     "HazardBootsBeltMixin",

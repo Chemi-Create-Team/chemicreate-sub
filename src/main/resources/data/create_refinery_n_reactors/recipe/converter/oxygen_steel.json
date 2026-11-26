@@ -22,5 +22,6 @@
     "id": "create_refinery_n_reactors:converter_gas",
     "amount": 128000
   },
-  "processingTime": 800
+  "processingTime": 800,
+  "legacy": true
 }

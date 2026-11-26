@@ -10,7 +10,7 @@
       "item": "create_refinery_n_reactors:steel_block"
     },
     "B": {
-      "item": "minecraft:polished_blackstone_bricks"
+      "item": "create_refinery_n_reactors:silica_refractory_bricks"
     }
   },
   "result": {

@@ -27,6 +27,8 @@
     "create_refinery_n_reactors:converter_shell",
     "create_refinery_n_reactors:converter_trunnion_bearing",
     "create_refinery_n_reactors:zirconia_refractory_bricks",
+    "create_refinery_n_reactors:silica_refractory_bricks",
+    "create_refinery_n_reactors:torpedo_tank",
     "create_refinery_n_reactors:flare_tip",
     "create_refinery_n_reactors:gas_holder",
     "create_refinery_n_reactors:electrolysis_cell",

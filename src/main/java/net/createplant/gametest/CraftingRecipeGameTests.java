@@ -180,23 +180,20 @@ public class CraftingRecipeGameTests {
         var unpacking = CreatePlant.location("steel_ingot_from_steel_block");
         var makers = manager.getRecipes().stream()
             .filter(holder -> holder.value().getResultItem(access).is(CEItems.STEEL_INGOT.get()) && !holder.id().equals(unpacking))
+            .filter(holder -> !(holder.value() instanceof net.createplant.recipe.ConverterRecipe charge) || !charge.legacy())
             .toList();
-        h.assertTrue(makers.size() == 3, "Steel has carbon mixing, forging and converter production recipes: "
+        h.assertTrue(makers.size() == 3, "Steel has carbon mixing, forging and cast-slab production recipes: "
             + makers.stream().map(RecipeHolder::id).toList());
         var assembly = makers.stream().filter(holder -> holder.id().equals(
             CreatePlant.location("sequenced_assembly/steel_ingot"))).findFirst().orElseThrow();
-        h.assertTrue(assembly.id().equals(CreatePlant.location("sequenced_assembly/steel_ingot"))
-            && assembly.value().getType() == AllRecipeTypes.SEQUENCED_ASSEMBLY.getType(),
+        h.assertTrue(assembly.value().getType() == AllRecipeTypes.SEQUENCED_ASSEMBLY.getType(),
             "The small-batch route is the five-pass carbon-steel assembly");
-        var converter = makers.stream().filter(holder -> holder.id().equals(CreatePlant.location("converter/oxygen_steel")))
-            .findFirst().orElseThrow();
-        h.assertTrue(converter.value().getType() == CERecipeTypes.CONVERTER.getType(),
-            "The bulk route is the oxygen converter recipe");
-        var charge = (net.createplant.recipe.ConverterRecipe) converter.value();
-        h.assertTrue(charge.itemIngredients().size() == 2 && charge.itemIngredients().get(0).count() == 48
-            && charge.itemIngredients().get(1).count() == 24 && contains(charge, Items.IRON_INGOT) && contains(charge, Items.RAW_IRON)
-            && !contains(charge, Items.IRON_ORE) && !contains(charge, Items.DEEPSLATE_IRON_ORE),
-            "The converter retains the 48-ingot, 24-raw-iron charge without ore blocks");
+        var charge = (net.createplant.recipe.ConverterRecipe) manager.byKey(CreatePlant.location("converter/refine_hot_metal"))
+            .orElseThrow().value();
+        h.assertTrue(charge.itemIngredients().size() == 2 && charge.itemIngredients().get(0).count() == 8
+            && charge.itemIngredients().get(1).count() == 4 && contains(charge, Items.IRON_INGOT) && contains(charge, CEItems.QUICKLIME.get())
+            && charge.metalIngredient().orElseThrow().amount() == 6_400 && charge.metalResult().getAmount() == 6_400,
+            "Bulk steel consumes pretreated hot metal, iron and quicklime and is tapped as a liquid");
         for (String suffix : List.of("", "_with_flux")) for (String feed : List.of("iron_ore", "raw_iron"))
             h.assertTrue(manager.byKey(CreatePlant.location("mixing/puddled_iron_from_" + feed + suffix)).isEmpty(), "Puddling recipes are removed");
         var mixing = (com.simibubi.create.content.kinetics.mixer.MixingRecipe) manager.byKey(CreatePlant.location("mixing/unprocessed_steel")).orElseThrow().value();

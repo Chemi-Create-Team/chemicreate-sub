@@ -108,8 +108,8 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(), (be, side) -> be.port(side));
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.STAINLESS_BOILER_ENTITY.get(), (be, side) -> be.port(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.HORIZONTAL_FLUID_TANK_ENTITY.get(), (be, side) -> be.tankPort(side));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.STAINLESS_BOILER_ENTITY.get(), (be, side) -> be.tankPort(side));
     }
 
     public ThermalFluidTank steam() { return steam; }
@@ -175,7 +175,7 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     }
 
     /** Keep cached Create pipe connections attached to the current controller and mode. */
-    private IFluidHandler port(Direction side) {
+    protected final IFluidHandler tankPort(Direction side) {
         return new IFluidHandler() {
             private IFluidHandler held(boolean extracting) {
                 var root = owner();

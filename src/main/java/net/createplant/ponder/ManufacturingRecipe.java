@@ -53,8 +53,13 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
         if (holder.isEmpty() && id.equals(NETHERRACK_CRUSHING)) holder = manager.byKey(EX_NIHILO_NETHERRACK_CRUSHING);
         var recipe = holder.orElseThrow(() -> new IllegalArgumentException("Missing manufacturing recipe " + id)).value();
         if (recipe instanceof ConverterRecipe converter) {
+            var feeds = new ArrayList<FluidStack>();
+            feeds.add(converter.gasIngredient().getFluids()[0]);
+            converter.metalIngredient().ifPresent(metal -> feeds.add(metal.getFluids()[0]));
+            var products = java.util.stream.Stream.of(converter.metalResult(), converter.byproduct())
+                .filter(fluid -> !fluid.isEmpty()).toList();
             return new ManufacturingRecipe(converter.itemIngredients().stream().map(ingredient -> ingredient.getItems()[0].copy()).toList(),
-                List.of(converter.gasIngredient().getFluids()[0]), List.of(converter.result()), converter.byproduct().isEmpty() ? List.of() : List.of(converter.byproduct()),
+                feeds, List.of(converter.result()), products,
                 ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
         }
         if (recipe instanceof SequencedAssemblyRecipe assembly) {

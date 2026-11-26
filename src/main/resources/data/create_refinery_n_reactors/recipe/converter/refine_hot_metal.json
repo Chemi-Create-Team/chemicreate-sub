@@ -1,0 +1,34 @@
+{
+  "type": "create_refinery_n_reactors:converter",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 8
+    },
+    {
+      "item": "create_refinery_n_reactors:quicklime",
+      "count": 4
+    }
+  ],
+  "gas": {
+    "fluid": "create_refinery_n_reactors:oxygen_gas",
+    "amount": 64000
+  },
+  "metal": {
+    "fluid": "create_refinery_n_reactors:desulfurized_hot_metal",
+    "amount": 6400
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:steel_slag",
+    "count": 8
+  },
+  "metal_result": {
+    "id": "create_refinery_n_reactors:molten_steel",
+    "amount": 6400
+  },
+  "byproduct": {
+    "id": "create_refinery_n_reactors:converter_gas",
+    "amount": 128000
+  },
+  "processingTime": 800
+}

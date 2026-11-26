@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "create_refinery_n_reactors:block/silica_refractory_bricks"
+  }
+}

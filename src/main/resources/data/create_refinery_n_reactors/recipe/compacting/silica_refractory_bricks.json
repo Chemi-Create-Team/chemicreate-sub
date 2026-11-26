@@ -1,0 +1,22 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "item": "create_refinery_n_reactors:quicklime"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:silica_refractory_bricks",
+      "count": 4
+    }
+  ],
+  "processing_time": 160,
+  "heat_requirement": "superheated"
+}

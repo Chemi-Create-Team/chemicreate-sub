@@ -1,0 +1,16 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:pig_iron"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:molten_pig_iron",
+      "amount": 100
+    }
+  ],
+  "processing_time": 120,
+  "heat_requirement": "superheated"
+}

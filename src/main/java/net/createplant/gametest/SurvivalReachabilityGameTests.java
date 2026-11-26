@@ -89,8 +89,15 @@ public final class SurvivalReachabilityGameTests {
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe)
             return reached.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
                 && has(reached, "steam_gasifier");
-        if (recipe instanceof ConverterRecipe)
-            return has(reached, "converter_shell", "converter_trunnion_bearing", "zirconia_refractory_bricks");
+        if (recipe instanceof ConverterRecipe converter)
+            return !converter.legacy() && has(reached, "converter_shell", "converter_trunnion_bearing", "silica_refractory_bricks");
+        if (recipe instanceof net.createplant.recipe.ContinuousFactoryRecipe continuous)
+            return has(reached, continuous.machine().id, "continuous_factory_outlet", "continuous_factory_frame")
+                && switch (continuous.machine()) {
+                    case KILN -> has(reached, "rotary_kiln_exhaust");
+                    case MILL -> has(reached, "rolling_stand");
+                    case WINDER -> has(reached, "winder_brake");
+                };
         if (recipe instanceof net.createplant.recipe.FuelCycleRecipe)
             return has(reached, "pulse_extraction_column", "extraction_column_shell", "extraction_pulse_plate", "extraction_column_outlet",
                 "vitrification_melter", "vitrification_refractory_shell", "vitrification_electrode");
@@ -100,7 +107,8 @@ public final class SurvivalReachabilityGameTests {
         net.minecraft.core.HolderLookup.Provider registries) {
         Recipe<?> recipe = holder.value();
         if (!equipmentFor(recipe, items) || !itemInputs(recipe, items)) return false;
-        if (recipe instanceof ConverterRecipe converter && !gasInput(converter, fluids)) return false;
+        if (recipe instanceof ConverterRecipe converter && (!gasInput(converter, fluids) || converter.metalIngredient()
+            .filter(metal -> Arrays.stream(metal.getFluids()).noneMatch(stack -> fluids.contains(stack.getFluid()))).isPresent())) return false;
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe gasifier
             && Arrays.stream(gasifier.steam().getFluids()).noneMatch(stack -> fluids.contains(stack.getFluid()))) return false;
         if (recipe instanceof ProcessingRecipe<?, ?> processing && !fluidInputs(processing, fluids)) return false;
@@ -115,6 +123,11 @@ public final class SurvivalReachabilityGameTests {
         }
         boolean changed = false;
         if (recipe instanceof net.createplant.arm.ArmRecipe arm && arm.transitional().isPresent()) changed |= items.add(arm.transitional().get());
+        if (recipe instanceof net.createplant.recipe.ContinuousFactoryRecipe continuous)
+            changed |= switch (continuous.machine()) {
+                case KILN, MILL -> items.add(CEContinuousFactory.SCRAP.get());
+                case WINDER -> items.add(CEContinuousFactory.LOOSE_WINDING.get());
+            };
         ItemStack result = recipe.getResultItem(registries);
         if (!result.isEmpty()) changed |= items.add(result.getItem());
         if (recipe instanceof com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe assembly) {
@@ -127,7 +140,10 @@ public final class SurvivalReachabilityGameTests {
             for (FluidStack output : processing.getFluidResults()) if (!output.isEmpty()) changed |= fluids.addAll(stateEntries(output));
         }
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe gasifier) changed |= fluids.add(gasifier.gasResult().getFluid());
-        if (recipe instanceof ConverterRecipe converter && !converter.byproduct().isEmpty()) changed |= fluids.add(converter.byproduct().getFluid());
+        if (recipe instanceof ConverterRecipe converter) {
+            if (!converter.byproduct().isEmpty()) changed |= fluids.add(converter.byproduct().getFluid());
+            if (!converter.metalResult().isEmpty()) changed |= fluids.add(converter.metalResult().getFluid());
+        }
         return changed;
     }
     private static boolean processEquipment(ProcessModule module, Set<Item> reached) {

@@ -1,0 +1,15 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "create_refinery_n_reactors:block/torpedo/side",
+    "end_a": "create_refinery_n_reactors:block/torpedo/joint",
+    "end_b": "create_refinery_n_reactors:block/torpedo/end",
+    "side": "create_refinery_n_reactors:block/torpedo/collar",
+    "north": "#side",
+    "south": "#side",
+    "east": "#side",
+    "west": "#side",
+    "up": "#end_a",
+    "down": "#end_b"
+  }
+}

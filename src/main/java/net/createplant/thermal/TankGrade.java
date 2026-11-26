@@ -17,6 +17,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public enum TankGrade {
     STANDARD(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.PRESSURISED, Kind.ALL),
     LIQUID(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.PRESSURISED, Kind.LIQUID),
+    REFRACTORY(Grade.Heat.VERY_HOT, Grade.Heat.VERY_HOT, Grade.Pressure.ATMOSPHERIC, Kind.LIQUID),
     GAS(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.HIGH, Kind.GAS),
     PRESSURE(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Pressure.HIGH, Kind.LIQUID),
     STAINLESS(Grade.Heat.COLD, Grade.Heat.VERY_HOT, Grade.Pressure.PRESSURISED, Kind.LIQUID, FluidHazards.Corrosion.ACID, FluidHazards.Corrosion.HALOGEN, FluidHazards.Corrosion.BASE),
@@ -80,6 +81,7 @@ public enum TankGrade {
         if (owner instanceof GasHolderBlockEntity) return HOLDER;
         if (owner instanceof HighPressureSeparatorBlockEntity) return SEPARATOR;
         if (owner instanceof GasTankContainerBlockEntity) return GAS;
+        if (owner instanceof net.createplant.block.entity.TorpedoTankBlockEntity) return REFRACTORY;
         if (owner instanceof HorizontalTankBlockEntity) return LIQUID;
         if (!(owner instanceof FluidTankBlockEntity)) return null;
         var grade=of(owner.getBlockState().getBlock());
@@ -88,6 +90,7 @@ public enum TankGrade {
 
     /** The grade of a tank block, for its item as well as the placed tank; null for any other block. */
     public static TankGrade of(Block block) {
+        if (block == net.createplant.registry.CEConverter.TORPEDO_TANK.get()) return REFRACTORY;
         if (block==com.simibubi.create.AllBlocks.FLUID_TANK.get() || block==CETransport.HORIZONTAL_FLUID_TANK.get()) return LIQUID;
         if (block==CETransport.GAS_RECEIVER.get() || block==CETransport.GAS_TANK_CONTAINER.get()) return GAS;
         if (block==CETransport.HIGH_PRESSURE_SEPARATOR.get()) return SEPARATOR;

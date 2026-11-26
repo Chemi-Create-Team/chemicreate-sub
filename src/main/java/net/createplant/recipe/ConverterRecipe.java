@@ -1,6 +1,7 @@
 package net.createplant.recipe;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -37,7 +38,10 @@ public final class ConverterRecipe implements Recipe<RecipeInput> {
         SizedFluidIngredient.FLAT_CODEC.fieldOf("gas").forGetter(ConverterRecipe::gasIngredient),
         OUTPUT_CODEC.fieldOf("result").forGetter(ConverterRecipe::result),
         FluidStack.OPTIONAL_CODEC.optionalFieldOf("byproduct", FluidStack.EMPTY).forGetter(ConverterRecipe::byproduct),
-        ExtraCodecs.POSITIVE_INT.optionalFieldOf("processingTime", 800).forGetter(ConverterRecipe::duration)
+        ExtraCodecs.POSITIVE_INT.optionalFieldOf("processingTime", 800).forGetter(ConverterRecipe::duration),
+        SizedFluidIngredient.FLAT_CODEC.optionalFieldOf("metal").forGetter(ConverterRecipe::metalIngredient),
+        FluidStack.OPTIONAL_CODEC.optionalFieldOf("metal_result", FluidStack.EMPTY).forGetter(ConverterRecipe::metalResult),
+        Codec.BOOL.optionalFieldOf("legacy", false).forGetter(ConverterRecipe::legacy)
     ).apply(instance, ConverterRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ConverterRecipe> STREAM_CODEC = StreamCodec.of(
@@ -48,6 +52,9 @@ public final class ConverterRecipe implements Recipe<RecipeInput> {
             ItemStack.STREAM_CODEC.encode(buffer, recipe.result);
             FluidStack.OPTIONAL_STREAM_CODEC.encode(buffer, recipe.byproduct);
             ByteBufCodecs.VAR_INT.encode(buffer, recipe.duration);
+            ByteBufCodecs.optional(SizedFluidIngredient.STREAM_CODEC).encode(buffer, recipe.metalIngredient);
+            FluidStack.OPTIONAL_STREAM_CODEC.encode(buffer, recipe.metalResult);
+            buffer.writeBoolean(recipe.legacy);
         },
         buffer -> {
             int size = Math.clamp(ByteBufCodecs.VAR_INT.decode(buffer), 0, 64);
@@ -55,7 +62,8 @@ public final class ConverterRecipe implements Recipe<RecipeInput> {
             for (int i = 0; i < size; i++) ingredients.add(SizedIngredient.STREAM_CODEC.decode(buffer));
             return new ConverterRecipe(ingredients, SizedFluidIngredient.STREAM_CODEC.decode(buffer),
                 ItemStack.STREAM_CODEC.decode(buffer), FluidStack.OPTIONAL_STREAM_CODEC.decode(buffer),
-                ByteBufCodecs.VAR_INT.decode(buffer));
+                ByteBufCodecs.VAR_INT.decode(buffer), ByteBufCodecs.optional(SizedFluidIngredient.STREAM_CODEC).decode(buffer),
+                FluidStack.OPTIONAL_STREAM_CODEC.decode(buffer), buffer.readBoolean());
         });
 
     private final List<SizedIngredient> itemIngredients;
@@ -63,14 +71,21 @@ public final class ConverterRecipe implements Recipe<RecipeInput> {
     private final ItemStack result;
     private final FluidStack byproduct;
     private final int duration;
+    private final Optional<SizedFluidIngredient> metalIngredient;
+    private final FluidStack metalResult;
+    private final boolean legacy;
 
     public ConverterRecipe(List<SizedIngredient> itemIngredients, SizedFluidIngredient gasIngredient, ItemStack result,
-        FluidStack byproduct, int duration) {
+        FluidStack byproduct, int duration, Optional<SizedFluidIngredient> metalIngredient, FluidStack metalResult,
+        boolean legacy) {
         this.itemIngredients = List.copyOf(itemIngredients);
         this.gasIngredient = gasIngredient;
         this.result = result.copy();
         this.byproduct = byproduct.copy();
         this.duration = duration;
+        this.metalIngredient = metalIngredient;
+        this.metalResult = metalResult.copy();
+        this.legacy = legacy;
     }
 
     public List<SizedIngredient> itemIngredients() { return itemIngredients; }
@@ -78,6 +93,9 @@ public final class ConverterRecipe implements Recipe<RecipeInput> {
     public ItemStack result() { return result.copy(); }
     public FluidStack byproduct() { return byproduct.copy(); }
     public int duration() { return duration; }
+    public Optional<SizedFluidIngredient> metalIngredient() { return metalIngredient; }
+    public FluidStack metalResult() { return metalResult.copy(); }
+    public boolean legacy() { return legacy; }
 
     @Override public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> result = NonNullList.create();

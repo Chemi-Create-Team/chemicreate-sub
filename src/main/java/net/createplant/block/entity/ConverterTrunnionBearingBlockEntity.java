@@ -48,6 +48,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockEntity implements IHaveGoggleInformation {
     public static final int INPUT_SLOTS = 6, OUTPUT_SLOTS = 4;
     public static final int GAS_INPUT_CAPACITY = 64_000, GAS_OUTPUT_CAPACITY = 128_000;
+    public static final int METAL_CAPACITY = 16_000;
     public static final float MAX_ANGLE = 60, UPRIGHT_EPSILON = .5f, TAPPED_ANGLE = 59;
     public static final double ACTIVE_SURFACE_KELVIN = 1900;
     private static final String TOOLTIP = "converter.create_refinery_n_reactors.";
@@ -62,10 +63,15 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
     private final SmartFluidTank gasInput = new SmartFluidTank(GAS_INPUT_CAPACITY, stack -> changed());
     private final SmartFluidTank gasOutput = new SmartFluidTank(GAS_OUTPUT_CAPACITY, stack -> changed());
     private final SmartFluidTank reservedGas = new SmartFluidTank(GAS_INPUT_CAPACITY, stack -> changed());
+    private final SmartFluidTank metalInput = new SmartFluidTank(METAL_CAPACITY, stack -> changed());
+    private final SmartFluidTank metalOutput = new SmartFluidTank(METAL_CAPACITY, stack -> changed());
+    private final SmartFluidTank reservedMetal = new SmartFluidTank(METAL_CAPACITY, stack -> changed());
     private final IItemHandler rawPort = new RawPort();
     private final IItemHandler tapPort = new TapPort();
     private final IFluidHandler lancePort = new LancePort();
     private final IFluidHandler offgasPort = new OffgasPort();
+    private final IFluidHandler feedMetalPort = new MetalPort(true);
+    private final IFluidHandler tapMetalPort = new MetalPort(false);
 
     private BlockPos origin;
     private Direction structureFacing = Direction.NORTH;
@@ -78,6 +84,8 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         super(CEConverter.TRUNNION_ENTITY.get(), pos, state);
         gasInput.setValidator(this::acceptsGas);
         gasOutput.setValidator(stack -> stack.is(CEFluids.CONVERTER_GAS.get()));
+        metalInput.setValidator(this::acceptsMetal);
+        metalOutput.setValidator(TorpedoTankBlockEntity::accepts);
     }
 
     public boolean formed() { return formed; }
@@ -99,7 +107,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         structureFacing = facing;
         formed = true;
         angle = Math.clamp(tilt, 0, MAX_ANGLE);
-        activeRecipe = blowing ? net.createplant.CreatePlant.location("converter/oxygen_steel") : null;
+        activeRecipe = blowing ? net.createplant.CreatePlant.location("converter/refine_hot_metal") : null;
         status = blowing ? "blowing" : angle >= TAPPED_ANGLE ? "tapping" : "idle";
     }
 
@@ -191,7 +199,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         }
         for (Map.Entry<BlockPos, BlockState> entry : expected.entrySet()) {
             StructureBlockInfo info = found.get(entry.getKey());
-            if (info == null || !info.state().equals(entry.getValue())) {
+            if (info == null || !ConverterStructure.matchesMovingState(info.state(), entry.getValue())) {
                 fail("converter_material");
                 return;
             }
@@ -366,7 +374,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
             ProductionMonitor.batchRate(recipe.result().getCount(), 1, recipe.duration(), 1), 0);
         if (!upright()) { status = "tilting";return; }
         if (!recipe.byproduct().isEmpty() && !offgasConnected()) { status = "gas_disconnected";return; }
-        if (!canStoreResult(recipe.result()) || !canStoreGas(recipe.byproduct())) { status = "output_full";return; }
+        if (!canStoreOutputs(recipe)) { status = "output_full";return; }
         progress = Math.min(recipe.duration(), progress + ticks);
         status = "blowing";
         setChanged();
@@ -376,6 +384,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         }
         insertResult(recipe.result(), false);
         int gas = recipe.byproduct().isEmpty() ? 0 : gasOutput.fill(recipe.byproduct(), IFluidHandler.FluidAction.EXECUTE);
+        if (!recipe.metalResult().isEmpty()) metalOutput.fill(recipe.metalResult(), IFluidHandler.FluidAction.EXECUTE);
         ProductionMonitor.produced(this, gas, recipe.result().getCount(), 0);
         consumeReservation();
         activeRecipe = null;
@@ -389,15 +398,18 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         boolean sawInputs = false, sawOutputProblem = false, sawConnectionProblem = false;
         for (RecipeHolder<ConverterRecipe> holder : recipes()) {
             ConverterRecipe recipe = holder.value();
+            if (recipe.legacy()) continue;
             int gasToDrain = gasDrainAmount(recipe);
-            if (gasToDrain <= 0 || !hasItems(recipe.itemIngredients())) continue;
+            int metalToDrain = recipe.metalIngredient().map(ingredient -> ingredient.test(metalInput.getFluid()) ? ingredient.amount() : -1).orElse(0);
+            if (gasToDrain <= 0 || metalToDrain < 0 || !hasItems(recipe.itemIngredients())) continue;
             sawInputs = true;
             ProductionMonitor.plan(this, ProductionMonitor.batchRate(recipe.byproduct().getAmount(), 1, recipe.duration(), 1),
                 ProductionMonitor.batchRate(recipe.result().getCount(), 1, recipe.duration(), 1), 0);
-            if (!canStoreResult(recipe.result()) || !canStoreGas(recipe.byproduct())) { sawOutputProblem = true;continue; }
+            if (!canStoreOutputs(recipe)) { sawOutputProblem = true;continue; }
             if (!recipe.byproduct().isEmpty() && !offgasConnected()) { sawConnectionProblem = true;continue; }
             reserveItems(recipe.itemIngredients());
             reservedGas.setFluid(gasInput.drain(gasToDrain, IFluidHandler.FluidAction.EXECUTE));
+            if (metalToDrain > 0) reservedMetal.setFluid(metalInput.drain(metalToDrain, IFluidHandler.FluidAction.EXECUTE));
             activeRecipe = holder.id();
             progress = 0;
             status = "blowing";
@@ -443,9 +455,19 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
 
     private boolean acceptsItem(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        for (RecipeHolder<ConverterRecipe> holder : recipes())
+        for (RecipeHolder<ConverterRecipe> holder : recipes()) {
+            if (holder.value().legacy()) continue;
             for (SizedIngredient ingredient : holder.value().itemIngredients())
                 if (ingredient.ingredient().test(stack)) return true;
+        }
+        return false;
+    }
+
+    private boolean acceptsMetal(FluidStack stack) {
+        if (!TorpedoTankBlockEntity.accepts(stack)) return false;
+        for (var holder : recipes())
+            if (!holder.value().legacy() && holder.value().metalIngredient()
+                .filter(ingredient -> ingredient.ingredient().test(stack)).isPresent()) return true;
         return false;
     }
 
@@ -482,7 +504,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
     }
 
     private boolean reservationEmpty() {
-        if (!reservedGas.isEmpty()) return false;
+        if (!reservedGas.isEmpty() || !reservedMetal.isEmpty()) return false;
         for (int slot = 0; slot < reservedItems.getSlots(); slot++)
             if (!reservedItems.getStackInSlot(slot).isEmpty()) return false;
         return true;
@@ -491,9 +513,16 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
     private void consumeReservation() {
         for (int slot = 0; slot < reservedItems.getSlots(); slot++) reservedItems.setStackInSlot(slot, ItemStack.EMPTY);
         reservedGas.setFluid(FluidStack.EMPTY);
+        reservedMetal.setFluid(FluidStack.EMPTY);
     }
 
     private boolean canStoreResult(ItemStack stack) { return insertResult(stack, true).isEmpty(); }
+
+    private boolean canStoreOutputs(ConverterRecipe recipe) {
+        var metal = recipe.metalResult();
+        return canStoreResult(recipe.result()) && canStoreGas(recipe.byproduct())
+            && (metal.isEmpty() || metalOutput.fill(metal, IFluidHandler.FluidAction.SIMULATE) == metal.getAmount());
+    }
 
     private ItemStack insertResult(ItemStack offered, boolean simulate) {
         ItemStack left = offered.copy();
@@ -515,6 +544,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
     }
 
     private boolean hasProduct() {
+        if (!metalOutput.isEmpty()) return true;
         for (int slot = INPUT_SLOTS; slot < INPUT_SLOTS + OUTPUT_SLOTS; slot++)
             if (!inventory.getStackInSlot(slot).isEmpty()) return true;
         return false;
@@ -532,13 +562,15 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
     public IItemHandler itemPort(Part part, Direction side) {
         if (!formed) return null;
         if (part == Part.RAW_PORT && (side == null || side == Direction.UP)) return rawPort;
-        if (part == Part.TAP && (side == null || side == structureFacing)) return tapPort;
+        if (part == Part.TAP && (side == null || side == structureFacing || side == Direction.DOWN)) return tapPort;
         return null;
     }
 
     public IFluidHandler fluidPort(Part part, Direction side) {
         if (!formed) return null;
         if (part == Part.LANCE && (side == null || side == Direction.UP)) return lancePort;
+        if (part == Part.RAW_PORT && (side == null || side == structureFacing.getClockWise())) return feedMetalPort;
+        if (part == Part.TAP && (side == null || side == structureFacing)) return tapMetalPort;
         Direction gasSide = structureFacing.getOpposite();
         if (part == Part.GAS_PORT && (side == null || side == gasSide)) return offgasPort;
         return null;
@@ -592,8 +624,33 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         }
     }
 
+    private final class MetalPort implements IFluidHandler {
+        private final boolean input;
+        private final SmartFluidTank tank;
+
+        private MetalPort(boolean input) {
+            this.input = input;
+            tank = input ? metalInput : metalOutput;
+        }
+
+        @Override public int getTanks() { return 1; }
+        @Override public FluidStack getFluidInTank(int slot) { return slot == 0 ? tank.getFluid().copy() : FluidStack.EMPTY; }
+        @Override public int getTankCapacity(int slot) { return slot == 0 ? tank.getCapacity() : 0; }
+        @Override public boolean isFluidValid(int slot, FluidStack stack) { return input && slot == 0 && acceptsMetal(stack); }
+        @Override public int fill(FluidStack stack, FluidAction action) {
+            return input && formed && upright() ? tank.fill(stack, action) : 0;
+        }
+        @Override public FluidStack drain(FluidStack stack, FluidAction action) {
+            return !input && formed && tilted() ? tank.drain(stack, action) : FluidStack.EMPTY;
+        }
+        @Override public FluidStack drain(int amount, FluidAction action) {
+            return !input && formed && tilted() ? tank.drain(amount, action) : FluidStack.EMPTY;
+        }
+    }
+
     public boolean hasContents() {
-        if (activeRecipe != null || !gasInput.isEmpty() || !gasOutput.isEmpty() || !reservationEmpty()) return true;
+        if (activeRecipe != null || !gasInput.isEmpty() || !gasOutput.isEmpty() || !metalInput.isEmpty()
+            || !metalOutput.isEmpty() || !reservationEmpty()) return true;
         for (int slot = 0; slot < inventory.getSlots(); slot++)
             if (!inventory.getStackInSlot(slot).isEmpty()) return true;
         return false;
@@ -613,6 +670,9 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
                 worldPosition.getZ() + .5, stack);
         }
         vent(gasInput);vent(reservedGas);vent(gasOutput);
+        metalInput.setFluid(FluidStack.EMPTY);
+        metalOutput.setFluid(FluidStack.EMPTY);
+        reservedMetal.setFluid(FluidStack.EMPTY);
         activeRecipe = null;
         progress = 0;
         formed = false;
@@ -636,6 +696,8 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         for (int slot = 0; slot < reservedItems.getSlots(); slot++) items += reservedItems.getStackInSlot(slot).getCount();
         text.add(Component.translatable(TOOLTIP + "stores", items, gasInput.getFluidAmount(), GAS_INPUT_CAPACITY,
             gasOutput.getFluidAmount(), GAS_OUTPUT_CAPACITY));
+        text.add(Component.translatable(TOOLTIP + "molten_stores", metalInput.getFluidAmount() + reservedMetal.getFluidAmount(),
+            metalOutput.getFluidAmount()));
         MachineReadings.compact(text);
         return true;
     }
@@ -652,6 +714,9 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         tag.put("ConverterGasInput", gasInput.writeToNBT(lookup, new CompoundTag()));
         tag.put("ConverterGasOutput", gasOutput.writeToNBT(lookup, new CompoundTag()));
         tag.put("ConverterReservedGas", reservedGas.writeToNBT(lookup, new CompoundTag()));
+        tag.put("ConverterMetalInput", metalInput.writeToNBT(lookup, new CompoundTag()));
+        tag.put("ConverterMetalOutput", metalOutput.writeToNBT(lookup, new CompoundTag()));
+        tag.put("ConverterReservedMetal", reservedMetal.writeToNBT(lookup, new CompoundTag()));
         tag.putInt("ConverterProgress", progress);
         if (activeRecipe != null) tag.putString("ConverterRecipe", activeRecipe.toString());
     }
@@ -671,6 +736,9 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
         gasOutput.readFromNBT(lookup, tag.getCompound("ConverterGasOutput"));
         if (tag.contains("ConverterReservedGas")) reservedGas.readFromNBT(lookup, tag.getCompound("ConverterReservedGas"));
         else reservedGas.setFluid(FluidStack.EMPTY);
+        metalInput.readFromNBT(lookup, tag.getCompound("ConverterMetalInput"));
+        metalOutput.readFromNBT(lookup, tag.getCompound("ConverterMetalOutput"));
+        reservedMetal.readFromNBT(lookup, tag.getCompound("ConverterReservedMetal"));
         angle = Float.isFinite(angle) ? Math.clamp(angle, 0, MAX_ANGLE) : 0;
         progress = Math.clamp(tag.getInt("ConverterProgress"), 0, 1_000_000);
         activeRecipe = ResourceLocation.tryParse(tag.getString("ConverterRecipe"));

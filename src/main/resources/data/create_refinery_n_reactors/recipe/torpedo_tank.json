@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "BTB"
+  ],
+  "key": {
+    "B": {
+      "item": "create_refinery_n_reactors:silica_refractory_bricks"
+    },
+    "T": {
+      "item": "create_refinery_n_reactors:horizontal_fluid_tank"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:torpedo_tank"
+  }
+}

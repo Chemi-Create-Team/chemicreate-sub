@@ -20,21 +20,21 @@ TEXTS = {
         '底面9×9・高さ11ブロックのCreate鉄骨架台を組み、左に動力付きトラニオン軸受、反対側に従動軸受を取り付けます。',
         '搭建占地9×9、高11格的Create金属梁框架，在左侧安装动力耳轴轴承，在另一侧安装从动轴承。'),
     'step_2': (
-        'Build the stepped vessel from steel blocks. Line its four inner courses and mouth with zirconia refractory bricks; the centre remains hollow.',
-        '段付きの炉体外殻を鋼鉄ブロックで組み、内側4段と炉口をジルコニア耐火レンガで覆います。中央は空洞のままです。',
-        '用钢块搭建阶梯状炉壳，再用氧化锆耐火砖铺设四层内衬和炉口，中央保持中空。'),
+        'Build the stepped vessel from steel blocks. Line its four inner courses and mouth with silica refractory bricks; the centre remains hollow.',
+        '段付きの炉体外殻を鋼鉄ブロックで組み、内側4段と炉口をけい石レンガで覆います。中央は空洞のままです。',
+        '用钢块搭建阶梯状炉壳，再用硅质耐火砖铺设四层内衬和炉口，中央保持中空。'),
     'step_3': (
         'Use Super Glue to connect every vessel block, including both steel trunnions. Missing, incorrect, unglued or extra attached blocks prevent assembly.',
         '両側の鋼製トラニオンを含む炉体すべてを超粘着剤で接着します。不足・素材違い・未接着・余計な接着ブロックがあると組み立てられません。',
         '用强力胶连接炉体的全部方块，包括两侧钢制耳轴。缺块、材料错误、未粘合或粘连多余方块都会阻止组装。'),
     'step_4': (
-        'While upright, feed 48 iron ingots and 24 raw iron through the chute and 64,000 mB of oxygen through the lance. An 800-tick blow makes 64 steel ingots and 128,000 mB of converter gas.',
-        '直立中にシュートから鉄インゴット48個と鉄の原石24個、ランスから酸素64,000 mBを入れます。800 tickの吹錬で鋼鉄インゴット64個と転炉ガス128,000 mBを作ります。',
-        '炉体直立时，从溜槽加入48个铁锭和24个粗铁，并从氧枪输入64,000 mB氧气。吹炼800 tick后得到64个钢锭和128,000 mB转炉煤气。'),
+        'While upright, pipe desulfurized hot metal into the right side of the feed port. The chute takes iron and quicklime, and the lance takes oxygen. The blow yields molten steel, slag and converter gas.',
+        '直立中に原料口の右側へ脱硫溶銑、上のシュートへ鉄と生石灰、ランスへ酸素を送ります。吹錬すると溶鋼、スラグ、転炉ガスができます。',
+        '炉体直立时，把脱硫铁水从进料口右侧接入，从溜槽加入铁和生石灰，并从氧枪通入氧气。吹炼后产出钢水、炉渣和转炉煤气。'),
     'step_5': (
-        'Turn the shaft forward to assemble and tilt the glued vessel to 60 degrees. Only then can steel leave the tapping port. Reverse the shaft to return to zero and disassemble.',
-        'シャフトを正転すると接着した炉体を組み立てて60度まで傾けます。この間だけ出鋼口から製品を取り出せます。逆転すると0度へ戻って分解します。',
-        '正转传动轴会组装已粘合的炉体并倾动至60度，此时才能从出钢口取出产品。反转后炉体回到0度并拆解。'),
+        'Turn the shaft forward to assemble and tilt the glued vessel to 60 degrees. Connect a stainless line to the front for molten steel and a chute below for slag. Reverse the shaft to return to zero and disassemble.',
+        'シャフトを正転すると接着した炉体を組み立てて60度まで傾けます。傾けた炉の出鋼口は、正面のステンレス配管から溶鋼、下面のシュートからスラグを取り出せます。逆転すると0度へ戻って分解します。',
+        '正转传动轴会组装已粘合的炉体并倾动至60度，此时可从出钢口正面以不锈钢管抽出钢水，从下方溜槽取出炉渣。反转后炉体回到0度并拆解。'),
     'step_6': (
         'Route excess converter gas from the rear to an ignited flare tip.',
         '背面の転炉ガスを着火したフレアスタック先端部へ送ります。',
@@ -88,7 +88,7 @@ def converter_cells():
         for x in range(-1, 2):
             for z in range(-1, 2):
                 if abs(x) == 1 or abs(z) == 1:
-                    put(cells, x, y, z, NS + 'zirconia_refractory_bricks')
+                    put(cells, x, y, z, NS + 'silica_refractory_bricks')
     put(cells, -4, 5, 0, NS + 'converter_trunnion_bearing', facing='east')
     put(cells, 4, 5, 0, NS + 'converter_shell', facing='north', part='bearing')
     put(cells, 0, 7, 0, NS + 'converter_shell', facing='north', part='lance')
@@ -138,13 +138,13 @@ def generate():
         'height': 13,
         'scale': .34,
         'formed': 'step_1',
-        'components': ['converter_trunnion_bearing', 'zirconia_refractory_bricks', 'converter_shell', 'steel_block'],
+        'components': ['converter_trunnion_bearing', 'silica_refractory_bricks', 'converter_shell', 'steel_block', 'molten_steel_bucket'],
         'steps': [
             {'target': [1, 6, 6], 'key': 'step_1', 'reveal': [1, 1, 2, 9, 11, 10]},
-            {'target': [6, 5, 6], 'key': 'step_2', 'item': NS + 'zirconia_refractory_bricks'},
+            {'target': [6, 5, 6], 'key': 'step_2', 'item': NS + 'silica_refractory_bricks'},
             {'target': [7, 5, 6], 'key': 'step_3', 'item': 'create:super_glue'},
             {'target': [7, 8, 5], 'key': 'step_4', 'item': NS + 'oxygen_gas_bucket'},
-            {'target': [1, 6, 6], 'key': 'step_5', 'speed': 32, 'item': NS + 'steel_ingot'},
+            {'target': [1, 6, 6], 'key': 'step_5', 'speed': 32, 'item': NS + 'molten_steel_bucket'},
             {'target': [5, 10, 10], 'key': 'step_6', 'reveal': [5, 1, 10, 13, 10, 11], 'item': NS + 'converter_gas_bucket'},
             {'target': [5, 11, 6], 'key': 'step_7', 'item': NS + 'argon_gas_bucket'},
         ],

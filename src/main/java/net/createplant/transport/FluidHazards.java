@@ -53,6 +53,8 @@ public final class FluidHazards {
         entry("cold_nitric_oxide_mixture",310,1,false,true),
         entry("hot_olefins",780,1,false,true),
         entry("molten_polyethylene",480,1,false,false), entry("molten_polypropylene",490,1,false,false),
+        entry("molten_pig_iron",1673,1,false,false), entry("desulfurized_hot_metal",1623,1,false,false),
+        entry("molten_steel",1873,1,false,false),
         entry("resin_process_vapor",293,1,false,true),
         entry("warm_water",330,1,false,false), entry("wastewater",293,1,false,false),
         entry("warm_slime_coolant",330,1,false,false),

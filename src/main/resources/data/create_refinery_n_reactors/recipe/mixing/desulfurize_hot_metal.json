@@ -1,0 +1,24 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:molten_pig_iron",
+      "amount": 800
+    },
+    {
+      "item": "create_refinery_n_reactors:quicklime"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:desulfurized_hot_metal",
+      "amount": 800
+    },
+    {
+      "id": "create_refinery_n_reactors:steel_slag"
+    }
+  ],
+  "processing_time": 120,
+  "heat_requirement": "heated"
+}
