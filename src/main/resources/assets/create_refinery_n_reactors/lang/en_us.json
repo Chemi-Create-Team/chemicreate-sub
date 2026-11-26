@@ -2671,7 +2671,6 @@
   "create_refinery_n_reactors.ponder.shared.pulsation_tube.wrench": "Use the wrench to change the axis. Separate the run into branches with ordinary pipes and keep the tube ends clear.",
   "create_refinery_n_reactors.ponder.shared.pulsation_tube.liquid": "Create fluid tanks hold liquids only. Send gases and steam to damping tubes or suitably rated gas storage.",
   "create_refinery_n_reactors.ponder.pulsation_tube.header": "Pulsation damping tubes",
-  "block.create_refinery_n_reactors.clarifier_basin_wall": "Lined Clarifier Basin",
   "block.create_refinery_n_reactors.clarifier_feed_port": "Clarifier Bottom Feed",
   "block.create_refinery_n_reactors.overflow_weir": "Clarifier Overflow Weir",
   "block.create_refinery_n_reactors.underflow_drain": "Clarifier Underflow Drain",

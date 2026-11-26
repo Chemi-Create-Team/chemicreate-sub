@@ -13,11 +13,10 @@ import net.minecraft.world.level.block.state.properties.*;
 
 public final class WetProcessPartBlock extends Block implements IBE<WetProcessPartBlockEntity>, com.simibubi.create.content.equipment.wrench.IWrenchable {
     public enum Role {
-        BASIN("clarifier_basin_wall"), FEED("clarifier_feed_port"),
+        FEED("clarifier_feed_port"),
         OVERFLOW("overflow_weir"), UNDERFLOW("underflow_drain");
         public final String id;
         Role(String id) { this.id = id; }
-        public boolean port() { return this != BASIN; }
     }
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public final Role role;

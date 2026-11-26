@@ -27,7 +27,8 @@ public final class CELegacyIds {
         Map.entry("reinforced_pump", "stainless_steel_pump"), Map.entry("cryogenic_pump", "stainless_steel_pump"), Map.entry("gas_pump", "stainless_steel_pump"),
         Map.entry("large_gas_pump", "stainless_steel_pump"), Map.entry("resin_pump", "stainless_steel_pump"), Map.entry("pvc_pump", "stainless_steel_pump"),
         // The reaction tower's catalyst basket became the reaction tray, which holds the catalyst as well as solid feed.
-        Map.entry("reactor_catalyst_basket", "reactor_separator_core"));
+        Map.entry("reactor_catalyst_basket", "reactor_separator_core"),
+        Map.entry("clarifier_basin_wall", "tank_casing"));
 
     private CELegacyIds() { }
 

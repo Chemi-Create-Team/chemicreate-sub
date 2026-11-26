@@ -107,12 +107,13 @@ public final class WetProcessingGameTests {
         h.succeed();
     }
     @GameTest(template = "test_wet_processing")
-    public static void handBuiltCubesFormAndAllFacingsHaveValidPorts(GameTestHelper h) {
+    public static void casingTanksExposeTheSamePortsInEveryFacing(GameTestHelper h) {
         for (Direction front : Direction.Plane.HORIZONTAL) {
             var be=assemble(h,new BlockPos(16,6,16),15,4,front);
             var cells=WetProcessStructure.cells(be.getBlockPos(),front,15,4);
-            for (var cell:cells) if (cell.state().is(CEBlocks.TANK_CASING.get())) h.getLevel().setBlock(cell.pos(), CEWetProcessing.PARTS.get(BASIN).get().defaultBlockState(), 3);
-            be.rebuild();h.assertTrue(be.formed(),"Existing odd-sized linings remain valid in every direction");
+            var overflow = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos().relative(front, 7), front);
+            var underflow = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos().relative(front.getOpposite(), 7).below(3), front.getOpposite());
+            h.assertTrue(overflow != null && underflow != null, "Tank casings expose their exterior outputs in every direction");
             for (var cell:cells) h.getLevel().setBlock(cell.pos(),Blocks.AIR.defaultBlockState(),3);
         }
         h.succeed();

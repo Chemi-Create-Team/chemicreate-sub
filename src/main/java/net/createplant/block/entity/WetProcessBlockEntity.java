@@ -85,8 +85,6 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
                 if (cell.state().is(CEBlocks.TANK_CASING.get())) {
                     if (level.getBlockEntity(pos) instanceof TankCasingBlockEntity casing) {
                         if (port != null && casing.clarifier() != null && casing.clarifier() != this) valid = false;
-                    } else if (state.is(CEWetProcessing.PARTS.get(BASIN).get())) {
-                        // Existing odd-sized basins can retain their original lining.
                     } else if (port == null || port.legacy == null || !state.is(CEWetProcessing.PARTS.get(port.legacy).get())
                         || state.getValue(WetProcessPartBlock.FACING) != port.face(facing)) valid = false;
                 } else if (state != cell.state() && !pos.equals(feed)) valid = false;
@@ -133,7 +131,7 @@ public final class WetProcessBlockEntity extends KineticBlockEntity {
     }
     public Direction front() { return getBlockState().getValue(WetProcessDriveBlock.FACING); }
     private static boolean rimWall(BlockState state) {
-        return state.is(CEBlocks.TANK_CASING.get()) || state.is(CEWetProcessing.PARTS.get(BASIN).get()) || state.is(CEWetProcessing.PARTS.get(OVERFLOW).get());
+        return state.is(CEBlocks.TANK_CASING.get()) || state.is(CEWetProcessing.PARTS.get(OVERFLOW).get());
     }
     @Override public void initialize() { super.initialize();if (members.isEmpty()) dirty = true; }
     @Override public void onChunkUnloaded() {

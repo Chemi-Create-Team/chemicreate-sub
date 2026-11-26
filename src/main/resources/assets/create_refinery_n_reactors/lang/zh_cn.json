@@ -2671,7 +2671,6 @@
   "create_refinery_n_reactors.ponder.shared.pulsation_tube.wrench": "用扳手改变轴向。使用普通流体管分支，保持缓冲管两端可连接。",
   "create_refinery_n_reactors.ponder.shared.pulsation_tube.liquid": "Create流体储罐只储存液体。气体与蒸汽应送入缓冲管或相应等级的气体储存设备。",
   "create_refinery_n_reactors.ponder.pulsation_tube.header": "连接脉动缓冲管",
-  "block.create_refinery_n_reactors.clarifier_basin_wall": "沉淀池衬里槽壁",
   "block.create_refinery_n_reactors.clarifier_feed_port": "沉淀池底部进料口",
   "block.create_refinery_n_reactors.overflow_weir": "沉淀池溢流堰",
   "block.create_refinery_n_reactors.underflow_drain": "沉淀池污泥出口",

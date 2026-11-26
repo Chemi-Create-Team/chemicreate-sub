@@ -7,7 +7,6 @@ import generate_petrochemical_ponder as p
 from generate_world_liquids import bucket_image
 R=Path(__file__).resolve().parents[1];A=R/'src/main/resources/assets/create_refinery_n_reactors';D=R/'src/main/resources/data/create_refinery_n_reactors';NS='create_refinery_n_reactors:'
 PARTS={
-'clarifier_basin_wall':('Lined Clarifier Basin','沈殿池のライニング槽壁','沉淀池衬里槽壁'),
 'clarifier_feed_port':('Clarifier Bottom Feed','沈殿池の底面流入口','沉淀池底部进料口'),
 'overflow_weir':('Clarifier Overflow Weir','沈殿池の越流堰','沉淀池溢流堰'),
 'underflow_drain':('Clarifier Underflow Drain','沈殿池の汚泥排出口','沉淀池污泥出口'),
@@ -35,7 +34,6 @@ def assets():
  for name in PARTS:
   if name=='clarifier_center_drive':
    elements=[box([1,0,1,15,3,15],'steel'),box([4,3,4,12,11,12],'frame'),box([2,9,2,14,12,14],'steel'),box([6,12,6,10,16,10],'steel'),box([5,4,3,11,9,4],'brass'),box([1,3,1,3,9,15],'brass')]
-  elif name=='clarifier_basin_wall':elements=[box([0,0,0,16,16,16],'concrete'),box([0,14,0,16,16,16],'steel')]
   else:
    elements=[box([0,0,2,16,16,16],'concrete'),box([3,3,0,13,13,2],'frame'),box([5,5,0,11,11,3],'brass')]
    if name=='underflow_drain':elements += [box([3,0,3,13,2,13],'frame'),box([5,0,5,11,3,11],'steel')]
@@ -95,7 +93,6 @@ def recipes():
  for name in PARTS:
   if name=='clarifier_center_drive':
    pattern=[' S ','CMC',' T '];key={'S':{'item':'create:shaft'},'C':{'item':NS+'stainless_steel_ingot'},'M':{'item':'create:precision_mechanism'},'T':{'item':NS+'tank_casing'}};count=1
-  elif name=='clarifier_basin_wall':pattern=['SSS','CCC'];key={'S':{'item':'create:iron_sheet'},'C':{'item':NS+'industrial_concrete'}};count=6
   else:
    pattern=[' C ','CPC',' C '];key={'C':{'item':NS+'tank_casing'},'P':{'item':'create:andesite_funnel' if name=='underflow_drain' else 'create:brass_sheet' if name=='overflow_weir' else NS+'stainless_steel_pipe'}};count=1
   write(D/f'recipe/{name}.json',{'type':'minecraft:crafting_shaped','category':'misc','pattern':pattern,'key':key,'result':{'id':NS+name,'count':count}})

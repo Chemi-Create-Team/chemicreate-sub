@@ -2671,7 +2671,6 @@
   "create_refinery_n_reactors.ponder.shared.pulsation_tube.wrench": "レンチで軸を変更できます。分岐は通常の配管で作り、管の両端を空けて接続します。",
   "create_refinery_n_reactors.ponder.shared.pulsation_tube.liquid": "Createの液体タンクには液体だけが入ります。気体や蒸気は脈動抑制管か、等級に合う気体用の設備へ送ります。",
   "create_refinery_n_reactors.ponder.pulsation_tube.header": "脈動抑制管をつなぐ",
-  "block.create_refinery_n_reactors.clarifier_basin_wall": "沈殿池のライニング槽壁",
   "block.create_refinery_n_reactors.clarifier_feed_port": "沈殿池の底面流入口",
   "block.create_refinery_n_reactors.overflow_weir": "沈殿池の越流堰",
   "block.create_refinery_n_reactors.underflow_drain": "沈殿池の汚泥排出口",

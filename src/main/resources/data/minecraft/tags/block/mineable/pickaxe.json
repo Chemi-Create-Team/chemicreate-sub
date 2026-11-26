@@ -144,7 +144,6 @@
     "create_refinery_n_reactors:large_absorption_tower_ring",
     "create_refinery_n_reactors:electrolysis_electrode_head",
     "create_refinery_n_reactors:reaction_tower",
-    "create_refinery_n_reactors:clarifier_basin_wall",
     "create_refinery_n_reactors:clarifier_feed_port",
     "create_refinery_n_reactors:overflow_weir",
     "create_refinery_n_reactors:underflow_drain",
