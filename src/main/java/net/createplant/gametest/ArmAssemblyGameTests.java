@@ -157,7 +157,7 @@ public class ArmAssemblyGameTests {
                 for (int j = 0; j < g; j++) {
                     Vec3 core = new Vec3(net.createplant.arm.Trajectory.gridAt(i), net.createplant.arm.Trajectory.CORE_Y, net.createplant.arm.Trajectory.gridAt(j));
                     int through = 0;
-                    for (int s = 0; s < t.segments(); s++) if (t.kind[s] == kind && t.points[s + 1].distanceTo(core) < .01) through++;
+                    for (int s = 0; s < t.segments(); s++) if (t.kind[s] == kind && t.points[s + 1].distanceTo(core) < .004) through++;
                     h.assertTrue(through == 1, "wire kind " + kind + " passes core " + i + "," + j + " exactly once, not " + through + " times");
                 }
         h.succeed();

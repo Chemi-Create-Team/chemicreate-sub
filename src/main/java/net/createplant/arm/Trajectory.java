@@ -14,12 +14,14 @@ import net.minecraft.world.phys.Vec3;
  * core-memory grid uses more than one ({@link #CORES}, {@link #X_WIRE}, {@link #Y_WIRE}, {@link #SENSE}).
  */
 public final class Trajectory {
-    public static final int GRID = 6;
+    /** Cores per side of the memory plane, which covers the middle quarter of the cell's top face (half a block square). */
+    public static final int GRID = 12;
+    public static final double PLANE_MIN = .25, PLANE_MAX = .75;
     public static final double MARGIN = .08, LIFT = .03;
     /** Kinds of the grid's strokes: setting the ferrite cores row by row, then threading the X, Y and sense wires through them. */
     public static final int CORES = 0, X_WIRE = 1, Y_WIRE = 2, SENSE = 3;
-    /** Height of the cores' centres over the cell, where the wires pass through them, and how far the head lifts between cores. */
-    public static final double CORE_Y = 1.07, BETWEEN_Y = 1.105, SET_Y = 1.14;
+    /** Height of the cores' centres over the cell, where the wires pass through them, how far the head lifts between cores, and where it sets them. */
+    public static final double CORE_Y = 1.012, BETWEEN_Y = 1.022, SET_Y = 1.04;
     private static final Map<Long, Trajectory> CACHE = new ConcurrentHashMap<>();
 
     public final Vec3[] points;
@@ -109,7 +111,7 @@ public final class Trajectory {
 
     /** Position of grid line {@code i} across the face. */
     public static double gridAt(int i) {
-        return MARGIN + i * (1 - 2 * MARGIN) / (GRID - 1);
+        return PLANE_MIN + i * (PLANE_MAX - PLANE_MIN) / (GRID - 1);
     }
 
     /**
@@ -133,11 +135,11 @@ public final class Trajectory {
                 for (int k = 0; k < GRID; k++) {
                     int along = fwd ? k : n - k;
                     // X and Y wires cross inside each core, one just under the other
-                    double y = CORE_Y + (dir == 0 ? -.008 : .008);
+                    double y = CORE_Y + (dir == 0 ? -.002 : .002);
                     cores.add(dir == 0 ? new Vec3(gridAt(along), y, gridAt(line)) : new Vec3(gridAt(line), y, gridAt(along)));
                 }
-                Vec3 lead = cores.get(0).add(cores.get(0).subtract(cores.get(1)).normalize().scale(MARGIN * .8));
-                Vec3 tail = cores.get(n).add(cores.get(n).subtract(cores.get(n - 1)).normalize().scale(MARGIN * .8));
+                Vec3 lead = cores.get(0).add(cores.get(0).subtract(cores.get(1)).normalize().scale(.03));
+                Vec3 tail = cores.get(n).add(cores.get(n).subtract(cores.get(n - 1)).normalize().scale(.03));
                 hop(p, s, new Vec3(lead.x, BETWEEN_Y, lead.z));
                 thread(p, s, cores, dir == 0 ? X_WIRE : Y_WIRE);
                 p.add(new Vec3(tail.x, BETWEEN_Y, tail.z));

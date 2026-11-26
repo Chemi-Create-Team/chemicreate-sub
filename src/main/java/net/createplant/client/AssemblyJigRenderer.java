@@ -127,7 +127,7 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
         pieces(t, p, 1, (a, b, behind, kind) -> {
             if (kind == Trajectory.CORES) return; // the head only sets cores on this pass
             int color = kind == Trajectory.X_WIRE ? COPPER : kind == Trajectory.Y_WIRE ? ENAMEL : GOLD;
-            ArmDraw.bar(q, pose, o.add(a), o.add(b), .012, .012, color, 255, light);
+            ArmDraw.bar(q, pose, o.add(a), o.add(b), .0025, .0025, color, 255, light);
         });
         // each core appears once the head has passed over its place on the setting pass
         for (int j = 0; j < Trajectory.GRID; j++) {
@@ -144,10 +144,10 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
 
     /** A ferrite core standing on edge, its hole along {@link Trajectory#CORE_AXIS}, so the wires visibly pass through it. */
     private static void ring(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 c) {
-        double r = .03;
+        double r = .007; // dust-sized, like real cores
         Vec3 u = new Vec3(0, 1, 0).cross(Trajectory.CORE_AXIS).normalize().scale(r), v = new Vec3(0, r, 0);
         Vec3[] k = {u.add(v), u.reverse().add(v), u.reverse().subtract(v), u.subtract(v)};
-        for (int i = 0; i < 4; i++) ArmDraw.bar(q, pose, c.add(k[i]), c.add(k[(i + 1) % 4]), .014, .016, FERRITE, 255, light);
+        for (int i = 0; i < 4; i++) ArmDraw.bar(q, pose, c.add(k[i]), c.add(k[(i + 1) % 4]), .003, .004, FERRITE, 255, light);
     }
 
     private static void spray(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 o, Trajectory t, float p, boolean live, float time, int color) {
