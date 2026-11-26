@@ -81,6 +81,6 @@ Createのメカニカルアームと同じ関節計算・モデル・テクス�
 - `block/AssemblyJigBlock`、`block/entity/AssemblyJigBlockEntity`: 予約・進捗・完成。更新タグで同期し、進捗の変化は2 tickごと。クライアントは進捗を補間して描く。
 - `block/IndustrialArmBlock`、`block/entity/IndustrialArmBlockEntity`: 探索・材料の取得・作業。サーバーは狙う先端の位置だけを同期し、クライアントがCreateの `ArmAngleTarget` で関節角を求めて動かす。
 - `client/IndustrialArmRenderer`、`client/AssemblyJigRenderer`: 描画。Flywheelのインスタンス描画は使わない。持った物と工具は、Createのアームと同じく関節の変換の後に爪の座標系で置く。工具は爪の狙う点で終わる大きさで描く。
-- Createの `ArmAngleTarget` の角度は非公開なのでリフレクションで読む（Mixin・Access Transformerは使わない）。読めない場合、アームは休止姿勢のままになり、ログに警告が出る。
+- 関節角はCreateの `ArmAngleTarget` の計算を `ArmPose.angles` に移植し、腕の長さだけを変えて解く（Mixin・Access Transformer・リフレクションは使わない）。Createの元の長さでは同じ角度になることをGameTestで確認している。
 - ゴーグル: アームは状態・工具・ジグの位置と工程・タンク、ジグはレシピ・ステージ・工程数・タンクを表示する。
 - Ponder: `plant/industrial_arm`（`ponder/ArmPonderScenes`）。
