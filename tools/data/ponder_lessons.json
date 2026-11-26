@@ -2975,9 +2975,9 @@
     "zh_cn": "在超级加热的工作盆中混合2个铬铁矿与1份碳粉。矿石中的铁留在金属里，得到铬铁。\n%s → %s"
   },
   "guide.manufacturing_chromium.step_3": {
-    "en_us": "Superheat six iron ingots, two ferrochrome and one nickel into ten stainless steel ingots.\n%s → %s",
-    "ja_jp": "鉄インゴット6個・フェロクロム2個・ニッケル1個を超加熱し、ステンレス鋼インゴット10個にします。\n%s → %s",
-    "zh_cn": "超级加热6个铁锭、2个铬铁和1个镍，得到10个不锈钢锭。\n%s → %s"
+    "en_us": "Superheat six iron ingots, two ferrochrome and one nickel to make 600 mB of molten stainless steel.\n%s → %s",
+    "ja_jp": "鉄インゴット6個・フェロクロム2個・ニッケル1個を超過熱して、溶融ステンレス600 mBを作ります。\n%s → %s",
+    "zh_cn": "超级加热6个铁锭、2个铬铁和1个镍，得到600 mB熔融不锈钢。\n%s → %s"
   },
   "guide.manufacturing_chromium.title": {
     "en_us": "From chromite to chromium",
@@ -3265,9 +3265,9 @@
     "zh_cn": "向槽内供应水和液氮，制冰配方生成冰和氮气。\n%s → %s"
   },
   "guide.manufacturing_steel.step_7": {
-    "en_us": "Superheat iron, ferrochrome and nickel in a basin to make stainless steel.\n%s → %s",
-    "ja_jp": "鉢で鉄・フェロクロム・ニッケルを超加熱し、ステンレス鋼を作ります。\n%s → %s",
-    "zh_cn": "在工作盆中超级加热铁、铬铁和镍，制成不锈钢。\n%s → %s"
+    "en_us": "Superheat iron, ferrochrome and nickel in a basin. Cast the molten stainless steel and roll the slabs to make ingots.\n%s → %s",
+    "ja_jp": "鉢で鉄・フェロクロム・ニッケルを超過熱します。溶融ステンレスを鋳造し、スラブを圧延します。\n%s → %s",
+    "zh_cn": "在工作盆中超级加热铁、铬铁和镍，将熔融不锈钢铸成板坯再轧成钢锭。\n%s → %s"
   },
   "electrolysis_cell.title": {
     "en_us": "Filter-press electrolysis cells",
@@ -4555,9 +4555,9 @@
     "zh_cn": "需要纯铬的部件，在不锈钢搅拌槽中与铝超级加热进行铝热还原，回收铬、铁和氧化铝。\n%s → %s"
   },
   "guide.manufacturing_chromium.step_5": {
-    "en_us": "Pure chromium also makes stainless steel. The steel family also shows the converter route.\n%s → %s",
-    "ja_jp": "純粋なクロムからもステンレス鋼を作れます。鋼の系列では転炉を使う工程も示します。\n%s → %s",
-    "zh_cn": "纯铬也可炼不锈钢。钢的系列中也展示转炉工序。\n%s → %s"
+    "en_us": "Pure chromium also makes molten stainless steel. Cast it in a basin and roll the slabs to obtain ingots.\n%s → %s",
+    "ja_jp": "純粋なクロムからも溶融ステンレスを作れます。鉢とプレスで鋳造し、スラブを圧延するとインゴットになります。\n%s → %s",
+    "zh_cn": "纯铬也可炼出熔融不锈钢。在工作盆中铸成板坯，再轧成钢锭。\n%s → %s"
   },
   "entrained_gasifier.title": {
     "en_us": "Steam Gasifier",
@@ -5288,5 +5288,25 @@
     "en_us": "A higher circuit voltage charges the bank; a full bank leaves the charging circuit. If it stops, check the box, the electrolyte and the wiring.",
     "ja_jp": "回路の電圧が高いと充電され、満充電になると充電回路から切れます。止まったときは直方体・電解液・配線を確認します。",
     "zh_cn": "电路电压更高时会充电，充满后会断开充电电路。若停止工作，请检查长方体、电解液和接线。"
+  },
+  "stainless_casting.title": {
+    "en_us": "Mixing and casting stainless steel",
+    "ja_jp": "ステンレスの溶融と鋳造",
+    "zh_cn": "熔炼与铸造不锈钢"
+  },
+  "stainless_casting.mix": {
+    "en_us": "Superheat six iron ingots, two ferrochrome or chromium and one nickel ingot. The mixer makes 600 mB of molten stainless steel.",
+    "ja_jp": "鉄インゴット6個、フェロクロムかクロム2個、ニッケル1個を超過熱します。ミキサーで溶融ステンレス600 mBを作ります。",
+    "zh_cn": "超级加热6个铁锭、2个铬铁或铬锭和1个镍锭。动力搅拌器每批产出600 mB熔融不锈钢。"
+  },
+  "stainless_casting.pump": {
+    "en_us": "A stainless pump sends the molten alloy into the basin under a mechanical press.",
+    "ja_jp": "ステンレス製ポンプで、メカニカルプレスの下にある鉢へ溶湯を送ります。",
+    "zh_cn": "使用不锈钢泵把熔融金属送至机械压力机下方的工作盆。"
+  },
+  "stainless_casting.cast": {
+    "en_us": "Cast 800 mB into one slab. Feed it through a heated tandem rolling mill to obtain eight stainless steel ingots.",
+    "ja_jp": "溶湯800 mBをスラブ1個に鋳造します。加熱した連続圧延ラインへ送り、ステンレス鋼インゴット8個にします。",
+    "zh_cn": "将800 mB熔融不锈钢铸成1块板坯。在加热的串列轧机中将板坯轧成8个不锈钢锭。"
   }
 }

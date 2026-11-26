@@ -19,6 +19,7 @@ HEADERS.update({scene: scene + '.title' for scene in ('synthetic_reactions', 'sy
 HEADERS.update({scene: scene + '.title' for scene in ('downstream_materials', 'liquid_fertilizer')})
 HEADERS.update({scene: scene + '.title' for scene in ('agricultural_sprayer_bearing', 'agricultural_sprayer_gantry', 'agricultural_sprayer_stationary')})
 HEADERS['pressure_infrastructure'] = 'pressure_infrastructure.title'
+HEADERS['stainless_casting'] = 'stainless_casting.title'
 
 def generate():
  lessons=json.loads((Path(__file__).parent/'data/ponder_lessons.json').read_text())

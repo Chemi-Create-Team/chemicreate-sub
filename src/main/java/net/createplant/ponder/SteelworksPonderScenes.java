@@ -13,8 +13,35 @@ import net.minecraft.world.phys.Vec3;
 
 public final class SteelworksPonderScenes {
     private static final String TEXT = "ponder.create_refinery_n_reactors.torpedo_car.";
+    private static final String STAINLESS = "ponder.create_refinery_n_reactors.stainless_casting.";
 
     private SteelworksPonderScenes() { }
+
+    public static void stainless(SceneBuilder builder, SceneBuildingUtil util) {
+        var scene = new CreateSceneBuilder(builder);
+        scene.title("stainless_casting", PonderText.title(STAINLESS + "title", "Mixing and casting stainless steel"));
+        scene.configureBasePlate(0, 0, 12);
+        scene.scaleSceneView(.65f);
+        scene.showBasePlate();
+
+        var mixer = util.select().fromTo(3, 2, 5, 3, 6, 6);
+        scene.world().showSection(mixer, Direction.DOWN);
+        scene.world().setKineticSpeed(mixer, 128);
+        PonderText.caption(scene, util.vector().centerOf(util.grid().at(3, 3, 5)), STAINLESS + "mix", 120);
+
+        var pipes = util.select().fromTo(4, 2, 5, 8, 3, 5);
+        var caster = util.select().fromTo(9, 1, 5, 10, 5, 5);
+        scene.world().showSection(caster, Direction.DOWN);
+        scene.world().showSection(pipes, Direction.WEST);
+        scene.world().setKineticSpeed(pipes.copy().add(caster), 128);
+        scene.overlay().showOutline(PonderPalette.INPUT, "stainless_pipe", util.select().fromTo(4, 3, 5, 8, 3, 5), 120);
+        PonderText.caption(scene, util.vector().centerOf(util.grid().at(6, 3, 5)), STAINLESS + "pump", 120);
+        var output = util.grid().at(9, 1, 5);
+        scene.overlay().showControls(util.vector().topOf(output), Pointing.DOWN, 100)
+            .withItem(CEConverter.CAST_STAINLESS_STEEL_SLAB.toStack());
+        PonderText.caption(scene, util.vector().centerOf(output), STAINLESS + "cast", 120);
+        scene.markAsFinished();
+    }
 
     public static void torpedo(SceneBuilder builder, SceneBuildingUtil util) {
         var scene = new CreateSceneBuilder(builder);

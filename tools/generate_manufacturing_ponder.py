@@ -546,9 +546,9 @@ route('chromium', ('From chromite to chromium', 'クロム鉄鉱からクロム�
     ['chromite_ore', 'deepslate_chromite_ore', 'chromite', 'ferrochrome', 'chromium_ingot'], [
     step('crushing', 'crushing/chromite_ore', 'Crush chromite ore into the mineral feed.', 'クロム鉄鉱石を粉砕して鉱物原料にします。', '粉碎铬铁矿石取得矿物原料。'),
     step('mixing', 'mixing/ferrochrome', "Superheat two chromite with one carbon powder in a basin. The ore's iron stays in the metal, giving ferrochrome.", '超加熱した鉢で、クロム鉄鉱2個と炭素粉1個を混ぜます。鉱石の鉄は金属に残り、フェロクロムになります。', '在超级加热的工作盆中混合2个铬铁矿与1份碳粉。矿石中的铁留在金属里，得到铬铁。'),
-    step('mixing', 'mixing/stainless_steel_from_ferrochrome', 'Superheat six iron ingots, two ferrochrome and one nickel into ten stainless steel ingots.', '鉄インゴット6個・フェロクロム2個・ニッケル1個を超加熱し、ステンレス鋼インゴット10個にします。', '超级加热6个铁锭、2个铬铁和1个镍，得到10个不锈钢锭。'),
+    step('mixing', 'mixing/stainless_steel_from_ferrochrome', 'Superheat six iron ingots, two ferrochrome and one nickel to make 600 mB of molten stainless steel.', '鉄インゴット6個・フェロクロム2個・ニッケル1個を超過熱して、溶融ステンレス600 mBを作ります。', '超级加热6个铁锭、2个铬铁和1个镍，得到600 mB熔融不锈钢。'),
     step('vessel', 'pressure_reaction/chromium_ingot', 'For parts that need pure chromium, use thermite with aluminium in a superheated stainless impeller vessel. Recover chromium, iron and alumina.', '純粋なクロムが要る部品には、ステンレス鋼の撹拌槽でアルミニウムと超加熱するテルミット法を使います。クロム・鉄・アルミナを回収します。', '需要纯铬的部件，在不锈钢搅拌槽中与铝超级加热进行铝热还原，回收铬、铁和氧化铝。'),
-    step('mixing', 'mixing/stainless_steel_ingot', 'Pure chromium also makes stainless steel. The steel family also shows the converter route.', '純粋なクロムからもステンレス鋼を作れます。鋼の系列では転炉を使う工程も示します。', '纯铬也可炼不锈钢。钢的系列中也展示转炉工序。'),
+    step('mixing', 'mixing/stainless_steel_ingot', 'Pure chromium also makes molten stainless steel. Cast it in a basin and roll the slabs to obtain ingots.', '純粋なクロムからも溶融ステンレスを作れます。鉢とプレスで鋳造し、スラブを圧延するとインゴットになります。', '纯铬也可炼出熔融不锈钢。在工作盆中铸成板坯，再轧成钢锭。'),
 ])
 
 route('molybdenum', ('From molybdenite to molybdenum', '輝水鉛鉱からモリブデンを作る', '从辉钼矿制取钼'),
@@ -566,7 +566,7 @@ route('steel', ('From iron feed to steel and stainless steel', '鉄原料から�
     step('pressing', 'sequenced_assembly/steel_ingot', 'Pass each workpiece through a Mechanical Press five times. Four workpieces yield exactly four steel ingots; intermediate passes retain their assembly progress.', '中間素材をそれぞれメカニカルプレスへ5回通します。4個の中間素材から鋼鉄インゴット計4個になり、加工途中は進捗を保持します。', '每份中间材料经过动力压机五次。4份材料共得4个钢锭，加工中保留组装进度。'),
     step('crafting', 'steel_block', 'Compress steel ingots into a steel block for equipment frames and vessel walls. Craft the block back into ingots when needed; Create industrial iron remains a separate decorative material.', '鋼鉄インゴットを圧縮し、設備の骨組みや槽の壁に使う鋼鉄ブロックにします。ブロックはインゴットへ戻せ、Createの鋼材ブロックとは別の素材です。', '将钢锭压成钢块用于设备框架与容器壁，也可拆回钢锭；Create工业铁块为独立的装饰材料。'),
     step('converter', 'converter/refine_hot_metal', 'For bulk steel, blow oxygen through desulfurized hot metal, iron and quicklime. Tilt to tap molten steel.', '大量製造では脱硫溶銑・鉄・生石灰を転炉で酸素吹錬し、炉体を傾けて溶鋼を取り出します。', '批量制钢时，用氧气吹炼脱硫铁水、铁和生石灰，再倾转出钢水。'),
-    step('mixing', 'mixing/stainless_steel_from_ferrochrome', 'Superheat iron, ferrochrome and nickel in a basin to make stainless steel.', '鉢で鉄・フェロクロム・ニッケルを超加熱し、ステンレス鋼を作ります。', '在工作盆中超级加热铁、铬铁和镍，制成不锈钢。'),
+    step('mixing', 'mixing/stainless_steel_from_ferrochrome', 'Superheat iron, ferrochrome and nickel in a basin. Cast the molten stainless steel and roll the slabs to make ingots.', '鉢で鉄・フェロクロム・ニッケルを超過熱します。溶融ステンレスを鋳造し、スラブを圧延します。', '在工作盆中超级加热铁、铬铁和镍，将熔融不锈钢铸成板坯再轧成钢锭。'),
     step('converter', 'converter/aod_stainless_steel', 'The bulk stainless route uses the converter with its argon/oxygen blend. Keep the separate exhaust path available.', '大量のステンレス鋼は転炉とアルゴン・酸素の混合ガスで作ります。別系統の排ガス経路も確保します。', '批量不锈钢用转炉和氩氧混合气制造，同时保持独立排气通路畅通。'),
     step('pressing', 'pressing/stainless_steel_sheet', 'Press the recovered stainless steel into sheets for chemical vessels and corrosion-resistant equipment.', '回収したステンレス鋼を板にプレスし、化学槽や耐食設備へ使います。', '把回收不锈钢压成板，用于化学容器与耐腐蚀设备。'),
 ])
