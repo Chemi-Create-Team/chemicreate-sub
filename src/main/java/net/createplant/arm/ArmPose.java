@@ -15,6 +15,13 @@ import net.minecraft.world.phys.Vec3;
 public final class ArmPose {
     /** base, lower arm, upper arm, head, as Create's arm block entity chases them. */
     public static final float[] REST = {0, 135, 45, 0};
+
+    /** The rest pose with the claw toward {@code facing} (base yaw as {@link #angles} measures it: 0 is north). */
+    public static float[] rest(Direction facing) {
+        float[] r = REST.clone();
+        r[0] = AngleHelper.deg(Mth.atan2(facing.getStepX(), facing.getStepZ())) + 180;
+        return r;
+    }
     /** The two arm segments are this many times longer than Create's, so the arm reaches the depots and belts around it. */
     public static final float SCALE = 2;
     /** Create's shoulder above the arm block's centre, the lengths of its two arm segments and its shortest reach. */

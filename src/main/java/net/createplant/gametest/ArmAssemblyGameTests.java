@@ -49,6 +49,23 @@ public class ArmAssemblyGameTests {
             new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25)};
     }
 
+    /** A placed arm rests with its claw toward where the player looked: the rest yaw is the yaw of a target in that direction. */
+    @GameTest(template = "test_empty", timeoutTicks = 20)
+    public static void armRestsFacingThePlacementDirection(GameTestHelper h) {
+        BlockPos arm = h.absolutePos(new BlockPos(1, 1, 1));
+        for (net.minecraft.core.Direction facing : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+            float rest = net.createplant.arm.ArmPose.rest(facing)[0];
+            float toward = net.createplant.arm.ArmPose.toward(arm, net.minecraft.world.phys.Vec3.atBottomCenterOf(arm.relative(facing, 2)))[0];
+            h.assertTrue(Math.abs(net.minecraft.util.Mth.wrapDegrees(rest - toward)) < 1, facing + ": rest " + rest + " vs target " + toward);
+        }
+        h.setBlock(new BlockPos(1, 1, 1), net.createplant.registry.CEArm.ARM.get().defaultBlockState()
+            .setValue(net.createplant.block.IndustrialArmBlock.FACING, net.minecraft.core.Direction.EAST));
+        var be = (net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(new BlockPos(1, 1, 1));
+        h.assertTrue(Math.abs(net.minecraft.util.Mth.wrapDegrees(be.baseAngle.getValue() - net.createplant.arm.ArmPose.rest(net.minecraft.core.Direction.EAST)[0])) < 1,
+            "A new east-facing arm starts turned east: " + be.baseAngle.getValue());
+        h.succeed();
+    }
+
     @GameTest(template = "test_empty")
     public static void theMemoryRecipeStepsAnItemThroughItsStages(GameTestHelper h) {
         var holder = recipe(h, MEMORY);

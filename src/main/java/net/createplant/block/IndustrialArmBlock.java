@@ -28,8 +28,30 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class IndustrialArmBlock extends KineticBlock implements IBE<IndustrialArmBlockEntity>, ICogWheel {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 6, 16);
 
+    /** Where the claw rests: the way the placing player looked. */
+    public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING =
+        net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+
     public IndustrialArmBlock(Properties p) {
         super(p);
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(FACING);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(net.minecraft.world.item.context.BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
+        return state == null ? null : state.setValue(FACING, context.getHorizontalDirection());
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, net.minecraft.world.level.block.Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override

@@ -114,6 +114,14 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
 
     public IndustrialArmBlockEntity(BlockPos pos, BlockState state) {
         super(CEArm.ARM_ENTITY.get(), pos, state);
+        baseAngle.startWithValue(rest()[0]);
+        target = rest();
+    }
+
+    private float[] rest() {
+        BlockState state = getBlockState();
+        return ArmPose.rest(state.hasProperty(net.createplant.block.IndustrialArmBlock.FACING)
+            ? state.getValue(net.createplant.block.IndustrialArmBlock.FACING) : Direction.NORTH);
     }
 
     public ItemStack tool() {
@@ -557,7 +565,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     public void aim(byte phase, Vec3 tip) {
         this.phase = phase;
         this.tip = tip;
-        target = tip == null ? ArmPose.REST : ArmPose.toward(worldPosition, tip);
+        target = tip == null ? rest() : ArmPose.toward(worldPosition, tip);
     }
 
     public ArmPattern displayedPattern() {
@@ -571,7 +579,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         float lift = precision && tip != null ? (float) ArmPose.wristClearance(worldPosition, tip, .44) : 0;
         wristLift.chase(lift, .45, LerpedFloat.Chaser.EXP);
         wristLift.tickChaser();
-        float[] a = phase != IDLE && tip != null ? target : ArmPose.REST;
+        float[] a = phase != IDLE && tip != null ? target : rest();
         if (tip != null && wristLift.getValue() > .001f)
             a = ArmPose.toward(worldPosition, tip.add(0, wristLift.getValue(), 0));
         baseAngle.chase(a[0], .35, LerpedFloat.Chaser.EXP);
