@@ -1,86 +1,62 @@
 package net.createplant.arm;
 
-import com.mojang.logging.LogUtils;
-import java.lang.reflect.Field;
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Joint angles of a Create mechanical arm reaching a point. The angle maths is Create's {@code ArmAngleTarget}, whose angles are
- * package-private; they are read by reflection, because AGENTS.md rules out Mixin and a class in Create's package would split it.
- * Any failure gives the rest pose, so a pose can never crash the renderer.
+ * Joint angles of the industrial arm reaching a point. This is the maths of Create's {@code ArmAngleTarget} (claw facing down,
+ * floor mounted), with the two arm segments {@link #SCALE} times longer; the joints, the claw and the thickness stay Create's.
+ * {@code ArmAssemblyGameTests} checks it against Create's own result at scale 1.
  */
 public final class ArmPose {
-    private static final org.slf4j.Logger LOGGER = LogUtils.getLogger();
     /** base, lower arm, upper arm, head, as Create's arm block entity chases them. */
     public static final float[] REST = {0, 135, 45, 0};
-    /** The industrial arm is Create's arm drawn this many times larger from the shoulder up, so it reaches across a 3 x 3 jig. */
+    /** The two arm segments are this many times longer than Create's, so the arm reaches across a 3 x 3 jig. */
     public static final float SCALE = 2;
     /** Create's shoulder above the arm block's centre, the lengths of its two arm segments and its shortest reach. */
-    private static final double SHOULDER = .375, LOWER = .875, UPPER = .9375, NEAREST = .125;
+    public static final double SHOULDER = .375, LOWER = .875, UPPER = .9375, NEAREST = .125;
     /** Create puts the wrist half a block above the point the claw aims at. */
     private static final double WRIST = .5;
-    private static Field base, lower, upper, head;
-    private static boolean broken;
 
     private ArmPose() {}
-
-    private static synchronized boolean ready() {
-        if (broken) return false;
-        if (base != null) return true;
-        try {
-            Class<?> c = Class.forName("com.simibubi.create.content.kinetics.mechanicalArm.ArmAngleTarget");
-            base = field(c, "baseAngle");
-            lower = field(c, "lowerArmAngle");
-            upper = field(c, "upperArmAngle");
-            head = field(c, "headAngle");
-            try {
-                Object rest = field(c, "NO_TARGET").get(null);
-                REST[0] = base.getFloat(rest);
-                REST[1] = lower.getFloat(rest);
-                REST[2] = upper.getFloat(rest);
-                REST[3] = head.getFloat(rest);
-            } catch (ReflectiveOperationException | RuntimeException e) {
-                // keep the standard rest pose
-            }
-            return true;
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            broken = true;
-            LOGGER.warn("Cannot read the angles of Create's arm, the industrial arm will stay in its rest pose", e);
-            return false;
-        }
-    }
-
-    private static Field field(Class<?> c, String name) throws NoSuchFieldException {
-        Field f = c.getDeclaredField(name);
-        f.setAccessible(true);
-        return f;
-    }
 
     private static Vec3 shoulder(BlockPos arm) {
         return Vec3.atCenterOf(arm).add(0, SHOULDER, 0);
     }
 
-    /** Whether the claw of the arm at {@code arm} can touch {@code target}; Create's arm stops short of anything farther. */
+    /** Whether the claw of the arm at {@code arm} can touch {@code target}; the arm stops short of anything farther. */
     public static boolean reaches(BlockPos arm, Vec3 target) {
-        double d = target.add(0, WRIST * SCALE, 0).distanceTo(shoulder(arm));
-        return d <= (LOWER + UPPER) * SCALE && d >= NEAREST * SCALE;
+        double d = target.add(0, WRIST, 0).distanceTo(shoulder(arm));
+        return d <= (LOWER + UPPER) * SCALE && d >= NEAREST;
     }
 
-    /** Joint angles that put the claw on {@code target}, worked out by Create in the arm's own unscaled size. */
+    /** Joint angles that put the claw on {@code target}. */
     public static float[] toward(BlockPos arm, Vec3 target) {
-        if (!ready()) return REST.clone();
-        Vec3 shoulder = shoulder(arm);
-        target = shoulder.add(target.subtract(shoulder).scale(1 / SCALE));
-        try {
-            Object t = Class.forName("com.simibubi.create.content.kinetics.mechanicalArm.ArmAngleTarget")
-                    .getConstructor(BlockPos.class, Vec3.class, Direction.class, boolean.class).newInstance(arm, target, Direction.DOWN, false);
-            float[] a = {base.getFloat(t), lower.getFloat(t), upper.getFloat(t), head.getFloat(t)};
-            for (float f : a) if (Float.isNaN(f) || Float.isInfinite(f)) return REST.clone();
-            return a;
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            return REST.clone();
-        }
+        float[] r = angles(shoulder(arm), target, (float) (LOWER * SCALE), (float) (UPPER * SCALE));
+        for (float f : r) if (!Float.isFinite(f)) return REST.clone();
+        return r;
+    }
+
+    /** Create's ArmAngleTarget with segment lengths {@code a} and {@code b}. */
+    public static float[] angles(Vec3 origin, Vec3 target, float a, float b) {
+        Vec3 diff = target.add(0, WRIST, 0).subtract(origin);
+        float h = (float) diff.multiply(1, 0, 1).length();
+        float base = AngleHelper.deg(Mth.atan2(diff.x, diff.z)) + 180;
+        float alpha = AngleHelper.deg(Mth.atan2(diff.y, h));
+        float d = Mth.clamp(Mth.sqrt((float) (diff.y * diff.y + h * h)), (float) NEAREST, a + b), d2 = d * d;
+        float lower = AngleHelper.deg(Math.acos((a * a + d2 - b * b) / (2 * a * d))) + alpha;
+        float upper = AngleHelper.deg(Math.acos((a * a + b * b - d2) / (2 * b * a)));
+        if (Float.isNaN(lower)) lower = 0;
+        if (Float.isNaN(upper)) upper = 0;
+        Vec3 wrist = VecHelper.rotate(new Vec3(0, b, 0), upper + 180, Direction.Axis.X);
+        wrist = VecHelper.rotate(wrist.add(0, a, 0), lower - 90, Direction.Axis.X);
+        wrist = VecHelper.rotate(wrist, base, Direction.Axis.Y).add(origin);
+        Vec3 head = target.subtract(wrist);
+        float head2 = AngleHelper.deg(Mth.atan2(head.y, head.multiply(1, 0, 1).length())) - lower - upper - 135;
+        return new float[] {base, lower, upper, head2};
     }
 }

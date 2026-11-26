@@ -27,8 +27,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 /**
- * Draws the arm from Create's own partial models and joint transforms, so it moves exactly like a mechanical arm. A yellow tint
- * and the tool at the claw tell it apart. Plain block entity rendering: no Flywheel instancing.
+ * Draws the arm from Create's own partial models and joint transforms, so it moves exactly like a mechanical arm. Longer arm
+ * segments and the tool at the claw tell it apart. Plain block entity rendering: no Flywheel instancing.
  */
 public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmBlockEntity> {
     /** A tool is drawn this large in the claw's frame and ends where the claw aims, half a block past the wrist. */
@@ -59,10 +59,12 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
         ArmRenderer.transformBase(msr, base);
         part(AllPartialModels.ARM_BASE, state, light, local, ps, vb);
         ArmRenderer.transformLowerArm(msr, lower);
-        msr.scale(ArmPose.SCALE);
-        part(AllPartialModels.ARM_LOWER_BODY, state, light, local, ps, vb);
+        stretched(AllPartialModels.ARM_LOWER_BODY, state, light, local, ps, vb);
+        // Create's joint offsets lie along the segment's -Z; only the segments get longer, the joints keep Create's size.
+        local.translate(0, 0, -ArmPose.LOWER * (ArmPose.SCALE - 1));
         ArmRenderer.transformUpperArm(msr, upper);
-        part(AllPartialModels.ARM_UPPER_BODY, state, light, local, ps, vb);
+        stretched(AllPartialModels.ARM_UPPER_BODY, state, light, local, ps, vb);
+        local.translate(0, 0, -ArmPose.UPPER * (ArmPose.SCALE - 1));
         ArmRenderer.transformHead(msr, head);
         msr.rotateZDegrees(180);
         part(AllPartialModels.ARM_CLAW_BASE, state, light, local, ps, vb);
@@ -86,6 +88,14 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
             Minecraft.getInstance().getItemRenderer().renderStatic(shown, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
             ps.popPose();
         }
+    }
+
+    /** A segment drawn longer along its length only, so it keeps Create's thickness. */
+    private static void stretched(PartialModel model, BlockState state, int light, PoseStack local, PoseStack ps, VertexConsumer vb) {
+        local.pushPose();
+        local.scale(1, 1, ArmPose.SCALE);
+        part(model, state, light, local, ps, vb);
+        local.popPose();
     }
 
     private static void part(PartialModel model, BlockState state, int light, PoseStack local, PoseStack ps, VertexConsumer vb) {

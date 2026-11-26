@@ -107,10 +107,33 @@ public class ArmAssemblyGameTests {
         BlockPos arm = h.absolutePos(JIG);
         Vec3 near = Vec3.atCenterOf(arm).add(2, .5, 1), far = Vec3.atCenterOf(arm).add(5, .5, 0);
         float[] a = net.createplant.arm.ArmPose.toward(arm, near), b = net.createplant.arm.ArmPose.toward(arm, Vec3.atCenterOf(arm).add(-2, .5, 1));
-        h.assertTrue(!java.util.Arrays.equals(a, net.createplant.arm.ArmPose.REST), "Create's arm angles are read, so the arm leaves its rest pose");
+        h.assertTrue(!java.util.Arrays.equals(a, net.createplant.arm.ArmPose.REST), "the arm leaves its rest pose");
         h.assertTrue(Math.abs(a[0] - b[0]) > 1, "a target on the other side turns the base");
         h.assertTrue(net.createplant.arm.ArmPose.reaches(arm, near) && !net.createplant.arm.ArmPose.reaches(arm, far), "steps two blocks away are in reach, five blocks away are not");
+        // At Create's segment lengths the port gives Create's own angles.
+        Vec3 shoulder = Vec3.atCenterOf(arm).add(0, net.createplant.arm.ArmPose.SHOULDER, 0);
+        for (Vec3 t : new Vec3[] {Vec3.atCenterOf(arm).add(1, -.3, .5), Vec3.atCenterOf(arm).add(-.4, .8, -1.2)}) {
+            float[] mine = net.createplant.arm.ArmPose.angles(shoulder, t, .875f, .9375f), create = createAngles(arm, t);
+            for (int i = 0; i < 4; i++) h.assertTrue(Math.abs(mine[i] - create[i]) < .01, "joint " + i + " matches Create: " + mine[i] + " vs " + create[i]);
+        }
         h.succeed();
+    }
+
+    private static float[] createAngles(BlockPos arm, Vec3 t) {
+        try {
+            Class<?> c = Class.forName("com.simibubi.create.content.kinetics.mechanicalArm.ArmAngleTarget");
+            Object o = c.getConstructor(BlockPos.class, Vec3.class, net.minecraft.core.Direction.class, boolean.class).newInstance(arm, t, net.minecraft.core.Direction.DOWN, false);
+            float[] r = new float[4];
+            String[] names = {"baseAngle", "lowerArmAngle", "upperArmAngle", "headAngle"};
+            for (int i = 0; i < 4; i++) {
+                var f = c.getDeclaredField(names[i]);
+                f.setAccessible(true);
+                r[i] = f.getFloat(o);
+            }
+            return r;
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @GameTest(template = "test_empty", timeoutTicks = 600)

@@ -53,4 +53,8 @@
 
 - 色: 描画の黄色の着色をやめ、ブロックとアイテムのモデルはCreateの `create:block/mechanical_arm/block` と `.../item` をそのまま使う。独自のアーム用テクスチャとブロックモデルは削除した。
 - ベルト: `IndustrialArmBlockEntity.findBeltJob` / `holdBeltItem` / `beltWork`。レシピは `ArmBeltRecipe`（`assembly/` で `input` を持つJSON）。取り合いは `CLAIMED`（WeakHashMap）で防ぐ。クライアントへは `shownPhase` で作業状態を送る（ベルト作業はジグ位置を持たないため）。Ponderの最後にデポで金床を溶接修理する場面を追加。
-- 確認: `ArmAssemblyGameTests`（デポ上の欠けた金床が溶接されて少し欠けた金床になる試験を追加、7件）、`MagneticMemoryLineGameTests`、`SurvivalReachabilityGameTests` の11件が成功。実クライアントでPonderを撮影し、Createと同じ色のアーム、ジグの継ぎ目とデポの金床での溶接の火花を確認した（`docs/quality/industrial-arm/weld-jig.png`, `weld-jig-side.png`, `weld-depot.png`）。ベルト（デポ以外）での動作は同じ `TransportedItemStackHandlerBehaviour` を使うが、実機では未確認。溶接ビードの色の変化は、トーチの頭に隠れて撮影でははっきり確認できていない。
+- 確認: `ArmAssemblyGameTests`（デポ上の欠けた金床が溶接されて少し欠けた金床になる試験を追加、7件）、`MagneticMemoryLineGameTests`、`SurvivalReachabilityGameTests` の11件が成功。実クライアントでPonderを撮影し、Createと同じ色のアーム、ジグの継ぎ目とデポの金床での溶接の火花を確認した（`docs/quality/industrial-arm/weld-jig.png`, `weld-depot.png`）。ベルト（デポ以外）での動作は同じ `TransportedItemStackHandlerBehaviour` を使うが、実機では未確認。溶接ビードの色の変化は、トーチの頭に隠れて撮影でははっきり確認できていない。
+
+## 修正（腕の太さ）
+
+肩から先を丸ごと2倍にしていたため腕が太すぎた。腕の2区間だけを長さ方向に2倍にし（`IndustrialArmRenderer.stretched`）、関節・爪・工具はCreateの大きさに戻した。手首から先が縮んだので、関節角はCreateの式を `ArmPose.angles` に移植して腕の長さだけを変えて解く（反射での角度読み取りは削除）。`theArmAimsWithCreatesAnglesWithinItsReach` で元の長さのときCreateの `ArmAngleTarget` と角度が一致することを確認。GameTest 11件成功、Ponderの撮影で細い腕がジグの継ぎ目とデポに届くことを確認。
