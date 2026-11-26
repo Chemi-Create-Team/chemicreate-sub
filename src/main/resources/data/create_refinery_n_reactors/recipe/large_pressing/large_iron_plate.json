@@ -1,0 +1,9 @@
+{
+  "type": "create_refinery_n_reactors:large_pressing",
+  "ingredient": {
+    "item": "minecraft:iron_block"
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:large_iron_plate"
+  }
+}

@@ -27,6 +27,7 @@ public enum CERecipeTypes implements IRecipeTypeInfo, StringRepresentable {
     VITRIFICATION("vitrification", () -> new StandardProcessingRecipe.Serializer<>(p -> new net.createplant.recipe.FuelCycleRecipe(CERecipeTypes.valueOf("VITRIFICATION"), p))),
     FORGING_BLASTING("forging_blasting", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.ForgingBlastingRecipe::new)),
     CUBIC_PRESSING("cubic_pressing", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.CubicPressRecipe::new)),
+    LARGE_PRESSING("large_pressing", net.createplant.recipe.LargePressingRecipe.Serializer::new),
     CONVERTER("converter", ConverterRecipe.Serializer::new),
     INDUSTRIAL_DELIVERY("industrial_delivery", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.IndustrialDeliveryRecipe::new)),
     ARM_ASSEMBLY("arm_assembly", net.createplant.arm.ArmRecipe.Serializer::new);

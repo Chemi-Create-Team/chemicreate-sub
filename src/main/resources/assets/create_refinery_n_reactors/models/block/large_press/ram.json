@@ -1,0 +1,83 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "create_refinery_n_reactors:block/large_press/case",
+    "case": "create_refinery_n_reactors:block/large_press/case",
+    "side": "create_refinery_n_reactors:block/large_press/rib",
+    "deck": "create_refinery_n_reactors:block/large_press/deck",
+    "bed": "create_refinery_n_reactors:block/large_press/bed",
+    "ram": "create_refinery_n_reactors:block/large_press/ram",
+    "trim": "create_refinery_n_reactors:block/large_press/brass",
+    "tool": "create_refinery_n_reactors:block/large_press/platen"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        16,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

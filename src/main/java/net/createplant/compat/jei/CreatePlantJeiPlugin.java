@@ -24,6 +24,7 @@ import net.createplant.chemistry.ProcessModule;
 import net.createplant.chemistry.ProcessRecipe;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.recipe.ConverterRecipe;
+import net.createplant.recipe.LargePressingRecipe;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.recipe.SprayingRecipe;
 import net.createplant.registry.*;
@@ -35,6 +36,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -56,6 +58,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("fusion_service", "nuclear/fusion_tokamak", CEFusion.IRRADIATION_CARTRIDGE.get(), CEFusion.IRRADIATION_CARTRIDGE.get()),
             new Kind("forging_byproducts", "plant/steel_forging", CEItems.STEEL_SLAG.get(), CEItems.PIG_IRON.get()),
             new Kind("cubic_pressing", "plant/cubic_press", CEHighStressMachines.PRESS.get(), CEHighStressMachines.PRESS.get(), AllBlocks.BLAZE_BURNER.get()),
+            new Kind("large_pressing", "plant/large_press", CELargePress.PRESS.get(), CELargePress.PRESS.get(), CELargePress.DEPOT.get()),
             new Kind("stirred_reactor", "plant/reactor_plant_stirred", CEReactor.STIRRER.get(), CETransport.LIDDED_VESSEL.get(), CEReactor.STIRRER.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("tray_reactor", "plant/uranium_preparation", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("reaction_vessel", "plant/reaction_tower", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get()),
@@ -128,6 +131,12 @@ public class CreatePlantJeiPlugin implements IModPlugin {
 
     @Override public void registerRecipes(IRecipeRegistration registration) {
         var world = Minecraft.getInstance().level;
+        if (world != null) registration.addRecipes(type("large_pressing"), world.getRecipeManager()
+            .getAllRecipesFor(CERecipeTypes.LARGE_PRESSING.<SingleRecipeInput, LargePressingRecipe>getType()).stream().map(holder -> {
+                var recipe = holder.value();
+                return new PlantProcess(List.of(Arrays.asList(recipe.ingredient().getItems())), List.of(), List.of(),
+                    List.of(recipe.result().copy()), List.of(), note("large_pressing"));
+            }).toList());
         if (world != null) registration.addRecipes(type("spraying"), SprayingRecipe.available(world).stream().flatMap(holder -> {
             var recipe = holder.value();
             var fluids = Arrays.asList(recipe.liquid().getFluids());

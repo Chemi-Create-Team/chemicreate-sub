@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SAS",
+    "IPI",
+    "SBS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "A": {
+      "item": "create:shaft"
+    },
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "P": {
+      "item": "create:mechanical_press"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:large_mechanical_press"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IAI",
+    "ADA",
+    "ISI"
+  ],
+  "key": {
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "A": {
+      "item": "create:andesite_alloy"
+    },
+    "D": {
+      "item": "create:depot"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:steel_block"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:large_depot"
+  }
+}

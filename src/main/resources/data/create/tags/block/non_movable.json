@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
+    "create_refinery_n_reactors:large_mechanical_press",
+    "create_refinery_n_reactors:large_depot",
+    "create_refinery_n_reactors:large_press_frame",
     "create_refinery_n_reactors:fractionating_column",
     "create_refinery_n_reactors:flow_regulator",
     "create_refinery_n_reactors:reciprocating_cylinder",

@@ -8,11 +8,14 @@ import com.llamalad7.mixinextras.sugar.ref.LocalFloatRef;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import java.util.List;
+import net.createplant.block.LargePressFrameBlock;
 import net.createplant.block.entity.AbsorptionTowerBlockEntity;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.client.ProcessGoggles;
 import net.createplant.registry.CEReactor;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,6 +25,16 @@ import org.spongepowered.asm.mixin.injection.At;
 /** Create draws the goggle icon over the left of the tooltip; lines that do not start with its indent are hidden behind it. */
 @Mixin(value = GoggleOverlayRenderer.class, remap = false)
 public class GoggleOverlayMixin {
+    @WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/ClientLevel;getBlockEntity(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/block/entity/BlockEntity;", remap = true))
+    private static BlockEntity createPlant$largePressFrame(ClientLevel level, BlockPos pos, Operation<BlockEntity> original) {
+        var state = level.getBlockState(pos);
+        if (state.getBlock() instanceof LargePressFrameBlock && !state.getValue(LargePressFrameBlock.DEPOT)) {
+            BlockPos center = LargePressFrameBlock.center(level, pos, state);
+            if (center != null) return original.call(level, center);
+        }
+        return original.call(level, pos);
+    }
+
     @WrapOperation(method = "renderOverlay", at = @At(value = "INVOKE", target = "Lcom/simibubi/create/api/equipment/goggles/IHaveGoggleInformation;addToGoggleTooltip(Ljava/util/List;Z)Z"))
     private static boolean createPlant$indent(IHaveGoggleInformation goggles, List<Component> tooltip, boolean sneaking, Operation<Boolean> original) {
         boolean result = original.call(goggles, tooltip, sneaking);

@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
+    "create_refinery_n_reactors:large_mechanical_press",
+    "create_refinery_n_reactors:large_depot",
+    "create_refinery_n_reactors:large_press_frame",
     "create_refinery_n_reactors:halite_ore",
     "create_refinery_n_reactors:deepslate_halite_ore",
     "create_refinery_n_reactors:corrosion_resistant_floor",

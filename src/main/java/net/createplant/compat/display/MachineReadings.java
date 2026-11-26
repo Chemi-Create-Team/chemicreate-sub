@@ -100,6 +100,7 @@ public final class MachineReadings {
         if (original instanceof GasCentrifugePortBlockEntity port && port.owner() != null) return status(port.owner());
         if (original instanceof GasCentrifugeBlockEntity c) return Component.translatable("centrifuge.create_refinery_n_reactors.status." + c.status());
         if (original instanceof CubicPressBlockEntity p) return Component.translatable("cubic_press.create_refinery_n_reactors.status." + p.status());
+        if (original instanceof LargeMechanicalPressBlockEntity p) return p.status();
         if (original instanceof ElectricPumpBlockEntity pump) return Component.translatable("electric_utility.create_refinery_n_reactors."+pump.status());
         if (original instanceof GasHolderBlockEntity part) {var bell=part.getControllerBE();return Component.translatable("gas_bell.create_refinery_n_reactors."+(bell==null ? "unloaded" : bell.status()));}
         if (original instanceof FlareTipBlockEntity flare) return Component.translatable("flare.create_refinery_n_reactors."+flare.status());
@@ -501,6 +502,10 @@ public final class MachineReadings {
                 case "stress": return new Reading(256 * Math.abs(p.getSpeed()), 0);
                 case "superheated": return new Reading(p.superheated() ? 1 : 0, 1);
             }
+        }
+        if (be instanceof LargeMechanicalPressBlockEntity p && key.equals("progress")) {
+            var pressing = p.pressing();
+            return new Reading(pressing.running ? Math.abs(pressing.runningTicks) : 0, com.simibubi.create.content.kinetics.press.PressingBehaviour.CYCLE);
         }
         if (key.equals("speed")) return be instanceof KineticBlockEntity kinetic ? new Reading(Math.abs(kinetic instanceof ReactorMachineBlockEntity reactor ? reactor.rotationSpeed() : kinetic.getSpeed()),0) : null;
         if (be instanceof ReactorMachineBlockEntity r) {

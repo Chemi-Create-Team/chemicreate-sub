@@ -59,6 +59,8 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/transmission_tower", TransmissionTowerPonderScenes::connection);
         helper.forComponents(CreatePlant.location("electric_pump")).addStoryBoard("plant/electric_pump", ElectricUtilityPonderScenes::pump);
         helper.forComponents(CreatePlant.location("cubic_press")).addStoryBoard("plant/cubic_press", HighStressPonderScenes::press);
+        helper.forComponents(CreatePlant.location("large_mechanical_press"), CreatePlant.location("large_depot"), CreatePlant.location("large_iron_plate"))
+            .addStoryBoard("plant/large_press", LargePressPonderScenes::press);
         for (var tutorial : PlantTutorialCatalog.all()) if (tutorial.family() != null) {
             helper.forComponents(tutorial.components().stream().map(name -> name.contains(":") ? ResourceLocation.parse(name) : CreatePlant.location(name)).toArray(ResourceLocation[]::new))
                 .addStoryBoard(tutorial.storyboard(), (scene, util) -> PlantPonderScenes.show(scene, util, tutorial));

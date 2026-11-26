@@ -29,6 +29,7 @@ public class ElectrolysisClient {
         net.createplant.client.ElectricPumpRenderer.init();
         net.createplant.client.PressurePumpRenderer.init();
         net.createplant.client.CubicPressRenderer.init();
+        net.createplant.client.LargeMechanicalPressRenderer.init();
         net.createplant.client.ReciprocatingCompressorRenderer.init();
         net.createplant.client.ReactorMachineRenderer.init();
         net.createplant.client.LiddedVesselRenderer.init();
@@ -115,6 +116,8 @@ public class ElectrolysisClient {
         event.registerEntityRenderer(net.createplant.registry.CESafety.GAS_CLOUD.get(), net.createplant.client.GasCloudRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get(), com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEHighStressMachines.PRESS_ENTITY.get(), net.createplant.client.CubicPressRenderer::new);
+        event.registerBlockEntityRenderer(net.createplant.registry.CELargePress.PRESS_ENTITY.get(), net.createplant.client.LargeMechanicalPressRenderer::new);
+        event.registerBlockEntityRenderer(net.createplant.registry.CELargePress.DEPOT_ENTITY.get(), com.simibubi.create.content.logistics.depot.DepotRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.MATERIAL_PUMP_ENTITY.get(), com.simibubi.create.content.fluids.pump.PumpRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEAssembly.CONSTRUCTOR_ENTITY.get(), net.createplant.client.FacilityConstructorRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectricUtilities.PUMP_ENTITY.get(), net.createplant.client.ElectricPumpRenderer::new);
