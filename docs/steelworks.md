@@ -18,4 +18,6 @@
 
 このタンクは常圧の溶銑・脱硫溶銑・溶鋼を1種類ずつ保持します。走行中の冷却と凝固はゲーム内では計算しません。タンクの一部だけが車体の組立範囲に入っている場合、Createの組立画面に接着範囲のエラーが出ます。
 
+[ゲーム内Ponderでの台車と積み下ろし口](quality/steelworks/torpedo-car.jpg)
+
 ゲーム内の製鋼経路は、溶銑の輸送と予備処理、酸素吹錬、鋳造、熱間圧延の順を採用しています。けい石レンガは指定されたゲーム内建材です。現代の酸素転炉では塩基性スラグに適したマグネシア系・ドロマイト系の耐火材が用いられます。 [日本製鉄の製鋼技報](https://www.nipponsteel.com/en/tech/report/pdf/124-03.pdf) · [ArcelorMittalの製鋼・圧延解説](https://constructalia.arcelormittal.com/en/sica-steel-academy/properties-of-steel/manufacturing-and-forming-processes)
