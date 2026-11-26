@@ -11,5 +11,6 @@
   },
   "work": 400,
   "heat": 1,
-  "starting_thickness": 0.67
+  "starting_thickness": 0.67,
+  "min_stands": 4
 }

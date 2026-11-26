@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "RLR",
+    "LRL",
+    "RLR"
+  ],
+  "key": {
+    "R": {
+      "item": "create_refinery_n_reactors:serpentinite"
+    },
+    "L": {
+      "item": "create_refinery_n_reactors:lead_sheet"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:biological_shield",
+    "count": 8
+  }
+}

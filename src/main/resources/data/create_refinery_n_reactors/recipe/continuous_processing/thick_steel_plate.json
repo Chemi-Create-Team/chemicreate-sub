@@ -11,5 +11,6 @@
   },
   "work": 400,
   "heat": 1,
-  "starting_thickness": 0.78
+  "starting_thickness": 0.78,
+  "max_stands": 3
 }

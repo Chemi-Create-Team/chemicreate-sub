@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TTT",
+    "TRT"
+  ],
+  "key": {
+    "T": {
+      "item": "create_refinery_n_reactors:thick_steel_plate"
+    },
+    "R": {
+      "item": "create_refinery_n_reactors:serpentinite"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:reactor_top_cap",
+    "count": 8
+  }
+}

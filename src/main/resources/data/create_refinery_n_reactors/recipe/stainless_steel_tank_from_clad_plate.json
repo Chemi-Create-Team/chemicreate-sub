@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " K ",
+    " B ",
+    " K "
+  ],
+  "key": {
+    "K": {
+      "item": "create_refinery_n_reactors:stainless_clad_plate"
+    },
+    "B": {
+      "item": "minecraft:barrel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:stainless_steel_tank",
+    "count": 2
+  }
+}

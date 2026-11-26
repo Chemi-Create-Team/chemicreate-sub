@@ -21,7 +21,8 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
 
 public record ContinuousFactoryRecipe(FactoryKind machine, SizedIngredient feed, Optional<SizedIngredient> auxiliary, ItemStack result,
-                                      int work, int heat, float startingThickness, int minimumDamage) implements Recipe<RecipeInput> {
+                                      int work, int heat, float startingThickness, int minimumDamage,
+                                      int maxHeat, int minStands, int maxStands, float rpmTolerance) implements Recipe<RecipeInput> {
     private static final MapCodec<ContinuousFactoryRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
         FactoryKind.CODEC.fieldOf("machine").forGetter(ContinuousFactoryRecipe::machine),
         SizedIngredient.FLAT_CODEC.fieldOf("feed").forGetter(ContinuousFactoryRecipe::feed),
@@ -30,7 +31,11 @@ public record ContinuousFactoryRecipe(FactoryKind machine, SizedIngredient feed,
         Codec.intRange(20, 12000).optionalFieldOf("work", 400).forGetter(ContinuousFactoryRecipe::work),
         Codec.intRange(0, 2).optionalFieldOf("heat", 0).forGetter(ContinuousFactoryRecipe::heat),
         Codec.floatRange(.06f, .9f).optionalFieldOf("starting_thickness", .58f).forGetter(ContinuousFactoryRecipe::startingThickness),
-        Codec.intRange(0, 10000).optionalFieldOf("minimum_damage", 0).forGetter(ContinuousFactoryRecipe::minimumDamage)
+        Codec.intRange(0, 10000).optionalFieldOf("minimum_damage", 0).forGetter(ContinuousFactoryRecipe::minimumDamage),
+        Codec.intRange(0, 2).optionalFieldOf("max_heat", 2).forGetter(ContinuousFactoryRecipe::maxHeat),
+        Codec.intRange(1, 8).optionalFieldOf("min_stands", 1).forGetter(ContinuousFactoryRecipe::minStands),
+        Codec.intRange(1, 8).optionalFieldOf("max_stands", 8).forGetter(ContinuousFactoryRecipe::maxStands),
+        Codec.floatRange(.01f, .5f).optionalFieldOf("rpm_tolerance", .10f).forGetter(ContinuousFactoryRecipe::rpmTolerance)
     ).apply(i, ContinuousFactoryRecipe::new));
     private static final StreamCodec<RegistryFriendlyByteBuf, ContinuousFactoryRecipe> STREAM = ByteBufCodecs.fromCodecWithRegistries(CODEC.codec());
 
@@ -44,6 +49,10 @@ public record ContinuousFactoryRecipe(FactoryKind machine, SizedIngredient feed,
         return input.size() >= 1 && feed.test(input.getItem(0)) && input.getItem(0).getDamageValue() >= minimumDamage
             && (auxiliary.isEmpty() || input.size() >= 2 && auxiliary.get().test(input.getItem(1)));
     }
+    /** A line with this many stands (drives) and this burner heat can run the recipe: cold recipes refuse a lit burner. */
+    public boolean fitsLine(int stands, int lineHeat) { return stands >= minStands && stands <= maxStands && lineHeat <= maxHeat; }
+    public boolean cold() { return maxHeat == 0; }
+
     @Override public ItemStack assemble(RecipeInput input, HolderLookup.Provider lookup) { return result.copy(); }
     @Override public ItemStack getResultItem(HolderLookup.Provider lookup) { return result; }
     @Override public boolean isSpecial() { return true; }

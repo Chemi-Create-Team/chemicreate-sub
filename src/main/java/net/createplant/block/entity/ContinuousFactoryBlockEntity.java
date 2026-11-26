@@ -65,6 +65,7 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
     private int sampledInventoryVersion = -1;
     private long recipeLookupAt = Long.MIN_VALUE;
     private ContinuousFactoryRecipe matchingRecipe;
+    private String refusal = "";
     private String status = "unformed", fault = "";
     private String notice = "";
     private int noticeTicks;
@@ -95,7 +96,7 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
 
     public IItemHandler inlet(Direction side) {
         if (side == null || side == Direction.UP || side == facing().getOpposite()) return feedPort;
-        if (kind() == FactoryKind.WINDER && side == facing().getClockWise()) return auxiliaryPort;
+        if (kind() != FactoryKind.KILN && side == facing().getClockWise()) return auxiliaryPort;
         return null;
     }
 
@@ -258,7 +259,7 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
             if (last.travel < (kind() == FactoryKind.MILL ? 3.5 : 1.15) || !last.finished.isEmpty()) return;
         }
         var recipe = recipe();
-        if (recipe == null) return;
+        if (recipe == null) { if (!refusal.isEmpty()) status = refusal; return; }
         if (heat < recipe.heat()) { status = "heat"; return; }
         if (!fits(recipe.result())) { status = "output_full"; return; }
         int slot = 0;
@@ -276,14 +277,30 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
         if (sampledInventoryVersion == workInventoryVersion && time - recipeLookupAt < 20) return matchingRecipe;
         recipeLookupAt = time;
         sampledInventoryVersion = workInventoryVersion;
+        refusal = "";
         if (input.getStackInSlot(0).isEmpty()) return matchingRecipe = null;
         RecipeInput stock = new RecipeInput() {
             @Override public ItemStack getItem(int slot) { return input.getStackInSlot(slot); }
             @Override public int size() { return 2; }
         };
-        matchingRecipe = level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType())
-            .stream().map(holder -> holder.value()).filter(r -> r.machine() == kind() && r.matches(stock, level)).findFirst().orElse(null);
+        var candidates = level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType())
+            .stream().map(holder -> holder.value()).filter(r -> r.machine() == kind() && r.matches(stock, level)).toList();
+        int stands = kind() == FactoryKind.MILL ? layout.drives().size() : 1;
+        matchingRecipe = pick(candidates, stands, heat);
+        if (matchingRecipe == null && !candidates.isEmpty())
+            refusal = candidates.stream().anyMatch(r -> stands >= r.minStands() && stands <= r.maxStands()) ? "too_hot" : "stands";
         return matchingRecipe;
+    }
+
+    /** The recipe the line runs now; failing that, one it could run with more heat (shown as "heat"); else null. */
+    public static ContinuousFactoryRecipe pick(List<ContinuousFactoryRecipe> candidates, int stands, int heat) {
+        ContinuousFactoryRecipe colder = null;
+        for (var recipe : candidates) {
+            if (!recipe.fitsLine(stands, heat)) continue;
+            if (heat >= recipe.heat()) return recipe;
+            if (colder == null) colder = recipe;
+        }
+        return colder;
     }
 
     private boolean fits(ItemStack stack) { return ItemHandlerHelper.insertItemStacked(output, stack, true).isEmpty(); }
@@ -313,13 +330,13 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
         for (int i = 0; i < stages; i++) {
             double bite = 2 + i * FactoryLayout.MILL_SPACING;
             if (batch.travel < bite && next >= bite) {
-                if (stageRpm[i] < 0 || i > 0 && FactoryProcess.millRatio(stageRpm[i - 1], stageRpm[i]) < 1 - FactoryProcess.RPM_TOLERANCE) {
+                if (stageRpm[i] < 0 || i > 0 && FactoryProcess.millRatio(stageRpm[i - 1], stageRpm[i]) < 1 - batch.tolerance) {
                     batch.travel = bite - .18;
                     batch.damaged = true;
                     trip(server, "buckled", bite);
                     return;
                 }
-                if (i > 0 && FactoryProcess.millRatio(stageRpm[i - 1], stageRpm[i]) > 1 + FactoryProcess.RPM_TOLERANCE) {
+                if (i > 0 && FactoryProcess.millRatio(stageRpm[i - 1], stageRpm[i]) > 1 + batch.tolerance) {
                     batch.finished = CEContinuousFactory.SCRAP.toStack();
                     trip(server, "torn", bite);
                     return;

@@ -47,7 +47,7 @@ public class CECreativeModeTabs {
             "treatment_sludge", "charred_wood"),
         List.of("carbon_powder", "unprocessed_steel", "pig_iron", "heated_unfinished_steel", "steel_slag", "steel_ingot", "steel_block", "ferrochrome", "aluminum_ingot", "lead_ingot", "nickel_ingot", "titanium_ingot", "zirconium_ingot", "chromium_ingot",
             "molybdenum_ingot", "stainless_steel_ingot", "aluminum_sheet", "nickel_sheet", "titanium_sheet", "stainless_steel_sheet",
-            "large_iron_plate", "cast_steel_slab", "cast_stainless_steel_slab", "thick_steel_plate", "steel_h_beam", "steel_rail_stock", "copper_foil", "aluminum_foil", "steel_core_aluminum_cable",
+            "large_iron_plate", "cast_steel_slab", "cast_stainless_steel_slab", "thick_steel_plate", "steel_h_beam", "steel_rail_stock", "copper_foil", "aluminum_foil", "electrical_steel_sheet", "stainless_clad_plate", "lead_sheet", "gold_foil", "steel_core_aluminum_cable",
             "heavy_wire_rope", "deformed_workpiece", "loose_winding", "iron_pipe", "unfired_ceramic_pipe", "zircaloy_cladding_tube"),
         List.of("polyethylene", "polypropylene", "synthetic_rubber", "industrial_resin", "plastic_sheet", "rubber_gasket",
             "flame_retardant_pellet", "heat_resistant_gasket", "flexible_rubber_hose", "paraffin_wax", "phenolic_resin", "phenolic_board",
