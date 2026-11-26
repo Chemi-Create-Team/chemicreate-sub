@@ -23,13 +23,15 @@ import net.minecraft.world.level.block.Block;
  */
 public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> steps, Item result, int resultCount) {
     public static final int MAX_SIZE = 3;
+    /** Most parts one step may use up; a core memory plane takes 144 cores. */
+    public static final int MAX_CONSUME = 1024;
 
     /**
-     * One job. {@code place}: the gripper sets {@code block}. Otherwise the {@code tool} works the cell, using up {@code consume}
+     * One job. {@code place}: the gripper sets {@code block}. Otherwise the {@code tool} works the cell, using up {@code count} of {@code consume}
      * (a wire or part, may be null) and {@code fluid} (spray only). {@code time} is ticks at 16 rpm. {@code seam} is the 2D data value
      * of the horizontal direction of the neighbouring placed block, or -1.
      */
-    public record Step(int stage, BlockPos rel, boolean place, ArmTool tool, Block block, Item consume, ResourceLocation fluid,
+    public record Step(int stage, BlockPos rel, boolean place, ArmTool tool, Block block, Item consume, int count, ResourceLocation fluid,
                        int fluidAmount, int time, ArmPattern pattern, int seam) {
         public Direction seamDirection() {
             return seam < 0 ? null : Direction.from2DDataValue(seam);
@@ -38,6 +40,11 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
         /** The item an arm must fetch before starting, or null. */
         public Item material() {
             return place ? block.asItem() : consume;
+        }
+
+        /** How many of {@link #material()} the arm fetches. */
+        public int materialCount() {
+            return place ? 1 : count;
         }
     }
 
@@ -90,7 +97,17 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
             if (!(i instanceof net.minecraft.world.item.BlockItem bi)) throw new IllegalArgumentException("not a block");
             block = bi.getBlock();
         }
-        Item consume = o.has("consume") ? item(GsonHelper.getAsString(o, "consume")) : null;
+        Item consume = null;
+        int count = 1;
+        if (o.has("consume")) {
+            // "consume": "id", or {"id": ..., "count": n} for many of one part
+            if (o.get("consume").isJsonObject()) {
+                JsonObject c = GsonHelper.getAsJsonObject(o, "consume");
+                consume = item(GsonHelper.getAsString(c, "id"));
+                count = GsonHelper.getAsInt(c, "count", 1);
+                if (count < 1 || count > MAX_CONSUME) throw new IllegalArgumentException("consume count must be 1 to " + MAX_CONSUME);
+            } else consume = item(GsonHelper.getAsString(o, "consume"));
+        }
         ResourceLocation fluid = null;
         int amount = 0;
         if (o.has("fluid")) {
@@ -102,14 +119,14 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
         if (tool == ArmTool.SPRAY_NOZZLE && fluid == null) throw new IllegalArgumentException("the spray nozzle needs a fluid");
         ArmPattern pattern = o.has("pattern") ? ArmPattern.byId(GsonHelper.getAsString(o, "pattern")) : ArmPattern.defaultFor(tool);
         if (pattern == null) throw new IllegalArgumentException("unknown pattern");
-        return new Step(stage, rel, place, tool, block, consume, fluid, amount, Math.max(1, GsonHelper.getAsInt(o, "time", 40)), place ? ArmPattern.PLACE : pattern, -1);
+        return new Step(stage, rel, place, tool, block, consume, count, fluid, amount, Math.max(1, GsonHelper.getAsInt(o, "time", 40)), place ? ArmPattern.PLACE : pattern, -1);
     }
 
     private static Step withSeam(Step s, List<Step> all) {
         if (s.pattern != ArmPattern.SEAM_WELD) return s;
         for (Direction d : Direction.Plane.HORIZONTAL) {
             BlockPos n = s.rel.relative(d);
-            for (Step o : all) if (o.place && o.rel.equals(n)) return new Step(s.stage, s.rel, s.place, s.tool, s.block, s.consume, s.fluid, s.fluidAmount, s.time, s.pattern, d.get2DDataValue());
+            for (Step o : all) if (o.place && o.rel.equals(n)) return new Step(s.stage, s.rel, s.place, s.tool, s.block, s.consume, s.count, s.fluid, s.fluidAmount, s.time, s.pattern, d.get2DDataValue());
         }
         return s;
     }
@@ -136,7 +153,10 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
             c.putBoolean("place", s.place);
             c.putString("tool", s.tool.id());
             if (s.block != null) c.putString("block", BuiltInRegistries.BLOCK.getKey(s.block).toString());
-            if (s.consume != null) c.putString("consume", BuiltInRegistries.ITEM.getKey(s.consume).toString());
+            if (s.consume != null) {
+                c.putString("consume", BuiltInRegistries.ITEM.getKey(s.consume).toString());
+                c.putInt("consumeCount", s.count);
+            }
             if (s.fluid != null) { c.putString("fluid", s.fluid.toString()); c.putInt("amount", s.fluidAmount); }
             c.putInt("time", s.time);
             c.putString("pattern", s.pattern.id());
@@ -156,7 +176,7 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
             boolean place = c.getBoolean("place");
             Block block = place ? BuiltInRegistries.BLOCK.get(ResourceLocation.parse(c.getString("block"))) : null;
             Item consume = c.contains("consume") ? BuiltInRegistries.ITEM.get(ResourceLocation.parse(c.getString("consume"))) : null;
-            steps.add(new Step(c.getInt("stage"), new BlockPos(r[0], r[1], r[2]), place, ArmTool.byId(c.getString("tool")), block, consume,
+            steps.add(new Step(c.getInt("stage"), new BlockPos(r[0], r[1], r[2]), place, ArmTool.byId(c.getString("tool")), block, consume, Math.max(1, c.getInt("consumeCount")),
                     c.contains("fluid") ? ResourceLocation.parse(c.getString("fluid")) : null, c.getInt("amount"), c.getInt("time"),
                     ArmPattern.byId(c.getString("pattern")), c.getInt("seam")));
         }

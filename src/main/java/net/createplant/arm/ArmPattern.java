@@ -4,7 +4,11 @@ import java.util.Locale;
 
 /** How a tool moves over its cell. PLACE is the gripper's own drop and is not written in recipes. */
 public enum ArmPattern {
-    PLACE, SEAM_WELD, PERIMETER_CUT, DIAGONAL_CUT, GRID_WIRE, FULL_SPRAY;
+    PLACE, SEAM_WELD, PERIMETER_CUT, DIAGONAL_CUT, GRID_WIRE, FULL_SPRAY,
+    /** The first half of GRID_WIRE alone: setting the ferrite cores. */
+    CORE_SET,
+    /** The second half of GRID_WIRE alone: threading the X, Y and sense wires through cores already set. */
+    WIRE_THREAD;
 
     public String id() {
         return name().toLowerCase(Locale.ROOT);

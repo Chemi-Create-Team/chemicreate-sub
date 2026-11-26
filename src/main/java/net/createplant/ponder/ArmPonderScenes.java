@@ -29,7 +29,8 @@ public final class ArmPonderScenes {
         + "\"result\":{\"id\":\"create_refinery_n_reactors:welded_iron_beam\"}}";
     /** One cell of the magnetic core memory's wiring stage, to show the threading up close. */
     private static final String CORE = "{\"size\":[1,1,1],\"stages\":[[{\"pos\":[0,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
-        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"grid_wire\",\"time\":120}]],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"core_set\",\"time\":60}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"wire_thread\",\"time\":120}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:magnetic_core_memory\"}}";
     private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6), DEPOT = new BlockPos(5, 1, 2);
     private static final int FRAMES = 24, WIRE_FRAMES = 240;
@@ -108,8 +109,10 @@ public final class ArmPonderScenes {
         scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WIRING_HEAD)));
         scene.idle(10);
         text(scene, util, JIG.above(), "wire");
-        work(scene, core, 1, WIRE_FRAMES, 1);
+        work(scene, core, 1, WIRE_FRAMES / 3, 1);
         finish(scene, 1);
+        work(scene, core, 2, WIRE_FRAMES, 1);
+        finish(scene, 2);
         scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
         scene.idle(40);
         scene.markAsFinished();

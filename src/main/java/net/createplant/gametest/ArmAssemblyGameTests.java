@@ -35,8 +35,9 @@ public class ArmAssemblyGameTests {
         var memory = ArmRecipes.get(CreatePlant.location(MEMORY));
         var beam = ArmRecipes.get(CreatePlant.location(BEAM));
         h.assertTrue(memory != null && beam != null, "both sample recipes load");
-        h.assertTrue(memory.stages() == 3 && memory.steps().size() == 6, "the memory has three stages and six steps");
+        h.assertTrue(memory.stages() == 4 && memory.steps().size() == 7, "the memory has four stages and seven steps");
         h.assertTrue(beam.steps().get(2).seamDirection() != null, "the weld knows which side its neighbour is on");
+        h.assertTrue(memory.steps().get(3).materialCount() == 144, "the plane takes one ferrite core for each of its 12 x 12 cores");
         h.succeed();
     }
 
@@ -232,5 +233,13 @@ public class ArmAssemblyGameTests {
             h.assertTrue(reloaded[0] && items.getStackInSlot(0).is(Blocks.WHITE_CONCRETE.asItem()), "the reloaded arm still cures the powder");
             h.assertTrue(now.tank.isEmpty(), "the water is drawn once, when the concrete is done");
         });
+    }
+
+    @GameTest(template = "test_empty")
+    public static void coreMemoryPartsHaveRecipes(GameTestHelper h) {
+        var recipes = h.getLevel().getRecipeManager();
+        for (String id : new String[] {"mixing/ferrite_powder", "pressing/unfired_ferrite_rings", "ferrite_core", "mixing/enamelled_copper_wire"})
+            h.assertTrue(recipes.byKey(CreatePlant.location(id)).isPresent(), "the recipe " + id + " is loaded");
+        h.succeed();
     }
 }

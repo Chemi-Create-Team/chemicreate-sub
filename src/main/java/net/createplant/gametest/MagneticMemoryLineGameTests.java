@@ -39,38 +39,38 @@ public final class MagneticMemoryLineGameTests {
         new Station(new BlockPos(-1, 0, 1), ArmTool.WELDING_TORCH),
         new Station(new BlockPos(3, 0, 1), ArmTool.WELDING_TORCH));
 
-    /** The copper chest beside the wiring arm: an arm only takes material it can reach. */
-    private static final BlockPos COPPER = new BlockPos(2, 0, 4);
+    /** The parts chest beside the wiring arm (an arm only takes material it can reach): 144 ferrite cores and 25 enamelled wires a plane. */
+    private static final BlockPos PARTS = new BlockPos(2, 0, 4);
 
     private MagneticMemoryLineGameTests() { }
 
-    @GameTest(template = "test_forging", timeoutTicks = 1000)
+    @GameTest(template = "test_forging", timeoutTicks = 1600)
     public static void poweredArmsProduceTwoMemoriesAndTheFanDeliversThemToStorage(GameTestHelper helper) {
         var line = build(helper.getLevel(), helper.absolutePos(ORIGIN));
         helper.assertTrue(!ChestBlock.isChestBlockedAt(line.level(), line.output().getBlockPos()),
             "Players can open the output chest beneath the collector's stop block");
         line.input().setItem(0, new ItemStack(Items.IRON_BLOCK, 6));
-        line.copper().setItem(0, new ItemStack(Items.COPPER_INGOT));
+        line.supplyParts();
         helper.runAfterDelay(10, line::start);
         var completedAt = new long[1];
         helper.onEachTick(() -> {
             if (completedAt[0] == 0 && line.products() == 1 && line.jig().currentStage() == 1) {
                 completedAt[0] = helper.getTick();
-                helper.assertTrue(line.suppliesEmpty(), "Two frames used six iron blocks and the first batch used one copper ingot");
+                helper.assertTrue(line.suppliesEmpty(), "Two frames used six iron blocks and the first plane used all its cores and wires");
                 for (int x = 0; x < 3; x++)
                     helper.assertTrue(line.level().getBlockState(line.origin().offset(x, 1, 1)).is(Blocks.IRON_BLOCK),
-                        "The second frame is present while the line waits for copper");
+                        "The second frame is present while the line waits for parts");
                 helper.runAfterDelay(65, () -> {
                     helper.assertTrue(line.products() == 1 && line.jig().currentStage() == 1,
-                        "Missing copper holds the second batch at wiring");
-                    line.copper().setItem(0, new ItemStack(Items.COPPER_INGOT));
+                        "Missing cores hold the second batch at core setting");
+                    line.supplyParts();
                 });
             }
         });
         helper.succeedWhen(() -> {
             helper.assertTrue(completedAt[0] != 0 && line.products() == 2,
                 "Both assemblies must reach the real output chest through the fan and hopper");
-            helper.assertTrue(line.suppliesEmpty(), "The full run consumes exactly six iron blocks and two copper ingots");
+            helper.assertTrue(line.suppliesEmpty(), "The full run consumes exactly six iron blocks and two planes' cores and wires");
             for (int x = 0; x < 3; x++)
                 helper.assertTrue(line.level().isEmptyBlock(line.origin().offset(x, 1, 1)), "No temporary frame remains");
             LOGGER.info("Magnetic memory line recovered {} products at tick {} after resupplying copper", line.products(), helper.getTick());
@@ -91,18 +91,18 @@ public final class MagneticMemoryLineGameTests {
         });
     }
 
-    @GameTest(template = "test_forging", timeoutTicks = 600)
+    @GameTest(template = "test_forging", timeoutTicks = 1000)
     public static void paidWiringSurvivesLoadingTheArmAndJig(GameTestHelper helper) {
         var line = build(helper.getLevel(), helper.absolutePos(ORIGIN));
         line.input().setItem(0, new ItemStack(Items.IRON_BLOCK, 3));
-        line.copper().setItem(0, new ItemStack(Items.COPPER_INGOT));
+        line.supplyParts();
         helper.runAfterDelay(10, line::start);
         var reloaded = new boolean[1];
         helper.onEachTick(() -> {
             if (reloaded[0]) return;
             var wire = line.arms().get(1);
             if (wire.phase != IndustrialArmBlockEntity.WORK || wire.progress <= .2f) return;
-            helper.assertTrue(line.suppliesEmpty() && wire.held.is(Items.COPPER_INGOT), "Wiring already paid for its one copper ingot");
+            helper.assertTrue(line.input().isEmpty() && line.parts().getItem(0).isEmpty() && line.parts().getItem(2).isEmpty() && wire.held.is(CEArm.FERRITE_CORE.get()) && wire.held.getCount() == 144, "Core setting already paid for its 144 cores");
             var registries = line.level().registryAccess();
             var jig = line.jig();
             var savedJig = jig.saveWithFullMetadata(registries);
@@ -112,7 +112,7 @@ public final class MagneticMemoryLineGameTests {
             reloaded[0] = true;
         });
         helper.succeedWhen(() -> helper.assertTrue(reloaded[0] && line.suppliesEmpty() && line.products() == 1,
-            "The reloaded wiring arm must finish its paid operation without requiring a second copper ingot"));
+            "The reloaded wiring arm must finish its paid operation without requiring more parts"));
     }
 
     public static Line build(ServerLevel level, BlockPos origin) {
@@ -122,7 +122,7 @@ public final class MagneticMemoryLineGameTests {
         var input = origin.offset(2, 0, -2);
         var output = origin.east(3);
         place(level, input, Blocks.CHEST.defaultBlockState());
-        place(level, origin.offset(COPPER), Blocks.CHEST.defaultBlockState()); // within the wiring arm's reach
+        place(level, origin.offset(PARTS), Blocks.CHEST.defaultBlockState()); // within the wiring arm's reach
         place(level, output, Blocks.CHEST.defaultBlockState());
         place(level, origin.east(), Blocks.STONE.defaultBlockState());
         place(level, output.west(), Blocks.HOPPER.defaultBlockState().setValue(HopperBlock.FACING, Direction.EAST));
@@ -154,8 +154,14 @@ public final class MagneticMemoryLineGameTests {
     public record Line(ServerLevel level, BlockPos origin) {
         public AssemblyJigBlockEntity jig() { return (AssemblyJigBlockEntity) level.getBlockEntity(origin); }
         public ChestBlockEntity input() { return (ChestBlockEntity) level.getBlockEntity(origin.offset(2, 0, -2)); }
-        public ChestBlockEntity copper() { return (ChestBlockEntity) level.getBlockEntity(origin.offset(COPPER)); }
-        public boolean suppliesEmpty() { return input().isEmpty() && copper().isEmpty(); }
+        public ChestBlockEntity parts() { return (ChestBlockEntity) level.getBlockEntity(origin.offset(PARTS)); }
+        public boolean suppliesEmpty() { return input().isEmpty() && parts().isEmpty(); }
+        public void supplyParts() {
+            parts().setItem(0, new ItemStack(CEArm.FERRITE_CORE.get(), 64));
+            parts().setItem(1, new ItemStack(CEArm.FERRITE_CORE.get(), 64));
+            parts().setItem(2, new ItemStack(CEArm.FERRITE_CORE.get(), 16));
+            parts().setItem(3, new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25));
+        }
         public ChestBlockEntity output() { return (ChestBlockEntity) level.getBlockEntity(origin.east(3)); }
         public EncasedFanBlockEntity fan() { return (EncasedFanBlockEntity) level.getBlockEntity(origin.west(2).above()); }
         public List<IndustrialArmBlockEntity> arms() {

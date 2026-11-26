@@ -43,6 +43,11 @@ public final class CEArm {
     public static final Map<ArmTool, DeferredItem<ArmToolItem>> TOOLS = new EnumMap<>(ArmTool.class);
     public static final DeferredItem<Item> WELDED_IRON_BEAM = ITEMS.registerSimpleItem("welded_iron_beam");
     public static final DeferredItem<Item> MAGNETIC_CORE_MEMORY = ITEMS.registerSimpleItem("magnetic_core_memory");
+    /** Core memory parts: Ni-Zn ferrite powder is pressed into rings and fired into cores; copper wire is enamelled with resin. */
+    public static final DeferredItem<Item> FERRITE_POWDER = ITEMS.registerSimpleItem("ferrite_powder");
+    public static final DeferredItem<Item> UNFIRED_FERRITE_RING = ITEMS.registerSimpleItem("unfired_ferrite_ring");
+    public static final DeferredItem<Item> FERRITE_CORE = ITEMS.registerSimpleItem("ferrite_core");
+    public static final DeferredItem<Item> ENAMELLED_COPPER_WIRE = ITEMS.registerSimpleItem("enamelled_copper_wire");
     public static final Supplier<BlockEntityType<AssemblyJigBlockEntity>> JIG_ENTITY = TYPES.register("assembly_jig",
         () -> BlockEntityType.Builder.of(AssemblyJigBlockEntity::new, JIG.get()).build(null));
     public static final Supplier<BlockEntityType<IndustrialArmBlockEntity>> ARM_ENTITY = TYPES.register("industrial_arm",

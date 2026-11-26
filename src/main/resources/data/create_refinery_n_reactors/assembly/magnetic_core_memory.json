@@ -46,8 +46,28 @@
         ],
         "action": "process",
         "tool": "wiring_head",
-        "pattern": "grid_wire",
-        "consume": "minecraft:copper_ingot",
+        "pattern": "core_set",
+        "consume": {
+          "id": "create_refinery_n_reactors:ferrite_core",
+          "count": 144
+        },
+        "time": 60
+      }
+    ],
+    [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "action": "process",
+        "tool": "wiring_head",
+        "pattern": "wire_thread",
+        "consume": {
+          "id": "create_refinery_n_reactors:enamelled_copper_wire",
+          "count": 25
+        },
         "time": 120
       }
     ],

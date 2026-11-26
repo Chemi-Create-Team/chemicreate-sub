@@ -73,7 +73,9 @@ public final class Trajectory {
                 hop(p, s, new Vec3(1, 1, 0));
                 line(p, s, new Vec3(1, 1, 0), new Vec3(0, 1, 1), true);
             }
-            case GRID_WIRE -> grid(p, s);
+            case GRID_WIRE -> grid(p, s, true, true);
+            case CORE_SET -> grid(p, s, true, false);
+            case WIRE_THREAD -> grid(p, s, false, true);
             case FULL_SPRAY -> {
                 int rows = 7;
                 for (int r = 0; r < rows; r++) {
@@ -119,15 +121,16 @@ public final class Trajectory {
      * X wires and the Y wires through every core, dipping into each core and lifting between them, and last the sense wire,
      * which zigzags along the diagonals through every core once.
      */
-    private static void grid(List<Vec3> p, List<Integer> s) {
+    private static void grid(List<Vec3> p, List<Integer> s, boolean setCores, boolean threadWires) {
         int n = GRID - 1;
-        for (int j = 0; j < GRID; j++) {
+        for (int j = 0; setCores && j < GRID; j++) {
             boolean fwd = j % 2 == 0;
             Vec3 a = new Vec3(gridAt(fwd ? 0 : n), SET_Y, gridAt(j)), b = new Vec3(gridAt(fwd ? n : 0), SET_Y, gridAt(j));
             if (p.isEmpty()) p.add(a); else hop(p, s, a);
             p.add(b);
             s.add(CORES);
         }
+        if (!threadWires) return;
         for (int dir = 0; dir < 2; dir++) {
             for (int line = 0; line < GRID; line++) {
                 boolean fwd = line % 2 == 0;
@@ -140,7 +143,8 @@ public final class Trajectory {
                 }
                 Vec3 lead = cores.get(0).add(cores.get(0).subtract(cores.get(1)).normalize().scale(.03));
                 Vec3 tail = cores.get(n).add(cores.get(n).subtract(cores.get(n - 1)).normalize().scale(.03));
-                hop(p, s, new Vec3(lead.x, BETWEEN_Y, lead.z));
+                Vec3 start = new Vec3(lead.x, BETWEEN_Y, lead.z);
+                if (p.isEmpty()) p.add(start); else hop(p, s, start);
                 thread(p, s, cores, dir == 0 ? X_WIRE : Y_WIRE);
                 p.add(new Vec3(tail.x, BETWEEN_Y, tail.z));
                 s.add(dir == 0 ? X_WIRE : Y_WIRE);

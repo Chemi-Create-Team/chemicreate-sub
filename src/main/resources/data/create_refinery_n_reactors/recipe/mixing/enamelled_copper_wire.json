@@ -1,0 +1,28 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "electroenergetics:copper_wire"
+    },
+    {
+      "item": "electroenergetics:copper_wire"
+    },
+    {
+      "item": "electroenergetics:copper_wire"
+    },
+    {
+      "item": "electroenergetics:copper_wire"
+    },
+    {
+      "item": "create_refinery_n_reactors:industrial_resin"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:enamelled_copper_wire",
+      "count": 4
+    }
+  ],
+  "processing_time": 80,
+  "heat_requirement": "heated"
+}

@@ -1,0 +1,15 @@
+{
+  "type": "create:pressing",
+  "ingredients": [
+    {
+      "item": "create_refinery_n_reactors:ferrite_powder"
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:unfired_ferrite_ring",
+      "count": 16
+    }
+  ],
+  "processingTime": 50
+}

@@ -57,7 +57,7 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
             switch (s.pattern()) {
                 case SEAM_WELD -> weld(q, pose, o, t, p, live, done ? (now - be.doneAt[i] + partial) / 40f : 0, time);
                 case PERIMETER_CUT, DIAGONAL_CUT -> cut(q, pose, o, t, p, live);
-                case GRID_WIRE -> wires(q, pose, light, o, t, p);
+                case GRID_WIRE, CORE_SET, WIRE_THREAD -> wires(q, pose, light, o, t, p);
                 case FULL_SPRAY -> spray(q, pose, light, o, t, p, live, time, tint(s));
                 default -> {}
             }

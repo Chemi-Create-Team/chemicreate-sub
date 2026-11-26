@@ -205,7 +205,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             ItemStack material = ItemStack.EMPTY;
             boolean ok = true;
             if (st.material() != null) {
-                material = fetch(st.material(), jig.getBlockPos());
+                material = fetch(st.material(), st.materialCount(), jig.getBlockPos());
                 ok = !material.isEmpty();
             }
             if (ok && st.fluid() != null) ok = drawFluid(jig, st, true) && drawFluid(jig, st, false);
@@ -339,9 +339,16 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     }
 
     /** One item from a chest, depot, belt or whatever holds items around the arm; never from arms or jigs. */
-    private ItemStack fetch(net.minecraft.world.item.Item item, BlockPos jigAt) {
+    /**
+     * Takes {@code count} of the item from the containers the claw reaches, or nothing if they do not hold that many together.
+     * The result may be larger than a stack (a core plane takes 144 cores); it is saved and dropped in pieces.
+     */
+    private ItemStack fetch(net.minecraft.world.item.Item item, int count, BlockPos jigAt) {
         fetchFrom = null;
+        List<IItemHandler> from = new java.util.ArrayList<>();
+        int available = 0;
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE))) {
+            if (available >= count) break;
             if (p.equals(worldPosition) || p.equals(jigAt) || !level.isLoaded(p)) continue;
             BlockEntity be = level.getBlockEntity(p);
             if (be == null || be instanceof IndustrialArmBlockEntity || be instanceof AssemblyJigBlockEntity) continue;
@@ -349,15 +356,23 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             if (h == null) h = level.getCapability(Capabilities.ItemHandler.BLOCK, p, net.minecraft.core.Direction.UP);
             Vec3 top = Vec3.atBottomCenterOf(p).add(0, 1, 0);
             if (h == null || !ArmPose.reaches(worldPosition, top)) continue; // only from what the claw can reach
-            for (int slot = 0; slot < h.getSlots(); slot++) {
-                if (!h.getStackInSlot(slot).is(item)) continue;
-                ItemStack got = h.extractItem(slot, 1, false);
-                if (got.isEmpty()) continue;
-                fetchFrom = top;
-                return got;
-            }
+            int here = 0;
+            for (int slot = 0; slot < h.getSlots(); slot++)
+                if (h.getStackInSlot(slot).is(item)) here += h.extractItem(slot, h.getStackInSlot(slot).getCount(), true).getCount();
+            if (here == 0) continue;
+            if (fetchFrom == null) fetchFrom = top;
+            from.add(h);
+            available += here;
         }
-        return ItemStack.EMPTY;
+        if (available < count) {
+            fetchFrom = null;
+            return ItemStack.EMPTY;
+        }
+        int got = 0;
+        for (IItemHandler h : from)
+            for (int slot = 0; slot < h.getSlots() && got < count; slot++)
+                if (h.getStackInSlot(slot).is(item)) got += h.extractItem(slot, Math.min(count - got, h.getStackInSlot(slot).getCount()), false).getCount();
+        return new ItemStack(item, got);
     }
 
     private void work() {
@@ -479,7 +494,9 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         super.write(tag, r, clientPacket);
         tag.put("tools", toolSlot.serializeNBT(r));
         tag.put("tank", tank.writeToNBT(r, new CompoundTag()));
-        tag.put("held", held.saveOptional(r));
+        // A held count above a stack (144 cores) is not a valid saved stack, so the count goes beside it.
+        tag.put("held", held.isEmpty() ? new CompoundTag() : held.copyWithCount(1).save(r));
+        tag.putInt("heldCount", held.getCount());
         if (phase != IDLE && jigPos != null) {
             tag.putByte("phase", phase);
             tag.putInt("step", step);
@@ -501,6 +518,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         toolSlot.deserializeNBT(r, tag.getCompound("tools"));
         tank.readFromNBT(r, tag.getCompound("tank"));
         held = ItemStack.parseOptional(r, tag.getCompound("held"));
+        if (!held.isEmpty() && tag.contains("heldCount")) held = held.copyWithCount(Math.max(1, tag.getInt("heldCount")));
         byte savedPhase = tag.getByte("phase");
         boolean hasJob = (savedPhase == FETCH || savedPhase == MOVE || savedPhase == WORK) && tag.contains("jig") && tag.contains("step");
         phase = !hasJob ? IDLE : savedPhase == FETCH && !clientPacket ? MOVE : savedPhase;

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "ingredient": {
+    "item": "create_refinery_n_reactors:unfired_ferrite_ring"
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:ferrite_core"
+  },
+  "experience": 0.05,
+  "cookingtime": 100
+}
