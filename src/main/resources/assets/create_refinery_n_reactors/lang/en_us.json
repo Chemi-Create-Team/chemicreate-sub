@@ -6577,5 +6577,6 @@
   "create_refinery_n_reactors.ponder.shared.relay_computer.target": "Set the target output with the value panel on the front (10-100%). Right-click shows the status.",
   "create_refinery_n_reactors.ponder.shared.relay_computer.fission": "On a fission core it moves the control rods to hold that share of nominal power, backing off if fuel or coolant runs hot.",
   "create_refinery_n_reactors.ponder.shared.relay_computer.fusion": "On a fusion reactor it runs the start-up: vacuum, coil cooling, magnets, then plasma, and steps output down if the blanket runs hot.",
-  "create_refinery_n_reactors.ponder.shared.relay_computer.manual": "A redstone signal on the computer hands control back to the operator."
+  "create_refinery_n_reactors.ponder.shared.relay_computer.manual": "A redstone signal on the computer hands control back to the operator.",
+  "subtitles.create_refinery_n_reactors.relay.click": "Relays click"
 }

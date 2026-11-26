@@ -31,6 +31,10 @@ public final class RelayComputerBlockEntity extends SmartBlockEntity implements 
     public ScrollValueBehaviour target;
     private String status = "unformed";
     private double rodTarget = -1;
+    private final RelayAlu alu = new RelayAlu();
+    /** Ticks the relays are still busy with the last pass, and the switchings left to sound over them. */
+    private int busy;
+    private long clicks;
 
     public RelayComputerBlockEntity(BlockPos pos, BlockState state) { super(CERelayComputer.COMPUTER_ENTITY.get(), pos, state); }
 
@@ -53,8 +57,19 @@ public final class RelayComputerBlockEntity extends SmartBlockEntity implements 
 
     @Override public void tick() {
         super.tick();
-        if (level.isClientSide || level.getGameTime() % PERIOD != 0) return;
+        if (level.isClientSide) return;
+        if (busy > 0) {
+            busy--;
+            sound();
+            if (rodTarget >= 0 && status.startsWith("reactor")) renewLease();
+            return;
+        }
         String next = run();
+        // The relays take one contact transfer per step; more racks run more banks side by side.
+        long steps = alu.takeSteps();
+        clicks += alu.takeFlips();
+        busy = (int) Math.max(PERIOD - 1, Math.ceil(steps / (double) stepsPerTick()));
+        sound();
         boolean active = next.startsWith("reactor") || next.startsWith("fusion");
         setActive(active);
         if (!next.equals(status)) { status = next; setChanged(); sendData(); }
@@ -72,36 +87,47 @@ public final class RelayComputerBlockEntity extends SmartBlockEntity implements 
         return fusion == null ? "no_target" : fusion(fusion);
     }
 
+    /** Relay switchings per game tick of a computer with this many racks. */
+    public static int stepsPerTick(int racks) { return 8 * Math.min(racks, 8); }
+    private int stepsPerTick() { return stepsPerTick(racks()); }
+
     private String fission(ReactorCore core) {
         if (rodTarget < 0) rodTarget = Math.clamp(Math.round(core.rodInsertion() * 100), 0, 100);
         double flow = 0; var bottoms = core.fuelBottoms();
         for (BlockPos bottom : bottoms) flow += core.columnFlow(bottom);
         flow /= Math.max(1, bottoms.size());
-        // ReactorAutomaticControl aims at nominal power; scale nominal so the setpoint is target% of it.
-        rodTarget = ReactorAutomaticControl.nextTarget(rodTarget, core.hottestKelvin(), core.averageCoolantKelvin(), flow,
-            core.power(), core.nominalWatts() * target.getValue() / 100d, core.reactivity(), core.scram());
+        double setpoint = core.nominalWatts() * target.getValue() / 100d;
+        int tenths = RelayPrograms.fission(alu, RelayAlu.input(rodTarget * 10), RelayAlu.input(core.hottestKelvin() / 10),
+            RelayAlu.input(core.averageCoolantKelvin() / 2), RelayAlu.input(flow * 4), RelayAlu.input(core.power() / 1e6),
+            RelayAlu.input(setpoint > 0 ? core.power() / setpoint * 100 : 0), RelayAlu.input(core.reactivity() * 1e4), core.scram());
+        rodTarget = tenths / 10d;
         if (!core.setAutomaticTarget(worldPosition, rodTarget)) { rodTarget = -1; return "busy"; }
         return core.scram() ? "reactor_scram" : "reactor";
     }
 
     /** One step of the fusion start-up / hold sequence; returns the status key. */
     public static String fusionStep(FusionReactorControllerBlockEntity f, int wanted) {
-        if (f.emergency()) return "fusion_emergency";
-        if (f.quench()) { f.command(Command.PLASMA, false); return "fusion_quench"; }
-        f.command(Command.VACUUM, true);
-        if (!FusionPhysics.vacuumReady(f.baseVacuumPascals()) && f.fusionWatts() <= 0) return "fusion_vacuum";
-        f.command(Command.CRYOGENICS, true);
-        if (f.coilKelvin() > 5) { f.command(Command.PLASMA, false); return "fusion_cooling"; }
-        f.command(Command.MAGNETS, true);
-        if (f.magnetCharge() < .98) return "fusion_charging";
-        f.command(Command.PLASMA, true);
-        int current = f.targetPercent();
-        if (f.blanketKelvin() > 600) f.setTargetPercent(current - 10);
-        else if (current != wanted) f.setTargetPercent(current + Math.clamp(wanted - current, -5, 5));
-        return "fusion";
+        return RelayPrograms.fusion(new RelayAlu(), f, wanted);
     }
 
-    private String fusion(FusionReactorControllerBlockEntity f) { return fusionStep(f, target.getValue()); }
+    private void renewLease() {
+        BlockPos controller = ReactorCores.nearest(level, worldPosition, RANGE);
+        if (controller != null && level.getBlockEntity(controller) instanceof net.createplant.block.entity.FuelChannelBlockEntity lead && lead.core() != null)
+            lead.core().setAutomaticTarget(worldPosition, rodTarget);
+    }
+
+    /** Plays this tick's share of the pass's relay switchings. */
+    private void sound() {
+        if (clicks <= 0) return;
+        long now = (long) Math.ceil(clicks / (double) (busy + 1));
+        clicks -= now;
+        if (level.getGameTime() % 2 != 0 && busy > 0) return;
+        float volume = (float) Math.min(.6, .08 + now * .01);
+        level.playSound(null, worldPosition.above(), CERelayComputer.CLICK.get(), net.minecraft.sounds.SoundSource.BLOCKS,
+            volume, .9f + level.random.nextFloat() * .3f);
+    }
+
+    private String fusion(FusionReactorControllerBlockEntity f) { return RelayPrograms.fusion(alu, f, target.getValue()); }
 
     private FusionReactorControllerBlockEntity nearestFusion() {
         FusionReactorControllerBlockEntity best = null; double bestDistance = (double) RANGE * RANGE * 4;

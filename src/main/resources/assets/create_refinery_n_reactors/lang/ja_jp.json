@@ -6577,5 +6577,6 @@
   "create_refinery_n_reactors.ponder.shared.relay_computer.target": "正面の値パネルで目標出力(10〜100%)を設定。右クリックで状態を表示。",
   "create_refinery_n_reactors.ponder.shared.relay_computer.fission": "原子炉では定格出力のその割合になるよう制御棒を動かし、燃料や冷却材が熱くなれば出力を下げる。",
   "create_refinery_n_reactors.ponder.shared.relay_computer.fusion": "核融合炉では真空引き→コイル冷却→マグネット→プラズマの順に起動し、ブランケットが熱くなれば出力を下げる。",
-  "create_refinery_n_reactors.ponder.shared.relay_computer.manual": "コンピュータにレッドストーン信号を入れると、制御を手動に返す。"
+  "create_refinery_n_reactors.ponder.shared.relay_computer.manual": "コンピュータにレッドストーン信号を入れると、制御を手動に返す。",
+  "subtitles.create_refinery_n_reactors.relay.click": "リレーがカチカチ鳴る"
 }

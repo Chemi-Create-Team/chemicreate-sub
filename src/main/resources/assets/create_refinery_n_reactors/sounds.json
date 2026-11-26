@@ -182,5 +182,9 @@
   "machine.high_pressure_gas": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.high_pressure_gas",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/high_pressure_gas", "attenuation_distance": 20 }]
+  },
+  "relay.click": {
+    "subtitle": "subtitles.create_refinery_n_reactors.relay.click",
+    "sounds": [{ "name": "create_refinery_n_reactors:relay/click0", "attenuation_distance": 16 }, { "name": "create_refinery_n_reactors:relay/click1", "attenuation_distance": 16 }, { "name": "create_refinery_n_reactors:relay/click2", "attenuation_distance": 16 }]
   }
 }

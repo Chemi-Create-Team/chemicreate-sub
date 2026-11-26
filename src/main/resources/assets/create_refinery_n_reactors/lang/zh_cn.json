@@ -6577,5 +6577,6 @@
   "create_refinery_n_reactors.ponder.shared.relay_computer.target": "用正面的数值面板设置目标输出（10–100%）。右键显示状态。",
   "create_refinery_n_reactors.ponder.shared.relay_computer.fission": "对裂变堆芯，它移动控制棒维持该比例的额定功率，燃料或冷却剂过热时降低功率。",
   "create_refinery_n_reactors.ponder.shared.relay_computer.fusion": "对聚变堆，它依次执行抽真空、线圈冷却、磁体、等离子体的启动流程，包层过热时降低输出。",
-  "create_refinery_n_reactors.ponder.shared.relay_computer.manual": "向计算机输入红石信号即可把控制交还给操作员。"
+  "create_refinery_n_reactors.ponder.shared.relay_computer.manual": "向计算机输入红石信号即可把控制交还给操作员。",
+  "subtitles.create_refinery_n_reactors.relay.click": "继电器咔嗒作响"
 }

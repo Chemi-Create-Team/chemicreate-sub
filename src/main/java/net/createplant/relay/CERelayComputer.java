@@ -23,9 +23,12 @@ public final class CERelayComputer {
         BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
     public static final Supplier<BlockEntityType<RelayComputerBlockEntity>> COMPUTER_ENTITY = TYPES.register("relay_computer",
         () -> BlockEntityType.Builder.of(RelayComputerBlockEntity::new, COMPUTER.get()).build(null));
+    private static final DeferredRegister<net.minecraft.sounds.SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, CreatePlant.MOD_ID);
+    public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.sounds.SoundEvent, net.minecraft.sounds.SoundEvent> CLICK =
+        SOUNDS.register("relay.click", () -> net.minecraft.sounds.SoundEvent.createVariableRangeEvent(CreatePlant.location("relay.click")));
     private CERelayComputer() { }
     public static void register(IEventBus bus) {
         ITEMS.registerSimpleBlockItem(RACK);ITEMS.registerSimpleBlockItem(COMPUTER);
-        BLOCKS.register(bus);ITEMS.register(bus);TYPES.register(bus);
+        BLOCKS.register(bus);ITEMS.register(bus);TYPES.register(bus);SOUNDS.register(bus);
     }
 }
