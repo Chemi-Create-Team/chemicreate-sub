@@ -124,6 +124,70 @@ public class ContinuousFactoryGameTests {
         });
     }
 
+    /** The same stock becomes a different product with the number of stands and the burner: plate or beam, sheet or foil, hot or cold. */
+    @GameTest(template = "test_wet_processing")
+    public static void standCountAndBurnerChooseTheRolledProduct(GameTestHelper h) {
+        var steel = CEMetals.STEEL_BLOCK.toStack();
+        var quartz = new ItemStack(Items.QUARTZ, 2);
+        h.assertTrue(rolled(h, steel, ItemStack.EMPTY, 2, 1).is(CEContinuousFactory.THICK_STEEL_PLATE.get()), "Two hot stands roll plate");
+        h.assertTrue(rolled(h, steel, ItemStack.EMPTY, 4, 1).is(CEContinuousFactory.STEEL_H_BEAM.get()), "Four hot stands roll beam");
+        h.assertTrue(rolled(h, steel, quartz, 4, 0).is(CEContinuousFactory.ELECTRICAL_STEEL_SHEET.get()), "Four cold stands with silicon roll electrical steel");
+        h.assertTrue(rolled(h, steel, quartz, 4, 1).is(CEContinuousFactory.STEEL_H_BEAM.get()), "A lit burner never cold-rolls");
+        var waiting = ContinuousFactoryBlockEntity.pick(candidates(h, steel, ItemStack.EMPTY), 2, 0);
+        h.assertTrue(waiting != null && waiting.heat() > 0, "Cold steel on two stands waits for heat instead of finding another product");
+        var copper = new ItemStack(Items.COPPER_BLOCK);
+        h.assertTrue(rolled(h, copper, ItemStack.EMPTY, 3, 1).is(com.simibubi.create.AllItems.COPPER_SHEET.get()), "Few stands roll copper sheet");
+        h.assertTrue(rolled(h, copper, ItemStack.EMPTY, 5, 1).is(CEContinuousFactory.COPPER_FOIL.get()), "Many stands roll copper foil");
+        var gold = new ItemStack(Items.GOLD_BLOCK);
+        h.assertTrue(ContinuousFactoryBlockEntity.pick(candidates(h, gold, ItemStack.EMPTY), 4, 1) == null, "Gold foil needs the full five stands");
+        h.assertTrue(rolled(h, gold, ItemStack.EMPTY, 5, 1).getCount() == 32, "Five stands beat gold into foil");
+        h.assertTrue(rolled(h, new ItemStack(CEMetals.LEAD_INGOT.get()), ItemStack.EMPTY, 2, 0).is(CEContinuousFactory.LEAD_SHEET.get()), "Soft lead rolls cold");
+        h.assertTrue(rolled(h, new ItemStack(CEContinuousFactory.THICK_STEEL_PLATE.get()), new ItemStack(CEItems.STAINLESS_STEEL_SHEET.get()), 2, 1)
+            .is(CEContinuousFactory.STAINLESS_CLAD_PLATE.get()), "A stainless sheet on a thick plate bonds into clad plate");
+        h.succeed();
+    }
+
+    /** Zircaloy allows only 6% speed error: a ratio that steel would forgive buckles the tube stock. */
+    @GameTest(template = "test_wet_processing", timeoutTicks = 140)
+    public static void zircaloyBucklesWhereSteelIsForgiven(GameTestHelper h) {
+        var machine = mill(h, 30, 37);
+        h.assertTrue(Math.abs(FactoryProcess.millRatio(30, 37) - 1) < .10, "Steel would tolerate this ratio");
+        insert(h, machine, Direction.UP, new ItemStack(CEItems.ZIRCONIUM_INGOT.get(), 3));
+        insert(h, machine, Direction.WEST, new ItemStack(CEItems.NICKEL_INGOT.get()));
+        h.runAfterDelay(120, () -> {
+            h.assertTrue(machine.status().equals("buckled"), "Zircaloy buckles at 30 → 37 RPM: " + machine.status());
+            h.succeed();
+        });
+    }
+
+    /** With the burner removed the line cold-rolls lead into sheet. */
+    @GameTest(template = "test_wet_processing", timeoutTicks = 165)
+    public static void coldLineRollsLeadSheet(GameTestHelper h) {
+        var machine = mill(h, 30, 40);
+        h.setBlock(CONTROL.below(), Blocks.AIR);
+        insert(h, machine, Direction.UP, new ItemStack(CEMetals.LEAD_INGOT.get()));
+        h.runAfterDelay(146, () -> {
+            h.assertTrue(count(h, CONTROL.south(7), CEContinuousFactory.LEAD_SHEET.get()) == 2, "Cold stands roll two lead sheets: " + machine.status());
+            h.succeed();
+        });
+    }
+
+    private static List<net.createplant.recipe.ContinuousFactoryRecipe> candidates(GameTestHelper h, ItemStack feed, ItemStack auxiliary) {
+        var input = new net.minecraft.world.item.crafting.RecipeInput() {
+            @Override public ItemStack getItem(int slot) { return slot == 0 ? feed : auxiliary; }
+            @Override public int size() { return 2; }
+        };
+        return h.getLevel().getRecipeManager().getAllRecipesFor(net.createplant.registry.CERecipeTypes.CONTINUOUS_PROCESSING
+                .<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.ContinuousFactoryRecipe>getType()).stream()
+            .map(holder -> holder.value()).filter(r -> r.machine() == net.createplant.factory.FactoryKind.MILL && r.matches(input, h.getLevel())).toList();
+    }
+
+    private static ItemStack rolled(GameTestHelper h, ItemStack feed, ItemStack auxiliary, int stands, int heat) {
+        var recipe = ContinuousFactoryBlockEntity.pick(candidates(h, feed, auxiliary), stands, heat);
+        h.assertTrue(recipe != null && heat >= recipe.heat(), "A recipe runs " + feed + " on " + stands + " stands at heat " + heat);
+        return recipe.result();
+    }
+
     @GameTest(template = "test_wet_processing", timeoutTicks = 140)
     public static void slowStandBucklesInsteadOfIssuingProduct(GameTestHelper h) { checkMillFault(h, 25, "buckled", 0); }
 

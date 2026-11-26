@@ -1,0 +1,20 @@
+{
+  "machine": "rolling_mill",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "tag": "c:ingots/zirconium",
+    "count": 3
+  },
+  "auxiliary": {
+    "tag": "c:ingots/nickel",
+    "count": 1
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:zircaloy_cladding_tube",
+    "count": 8
+  },
+  "work": 400,
+  "heat": 1,
+  "starting_thickness": 0.36,
+  "rpm_tolerance": 0.06
+}

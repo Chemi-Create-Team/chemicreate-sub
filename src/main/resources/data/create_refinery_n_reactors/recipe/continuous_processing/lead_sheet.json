@@ -1,0 +1,16 @@
+{
+  "machine": "rolling_mill",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "tag": "c:ingots/lead",
+    "count": 1
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:lead_sheet",
+    "count": 2
+  },
+  "work": 400,
+  "heat": 0,
+  "starting_thickness": 0.45,
+  "rpm_tolerance": 0.2
+}

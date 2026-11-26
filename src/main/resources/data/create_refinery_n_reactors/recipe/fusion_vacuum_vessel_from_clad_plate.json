@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "KKK",
+    "KCK",
+    "KKK"
+  ],
+  "key": {
+    "K": {
+      "item": "create_refinery_n_reactors:stainless_clad_plate"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_vacuum_vessel",
+    "count": 16
+  }
+}

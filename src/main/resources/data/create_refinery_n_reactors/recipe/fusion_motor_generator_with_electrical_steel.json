@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CEC",
+    "PAP",
+    "CEC"
+  ],
+  "key": {
+    "C": {
+      "item": "create:copper_sheet"
+    },
+    "E": {
+      "item": "create_refinery_n_reactors:electrical_steel_sheet"
+    },
+    "P": {
+      "item": "create:precision_mechanism"
+    },
+    "A": {
+      "item": "create_refinery_n_reactors:fusion_reinforced_casing"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_motor_generator",
+    "count": 2
+  }
+}

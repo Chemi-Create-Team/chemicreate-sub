@@ -1,0 +1,16 @@
+{
+  "machine": "rolling_mill",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:titanium_block",
+    "count": 1
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:titanium_sheet",
+    "count": 12
+  },
+  "work": 400,
+  "heat": 2,
+  "starting_thickness": 0.5,
+  "rpm_tolerance": 0.04
+}

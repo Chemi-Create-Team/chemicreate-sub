@@ -53,6 +53,10 @@ public final class CEContinuousFactory {
     public static final DeferredItem<Item> STEEL_RAIL_STOCK = ITEMS.registerSimpleItem("steel_rail_stock");
     public static final DeferredItem<Item> COPPER_FOIL = ITEMS.registerSimpleItem("copper_foil");
     public static final DeferredItem<Item> ALUMINUM_FOIL = ITEMS.registerSimpleItem("aluminum_foil");
+    public static final DeferredItem<Item> ELECTRICAL_STEEL_SHEET = ITEMS.registerSimpleItem("electrical_steel_sheet");
+    public static final DeferredItem<Item> STAINLESS_CLAD_PLATE = ITEMS.registerSimpleItem("stainless_clad_plate");
+    public static final DeferredItem<Item> LEAD_SHEET = ITEMS.registerSimpleItem("lead_sheet");
+    public static final DeferredItem<Item> GOLD_FOIL = ITEMS.registerSimpleItem("gold_foil");
     public static final DeferredItem<Item> STEEL_CORE_CABLE = ITEMS.registerSimpleItem("steel_core_aluminum_cable");
     public static final DeferredItem<Item> WIRE_ROPE = ITEMS.registerSimpleItem("heavy_wire_rope");
 

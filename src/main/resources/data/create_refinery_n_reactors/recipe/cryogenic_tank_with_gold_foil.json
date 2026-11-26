@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SGS",
+    "ABA",
+    "SGS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "A": {
+      "tag": "c:plates/aluminum"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:gold_foil"
+    },
+    "B": {
+      "item": "minecraft:barrel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:cryogenic_tank",
+    "count": 2
+  }
+}

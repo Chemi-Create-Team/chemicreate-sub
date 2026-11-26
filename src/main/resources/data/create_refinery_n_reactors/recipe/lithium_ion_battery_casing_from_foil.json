@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SLS",
+    "UGA",
+    "SLS"
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:stainless_steel_sheet"
+    },
+    "L": {
+      "item": "create_refinery_n_reactors:lithium_carbonate"
+    },
+    "G": {
+      "item": "create_refinery_n_reactors:carbon_powder"
+    },
+    "U": {
+      "item": "create_refinery_n_reactors:copper_foil"
+    },
+    "A": {
+      "item": "create_refinery_n_reactors:aluminum_foil"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:lithium_ion_battery_casing",
+    "count": 4
+  }
+}

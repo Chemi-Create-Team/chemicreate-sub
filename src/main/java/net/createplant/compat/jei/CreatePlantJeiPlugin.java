@@ -143,8 +143,11 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             return feed;
         }).toList());
         recipe.auxiliary().ifPresent(aux -> inputs.add(Arrays.stream(aux.ingredient().getItems()).map(stack -> stack.copyWithCount(aux.count())).toList()));
-        return new PlantProcess(inputs, List.of(), List.of(), List.of(recipe.result().copy()), List.of(),
-            note(recipe.machine().id + (recipe.minimumDamage() > 0 ? "_worn" : recipe.heat() == 2 ? "_strong" : "")));
+        var text = note(recipe.machine().id + (recipe.cold() ? "_cold" : recipe.minimumDamage() > 0 ? "_worn" : recipe.heat() == 2 ? "_strong" : "")).copy();
+        if (recipe.minStands() > 1 || recipe.maxStands() < 8)
+            text.append(" ").append(note("stands", recipe.minStands() > 1 ? recipe.minStands() : 2, recipe.maxStands() < 8 ? recipe.maxStands() : 5));
+        if (recipe.rpmTolerance() != .10f) text.append(" ").append(note("rpm_tolerance", Math.round(recipe.rpmTolerance() * 100)));
+        return new PlantProcess(inputs, List.of(), List.of(), List.of(recipe.result().copy()), List.of(), text);
     }
 
     @Override public void registerRecipes(IRecipeRegistration registration) {

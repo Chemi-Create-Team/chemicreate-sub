@@ -1,0 +1,22 @@
+{
+  "machine": "rolling_mill",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:steel_block",
+    "count": 1
+  },
+  "auxiliary": {
+    "item": "minecraft:quartz",
+    "count": 2
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:electrical_steel_sheet",
+    "count": 6
+  },
+  "work": 400,
+  "heat": 0,
+  "starting_thickness": 0.4,
+  "max_heat": 0,
+  "min_stands": 4,
+  "rpm_tolerance": 0.05
+}
