@@ -58,3 +58,7 @@
 ## 修正（腕の太さ）
 
 肩から先を丸ごと2倍にしていたため腕が太すぎた。腕の2区間だけを長さ方向に2倍にし（`IndustrialArmRenderer.stretched`）、関節・爪・工具はCreateの大きさに戻した。手首から先が縮んだので、関節角はCreateの式を `ArmPose.angles` に移植して腕の長さだけを変えて解く（反射での角度読み取りは削除）。`theArmAimsWithCreatesAnglesWithinItsReach` で元の長さのときCreateの `ArmAngleTarget` と角度が一致することを確認。GameTest 11件成功、Ponderの撮影で細い腕がジグの継ぎ目とデポに届くことを確認。
+
+## 修正（コアメモリを編む動き）
+
+以前の配線は格子の上に直線を重ねて描き、交点の上に輪を載せるだけで、線がコアを通っていなかった。`Trajectory.grid` を作り直し、コアを置く工程→X線→Y線→センス線（対角線ジグザグ）の順にし、ヘッドがコアごとに輪の中心まで沈み間で持ち上がるようにした。軌道の各区間に種類（`Trajectory.kind`）を持たせ、描画はそれで色分けする。コアは45°傾けて立て、穴をX・Y・対角線のすべてが通る向きにした。作業時間は従来どおり120 tick（GameTestの時間に合わせたまま）。Ponderの最後に1マスの配線場面を追加（`docs/quality/industrial-arm/core-wiring.png`）。GameTest 12件成功。

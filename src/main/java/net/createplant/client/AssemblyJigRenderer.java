@@ -29,7 +29,7 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
     /** White hot, yellow, orange, dark red, then cold silver. */
     private static final int[] HEAT = {0xFFFFEB, 0xFFE65A, 0xFF821E, 0x78140A, 0xAAAFB9};
     private static final double[] HEAT_AT = {0, .2, .45, .75, 1};
-    private static final int COPPER = 0xC8733A, SILVER = 0xD2D7E0, GOLD = 0xD4A84A, FERRITE = 0x3C3C42;
+    private static final int COPPER = 0xC8733A, ENAMEL = 0x9E2F26, GOLD = 0xD4A84A, FERRITE = 0x3C3C42;
 
     public AssemblyJigRenderer(BlockEntityRendererProvider.Context ctx) {}
 
@@ -77,24 +77,22 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
     }
 
     private interface Piece {
-        void draw(Vec3 a, Vec3 b, double behind, int stroke);
+        void draw(Vec3 a, Vec3 b, double behind, int kind);
     }
 
     /** Cuts every stroke up to the progress into short pieces; {@code behind} is how far the tool has moved on since the piece. */
     private static void pieces(Trajectory t, double progress, double step, Piece out) {
-        int n = 0;
         for (int i = 0; i < t.segments(); i++) {
             if (!t.stroke[i]) continue;
             double d = t.done(i, progress);
-            if (d <= 0) { n++; continue; }
+            if (d <= 0) continue;
             Vec3 a = t.points[i], b = t.points[i + 1];
             int cuts = Math.max(1, (int) Math.ceil(a.distanceTo(b) * d / step));
             for (int c = 0; c < cuts; c++) {
                 double f0 = d * c / cuts, f1 = d * (c + 1) / cuts;
                 double behind = progress * t.length - (t.cumulative[i] + (f0 + f1) / 2 * (t.cumulative[i + 1] - t.cumulative[i]));
-                out.draw(a.lerp(b, f0), a.lerp(b, f1), behind, n);
+                out.draw(a.lerp(b, f0), a.lerp(b, f1), behind, t.kind[i]);
             }
-            n++;
         }
     }
 
@@ -126,27 +124,30 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
     }
 
     private static void wires(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 o, Trajectory t, float p) {
-        pieces(t, p, 1, (a, b, behind, n) -> {
-            int color = n < Trajectory.GRID ? COPPER : n < 2 * Trajectory.GRID ? SILVER : n % 2 == 0 ? GOLD : SILVER;
-            ArmDraw.bar(q, pose, o.add(a), o.add(b), .026, .026, color, 255, light);
+        pieces(t, p, 1, (a, b, behind, kind) -> {
+            if (kind == Trajectory.CORES) return; // the head only sets cores on this pass
+            int color = kind == Trajectory.X_WIRE ? COPPER : kind == Trajectory.Y_WIRE ? ENAMEL : GOLD;
+            ArmDraw.bar(q, pose, o.add(a), o.add(b), .012, .012, color, 255, light);
         });
-        // ferrite core rings sit on the crossings once the second wire has passed
+        // each core appears once the head has passed over its place on the setting pass
         for (int j = 0; j < Trajectory.GRID; j++) {
-            int seg = t.segmentOfStroke(Trajectory.GRID + j);
+            int seg = t.segmentOfKind(Trajectory.CORES, j);
             if (seg < 0) continue;
             double done = t.done(seg, p);
             for (int i = 0; i < Trajectory.GRID; i++) {
                 double f = (double) i / (Trajectory.GRID - 1);
-                if (done < (j % 2 == 0 ? f : 1 - f) - 1e-6 || done <= 0) continue;
-                ring(q, pose, light, o.add(Trajectory.gridAt(i), 1.05, Trajectory.gridAt(j)));
+                if (done <= 0 || done < (j % 2 == 0 ? f : 1 - f) - 1e-6) continue;
+                ring(q, pose, light, o.add(Trajectory.gridAt(i), Trajectory.CORE_Y, Trajectory.gridAt(j)));
             }
         }
     }
 
+    /** A ferrite core standing on edge, its hole along {@link Trajectory#CORE_AXIS}, so the wires visibly pass through it. */
     private static void ring(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 c) {
-        double r = .042;
-        Vec3[] k = {new Vec3(-r, 0, -r), new Vec3(r, 0, -r), new Vec3(r, 0, r), new Vec3(-r, 0, r)};
-        for (int i = 0; i < 4; i++) ArmDraw.bar(q, pose, c.add(k[i]), c.add(k[(i + 1) % 4]), .02, .03, FERRITE, 255, light);
+        double r = .03;
+        Vec3 u = new Vec3(0, 1, 0).cross(Trajectory.CORE_AXIS).normalize().scale(r), v = new Vec3(0, r, 0);
+        Vec3[] k = {u.add(v), u.reverse().add(v), u.reverse().subtract(v), u.subtract(v)};
+        for (int i = 0; i < 4; i++) ArmDraw.bar(q, pose, c.add(k[i]), c.add(k[(i + 1) % 4]), .014, .016, FERRITE, 255, light);
     }
 
     private static void spray(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 o, Trajectory t, float p, boolean live, float time, int color) {

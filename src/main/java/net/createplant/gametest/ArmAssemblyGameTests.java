@@ -147,4 +147,19 @@ public class ArmAssemblyGameTests {
         h.assertTrue(items != null && items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.DAMAGED_ANVIL), false).isEmpty(), "the depot takes the anvil");
         h.succeedWhen(() -> h.assertTrue(items.getStackInSlot(0).is(Blocks.CHIPPED_ANVIL.asItem()), "the arm welds the anvil one stage back, and the depot holds the result"));
     }
+
+    @GameTest(template = "test_empty")
+    public static void everyWireThreadsEveryCore(GameTestHelper h) {
+        var t = net.createplant.arm.Trajectory.of(net.createplant.arm.ArmPattern.GRID_WIRE, null);
+        int g = net.createplant.arm.Trajectory.GRID;
+        for (int kind : new int[] {net.createplant.arm.Trajectory.X_WIRE, net.createplant.arm.Trajectory.Y_WIRE, net.createplant.arm.Trajectory.SENSE})
+            for (int i = 0; i < g; i++)
+                for (int j = 0; j < g; j++) {
+                    Vec3 core = new Vec3(net.createplant.arm.Trajectory.gridAt(i), net.createplant.arm.Trajectory.CORE_Y, net.createplant.arm.Trajectory.gridAt(j));
+                    int through = 0;
+                    for (int s = 0; s < t.segments(); s++) if (t.kind[s] == kind && t.points[s + 1].distanceTo(core) < .01) through++;
+                    h.assertTrue(through == 1, "wire kind " + kind + " passes core " + i + "," + j + " exactly once, not " + through + " times");
+                }
+        h.succeed();
+    }
 }

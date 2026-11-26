@@ -6527,5 +6527,6 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.grip": "夹爪领取离自己最近的未开始步骤并放置方块。多台机械臂共用一个夹具，一个步骤只归一台。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "前一阶段完成后才开始下一阶段。焊枪沿接缝画出由白色冷却为银色的焊道。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "全部步骤完成后临时方块消失，成品掉落并升起蒸汽。配方是 assembly/ 下的数据包。",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "没有夹具工作时，机械臂也会加工范围内传送带和置物台上的物品：它会让物品停住，并变成传送带配方的结果，例如焊接修复。传送带配方是带有 input 的 assembly/ JSON。"
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "没有夹具工作时，机械臂也会加工范围内传送带和置物台上的物品：它会让物品停住，并变成传送带配方的结果，例如焊接修复。传送带配方是带有 input 的 assembly/ JSON。",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.wire": "精密布线头先逐行摆放铁氧体磁芯，再把铜色X线和红色漆包Y线逐个穿过每个磁芯，最后让金色读出线沿对角线之字形穿过。"
 }

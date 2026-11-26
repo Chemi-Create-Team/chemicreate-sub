@@ -27,8 +27,12 @@ public final class ArmPonderScenes {
         + "{\"pos\":[1,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
         + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"welding_torch\",\"pattern\":\"seam_weld\",\"time\":60}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:welded_iron_beam\"}}";
+    /** One cell of the magnetic core memory's wiring stage, to show the threading up close. */
+    private static final String CORE = "{\"size\":[1,1,1],\"stages\":[[{\"pos\":[0,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"grid_wire\",\"time\":120}]],"
+        + "\"result\":{\"id\":\"create_refinery_n_reactors:magnetic_core_memory\"}}";
     private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6), DEPOT = new BlockPos(5, 1, 2);
-    private static final int FRAMES = 24;
+    private static final int FRAMES = 24, WIRE_FRAMES = 240;
     private ArmPonderScenes() { }
 
     public static void arm(SceneBuilder builder, SceneBuildingUtil util) {
@@ -92,16 +96,36 @@ public final class ArmPonderScenes {
         scene.world().createItemOnBeltLike(DEPOT, Direction.UP, new ItemStack(Blocks.CHIPPED_ANVIL));
         scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
         scene.idle(30);
+
+        // Core memory wiring: cores set row by row, then the X, Y and sense wires threaded through each of them.
+        var core = ArmRecipe.fromJson(CreatePlant.location("magnetic_core_memory"), JsonParser.parseString(CORE).getAsJsonObject());
+        scene.world().removeItemsFromBelt(DEPOT);
+        scene.world().modifyBlockEntity(JIG, AssemblyJigBlockEntity.class, be -> be.setRecipe(core));
+        scene.world().setBlock(JIG.above(), Blocks.IRON_BLOCK.defaultBlockState(), false);
+        scene.world().showSection(util.select().position(JIG.above()), Direction.DOWN);
+        finish(scene, 0);
+        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 50).rightClick().withItem(tool(ArmTool.WIRING_HEAD));
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WIRING_HEAD)));
+        scene.idle(10);
+        text(scene, util, JIG.above(), "wire");
+        work(scene, core, 1, WIRE_FRAMES, 1);
+        finish(scene, 1);
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
+        scene.idle(40);
         scene.markAsFinished();
     }
 
     /** One step played from start to end: the jig's progress and the arm's tip follow the same trajectory the server uses. */
     private static void work(CreateSceneBuilder scene, ArmRecipe recipe, int step) {
+        work(scene, recipe, step, FRAMES, 2);
+    }
+
+    private static void work(CreateSceneBuilder scene, ArmRecipe recipe, int step, int frames, int ticksPerFrame) {
         var s = recipe.steps().get(step);
         Trajectory path = Trajectory.of(s.pattern(), s.seamDirection());
         Vec3 origin = Vec3.atLowerCornerOf(JIG.above().offset(s.rel()));
-        for (int frame = 1; frame <= FRAMES; frame++) {
-            float progress = frame / (float) FRAMES;
+        for (int frame = 1; frame <= frames; frame++) {
+            float progress = frame / (float) frames;
             Vec3 tip = origin.add(path.tip(progress)).add(0, s.place() ? 0 : IndustrialArmBlockEntity.HOVER, 0);
             scene.world().modifyBlockEntity(JIG, AssemblyJigBlockEntity.class, be -> {
                 be.status[step] = AssemblyJigBlockEntity.RESERVED;
@@ -111,7 +135,7 @@ public final class ArmPonderScenes {
                 be.held = s.place() ? new ItemStack(s.block()) : ItemStack.EMPTY;
                 be.aim(IndustrialArmBlockEntity.WORK, tip);
             });
-            scene.idle(frame == 1 ? 12 : 2);
+            scene.idle(frame == 1 ? 12 : ticksPerFrame);
         }
     }
 

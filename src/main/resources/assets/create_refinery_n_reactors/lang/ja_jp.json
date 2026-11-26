@@ -6527,5 +6527,6 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.grip": "グリッパーは自分に最も近い未着手の工程を取り、ブロックを置きます。1つのジグを複数のアームで分け合い、1つの工程は1台だけが担当します。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "前のステージが終わると次のステージが始まります。溶接トーチは継ぎ目に沿って、白から銀へ冷えていくビードを描きます。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "全工程が終わると仮ブロックが消え、完成品が出て蒸気が上がります。レシピは assembly/ のデータパックで追加できます。",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "ジグの仕事がないときは、届く範囲のベルトやデポ上のアイテムも加工します。アイテムを止めて、溶接修理などベルト用レシピの結果に変えます。ベルト用レシピは input を持つ assembly/ のJSONです。"
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "ジグの仕事がないときは、届く範囲のベルトやデポ上のアイテムも加工します。アイテムを止めて、溶接修理などベルト用レシピの結果に変えます。ベルト用レシピは input を持つ assembly/ のJSONです。",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.wire": "精密配線ヘッドは、まずフェライトコアを1列ずつ並べ、次に銅のX線と赤いエナメル線のY線を、コアごとに沈み込みながら全部のコアに通し、最後に金のセンス線を対角線に沿ってジグザグに通します。"
 }
