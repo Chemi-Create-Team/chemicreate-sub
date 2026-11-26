@@ -6667,5 +6667,12 @@
   "item.create_refinery_n_reactors.desulfurized_hot_metal_bucket": "Desulfurized Hot Metal Bucket",
   "item.create_refinery_n_reactors.molten_steel_bucket": "Molten Steel Bucket",
   "create_refinery_n_reactors.ponder.torpedo_car.header": "From pig iron to rolled steel",
-  "block.create_refinery_n_reactors.torpedo_tank.section_required": "The torpedo tank needs a solid 3×3 cross-section."
+  "block.create_refinery_n_reactors.torpedo_tank.section_required": "The torpedo tank needs a solid 3×3 cross-section.",
+  "fluid.create_refinery_n_reactors.molten_stainless_steel": "Molten Stainless Steel",
+  "item.create_refinery_n_reactors.molten_stainless_steel_bucket": "Molten Stainless Steel Bucket",
+  "item.create_refinery_n_reactors.cast_stainless_steel_slab": "Cast Stainless Steel Slab",
+  "block.create_refinery_n_reactors.molten_pig_iron": "Molten Pig Iron",
+  "block.create_refinery_n_reactors.desulfurized_hot_metal": "Desulfurized Hot Metal",
+  "block.create_refinery_n_reactors.molten_steel": "Molten Steel",
+  "block.create_refinery_n_reactors.molten_stainless_steel": "Molten Stainless Steel"
 }

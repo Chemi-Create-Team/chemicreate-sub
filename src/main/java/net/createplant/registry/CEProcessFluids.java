@@ -23,6 +23,7 @@ public final class CEProcessFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_PIG_IRON = stream("molten_pig_iron", 0xFFF98235, 6900);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DESULFURIZED_HOT_METAL = stream("desulfurized_hot_metal", 0xFFFFA454, 6900);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_STEEL = stream("molten_steel", 0xFFFFC579, 7000);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> MOLTEN_STAINLESS_STEEL = stream("molten_stainless_steel", 0xFFFFD793, 7300);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> COOLED_HYDROTREATER_EFFLUENT = stream("cooled_hydrotreater_effluent");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> LOW_SULFUR_DIESEL = stream("low_sulfur_diesel");
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HYDROGEN_SULFIDE = stream("hydrogen_sulfide");

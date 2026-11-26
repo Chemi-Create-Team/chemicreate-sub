@@ -53,6 +53,7 @@ public final class CEConverter {
         BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().sound(SoundType.METAL));
     public static final DeferredItem<BlockItem> TORPEDO_TANK_ITEM = ITEMS.registerSimpleBlockItem(TORPEDO_TANK);
     public static final DeferredItem<Item> CAST_STEEL_SLAB = ITEMS.registerSimpleItem("cast_steel_slab");
+    public static final DeferredItem<Item> CAST_STAINLESS_STEEL_SLAB = ITEMS.registerSimpleItem("cast_stainless_steel_slab");
     public static final Supplier<BlockEntityType<TorpedoTankBlockEntity>> TORPEDO_ENTITY = TYPES.register("torpedo_tank",
         () -> BlockEntityType.Builder.of(TorpedoTankBlockEntity::new, TORPEDO_TANK.get()).build(null));
     public static final Supplier<TorpedoStorage.Type> TORPEDO_STORAGE = MOUNTED_TYPES.register("torpedo_tank", TorpedoStorage.Type::new);

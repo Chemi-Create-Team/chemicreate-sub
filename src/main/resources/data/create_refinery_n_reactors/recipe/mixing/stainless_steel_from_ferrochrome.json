@@ -31,8 +31,8 @@
   ],
   "results": [
     {
-      "id": "create_refinery_n_reactors:stainless_steel_ingot",
-      "count": 10
+      "id": "create_refinery_n_reactors:molten_stainless_steel",
+      "amount": 600
     }
   ],
   "heat_requirement": "superheated"

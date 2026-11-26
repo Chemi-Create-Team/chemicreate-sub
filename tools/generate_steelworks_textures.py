@@ -88,7 +88,19 @@ draw.line((3, 8, 10, 5), fill='#d1b198')
 draw.line((7, 11, 14, 8), fill='#af9e90')
 save(slab, 'item/cast_steel_slab')
 
-for name, liquid in (('molten_pig_iron', '#e06e30'), ('desulfurized_hot_metal', '#f48d44'), ('molten_steel', '#f5b563')):
+# Stainless slab: same cast shape, brighter grey faces with a faint blue sheen and no rust tone.
+slab = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
+draw = ImageDraw.Draw(slab)
+draw.polygon([(1, 8), (10, 4), (15, 7), (15, 10), (6, 14), (1, 11)], fill='#3c4245')
+draw.polygon([(2, 8), (10, 5), (14, 7), (6, 11)], fill='#c3c9cc')
+draw.polygon([(2, 9), (6, 12), (6, 13), (2, 11)], fill='#7c8487')
+draw.polygon([(7, 11), (14, 8), (14, 10), (7, 13)], fill='#959da1')
+draw.line((3, 8, 10, 5), fill='#eef3f5')
+draw.line((7, 11, 14, 8), fill='#b4c0c6')
+draw.point((9, 7), fill='#dbe6ec')
+save(slab, 'item/cast_stainless_steel_slab')
+
+for name, liquid in (('molten_pig_iron', '#e06e30'), ('desulfurized_hot_metal', '#f48d44'), ('molten_steel', '#f5b563'), ('molten_stainless_steel', '#ffd793')):
     bucket = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
     draw = ImageDraw.Draw(bucket)
     draw.polygon([(2, 3), (5, 2), (10, 2), (13, 3), (13, 7), (11, 13), (10, 14),

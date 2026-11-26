@@ -3,24 +3,28 @@
   "ingredients": [
     {
       "item": "minecraft:iron_ingot",
-      "count": 112
+      "count": 42
     },
     {
       "item": "create_refinery_n_reactors:chromium_ingot",
-      "count": 32
+      "count": 12
     },
     {
       "item": "create_refinery_n_reactors:nickel_ingot",
-      "count": 16
+      "count": 6
     }
   ],
   "gas": {
     "fluid": "create_refinery_n_reactors:argon_gas",
-    "amount": 1600
+    "amount": 600
   },
   "result": {
-    "id": "create_refinery_n_reactors:stainless_steel_ingot",
-    "count": 192
+    "id": "create_refinery_n_reactors:steel_slag",
+    "count": 2
+  },
+  "metal_result": {
+    "id": "create_refinery_n_reactors:molten_stainless_steel",
+    "amount": 6400
   },
   "processingTime": 800
 }

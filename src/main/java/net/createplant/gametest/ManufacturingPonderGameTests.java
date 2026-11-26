@@ -129,7 +129,7 @@ public final class ManufacturingPonderGameTests {
         }
         var alloy = ManufacturingRecipe.resolve(level, CreatePlant.MOD_ID + ":mixing/stainless_steel_ingot");
         helper.assertTrue(alloy.items().stream().mapToInt(net.minecraft.world.item.ItemStack::getCount).sum() == 10
-            && alloy.products().getFirst().getCount() == 10, "Repeated ingredients retain alloy batch quantities");
+            && alloy.fluidProducts().getFirst().getAmount() == 600, "Repeated ingredients retain alloy batch quantities");
         var converter = ManufacturingRecipe.resolve(level, CreatePlant.MOD_ID + ":converter/refine_hot_metal");
         var actual = (net.createplant.recipe.ConverterRecipe) level.getRecipeManager().byKey(
             CreatePlant.location("converter/refine_hot_metal")).orElseThrow().value();

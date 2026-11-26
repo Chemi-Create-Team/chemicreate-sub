@@ -226,15 +226,17 @@ public final class ConverterGameTests {
     public static void argonChargeMakesOneHundredNinetyTwoStainlessIngots(GameTestHelper helper) {
         ConverterTrunnionBearingBlockEntity converter = build(helper, false, true);
         IItemHandler raw = items(helper, ConverterStructure.rawPort(ORIGIN, FACING), Direction.UP);
-        insert(raw, Items.IRON_INGOT, 112);
-        insert(raw, CEItems.CHROMIUM_INGOT.get(), 32);
-        insert(raw, CEItems.NICKEL_INGOT.get(), 16);
+        insert(raw, Items.IRON_INGOT, 42);
+        insert(raw, CEItems.CHROMIUM_INGOT.get(), 12);
+        insert(raw, CEItems.NICKEL_INGOT.get(), 6);
         IFluidHandler lance = fluids(helper, ConverterStructure.lance(ORIGIN, FACING), Direction.UP);
-        helper.assertTrue(lance.fill(new FluidStack(CEFluids.ARGON_GAS.get(), 1_600), EXECUTE) == 1_600,
+        helper.assertTrue(lance.fill(new FluidStack(CEFluids.ARGON_GAS.get(), 600), EXECUTE) == 600,
             "The lance accepts one AOD argon charge");
         converter.runProcess(800);
-        helper.assertTrue(products(converter) == 192 && converter.gasOutput().isEmpty(),
-            "AOD makes exactly 192 stainless ingots without converter gas");
+        var tapped = metalTap(helper).getFluidInTank(0);
+        helper.assertTrue(products(converter) == 2 && tapped.is(net.createplant.registry.CEProcessFluids.MOLTEN_STAINLESS_STEEL.get())
+                && tapped.getAmount() == 6_400 && converter.gasOutput().isEmpty(),
+            "AOD taps 6,400 mB of molten stainless steel and two slag without converter gas: " + tapped.getAmount());
         helper.succeed();
     }
 

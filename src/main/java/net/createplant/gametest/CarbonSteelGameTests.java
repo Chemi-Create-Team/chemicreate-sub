@@ -63,9 +63,7 @@ public class CarbonSteelGameTests {
             var steps = new Step[]{
                 new Step("mixing/nickel_oxide_roasted_in_air", BlazeBurnerBlock.HeatLevel.KINDLED, new ItemStack[]{new ItemStack(pentlandite, 2)}, oxide, 1),
                 new Step("mixing/nickel_ingot_reduced_with_carbon", BlazeBurnerBlock.HeatLevel.SEETHING, new ItemStack[]{new ItemStack(oxide), new ItemStack(carbon)}, nickel, 1),
-                new Step("mixing/ferrochrome", BlazeBurnerBlock.HeatLevel.SEETHING, new ItemStack[]{new ItemStack(chromite, 2), new ItemStack(carbon)}, ferrochrome, 1),
-                new Step("mixing/stainless_steel_from_ferrochrome", BlazeBurnerBlock.HeatLevel.SEETHING,
-                    new ItemStack[]{new ItemStack(iron, 6), new ItemStack(ferrochrome, 2), new ItemStack(nickel)}, stainless, 10)};
+                new Step("mixing/ferrochrome", BlazeBurnerBlock.HeatLevel.SEETHING, new ItemStack[]{new ItemStack(chromite, 2), new ItemStack(carbon)}, ferrochrome, 1)};
             for (var step : steps) {
                 h.setBlock(pos.below(), AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, step.heat()));basin.tick();
                 var input = basin.getInputInventory();var output = basin.getOutputInventory();
@@ -78,6 +76,16 @@ public class CarbonSteelGameTests {
                 boolean spent = true;for (int slot = 0; slot < input.getSlots(); slot++) spent &= input.getStackInSlot(slot).isEmpty();
                 h.assertTrue(made == step.count() && spent, step.recipe() + " spends its whole charge for " + step.count() + " " + step.product());
             }
+            // The alloy comes out molten; casting it is the next step, rolling (ContinuousFactory) the one after.
+            var input = basin.getInputInventory();
+            for (int slot = 0; slot < input.getSlots(); slot++) input.extractItem(slot, 64, false);
+            ItemStack[] charge = {new ItemStack(iron, 6), new ItemStack(ferrochrome, 2), new ItemStack(nickel)};
+            for (int slot = 0; slot < charge.length; slot++) input.insertItem(slot, charge[slot], false);
+            var alloy = (MixingRecipe) h.getLevel().getRecipeManager().byKey(CreatePlant.location("mixing/stainless_steel_from_ferrochrome")).orElseThrow().value();
+            h.assertTrue(BasinRecipe.apply(basin, alloy), "The basin melts stainless steel");
+            var molten = basin.getTanks().getSecond().getPrimaryHandler().getFluid();
+            h.assertTrue(molten.is(net.createplant.registry.CEProcessFluids.MOLTEN_STAINLESS_STEEL.get()) && molten.getAmount() == 600,
+                "Nine ingots of charge make 600 mB of molten stainless steel, not ingots: " + molten.getAmount() + " " + stainless);
             h.succeed();
         });
     }

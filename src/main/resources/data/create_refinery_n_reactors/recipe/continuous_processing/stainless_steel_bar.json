@@ -1,0 +1,15 @@
+{
+  "machine": "rolling_mill",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:cast_stainless_steel_slab",
+    "count": 1
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:stainless_steel_ingot",
+    "count": 8
+  },
+  "work": 400,
+  "heat": 1,
+  "starting_thickness": 0.62
+}

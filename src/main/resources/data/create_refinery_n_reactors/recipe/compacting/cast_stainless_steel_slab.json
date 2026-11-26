@@ -1,0 +1,16 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "fluid": "create_refinery_n_reactors:molten_stainless_steel",
+      "amount": 800
+    }
+  ],
+  "results": [
+    {
+      "id": "create_refinery_n_reactors:cast_stainless_steel_slab"
+    }
+  ],
+  "processing_time": 120
+}

@@ -85,6 +85,24 @@ public final class SteelworksGameTests {
         helper.succeed();
     }
 
+    /** Stainless only becomes ingots on the mill: molten stainless is cast into a slab, and no recipe but rolling turns the slab into ingots. */
+    @GameTest(template = "test_fractionation", timeoutTicks = 40)
+    public static void stainlessIsCastThenRolledIntoIngots(GameTestHelper helper) {
+        var casting = basin(helper, new BlockPos(14, 4, 5), HeatLevel.NONE);
+        fluid(helper, casting).fill(new FluidStack(CEProcessFluids.MOLTEN_STAINLESS_STEEL.get(), 800), EXECUTE);
+        helper.assertTrue(BasinRecipe.apply(casting, recipe(helper, "compacting/cast_stainless_steel_slab")), "Molten stainless casts in a basin");
+        var slab = casting.getOutputInventory().getStackInSlot(0);
+        helper.assertTrue(slab.is(CEConverter.CAST_STAINLESS_STEEL_SLAB.get()), "The cast is a stainless slab");
+        var rolling = (ContinuousFactoryRecipe) recipe(helper, "continuous_processing/stainless_steel_bar");
+        helper.assertTrue(rolling.matches(new SingleRecipeInput(slab), helper.getLevel()) && rolling.result().is(net.createplant.registry.CEItems.STAINLESS_STEEL_INGOT.get())
+            && rolling.result().getCount() == 8, "The mill rolls the slab into eight stainless ingots");
+        for (var holder : helper.getLevel().getRecipeManager().getRecipes())
+            if (holder.value().getResultItem(helper.getLevel().registryAccess()).is(net.createplant.registry.CEItems.STAINLESS_STEEL_INGOT.get()))
+                helper.assertTrue(holder.value() instanceof ContinuousFactoryRecipe || holder.id().getPath().equals("stainless_steel_ingot_from_stainless_steel_block"),
+                    "Only rolling (or unpacking a stainless block) yields stainless ingots: " + holder.id());
+        helper.succeed();
+    }
+
     @GameTest(template = "test_fractionation", timeoutTicks = 80)
     public static void undersizedTorpedoCannotLoadOrAssembleButCanDrain(GameTestHelper helper) {
         var bogey = new BlockPos(7, 3, 7);

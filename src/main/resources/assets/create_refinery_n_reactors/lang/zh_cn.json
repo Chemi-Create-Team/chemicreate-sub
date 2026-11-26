@@ -6667,5 +6667,12 @@
   "item.create_refinery_n_reactors.desulfurized_hot_metal_bucket": "脱硫铁水桶",
   "item.create_refinery_n_reactors.molten_steel_bucket": "钢水桶",
   "create_refinery_n_reactors.ponder.torpedo_car.header": "从生铁到轧制钢",
-  "block.create_refinery_n_reactors.torpedo_tank.section_required": "鱼雷罐需要完整的3×3横截面。"
+  "block.create_refinery_n_reactors.torpedo_tank.section_required": "鱼雷罐需要完整的3×3横截面。",
+  "fluid.create_refinery_n_reactors.molten_stainless_steel": "不锈钢水",
+  "item.create_refinery_n_reactors.molten_stainless_steel_bucket": "不锈钢水桶",
+  "item.create_refinery_n_reactors.cast_stainless_steel_slab": "不锈钢铸坯",
+  "block.create_refinery_n_reactors.molten_pig_iron": "铁水",
+  "block.create_refinery_n_reactors.desulfurized_hot_metal": "脱硫铁水",
+  "block.create_refinery_n_reactors.molten_steel": "钢水",
+  "block.create_refinery_n_reactors.molten_stainless_steel": "不锈钢水"
 }

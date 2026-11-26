@@ -771,5 +771,21 @@
     "formula": "Zr(SO₄)₂ + H₂O",
     "hazards": [],
     "aqueous": true
+  },
+  "molten_pig_iron": {
+    "formula": "Fe + C",
+    "hazards": ["HIGH_VISCOSITY"]
+  },
+  "desulfurized_hot_metal": {
+    "formula": "Fe + C",
+    "hazards": ["HIGH_VISCOSITY"]
+  },
+  "molten_steel": {
+    "formula": "Fe + C",
+    "hazards": ["HIGH_VISCOSITY"]
+  },
+  "molten_stainless_steel": {
+    "formula": "Fe + Cr + Ni",
+    "hazards": ["HIGH_VISCOSITY"]
   }
 }
