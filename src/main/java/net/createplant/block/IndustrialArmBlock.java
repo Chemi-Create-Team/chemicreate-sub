@@ -22,8 +22,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * The industrial arm. Hold a tool and use it on the arm to fit it (an old one is swapped out), use an empty hand to take the tool
- * off. Hoppers, funnels and belts can feed and empty the tool slot, and pipes fill the spray tank.
+ * The industrial arm. With nothing fitted it works with its own claw; use a welding torch on it to fit the torch (an old one is
+ * swapped out), an empty hand to take it off. Hoppers, funnels and belts can feed and empty the tool slot.
  */
 public class IndustrialArmBlock extends KineticBlock implements IBE<IndustrialArmBlockEntity>, ICogWheel {
     private static final VoxelShape SHAPE = box(0, 0, 0, 16, 6, 16);

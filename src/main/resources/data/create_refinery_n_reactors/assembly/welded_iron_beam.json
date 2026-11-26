@@ -13,7 +13,7 @@
           0
         ],
         "action": "place",
-        "tool": "gripper",
+        "tool": "hand",
         "block": "minecraft:iron_block"
       },
       {
@@ -23,7 +23,7 @@
           0
         ],
         "action": "place",
-        "tool": "gripper",
+        "tool": "hand",
         "block": "minecraft:iron_block"
       }
     ],

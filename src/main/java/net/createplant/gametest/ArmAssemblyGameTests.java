@@ -45,16 +45,15 @@ public class ArmAssemblyGameTests {
     public static void laterStagesWaitAndSteps_goToOneArmNearestFirst(GameTestHelper h) {
         var memory = jig(h, MEMORY);
         BlockPos a = h.absolutePos(JIG.west(3)), b = h.absolutePos(JIG.east(3));
-        h.assertTrue(memory.reserve(a, ArmTool.WIRING_HEAD, Vec3.atCenterOf(a)) == -1, "wiring waits for the sheet");
         h.assertTrue(memory.reserve(a, ArmTool.WELDING_TORCH, Vec3.atCenterOf(a)) == -1, "soldering waits for the wiring");
-        h.assertTrue(memory.reserve(a, ArmTool.GRIPPER, Vec3.atCenterOf(a)) == 0, "the gripper lays the sheet first");
-        h.assertTrue(memory.reserve(b, ArmTool.GRIPPER, Vec3.atCenterOf(b)) == -1, "no step is given twice");
+        h.assertTrue(memory.reserve(a, ArmTool.HAND, Vec3.atCenterOf(a)) == 0, "a bare arm lays the sheet first");
+        h.assertTrue(memory.reserve(b, ArmTool.HAND, Vec3.atCenterOf(b)) == -1, "no step is given twice, and the cores wait for the sheet");
         var jig = jig(h, BEAM);
-        int first = jig.reserve(a, ArmTool.GRIPPER, Vec3.atCenterOf(a));
+        int first = jig.reserve(a, ArmTool.HAND, Vec3.atCenterOf(a));
         h.assertTrue(first >= 0 && jig.recipe.steps().get(first).rel().getX() == 0, "the west arm takes the west cell first");
-        int second = jig.reserve(b, ArmTool.GRIPPER, Vec3.atCenterOf(b));
+        int second = jig.reserve(b, ArmTool.HAND, Vec3.atCenterOf(b));
         h.assertTrue(second >= 0 && second != first && jig.recipe.steps().get(second).rel().getX() == 1, "the east arm takes the other one, the east cell");
-        h.assertTrue(jig.reserve(a, ArmTool.GRIPPER, Vec3.atCenterOf(a)) == -1, "nothing is left in the stage");
+        h.assertTrue(jig.reserve(a, ArmTool.HAND, Vec3.atCenterOf(a)) == -1, "nothing is left in the stage");
         h.succeed();
     }
 
@@ -62,7 +61,7 @@ public class ArmAssemblyGameTests {
     public static void aReservationWithoutArmReturns(GameTestHelper h) {
         var jig = jig(h, BEAM);
         BlockPos a = h.absolutePos(JIG.west(3));
-        int s = jig.reserve(a, ArmTool.GRIPPER, Vec3.atCenterOf(a));
+        int s = jig.reserve(a, ArmTool.HAND, Vec3.atCenterOf(a));
         h.assertTrue(s >= 0 && jig.status[s] == AssemblyJigBlockEntity.RESERVED, "reserved");
         h.runAfterDelay(45, () -> {
             h.assertTrue(jig.status[s] == AssemblyJigBlockEntity.PENDING, "the step is open again once no arm holds it");
@@ -75,7 +74,7 @@ public class ArmAssemblyGameTests {
         var jig = jig(h, BEAM);
         BlockPos a = h.absolutePos(JIG.west(3));
         for (int stage = 0; stage < 2; stage++) {
-            ArmTool tool = stage == 0 ? ArmTool.GRIPPER : ArmTool.WELDING_TORCH;
+            ArmTool tool = stage == 0 ? ArmTool.HAND : ArmTool.WELDING_TORCH;
             int s;
             while ((s = jig.reserve(a, tool, Vec3.atCenterOf(a))) >= 0) {
                 if (jig.recipe.steps().get(s).place()) h.assertTrue(jig.place(s), "the block is placed into the free cell");
@@ -98,7 +97,7 @@ public class ArmAssemblyGameTests {
         var jig = jig(h, BEAM);
         h.setBlock(JIG.above(), Blocks.DIRT.defaultBlockState());
         BlockPos a = h.absolutePos(JIG.west(3));
-        int s = jig.reserve(a, ArmTool.GRIPPER, Vec3.atCenterOf(a));
+        int s = jig.reserve(a, ArmTool.HAND, Vec3.atCenterOf(a));
         h.assertTrue(!jig.place(s) || jig.recipe.steps().get(s).rel().getX() != 0, "an occupied cell is not overwritten");
         h.assertTrue(h.getBlockState(JIG.above()).is(Blocks.DIRT), "the dirt is still there");
         h.succeed();
@@ -143,7 +142,7 @@ public class ArmAssemblyGameTests {
         BlockPos arm = new BlockPos(1, 2, 1), depot = new BlockPos(3, 2, 1);
         h.setBlock(arm.below(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.UP));
         h.setBlock(arm, CEArm.ARM.get().defaultBlockState());
-        ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm)).toolSlot.setStackInSlot(0, new net.minecraft.world.item.ItemStack(CEArm.TOOLS.get(ArmTool.WELDING_TORCH).get()));
+        ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm)).toolSlot.setStackInSlot(0, toolStack(ArmTool.WELDING_TORCH));
         h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
         ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm)).setPoints(java.util.List.of(h.absolutePos(depot)), java.util.List.of());
         var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
@@ -153,7 +152,7 @@ public class ArmAssemblyGameTests {
 
     @GameTest(template = "test_empty")
     public static void everyWireThreadsEveryCore(GameTestHelper h) {
-        var t = net.createplant.arm.Trajectory.of(net.createplant.arm.ArmPattern.GRID_WIRE, null);
+        var t = net.createplant.arm.Trajectory.of(net.createplant.arm.ArmPattern.WIRE_THREAD, null);
         int g = net.createplant.arm.Trajectory.GRID;
         for (int kind : new int[] {net.createplant.arm.Trajectory.X_WIRE, net.createplant.arm.Trajectory.Y_WIRE, net.createplant.arm.Trajectory.SENSE})
             for (int i = 0; i < g; i++)
@@ -170,8 +169,13 @@ public class ArmAssemblyGameTests {
         h.setBlock(arm.below(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.UP));
         h.setBlock(arm, CEArm.ARM.get().defaultBlockState());
         var be = (net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm);
-        be.toolSlot.setStackInSlot(0, new net.minecraft.world.item.ItemStack(CEArm.TOOLS.get(tool).get()));
+        be.toolSlot.setStackInSlot(0, toolStack(tool));
         return be;
+    }
+
+    /** The bare arm has nothing fitted; the welding torch is the only tool. */
+    private static net.minecraft.world.item.ItemStack toolStack(ArmTool tool) {
+        return tool == ArmTool.HAND ? net.minecraft.world.item.ItemStack.EMPTY : new net.minecraft.world.item.ItemStack(CEArm.WELDING_TORCH.get());
     }
 
     @GameTest(template = "test_empty", timeoutTicks = 200)
@@ -179,7 +183,7 @@ public class ArmAssemblyGameTests {
         var jig = jig(h, BEAM);
         BlockPos a = h.absolutePos(JIG.west(3));
         for (int stage = 0; stage < 2; stage++) {
-            ArmTool tool = stage == 0 ? ArmTool.GRIPPER : ArmTool.WELDING_TORCH;
+            ArmTool tool = stage == 0 ? ArmTool.HAND : ArmTool.WELDING_TORCH;
             int s;
             while ((s = jig.reserve(a, tool, Vec3.atCenterOf(a))) >= 0) {
                 if (jig.recipe.steps().get(s).place()) jig.place(s);
@@ -203,38 +207,13 @@ public class ArmAssemblyGameTests {
     public static void theArmLeavesMaterialItCannotReach(GameTestHelper h) {
         BlockPos arm = new BlockPos(6, 2, 6), chest = arm.offset(-5, -1, -5);
         jig(h, BEAM);
-        poweredArm(h, arm, ArmTool.GRIPPER);
+        poweredArm(h, arm, ArmTool.HAND);
         h.setBlock(chest, Blocks.CHEST.defaultBlockState());
         var box = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getBlockEntity(chest);
         box.setItem(0, new net.minecraft.world.item.ItemStack(Blocks.IRON_BLOCK, 3));
         h.runAfterDelay(120, () -> {
             h.assertTrue(box.getItem(0).getCount() == 3, "the iron in the chest out of the claw's reach stays there");
             h.succeed();
-        });
-    }
-
-    @GameTest(template = "test_empty", timeoutTicks = 600)
-    public static void sprayFluidIsKeptWhenTheArmIsReloadedMidWork(GameTestHelper h) {
-        BlockPos arm = new BlockPos(1, 2, 1), depot = new BlockPos(3, 2, 1);
-        var be = poweredArm(h, arm, ArmTool.SPRAY_NOZZLE);
-        be.tank.fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 50), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
-        h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
-        be.setPoints(java.util.List.of(h.absolutePos(depot)), java.util.List.of());
-        var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
-        items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.WHITE_CONCRETE_POWDER), false);
-        boolean[] reloaded = {false};
-        h.onEachTick(() -> {
-            var now = (net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm);
-            if (reloaded[0] || now.phase != net.createplant.block.entity.IndustrialArmBlockEntity.WORK || now.progress < .3f) return;
-            var level = h.getLevel();
-            var saved = now.saveWithFullMetadata(level.registryAccess());
-            level.setBlockEntity(net.minecraft.world.level.block.entity.BlockEntity.loadStatic(now.getBlockPos(), now.getBlockState(), saved, level.registryAccess()));
-            reloaded[0] = true;
-        });
-        h.succeedWhen(() -> {
-            var now = (net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm);
-            h.assertTrue(reloaded[0] && items.getStackInSlot(0).is(Blocks.WHITE_CONCRETE.asItem()), "the reloaded arm still cures the powder");
-            h.assertTrue(now.tank.isEmpty(), "the water is drawn once, when the concrete is done");
         });
     }
 
@@ -279,34 +258,31 @@ public class ArmAssemblyGameTests {
 
     @GameTest(template = "test_empty", timeoutTicks = 200)
     public static void anAutomaticJigMakesWhatTheArmsMaterialsAllow(GameTestHelper h) {
-        BlockPos jigPos = new BlockPos(3, 2, 3), grip = new BlockPos(6, 2, 2), wire = new BlockPos(3, 2, 7);
+        BlockPos jigPos = new BlockPos(3, 2, 3), grip = new BlockPos(6, 2, 2);
         h.setBlock(jigPos, CEArm.JIG.get().defaultBlockState());
         var jig = (AssemblyJigBlockEntity) h.getBlockEntity(jigPos);
         h.assertTrue(jig.auto && jig.recipe == null, "a new jig chooses by itself");
         // unpowered arms: they show their tools and reach but take nothing
-        BlockPos[] arms = {new BlockPos(5, 2, 2), new BlockPos(3, 2, 6), new BlockPos(5, 2, 5)};
-        ArmTool[] tools = {ArmTool.GRIPPER, ArmTool.WIRING_HEAD, ArmTool.WELDING_TORCH};
-        for (int i = 0; i < 3; i++) {
+        BlockPos[] arms = {new BlockPos(5, 2, 2), new BlockPos(5, 2, 5), new BlockPos(3, 2, 6)};
+        ArmTool[] tools = {ArmTool.HAND, ArmTool.WELDING_TORCH, ArmTool.HAND};
+        for (int i = 0; i < 2; i++) {
             h.setBlock(arms[i], CEArm.ARM.get().defaultBlockState());
-            ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arms[i])).toolSlot.setStackInSlot(0, new net.minecraft.world.item.ItemStack(CEArm.TOOLS.get(tools[i]).get()));
+            ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arms[i])).toolSlot.setStackInSlot(0, toolStack(tools[i]));
         }
         h.setBlock(grip, Blocks.CHEST.defaultBlockState());
-        h.setBlock(wire, Blocks.CHEST.defaultBlockState());
         var a = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getBlockEntity(grip);
-        var b = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getBlockEntity(wire);
         a.setItem(0, new net.minecraft.world.item.ItemStack(Blocks.IRON_BLOCK, 3));
         a.setItem(1, new net.minecraft.world.item.ItemStack(com.simibubi.create.AllItems.IRON_SHEET.get()));
-        // the parts sit where only the gripper reaches: the wiring head could not get them
         a.setItem(2, new net.minecraft.world.item.ItemStack(CEArm.FERRITE_CORE.get(), 64));
         a.setItem(3, new net.minecraft.world.item.ItemStack(CEArm.FERRITE_CORE.get(), 64));
         a.setItem(4, new net.minecraft.world.item.ItemStack(CEArm.FERRITE_CORE.get(), 16));
         a.setItem(5, new net.minecraft.world.item.ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25));
         h.runAfterDelay(30, () -> {
-            h.assertTrue(jig.recipe != null && jig.recipe.id().equals(CreatePlant.location(BEAM)), "parts the wiring arm cannot reach do not count: a beam");
-            for (int i = 2; i <= 5; i++) { b.setItem(i, a.getItem(i)); a.setItem(i, net.minecraft.world.item.ItemStack.EMPTY); }
+            h.assertTrue(jig.recipe != null && jig.recipe.id().equals(CreatePlant.location(BEAM)), "one bare arm cannot thread alone: a beam");
+            h.setBlock(arms[2], CEArm.ARM.get().defaultBlockState());
             h.runAfterDelay(30, () -> {
-                h.assertTrue(jig.recipe != null && jig.recipe.id().equals(CreatePlant.location(MEMORY)), "with the parts beside the wiring arm: core memory");
-                b.setItem(4, net.minecraft.world.item.ItemStack.EMPTY);
+                h.assertTrue(jig.recipe != null && jig.recipe.id().equals(CreatePlant.location(MEMORY)), "with a second bare arm to hold the wire: core memory");
+                a.setItem(4, net.minecraft.world.item.ItemStack.EMPTY);
                 h.runAfterDelay(30, () -> {
                     h.assertTrue(jig.recipe.id().equals(CreatePlant.location(BEAM)), "short of cores: back to the beam");
                     h.assertTrue(jig.cycleRecipe() && !jig.auto, "the wrench pins a recipe");
@@ -319,7 +295,7 @@ public class ArmAssemblyGameTests {
     @GameTest(template = "test_empty", timeoutTicks = 100)
     public static void bothHalvesOfALargeChestAreCountedOnce(GameTestHelper h) {
         BlockPos arm = new BlockPos(1, 2, 1), left = new BlockPos(3, 2, 1), right = new BlockPos(3, 2, 2);
-        var be = poweredArm(h, arm, ArmTool.WIRING_HEAD);
+        var be = poweredArm(h, arm, ArmTool.HAND);
         h.setBlock(left, Blocks.CHEST.defaultBlockState().setValue(net.minecraft.world.level.block.ChestBlock.FACING, net.minecraft.core.Direction.WEST)
                 .setValue(net.minecraft.world.level.block.ChestBlock.TYPE, net.minecraft.world.level.block.state.properties.ChestType.RIGHT));
         h.setBlock(right, Blocks.CHEST.defaultBlockState().setValue(net.minecraft.world.level.block.ChestBlock.FACING, net.minecraft.core.Direction.WEST)
@@ -359,7 +335,7 @@ public class ArmAssemblyGameTests {
         var jig = jig(h, BEAM);
         BlockPos a = h.absolutePos(JIG.west(3));
         for (int stage = 0; stage < 2; stage++) {
-            ArmTool tool = stage == 0 ? ArmTool.GRIPPER : ArmTool.WELDING_TORCH;
+            ArmTool tool = stage == 0 ? ArmTool.HAND : ArmTool.WELDING_TORCH;
             int s;
             while ((s = jig.reserve(a, tool, Vec3.atCenterOf(a))) >= 0) {
                 if (jig.recipe.steps().get(s).place()) jig.place(s);
@@ -378,7 +354,7 @@ public class ArmAssemblyGameTests {
     }
 
     @GameTest(template = "test_empty", timeoutTicks = 200)
-    public static void sprayWithoutFluidKeepsItsMaterialAndAStoppedArmLetsGo(GameTestHelper h) {
+    public static void aStoppedArmLetsGoOfTheDepotItem(GameTestHelper h) {
         BlockPos arm = new BlockPos(1, 2, 1), depot = new BlockPos(3, 2, 1);
         var be = poweredArm(h, arm, ArmTool.WELDING_TORCH);
         h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
@@ -395,32 +371,33 @@ public class ArmAssemblyGameTests {
         });
     }
 
-    @GameTest(template = "test_empty", timeoutTicks = 500)
-    public static void jigSprayChecksFluidFirstAndGivesBackWhatItTook(GameTestHelper h) {
-        String json = "{\"size\":[1,1,1],\"stages\":[[{\"pos\":[0,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
-            + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"spray_nozzle\",\"consume\":\"minecraft:clay_ball\",\"time\":200,"
-            + "\"fluid\":{\"id\":\"minecraft:water\",\"amount\":100}}]],\"result\":{\"id\":\"minecraft:stone\"}}";
-        var recipe = net.createplant.arm.ArmRecipe.fromJson(CreatePlant.location("test_spray"), com.google.gson.JsonParser.parseString(json).getAsJsonObject());
-        BlockPos jigPos = new BlockPos(1, 2, 1), arm = new BlockPos(3, 2, 1), chest = new BlockPos(3, 2, 2);
+    @GameTest(template = "test_empty", timeoutTicks = 400)
+    public static void threadingTakesASecondBareArmThatHoldsTheWire(GameTestHelper h) {
+        String json = "{\"size\":[1,1,1],\"stages\":[[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"hand\",\"pattern\":\"wire_thread\",\"helpers\":1,"
+            + "\"consume\":{\"id\":\"create_refinery_n_reactors:enamelled_copper_wire\",\"count\":25},\"time\":800}]],\"result\":{\"id\":\"minecraft:stone\"}}";
+        var recipe = net.createplant.arm.ArmRecipe.fromJson(CreatePlant.location("test_thread"), com.google.gson.JsonParser.parseString(json).getAsJsonObject());
+        BlockPos jigPos = new BlockPos(2, 2, 2), lead = new BlockPos(4, 2, 2), chest = new BlockPos(5, 2, 2), second = new BlockPos(0, 2, 2);
         h.setBlock(jigPos, CEArm.JIG.get().defaultBlockState());
-        var jig = (AssemblyJigBlockEntity) h.getBlockEntity(jigPos);
-        jig.setRecipe(recipe);
-        h.setBlock(jigPos.above(), Blocks.IRON_BLOCK.defaultBlockState()); // counts as placed
-        var be = poweredArm(h, arm, ArmTool.SPRAY_NOZZLE);
+        ((AssemblyJigBlockEntity) h.getBlockEntity(jigPos)).setRecipe(recipe);
+        var be = poweredArm(h, lead, ArmTool.HAND);
         h.setBlock(chest, Blocks.CHEST.defaultBlockState());
         be.setPoints(java.util.List.of(h.absolutePos(chest)), java.util.List.of());
         var box = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getBlockEntity(chest);
-        box.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CLAY_BALL, 4));
-        h.runAfterDelay(80, () -> {
-            h.assertTrue(box.getItem(0).getCount() == 4, "without water no clay is taken");
-            h.assertTrue(h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(h.absolutePos(arm)).inflate(4)).isEmpty(), "and none is dropped");
-            be.tank.fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 100), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
-            h.runAfterDelay(150, () -> {
-                h.assertTrue(be.phase == net.createplant.block.entity.IndustrialArmBlockEntity.WORK && be.tank.isEmpty() && box.getItem(0).getCount() == 3, "with water it starts, paying water and clay");
-                be.toolSlot.setStackInSlot(0, net.minecraft.world.item.ItemStack.EMPTY);
-                h.assertTrue(be.tank.getFluidAmount() == 100, "taking the nozzle off gives the water back");
-                h.assertTrue(box.getItem(0).getCount() == 4, "and the clay goes back into the chest");
-                h.succeed();
+        box.setItem(0, new net.minecraft.world.item.ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25));
+        h.runAfterDelay(60, () -> {
+            h.assertTrue(box.getItem(0).getCount() == 25 && be.phase == net.createplant.block.entity.IndustrialArmBlockEntity.IDLE, "alone, a bare arm takes no wire");
+            var helper = poweredArm(h, second, ArmTool.HAND);
+            // the lone arm waits up to 3 seconds before it looks again, then reaches for the wire and moves over
+            h.runAfterDelay(140, () -> {
+                h.assertTrue(be.phase == net.createplant.block.entity.IndustrialArmBlockEntity.WORK && box.getItem(0).isEmpty(), "with a second bare arm it takes the wire and threads");
+                h.assertTrue(helper.phase == net.createplant.block.entity.IndustrialArmBlockEntity.ASSIST && helper.lead.equals(be.getBlockPos()), "the other arm helps");
+                Vec3 c = Vec3.atBottomCenterOf(h.absolutePos(jigPos.above()));
+                h.assertTrue(helper.tip != null && Math.max(Math.abs(helper.tip.x - c.x), Math.abs(helper.tip.z - c.z)) > .2, "the helper holds the wire's end at the edge of the plane");
+                h.setBlock(second, Blocks.AIR.defaultBlockState());
+                h.runAfterDelay(10, () -> {
+                    h.assertTrue(be.phase == net.createplant.block.entity.IndustrialArmBlockEntity.IDLE && box.getItem(0).getCount() == 25, "without its helper the arm stops and puts the wire back");
+                    h.succeed();
+                });
             });
         });
     }

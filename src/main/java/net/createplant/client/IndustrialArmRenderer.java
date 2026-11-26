@@ -53,8 +53,9 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
         float base = be.baseAngle.getValue(partial), lower = be.lowerArmAngle.getValue(partial) - 135, upper = be.upperArmAngle.getValue(partial) - 90, head = be.headAngle.getValue(partial);
 
         ArmTool tool = be.toolType();
-        ItemStack shown = tool == null ? ItemStack.EMPTY : tool != ArmTool.GRIPPER ? be.tool() : be.phase == IndustrialArmBlockEntity.FETCH ? ItemStack.EMPTY : be.held;
+        ItemStack shown = tool != ArmTool.HAND ? be.tool() : be.phase == IndustrialArmBlockEntity.FETCH ? ItemStack.EMPTY : be.held;
         boolean has = !shown.isEmpty(), block = has && shown.getItem() instanceof BlockItem;
+        boolean grip = has || be.phase == IndustrialArmBlockEntity.ASSIST; // a helper's claw closes on the wire it holds
 
         ArmRenderer.transformBase(msr, base);
         part(AllPartialModels.ARM_BASE, state, light, local, ps, vb);
@@ -69,16 +70,16 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
         msr.rotateZDegrees(180);
         part(AllPartialModels.ARM_CLAW_BASE, state, light, local, ps, vb);
         msr.rotateZDegrees(180);
-        if (tool == ArmTool.GRIPPER || tool == null) {
+        if (tool == ArmTool.HAND) {
             for (int i : new int[] {1, -1}) {
                 local.pushPose();
-                ArmRenderer.transformClawHalf(msr, has, block, i);
+                ArmRenderer.transformClawHalf(msr, grip, block, i);
                 part(i > 0 ? AllPartialModels.ARM_CLAW_GRIP_LOWER : AllPartialModels.ARM_CLAW_GRIP_UPPER, state, light, local, ps, vb);
                 local.popPose();
             }
         }
         // A tool arm carrying finished belt work: the item hangs just under the tool.
-        ItemStack carried = tool != null && tool != ArmTool.GRIPPER && be.phase == IndustrialArmBlockEntity.CARRY ? be.held : ItemStack.EMPTY;
+        ItemStack carried = tool != ArmTool.HAND && be.phase == IndustrialArmBlockEntity.CARRY ? be.held : ItemStack.EMPTY;
         if (!carried.isEmpty()) {
             local.pushPose();
             msr.rotateXDegrees(90);

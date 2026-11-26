@@ -13,7 +13,7 @@
           1
         ],
         "action": "lay",
-        "tool": "gripper",
+        "tool": "hand",
         "item": "create:iron_sheet"
       }
     ],
@@ -25,7 +25,7 @@
           1
         ],
         "action": "process",
-        "tool": "wiring_head",
+        "tool": "hand",
         "pattern": "core_set",
         "consume": {
           "id": "create_refinery_n_reactors:ferrite_core",
@@ -42,13 +42,14 @@
           1
         ],
         "action": "process",
-        "tool": "wiring_head",
+        "tool": "hand",
         "pattern": "wire_thread",
         "consume": {
           "id": "create_refinery_n_reactors:enamelled_copper_wire",
           "count": 25
         },
-        "time": 120
+        "time": 120,
+        "helpers": 1
       }
     ],
     [

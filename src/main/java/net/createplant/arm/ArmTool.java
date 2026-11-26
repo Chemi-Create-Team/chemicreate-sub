@@ -2,9 +2,9 @@ package net.createplant.arm;
 
 import java.util.Locale;
 
-/** The five end effectors of the industrial arm. */
+/** What the industrial arm works with: its own claw with nothing fitted, or the welding torch, its only tool. */
 public enum ArmTool {
-    GRIPPER, WELDING_TORCH, LASER_CUTTER, SPRAY_NOZZLE, WIRING_HEAD;
+    HAND, WELDING_TORCH;
 
     public String id() {
         return name().toLowerCase(Locale.ROOT);

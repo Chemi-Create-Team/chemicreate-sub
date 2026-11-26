@@ -26,7 +26,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
  * The jig knows which job is open, which arm has reserved it and how far it is. Every second it checks that loaded arms still hold
@@ -37,12 +36,6 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
     public static final byte PENDING = 0, RESERVED = 1, DONE = 2;
     public static final int FINISH_DELAY = 40, SYNC_EVERY = 2;
 
-    public final FluidTank tank = new FluidTank(1000) {
-        @Override
-        protected void onContentsChanged() {
-            setChanged();
-        }
-    };
     public ArmRecipe recipe;
     /**
      * Automatic: while no step has started, the jig makes whatever the arms around it can make from what is in their places to
@@ -101,7 +94,7 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
 
     /**
      * Picks the recipe to make from what the nearby arms can do. A recipe qualifies when every step has an arm with its tool that
-     * reaches all of the step's path, and the arms of each tool can take, from the places they take from, all the material their
+     * reaches all of the step's path (and a step with a helper a second bare arm that does), and the arms of each tool can take, from the places they take from, all the material their
      * steps use (each stack counted once, so the two halves of a large chest are not counted twice). Of those, the one using the
      * most kinds of material wins, so a sheet with cores and wire makes core memory rather than a beam.
      * ponytail: scans the arms around and their sources once a second per idle jig, and counts a chest shared by two tools for
@@ -112,7 +105,7 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         List<IndustrialArmBlockEntity> arms = new java.util.ArrayList<>();
         int range = IndustrialArmBlockEntity.RANGE;
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-range, -range, -range), worldPosition.offset(range, range, range)))
-            if (level.isLoaded(p) && level.getBlockEntity(p) instanceof IndustrialArmBlockEntity arm && arm.toolType() != null) arms.add(arm);
+            if (level.isLoaded(p) && level.getBlockEntity(p) instanceof IndustrialArmBlockEntity arm) arms.add(arm);
         java.util.Map<ArmTool, java.util.Map<net.minecraft.world.item.Item, Integer>> stockOf = new java.util.EnumMap<>(ArmTool.class);
         ArmRecipe best = null;
         int bestKinds = -1, bestTotal = -1;
@@ -120,7 +113,10 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
             java.util.Map<ArmTool, java.util.Map<net.minecraft.world.item.Item, Integer>> need = new java.util.EnumMap<>(ArmTool.class);
             boolean ok = true;
             for (Step s : r.steps()) {
-                ok &= arms.stream().anyMatch(a -> a.toolType() == s.tool() && a.reachesStep(worldPosition, r, s));
+                // the step's own arm, and for threading a second bare arm to hold the wire
+                long leads = arms.stream().filter(a -> a.toolType() == s.tool() && a.reachesStep(worldPosition, r, s)).count();
+                long hands = arms.stream().filter(a -> a.toolType() == ArmTool.HAND && a.reachesStep(worldPosition, r, s)).count();
+                ok &= leads >= 1 && (s.helpers() == 0 || hands >= (s.tool() == ArmTool.HAND ? 2 : 1));
                 if (s.material() != null) need.computeIfAbsent(s.tool(), t -> new java.util.HashMap<>()).merge(s.material(), s.materialCount(), Integer::sum);
             }
             for (var e : need.entrySet()) {
@@ -254,11 +250,6 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         return true;
     }
 
-    /** A cell's own fluid: whatever the spray nozzle may take when its arm has none. */
-    public int drawFluid(int amount, boolean simulate) {
-        return tank.drain(amount, simulate ? net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE : net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE).getAmount();
-    }
-
     private void changed() {
         setChanged();
         dirty = true;
@@ -371,7 +362,6 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         tooltip.add(Component.translatable(auto ? "arm.create_refinery_n_reactors.jig.auto_recipe" : "arm.create_refinery_n_reactors.jig.recipe", AssemblyJigBlock.name(recipe)));
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.stage", Math.max(0, currentStage() + 1), recipe.stages()));
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.steps", done, status.length, working));
-        tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.tank", tank.getFluidAmount(), tank.getCapacity()));
         return true;
     }
 
@@ -380,7 +370,6 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider r) {
         super.saveAdditional(tag, r);
-        tag.put("tank", tank.writeToNBT(r, new CompoundTag()));
         tag.putBoolean("auto", auto);
         if (recipe == null) return;
         tag.put("recipe", recipe.toTag());
@@ -398,10 +387,10 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider r) {
         super.loadAdditional(tag, r);
-        tank.readFromNBT(r, tag.getCompound("tank"));
         auto = tag.contains("auto") ? tag.getBoolean("auto") : !tag.contains("recipe"); // older jigs with a recipe had it chosen by wrench
         if (!tag.contains("recipe")) { recipe = null; status = new byte[0]; progress = new float[0]; doneAt = new long[0]; reserved = new BlockPos[0]; return; }
         ArmRecipe saved = ArmRecipe.fromTag(tag.getCompound("recipe"));
+        if (saved == null) { auto = true; recipe = null; status = new byte[0]; progress = new float[0]; doneAt = new long[0]; reserved = new BlockPos[0]; return; }
         // a data pack may have changed the recipe since it was saved: progress only carries over to an identical one,
         // otherwise the saved recipe is finished as it was
         ArmRecipe current = ArmRecipes.get(saved.id());

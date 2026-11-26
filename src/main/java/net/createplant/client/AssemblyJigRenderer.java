@@ -13,11 +13,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 
 /**
  * Draws the work as it happens: the weld bead cooling behind the torch, wires and ferrite cores, the laser and its groove, the
@@ -59,9 +57,7 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
             Trajectory t = Trajectory.of(s.pattern(), s.seamDirection());
             switch (s.pattern()) {
                 case SEAM_WELD -> weld(q, pose, o, t, p, live, done ? (now - be.doneAt[i] + partial) / 40f : 0, time);
-                case PERIMETER_CUT, DIAGONAL_CUT -> cut(q, pose, o, t, p, live);
-                case GRID_WIRE, CORE_SET, WIRE_THREAD -> wires(q, pose, light, o, t, p);
-                case FULL_SPRAY -> spray(q, pose, light, o, t, p, live, time, tint(s));
+                case CORE_SET, WIRE_THREAD -> wires(q, pose, light, o, t, p);
                 default -> {}
             }
         }
@@ -75,12 +71,6 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
         net.minecraft.client.Minecraft.getInstance().getItemRenderer().renderStatic(new net.minecraft.world.item.ItemStack(s.material()),
                 net.minecraft.world.item.ItemDisplayContext.FIXED, light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
         ps.popPose();
-    }
-
-    private static int tint(Step s) {
-        if (s.fluid() == null) return 0xFFFFFF;
-        var f = BuiltInRegistries.FLUID.get(s.fluid());
-        return IClientFluidTypeExtensions.of(f).getTintColor() & 0xFFFFFF;
     }
 
     private static int heat(double h) {
@@ -124,18 +114,6 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
         }
     }
 
-    private static void cut(VertexConsumer q, PoseStack.Pose pose, Vec3 o, Trajectory t, float p, boolean live) {
-        pieces(t, p, .1, (a, b, behind, n) -> {
-            ArmDraw.bar(q, pose, o.add(a).add(0, .005, 0), o.add(b).add(0, .005, 0), .04, .014, behind < .12 ? ArmDraw.mix(0xFF6420, 0x1A1414, behind / .12) : 0x1A1414, 240, behind < .12 ? FULL : LightTexture.pack(8, 8));
-        });
-        if (live) {
-            Vec3 tip = o.add(t.tip(p));
-            ArmDraw.bar(q, pose, tip, tip.add(0, .7, 0), .035, .035, 0xFF2020, 120, FULL);
-            ArmDraw.bar(q, pose, tip, tip.add(0, .7, 0), .014, .014, 0xFFFFFF, 255, FULL);
-            ArmDraw.blob(q, pose, tip, .07, 0xFFE0C0, 230, FULL);
-        }
-    }
-
     private static void wires(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 o, Trajectory t, float p) {
         pieces(t, p, 1, (a, b, behind, kind) -> {
             if (kind == Trajectory.CORES) return; // the head only sets cores on this pass
@@ -161,19 +139,5 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
         Vec3 u = new Vec3(0, 1, 0).cross(Trajectory.CORE_AXIS).normalize().scale(r), v = new Vec3(0, r, 0);
         Vec3[] k = {u.add(v), u.reverse().add(v), u.reverse().subtract(v), u.subtract(v)};
         for (int i = 0; i < 4; i++) ArmDraw.bar(q, pose, c.add(k[i]), c.add(k[(i + 1) % 4]), .003, .004, FERRITE, 255, light);
-    }
-
-    private static void spray(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 o, Trajectory t, float p, boolean live, float time, int color) {
-        pieces(t, p, 1, (a, b, behind, n) -> {
-            Vec3 a2 = new Vec3(a.x, 1.012, a.z), b2 = new Vec3(b.x, 1.012, b.z);
-            ArmDraw.bar(q, pose, o.add(a2), o.add(b2), .16, .008, color, 140, light);
-        });
-        if (live) {
-            Vec3 tip = o.add(t.tip(p));
-            for (int k = 0; k < 3; k++) {
-                double dx = .05 * Math.sin(time * 1.3 + k * 2.1), dz = .05 * Math.cos(time * 1.7 + k * 1.3);
-                ArmDraw.bar(q, pose, tip.add(dx, 0, dz), new Vec3(tip.x + dx * 2, o.y + 1.012, tip.z + dz * 2), .014, .014, color, 190, light);
-            }
-        }
     }
 }

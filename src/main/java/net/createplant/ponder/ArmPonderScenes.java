@@ -20,21 +20,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-/** The welded iron beam sample: the gripper sets two iron blocks, then the torch welds their seam. The jig and arm play the same data the server runs. */
+/** The welded iron beam sample: the bare arm sets two iron blocks, then the torch welds their seam. The jig and arm play the same data the server runs. */
 public final class ArmPonderScenes {
     private static final String ID = "industrial_arm";
-    private static final String BEAM = "{\"size\":[2,1,1],\"stages\":[[{\"pos\":[0,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"},"
-        + "{\"pos\":[1,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
+    private static final String BEAM = "{\"size\":[2,1,1],\"stages\":[[{\"pos\":[0,0,0],\"action\":\"place\",\"tool\":\"hand\",\"block\":\"minecraft:iron_block\"},"
+        + "{\"pos\":[1,0,0],\"action\":\"place\",\"tool\":\"hand\",\"block\":\"minecraft:iron_block\"}],"
         + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"welding_torch\",\"pattern\":\"seam_weld\",\"time\":60}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:welded_iron_beam\"}}";
     /** The magnetic core memory as the data pack has it, on the jig's own cell so this arm reaches every step. */
     private static final String MEMORY = "{\"size\":[1,1,1],\"stages\":["
-        + "[{\"pos\":[0,0,0],\"action\":\"lay\",\"tool\":\"gripper\",\"item\":\"create:iron_sheet\"}],"
-        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"core_set\",\"consume\":{\"id\":\"create_refinery_n_reactors:ferrite_core\",\"count\":144},\"time\":60}],"
-        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"wire_thread\",\"consume\":{\"id\":\"create_refinery_n_reactors:enamelled_copper_wire\",\"count\":25},\"time\":120}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"lay\",\"tool\":\"hand\",\"item\":\"create:iron_sheet\"}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"hand\",\"pattern\":\"core_set\",\"consume\":{\"id\":\"create_refinery_n_reactors:ferrite_core\",\"count\":144},\"time\":60}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"hand\",\"pattern\":\"wire_thread\",\"helpers\":1,\"consume\":{\"id\":\"create_refinery_n_reactors:enamelled_copper_wire\",\"count\":25},\"time\":120}],"
         + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"welding_torch\",\"pattern\":\"seam_weld\",\"time\":50}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:magnetic_core_memory\"}}";
     private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6), DEPOT = new BlockPos(5, 1, 2);
+    /** The second, bare arm of the memory scene, which holds the far end of each wire while the first one threads it. */
+    private static final BlockPos HELPER = new BlockPos(0, 1, 4);
     private static final int FRAMES = 24;
     private ArmPonderScenes() { }
 
@@ -53,8 +55,6 @@ public final class ArmPonderScenes {
         scene.world().showSection(util.select().fromTo(5, 1, 4, 5, 3, 4), Direction.DOWN);
         scene.world().setKineticSpeed(util.select().fromTo(5, 1, 4, 5, 3, 4), 64);
         text(scene, util, ARM, "arm");
-        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 50).rightClick().withItem(tool(ArmTool.GRIPPER));
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.GRIPPER)));
         text(scene, util, ARM, "tool");
         scene.world().showSection(util.select().position(CHEST), Direction.DOWN);
         text(scene, util, CHEST, "supply");
@@ -67,8 +67,8 @@ public final class ArmPonderScenes {
             scene.world().showSection(util.select().position(cell), Direction.DOWN);
             finish(scene, step);
         }
-        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 50).rightClick().withItem(tool(ArmTool.WELDING_TORCH));
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WELDING_TORCH)));
+        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 50).rightClick().withItem(torch());
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, torch()));
         scene.idle(10);
         text(scene, util, JIG.above(), "weld");
         work(scene, recipe, 2);
@@ -146,23 +146,24 @@ public final class ArmPonderScenes {
         scene.overlay().showControls(util.vector().topOf(CHEST), Pointing.DOWN, 60).withItem(new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get()));
         text(scene, util, CHEST, id, "wire");
 
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.GRIPPER)));
         text(scene, util, JIG, id, "sheet");
         work(scene, recipe, 0);
         finish(scene, 0);
 
-        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 40).rightClick().withItem(tool(ArmTool.WIRING_HEAD));
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WIRING_HEAD)));
-        scene.idle(10);
         text(scene, util, JIG.above(), id, "set");
         work(scene, recipe, 1, 72, 1);
         finish(scene, 1);
-        text(scene, util, JIG.above(), id, "thread");
+        scene.world().setBlock(HELPER, CEArm.ARM.get().defaultBlockState(), false);
+        scene.world().showSection(util.select().position(HELPER), Direction.DOWN);
+        scene.world().setKineticSpeed(util.select().position(HELPER), 64);
+        scene.idle(10);
+        text(scene, util, HELPER, id, "thread");
         work(scene, recipe, 2, 200, 1);
         finish(scene, 2);
+        scene.world().modifyBlockEntity(HELPER, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
 
-        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 40).rightClick().withItem(tool(ArmTool.WELDING_TORCH));
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WELDING_TORCH)));
+        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 40).rightClick().withItem(torch());
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, torch()));
         scene.idle(10);
         text(scene, util, JIG.above(), id, "solder");
         work(scene, recipe, 3);
@@ -189,9 +190,14 @@ public final class ArmPonderScenes {
                 be.progress[step] = progress;
             });
             scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> {
-                be.held = s.place() ? new ItemStack(s.material()) : ItemStack.EMPTY;
+                // the bare arm holds what it works with: the block, the sheet, the cores, the wire
+                be.held = s.tool() == ArmTool.HAND && s.material() != null ? new ItemStack(s.material()) : ItemStack.EMPTY;
                 be.aim(IndustrialArmBlockEntity.WORK, tip);
             });
+            if (s.helpers() > 0) {
+                Vec3 end = origin.add(path.runEnd(progress)).add(0, IndustrialArmBlockEntity.HOVER + IndustrialArmBlockEntity.HELPER_LIFT, 0);
+                scene.world().modifyBlockEntity(HELPER, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.ASSIST, end));
+            }
             scene.idle(frame == 1 ? 12 : ticksPerFrame);
         }
     }
@@ -205,8 +211,8 @@ public final class ArmPonderScenes {
         });
     }
 
-    private static ItemStack tool(ArmTool tool) {
-        return new ItemStack(CEArm.TOOLS.get(tool).get());
+    private static ItemStack torch() {
+        return new ItemStack(CEArm.WELDING_TORCH.get());
     }
 
     private static void text(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos at, String key) {

@@ -68,25 +68,8 @@ public final class Trajectory {
                     line(p, s, a, b, true);
                 }
             }
-            case PERIMETER_CUT -> perimeter(p, s);
-            case DIAGONAL_CUT -> {
-                line(p, s, new Vec3(0, 1, 0), new Vec3(1, 1, 1), true);
-                hop(p, s, new Vec3(1, 1, 0));
-                line(p, s, new Vec3(1, 1, 0), new Vec3(0, 1, 1), true);
-            }
-            case GRID_WIRE -> grid(p, s, true, true);
             case CORE_SET -> grid(p, s, true, false);
             case WIRE_THREAD -> grid(p, s, false, true);
-            case FULL_SPRAY -> {
-                int rows = 7;
-                for (int r = 0; r < rows; r++) {
-                    double z = .06 + r * .88 / (rows - 1), x0 = r % 2 == 0 ? .04 : .96, x1 = 1 - x0;
-                    Vec3 a = new Vec3(x0, 1.1, z), b = new Vec3(x1, 1.1, z);
-                    if (r == 0) p.add(a);
-                    else { line(p, s, p.get(p.size() - 1), a, true); }
-                    line(p, s, a, b, true);
-                }
-            }
         }
         return new Trajectory(p, s);
     }
@@ -212,6 +195,19 @@ public final class Trajectory {
     /** Progress, 0..1, at which the tool is at fraction {@code t} of segment {@code i}. */
     public double progressAt(int i, double t) {
         return length < 1e-9 ? 0 : (cumulative[i] + t * (cumulative[i + 1] - cumulative[i])) / length;
+    }
+
+    /**
+     * Where the wire being threaded at this progress comes out: the end of the current run of strokes of one kind (on a hop, of
+     * the next one). The helper arm holds the wire there, so it stays taut while the other arm threads it.
+     */
+    public Vec3 runEnd(double progress) {
+        double d = Math.max(0, Math.min(1, progress)) * length;
+        int i = 0;
+        while (i < stroke.length - 1 && d > cumulative[i + 1]) i++;
+        while (i < stroke.length - 1 && !stroke[i]) i++;
+        while (i < stroke.length - 1 && kind[i + 1] == kind[i]) i++;
+        return points[i + 1];
     }
 
     /** The n-th segment of the given stroke kind, or -1. */

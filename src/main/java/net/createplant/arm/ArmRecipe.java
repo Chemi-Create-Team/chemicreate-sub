@@ -27,12 +27,12 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
     public static final int MAX_CONSUME = 1024;
 
     /**
-     * One job. {@code place}: the gripper sets {@code block}. Otherwise the {@code tool} works the cell, using up {@code count} of {@code consume}
-     * (a wire or part, may be null) and {@code fluid} (spray only). {@code time} is ticks at 16 rpm. {@code seam} is the 2D data value
+     * One job. {@code place}: the bare arm sets {@code block} (or lays {@code consume}). Otherwise the {@code tool} works the cell, using up
+     * {@code count} of {@code consume} (a wire or part, may be null), with {@code helpers} more bare arms helping. {@code time} is ticks at 16 rpm. {@code seam} is the 2D data value
      * of the horizontal direction of the neighbouring placed block, or -1.
      */
-    public record Step(int stage, BlockPos rel, boolean place, ArmTool tool, Block block, Item consume, int count, ResourceLocation fluid,
-                       int fluidAmount, int time, ArmPattern pattern, int seam) {
+    public record Step(int stage, BlockPos rel, boolean place, ArmTool tool, Block block, Item consume, int count, int helpers,
+                       int time, ArmPattern pattern, int seam) {
         public Direction seamDirection() {
             return seam < 0 ? null : Direction.from2DDataValue(seam);
         }
@@ -42,7 +42,7 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
             return place && block != null ? block.asItem() : consume;
         }
 
-        /** A gripper step that lays an item (such as an iron sheet) flat on the cell instead of setting a block. */
+        /** A bare-arm step that lays an item (such as an iron sheet) flat on the cell instead of setting a block. */
         public boolean lay() {
             return place && block == null;
         }
@@ -104,9 +104,9 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
             case "process" -> false;
             default -> throw new IllegalArgumentException("unknown action " + action);
         };
-        ArmTool tool = ArmTool.byId(GsonHelper.getAsString(o, "tool", place ? "gripper" : ""));
+        ArmTool tool = ArmTool.byId(GsonHelper.getAsString(o, "tool", "hand"));
         if (tool == null) throw new IllegalArgumentException("unknown tool");
-        if (place != (tool == ArmTool.GRIPPER)) throw new IllegalArgumentException("only the gripper places blocks, and it does nothing else");
+        if (place && tool != ArmTool.HAND) throw new IllegalArgumentException("only the bare arm places blocks");
         Block block = null;
         if (place && !lay) {
             Item i = item(GsonHelper.getAsString(o, "block"));
@@ -124,25 +124,20 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
                 if (count < 1 || count > MAX_CONSUME) throw new IllegalArgumentException("consume count must be 1 to " + MAX_CONSUME);
             } else consume = item(GsonHelper.getAsString(o, "consume"));
         }
-        ResourceLocation fluid = null;
-        int amount = 0;
-        if (o.has("fluid")) {
-            JsonObject f = GsonHelper.getAsJsonObject(o, "fluid");
-            fluid = ResourceLocation.parse(GsonHelper.getAsString(f, "id"));
-            if (!BuiltInRegistries.FLUID.containsKey(fluid)) throw new IllegalArgumentException("unknown fluid " + fluid);
-            amount = GsonHelper.getAsInt(f, "amount");
-        }
-        if (tool == ArmTool.SPRAY_NOZZLE && fluid == null) throw new IllegalArgumentException("the spray nozzle needs a fluid");
-        ArmPattern pattern = o.has("pattern") ? ArmPattern.byId(GsonHelper.getAsString(o, "pattern")) : ArmPattern.defaultFor(tool);
+        ArmPattern pattern = lay ? ArmPattern.LAY : place ? ArmPattern.PLACE : o.has("pattern") ? ArmPattern.byId(GsonHelper.getAsString(o, "pattern")) : ArmPattern.defaultFor(tool);
         if (pattern == null) throw new IllegalArgumentException("unknown pattern");
-        return new Step(stage, rel, place, tool, block, consume, count, fluid, amount, Math.max(1, GsonHelper.getAsInt(o, "time", 40)), lay ? ArmPattern.LAY : place ? ArmPattern.PLACE : pattern, -1);
+        if (!place && (pattern == ArmPattern.PLACE || pattern == ArmPattern.LAY)) throw new IllegalArgumentException("work by the bare arm needs a pattern, such as core_set");
+        if (!place && (tool == ArmTool.WELDING_TORCH) != (pattern == ArmPattern.SEAM_WELD)) throw new IllegalArgumentException("welding needs the welding torch, and the torch only welds");
+        int helpers = GsonHelper.getAsInt(o, "helpers", 0);
+        if (helpers < 0 || helpers > 1) throw new IllegalArgumentException("helpers must be 0 or 1");
+        return new Step(stage, rel, place, tool, block, consume, count, helpers, Math.max(1, GsonHelper.getAsInt(o, "time", 40)), pattern, -1);
     }
 
     private static Step withSeam(Step s, List<Step> all) {
         if (s.pattern != ArmPattern.SEAM_WELD) return s;
         for (Direction d : Direction.Plane.HORIZONTAL) {
             BlockPos n = s.rel.relative(d);
-            for (Step o : all) if (o.place && o.rel.equals(n)) return new Step(s.stage, s.rel, s.place, s.tool, s.block, s.consume, s.count, s.fluid, s.fluidAmount, s.time, s.pattern, d.get2DDataValue());
+            for (Step o : all) if (o.place && o.rel.equals(n)) return new Step(s.stage, s.rel, s.place, s.tool, s.block, s.consume, s.count, s.helpers, s.time, s.pattern, d.get2DDataValue());
         }
         return s;
     }
@@ -173,7 +168,7 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
                 c.putString("consume", BuiltInRegistries.ITEM.getKey(s.consume).toString());
                 c.putInt("consumeCount", s.count);
             }
-            if (s.fluid != null) { c.putString("fluid", s.fluid.toString()); c.putInt("amount", s.fluidAmount); }
+            if (s.helpers > 0) c.putInt("helpers", s.helpers);
             c.putInt("time", s.time);
             c.putString("pattern", s.pattern.id());
             c.putInt("seam", s.seam);
@@ -183,6 +178,7 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
         return t;
     }
 
+    /** The recipe as saved, or null if it uses tools or patterns that no longer exist. */
     public static ArmRecipe fromTag(CompoundTag t) {
         int[] size = t.getIntArray("size");
         List<Step> steps = new ArrayList<>();
@@ -192,9 +188,11 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
             boolean place = c.getBoolean("place");
             Block block = place && c.contains("block") ? BuiltInRegistries.BLOCK.get(ResourceLocation.parse(c.getString("block"))) : null;
             Item consume = c.contains("consume") ? BuiltInRegistries.ITEM.get(ResourceLocation.parse(c.getString("consume"))) : null;
-            steps.add(new Step(c.getInt("stage"), new BlockPos(r[0], r[1], r[2]), place, ArmTool.byId(c.getString("tool")), block, consume, Math.max(1, c.getInt("consumeCount")),
-                    c.contains("fluid") ? ResourceLocation.parse(c.getString("fluid")) : null, c.getInt("amount"), c.getInt("time"),
-                    ArmPattern.byId(c.getString("pattern")), c.getInt("seam")));
+            ArmTool tool = ArmTool.byId(c.getString("tool"));
+            ArmPattern pattern = ArmPattern.byId(c.getString("pattern"));
+            if (tool == null || pattern == null) return null; // saved before the gripper and the other tools were retired
+            steps.add(new Step(c.getInt("stage"), new BlockPos(r[0], r[1], r[2]), place, tool, block, consume, Math.max(1, c.getInt("consumeCount")),
+                    c.getInt("helpers"), c.getInt("time"), pattern, c.getInt("seam")));
         }
         return new ArmRecipe(ResourceLocation.parse(t.getString("id")), size[0], size[1], size[2], List.copyOf(steps),
                 BuiltInRegistries.ITEM.get(ResourceLocation.parse(t.getString("result"))), Math.max(1, t.getInt("count")));

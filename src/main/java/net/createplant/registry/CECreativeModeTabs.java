@@ -100,7 +100,7 @@ public class CECreativeModeTabs {
             "fusion_vacuum_pump", "fusion_deuterium_port", "fusion_tritium_port", "fusion_ash_port", "fusion_helium_inlet",
             "fusion_helium_outlet", "fusion_coolant_inlet", "fusion_coolant_outlet", "fusion_control_console", "fusion_console_panel"),
         List.of("crane_drive", "fusion_crane_drive", "quarry_drive", "industrial_dispatch_board", "facility_constructor", "vault_hatch",
-            "assembly_jig", "industrial_arm", "gripper", "welding_torch", "laser_cutter", "spray_nozzle", "wiring_head")
+            "assembly_jig", "industrial_arm", "welding_torch")
     );
 
     private static void display(CreativeModeTab.Output output) {

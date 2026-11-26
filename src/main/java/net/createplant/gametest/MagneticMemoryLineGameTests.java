@@ -34,8 +34,9 @@ public final class MagneticMemoryLineGameTests {
     private static final org.slf4j.Logger LOGGER = LogUtils.getLogger();
     private static final BlockPos ORIGIN = new BlockPos(8, 4, 8);
     private static final List<Station> STATIONS = List.of(
-        new Station(new BlockPos(1, 0, -1), ArmTool.GRIPPER),
-        new Station(new BlockPos(1, 0, 3), ArmTool.WIRING_HEAD),
+        // two bare arms: either lays the sheet and sets cores, and threading takes both, one holding the wire's far end
+        new Station(new BlockPos(1, 0, -1), ArmTool.HAND),
+        new Station(new BlockPos(1, 0, 3), ArmTool.HAND),
         new Station(new BlockPos(-1, 0, 1), ArmTool.WELDING_TORCH),
         new Station(new BlockPos(3, 0, 1), ArmTool.WELDING_TORCH));
 
@@ -134,7 +135,7 @@ public final class MagneticMemoryLineGameTests {
             place(level, pos, CEArm.ARM.get().defaultBlockState());
             drive(level, pos.below(), Direction.UP);
             var arm = (IndustrialArmBlockEntity) level.getBlockEntity(pos);
-            arm.toolSlot.insertItem(0, CEArm.TOOLS.get(station.tool()).toStack(), false);
+            if (station.tool() == ArmTool.WELDING_TORCH) arm.toolSlot.insertItem(0, CEArm.WELDING_TORCH.toStack(), false);
         }
         return new Line(level, origin);
     }

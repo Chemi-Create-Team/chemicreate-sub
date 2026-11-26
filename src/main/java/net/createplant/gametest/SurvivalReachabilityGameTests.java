@@ -151,7 +151,7 @@ public final class SurvivalReachabilityGameTests {
             if (fluids.contains(CEUranium.HYDROGEN_FLUORIDE.get())) changed |= fluids.add(CEUranium.FLUORINE.get());
         }
         if (has(items, "assembly_jig", "industrial_arm")) for (var recipe : net.createplant.arm.ArmRecipes.list())
-            if (recipe.steps().stream().allMatch(step -> items.contains(net.createplant.registry.CEArm.TOOLS.get(step.tool()).get())
+            if (recipe.steps().stream().allMatch(step -> (step.tool() == net.createplant.arm.ArmTool.HAND || items.contains(net.createplant.registry.CEArm.WELDING_TORCH.get()))
                 && (step.material() == null || items.contains(step.material())))) changed |= items.add(recipe.result());
         if (has(items, "electrolysis_cell", "electrolysis_cell_controller", "electrolysis_electrode_head", "asbestos_wrapped_electrode")) {
             for (var recipe : net.createplant.chemistry.ElectrolysisProcess.all()) if (recipe.electrowinning() && fluids.contains(recipe.feed())) {

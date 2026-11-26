@@ -2,14 +2,14 @@ package net.createplant.arm;
 
 import java.util.Locale;
 
-/** How a tool moves over its cell. PLACE is the gripper's own drop and is not written in recipes. */
+/** How an arm moves over its cell. PLACE and LAY are the bare arm's own drops and are not written in recipes. */
 public enum ArmPattern {
-    PLACE, SEAM_WELD, PERIMETER_CUT, DIAGONAL_CUT, GRID_WIRE, FULL_SPRAY,
-    /** The first half of GRID_WIRE alone: setting the ferrite cores. */
+    PLACE, SEAM_WELD,
+    /** The bare arm sets the ferrite cores row by row. */
     CORE_SET,
-    /** The second half of GRID_WIRE alone: threading the X, Y and sense wires through cores already set. */
+    /** The bare arm threads the X, Y and sense wires through cores already set; a helper arm holds the far end of each wire. */
     WIRE_THREAD,
-    /** The gripper's drop onto the jig plate for a laid item. Not written in recipes. */
+    /** The bare arm's drop onto the jig plate for a laid item. */
     LAY;
 
     public String id() {
@@ -23,12 +23,6 @@ public enum ArmPattern {
 
     /** The pattern a tool uses when a recipe step does not name one. */
     public static ArmPattern defaultFor(ArmTool tool) {
-        return switch (tool) {
-            case GRIPPER -> PLACE;
-            case WELDING_TORCH -> SEAM_WELD;
-            case LASER_CUTTER -> PERIMETER_CUT;
-            case SPRAY_NOZZLE -> FULL_SPRAY;
-            case WIRING_HEAD -> GRID_WIRE;
-        };
+        return tool == ArmTool.WELDING_TORCH ? SEAM_WELD : PLACE;
     }
 }

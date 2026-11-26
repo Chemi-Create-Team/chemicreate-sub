@@ -1,8 +1,6 @@
 package net.createplant.registry;
 
 import com.simibubi.create.api.stress.BlockStressValues;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
 import net.createplant.arm.ArmRecipes;
@@ -28,7 +26,7 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** The assembly jig, the industrial arm and its five tools; recipes are data under data/&lt;namespace&gt;/assembly. */
+/** The assembly jig, the industrial arm and its one tool, the welding torch; recipes are data under data/&lt;namespace&gt;/assembly. */
 public final class CEArm {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePlant.MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePlant.MOD_ID);
@@ -40,7 +38,7 @@ public final class CEArm {
         BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion());
     public static final DeferredItem<BlockItem> JIG_ITEM = ITEMS.registerSimpleBlockItem(JIG);
     public static final DeferredItem<BlockItem> ARM_ITEM = ITEMS.registerItem("industrial_arm", properties -> new net.createplant.item.IndustrialArmItem(ARM.get(), properties));
-    public static final Map<ArmTool, DeferredItem<ArmToolItem>> TOOLS = new EnumMap<>(ArmTool.class);
+    public static final DeferredItem<ArmToolItem> WELDING_TORCH = ITEMS.registerItem("welding_torch", properties -> new ArmToolItem(ArmTool.WELDING_TORCH, properties));
     public static final DeferredItem<Item> WELDED_IRON_BEAM = ITEMS.registerSimpleItem("welded_iron_beam");
     public static final DeferredItem<Item> MAGNETIC_CORE_MEMORY = ITEMS.registerSimpleItem("magnetic_core_memory");
     /** Core memory parts: Ni-Zn ferrite powder is pressed into rings and fired into cores; copper wire is enamelled with resin. */
@@ -52,10 +50,6 @@ public final class CEArm {
         () -> BlockEntityType.Builder.of(AssemblyJigBlockEntity::new, JIG.get()).build(null));
     public static final Supplier<BlockEntityType<IndustrialArmBlockEntity>> ARM_ENTITY = TYPES.register("industrial_arm",
         () -> BlockEntityType.Builder.of(IndustrialArmBlockEntity::new, ARM.get()).build(null));
-
-    static {
-        for (ArmTool tool : ArmTool.values()) TOOLS.put(tool, ITEMS.registerItem(tool.id(), properties -> new ArmToolItem(tool, properties)));
-    }
 
     private CEArm() { }
 
@@ -71,8 +65,6 @@ public final class CEArm {
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, JIG_ENTITY.get(), (be, side) -> be.tank);
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ARM_ENTITY.get(), (be, side) -> be.tank);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ARM_ENTITY.get(), (be, side) -> be.toolSlot);
     }
 }
