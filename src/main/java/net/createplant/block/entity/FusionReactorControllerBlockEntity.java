@@ -497,6 +497,24 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
             Component.translatable(KEY + "control.state." + (command(command) ? "on" : "off"))), true);
     }
 
+    /** For automatic controllers: sets a command without a player; ignored while the emergency latch is set. */
+    public void command(Command command, boolean on) {
+        if (emergency || command(command) == on) return;
+        switch (command) {
+            case VACUUM -> vacuumCommand = on;
+            case CRYOGENICS -> cryogenicCommand = on;
+            case MAGNETS -> magnetCommand = on;
+            case PLASMA -> plasmaCommand = on;
+        }
+        setChanged(); sendData();
+    }
+
+    public void setTargetPercent(int percent) {
+        int next = Math.clamp(percent, 10, 100);
+        if (next == targetPercent) return;
+        targetPercent = next; setChanged(); sendData();
+    }
+
     public void adjustTarget(int delta, Player player) {
         targetPercent = Math.clamp(targetPercent + delta, 10, 100);
         setChanged(); sendData();

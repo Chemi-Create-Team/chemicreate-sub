@@ -70,6 +70,7 @@ public class CreatePlant {
         modEventBus.addListener(net.createplant.block.entity.HighPressureSeparatorBlockEntity::registerCapabilities);
         net.createplant.registry.CEHighStressMachines.register(modEventBus);
         net.createplant.registry.CELargePress.register(modEventBus);
+        net.createplant.relay.CERelayComputer.register(modEventBus);
         net.createplant.registry.CEReactor.register(modEventBus);
         net.createplant.registry.CEHeating.register(modEventBus);
         net.createplant.registry.CEElectricUtilities.register(modEventBus);

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LLL",
+    "LSL",
+    "LLL"
+  ],
+  "key": {
+    "L": {
+      "item": "create_refinery_n_reactors:large_relay"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:large_iron_plate"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:relay_rack",
+    "count": 1
+  }
+}

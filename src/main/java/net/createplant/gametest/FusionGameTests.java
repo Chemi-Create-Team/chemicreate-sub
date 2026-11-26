@@ -522,6 +522,44 @@ public class FusionGameTests {
             throw new IllegalStateException("Turbine transfer promise changed");
     }
 
+    /** The relay computer's sequence brings a cold, unpumped tokamak to a burn at its own target without anyone at the desk. */
+    @GameTest(template = "test_fusion", timeoutTicks = 200)
+    public static void relayComputerStartsAColdReactorAndHoldsItsTarget(GameTestHelper helper) {
+        BlockPos controllerPos = helper.absolutePos(CONTROLLER);
+        for (FusionStructure.Cell cell : FusionStructure.cells(controllerPos, Direction.SOUTH))
+            if (cell.role() != FusionStructure.Role.CLEAR) helper.getLevel().setBlock(cell.pos(), cell.expected(), 3);
+        var controller = (FusionReactorControllerBlockEntity) helper.getLevel().getBlockEntity(controllerPos);
+        controller.tick();
+        helper.assertTrue(controller.formed(), "The tokamak forms: " + controller.status());
+        var pump = (FusionVacuumPumpBlockEntity) helper.getLevel().getBlockEntity(controller.centre().relative(Direction.WEST, FusionPhysics.HALF_WIDTH));
+        fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.DEUTERIUM, new FluidStack(CEFusion.DEUTERIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
+        fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM, new FluidStack(CEFusion.TRITIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
+        controller.blanketPort().insertItem(0, new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()), false);
+        controller.blanketPort().insertItem(1, new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()), false);
+        String first = net.createplant.relay.RelayComputerBlockEntity.fusionStep(controller, 50);
+        helper.assertTrue(first.equals("fusion_vacuum") && controller.vacuumCommand() && !controller.plasmaCommand(),
+            "A cold reactor is pumped down first, with the plasma held off: " + first);
+        String status = first;
+        java.util.List<String> seen = new java.util.ArrayList<>(java.util.List.of(first));
+        for (int tick = 0; tick < 200_000 && !(status.equals("fusion") && controller.fusionWatts() > 0 && controller.targetPercent() == 50); tick++) {
+            pump.setSpeed(64);
+            controller.supplyElectrical(50_000_000, 400);
+            fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.HELIUM_IN,
+                FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(FusionReactorControllerBlockEntity.LIQUID_HELIUM_CAPACITY), 4.2));
+            fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN, FluidForm.PRESSURISED_WATER.stack(FusionPhysics.RATED_COOLANT_MB_PER_TICK));
+            controller.port(net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_OUT).drain(FusionReactorControllerBlockEntity.COOLANT_CAPACITY, FluidAction.EXECUTE);
+            controller.tick();
+            if (tick % net.createplant.relay.RelayComputerBlockEntity.PERIOD == 0) {
+                status = net.createplant.relay.RelayComputerBlockEntity.fusionStep(controller, 50);
+                if (!seen.getLast().equals(status)) seen.add(status);
+            }
+        }
+        helper.assertTrue(status.equals("fusion") && controller.fusionWatts() > 0 && controller.targetPercent() == 50 && !controller.emergency(),
+            "The computer brings the reactor to a burn at 50%: " + seen + " status=" + controller.status() + " target=" + controller.targetPercent());
+        helper.assertTrue(seen.indexOf("fusion_charging") > seen.indexOf("fusion_vacuum"), "Magnets charge only after the vacuum: " + seen);
+        helper.succeed();
+    }
+
     private static void fill(FusionReactorControllerBlockEntity controller,
                              net.createplant.block.FusionFluidPortBlock.Kind kind, FluidStack stack) {
         controller.port(kind).fill(stack, FluidAction.EXECUTE);

@@ -184,6 +184,22 @@ public final class ReactorCores {
         return pos;
     }
 
+    /** Controller of the formed core whose box is closest to pos, within range blocks; null if none. */
+    public static BlockPos nearest(Level level, BlockPos pos, int range) {
+        var cores = FORMED.get(level);
+        if (cores == null) return null;
+        BlockPos best = null; double bestDistance = Double.MAX_VALUE;
+        for (var entry : cores.entrySet()) {
+            BoundingBox box = entry.getValue();
+            double dx = Math.max(0, Math.max(box.minX() - pos.getX(), pos.getX() - box.maxX()));
+            double dy = Math.max(0, Math.max(box.minY() - pos.getY(), pos.getY() - box.maxY()));
+            double dz = Math.max(0, Math.max(box.minZ() - pos.getZ(), pos.getZ() - box.maxZ()));
+            double d = dx * dx + dy * dy + dz * dz;
+            if (d <= range * range && d < bestDistance) { bestDistance = d; best = entry.getKey(); }
+        }
+        return best;
+    }
+
     public static void formed(Level level, BlockPos controller, BoundingBox box) {
         FORMED.computeIfAbsent(level, l -> new HashMap<>()).put(controller, box);
     }

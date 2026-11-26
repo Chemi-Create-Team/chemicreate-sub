@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "side": "create_refinery_n_reactors:block/relay/rack_on",
+    "end": "create_refinery_n_reactors:block/relay/computer_side"
+  }
+}

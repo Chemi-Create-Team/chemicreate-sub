@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "front": "create_refinery_n_reactors:block/relay/computer_front",
+    "side": "create_refinery_n_reactors:block/relay/computer_side",
+    "top": "create_refinery_n_reactors:block/relay/computer_side"
+  }
+}

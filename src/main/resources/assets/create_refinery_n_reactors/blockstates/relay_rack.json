@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "powered=false": {
+      "model": "create_refinery_n_reactors:block/relay/rack"
+    },
+    "powered=true": {
+      "model": "create_refinery_n_reactors:block/relay/rack_on"
+    }
+  }
+}

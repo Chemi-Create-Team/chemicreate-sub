@@ -172,6 +172,8 @@
     "create_refinery_n_reactors:lithium_ion_battery_casing",
     "create_refinery_n_reactors:lithium_ion_battery_terminal",
     "create_refinery_n_reactors:high_pressure_separator",
-    "create_refinery_n_reactors:industrial_arm"
+    "create_refinery_n_reactors:industrial_arm",
+    "create_refinery_n_reactors:relay_rack",
+    "create_refinery_n_reactors:relay_computer"
   ]
 }
