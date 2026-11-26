@@ -66,3 +66,11 @@
 ## 修正（コアメモリの大きさ）
 
 配線面を上面中央の4分の1（0.5×0.5マス）にし、コアを半径0.007マスのほこりほどの大きさ、線を0.0025マスの太さにした。小さくなった分、コアを12×12に増やした。
+
+## 修正（評価報告の不具合3件）
+
+`docs/reports/industrial-arm-evaluation-2026-11-26.md` の高優先度3件を修正した。
+
+- 枠の撤去で完成品が出る: `AssemblyJigBlockEntity.checkPlaced` が毎tick置いたブロックを確かめ、消えた配置工程を未着手に戻し、後のステージの工程もやり直しにする。試験 `aRemovedFrameBlockTakesItsStepAndTheLaterWorkBack`。
+- 届かない入れ物から材料を取る: `fetch` は上面に爪が届かない入れ物を、アイテムを抜く前に飛ばす。試験 `theArmLeavesMaterialItCannotReach`。磁気コアメモリのラインのGameTestは投入チェストが配線アームから届かない配置に頼っていたため、銅用チェストを配線アームのそばに分けた。プレイテスト用ワールドのZIPは古い配置のままなので、手順書に注意を追記した。
+- デポのスプレー中に保存すると水が消える: 液体を加工完了時に引き落とすようにした。あわせて、開き直したアームが前の自分の「使用中」の印でアイテムを取れなくなる問題も直した（`claimedByOther`）。試験 `sprayFluidIsKeptWhenTheArmIsReloadedMidWork`。

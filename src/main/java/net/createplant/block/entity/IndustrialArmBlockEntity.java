@@ -244,7 +244,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             TransportedItemStack[] found = {null};
             ArmBeltRecipe[] recipe = {null};
             belt.handleCenteredProcessingOnAllItems(.5f, t -> {
-                ArmBeltRecipe r = found[0] == null && !CLAIMED.containsKey(t) ? ArmRecipes.belt(tool, t.stack) : null;
+                ArmBeltRecipe r = found[0] == null && !claimedByOther(t) ? ArmRecipes.belt(tool, t.stack) : null;
                 if (r != null && ArmPose.reaches(worldPosition, belt.getWorldPositionOf(t).add(0, HOVER, 0))) {
                     found[0] = t;
                     recipe[0] = r;
@@ -253,7 +253,8 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             });
             if (found[0] == null) continue;
             ArmBeltRecipe r = recipe[0];
-            if (r.fluid() != null && !(drawFluid(new FluidTank[] {tank}, r.fluid(), r.fluidAmount(), true) && drawFluid(new FluidTank[] {tank}, r.fluid(), r.fluidAmount(), false))) {
+            // The fluid is only checked here and drawn when the item is done, as belt work is not saved.
+            if (r.fluid() != null && !drawFluid(new FluidTank[] {tank}, r.fluid(), r.fluidAmount(), true)) {
                 cooldown = 60;
                 return;
             }
@@ -268,6 +269,12 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             sendData();
             return;
         }
+    }
+
+    /** Another arm is working the item. A claim left by this arm's earlier self (before a reload) or by a removed arm does not count. */
+    private boolean claimedByOther(TransportedItemStack t) {
+        BlockPos owner = CLAIMED.get(t);
+        return owner != null && !owner.equals(worldPosition) && level.getBlockEntity(owner) instanceof IndustrialArmBlockEntity arm && arm.beltItem == t;
     }
 
     /** Stops the claimed item for this tick, as Create's own arm does, and aims at it. False once the item is gone. */
@@ -295,6 +302,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         progress = (float) Math.min(1, progress + f / beltRecipe.time());
         if (level.getGameTime() % 4 == 0) sound(beltRecipe.tool());
         if (progress < 1) return;
+        if (beltRecipe.fluid() != null && !drawFluid(new FluidTank[] {tank}, beltRecipe.fluid(), beltRecipe.fluidAmount(), false)) {
+            endJob(); // the tank ran dry meanwhile: the item stays as it was
+            return;
+        }
         TransportedItemStack worked = beltItem;
         belt(level, beltPos).handleProcessingOnAllItems(t -> {
             if (t != worked) return TransportedResult.doNothing();
@@ -336,13 +347,13 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             if (be == null || be instanceof IndustrialArmBlockEntity || be instanceof AssemblyJigBlockEntity) continue;
             IItemHandler h = level.getCapability(Capabilities.ItemHandler.BLOCK, p, null);
             if (h == null) h = level.getCapability(Capabilities.ItemHandler.BLOCK, p, net.minecraft.core.Direction.UP);
-            if (h == null) continue;
+            Vec3 top = Vec3.atBottomCenterOf(p).add(0, 1, 0);
+            if (h == null || !ArmPose.reaches(worldPosition, top)) continue; // only from what the claw can reach
             for (int slot = 0; slot < h.getSlots(); slot++) {
                 if (!h.getStackInSlot(slot).is(item)) continue;
                 ItemStack got = h.extractItem(slot, 1, false);
                 if (got.isEmpty()) continue;
-                Vec3 top = Vec3.atBottomCenterOf(p).add(0, 1, 0);
-                if (ArmPose.reaches(worldPosition, top)) fetchFrom = top;
+                fetchFrom = top;
                 return got;
             }
         }

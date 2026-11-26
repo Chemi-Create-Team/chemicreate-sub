@@ -162,4 +162,75 @@ public class ArmAssemblyGameTests {
                 }
         h.succeed();
     }
+
+    private static net.createplant.block.entity.IndustrialArmBlockEntity poweredArm(GameTestHelper h, BlockPos arm, ArmTool tool) {
+        h.setBlock(arm.below(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, net.minecraft.core.Direction.UP));
+        h.setBlock(arm, CEArm.ARM.get().defaultBlockState());
+        var be = (net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm);
+        be.toolSlot.setStackInSlot(0, new net.minecraft.world.item.ItemStack(CEArm.TOOLS.get(tool).get()));
+        return be;
+    }
+
+    @GameTest(template = "test_empty", timeoutTicks = 200)
+    public static void aRemovedFrameBlockTakesItsStepAndTheLaterWorkBack(GameTestHelper h) {
+        var jig = jig(h, BEAM);
+        BlockPos a = h.absolutePos(JIG.west(3));
+        for (int stage = 0; stage < 2; stage++) {
+            ArmTool tool = stage == 0 ? ArmTool.GRIPPER : ArmTool.WELDING_TORCH;
+            int s;
+            while ((s = jig.reserve(a, tool, Vec3.atCenterOf(a))) >= 0) {
+                if (jig.recipe.steps().get(s).place()) jig.place(s);
+                else jig.complete(s);
+            }
+        }
+        h.assertTrue(jig.allDone(), "all steps are done");
+        h.setBlock(JIG.above(), Blocks.AIR.defaultBlockState());
+        h.runAfterDelay(60, () -> {
+            h.assertTrue(jig.currentStage() == 0 && !jig.allDone(), "the frame stage is open again");
+            for (int i = 0; i < jig.status.length; i++)
+                if (!jig.recipe.steps().get(i).place()) h.assertTrue(jig.status[i] == AssemblyJigBlockEntity.PENDING, "the weld on the broken frame is to be done again");
+            var items = h.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(h.absolutePos(JIG)).inflate(3));
+            h.assertTrue(items.stream().noneMatch(i -> i.getItem().is(CEArm.WELDED_IRON_BEAM.get())), "no product comes out of a broken frame");
+            h.assertTrue(h.getBlockState(JIG.above().east()).is(Blocks.IRON_BLOCK), "the block still standing is kept");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_empty", timeoutTicks = 200)
+    public static void theArmLeavesMaterialItCannotReach(GameTestHelper h) {
+        BlockPos arm = new BlockPos(6, 2, 6), chest = arm.offset(-5, -1, -5);
+        jig(h, BEAM);
+        poweredArm(h, arm, ArmTool.GRIPPER);
+        h.setBlock(chest, Blocks.CHEST.defaultBlockState());
+        var box = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getBlockEntity(chest);
+        box.setItem(0, new net.minecraft.world.item.ItemStack(Blocks.IRON_BLOCK, 3));
+        h.runAfterDelay(120, () -> {
+            h.assertTrue(box.getItem(0).getCount() == 3, "the iron in the chest out of the claw's reach stays there");
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_empty", timeoutTicks = 600)
+    public static void sprayFluidIsKeptWhenTheArmIsReloadedMidWork(GameTestHelper h) {
+        BlockPos arm = new BlockPos(1, 2, 1), depot = new BlockPos(3, 2, 1);
+        var be = poweredArm(h, arm, ArmTool.SPRAY_NOZZLE);
+        be.tank.fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 50), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
+        var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
+        items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.WHITE_CONCRETE_POWDER), false);
+        boolean[] reloaded = {false};
+        h.onEachTick(() -> {
+            var now = (net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm);
+            if (reloaded[0] || now.phase != net.createplant.block.entity.IndustrialArmBlockEntity.WORK || now.progress < .3f) return;
+            var level = h.getLevel();
+            var saved = now.saveWithFullMetadata(level.registryAccess());
+            level.setBlockEntity(net.minecraft.world.level.block.entity.BlockEntity.loadStatic(now.getBlockPos(), now.getBlockState(), saved, level.registryAccess()));
+            reloaded[0] = true;
+        });
+        h.succeedWhen(() -> {
+            var now = (net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm);
+            h.assertTrue(reloaded[0] && items.getStackInSlot(0).is(Blocks.WHITE_CONCRETE.asItem()), "the reloaded arm still cures the powder");
+            h.assertTrue(now.tank.isEmpty(), "the water is drawn once, when the concrete is done");
+        });
+    }
 }

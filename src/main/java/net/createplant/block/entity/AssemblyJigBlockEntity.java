@@ -194,11 +194,37 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         }
         long now = level.getGameTime();
         if (now % 20 == 0) releaseOrphans();
+        checkPlaced();
         if (allDone() && now - lastDone >= FINISH_DELAY) finish();
         if (dirty && --syncIn <= 0) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
             dirty = false;
             syncIn = SYNC_EVERY;
+        }
+    }
+
+    /**
+     * A placed block that is gone takes its step back, and with it all work of the later stages, which was done on the frame
+     * that is no longer whole; so a product only comes out of a frame that is still standing.
+     */
+    private void checkPlaced() {
+        if (recipe == null) return;
+        int broken = Integer.MAX_VALUE;
+        for (int i = 0; i < status.length; i++) {
+            Step s = recipe.steps().get(i);
+            if (s.place() && status[i] == DONE && !level.getBlockState(cell(i)).is(s.block())) {
+                broken = Math.min(broken, s.stage());
+                status[i] = PENDING;
+                progress[i] = 0;
+                changed();
+            }
+        }
+        if (broken == Integer.MAX_VALUE) return;
+        for (int i = 0; i < status.length; i++) {
+            if (recipe.steps().get(i).stage() <= broken || status[i] == PENDING) continue;
+            status[i] = PENDING; // a reserving arm sees the step is no longer its own and gives up
+            reserved[i] = null;
+            progress[i] = 0;
         }
     }
 
