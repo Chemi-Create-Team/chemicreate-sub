@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "create_refinery_n_reactors:block/continuous_factory/coil_winder",
+      "y": 0
+    },
+    "facing=west": {
+      "model": "create_refinery_n_reactors:block/continuous_factory/coil_winder",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "create_refinery_n_reactors:block/continuous_factory/coil_winder",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "create_refinery_n_reactors:block/continuous_factory/coil_winder",
+      "y": 270
+    }
+  }
+}

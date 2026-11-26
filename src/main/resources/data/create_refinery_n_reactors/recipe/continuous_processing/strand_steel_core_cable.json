@@ -1,0 +1,19 @@
+{
+  "machine": "coil_winder",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:aluminum_sheet",
+    "count": 8
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:steel_core_aluminum_cable",
+    "count": 8
+  },
+  "work": 340,
+  "heat": 0,
+  "starting_thickness": 0.58,
+  "auxiliary": {
+    "item": "create_refinery_n_reactors:steel_ingot",
+    "count": 2
+  }
+}

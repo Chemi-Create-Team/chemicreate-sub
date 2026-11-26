@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " R ",
+    "CCC",
+    " R "
+  ],
+  "key": {
+    "R": {
+      "item": "create_refinery_n_reactors:rubber_gasket"
+    },
+    "C": {
+      "item": "create_refinery_n_reactors:steel_core_aluminum_cable"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:high_voltage_cable",
+    "count": 6
+  }
+}

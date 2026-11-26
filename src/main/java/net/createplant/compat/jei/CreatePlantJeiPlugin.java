@@ -23,6 +23,8 @@ import net.createplant.chemistry.DistillationProfile;
 import net.createplant.chemistry.ProcessModule;
 import net.createplant.chemistry.ProcessRecipe;
 import net.createplant.chemistry.ReactorModule;
+import net.createplant.factory.FactoryKind;
+import net.createplant.recipe.ContinuousFactoryRecipe;
 import net.createplant.recipe.ConverterRecipe;
 import net.createplant.recipe.LargePressingRecipe;
 import net.createplant.recipe.PressureReactionRecipe;
@@ -36,6 +38,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
@@ -59,6 +62,9 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("forging_byproducts", "plant/steel_forging", CEItems.STEEL_SLAG.get(), CEItems.PIG_IRON.get()),
             new Kind("cubic_pressing", "plant/cubic_press", CEHighStressMachines.PRESS.get(), CEHighStressMachines.PRESS.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("large_pressing", "plant/large_press", CELargePress.PRESS.get(), CELargePress.PRESS.get(), CELargePress.DEPOT.get()),
+            new Kind("rotary_kiln", "plant/rotary_kiln", CEContinuousFactory.KILN.get(), CEContinuousFactory.KILN.get(), AllBlocks.BLAZE_BURNER.get()),
+            new Kind("rolling_mill", "plant/rolling_mill", CEContinuousFactory.MILL.get(), CEContinuousFactory.MILL.get(), CEContinuousFactory.STAND.get()),
+            new Kind("coil_winder", "plant/coil_winder", CEContinuousFactory.WINDER.get(), CEContinuousFactory.WINDER.get(), CEContinuousFactory.BRAKE.get()),
             new Kind("stirred_reactor", "plant/reactor_plant_stirred", CEReactor.STIRRER.get(), CETransport.LIDDED_VESSEL.get(), CEReactor.STIRRER.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("tray_reactor", "plant/uranium_preparation", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("reaction_vessel", "plant/reaction_tower", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get()),
@@ -129,8 +135,28 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         return new PlantProcess(in, List.of(), kept, List.of(recipe.result().copy()), List.of(), note("arm_assembly", steps));
     }
 
+    private static PlantProcess continuous(ContinuousFactoryRecipe recipe) {
+        List<List<ItemStack>> inputs = new ArrayList<>();
+        inputs.add(Arrays.stream(recipe.feed().ingredient().getItems()).map(stack -> {
+            var feed = stack.copyWithCount(recipe.feed().count());
+            if (recipe.minimumDamage() != 0) feed.setDamageValue(recipe.minimumDamage());
+            return feed;
+        }).toList());
+        recipe.auxiliary().ifPresent(aux -> inputs.add(Arrays.stream(aux.ingredient().getItems()).map(stack -> stack.copyWithCount(aux.count())).toList()));
+        return new PlantProcess(inputs, List.of(), List.of(), List.of(recipe.result().copy()), List.of(),
+            note(recipe.machine().id + (recipe.minimumDamage() > 0 ? "_worn" : recipe.heat() == 2 ? "_strong" : "")));
+    }
+
     @Override public void registerRecipes(IRecipeRegistration registration) {
         var world = Minecraft.getInstance().level;
+        if (world != null) for (var kind : FactoryKind.values()) {
+            registration.addRecipes(type(kind.id), world.getRecipeManager()
+                .getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType()).stream()
+                .filter(holder -> holder.value().machine() == kind)
+                .sorted(java.util.Comparator.comparing((RecipeHolder<ContinuousFactoryRecipe> holder) -> holder.value().minimumDamage() > 0)
+                    .thenComparing(holder -> holder.id().getPath()))
+                .map(holder -> continuous(holder.value())).toList());
+        }
         if (world != null) registration.addRecipes(type("large_pressing"), world.getRecipeManager()
             .getAllRecipesFor(CERecipeTypes.LARGE_PRESSING.<SingleRecipeInput, LargePressingRecipe>getType()).stream().map(holder -> {
                 var recipe = holder.value();

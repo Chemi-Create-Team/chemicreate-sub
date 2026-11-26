@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FCF",
+    " A "
+  ],
+  "key": {
+    "F": {
+      "item": "create_refinery_n_reactors:continuous_factory_frame"
+    },
+    "C": {
+      "item": "create:chute"
+    },
+    "A": {
+      "item": "create:shaft"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:continuous_factory_outlet",
+    "count": 1
+  }
+}

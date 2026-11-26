@@ -1,0 +1,111 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "housing": "create_refinery_n_reactors:block/continuous_factory/housing",
+    "foundation": "create_refinery_n_reactors:block/continuous_factory/foundation",
+    "steel": "create_refinery_n_reactors:block/continuous_factory/steel",
+    "grille": "create_refinery_n_reactors:block/continuous_factory/grille",
+    "gear": "create_refinery_n_reactors:block/continuous_factory/gear",
+    "barrel": "create_refinery_n_reactors:block/continuous_factory/barrel",
+    "copper": "create_refinery_n_reactors:block/continuous_factory/copper",
+    "particle": "create_refinery_n_reactors:block/continuous_factory/foundation"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        4,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#foundation"
+        },
+        "down": {
+          "texture": "#foundation"
+        },
+        "north": {
+          "texture": "#foundation"
+        },
+        "south": {
+          "texture": "#foundation"
+        },
+        "east": {
+          "texture": "#foundation"
+        },
+        "west": {
+          "texture": "#foundation"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        4,
+        0
+      ],
+      "to": [
+        16,
+        14,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#housing"
+        },
+        "down": {
+          "texture": "#housing"
+        },
+        "north": {
+          "texture": "#housing"
+        },
+        "south": {
+          "texture": "#grille"
+        },
+        "east": {
+          "texture": "#housing"
+        },
+        "west": {
+          "texture": "#housing"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        13,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#grille"
+        },
+        "down": {
+          "texture": "#steel"
+        },
+        "north": {
+          "texture": "#steel"
+        },
+        "south": {
+          "texture": "#steel"
+        },
+        "east": {
+          "texture": "#steel"
+        },
+        "west": {
+          "texture": "#steel"
+        }
+      }
+    }
+  ]
+}

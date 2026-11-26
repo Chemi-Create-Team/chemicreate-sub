@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SCS",
+    "FBF",
+    " A "
+  ],
+  "key": {
+    "S": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "F": {
+      "item": "create_refinery_n_reactors:continuous_factory_frame"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "A": {
+      "item": "create:shaft"
+    },
+    "C": {
+      "item": "create:cogwheel"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:rotary_kiln",
+    "count": 1
+  }
+}

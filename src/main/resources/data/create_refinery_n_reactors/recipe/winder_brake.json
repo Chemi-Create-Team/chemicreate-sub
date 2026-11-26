@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " C ",
+    "FAF",
+    " S "
+  ],
+  "key": {
+    "C": {
+      "item": "create:cogwheel"
+    },
+    "F": {
+      "item": "create_refinery_n_reactors:continuous_factory_frame"
+    },
+    "A": {
+      "item": "create:shaft"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:steel_block"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:winder_brake",
+    "count": 1
+  }
+}

@@ -71,6 +71,7 @@ public class CreatePlant {
         net.createplant.registry.CEHighStressMachines.register(modEventBus);
         net.createplant.registry.CELargePress.register(modEventBus);
         net.createplant.relay.CERelayComputer.register(modEventBus);
+        net.createplant.registry.CEContinuousFactory.register(modEventBus);
         net.createplant.registry.CEReactor.register(modEventBus);
         net.createplant.registry.CEHeating.register(modEventBus);
         net.createplant.registry.CEElectricUtilities.register(modEventBus);

@@ -26,6 +26,10 @@ public final class ClientQualityCheck {
     private ClientQualityCheck() { }
     public static void tick(ClientTickEvent.Post event) {
         Minecraft mc=Minecraft.getInstance();
+        if (phase==35) {
+            try { if (ContinuousFactoryClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
+            return;
+        }
         if (phase==96) {
             try { if (CreativeTabsClientCheck.tick(mc)) mc.stop(); } catch (Exception exception) { fail(mc,exception); }
             return;
@@ -286,6 +290,7 @@ public final class ClientQualityCheck {
                 if (Boolean.getBoolean("createplant.charredWoodClientCheck")) { CharredWoodClientCheck.start(mc);ticks=0;phase=31;return; }
                 if (Boolean.getBoolean("createplant.electrolysisClientCheck")) { ElectrolysisClientCheck.start(mc);ticks=0;phase=33;return; }
                 if (Boolean.getBoolean("createplant.vesselContentsClientCheck")) { VesselContentsClientCheck.start(mc);ticks=0;phase=28;return; }
+                if (Boolean.getBoolean("createplant.continuousFactoryClientCheck")) { ContinuousFactoryClientCheck.start(mc);ticks=0;phase=35;return; }
                 if (Boolean.getBoolean("createplant.whiteThemeWorldCheck")) { WhiteThemeWorldClientCheck.start(mc);ticks=0;phase=25;return; }
                 show(mc);
             } catch (Exception exception) { fail(mc,exception); }

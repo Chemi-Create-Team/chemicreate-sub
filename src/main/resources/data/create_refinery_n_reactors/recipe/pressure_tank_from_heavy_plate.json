@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "TBT",
+    "P P",
+    "TBT"
+  ],
+  "key": {
+    "T": {
+      "item": "create_refinery_n_reactors:thick_steel_plate"
+    },
+    "B": {
+      "item": "create:brass_sheet"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:stainless_steel_pipe"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:pressure_tank",
+    "count": 1
+  }
+}

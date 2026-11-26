@@ -1,0 +1,19 @@
+{
+  "machine": "coil_winder",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:enamelled_copper_wire",
+    "count": 16
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:fusion_central_solenoid",
+    "count": 8
+  },
+  "work": 380,
+  "heat": 0,
+  "starting_thickness": 0.58,
+  "auxiliary": {
+    "item": "create_refinery_n_reactors:steel_block",
+    "count": 2
+  }
+}

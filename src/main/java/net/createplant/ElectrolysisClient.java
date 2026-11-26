@@ -77,6 +77,8 @@ public class ElectrolysisClient {
 
     private static void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> PonderIndex.addPlugin(new ElectrolysisPonderPlugin()));
+        event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleEntityVisualizer.builder(net.createplant.registry.CEContinuousFactory.BODY_ENTITY.get())
+            .factory(net.createplant.client.FactoryBodyVisual::new).neverSkipVanillaRender().apply());
         event.enqueueWork(net.createplant.client.StainlessPipeModels::setup);
         event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get())
             .factory(com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual::shaft).skipVanillaRender(be -> true).apply());
@@ -113,10 +115,12 @@ public class ElectrolysisClient {
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(net.createplant.registry.CEContinuousFactory.BODY_ENTITY.get(), net.createplant.client.FactoryBodyRenderer::new);
         event.registerEntityRenderer(net.createplant.registry.CESafety.GAS_CLOUD.get(), net.createplant.client.GasCloudRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get(), com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEHighStressMachines.PRESS_ENTITY.get(), net.createplant.client.CubicPressRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CELargePress.PRESS_ENTITY.get(), net.createplant.client.LargeMechanicalPressRenderer::new);
+        event.registerBlockEntityRenderer(net.createplant.registry.CEContinuousFactory.CONTROLLER_ENTITY.get(), net.createplant.client.FactoryPonderRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CELargePress.DEPOT_ENTITY.get(), com.simibubi.create.content.logistics.depot.DepotRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.MATERIAL_PUMP_ENTITY.get(), com.simibubi.create.content.fluids.pump.PumpRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEAssembly.CONSTRUCTOR_ENTITY.get(), net.createplant.client.FacilityConstructorRenderer::new);

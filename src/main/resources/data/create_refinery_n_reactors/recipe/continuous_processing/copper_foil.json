@@ -1,0 +1,15 @@
+{
+  "machine": "rolling_mill",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "minecraft:copper_block",
+    "count": 1
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:copper_foil",
+    "count": 12
+  },
+  "work": 400,
+  "heat": 1,
+  "starting_thickness": 0.29
+}

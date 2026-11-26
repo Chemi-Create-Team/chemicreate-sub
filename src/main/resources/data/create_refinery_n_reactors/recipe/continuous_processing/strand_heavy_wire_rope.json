@@ -1,0 +1,19 @@
+{
+  "machine": "coil_winder",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:steel_ingot",
+    "count": 8
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:heavy_wire_rope",
+    "count": 4
+  },
+  "work": 380,
+  "heat": 0,
+  "starting_thickness": 0.58,
+  "auxiliary": {
+    "item": "minecraft:iron_ingot",
+    "count": 2
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " A ",
+    "BRB",
+    " S "
+  ],
+  "key": {
+    "A": {
+      "item": "create:shaft"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "R": {
+      "item": "create_refinery_n_reactors:heavy_wire_rope"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:steel_ingot"
+    }
+  },
+  "result": {
+    "id": "create:rope_pulley",
+    "count": 1
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ISI",
+    "SPS",
+    "ISI"
+  ],
+  "key": {
+    "I": {
+      "item": "create:iron_sheet"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:steel_ingot"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:steel_block"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:continuous_factory_frame",
+    "count": 8
+  }
+}

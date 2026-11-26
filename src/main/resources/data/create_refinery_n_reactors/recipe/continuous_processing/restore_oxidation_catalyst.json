@@ -1,0 +1,16 @@
+{
+  "machine": "rotary_kiln",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:oxidation_catalyst",
+    "count": 1
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:oxidation_catalyst",
+    "count": 1
+  },
+  "work": 640,
+  "heat": 2,
+  "starting_thickness": 0.58,
+  "minimum_damage": 1
+}

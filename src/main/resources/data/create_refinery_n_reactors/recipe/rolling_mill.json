@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FAF",
+    "SPS",
+    "FBF"
+  ],
+  "key": {
+    "F": {
+      "item": "create_refinery_n_reactors:continuous_factory_frame"
+    },
+    "A": {
+      "item": "create:shaft"
+    },
+    "S": {
+      "item": "create_refinery_n_reactors:steel_block"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "P": {
+      "item": "create_refinery_n_reactors:large_mechanical_press"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:rolling_mill",
+    "count": 1
+  }
+}

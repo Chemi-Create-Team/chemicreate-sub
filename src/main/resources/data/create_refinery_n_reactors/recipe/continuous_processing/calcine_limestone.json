@@ -1,0 +1,15 @@
+{
+  "machine": "rotary_kiln",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "minecraft:calcite",
+    "count": 1
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:quicklime",
+    "count": 1
+  },
+  "work": 400,
+  "heat": 1,
+  "starting_thickness": 0.58
+}

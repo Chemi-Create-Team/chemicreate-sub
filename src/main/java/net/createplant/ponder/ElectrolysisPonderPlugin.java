@@ -61,6 +61,12 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         helper.forComponents(CreatePlant.location("cubic_press")).addStoryBoard("plant/cubic_press", HighStressPonderScenes::press);
         helper.forComponents(CreatePlant.location("large_mechanical_press"), CreatePlant.location("large_depot"), CreatePlant.location("large_iron_plate"))
             .addStoryBoard("plant/large_press", LargePressPonderScenes::press);
+        helper.forComponents(CreatePlant.location("rotary_kiln"), CreatePlant.location("rotary_kiln_exhaust"), CreatePlant.location("continuous_factory_frame"), CreatePlant.location("continuous_factory_outlet"))
+            .addStoryBoard("plant/rotary_kiln", ContinuousFactoryPonderScenes::kiln);
+        helper.forComponents(CreatePlant.location("rolling_mill"), CreatePlant.location("rolling_stand"), CreatePlant.location("thick_steel_plate"))
+            .addStoryBoard("plant/rolling_mill", ContinuousFactoryPonderScenes::mill);
+        helper.forComponents(CreatePlant.location("coil_winder"), CreatePlant.location("winder_brake"), CreatePlant.location("heavy_wire_rope"))
+            .addStoryBoard("plant/coil_winder", ContinuousFactoryPonderScenes::winder);
         for (var tutorial : PlantTutorialCatalog.all()) if (tutorial.family() != null) {
             helper.forComponents(tutorial.components().stream().map(name -> name.contains(":") ? ResourceLocation.parse(name) : CreatePlant.location(name)).toArray(ResourceLocation[]::new))
                 .addStoryBoard(tutorial.storyboard(), (scene, util) -> PlantPonderScenes.show(scene, util, tutorial));

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "R R",
+    "RSR",
+    "R R"
+  ],
+  "key": {
+    "R": {
+      "item": "create_refinery_n_reactors:steel_rail_stock"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "id": "minecraft:rail",
+    "count": 24
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "machine": "rolling_mill",
+  "type": "create_refinery_n_reactors:continuous_processing",
+  "feed": {
+    "item": "create_refinery_n_reactors:steel_ingot",
+    "count": 3
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:steel_rail_stock",
+    "count": 6
+  },
+  "work": 400,
+  "heat": 1,
+  "starting_thickness": 0.68
+}

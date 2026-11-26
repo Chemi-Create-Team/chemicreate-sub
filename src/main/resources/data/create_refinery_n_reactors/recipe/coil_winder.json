@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FCF",
+    "BWB",
+    " A "
+  ],
+  "key": {
+    "F": {
+      "item": "create_refinery_n_reactors:continuous_factory_frame"
+    },
+    "C": {
+      "item": "create:cogwheel"
+    },
+    "B": {
+      "item": "create:brass_casing"
+    },
+    "A": {
+      "item": "create:shaft"
+    },
+    "W": {
+      "item": "minecraft:copper_block"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:coil_winder",
+    "count": 1
+  }
+}
