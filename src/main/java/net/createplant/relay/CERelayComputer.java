@@ -18,7 +18,7 @@ public final class CERelayComputer {
     private static final DeferredRegister<BlockEntityType<?>> TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePlant.MOD_ID);
     public static final DeferredItem<Item> LARGE_RELAY = ITEMS.registerSimpleItem("large_relay");
     public static final DeferredBlock<RelayRackBlock> RACK = BLOCKS.registerBlock("relay_rack", RelayRackBlock::new,
-        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).lightLevel(s -> s.getValue(RelayRackBlock.ACTIVE) ? 4 : 0));
+        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().lightLevel(s -> s.getValue(RelayRackBlock.ACTIVE) ? 4 : 0));
     public static final DeferredBlock<RelayComputerBlock> COMPUTER = BLOCKS.registerBlock("relay_computer", RelayComputerBlock::new,
         BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK));
     public static final Supplier<BlockEntityType<RelayComputerBlockEntity>> COMPUTER_ENTITY = TYPES.register("relay_computer",
