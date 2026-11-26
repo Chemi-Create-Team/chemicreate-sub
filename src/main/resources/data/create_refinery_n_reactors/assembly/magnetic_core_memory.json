@@ -12,29 +12,9 @@
           0,
           1
         ],
-        "action": "place",
+        "action": "lay",
         "tool": "gripper",
-        "block": "minecraft:iron_block"
-      },
-      {
-        "pos": [
-          0,
-          0,
-          1
-        ],
-        "action": "place",
-        "tool": "gripper",
-        "block": "minecraft:iron_block"
-      },
-      {
-        "pos": [
-          2,
-          0,
-          1
-        ],
-        "action": "place",
-        "tool": "gripper",
-        "block": "minecraft:iron_block"
+        "item": "create:iron_sheet"
       }
     ],
     [
@@ -74,18 +54,7 @@
     [
       {
         "pos": [
-          0,
-          0,
-          1
-        ],
-        "action": "process",
-        "tool": "welding_torch",
-        "pattern": "seam_weld",
-        "time": 50
-      },
-      {
-        "pos": [
-          2,
+          1,
           0,
           1
         ],

@@ -6535,6 +6535,15 @@
   "arm.create_refinery_n_reactors.tank": "Spray fluid: %s / %s mB",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.title": "Industrial arm assembly",
   "create_refinery_n_reactors.ponder.industrial_arm.header": "Industrial arm assembly",
+  "create_refinery_n_reactors.ponder.magnetic_core_memory.header": "Making Magnetic Core Memory",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.title": "Making Magnetic Core Memory",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.cores": "Ferrite cores: mix two red iron oxide, nickel oxide and a zinc nugget in a heated basin into ferrite powder, press it into 16 unfired rings, and fire them in a furnace or with a blasting fan. One plane takes 144 cores, one for each of its 12 x 12.",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.wire": "Enamelled copper wire: four copper wires and industrial resin in a heated basin. One plane takes 25: 12 X wires, 12 Y wires and one sense wire. Put the parts where the wiring head's arm takes from.",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.sheet": "The gripper lays an iron sheet flat on the jig: the plane is built on it.",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.set": "The wiring head sets the 144 dust-sized ferrite cores in rows on the middle quarter of the sheet, all tilted the same way.",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.thread": "Then it threads the 25 enamelled wires through them: copper X wires and red Y wires through every core, dipping into each one, and last the gold sense wire zigzagging along the diagonals.",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.solder": "The welding torch solders the wire ends around the edge of the sheet.",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.done": "The finished magnetic core memory comes off the jig. With the materials in the arms' places to take from, an automatic jig chooses this recipe by itself.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.jig": "The assembly jig is the plate the arms build on. Its work area is up to 3 x 3 x 3 blocks above it. By itself it makes whatever the arms around it can make from the materials in their places to take from, the recipe using the most kinds of material first. A wrench pins one recipe instead; after the last comes automatic again.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.arm": "The industrial arm runs on rotation; the faster it turns, the faster it works. It looks for a jig within 5 blocks.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.tool": "Use a tool on the arm to fit it, an empty hand takes it off. Hoppers, funnels, chutes and belts can also reach the tool slot.",
@@ -6543,6 +6552,5 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "The next stage starts when the stage before is done. The welding torch draws a bead along the seam that cools from white to silver.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "When every step is done the temporary blocks vanish, the product drops and steam rises. Recipes are data packs under assembly/.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.points": "Like Create's mechanical arm, right-click blocks with the arm in hand before placing it: once marks a place to take from (blue), twice a place to put to (orange), three times unmarks it.",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "The arm works items only on the belts and depots chosen to take from: it holds the item still and turns it into the belt recipe result, such as a weld repair, then carries it to a place to put to, or leaves it there if none was chosen. Belt recipes are assembly/ JSONs with an input.",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.wire": "The wiring head first sets 144 dust-sized ferrite cores (12 x 12) row by row, then threads 25 enamelled copper wires through them: copper X wires and red Y wires through every core, dipping into each one, and last a gold sense wire that zigzags along the diagonals. Cores are fired from pressed Ni-Zn ferrite powder; the wire is copper wire mixed hot with industrial resin."
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "The arm works items only on the belts and depots chosen to take from: it holds the item still and turns it into the belt recipe result, such as a weld repair, then carries it to a place to put to, or leaves it there if none was chosen. Belt recipes are assembly/ JSONs with an input."
 }

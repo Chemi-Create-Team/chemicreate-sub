@@ -6535,6 +6535,15 @@
   "arm.create_refinery_n_reactors.tank": "噴霧用の液体: %s / %s mB",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.title": "産業用アームによる組立",
   "create_refinery_n_reactors.ponder.industrial_arm.header": "産業用アームによる組立",
+  "create_refinery_n_reactors.ponder.magnetic_core_memory.header": "磁気コアメモリの製造",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.title": "磁気コアメモリの製造",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.cores": "フェライトコア: 酸化鉄（赤）2個、酸化ニッケル、亜鉛ナゲットを加熱したベイスンで混ぜてフェライト粉にし、プレスで未焼成のリング16個にして、かまどかファンの溶鉱で焼きます。1面に、12×12の数と同じ144個使います。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.wire": "エナメル線: 銅線4本と工業用樹脂を加熱したベイスンで混ぜます。1面にX線12本、Y線12本、センス線1本の25本使います。部品は配線ヘッドのアームが取得する場所に置きます。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.sheet": "グリッパーが鉄板をジグの上に平らに置きます。この上にメモリ面を作ります。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.set": "精密配線ヘッドが、ほこりほどの大きさのフェライトコア144個を、鉄板の中央4分の1に同じ向きに傾けて1列ずつ並べます。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.thread": "次にエナメル線25本を通します。銅のX線と赤いY線をコアごとに沈み込みながら全部のコアに通し、最後に金のセンス線を対角線に沿ってジグザグに通します。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.solder": "溶接トーチが、鉄板の縁で線の端をはんだ付けします。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.done": "完成した磁気コアメモリがジグから出てきます。アームの取得する場所に材料があれば、自動のジグはこのレシピを自分で選びます。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.jig": "組立ジグはアームが作業する台です。作業範囲は上の最大3×3×3ブロックです。ジグは、周りのアームの取得する場所にある材料と工具で作れるレシピを自動で選びます。作れるものが複数あれば、使う材料の種類が多いレシピを優先します。レンチを使うとレシピを固定でき、最後の次は自動に戻ります。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.arm": "産業用アームは回転で動き、速く回すほど早く作業します。5ブロック以内のジグを探します。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.tool": "工具を持って右クリックすると装着し、素手で外せます。ホッパー、ファンネル、シュート、ベルトからも工具スロットに触れます。",
@@ -6543,6 +6552,5 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "前のステージが終わると次のステージが始まります。溶接トーチは継ぎ目に沿って、白から銀へ冷えていくビードを描きます。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "全工程が終わると仮ブロックが消え、完成品が出て蒸気が上がります。レシピは assembly/ のデータパックで追加できます。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.points": "Createのメカニカルアームと同じく、設置する前にアームを持ってブロックを右クリックします。1回で取得する場所（青）、2回で置く場所（橙）、3回で解除です。",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "アームは、取得する場所に選んだベルトやデポの上のアイテムだけを加工します。アイテムを止めて、溶接修理などベルト用レシピの結果に変え、置く場所があればそこへ運び、なければその場に残します。ベルト用レシピは input を持つ assembly/ のJSONです。",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.wire": "精密配線ヘッドは、まずほこりほどの大きさのフェライトコア144個（12×12）を1列ずつ並べ、次にエナメル線25本を通します。銅のX線と赤いY線を、コアごとに沈み込みながら全部のコアに通し、最後に金のセンス線を対角線に沿ってジグザグに通します。コアはニッケル亜鉛フェライト粉をプレスして焼いたもの、エナメル線は銅線を工業用樹脂と加熱ミキサーで混ぜたものです。"
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "アームは、取得する場所に選んだベルトやデポの上のアイテムだけを加工します。アイテムを止めて、溶接修理などベルト用レシピの結果に変え、置く場所があればそこへ運び、なければその場に残します。ベルト用レシピは input を持つ assembly/ のJSONです。"
 }

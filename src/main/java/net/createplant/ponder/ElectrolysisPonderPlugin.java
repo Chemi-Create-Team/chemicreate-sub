@@ -82,6 +82,9 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         helper.forComponents(CreatePlant.location("assembly_jig"), CreatePlant.location("industrial_arm"), CreatePlant.location("gripper"),
             CreatePlant.location("welding_torch"), CreatePlant.location("laser_cutter"), CreatePlant.location("spray_nozzle"), CreatePlant.location("wiring_head"))
             .addStoryBoard("plant/industrial_arm", ArmPonderScenes::arm);
+        helper.forComponents(CreatePlant.location("magnetic_core_memory"), CreatePlant.location("ferrite_core"), CreatePlant.location("enamelled_copper_wire"),
+                CreatePlant.location("assembly_jig"), CreatePlant.location("wiring_head"))
+            .addStoryBoard("plant/industrial_arm", ArmPonderScenes::memory);
         helper.forComponents(CreatePlant.location("natural_draft_cooling_tower"), CreatePlant.location("cooling_tower_shell"),
             CreatePlant.location("cooling_tower_basin"), CreatePlant.location("cooling_tower_fill"), CreatePlant.location("cooling_tower_distributor"),
             CreatePlant.location("cooling_tower_hot_inlet"), CreatePlant.location("cooling_tower_cold_outlet"), CreatePlant.location("cooling_tower_makeup_inlet"))

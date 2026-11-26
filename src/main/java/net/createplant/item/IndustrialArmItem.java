@@ -14,7 +14,9 @@ public class IndustrialArmItem extends BlockItem {
     @Override
     public InteractionResult place(BlockPlaceContext context) {
         InteractionResult result = super.place(context);
-        if (result.consumesAction() && context.getLevel().isClientSide) net.createplant.client.ArmPointSelection.flush(context.getClickedPos());
+        if (!result.consumesAction()) return result;
+        if (context.getLevel().isClientSide) net.createplant.client.ArmPointSelection.flush(context.getClickedPos());
+        else if (context.getPlayer() instanceof net.minecraft.server.level.ServerPlayer player) net.createplant.arm.ArmPoints.placed(player, context.getClickedPos());
         return result;
     }
 }

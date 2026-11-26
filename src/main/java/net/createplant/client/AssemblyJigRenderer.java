@@ -41,6 +41,9 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
     @Override
     public void render(AssemblyJigBlockEntity be, float partial, PoseStack ps, MultiBufferSource buffers, int light, int overlay) {
         if (be.recipe == null || be.shown.length != be.status.length) return;
+        // laid items first: they use other buffers, which would end the overlay's batch below
+        for (int i = 0; i < be.status.length; i++)
+            if (be.recipe.steps().get(i).lay() && be.status[i] == AssemblyJigBlockEntity.DONE) laid(be, be.recipe.steps().get(i), ps, buffers, light);
         VertexConsumer q = buffers.getBuffer(RenderType.entityTranslucent(WHITE));
         PoseStack.Pose pose = ps.last();
         long now = be.getLevel().getGameTime();
@@ -52,7 +55,7 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
             float p = done ? 1 : be.shown[i];
             if (p <= 0.001f) continue;
             boolean live = !done && be.status[i] == AssemblyJigBlockEntity.RESERVED && p < .999f;
-            Vec3 o = new Vec3(s.rel().getX(), s.rel().getY() + 1, s.rel().getZ());
+            Vec3 o = new Vec3(s.rel().getX(), s.rel().getY() + 1 + be.recipe.base(s), s.rel().getZ());
             Trajectory t = Trajectory.of(s.pattern(), s.seamDirection());
             switch (s.pattern()) {
                 case SEAM_WELD -> weld(q, pose, o, t, p, live, done ? (now - be.doneAt[i] + partial) / 40f : 0, time);
@@ -62,6 +65,16 @@ public class AssemblyJigRenderer implements BlockEntityRenderer<AssemblyJigBlock
                 default -> {}
             }
         }
+    }
+
+    /** A laid item (an iron sheet) lies flat over its whole cell, as thick as {@link net.createplant.arm.ArmRecipe#LAID}. */
+    private static void laid(AssemblyJigBlockEntity be, Step s, PoseStack ps, MultiBufferSource buffers, int light) {
+        ps.pushPose();
+        ps.translate(s.rel().getX() + .5, s.rel().getY() + 1 + net.createplant.arm.ArmRecipe.LAID / 2, s.rel().getZ() + .5);
+        ps.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90));
+        net.minecraft.client.Minecraft.getInstance().getItemRenderer().renderStatic(new net.minecraft.world.item.ItemStack(s.material()),
+                net.minecraft.world.item.ItemDisplayContext.FIXED, light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
+        ps.popPose();
     }
 
     private static int tint(Step s) {

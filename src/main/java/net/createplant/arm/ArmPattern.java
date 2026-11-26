@@ -8,7 +8,9 @@ public enum ArmPattern {
     /** The first half of GRID_WIRE alone: setting the ferrite cores. */
     CORE_SET,
     /** The second half of GRID_WIRE alone: threading the X, Y and sense wires through cores already set. */
-    WIRE_THREAD;
+    WIRE_THREAD,
+    /** The gripper's drop onto the jig plate for a laid item. Not written in recipes. */
+    LAY;
 
     public String id() {
         return name().toLowerCase(Locale.ROOT);

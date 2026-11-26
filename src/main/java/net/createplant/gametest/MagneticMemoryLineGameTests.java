@@ -49,17 +49,16 @@ public final class MagneticMemoryLineGameTests {
         var line = build(helper.getLevel(), helper.absolutePos(ORIGIN));
         helper.assertTrue(!ChestBlock.isChestBlockedAt(line.level(), line.output().getBlockPos()),
             "Players can open the output chest beneath the collector's stop block");
-        line.input().setItem(0, new ItemStack(Items.IRON_BLOCK, 6));
+        line.input().setItem(0, new ItemStack(com.simibubi.create.AllItems.IRON_SHEET.get(), 2));
         line.supplyParts();
         helper.runAfterDelay(10, line::start);
         var completedAt = new long[1];
         helper.onEachTick(() -> {
             if (completedAt[0] == 0 && line.products() == 1 && line.jig().currentStage() == 1) {
                 completedAt[0] = helper.getTick();
-                helper.assertTrue(line.suppliesEmpty(), "Two frames used six iron blocks and the first plane used all its cores and wires");
-                for (int x = 0; x < 3; x++)
-                    helper.assertTrue(line.level().getBlockState(line.origin().offset(x, 1, 1)).is(Blocks.IRON_BLOCK),
-                        "The second frame is present while the line waits for parts");
+                helper.assertTrue(line.suppliesEmpty(), "Two sheets were laid and the first plane used all its cores and wires");
+                helper.assertTrue(line.jig().status[0] == AssemblyJigBlockEntity.DONE,
+                        "The second sheet is laid while the line waits for parts");
                 helper.runAfterDelay(65, () -> {
                     helper.assertTrue(line.products() == 1 && line.jig().currentStage() == 1,
                         "Missing cores hold the second batch at core setting");
@@ -70,9 +69,8 @@ public final class MagneticMemoryLineGameTests {
         helper.succeedWhen(() -> {
             helper.assertTrue(completedAt[0] != 0 && line.products() == 2,
                 "Both assemblies must reach the real output chest through the fan and hopper");
-            helper.assertTrue(line.suppliesEmpty(), "The full run consumes exactly six iron blocks and two planes' cores and wires");
-            for (int x = 0; x < 3; x++)
-                helper.assertTrue(line.level().isEmptyBlock(line.origin().offset(x, 1, 1)), "No temporary frame remains");
+            helper.assertTrue(line.suppliesEmpty(), "The full run consumes exactly two sheets and two planes' cores and wires");
+            helper.assertTrue(line.jig().status.length == 0 || line.jig().status[0] == AssemblyJigBlockEntity.PENDING, "The jig is ready for the next sheet");
             LOGGER.info("Magnetic memory line recovered {} products at tick {} after resupplying copper", line.products(), helper.getTick());
         });
     }
@@ -81,9 +79,9 @@ public final class MagneticMemoryLineGameTests {
     public static void anUnpoweredArmDoesNotTakeFrameMaterials(GameTestHelper helper) {
         var line = build(helper.getLevel(), helper.absolutePos(ORIGIN));
         for (var arm : line.arms()) line.level().removeBlock(arm.getBlockPos().below(), false);
-        line.input().setItem(0, new ItemStack(Items.IRON_BLOCK, 3));
+        line.input().setItem(0, new ItemStack(com.simibubi.create.AllItems.IRON_SHEET.get()));
         helper.runAfterDelay(85, () -> {
-            helper.assertTrue(line.input().getItem(0).getCount() == 3
+            helper.assertTrue(line.input().getItem(0).getCount() == 1
                     && line.arms().stream().allMatch(arm -> arm.getSpeed() == 0
                         && arm.phase == IndustrialArmBlockEntity.IDLE && arm.held.isEmpty()),
                 "Without shaft power the arm must leave the new batch in the input chest");
@@ -94,7 +92,7 @@ public final class MagneticMemoryLineGameTests {
     @GameTest(template = "test_forging", timeoutTicks = 1000)
     public static void paidWiringSurvivesLoadingTheArmAndJig(GameTestHelper helper) {
         var line = build(helper.getLevel(), helper.absolutePos(ORIGIN));
-        line.input().setItem(0, new ItemStack(Items.IRON_BLOCK, 3));
+        line.input().setItem(0, new ItemStack(com.simibubi.create.AllItems.IRON_SHEET.get()));
         line.supplyParts();
         helper.runAfterDelay(10, line::start);
         var reloaded = new boolean[1];

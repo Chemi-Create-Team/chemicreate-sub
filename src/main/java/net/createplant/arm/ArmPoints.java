@@ -39,13 +39,29 @@ public record ArmPoints(BlockPos arm, List<BlockPos> inputs, List<BlockPos> outp
         });
     }
 
+    /**
+     * Marks that came before their arm: the client sends them while it places the arm, which is before the server has placed it.
+     * The server keeps them per player until its own placement of the arm picks them up.
+     */
+    private static final java.util.Map<java.util.UUID, ArmPoints> WAITING = new java.util.concurrent.ConcurrentHashMap<>();
+
     /** Server: gives the points to the arm the player just placed; points out of reach are left out and the player is told. */
     public void apply(ServerPlayer player) {
         Level level = player.level();
-        if (!level.isLoaded(arm) || player.distanceToSqr(arm.getCenter()) > 64 || !(level.getBlockEntity(arm) instanceof IndustrialArmBlockEntity be)) return;
+        if (!level.isLoaded(arm) || player.distanceToSqr(arm.getCenter()) > 64) return;
+        if (!(level.getBlockEntity(arm) instanceof IndustrialArmBlockEntity be)) {
+            WAITING.put(player.getUUID(), this);
+            return;
+        }
         int dropped = be.setPoints(inputs, outputs);
         player.displayClientMessage(Component.translatable(KEY + "saved", be.inputs.size(), be.outputs.size()), true);
         if (dropped > 0) player.displayClientMessage(Component.translatable(KEY + "dropped", dropped), false);
+    }
+
+    /** Server: the player placed an arm at {@code pos}; marks that arrived first are given to it now. */
+    public static void placed(ServerPlayer player, BlockPos pos) {
+        ArmPoints waiting = WAITING.remove(player.getUUID());
+        if (waiting != null && waiting.arm.equals(pos)) waiting.apply(player);
     }
 
     /** Anything an arm could take from or put to: a container, a belt or a depot. Range is checked when the arm is placed. */

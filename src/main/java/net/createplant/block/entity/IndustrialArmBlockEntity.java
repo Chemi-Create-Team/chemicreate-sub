@@ -88,6 +88,8 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     public float progress;
     /** Server side: the top of the container the material came from, while the arm reaches over to it. */
     private Vec3 fetchFrom;
+    /** Fluid drawn for the current jig step; it goes back if the step is not finished. */
+    private FluidStack paid = FluidStack.EMPTY;
     /**
      * Points chosen by right-clicking with the arm in hand before placing it, as with Create's mechanical arm. Material comes
      * only from {@link #inputs} when there are any; belt and depot work happens only on inputs; finished belt work goes to the
@@ -190,20 +192,30 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     private Vec3 worldTip(AssemblyJigBlockEntity jig, double p) {
         Step s = jig.recipe.steps().get(step);
         Vec3 t = Trajectory.of(s.pattern(), s.seamDirection()).tip(p);
-        return jig.cellOrigin(step).add(t).add(0, s.tool() == ArmTool.GRIPPER ? 0 : HOVER, 0);
+        return origin(jig.getBlockPos(), jig.recipe, s).add(t);
+    }
+
+    /** Where a step's path starts: its cell's corner, on the work surface, with the tool hovering above it. */
+    private static Vec3 origin(BlockPos jig, net.createplant.arm.ArmRecipe r, Step s) {
+        return Vec3.atLowerCornerOf(jig.above().offset(s.rel())).add(0, r.base(s) + (s.tool() == ArmTool.GRIPPER ? 0 : HOVER), 0);
+    }
+
+    /** Whether every point of the step's path, for a jig at {@code jig} making {@code r}, is within reach. */
+    public boolean reachesStep(BlockPos jig, net.createplant.arm.ArmRecipe r, Step s) {
+        Vec3 origin = origin(jig, r, s);
+        for (Vec3 p : Trajectory.of(s.pattern(), s.seamDirection()).points) if (!ArmPose.reaches(worldPosition, origin.add(p))) return false;
+        return true;
     }
 
     /** Every point the tool passes on the step lies within the arm's reach. */
     private boolean reaches(AssemblyJigBlockEntity jig, int step) {
-        Step s = jig.recipe.steps().get(step);
-        Vec3 origin = jig.cellOrigin(step).add(0, s.tool() == ArmTool.GRIPPER ? 0 : HOVER, 0);
-        for (Vec3 p : Trajectory.of(s.pattern(), s.seamDirection()).points) if (!ArmPose.reaches(worldPosition, origin.add(p))) return false;
-        return true;
+        return reachesStep(jig.getBlockPos(), jig.recipe, jig.recipe.steps().get(step));
     }
 
     private void findJob() {
         ArmTool tool = toolType();
         if (tool == null) return;
+        boolean waiting = false;
         Vec3 me = Vec3.atCenterOf(worldPosition);
         for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE))) {
             if (!level.isLoaded(p)) continue;
@@ -211,18 +223,24 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             int s = jig.reserve(worldPosition, tool, me, step -> reaches(jig, step));
             if (s < 0) continue;
             Step st = jig.recipe.steps().get(s);
+            // the fluid is checked before any material is taken, so a missing fluid never costs material
+            if (st.fluid() != null && !drawFluid(jig, st, true)) {
+                jig.release(worldPosition, s);
+                waiting = true;
+                continue;
+            }
             ItemStack material = ItemStack.EMPTY;
-            boolean ok = true;
             if (st.material() != null) {
                 material = fetch(st.material(), st.materialCount(), jig.getBlockPos());
-                ok = !material.isEmpty();
+                if (material.isEmpty()) {
+                    jig.release(worldPosition, s);
+                    waiting = true;
+                    continue;
+                }
             }
-            if (ok && st.fluid() != null) ok = drawFluid(jig, st, true) && drawFluid(jig, st, false);
-            if (!ok) {
-                if (!material.isEmpty()) Containers.dropItemStack(level, worldPosition.getX() + .5, worldPosition.getY() + 1, worldPosition.getZ() + .5, material);
-                jig.release(worldPosition, s);
-                cooldown = 60;
-                return;
+            if (st.fluid() != null) {
+                drawFluid(jig, st, false);
+                paid = new FluidStack(net.minecraft.core.registries.BuiltInRegistries.FLUID.get(st.fluid()), st.fluidAmount());
             }
             jigPos = p.immutable();
             step = s;
@@ -235,7 +253,9 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
             sendData();
             return;
         }
+        // a jig waiting for material does not keep the arm from its belts and depots
         findBeltJob(tool);
+        if (waiting && phase == IDLE) cooldown = 60;
     }
 
     // ------------------------------------------------------------- belt work
@@ -289,7 +309,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     /** Stops the claimed item for this tick, as Create's own arm does, and aims at it. False once the item is gone. */
     private boolean holdBeltItem() {
         TransportedItemStackHandlerBehaviour belt = belt(level, beltPos);
-        if (belt == null) return false;
+        if (belt == null || getSpeed() == 0) return false; // without power the arm lets go, so the belt carries on
         boolean[] present = {false};
         belt.handleProcessingOnAllItems(t -> {
             if (t == beltItem) {
@@ -367,6 +387,21 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         }
     }
 
+    /** Puts items the arm no longer needs back where it takes material from; only what does not fit is dropped. */
+    private void giveBack(ItemStack stack) {
+        if (stack.isEmpty()) return;
+        ItemStack rest = stack.copy();
+        for (BlockPos p : candidates()) {
+            if (rest.isEmpty()) break;
+            if (p.equals(worldPosition) || p.equals(jigPos)) continue;
+            BlockEntity be = level.isLoaded(p) ? level.getBlockEntity(p) : null;
+            if (be == null || be instanceof IndustrialArmBlockEntity || be instanceof AssemblyJigBlockEntity) continue;
+            IItemHandler h = items(level, p);
+            if (h != null && ArmPose.reaches(worldPosition, Vec3.atBottomCenterOf(p).add(0, 1, 0))) rest = net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(h, rest, false);
+        }
+        if (!rest.isEmpty()) Containers.dropItemStack(level, worldPosition.getX() + .5, worldPosition.getY() + 1, worldPosition.getZ() + .5, rest);
+    }
+
     /** Where material may come from: the chosen inputs, or with none chosen every block in range. */
     private Iterable<BlockPos> candidates() {
         return inputs.isEmpty() ? BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE)) : inputs;
@@ -436,33 +471,42 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
      */
     private ItemStack fetch(net.minecraft.world.item.Item item, int count, BlockPos jigAt) {
         fetchFrom = null;
-        List<IItemHandler> from = new java.util.ArrayList<>();
+        // each stack is counted once: both halves of a large chest hand out the same stacks
+        java.util.Set<ItemStack> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        List<IItemHandler> handlers = new java.util.ArrayList<>();
+        List<Integer> slots = new java.util.ArrayList<>();
         int available = 0;
         for (BlockPos p : candidates()) {
             if (available >= count) break;
             if (p.equals(worldPosition) || p.equals(jigAt) || !level.isLoaded(p)) continue;
             BlockEntity be = level.getBlockEntity(p);
             if (be == null || be instanceof IndustrialArmBlockEntity || be instanceof AssemblyJigBlockEntity) continue;
-            IItemHandler h = level.getCapability(Capabilities.ItemHandler.BLOCK, p, null);
-            if (h == null) h = level.getCapability(Capabilities.ItemHandler.BLOCK, p, net.minecraft.core.Direction.UP);
+            IItemHandler h = items(level, p);
             Vec3 top = Vec3.atBottomCenterOf(p).add(0, 1, 0);
             if (h == null || !ArmPose.reaches(worldPosition, top)) continue; // only from what the claw can reach
-            int here = 0;
-            for (int slot = 0; slot < h.getSlots(); slot++)
-                if (h.getStackInSlot(slot).is(item)) here += h.extractItem(slot, h.getStackInSlot(slot).getCount(), true).getCount();
-            if (here == 0) continue;
-            if (fetchFrom == null) fetchFrom = top;
-            from.add(h);
-            available += here;
+            for (int slot = 0; slot < h.getSlots() && available < count; slot++) {
+                ItemStack st = h.getStackInSlot(slot);
+                if (!st.is(item) || !seen.add(st)) continue;
+                int can = h.extractItem(slot, st.getCount(), true).getCount();
+                if (can <= 0) continue;
+                if (fetchFrom == null) fetchFrom = top;
+                handlers.add(h);
+                slots.add(slot);
+                available += can;
+            }
         }
         if (available < count) {
             fetchFrom = null;
             return ItemStack.EMPTY;
         }
         int got = 0;
-        for (IItemHandler h : from)
-            for (int slot = 0; slot < h.getSlots() && got < count; slot++)
-                if (h.getStackInSlot(slot).is(item)) got += h.extractItem(slot, Math.min(count - got, h.getStackInSlot(slot).getCount()), false).getCount();
+        for (int k = 0; k < handlers.size() && got < count; k++) got += handlers.get(k).extractItem(slots.get(k), count - got, false).getCount();
+        if (got < count) {
+            // something changed between counting and taking: never start short
+            giveBack(new ItemStack(item, got));
+            fetchFrom = null;
+            return ItemStack.EMPTY;
+        }
         return new ItemStack(item, got);
     }
 
@@ -484,12 +528,16 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         jig.setProgress(step, progress);
         if (level.getGameTime() % 4 == 0) sound(s.tool());
         if (progress < 1) return;
-        if (s.place()) {
+        if (s.place() && jig.standing(step)) {
+            jig.complete(step); // put back by hand meanwhile: the arm keeps its block for later
+            giveBack(held);
+        } else if (s.place()) {
             if (!jig.place(step)) return; // the cell is not free: keep holding the block until it is
         } else {
             jig.complete(step);
         }
         held = ItemStack.EMPTY;
+        paid = FluidStack.EMPTY;
         endJob();
     }
 
@@ -523,8 +571,14 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         if (level != null && !level.isClientSide) {
             AssemblyJigBlockEntity j = jigPos != null && level.isLoaded(jigPos) && level.getBlockEntity(jigPos) instanceof AssemblyJigBlockEntity x ? x : null;
             if (j != null && step >= 0) j.release(worldPosition, step);
-            if (!held.isEmpty()) Containers.dropItemStack(level, worldPosition.getX() + .5, worldPosition.getY() + 1, worldPosition.getZ() + .5, held);
+            giveBack(held);
             held = ItemStack.EMPTY;
+            if (!paid.isEmpty()) {
+                // the unused fluid goes back: into the arm's tank, what does not fit into the jig's
+                int in = tank.fill(paid.copy(), IFluidHandler.FluidAction.EXECUTE);
+                if (in < paid.getAmount() && j != null) j.tank.fill(paid.copyWithAmount(paid.getAmount() - in), IFluidHandler.FluidAction.EXECUTE);
+                paid = FluidStack.EMPTY;
+            }
         }
         endJob();
     }
@@ -599,6 +653,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         tag.putLongArray("inputs", inputs.stream().mapToLong(BlockPos::asLong).toArray());
         tag.putLongArray("outputs", outputs.stream().mapToLong(BlockPos::asLong).toArray());
         if (phase == CARRY) tag.putBoolean("carry", true);
+        if (!paid.isEmpty()) tag.put("paid", paid.save(r));
         if (clientPacket) tag.putByte("shownPhase", phase);
         if (clientPacket && tip != null) {
             tag.putDouble("tx", tip.x);
@@ -620,6 +675,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         step = hasJob ? tag.getInt("step") : -1;
         jigPos = hasJob ? BlockPos.of(tag.getLong("jig")) : null;
         moveLeft = tag.getInt("moveLeft");
+        paid = tag.contains("paid") ? FluidStack.parseOptional(r, tag.getCompound("paid")) : FluidStack.EMPTY;
         inputs.clear();
         outputs.clear();
         for (long l : tag.getLongArray("inputs")) inputs.add(BlockPos.of(l));

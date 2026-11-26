@@ -27,13 +27,15 @@ public final class ArmPonderScenes {
         + "{\"pos\":[1,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
         + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"welding_torch\",\"pattern\":\"seam_weld\",\"time\":60}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:welded_iron_beam\"}}";
-    /** One cell of the magnetic core memory's wiring stage, to show the threading up close. */
-    private static final String CORE = "{\"size\":[1,1,1],\"stages\":[[{\"pos\":[0,0,0],\"action\":\"place\",\"tool\":\"gripper\",\"block\":\"minecraft:iron_block\"}],"
-        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"core_set\",\"time\":60}],"
-        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"wire_thread\",\"time\":120}]],"
+    /** The magnetic core memory as the data pack has it, on the jig's own cell so this arm reaches every step. */
+    private static final String MEMORY = "{\"size\":[1,1,1],\"stages\":["
+        + "[{\"pos\":[0,0,0],\"action\":\"lay\",\"tool\":\"gripper\",\"item\":\"create:iron_sheet\"}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"core_set\",\"consume\":{\"id\":\"create_refinery_n_reactors:ferrite_core\",\"count\":144},\"time\":60}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"wiring_head\",\"pattern\":\"wire_thread\",\"consume\":{\"id\":\"create_refinery_n_reactors:enamelled_copper_wire\",\"count\":25},\"time\":120}],"
+        + "[{\"pos\":[0,0,0],\"action\":\"process\",\"tool\":\"welding_torch\",\"pattern\":\"seam_weld\",\"time\":50}]],"
         + "\"result\":{\"id\":\"create_refinery_n_reactors:magnetic_core_memory\"}}";
     private static final BlockPos JIG = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6), DEPOT = new BlockPos(5, 1, 2);
-    private static final int FRAMES = 24, WIRE_FRAMES = 240;
+    private static final int FRAMES = 24;
     private ArmPonderScenes() { }
 
     public static void arm(SceneBuilder builder, SceneBuildingUtil util) {
@@ -115,23 +117,6 @@ public final class ArmPonderScenes {
         });
         scene.idle(30);
 
-        // Core memory wiring: cores set row by row, then the X, Y and sense wires threaded through each of them.
-        var core = ArmRecipe.fromJson(CreatePlant.location("magnetic_core_memory"), JsonParser.parseString(CORE).getAsJsonObject());
-        scene.world().removeItemsFromBelt(DEPOT);
-        scene.world().modifyBlockEntity(JIG, AssemblyJigBlockEntity.class, be -> be.setRecipe(core));
-        scene.world().setBlock(JIG.above(), Blocks.IRON_BLOCK.defaultBlockState(), false);
-        scene.world().showSection(util.select().position(JIG.above()), Direction.DOWN);
-        finish(scene, 0);
-        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 50).rightClick().withItem(tool(ArmTool.WIRING_HEAD));
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WIRING_HEAD)));
-        scene.idle(10);
-        text(scene, util, JIG.above(), "wire");
-        work(scene, core, 1, WIRE_FRAMES / 3, 1);
-        finish(scene, 1);
-        work(scene, core, 2, WIRE_FRAMES, 1);
-        finish(scene, 2);
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
-        scene.idle(40);
         scene.markAsFinished();
     }
 
@@ -140,10 +125,62 @@ public final class ArmPonderScenes {
         work(scene, recipe, step, FRAMES, 2);
     }
 
+    /** The magnetic core memory, start to end: parts, the iron sheet, 144 cores, 25 enamelled wires, soldering, the product. */
+    public static void memory(SceneBuilder builder, SceneBuildingUtil util) {
+        var scene = new CreateSceneBuilder(builder);
+        String id = "magnetic_core_memory";
+        var recipe = ArmRecipe.fromJson(CreatePlant.location(id), JsonParser.parseString(MEMORY).getAsJsonObject());
+        scene.title(id, PonderText.title("ponder.create_refinery_n_reactors." + id + ".title", id));
+        scene.configureBasePlate(0, 0, 9);
+        scene.scaleSceneView(.75f);
+        scene.showBasePlate();
+        scene.world().showSection(util.select().fromTo(2, 1, 4, 2, 2, 4), Direction.DOWN);
+        scene.world().showSection(util.select().fromTo(5, 1, 4, 5, 3, 4), Direction.DOWN);
+        scene.world().setKineticSpeed(util.select().fromTo(5, 1, 4, 5, 3, 4), 64);
+        scene.world().showSection(util.select().position(CHEST), Direction.DOWN);
+        scene.world().modifyBlockEntity(JIG, AssemblyJigBlockEntity.class, be -> be.setRecipe(recipe));
+        scene.idle(10);
+
+        scene.overlay().showControls(util.vector().topOf(CHEST), Pointing.DOWN, 60).withItem(new ItemStack(CEArm.FERRITE_CORE.get()));
+        text(scene, util, CHEST, id, "cores");
+        scene.overlay().showControls(util.vector().topOf(CHEST), Pointing.DOWN, 60).withItem(new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get()));
+        text(scene, util, CHEST, id, "wire");
+
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.GRIPPER)));
+        text(scene, util, JIG, id, "sheet");
+        work(scene, recipe, 0);
+        finish(scene, 0);
+
+        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 40).rightClick().withItem(tool(ArmTool.WIRING_HEAD));
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WIRING_HEAD)));
+        scene.idle(10);
+        text(scene, util, JIG.above(), id, "set");
+        work(scene, recipe, 1, 72, 1);
+        finish(scene, 1);
+        text(scene, util, JIG.above(), id, "thread");
+        work(scene, recipe, 2, 200, 1);
+        finish(scene, 2);
+
+        scene.overlay().showControls(util.vector().topOf(ARM), Pointing.DOWN, 40).rightClick().withItem(tool(ArmTool.WELDING_TORCH));
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.toolSlot.setStackInSlot(0, tool(ArmTool.WELDING_TORCH)));
+        scene.idle(10);
+        text(scene, util, JIG.above(), id, "solder");
+        work(scene, recipe, 3);
+        finish(scene, 3);
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
+        scene.idle(30);
+        scene.world().modifyBlockEntity(JIG, AssemblyJigBlockEntity.class, be -> be.setRecipe(recipe));
+        Vec3 top = util.vector().topOf(JIG);
+        scene.world().createItemEntity(top.add(0, .2, 0), new Vec3(0, .1, 0), new ItemStack(CEArm.MAGNETIC_CORE_MEMORY.get()));
+        scene.effects().emitParticles(top.add(0, .3, 0), scene.effects().simpleParticleEmitter(ParticleTypes.CLOUD, new Vec3(0, .05, 0)), 6, 20);
+        text(scene, util, JIG, id, "done");
+        scene.markAsFinished();
+    }
+
     private static void work(CreateSceneBuilder scene, ArmRecipe recipe, int step, int frames, int ticksPerFrame) {
         var s = recipe.steps().get(step);
         Trajectory path = Trajectory.of(s.pattern(), s.seamDirection());
-        Vec3 origin = Vec3.atLowerCornerOf(JIG.above().offset(s.rel()));
+        Vec3 origin = Vec3.atLowerCornerOf(JIG.above().offset(s.rel())).add(0, recipe.base(s), 0);
         for (int frame = 1; frame <= frames; frame++) {
             float progress = frame / (float) frames;
             Vec3 tip = origin.add(path.tip(progress)).add(0, s.place() ? 0 : IndustrialArmBlockEntity.HOVER, 0);
@@ -152,7 +189,7 @@ public final class ArmPonderScenes {
                 be.progress[step] = progress;
             });
             scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> {
-                be.held = s.place() ? new ItemStack(s.block()) : ItemStack.EMPTY;
+                be.held = s.place() ? new ItemStack(s.material()) : ItemStack.EMPTY;
                 be.aim(IndustrialArmBlockEntity.WORK, tip);
             });
             scene.idle(frame == 1 ? 12 : ticksPerFrame);
@@ -173,6 +210,10 @@ public final class ArmPonderScenes {
     }
 
     private static void text(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos at, String key) {
-        PonderText.caption(scene, util.vector().centerOf(at), "ponder.create_refinery_n_reactors." + ID + "." + key, 120);
+        text(scene, util, at, ID, key);
+    }
+
+    private static void text(CreateSceneBuilder scene, SceneBuildingUtil util, BlockPos at, String id, String key) {
+        PonderText.caption(scene, util.vector().centerOf(at), "ponder.create_refinery_n_reactors." + id + "." + key, 120);
     }
 }

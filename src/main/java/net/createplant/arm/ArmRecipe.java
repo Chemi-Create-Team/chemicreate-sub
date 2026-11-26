@@ -39,13 +39,28 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
 
         /** The item an arm must fetch before starting, or null. */
         public Item material() {
-            return place ? block.asItem() : consume;
+            return place && block != null ? block.asItem() : consume;
+        }
+
+        /** A gripper step that lays an item (such as an iron sheet) flat on the cell instead of setting a block. */
+        public boolean lay() {
+            return place && block == null;
         }
 
         /** How many of {@link #material()} the arm fetches. */
         public int materialCount() {
             return place ? 1 : count;
         }
+    }
+
+    /** Thickness of a laid item: work on a cell with one is done on its top instead of a block's. */
+    public static final double LAID = 1 / 16.0;
+
+    /** How far below a full block's top the work surface of the step's cell is: on a laid sheet, almost a block. */
+    public double base(Step s) {
+        if (s.lay()) return 0;
+        for (Step o : steps) if (o.lay() && o.rel.equals(s.rel)) return LAID - 1;
+        return 0;
     }
 
     public int stages() {
@@ -83,8 +98,9 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
         BlockPos rel = new BlockPos(p.get(0).getAsInt(), p.get(1).getAsInt(), p.get(2).getAsInt());
         if (rel.getX() < 0 || rel.getY() < 0 || rel.getZ() < 0 || rel.getX() >= sx || rel.getY() >= sy || rel.getZ() >= sz) throw new IllegalArgumentException("step outside the work area: " + rel);
         String action = GsonHelper.getAsString(o, "action");
+        boolean lay = action.equals("lay");
         boolean place = switch (action) {
-            case "place" -> true;
+            case "place", "lay" -> true;
             case "process" -> false;
             default -> throw new IllegalArgumentException("unknown action " + action);
         };
@@ -92,14 +108,14 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
         if (tool == null) throw new IllegalArgumentException("unknown tool");
         if (place != (tool == ArmTool.GRIPPER)) throw new IllegalArgumentException("only the gripper places blocks, and it does nothing else");
         Block block = null;
-        if (place) {
+        if (place && !lay) {
             Item i = item(GsonHelper.getAsString(o, "block"));
             if (!(i instanceof net.minecraft.world.item.BlockItem bi)) throw new IllegalArgumentException("not a block");
             block = bi.getBlock();
         }
-        Item consume = null;
+        Item consume = lay ? item(GsonHelper.getAsString(o, "item")) : null;
         int count = 1;
-        if (o.has("consume")) {
+        if (!lay && o.has("consume")) {
             // "consume": "id", or {"id": ..., "count": n} for many of one part
             if (o.get("consume").isJsonObject()) {
                 JsonObject c = GsonHelper.getAsJsonObject(o, "consume");
@@ -119,7 +135,7 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
         if (tool == ArmTool.SPRAY_NOZZLE && fluid == null) throw new IllegalArgumentException("the spray nozzle needs a fluid");
         ArmPattern pattern = o.has("pattern") ? ArmPattern.byId(GsonHelper.getAsString(o, "pattern")) : ArmPattern.defaultFor(tool);
         if (pattern == null) throw new IllegalArgumentException("unknown pattern");
-        return new Step(stage, rel, place, tool, block, consume, count, fluid, amount, Math.max(1, GsonHelper.getAsInt(o, "time", 40)), place ? ArmPattern.PLACE : pattern, -1);
+        return new Step(stage, rel, place, tool, block, consume, count, fluid, amount, Math.max(1, GsonHelper.getAsInt(o, "time", 40)), lay ? ArmPattern.LAY : place ? ArmPattern.PLACE : pattern, -1);
     }
 
     private static Step withSeam(Step s, List<Step> all) {
@@ -174,7 +190,7 @@ public record ArmRecipe(ResourceLocation id, int sx, int sy, int sz, List<Step> 
             CompoundTag c = (CompoundTag) e;
             int[] r = c.getIntArray("rel");
             boolean place = c.getBoolean("place");
-            Block block = place ? BuiltInRegistries.BLOCK.get(ResourceLocation.parse(c.getString("block"))) : null;
+            Block block = place && c.contains("block") ? BuiltInRegistries.BLOCK.get(ResourceLocation.parse(c.getString("block"))) : null;
             Item consume = c.contains("consume") ? BuiltInRegistries.ITEM.get(ResourceLocation.parse(c.getString("consume"))) : null;
             steps.add(new Step(c.getInt("stage"), new BlockPos(r[0], r[1], r[2]), place, ArmTool.byId(c.getString("tool")), block, consume, Math.max(1, c.getInt("consumeCount")),
                     c.contains("fluid") ? ResourceLocation.parse(c.getString("fluid")) : null, c.getInt("amount"), c.getInt("time"),

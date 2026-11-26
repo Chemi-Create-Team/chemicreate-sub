@@ -54,6 +54,7 @@ public final class Trajectory {
         List<Integer> s = new ArrayList<>();
         switch (pattern) {
             case PLACE -> line(p, s, new Vec3(.5, 1.5, .5), new Vec3(.5, .56, .5), true);
+            case LAY -> line(p, s, new Vec3(.5, 1.0, .5), new Vec3(.5, .1, .5), true);
             case SEAM_WELD -> {
                 if (seam == null || seam.getAxis().isVertical()) perimeter(p, s);
                 else {

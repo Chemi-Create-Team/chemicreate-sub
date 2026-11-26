@@ -20,6 +20,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -99,44 +100,57 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
     }
 
     /**
-     * Picks the recipe to make from the materials the nearby arms can take and the tools they carry. Of the recipes that can be made
-     * in full, the one using the most kinds of material wins, so iron with cores and wire makes core memory rather than a beam.
-     * ponytail: scans the arms around and their sources once a second per idle jig; fine for a few lines, a cache would scale further.
+     * Picks the recipe to make from what the nearby arms can do. A recipe qualifies when every step has an arm with its tool that
+     * reaches all of the step's path, and the arms of each tool can take, from the places they take from, all the material their
+     * steps use (each stack counted once, so the two halves of a large chest are not counted twice). Of those, the one using the
+     * most kinds of material wins, so a sheet with cores and wire makes core memory rather than a beam.
+     * ponytail: scans the arms around and their sources once a second per idle jig, and counts a chest shared by two tools for
+     * both; fine for a few lines, a shared stock per item would be exact.
      */
     private void autoPick() {
         for (byte b : status) if (b != PENDING) return; // a job under way is kept
-        java.util.Set<ArmTool> tools = java.util.EnumSet.noneOf(ArmTool.class);
-        java.util.Set<BlockPos> sources = new java.util.LinkedHashSet<>();
+        List<IndustrialArmBlockEntity> arms = new java.util.ArrayList<>();
         int range = IndustrialArmBlockEntity.RANGE;
-        for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-range, -range, -range), worldPosition.offset(range, range, range))) {
-            if (!level.isLoaded(p) || !(level.getBlockEntity(p) instanceof IndustrialArmBlockEntity arm) || arm.toolType() == null) continue;
-            tools.add(arm.toolType());
-            arm.addSources(sources, worldPosition);
+        for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-range, -range, -range), worldPosition.offset(range, range, range)))
+            if (level.isLoaded(p) && level.getBlockEntity(p) instanceof IndustrialArmBlockEntity arm && arm.toolType() != null) arms.add(arm);
+        java.util.Map<ArmTool, java.util.Map<net.minecraft.world.item.Item, Integer>> stockOf = new java.util.EnumMap<>(ArmTool.class);
+        ArmRecipe best = null;
+        int bestKinds = -1, bestTotal = -1;
+        for (ArmRecipe r : ArmRecipes.list()) {
+            java.util.Map<ArmTool, java.util.Map<net.minecraft.world.item.Item, Integer>> need = new java.util.EnumMap<>(ArmTool.class);
+            boolean ok = true;
+            for (Step s : r.steps()) {
+                ok &= arms.stream().anyMatch(a -> a.toolType() == s.tool() && a.reachesStep(worldPosition, r, s));
+                if (s.material() != null) need.computeIfAbsent(s.tool(), t -> new java.util.HashMap<>()).merge(s.material(), s.materialCount(), Integer::sum);
+            }
+            for (var e : need.entrySet()) {
+                var stock = stockOf.computeIfAbsent(e.getKey(), t -> stock(arms, t));
+                for (var m : e.getValue().entrySet()) ok &= stock.getOrDefault(m.getKey(), 0) >= m.getValue();
+            }
+            if (!ok) continue;
+            int kinds = 0, total = 0;
+            java.util.Set<net.minecraft.world.item.Item> seen = new java.util.HashSet<>();
+            for (var m : need.values()) for (var e : m.entrySet()) { if (seen.add(e.getKey())) kinds++; total += e.getValue(); }
+            if (kinds > bestKinds || kinds == bestKinds && total > bestTotal) { best = r; bestKinds = kinds; bestTotal = total; }
         }
+        if (best == null ? recipe != null : recipe == null || !best.id().equals(recipe.id())) select(best);
+    }
+
+    /** What the arms with this tool can take for this jig, each stack counted once. */
+    private java.util.Map<net.minecraft.world.item.Item, Integer> stock(List<IndustrialArmBlockEntity> arms, ArmTool tool) {
+        java.util.Set<BlockPos> sources = new java.util.LinkedHashSet<>();
+        for (IndustrialArmBlockEntity a : arms) if (a.toolType() == tool) a.addSources(sources, worldPosition);
         java.util.Map<net.minecraft.world.item.Item, Integer> stock = new java.util.HashMap<>();
+        java.util.Set<ItemStack> counted = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
         for (BlockPos p : sources) {
             var h = IndustrialArmBlockEntity.items(level, p);
             if (h == null) continue;
             for (int slot = 0; slot < h.getSlots(); slot++) {
-                var st = h.getStackInSlot(slot);
-                if (!st.isEmpty()) stock.merge(st.getItem(), st.getCount(), Integer::sum);
+                ItemStack st = h.getStackInSlot(slot);
+                if (!st.isEmpty() && counted.add(st)) stock.merge(st.getItem(), st.getCount(), Integer::sum);
             }
         }
-        ArmRecipe best = null;
-        int bestKinds = -1, bestTotal = -1;
-        for (ArmRecipe r : ArmRecipes.list()) {
-            java.util.Map<net.minecraft.world.item.Item, Integer> need = new java.util.HashMap<>();
-            boolean ok = true;
-            for (Step s : r.steps()) {
-                ok &= tools.contains(s.tool());
-                if (s.material() != null) need.merge(s.material(), s.materialCount(), Integer::sum);
-            }
-            for (var e : need.entrySet()) ok &= stock.getOrDefault(e.getKey(), 0) >= e.getValue();
-            if (!ok) continue;
-            int total = need.values().stream().mapToInt(Integer::intValue).sum();
-            if (need.size() > bestKinds || need.size() == bestKinds && total > bestTotal) { best = r; bestKinds = need.size(); bestTotal = total; }
-        }
-        if (best == null ? recipe != null : recipe == null || !best.id().equals(recipe.id())) select(best);
+        return stock;
     }
 
     public BlockPos cell(int step) {
@@ -218,10 +232,21 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         changed();
     }
 
-    /** Sets the block of a placing step. Only into air; returns false, changing nothing, otherwise. */
+    /** Whether a placing step's block stands in its cell (so a block put back by hand counts too). */
+    public boolean standing(int step) {
+        Step s = recipe.steps().get(step);
+        return s.place() && !s.lay() && level.getBlockState(cell(step)).is(s.block());
+    }
+
+    /** Sets the block of a placing step, or lays its item. Only into air; returns false, changing nothing, otherwise. */
     public boolean place(int step) {
         Step s = recipe.steps().get(step);
         BlockPos p = cell(step);
+        if (s.lay()) {
+            level.playSound(null, p, SoundEvents.METAL_PLACE, SoundSource.BLOCKS, .8f, 1.2f);
+            complete(step);
+            return true;
+        }
         if (!level.getBlockState(p).isAir()) return false;
         level.setBlock(p, s.block().defaultBlockState(), 3);
         level.playSound(null, p, s.block().defaultBlockState().getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1f, 1f);
@@ -274,16 +299,19 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         int broken = Integer.MAX_VALUE;
         for (int i = 0; i < status.length; i++) {
             Step s = recipe.steps().get(i);
-            if (s.place() && status[i] == DONE && !level.getBlockState(cell(i)).is(s.block())) {
+            if (!s.place() || s.lay()) continue;
+            if (status[i] == DONE && !standing(i)) {
                 broken = Math.min(broken, s.stage());
                 status[i] = PENDING;
                 progress[i] = 0;
                 changed();
+            } else if (status[i] == PENDING && standing(i)) {
+                complete(i); // the block was put back by hand
             }
         }
         if (broken == Integer.MAX_VALUE) return;
         for (int i = 0; i < status.length; i++) {
-            if (recipe.steps().get(i).stage() <= broken || status[i] == PENDING) continue;
+            if (recipe.steps().get(i).stage() <= broken || status[i] == PENDING || standing(i)) continue; // blocks still standing stay done
             status[i] = PENDING; // a reserving arm sees the step is no longer its own and gives up
             reserved[i] = null;
             progress[i] = 0;
@@ -308,7 +336,7 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         for (int i = 0; i < status.length; i++) {
             Step s = recipe.steps().get(i);
             BlockPos p = cell(i);
-            if (s.place() && level.getBlockState(p).is(s.block())) level.removeBlock(p, false);
+            if (standing(i)) level.removeBlock(p, false);
         }
         Vec3 top = Vec3.atBottomCenterOf(worldPosition.above()).add(0, .1, 0);
         ItemEntity item = new ItemEntity(level, top.x, top.y, top.z, recipe.resultStack());
@@ -374,9 +402,10 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         auto = tag.contains("auto") ? tag.getBoolean("auto") : !tag.contains("recipe"); // older jigs with a recipe had it chosen by wrench
         if (!tag.contains("recipe")) { recipe = null; status = new byte[0]; progress = new float[0]; doneAt = new long[0]; reserved = new BlockPos[0]; return; }
         ArmRecipe saved = ArmRecipe.fromTag(tag.getCompound("recipe"));
-        // a data pack may have changed the recipe since it was saved; the loaded one wins as long as it has the same steps
+        // a data pack may have changed the recipe since it was saved: progress only carries over to an identical one,
+        // otherwise the saved recipe is finished as it was
         ArmRecipe current = ArmRecipes.get(saved.id());
-        recipe = current != null && current.steps().size() == saved.steps().size() ? current : saved;
+        recipe = current != null && current.equals(saved) ? current : saved;
         int n = recipe.steps().size();
         byte[] s = tag.getByteArray("status");
         status = s.length == n ? s : new byte[n];

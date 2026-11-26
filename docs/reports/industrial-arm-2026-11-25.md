@@ -86,3 +86,15 @@ Createのメカニカルアームと同じく、アームを持って右クリ�
 ## 追加（レシピの自動選択）
 
 ジグのレシピをレンチで選ぶ必要があったのを、周りのアームの工具と取得する場所の材料から自動で選ぶようにした（`AssemblyJigBlockEntity.autoPick`、`auto` フラグ、`IndustrialArmBlockEntity.addSources`）。材料の種類が多いレシピを優先する。レンチは固定、最後の次は自動。`setRecipe` は固定扱いなので既存のGameTestとPonderはそのまま。試験 `anAutomaticJigMakesWhatTheArmsMaterialsAllow`。
+
+## 修正（不具合6件と選択の不具合）・追加（鉄板のメモリ、専用Ponder）
+
+- 二重計上: 大きいチェストの両半分を選ぶと同じ中身を2回数え、コア100個で完成していた。`fetch` と自動選択で入れ物を同一性で1回だけ数え、全数を取れなければ戻す。試験 `bothHalvesOfALargeChestAreCountedOnce`。
+- 自動選択の停止: 届かないアームの材料でレシピを選んでいた。工程ごとに工具を持ち届くアームを要求（`reachesStep`）。
+- 枠の修理後に再開しない: 後のステージのブロックが立ったままだと置き直そうとして止まっていた。立っているブロックの工程は済みのまま残し、グリッパーは立っていれば材料を戻して済みにする。試験 `aLaterStageBlockStillStandingIsNotPlacedAgain`。
+- スプレーで材料・液体が消える: 液体を材料より先に確かめ、中断時は材料を入れ物へ、液体をタンクへ戻す。試験 `jigSprayChecksFluidFirstAndGivesBackWhatItTook`、`sprayWithoutFluidKeepsItsMaterialAndAStoppedArmLetsGo`。
+- ほかの設備を止める: 材料待ちのジグで止まらずベルト・デポ加工へ進む。回転0のアームはベルトのアイテムを放す。
+- 読み込みで製品が変わる: 進捗はレシピが完全に一致するときだけ引き継ぐ。
+- 選択が反映されない: クライアントは設置パケットより先に選択パケットを送るため、サーバーでブロックエンティティが無く捨てられていた。設置まで預かる（`ArmPoints.WAITING`）。試験 `marksSentBeforeTheArmIsPlacedReachIt`（FakePlayer）。実クライアントでの右クリック操作は未確認。
+- 磁気コアメモリを鉄板（`create:iron_sheet`）を敷く `lay` 工程から作るようにし、コア144個・エナメル線25本・縁のはんだ付けを続ける。
+- 専用Ponder `magnetic_core_memory`（磁気コアメモリ、フェライトコア、エナメル線、ジグ、配線ヘッドから開く）。部品の作り方、鉄板、コア、線、はんだ付け、完成の順。アームのPonderの配線場面は移した。撮影 `docs/quality/industrial-arm/memory-ponder.png`。
