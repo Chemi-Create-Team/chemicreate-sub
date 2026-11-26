@@ -25,7 +25,8 @@ public final class ArmWorkDraw {
     /** White hot, yellow, orange, dark red, then cold silver. */
     private static final int[] HEAT = {0xFFFFEB, 0xFFE65A, 0xFF821E, 0x78140A, 0xAAAFB9};
     private static final double[] HEAT_AT = {0, .2, .45, .75, 1};
-    private static final int COPPER = 0xC8733A, ENAMEL = 0x9E2F26, GOLD = 0xD4A84A, FERRITE = 0x3C3C42;
+    private static final int COPPER = 0xD58A4F, ENAMEL = 0xBC493D, GOLD = 0xDAB863, FERRITE = 0x37383E;
+    private static final double WIRE_WIDTH = .005;
 
     private ArmWorkDraw() {}
 
@@ -49,7 +50,11 @@ public final class ArmWorkDraw {
             ps.translate(-.5, -1, -.5);
             Trajectory t = Trajectory.of(s.pattern());
             if (s.pattern() == ArmPattern.SEAM_WELD) weld(q, ps.last(), Vec3.ZERO, t, p, current && be.phase == IndustrialArmBlockEntity.WORK && p < .999f, current ? 0 : 1, time);
-            else wires(q, ps.last(), light, Vec3.ZERO, t, p);
+            else {
+                wires(q, ps.last(), light, Vec3.ZERO, t, p);
+                if (current && be.phase == IndustrialArmBlockEntity.WORK && s.pattern() == ArmPattern.WIRE_THREAD)
+                    wireEnds(q, ps.last(), light, t, p, s.helpers() > 0);
+            }
             ps.popPose();
         }
     }
@@ -98,8 +103,7 @@ public final class ArmWorkDraw {
     private static void wires(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 o, Trajectory t, float p) {
         pieces(t, p, 1, (a, b, behind, kind) -> {
             if (kind == Trajectory.CORES) return; // the head only sets cores on this pass
-            int color = kind == Trajectory.X_WIRE ? COPPER : kind == Trajectory.Y_WIRE ? ENAMEL : GOLD;
-            ArmDraw.bar(q, pose, o.add(a), o.add(b), .0025, .0025, color, 255, light);
+            ArmDraw.bar(q, pose, o.add(a), o.add(b), WIRE_WIDTH, WIRE_WIDTH, wireColor(kind), 255, light);
         });
         // each core appears once the head has passed over its place on the setting pass
         for (int j = 0; j < Trajectory.GRID; j++) {
@@ -114,11 +118,30 @@ public final class ArmWorkDraw {
         }
     }
 
+    private static int wireColor(int kind) {
+        return kind == Trajectory.X_WIRE ? COPPER : kind == Trajectory.Y_WIRE ? ENAMEL : GOLD;
+    }
+
+    private static void wireEnds(VertexConsumer q, PoseStack.Pose pose, int light, Trajectory t, float progress, boolean helper) {
+        int kind = t.kindAt(progress);
+        if (kind < Trajectory.X_WIRE) return;
+        int color = wireColor(kind);
+        Vec3 tip = t.tip(progress);
+        ArmDraw.bar(q, pose, tip, tip.add(0, .022, 0), WIRE_WIDTH, WIRE_WIDTH, color, 255, light);
+        if (helper) {
+            Vec3 end = t.runEnd(progress);
+            Vec3 bend = end.add(.022, .027, .009);
+            ArmDraw.bar(q, pose, end, bend, WIRE_WIDTH, WIRE_WIDTH, color, 255, light);
+            ArmDraw.bar(q, pose, bend, end.add(0, .072, 0), WIRE_WIDTH, WIRE_WIDTH, color, 255, light);
+        }
+    }
+
     /** A ferrite core standing on edge, its hole along {@link Trajectory#CORE_AXIS}, so the wires visibly pass through it. */
     private static void ring(VertexConsumer q, PoseStack.Pose pose, int light, Vec3 c) {
-        double r = .007; // dust-sized, like real cores
+        double r = .009;
         Vec3 u = new Vec3(0, 1, 0).cross(Trajectory.CORE_AXIS).normalize().scale(r), v = new Vec3(0, r, 0);
         Vec3[] k = {u.add(v), u.reverse().add(v), u.reverse().subtract(v), u.subtract(v)};
-        for (int i = 0; i < 4; i++) ArmDraw.bar(q, pose, c.add(k[i]), c.add(k[(i + 1) % 4]), .003, .004, FERRITE, 255, light);
+        for (int i = 0; i < 4; i++)
+            ArmDraw.bar(q, pose, c.add(k[i]), c.add(k[(i + 1) % 4]), .004, .004, i == 0 ? 0x666266 : FERRITE, 255, light);
     }
 }

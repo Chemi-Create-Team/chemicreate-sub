@@ -9,7 +9,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * Joint angles of the industrial arm reaching a point. This is the maths of Create's {@code ArmAngleTarget} (claw facing down,
- * floor mounted), with the two arm segments {@link #SCALE} times longer; the joints, the claw and the thickness stay Create's.
+ * floor mounted), with the two arm segments {@link #SCALE} times longer.
  * {@code ArmAssemblyGameTests} checks it against Create's own result at scale 1.
  */
 public final class ArmPose {
@@ -32,6 +32,14 @@ public final class ArmPose {
     public static boolean reaches(BlockPos arm, Vec3 target) {
         double d = target.add(0, WRIST, 0).distanceTo(shoulder(arm));
         return d <= (LOWER + UPPER) * SCALE && d >= NEAREST;
+    }
+
+    /** How much higher the wrist can go while a telescoping tool still reaches the same point. */
+    public static double wristClearance(BlockPos arm, Vec3 target, double desired) {
+        Vec3 offset = target.add(0, WRIST, 0).subtract(shoulder(arm));
+        double reach = (LOWER + UPPER) * SCALE;
+        double upper = Math.sqrt(Math.max(0, reach * reach - offset.horizontalDistanceSqr()));
+        return Math.clamp(upper - offset.y, 0, desired);
     }
 
     /** Joint angles that put the claw on {@code target}. */

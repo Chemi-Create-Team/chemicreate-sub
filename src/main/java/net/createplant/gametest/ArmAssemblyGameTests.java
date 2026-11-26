@@ -178,6 +178,15 @@ public class ArmAssemblyGameTests {
         h.assertTrue(!java.util.Arrays.equals(a, net.createplant.arm.ArmPose.REST), "the arm leaves its rest pose");
         h.assertTrue(Math.abs(a[0] - b[0]) > 1, "a target on the other side turns the base");
         h.assertTrue(net.createplant.arm.ArmPose.reaches(arm, near) && !net.createplant.arm.ArmPose.reaches(arm, far), "steps two blocks away are in reach, five blocks away are not");
+        double clearance = net.createplant.arm.ArmPose.wristClearance(arm, near, .44);
+        h.assertTrue(clearance == .44 && net.createplant.arm.ArmPose.reaches(arm, near.add(0, clearance, 0)),
+            "The wrist can fully lift above a nearby workpiece");
+        Vec3 edge = Vec3.atCenterOf(arm).add(3.56, .4, 0);
+        double edgeClearance = net.createplant.arm.ArmPose.wristClearance(arm, edge, .44);
+        h.assertTrue(edgeClearance > 0 && edgeClearance < .44
+            && net.createplant.arm.ArmPose.reaches(arm, edge.add(0, edgeClearance - 1e-7, 0))
+            && !net.createplant.arm.ArmPose.reaches(arm, edge.add(0, edgeClearance + 1e-7, 0)),
+            "At the edge of reach, the wrist lifts only as far as it can");
         // At Create's segment lengths the port gives Create's own angles.
         Vec3 shoulder = Vec3.atCenterOf(arm).add(0, net.createplant.arm.ArmPose.SHOULDER, 0);
         for (Vec3 t : new Vec3[] {Vec3.atCenterOf(arm).add(1, -.3, .5), Vec3.atCenterOf(arm).add(-.4, .8, -1.2)}) {

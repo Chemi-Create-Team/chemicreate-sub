@@ -160,15 +160,19 @@ public final class Trajectory {
 
     /** The tool tip at progress 0..1 of the whole path. */
     public Vec3 tip(double progress) {
-        double d = Math.max(0, Math.min(1, progress)) * length;
-        for (int i = 0; i < stroke.length; i++) {
-            if (d <= cumulative[i + 1] || i == stroke.length - 1) {
-                double len = cumulative[i + 1] - cumulative[i];
-                double t = len < 1e-9 ? 1 : Math.min(1, (d - cumulative[i]) / len);
-                return points[i].lerp(points[i + 1], t);
-            }
-        }
-        return points[0];
+        int i = segmentAt(progress);
+        return points[i].lerp(points[i + 1], done(i, progress));
+    }
+
+    public int kindAt(double progress) {
+        return kind[segmentAt(progress)];
+    }
+
+    private int segmentAt(double progress) {
+        double distance = Math.clamp(progress, 0, 1) * length;
+        int i = 0;
+        while (i < stroke.length - 1 && distance > cumulative[i + 1]) i++;
+        return i;
     }
 
     /** How much of segment {@code i} has been passed at the given progress, 0..1. */
@@ -188,9 +192,7 @@ public final class Trajectory {
      * the next one). The helper arm holds the wire there, so it stays taut while the other arm threads it.
      */
     public Vec3 runEnd(double progress) {
-        double d = Math.max(0, Math.min(1, progress)) * length;
-        int i = 0;
-        while (i < stroke.length - 1 && d > cumulative[i + 1]) i++;
+        int i = segmentAt(progress);
         while (i < stroke.length - 1 && !stroke[i]) i++;
         while (i < stroke.length - 1 && kind[i + 1] == kind[i]) i++;
         return points[i + 1];

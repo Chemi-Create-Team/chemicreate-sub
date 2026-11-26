@@ -24,6 +24,7 @@ public class ElectrolysisClient {
         modEventBus.addListener(ElectrolysisClient::tintPowders);
         modEventBus.addListener(net.createplant.client.ProtectiveCapModel::register);
         net.createplant.client.CoolingFanRenderer.init();
+        net.createplant.client.IndustrialArmRenderer.init();
         net.createplant.client.WetProcessRenderer.init();
         net.createplant.client.ElectricPumpRenderer.init();
         net.createplant.client.PressurePumpRenderer.init();

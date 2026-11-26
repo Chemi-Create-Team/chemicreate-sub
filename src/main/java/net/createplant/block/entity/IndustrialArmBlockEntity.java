@@ -108,6 +108,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     public final LerpedFloat lowerArmAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[1]);
     public final LerpedFloat upperArmAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[2]);
     public final LerpedFloat headAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[3]);
+    public final LerpedFloat wristLift = LerpedFloat.linear();
     private float[] target = ArmPose.REST.clone();
     private int moveLeft, cooldown, syncIn;
 
@@ -559,8 +560,20 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         target = tip == null ? ArmPose.REST : ArmPose.toward(worldPosition, tip);
     }
 
+    public ArmPattern displayedPattern() {
+        return workRecipe != null && workStep >= 0 && workStep < workRecipe.steps().size()
+            ? workRecipe.steps().get(workStep).pattern() : null;
+    }
+
     private void clientTick() {
+        ArmPattern pattern = displayedPattern();
+        boolean precision = phase == ASSIST || (phase == MOVE || phase == WORK) && (pattern == ArmPattern.CORE_SET || pattern == ArmPattern.WIRE_THREAD);
+        float lift = precision && tip != null ? (float) ArmPose.wristClearance(worldPosition, tip, .44) : 0;
+        wristLift.chase(lift, .45, LerpedFloat.Chaser.EXP);
+        wristLift.tickChaser();
         float[] a = phase != IDLE && tip != null ? target : ArmPose.REST;
+        if (tip != null && wristLift.getValue() > .001f)
+            a = ArmPose.toward(worldPosition, tip.add(0, wristLift.getValue(), 0));
         baseAngle.chase(a[0], .35, LerpedFloat.Chaser.EXP);
         lowerArmAngle.chase(a[1], .35, LerpedFloat.Chaser.EXP);
         upperArmAngle.chase(a[2], .35, LerpedFloat.Chaser.EXP);

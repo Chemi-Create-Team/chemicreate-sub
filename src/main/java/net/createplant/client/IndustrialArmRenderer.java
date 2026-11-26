@@ -2,6 +2,7 @@ package net.createplant.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmRenderer;
@@ -10,6 +11,8 @@ import dev.engine_room.flywheel.lib.transform.PoseTransformStack;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.SuperByteBuffer;
+import net.createplant.CreatePlant;
+import net.createplant.arm.ArmPattern;
 import net.createplant.arm.ArmPose;
 import net.createplant.arm.ArmTool;
 import net.createplant.block.entity.IndustrialArmBlockEntity;
@@ -27,14 +30,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
 /**
- * Draws the arm from Create's own partial models and joint transforms, so it moves exactly like a mechanical arm. Longer arm
- * segments and the tool at the claw tell it apart. Plain block entity rendering: no Flywheel instancing.
+ * Draws the arm with Create's joint transforms and a slimmer working head.
  */
 public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmBlockEntity> {
-    /** A tool is drawn this large in the claw's frame and ends where the claw aims, half a block past the wrist. */
+    private static final PartialModel JAW = PartialModel.of(CreatePlant.location("block/industrial_arm/precision_jaw"));
+    private static final PartialModel STEM = PartialModel.of(CreatePlant.location("block/industrial_arm/precision_extension"));
+    private static final PartialModel TORCH = PartialModel.of(CreatePlant.location("block/industrial_arm/torch_tip"));
     private static final float TOOL_SIZE = .375f, TOOL_REACH = .5f;
+    private static final float PRECISION_EXTENSION = .105f;
 
     public IndustrialArmRenderer(BlockEntityRendererProvider.Context ctx) {}
+    public static void init() {}
 
     @Override
     public AABB getRenderBoundingBox(IndustrialArmBlockEntity be) {
@@ -44,10 +50,9 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
     @Override
     public void render(IndustrialArmBlockEntity be, float partial, PoseStack ps, MultiBufferSource buffers, int light, int overlay) {
         BlockState state = be.getBlockState();
-        VertexConsumer vb = buffers.getBuffer(RenderType.solid());
         if (be.phase == IndustrialArmBlockEntity.MOVE || be.phase == IndustrialArmBlockEntity.WORK)
             ArmWorkDraw.draw(be, ps, buffers, light, be.getLevel().getGameTime() + partial);
-        vb = buffers.getBuffer(RenderType.solid());
+        VertexConsumer vb = buffers.getBuffer(RenderType.solid());
         CachedBuffers.partial(AllPartialModels.ARM_COG, state).rotateCentered(KineticBlockEntityRenderer.getAngleForBe(be, be.getBlockPos(), Direction.Axis.Y), Direction.UP).light(light).renderInto(ps, vb);
 
         PoseStack local = new PoseStack();
@@ -56,9 +61,13 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
         float base = be.baseAngle.getValue(partial), lower = be.lowerArmAngle.getValue(partial) - 135, upper = be.upperArmAngle.getValue(partial) - 90, head = be.headAngle.getValue(partial);
 
         ArmTool tool = be.toolType();
-        ItemStack shown = tool != ArmTool.HAND ? be.tool() : be.phase == IndustrialArmBlockEntity.FETCH ? ItemStack.EMPTY : be.held;
-        boolean has = !shown.isEmpty(), block = has && shown.getItem() instanceof BlockItem;
-        boolean grip = has || be.phase == IndustrialArmBlockEntity.ASSIST; // a helper's claw closes on the wire it holds
+        ArmPattern pattern = be.displayedPattern();
+        boolean helper = be.phase == IndustrialArmBlockEntity.ASSIST;
+        boolean precision = pattern == ArmPattern.CORE_SET || pattern == ArmPattern.WIRE_THREAD;
+        boolean working = be.phase == IndustrialArmBlockEntity.WORK;
+        float extension = be.wristLift.getValue(partial) + (helper || working && precision ? PRECISION_EXTENSION : 0);
+        ItemStack shown = be.phase == IndustrialArmBlockEntity.FETCH || precision && working ? ItemStack.EMPTY : be.held;
+        boolean has = !shown.isEmpty(), block = shown.getItem() instanceof BlockItem;
 
         ArmRenderer.transformBase(msr, base);
         part(AllPartialModels.ARM_BASE, state, light, local, ps, vb);
@@ -70,42 +79,54 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
         stretched(AllPartialModels.ARM_UPPER_BODY, state, light, local, ps, vb);
         local.translate(0, 0, -ArmPose.UPPER * (ArmPose.SCALE - 1));
         ArmRenderer.transformHead(msr, head);
+        local.pushPose();
         msr.rotateZDegrees(180);
+        local.scale(.58f, .54f, 1);
         part(AllPartialModels.ARM_CLAW_BASE, state, light, local, ps, vb);
-        msr.rotateZDegrees(180);
+        local.popPose();
+
         if (tool == ArmTool.HAND) {
-            for (int i : new int[] {1, -1}) {
+            float jawAngle = block ? 42 : has ? 14 : 12;
+            if (helper || working && pattern == ArmPattern.WIRE_THREAD) jawAngle = 0;
+            if (working && pattern == ArmPattern.CORE_SET) {
+                double time = (be.getLevel().getGameTime() % 24 + partial) * Math.PI / 3;
+                jawAngle = 3 + (float) (7 * (1 - Math.cos(time)));
+            }
+            if (extension > .001f) {
                 local.pushPose();
-                ArmRenderer.transformClawHalf(msr, grip, block, i);
-                part(i > 0 ? AllPartialModels.ARM_CLAW_GRIP_LOWER : AllPartialModels.ARM_CLAW_GRIP_UPPER, state, light, local, ps, vb);
+                local.translate(0, 0, -.25);
+                local.scale(1, 1, extension);
+                part(STEM, state, light, local, ps, vb);
                 local.popPose();
             }
-        }
-        // A tool arm carrying finished belt work: the item hangs just under the tool.
-        ItemStack carried = tool != ArmTool.HAND && be.phase == IndustrialArmBlockEntity.CARRY ? be.held : ItemStack.EMPTY;
-        if (!carried.isEmpty()) {
+            jaw(state, light, local, ps, vb, 1, jawAngle, extension);
+            jaw(state, light, local, ps, vb, -1, jawAngle, extension);
+        } else {
             local.pushPose();
-            msr.rotateXDegrees(90);
-            local.translate(0, -(TOOL_REACH + .15), 0);
-            float s = carried.getItem() instanceof BlockItem ? .35f : .3f;
-            local.scale(s, s, s);
-            ps.pushPose();
-            ps.last().pose().mul(local.last().pose());
-            Minecraft.getInstance().getItemRenderer().renderStatic(carried, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
-            ps.popPose();
+            if (working) local.translate(0, 0, -.075);
+            part(TORCH, state, light, local, ps, vb);
             local.popPose();
         }
+
         if (has) {
-            // As Create's arm: the item hangs off the claw in the claw's own frame, so the offsets come after the joints.
             msr.rotateXDegrees(90);
-            local.translate(0, block ? -.5625 : -(TOOL_REACH - TOOL_SIZE / 2), 0);
-            float s = block ? .5f : TOOL_SIZE;
+            float s = block ? .5f : precision ? .16f : TOOL_SIZE;
+            local.translate(0, tool != ArmTool.HAND ? -(TOOL_REACH + .15) : block ? -.5625 : -(TOOL_REACH + extension - s / 2), 0);
             local.scale(s, s, s);
             ps.pushPose();
             ps.last().pose().mul(local.last().pose());
             Minecraft.getInstance().getItemRenderer().renderStatic(shown, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
             ps.popPose();
         }
+    }
+
+    private static void jaw(BlockState state, int light, PoseStack local, PoseStack ps, VertexConsumer vb, int side, float angle, float extension) {
+        local.pushPose();
+        local.translate(0, side * .0425, -.25 - extension);
+        if (side < 0) local.mulPose(Axis.ZP.rotationDegrees(180));
+        local.mulPose(Axis.XP.rotationDegrees(angle));
+        part(JAW, state, light, local, ps, vb);
+        local.popPose();
     }
 
     /** A segment drawn longer along its length only, so it keeps Create's thickness. */
