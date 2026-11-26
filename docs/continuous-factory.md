@@ -36,3 +36,10 @@
 ゴーグルで形成状態、進捗、回転数、キルン火力、巻線張力を確認できます。Createのディスプレイリンクでは状態、形成、進捗に対応します。回転動力を切るか入口にレッドストーン信号を入れて停止してから、入口をレンチで右クリックすると詰まりや断線を解除できます。破損した材料は変形した加工材として回収します。
 
 加工中の材料と完成品は入口ブロックに保存されます。可動部のからくりは形成された設備から再生成されます。`F3+B` を有効にすると、オレンジ色の線で可動部の衝突形状を確認できます。Minecraft標準の外接枠も同時に表示されます。
+
+## ゲーム内の動作画像
+
+- [ロータリーキルン](quality/continuous-factory/rotary-kiln.jpg)
+- [3段の圧延ラインと赤熱した材料](quality/continuous-factory/rolling-mill.jpg)
+- [巻線機と巻き取り中のコイル](quality/continuous-factory/coil-winder.jpg)
+- [巻線機の当たり判定表示](quality/continuous-factory/coil-winder-hitboxes.jpg)
