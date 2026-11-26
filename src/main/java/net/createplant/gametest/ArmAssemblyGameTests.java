@@ -82,6 +82,46 @@ public class ArmAssemblyGameTests {
         });
     }
 
+    @GameTest(template = "test_empty", timeoutTicks = 450)
+    public static void selectedSupplyDepotsFeedCoreMemoryAssembly(GameTestHelper h) {
+        BlockPos work = new BlockPos(3, 2, 3), lead = new BlockPos(5, 2, 3), assistant = new BlockPos(1, 2, 3),
+            torch = new BlockPos(3, 2, 5), out = new BlockPos(3, 2, 6);
+        var supply = java.util.List.of(new BlockPos(5, 2, 1), new BlockPos(6, 2, 2), new BlockPos(6, 2, 3), new BlockPos(6, 2, 4));
+        var material = memoryParts();
+        var handlers = new java.util.ArrayList<net.neoforged.neoforge.items.IItemHandler>();
+        for (int i = 0; i < supply.size(); i++) handlers.add(depot(h, supply.get(i), material[i]));
+        var workDepot = depot(h, work, new ItemStack(com.simibubi.create.AllItems.IRON_SHEET.get()));
+        var store = chest(h, out);
+        var inputs = new java.util.ArrayList<>(supply.stream().map(h::absolutePos).toList());
+        inputs.addFirst(h.absolutePos(work));
+        h.assertTrue(poweredArm(h, lead, ArmTool.HAND).setPoints(inputs, java.util.List.of()) == 0, "the lead reaches all five depots");
+        poweredArm(h, assistant, ArmTool.HAND);
+        h.assertTrue(poweredArm(h, torch, ArmTool.WELDING_TORCH).setPoints(java.util.List.of(h.absolutePos(work)), java.util.List.of(h.absolutePos(out))) == 0,
+            "the torch reaches the work depot and delivery chest");
+        h.succeedWhen(() -> {
+            h.assertTrue(store.getItem(0).is(CEArm.MAGNETIC_CORE_MEMORY.get()), "the finished memory reaches the chest using only depot inputs");
+            h.assertTrue(workDepot.getStackInSlot(0).isEmpty() && handlers.stream().allMatch(d -> d.getStackInSlot(0).isEmpty()),
+                "the arms use all supplied material exactly once");
+        });
+    }
+
+    @GameTest(template = "test_empty", timeoutTicks = 200)
+    public static void theWorkDepotDoesNotSupplyItsOwnBaseItem(GameTestHelper h) {
+        BlockPos arm = new BlockPos(1, 2, 1), work = new BlockPos(3, 2, 1), supply = new BlockPos(1, 2, 2);
+        var workDepot = depot(h, work, new ItemStack(Blocks.IRON_BLOCK));
+        var supplyDepot = depot(h, supply, ItemStack.EMPTY);
+        var be = poweredArm(h, arm, ArmTool.HAND);
+        be.setPoints(java.util.List.of(h.absolutePos(work), h.absolutePos(supply)), java.util.List.of());
+        h.runAfterDelay(30, () -> {
+            h.assertTrue(be.held.isEmpty() && workDepot.getStackInSlot(0).is(Blocks.IRON_BLOCK.asItem()),
+                "the base iron block stays on the work depot until a second one is supplied");
+            supplyDepot.insertItem(0, new ItemStack(Blocks.IRON_BLOCK), false);
+        });
+        h.succeedWhen(() -> h.assertTrue(supplyDepot.getStackInSlot(0).isEmpty()
+                && ArmRecipe.next(h.getLevel(), workDepot.getStackInSlot(0)).stream().anyMatch(next -> next.step() == 1),
+            "the extra iron block is used and the workpiece advances to welding"));
+    }
+
     @GameTest(template = "test_empty", timeoutTicks = 100)
     public static void bothHalvesOfALargeChestAreCountedOnce(GameTestHelper h) {
         BlockPos arm = new BlockPos(1, 2, 1), left = new BlockPos(3, 2, 1), right = new BlockPos(3, 2, 2), depot = new BlockPos(1, 2, 3);

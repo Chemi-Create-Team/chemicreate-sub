@@ -4,6 +4,7 @@ import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour;
 import com.simibubi.create.content.kinetics.belt.behaviour.TransportedItemStackHandlerBehaviour.TransportedResult;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
+import com.simibubi.create.content.logistics.depot.DepotBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +100,8 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     private RecipeHolder<ArmRecipe> job;
     /** Server side: the top of the container the parts came from, while the arm reaches over to it. */
     private Vec3 fetchFrom;
+    /** The workpiece's position is excluded when returning parts, including after loading. */
+    private BlockPos partWorkPos;
     /** Items some arm is working, so two arms never take the same one. Weak, so lost items drop out by themselves. */
     private static final Map<TransportedItemStack, BlockPos> CLAIMED = new WeakHashMap<>();
     public final LerpedFloat baseAngle = LerpedFloat.angular().startWithValue(ArmPose.REST[0]);
@@ -222,7 +225,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
                     // the helper is found before any part is taken, so waiting for one never costs parts
                     IndustrialArmBlockEntity h = s.helpers() > 0 ? findHelper(at, s) : null;
                     if (s.helpers() > 0 && h == null) { waiting = true; continue; }
-                    ItemStack parts = s.consume().isPresent() ? fetch(s.consume().get()) : ItemStack.EMPTY;
+                    ItemStack parts = s.consume().isPresent() ? fetch(s.consume().get(), p) : ItemStack.EMPTY;
                     if (s.consume().isPresent() && parts.isEmpty()) { waiting = true; continue; }
                     start(p, t, at, next, parts, h);
                     return;
@@ -241,6 +244,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         workStep = next.step();
         workAt = at;
         held = parts;
+        partWorkPos = parts.isEmpty() ? null : beltPos;
         progress = 0;
         moveLeft = 12;
         phase = fetchFrom != null ? FETCH : MOVE;
@@ -371,27 +375,39 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         return h != null ? h : level.getCapability(Capabilities.ItemHandler.BLOCK, p, Direction.UP);
     }
 
-    /** Where parts may come from: the chosen inputs, or with none chosen every block in range; never arms, depots or belts. */
+    /** Parts come from containers and explicitly selected supply depots. */
     private record Source(BlockPos pos, IItemHandler items) { }
 
-    private List<Source> sources() {
+    private List<Source> sources(BlockPos workPos) {
         List<Source> out = new ArrayList<>();
-        Iterable<BlockPos> around = inputs.isEmpty() ? BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE)) : inputs;
+        boolean explicit = !inputs.isEmpty();
+        Iterable<BlockPos> around = explicit ? inputs : BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE));
         for (BlockPos p : around) {
-            if (p.equals(worldPosition) || !level.isLoaded(p) || belt(level, p) != null) continue;
+            if (p.equals(worldPosition) || p.equals(workPos) || !level.isLoaded(p)) continue;
             BlockEntity be = level.getBlockEntity(p);
             if (be == null || be instanceof IndustrialArmBlockEntity) continue;
+            var transported = belt(level, p);
+            if (transported != null && (!explicit || !(be instanceof DepotBlockEntity) || hasClaimedItem(transported))) continue;
             IItemHandler h = items(level, p);
             if (h != null && ArmPose.reaches(worldPosition, Vec3.atBottomCenterOf(p).add(0, 1, 0))) out.add(new Source(p.immutable(), h));
         }
         return out;
     }
 
+    private boolean hasClaimedItem(TransportedItemStackHandlerBehaviour transported) {
+        boolean[] claimed = {false};
+        transported.handleProcessingOnAllItems(stack -> {
+            claimed[0] |= stack.lockedExternally || claimedByOther(stack);
+            return TransportedResult.doNothing();
+        });
+        return claimed[0];
+    }
+
     /**
      * Takes {@code part.count()} of the part from the containers the claw reaches, or nothing if they do not hold that many together.
      * The result may be larger than a stack (a core plane takes 144 cores); it is saved and given back in pieces.
      */
-    private ItemStack fetch(ArmRecipe.Part part) {
+    private ItemStack fetch(ArmRecipe.Part part, BlockPos workPos) {
         fetchFrom = null;
         int count = part.count();
         // each stack is counted once: both halves of a large chest hand out the same stacks
@@ -399,7 +415,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         List<IItemHandler> handlers = new ArrayList<>();
         List<Integer> slots = new ArrayList<>();
         int available = 0;
-        for (Source src : sources()) {
+        for (Source src : sources(workPos)) {
             IItemHandler h = src.items();
             for (int slot = 0; slot < h.getSlots() && available < count; slot++) {
                 ItemStack st = h.getStackInSlot(slot);
@@ -419,7 +435,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         int got = 0;
         for (int k = 0; k < handlers.size() && got < count; k++) got += handlers.get(k).extractItem(slots.get(k), count - got, false).getCount();
         if (got < count) {
-            giveBack(new ItemStack(part.item(), got)); // something changed between counting and taking: never start short
+            giveBack(new ItemStack(part.item(), got), workPos);
             fetchFrom = null;
             return ItemStack.EMPTY;
         }
@@ -427,10 +443,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     }
 
     /** Puts parts the arm no longer needs back where it takes them from; only what does not fit is dropped. */
-    private void giveBack(ItemStack stack) {
+    private void giveBack(ItemStack stack, BlockPos workPos) {
         if (stack.isEmpty()) return;
         ItemStack rest = stack.copy();
-        for (Source src : sources()) if (!rest.isEmpty()) rest = ItemHandlerHelper.insertItem(src.items(), rest, false);
+        for (Source src : sources(workPos)) if (!rest.isEmpty()) rest = ItemHandlerHelper.insertItem(src.items(), rest, false);
         while (!rest.isEmpty()) Containers.dropItemStack(level, worldPosition.getX() + .5, worldPosition.getY() + 1, worldPosition.getZ() + .5, rest.split(rest.getMaxStackSize()));
     }
 
@@ -478,9 +494,13 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     // ------------------------------------------------------------------ state
 
     private void endJob() {
-        if (beltItem != null) CLAIMED.remove(beltItem);
+        if (beltItem != null) {
+            CLAIMED.remove(beltItem);
+            beltItem.lockedExternally = false;
+        }
         beltPos = null;
         beltItem = null;
+        partWorkPos = null;
         job = null;
         workRecipe = null;
         workAt = null;
@@ -498,7 +518,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
     /** Stops the job and gives back the parts it holds; the item keeps the progress of the steps done. */
     public void abortJob() {
         if (level != null && !level.isClientSide) {
-            giveBack(held);
+            giveBack(held, partWorkPos);
             held = ItemStack.EMPTY;
         }
         endJob();
@@ -564,7 +584,10 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         tag.putLongArray("inputs", inputs.stream().mapToLong(BlockPos::asLong).toArray());
         tag.putLongArray("outputs", outputs.stream().mapToLong(BlockPos::asLong).toArray());
         if (phase == CARRY) tag.putBoolean("carry", true);
-        if (!clientPacket) return;
+        if (!clientPacket) {
+            if (partWorkPos != null && !held.isEmpty()) tag.putLong("partWorkPos", partWorkPos.asLong());
+            return;
+        }
         tag.putByte("shownPhase", phase);
         if (tip != null) {
             tag.putDouble("tx", tip.x);
@@ -594,6 +617,7 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         if (!clientPacket) {
             // belt work is not saved: parts held go back, a carried product is carried on
             phase = tag.getBoolean("carry") && !held.isEmpty() ? CARRY : IDLE;
+            partWorkPos = tag.contains("partWorkPos") ? BlockPos.of(tag.getLong("partWorkPos")) : null;
             moveLeft = 12;
             return;
         }

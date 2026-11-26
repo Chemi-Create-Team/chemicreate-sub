@@ -6520,7 +6520,7 @@
   "create_refinery_n_reactors.ponder.magnetic_core_memory.header": "磁気コアメモリの製造",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.title": "磁気コアメモリの製造",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.cores": "フェライトコア: 酸化鉄（赤）2個、酸化ニッケル、亜鉛ナゲットを加熱したベイスンで混ぜてフェライト粉にし、プレスで未焼成のリング16個にして、かまどかファンの溶鉱で焼きます。1面に、12×12の数と同じ144個使います。",
-  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.wire": "エナメル線: 銅線4本と工業用樹脂を加熱したベイスンで混ぜます。1面にX線12本、Y線12本、センス線1本の25本使います。部品は素のアームが取得する場所に置きます。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.wire": "エナメル線: 銅線4本と工業用樹脂を加熱したベイスンで混ぜます。1面にX線12本、Y線12本、センス線1本の25本使います。部品は素のアームが取得する場所に置きます。 チェストか部品供給用デポを取得先に登録します。コアをデポから供給する場合は64個、64個、16個の3か所に分けます。",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.sheet": "鉄板を、アームが取得するデポに置きます。溶接以外に工具はいりません。",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.set": "素のアームがフェライトコア144個を取り、ほこりほどの大きさのコアを鉄板の中央に1列ずつ並べます。鉄板は次の工程を覚えた未完成の磁気コアメモリになります。",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.thread": "線通しは素のアーム2台で行います。1台がエナメル線25本を取り、銅のX線、赤いY線、最後に金のセンス線を対角線に沿って全部のコアに通します。もう1台はたるまないように線の先を面の端で押さえます。2台目が届く所にいなければ、線を取らずに待ちます。",

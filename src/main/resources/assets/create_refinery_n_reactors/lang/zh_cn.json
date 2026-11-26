@@ -6520,7 +6520,7 @@
   "create_refinery_n_reactors.ponder.magnetic_core_memory.header": "制造磁芯存储器",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.title": "制造磁芯存储器",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.cores": "铁氧体磁芯：在加热的工作盆中混合2个红色氧化铁、氧化镍和锌粒得到铁氧体粉，压制成16个未烧结环，再用熔炉或鼓风机烧制。每面需要144个，即12×12个。",
-  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.wire": "漆包铜线：在加热的工作盆中混合4根铜线和工业树脂。每面需要25根：12根X线、12根Y线和1根读出线。把零件放在空手机械臂的取物位置。",
+  "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.wire": "漆包铜线：在加热的工作盆中混合4根铜线和工业树脂。每面需要25根：12根X线、12根Y线和1根读出线。把零件放在空手机械臂的取物位置。 将箱子或单独的供料置物台设为取物位置。磁芯可分成64、64和16个，摆在三个置物台上。",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.sheet": "把铁板放到机械臂取物的置物台上。除了焊枪不需要工具。",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.set": "空手机械臂取出144个铁氧体磁芯，把尘粒大小的磁芯逐行摆在铁板中央。铁板变成记住下一道工序的未完成磁芯存储器。",
   "create_refinery_n_reactors.ponder.shared.magnetic_core_memory.thread": "穿线需要两台空手机械臂。一台取出25根漆包线，依次穿过所有磁芯：铜色X线、红色Y线，最后是沿对角线的金色读出线；另一台在面的边缘扶住线头，使线保持绷紧。范围内没有第二台空手机械臂时，这道工序会等待且不取线。",

@@ -37,7 +37,7 @@ public final class ArmPonderScenes {
         + "{\"tool\":\"welding_torch\",\"time\":50}],\"result\":{\"id\":\"create_refinery_n_reactors:magnetic_core_memory\"}}";
     /** The schematic's work stand gets a depot on top; the arm, its chest and, for threading, a second arm stand around it. */
     private static final BlockPos DEPOT = new BlockPos(2, 2, 4), ARM = new BlockPos(5, 3, 4), CHEST = new BlockPos(5, 3, 6), OUT = new BlockPos(5, 1, 2),
-        HELPER = new BlockPos(0, 1, 4);
+        HELPER = new BlockPos(0, 1, 4), WIRE_SUPPLY = new BlockPos(6, 3, 6);
     private static final int FRAMES = 24;
     private ArmPonderScenes() { }
 
@@ -113,8 +113,13 @@ public final class ArmPonderScenes {
         scene.idle(10);
         scene.overlay().showControls(util.vector().topOf(CHEST), Pointing.DOWN, 60).withItem(new ItemStack(CEArm.FERRITE_CORE.get()));
         text(scene, util, CHEST, id, "cores");
-        scene.overlay().showControls(util.vector().topOf(CHEST), Pointing.DOWN, 60).withItem(new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get()));
-        text(scene, util, CHEST, id, "wire");
+        scene.world().setBlock(WIRE_SUPPLY.below(), AllBlocks.ANDESITE_CASING.getDefaultState(), false);
+        scene.world().setBlock(WIRE_SUPPLY, AllBlocks.DEPOT.getDefaultState(), false);
+        scene.world().showSection(util.select().fromTo(WIRE_SUPPLY.below(), WIRE_SUPPLY), Direction.DOWN);
+        scene.overlay().showControls(util.vector().topOf(WIRE_SUPPLY), Pointing.DOWN, 40).rightClick().withItem(new ItemStack(CEArm.ARM_ITEM.get()));
+        scene.overlay().chaseBoundingBoxOutline(PonderPalette.INPUT, WIRE_SUPPLY, new AABB(WIRE_SUPPLY), 120);
+        scene.world().createItemOnBeltLike(WIRE_SUPPLY, Direction.UP, new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25));
+        text(scene, util, WIRE_SUPPLY, id, "wire");
 
         scene.overlay().showControls(util.vector().topOf(DEPOT), Pointing.DOWN, 40).withItem(new ItemStack(AllItems.IRON_SHEET.get()));
         scene.world().createItemOnBeltLike(DEPOT, Direction.UP, new ItemStack(AllItems.IRON_SHEET.get()));
@@ -130,6 +135,7 @@ public final class ArmPonderScenes {
         scene.idle(10);
         text(scene, util, HELPER, id, "thread");
         work(scene, memory, 1, 200, 1);
+        scene.world().removeItemsFromBelt(WIRE_SUPPLY);
         rest(scene, ARM);
         rest(scene, HELPER);
 
