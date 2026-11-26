@@ -275,4 +275,35 @@ public class ArmAssemblyGameTests {
             h.succeed();
         });
     }
+
+    @GameTest(template = "test_empty", timeoutTicks = 200)
+    public static void anAutomaticJigMakesWhatTheArmsMaterialsAllow(GameTestHelper h) {
+        BlockPos jigPos = new BlockPos(3, 2, 3), chest = new BlockPos(6, 2, 4);
+        h.setBlock(jigPos, CEArm.JIG.get().defaultBlockState());
+        var jig = (AssemblyJigBlockEntity) h.getBlockEntity(jigPos);
+        h.assertTrue(jig.auto && jig.recipe == null, "a new jig chooses by itself");
+        // unpowered arms: they show their tools and reach but take nothing
+        BlockPos[] arms = {new BlockPos(6, 2, 3), new BlockPos(3, 2, 6), new BlockPos(0, 2, 3)};
+        ArmTool[] tools = {ArmTool.GRIPPER, ArmTool.WIRING_HEAD, ArmTool.WELDING_TORCH};
+        for (int i = 0; i < 3; i++) {
+            h.setBlock(arms[i], CEArm.ARM.get().defaultBlockState());
+            ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arms[i])).toolSlot.setStackInSlot(0, new net.minecraft.world.item.ItemStack(CEArm.TOOLS.get(tools[i]).get()));
+        }
+        h.setBlock(chest, Blocks.CHEST.defaultBlockState());
+        var box = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getBlockEntity(chest);
+        box.setItem(0, new net.minecraft.world.item.ItemStack(Blocks.IRON_BLOCK, 3));
+        box.setItem(1, new net.minecraft.world.item.ItemStack(CEArm.FERRITE_CORE.get(), 64));
+        box.setItem(2, new net.minecraft.world.item.ItemStack(CEArm.FERRITE_CORE.get(), 64));
+        box.setItem(3, new net.minecraft.world.item.ItemStack(CEArm.FERRITE_CORE.get(), 16));
+        box.setItem(4, new net.minecraft.world.item.ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25));
+        h.runAfterDelay(30, () -> {
+            h.assertTrue(jig.recipe != null && jig.recipe.id().equals(CreatePlant.location(MEMORY)), "iron, 144 cores and wire make core memory, not a beam");
+            box.setItem(3, net.minecraft.world.item.ItemStack.EMPTY);
+            h.runAfterDelay(30, () -> {
+                h.assertTrue(jig.recipe != null && jig.recipe.id().equals(CreatePlant.location(BEAM)), "short of cores, the iron makes a welded beam");
+                h.assertTrue(jig.cycleRecipe() && !jig.auto, "the wrench pins a recipe");
+                h.succeed();
+            });
+        });
+    }
 }

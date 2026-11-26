@@ -82,3 +82,7 @@
 ## 追加（取得・置く場所の選択）
 
 Createのメカニカルアームと同じく、アームを持って右クリックで取得する場所と置く場所を選ぶようにした。クライアントの `ArmPointSelection` が選択と枠表示、`IndustrialArmItem.place` が設置時に `ArmPoints` パケットを送り、サーバーが `IndustrialArmBlockEntity.setPoints` で範囲と到達を確かめて記録する。右クリックの横取りは `ArmPoints.rightClick`（両側、スニーク時は除く）。ベルト・デポ加工は取得する場所だけで行うように変え（以前は範囲内を自動で探していた）、置く場所があれば完成品を運ぶ `CARRY` 段階を追加。ジグの材料は、取得する場所があればそこからだけ取る。GameTest: 選んだデポで加工しチェストへ運ぶ、選んでいないデポは加工しない・届かない場所は外す、既存のデポ試験を場所選択つきに更新。Ponderに選択の操作と運搬を追加（`docs/quality/industrial-arm/arm-points.png`）。実際のクライアントでの右クリック操作は未確認（Ponderの撮影とサーバー側の試験のみ）。
+
+## 追加（レシピの自動選択）
+
+ジグのレシピをレンチで選ぶ必要があったのを、周りのアームの工具と取得する場所の材料から自動で選ぶようにした（`AssemblyJigBlockEntity.autoPick`、`auto` フラグ、`IndustrialArmBlockEntity.addSources`）。材料の種類が多いレシピを優先する。レンチは固定、最後の次は自動。`setRecipe` は固定扱いなので既存のGameTestとPonderはそのまま。試験 `anAutomaticJigMakesWhatTheArmsMaterialsAllow`。

@@ -43,6 +43,12 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         }
     };
     public ArmRecipe recipe;
+    /**
+     * Automatic: while no step has started, the jig makes whatever the arms around it can make from what is in their places to
+     * take from (or, for an arm with none chosen, the containers it reaches). A wrench pins one recipe instead.
+     */
+    public boolean auto = true;
+    private int autoIn;
     public byte[] status = new byte[0];
     public float[] progress = new float[0];
     public long[] doneAt = new long[0];
@@ -59,7 +65,13 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
 
     // ----------------------------------------------------------------- recipe
 
+    /** Pins a recipe (the wrench, tests); automatic choice stops. */
     public void setRecipe(ArmRecipe r) {
+        auto = false;
+        select(r);
+    }
+
+    private void select(ArmRecipe r) {
         recipe = r;
         int n = r == null ? 0 : r.steps().size();
         status = new byte[n];
@@ -76,9 +88,55 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         List<ArmRecipe> all = ArmRecipes.list();
         if (all.isEmpty()) return false;
         int i = -1;
-        for (int k = 0; k < all.size(); k++) if (recipe != null && all.get(k).id().equals(recipe.id())) i = k;
-        setRecipe(all.get((i + 1) % all.size()));
+        if (!auto) for (int k = 0; k < all.size(); k++) if (recipe != null && all.get(k).id().equals(recipe.id())) i = k;
+        if (i == all.size() - 1) {
+            // after the last one comes automatic again
+            auto = true;
+            autoIn = 0;
+            select(null);
+        } else setRecipe(all.get(i + 1));
         return true;
+    }
+
+    /**
+     * Picks the recipe to make from the materials the nearby arms can take and the tools they carry. Of the recipes that can be made
+     * in full, the one using the most kinds of material wins, so iron with cores and wire makes core memory rather than a beam.
+     * ponytail: scans the arms around and their sources once a second per idle jig; fine for a few lines, a cache would scale further.
+     */
+    private void autoPick() {
+        for (byte b : status) if (b != PENDING) return; // a job under way is kept
+        java.util.Set<ArmTool> tools = java.util.EnumSet.noneOf(ArmTool.class);
+        java.util.Set<BlockPos> sources = new java.util.LinkedHashSet<>();
+        int range = IndustrialArmBlockEntity.RANGE;
+        for (BlockPos p : BlockPos.betweenClosed(worldPosition.offset(-range, -range, -range), worldPosition.offset(range, range, range))) {
+            if (!level.isLoaded(p) || !(level.getBlockEntity(p) instanceof IndustrialArmBlockEntity arm) || arm.toolType() == null) continue;
+            tools.add(arm.toolType());
+            arm.addSources(sources, worldPosition);
+        }
+        java.util.Map<net.minecraft.world.item.Item, Integer> stock = new java.util.HashMap<>();
+        for (BlockPos p : sources) {
+            var h = IndustrialArmBlockEntity.items(level, p);
+            if (h == null) continue;
+            for (int slot = 0; slot < h.getSlots(); slot++) {
+                var st = h.getStackInSlot(slot);
+                if (!st.isEmpty()) stock.merge(st.getItem(), st.getCount(), Integer::sum);
+            }
+        }
+        ArmRecipe best = null;
+        int bestKinds = -1, bestTotal = -1;
+        for (ArmRecipe r : ArmRecipes.list()) {
+            java.util.Map<net.minecraft.world.item.Item, Integer> need = new java.util.HashMap<>();
+            boolean ok = true;
+            for (Step s : r.steps()) {
+                ok &= tools.contains(s.tool());
+                if (s.material() != null) need.merge(s.material(), s.materialCount(), Integer::sum);
+            }
+            for (var e : need.entrySet()) ok &= stock.getOrDefault(e.getKey(), 0) >= e.getValue();
+            if (!ok) continue;
+            int total = need.values().stream().mapToInt(Integer::intValue).sum();
+            if (need.size() > bestKinds || need.size() == bestKinds && total > bestTotal) { best = r; bestKinds = need.size(); bestTotal = total; }
+        }
+        if (best == null ? recipe != null : recipe == null || !best.id().equals(recipe.id())) select(best);
     }
 
     public BlockPos cell(int step) {
@@ -195,6 +253,10 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         long now = level.getGameTime();
         if (now % 20 == 0) releaseOrphans();
         checkPlaced();
+        if (auto && --autoIn <= 0) {
+            autoIn = 20;
+            autoPick();
+        }
         if (allDone() && now - lastDone >= FINISH_DELAY) finish();
         if (dirty && --syncIn <= 0) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -261,13 +323,16 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
         }
         level.playSound(null, worldPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1f, 1f);
         level.playSound(null, worldPosition, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, .6f, 1.4f);
-        setRecipe(recipe.id() != null && ArmRecipes.get(recipe.id()) != null ? ArmRecipes.get(recipe.id()) : recipe);
+        if (auto) {
+            select(null); // choose again from what is there now
+            autoIn = 0;
+        } else select(recipe.id() != null && ArmRecipes.get(recipe.id()) != null ? ArmRecipes.get(recipe.id()) : recipe);
     }
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean sneaking) {
         if (recipe == null) {
-            tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.none"));
+            tooltip.add(Component.translatable(auto ? "arm.create_refinery_n_reactors.jig.auto_waiting" : "arm.create_refinery_n_reactors.jig.none"));
             return true;
         }
         int done = 0, working = 0;
@@ -275,7 +340,7 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
             if (b == DONE) done++;
             else if (b == RESERVED) working++;
         }
-        tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.recipe", AssemblyJigBlock.name(recipe)));
+        tooltip.add(Component.translatable(auto ? "arm.create_refinery_n_reactors.jig.auto_recipe" : "arm.create_refinery_n_reactors.jig.recipe", AssemblyJigBlock.name(recipe)));
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.stage", Math.max(0, currentStage() + 1), recipe.stages()));
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.steps", done, status.length, working));
         tooltip.add(Component.translatable("arm.create_refinery_n_reactors.jig.tank", tank.getFluidAmount(), tank.getCapacity()));
@@ -288,6 +353,7 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider r) {
         super.saveAdditional(tag, r);
         tag.put("tank", tank.writeToNBT(r, new CompoundTag()));
+        tag.putBoolean("auto", auto);
         if (recipe == null) return;
         tag.put("recipe", recipe.toTag());
         tag.putByteArray("status", status);
@@ -305,6 +371,7 @@ public class AssemblyJigBlockEntity extends BlockEntity implements IHaveGoggleIn
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider r) {
         super.loadAdditional(tag, r);
         tank.readFromNBT(r, tag.getCompound("tank"));
+        auto = tag.contains("auto") ? tag.getBoolean("auto") : !tag.contains("recipe"); // older jigs with a recipe had it chosen by wrench
         if (!tag.contains("recipe")) { recipe = null; status = new byte[0]; progress = new float[0]; doneAt = new long[0]; reserved = new BlockPos[0]; return; }
         ArmRecipe saved = ArmRecipe.fromTag(tag.getCompound("recipe"));
         // a data pack may have changed the recipe since it was saved; the loaded one wins as long as it has the same steps

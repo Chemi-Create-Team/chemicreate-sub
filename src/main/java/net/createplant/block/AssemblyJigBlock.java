@@ -44,7 +44,8 @@ public class AssemblyJigBlock extends Block implements EntityBlock, IWrenchable 
             if (!level.isClientSide && context.getPlayer() != null) {
                 if (!jig.cycleRecipe())
                     context.getPlayer().displayClientMessage(Component.translatable("message.create_refinery_n_reactors.jig_busy"), true);
-                else context.getPlayer().displayClientMessage(Component.translatable("message.create_refinery_n_reactors.jig_recipe", name(jig.recipe)), true);
+                else context.getPlayer().displayClientMessage(jig.auto ? Component.translatable("message.create_refinery_n_reactors.jig_auto")
+                        : Component.translatable("message.create_refinery_n_reactors.jig_recipe", name(jig.recipe)), true);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -56,7 +57,7 @@ public class AssemblyJigBlock extends Block implements EntityBlock, IWrenchable 
         if (!(level.getBlockEntity(pos) instanceof AssemblyJigBlockEntity jig)) return InteractionResult.PASS;
         if (!level.isClientSide) {
             if (jig.recipe == null) {
-                player.displayClientMessage(Component.translatable("message.create_refinery_n_reactors.jig_none"), true);
+                player.displayClientMessage(Component.translatable(jig.auto ? "message.create_refinery_n_reactors.jig_auto_waiting" : "message.create_refinery_n_reactors.jig_none"), true);
             } else {
                 int done = 0;
                 for (byte b : jig.status) if (b == AssemblyJigBlockEntity.DONE) done++;

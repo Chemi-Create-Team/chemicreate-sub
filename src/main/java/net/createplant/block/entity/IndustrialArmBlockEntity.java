@@ -350,6 +350,23 @@ public class IndustrialArmBlockEntity extends KineticBlockEntity {
         endJob();
     }
 
+    /** The item handler of a container, belt or depot, or null. */
+    public static IItemHandler items(net.minecraft.world.level.Level level, BlockPos p) {
+        if (!level.isLoaded(p)) return null;
+        IItemHandler h = level.getCapability(Capabilities.ItemHandler.BLOCK, p, null);
+        return h != null ? h : level.getCapability(Capabilities.ItemHandler.BLOCK, p, net.minecraft.core.Direction.UP);
+    }
+
+    /** Adds every block this arm would take material from for the jig at {@code jigAt}. */
+    public void addSources(java.util.Set<BlockPos> into, BlockPos jigAt) {
+        for (BlockPos p : candidates()) {
+            if (p.equals(worldPosition) || p.equals(jigAt) || into.contains(p)) continue;
+            BlockEntity be = level.isLoaded(p) ? level.getBlockEntity(p) : null;
+            if (be == null || be instanceof IndustrialArmBlockEntity || be instanceof AssemblyJigBlockEntity) continue;
+            if (items(level, p) != null && ArmPose.reaches(worldPosition, Vec3.atBottomCenterOf(p).add(0, 1, 0))) into.add(p.immutable());
+        }
+    }
+
     /** Where material may come from: the chosen inputs, or with none chosen every block in range. */
     private Iterable<BlockPos> candidates() {
         return inputs.isEmpty() ? BlockPos.betweenClosed(worldPosition.offset(-RANGE, -RANGE, -RANGE), worldPosition.offset(RANGE, RANGE, RANGE)) : inputs;
