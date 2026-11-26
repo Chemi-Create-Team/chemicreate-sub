@@ -72,6 +72,8 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         helper.forComponents(CreatePlant.location("stainless_steel_ingot"), CreatePlant.location("molten_stainless_steel_bucket"),
             CreatePlant.location("ferrochrome"), CreatePlant.location("cast_stainless_steel_slab"))
             .addStoryBoard("plant/stainless_casting", SteelworksPonderScenes::stainless);
+        for (var product : ContinuousFactoryPonderScenes.ROLLED) helper.forComponents(CreatePlant.location(product.id()))
+            .addStoryBoard("plant/rolled_" + product.id(), (scene, util) -> ContinuousFactoryPonderScenes.rolled(scene, util, product));
         helper.forComponents(CreatePlant.location("coil_winder"), CreatePlant.location("winder_brake"), CreatePlant.location("heavy_wire_rope"))
             .addStoryBoard("plant/coil_winder", ContinuousFactoryPonderScenes::winder);
         for (var tutorial : PlantTutorialCatalog.all()) if (tutorial.family() != null) {

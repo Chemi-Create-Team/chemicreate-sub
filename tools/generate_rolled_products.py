@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""16 px item art and models for the rolling-mill products added in 0.4.0."""
+"""16 px item art, models and per-product Ponder stages for the rolling-mill products added in 0.4.0."""
 import json
 from pathlib import Path
 
 from PIL import Image, ImageDraw
+from generate_petrochemical_ponder import NS, OUT, Structure, string
 
 A = Path(__file__).resolve().parents[1] / 'src/main/resources/assets/create_refinery_n_reactors'
 
@@ -48,7 +49,42 @@ def gold(d):  # thin crumpled foil
     d.line([(3, 9), (7, 7)], fill='#ffe27a')
 
 
+# product: (stands, burner) — burner 'smouldering' is a burner that is out (cold rolling)
+PRODUCTS = {
+    'thick_steel_plate': (2, 'kindled'), 'stainless_clad_plate': (2, 'kindled'), 'lead_sheet': (2, 'smouldering'),
+    'zircaloy_cladding_tube': (3, 'kindled'), 'titanium_sheet': (3, 'seething'),
+    'copper_foil': (4, 'kindled'), 'aluminum_foil': (4, 'kindled'), 'electrical_steel_sheet': (4, 'smouldering'),
+    'gold_foil': (5, 'kindled'),
+}
+
+
+def ponder(name, stands, burner):
+    """The tandem mill of tools/generate_continuous_factory_assets.py with this product's stand count and burner."""
+    length = 3 * stands + 1
+    scene = Structure(length + 6, 9)
+    x, y, z = 4, 2, 2
+    def frame(dx, dy, dz): scene.block(x + dx, y + dy, z + dz, NS + 'continuous_factory_frame')
+    def state(dx, dy, dz, block, facing, nbt=None): scene.block(x + dx, y + dy, z + dz, block, nbt=nbt, facing=facing)
+    state(0, 0, 0, NS + 'rolling_mill', 'south', [string('id', NS + 'continuous_factory')])
+    state(0, 0, length, NS + 'continuous_factory_outlet', 'south')
+    for section in range(2, length - 1, 3):
+        for col in (-2, 2):
+            for h in range(4):
+                if (col, h) != (2, 1): frame(col, h, section)
+        for col in (-1, 0, 1): frame(col, 3, section)
+        for col in (-1, 0, 1): scene.block(x + col, y + 4, z + section, 'minecraft:cut_copper_slab', type='bottom', waterlogged='false')
+        state(2, 1, section, NS + 'rolling_stand', 'east')
+        state(3, 1, section, 'create:creative_motor', 'west')
+    for dz in range(1, length):
+        for col in (-1, 0, 1): scene.block(x + col, y, z + dz, 'create:metal_girder', x='false', z='true', top='false', bottom='false', waterlogged='false')
+    scene.block(x, y - 1, z, 'create:blaze_burner', blaze=burner)
+    target = A / f'ponder/plant/rolled_{name}.nbt'
+    scene.save(f'rolled_{name}')
+    (OUT / f'rolled_{name}.nbt').replace(target)
+
+
 if __name__ == '__main__':
+    for product, (stands, burner) in PRODUCTS.items(): ponder(product, stands, burner)
     item('electrical_steel_sheet', electrical)
     item('stainless_clad_plate', clad)
     item('lead_sheet', lead)
