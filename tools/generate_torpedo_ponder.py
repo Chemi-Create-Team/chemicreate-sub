@@ -12,15 +12,13 @@ for x in range(1, 12):
     scene.block(x, 1, 6, 'create:track', shape='xo', turn='false', waterlogged='false')
 for x in (3, 7):
     scene.block(x, 2, 6, 'create:small_bogey', axis='x', waterlogged='false')
-for x in range(2, 9):
-    scene.block(x, 3, 6, 'create:metal_girder')
 for x in range(3, 8):
-    for y in range(4, 7):
+    for y in range(3, 6):
         for z in range(5, 8):
             scene.block(x, y, z, mod+'torpedo_tank', axis='x', bottom=str(x==3).lower(), top=str(x==7).lower(), shape='plain')
-scene.block(5, 5, 4, 'create:portable_fluid_interface', facing='north')
-scene.block(5, 5, 1, 'create:portable_fluid_interface', facing='south')
-scene.block(5, 5, 0, mod+'stainless_steel_pipe', north='true', south='true', east='false', west='false', up='false', down='false', waterlogged='false')
+scene.block(5, 4, 4, 'create:portable_fluid_interface', facing='north')
+scene.block(5, 4, 1, 'create:portable_fluid_interface', facing='south')
+scene.block(5, 4, 0, mod+'stainless_steel_pipe', north='true', south='true', east='false', west='false', up='false', down='false', waterlogged='false')
 scene.block(2, 1, 8, 'create:track_station', assembling='false', waterlogged='false')
 scene.block(8, 3, 3, 'create:blaze_burner', blaze='seething')
 scene.block(8, 4, 3, 'create:basin')
