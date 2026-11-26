@@ -134,14 +134,6 @@
       ],
       "reason": "Loose precipitated PVC resin powder, distinct from manufactured polymer pellets."
     },
-    "salt": {
-      "colour": [
-        238,
-        238,
-        234
-      ],
-      "reason": "Evaporated salt dust; registered in c:dusts/salt."
-    },
     "sulfur_dust": {
       "colour": [
         205,
@@ -233,118 +225,6 @@
         57
       ],
       "reason": "Loose carbon powder from milling or crushing coal and charcoal."
-    },
-    "zirconium_sulfate_hydrate": {
-      "colour": [
-        236,
-        232,
-        218
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "zirconyl_sulfate": {
-      "colour": [
-        226,
-        222,
-        208
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "titanyl_sulfate_hydrate": {
-      "colour": [
-        214,
-        214,
-        160
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "aluminium_sulfate_hydrate": {
-      "colour": [
-        236,
-        238,
-        240
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "iron_sulfate_hydrate": {
-      "colour": [
-        150,
-        190,
-        130
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "copper_sulfate_crystals": {
-      "colour": [
-        52,
-        120,
-        214
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "zinc_sulfate_hydrate": {
-      "colour": [
-        226,
-        232,
-        228
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "tin_sulfate_crystals": {
-      "colour": [
-        206,
-        214,
-        214
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "lead_chloride_crystals": {
-      "colour": [
-        232,
-        228,
-        214
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "uranyl_nitrate_hydrate": {
-      "colour": [
-        206,
-        204,
-        80
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "plutonium_nitrate_crystals": {
-      "colour": [
-        150,
-        126,
-        92
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "sodium_aluminate_crystals": {
-      "colour": [
-        232,
-        232,
-        226
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "caustic_soda_flakes": {
-      "colour": [
-        240,
-        240,
-        244
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
-    },
-    "ammonium_chloride_crystals": {
-      "colour": [
-        238,
-        236,
-        226
-      ],
-      "reason": "Solid left when its solution is boiled down; heated further it dehydrates and decomposes."
     }
   },
   "preserved_items": {
@@ -438,6 +318,21 @@
     "galena": "Mined mineral lump/crystal, not a powder process product.",
     "lead_ingot": "Metal ingot; retain its ingot sprite.",
     "lithium_carbonate": "Refined lithium salt; retain its own sprite.",
-    "lead_sinter": "Roasted lead oxide sinter; retain its own sprite."
+    "lead_sinter": "Roasted lead oxide sinter; retain its own sprite.",
+    "sodium_aluminate_crystals": "Faceted crystal cluster sprite (distinct from alumina powder).",
+    "copper_sulfate_crystals": "Faceted cerulean triclinic crystal cluster sprite.",
+    "ammonium_chloride_crystals": "Faceted frosty needle crystal sprite.",
+    "lead_chloride_crystals": "Tabular pearl crystal sprite.",
+    "tin_sulfate_crystals": "Faceted pewter crystal cluster sprite.",
+    "plutonium_nitrate_crystals": "Faceted amber-olive crystal cluster sprite.",
+    "salt": "Cubic halite crystal grains sprite.",
+    "aluminium_sulfate_hydrate": "Hydrated crystalline salt shards sprite.",
+    "iron_sulfate_hydrate": "Hydrated seafoam vitriol crystal shards sprite.",
+    "zinc_sulfate_hydrate": "Hydrated silver-white crystal shards sprite.",
+    "zirconium_sulfate_hydrate": "Hydrated alabaster crystal shards sprite.",
+    "zirconyl_sulfate": "Granular ivory crystal salt sprite.",
+    "titanyl_sulfate_hydrate": "Hydrated straw-cream crystal shards sprite.",
+    "uranyl_nitrate_hydrate": "Hydrated fluorescent uranium crystal shards sprite.",
+    "caustic_soda_flakes": "Layered glossy caustic wafer flakes sprite."
   }
 }
