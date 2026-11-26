@@ -18,12 +18,15 @@ import net.minecraft.world.item.Items;
 /** Opt-in developer fixture using the vanilla chest screen to draw actual baked item models. */
 final class PowderItemsClientCheck {
     private static final List<String> POWDERS = List.of(
-        "alumina", "ammonium_nitrate", "ammonium_sulfate", "anfo", "borax",
-        "carbon_powder", "cement_powder", "chromium_oxide", "compact_uranium_dioxide", "depleted_uranium_dioxide",
-        "enriched_uranium_dioxide", "ground_clinker", "gypsum", "iron_oxide_red", "molybdenum_blue",
-        "molybdenum_trioxide", "mox_powder", "nickel_oxide", "nickel_titanium_yellow", "plutonium_dioxide",
-        "pvc_resin", "sulfur_dust", "titanium_dioxide", "treatment_sludge", "uranium_dioxide",
-        "uranium_tetrafluoride", "uranium_trioxide", "water_treatment_flocculant", "yellowcake", "zirconia");
+        "alumina", "ammonium_nitrate", "ammonium_sulfate", "anfo",
+        "borax", "carbon_powder", "cement_powder", "chromium_oxide", "depleted_uranium_dioxide",
+        "enriched_uranium_dioxide", "ground_clinker", "gypsum",
+        "iron_oxide_red", "molybdenum_blue", "molybdenum_trioxide", "mox_powder",
+        "nickel_oxide", "nickel_titanium_yellow", "plutonium_dioxide", "pvc_resin",
+        "salt", "sulfur_dust", "titanium_dioxide",
+        "treatment_sludge", "uranium_dioxide", "uranium_tetrafluoride",
+        "uranium_trioxide", "water_treatment_flocculant", "yellowcake", "zirconia", "compact_uranium_dioxide",
+        "zirconium_sulfate_hydrate", "zirconyl_sulfate", "titanyl_sulfate_hydrate", "aluminium_sulfate_hydrate", "iron_sulfate_hydrate", "copper_sulfate_crystals", "zinc_sulfate_hydrate", "tin_sulfate_crystals", "lead_chloride_crystals", "uranyl_nitrate_hydrate", "plutonium_nitrate_crystals", "sodium_aluminate_crystals", "caustic_soda_flakes", "ammonium_chloride_crystals");
     private static ContainerScreen screen;
     private static int ticks;
 
