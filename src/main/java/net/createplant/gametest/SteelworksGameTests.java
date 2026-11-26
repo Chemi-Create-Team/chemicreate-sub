@@ -85,23 +85,49 @@ public final class SteelworksGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = "test_fractionation", timeoutTicks = 80)
+    public static void undersizedTorpedoCannotLoadOrAssembleButCanDrain(GameTestHelper helper) {
+        var bogey = new BlockPos(7, 3, 7);
+        var cell = bogey.above();
+        helper.setBlock(bogey, AllBlocks.SMALL_BOGEY.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_AXIS, Direction.Axis.X));
+        helper.setBlock(cell, CEConverter.TORPEDO_TANK.get().defaultBlockState());
+        glue(helper, bogey, cell);
+        helper.runAfterDelay(6, () -> {
+            var tank = (TorpedoTankBlockEntity) helper.getBlockEntity(cell);
+            var molten = new FluidStack(CEProcessFluids.MOLTEN_PIG_IRON.get(), 400);
+            var port = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(cell), Direction.UP);
+            helper.assertTrue(port != null && !port.isFluidValid(0, molten) && port.fill(molten, SIMULATE) == 0
+                && port.fill(molten, EXECUTE) == 0, "A 1×1 torpedo must not accept new cargo");
+            tank.getTankInventory().setFluid(molten.copy());
+            try {
+                new TestCarriage().assemble(helper.getLevel(), helper.absolutePos(bogey));
+                helper.fail("A torpedo with one tank cell must fail assembly");
+            } catch (AssemblyException expected) {
+                helper.assertTrue(port.drain(400, EXECUTE).getAmount() == 400 && tank.getTankInventory().isEmpty(),
+                    "Rejecting a small torpedo still lets an existing save recover its old cargo");
+            }
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = "test_fractionation", timeoutTicks = 160)
     public static void createCarriageTransfersAndRestoresTheSameMoltenCargo(GameTestHelper helper) {
         var bogey = new BlockPos(7, 3, 7);
-        var start = bogey.above();
-        var end = start.east();
+        var start = bogey.above().north();
+        var end = start.east(4).above(2).south(2);
         helper.setBlock(bogey, AllBlocks.SMALL_BOGEY.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_AXIS, Direction.Axis.X));
         var state = CEConverter.TORPEDO_TANK.get().defaultBlockState().setValue(HorizontalFluidTankBlock.AXIS, Direction.Axis.X);
-        helper.setBlock(start, state);
-        helper.setBlock(end, state);
+        for (BlockPos part : BlockPos.betweenClosed(start, end)) helper.setBlock(part, state);
         helper.runAfterDelay(7, () -> {
             var root = (TorpedoTankBlockEntity) helper.getBlockEntity(start);
             var filled = new FluidStack(CEProcessFluids.MOLTEN_PIG_IRON.get(), root.getTankInventory().getCapacity());
             var initial = helper.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, helper.absolutePos(end), Direction.UP);
-            helper.assertTrue(root.getHeight() == 2 && initial != null && initial.fill(filled, SIMULATE) == filled.getAmount()
-                && root.getTankInventory().isEmpty() && root.steam().isEmpty(), "The formed horizontal tank offers its full capacity without mutating a simulated operation");
+            helper.assertTrue(root.getWidth() == 3 && root.getHeight() == 5
+                && filled.getAmount() == 45 * TorpedoTankBlockEntity.getCapacityMultiplier()
+                && initial != null && initial.fill(filled, SIMULATE) == filled.getAmount()
+                && root.getTankInventory().isEmpty() && root.steam().isEmpty(), "The formed 3×3×5 tank offers the capacity of all 45 blocks");
             helper.assertTrue(initial.fill(filled, EXECUTE) == filled.getAmount(), "The far tank member loads into the controller");
-            var partial = glue(helper, bogey, start);
+            var partial = glue(helper, bogey.north(), bogey.above());
             try {
                 var attempt = new TestCarriage();
                 if (attempt.assemble(helper.getLevel(), helper.absolutePos(bogey)))
@@ -110,7 +136,7 @@ public final class SteelworksGameTests {
                 helper.assertTrue(root.getTankInventory().getFluidAmount() == filled.getAmount(), "The assembly error leaves stationary cargo untouched");
             }
             partial.discard();
-            glue(helper, bogey, end);
+            glue(helper, bogey.north(), end);
             var carriage = new TestCarriage();
             try {
                 helper.assertTrue(carriage.assemble(helper.getLevel(), helper.absolutePos(bogey)),
@@ -139,11 +165,16 @@ public final class SteelworksGameTests {
                 var restored = new MountedStorageManager();
                 restored.read(saved, registries, false, carriage);
                 carriage.returnStorageForDisassembly(restored);
-                var translated = helper.absolutePos(bogey.east(6));
-                var turn = new StructureTransform(translated, Direction.Axis.Y, Rotation.CLOCKWISE_180, Mirror.NONE);
+                var translated = helper.absolutePos(bogey.east(7));
+                var turn = new StructureTransform(translated, Direction.Axis.Y, Rotation.CLOCKWISE_90, Mirror.NONE);
                 carriage.addBlocksToWorld(helper.getLevel(), turn);
-                var newRoot = (TorpedoTankBlockEntity) helper.getLevel().getBlockEntity(turn.apply(new BlockPos(1, 1, 0)));
+                var corner = turn.apply(start.subtract(bogey));
+                var farCorner = turn.apply(end.below(2).subtract(bogey));
+                var newRootPos = new BlockPos(Math.min(corner.getX(), farCorner.getX()), corner.getY(),
+                    Math.min(corner.getZ(), farCorner.getZ()));
+                var newRoot = (TorpedoTankBlockEntity) helper.getLevel().getBlockEntity(newRootPos);
                 helper.assertTrue(newRoot != null && newRoot.isController()
+                    && newRoot.getMainConnectionAxis() == Direction.Axis.Z && newRoot.getWidth() == 3 && newRoot.getHeight() == 5
                     && newRoot.getTankInventory().getFluidAmount() == filled.getAmount() - 100,
                     "Rotating and restoring a serialized carriage keeps the drained amount at the relocated controller");
                 helper.succeed();

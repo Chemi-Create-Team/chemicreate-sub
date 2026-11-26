@@ -116,10 +116,12 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     public double heatWatts() { return heatWatts; }
     public String status() { return status; }
 
-    private HorizontalTankBlockEntity owner() {
+    protected final HorizontalTankBlockEntity owner() {
         if (isRemoved() || level == null || !level.hasChunkAt(getController())) return null;
         return getControllerBE() instanceof HorizontalTankBlockEntity root && root.isController() && !root.isRemoved() ? root : null;
     }
+
+    protected boolean allowsTankFill() { return true; }
 
     private BlockPos rowEnd(int across) {
         return getMainConnectionAxis() == Direction.Axis.X ? TankCells.at(this, height - 1, 0, across) : TankCells.at(this, height - 1, across, 0);
@@ -177,9 +179,9 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
     /** Keep cached Create pipe connections attached to the current controller and mode. */
     protected final IFluidHandler tankPort(Direction side) {
         return new IFluidHandler() {
-            private IFluidHandler held(boolean extracting) {
+            private IFluidHandler held(boolean extracting, boolean inserting) {
                 var root = owner();
-                if (root == null) return UNAVAILABLE;
+                if (root == null || inserting && !root.allowsTankFill()) return UNAVAILABLE;
                 boolean tubes = root.tubeBoiler();
                 if (outletFace(root, side) && (tubes || !steam.isEmpty())) return outlet(root);
                 if (root.boiler.attachedEngines > 0) return root.engineFeed;
@@ -187,16 +189,16 @@ public class HorizontalTankBlockEntity extends FluidTankBlockEntity {
                 return root.getTankInventory();
             }
             @Override public int getTanks() { return 1; }
-            @Override public FluidStack getFluidInTank(int tank) { var port = held(true); return tank == 0 && port instanceof net.createplant.thermal.GradeFluidTank storage ? storage.layer(side) : port.getFluidInTank(tank); }
-            @Override public int getTankCapacity(int tank) { return held(false).getTankCapacity(tank); }
-            @Override public boolean isFluidValid(int tank, FluidStack stack) { return held(false).isFluidValid(tank, stack); }
-            @Override public int fill(FluidStack stack, FluidAction action) { return held(false).fill(stack, action); }
+            @Override public FluidStack getFluidInTank(int tank) { var port = held(true, false); return tank == 0 && port instanceof net.createplant.thermal.GradeFluidTank storage ? storage.layer(side) : port.getFluidInTank(tank); }
+            @Override public int getTankCapacity(int tank) { return held(false, false).getTankCapacity(tank); }
+            @Override public boolean isFluidValid(int tank, FluidStack stack) { var port = held(false, true); return port != UNAVAILABLE && port.isFluidValid(tank, stack); }
+            @Override public int fill(FluidStack stack, FluidAction action) { return held(false, true).fill(stack, action); }
             @Override public FluidStack drain(int amount, FluidAction action) {
-                var port = held(true);
+                var port = held(true, false);
                 return port instanceof net.createplant.thermal.GradeFluidTank storage ? storage.drainLayer(side, FluidStack.EMPTY, amount, action) : port.drain(amount, action);
             }
             @Override public FluidStack drain(FluidStack request, FluidAction action) {
-                var port = held(true);
+                var port = held(true, false);
                 return port instanceof net.createplant.thermal.GradeFluidTank storage ? storage.drainLayer(side, request, request.getAmount(), action) : port.drain(request, action);
             }
         };

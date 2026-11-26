@@ -6659,12 +6659,13 @@
   "gui.assembly.exception.create_refinery_n_reactors.torpedo_incomplete": "耐火内張り横型タンクの全ブロックを台車に接着してください。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.title": "銑鉄から圧延鋼へ",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.bricks": "メカニカルプレスと鉢を組みます。砂2個と生石灰1個を超過熱し、けい石レンガ4個を成形します。",
-  "create_refinery_n_reactors.ponder.shared.torpedo_car.assemble": "横型タンクをけい石レンガで内張りします。全タンク部品と流体インターフェースを台車に接着し、駅で列車を組み立てます。",
+  "create_refinery_n_reactors.ponder.shared.torpedo_car.assemble": "耐火内張り横型タンクを断面3×3、長さ5ブロックに組みます。タンク全体と流体インターフェースを台車に接着します。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.transfer": "流体インターフェース同士が向かい合う位置に停車します。ステンレス製の配管と動力付きポンプで溶銑を積み下ろしします。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.refine": "運んだ溶銑を加熱ミキサーで生石灰と混ぜて脱硫します。脱硫溶銑・鉄・生石灰・酸素を転炉に入れて吹錬します。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.cast": "転炉を傾けて溶鋼を出し、プレスの下の鉢でスラブに鋳造します。加熱した連続圧延ラインへ送り、極厚鋼板にします。",
   "item.create_refinery_n_reactors.molten_pig_iron_bucket": "溶銑入りバケツ",
   "item.create_refinery_n_reactors.desulfurized_hot_metal_bucket": "脱硫溶銑入りバケツ",
   "item.create_refinery_n_reactors.molten_steel_bucket": "溶鋼入りバケツ",
-  "create_refinery_n_reactors.ponder.torpedo_car.header": "銑鉄から圧延鋼へ"
+  "create_refinery_n_reactors.ponder.torpedo_car.header": "銑鉄から圧延鋼へ",
+  "block.create_refinery_n_reactors.torpedo_tank.section_required": "トーピードカーには断面3×3のタンクが必要です。"
 }

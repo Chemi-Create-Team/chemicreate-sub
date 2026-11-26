@@ -36,6 +36,7 @@ public abstract class TorpedoContraptionMixin {
                 || !(part.getControllerBE() instanceof TorpedoTankBlockEntity root)
                 || !blocks.containsKey(root.getBlockPos().subtract(anchor))) throw incomplete();
             if (!part.isController()) continue;
+            if (!root.hasFullSection()) throw new AssemblyException(Component.translatable(TorpedoTankBlockEntity.SECTION_REQUIRED));
             int width = root.getWidth();
             for (int length = 0; length < root.getHeight(); length++)
                 for (int u = 0; u < width; u++)

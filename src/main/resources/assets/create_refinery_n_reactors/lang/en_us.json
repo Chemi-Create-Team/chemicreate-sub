@@ -6659,12 +6659,13 @@
   "gui.assembly.exception.create_refinery_n_reactors.torpedo_incomplete": "Glue every cell of the Torpedo Tank to the carriage.",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.title": "From pig iron to rolled steel",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.bricks": "Use a mechanical press over a basin. Superheat two sand and one quicklime to press four silica bricks.",
-  "create_refinery_n_reactors.ponder.shared.torpedo_car.assemble": "Line a horizontal tank with silica bricks. Glue all of its cells and a portable fluid interface to a Create carriage before assembling at the station.",
+  "create_refinery_n_reactors.ponder.shared.torpedo_car.assemble": "Build the lined tank five blocks long with a solid 3×3 cross-section. Glue the tank and portable fluid interface to the carriage.",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.transfer": "Stop with the interfaces facing each other. Use stainless pipes and a powered stainless pump to load the molten pig iron or deliver it at the next station.",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.refine": "Treat the delivered metal with quicklime in a heated mixer. Feed desulfurized hot metal, iron, quicklime and oxygen to a converter.",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.cast": "Send molten steel from the tilted converter to a basin under a press. Feed the cast slab into a heated tandem mill to roll a plate.",
   "item.create_refinery_n_reactors.molten_pig_iron_bucket": "Molten Pig Iron Bucket",
   "item.create_refinery_n_reactors.desulfurized_hot_metal_bucket": "Desulfurized Hot Metal Bucket",
   "item.create_refinery_n_reactors.molten_steel_bucket": "Molten Steel Bucket",
-  "create_refinery_n_reactors.ponder.torpedo_car.header": "From pig iron to rolled steel"
+  "create_refinery_n_reactors.ponder.torpedo_car.header": "From pig iron to rolled steel",
+  "block.create_refinery_n_reactors.torpedo_tank.section_required": "The torpedo tank needs a solid 3×3 cross-section."
 }

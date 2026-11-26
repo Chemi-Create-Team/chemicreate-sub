@@ -20,7 +20,7 @@ public final class SteelworksPonderScenes {
         var scene = new CreateSceneBuilder(builder);
         scene.title("torpedo_car", PonderText.title(TEXT + "title", "From pig iron to rolled steel"));
         scene.configureBasePlate(0, 0, 13);
-        scene.scaleSceneView(.65f);
+        scene.scaleSceneView(.55f);
         scene.showBasePlate();
 
         var press = util.grid().at(8, 6, 3);
@@ -31,17 +31,22 @@ public final class SteelworksPonderScenes {
 
         scene.world().showSection(util.select().fromTo(1, 1, 6, 11, 1, 6), Direction.DOWN);
         scene.world().showSection(util.select().position(2, 1, 8), Direction.DOWN);
-        var carriage = util.select().fromTo(2, 2, 6, 8, 4, 6).add(util.select().position(5, 4, 5));
-        scene.world().showSection(carriage, Direction.DOWN);
-        var cell = util.grid().at(5, 4, 6);
-        scene.overlay().showOutline(PonderPalette.OUTPUT, "torpedo", carriage, 120);
+        var tank = util.select().fromTo(3, 4, 5, 7, 6, 7);
+        var chassis = util.select().fromTo(2, 2, 6, 8, 3, 6);
+        var movingPort = util.select().position(5, 5, 4);
+        scene.world().showSection(chassis, Direction.DOWN);
+        PonderText.build(scene, util, 3, 4, 5, 7, 6, 7, Direction.DOWN);
+        scene.world().showSection(movingPort, Direction.SOUTH);
+        var carriage = chassis.copy().add(tank).add(movingPort);
+        var cell = util.grid().at(5, 6, 6);
+        scene.overlay().showOutline(PonderPalette.OUTPUT, "torpedo", tank, 120);
         scene.overlay().showControls(util.vector().topOf(cell), Pointing.DOWN, 100).rightClick()
             .withItem(AllItems.SUPER_GLUE.asStack());
         caption(scene, util, cell, "assemble");
 
-        var port = util.grid().at(5, 4, 2);
-        scene.world().showSection(util.select().fromTo(5, 4, 1, 5, 4, 2), Direction.SOUTH);
-        scene.overlay().showOutline(PonderPalette.INPUT, "torpedo_transfer", util.select().fromTo(5, 4, 2, 5, 4, 5), 120);
+        var port = util.grid().at(5, 5, 1);
+        scene.world().showSection(util.select().fromTo(5, 5, 0, 5, 5, 1), Direction.SOUTH);
+        scene.overlay().showOutline(PonderPalette.INPUT, "torpedo_transfer", util.select().fromTo(5, 5, 1, 5, 5, 4), 120);
         caption(scene, util, port, "transfer");
         var train = scene.world().makeSectionIndependent(carriage);
         scene.world().moveSection(train, new Vec3(3, 0, 0), 50);

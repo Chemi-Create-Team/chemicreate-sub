@@ -6659,12 +6659,13 @@
   "gui.assembly.exception.create_refinery_n_reactors.torpedo_incomplete": "请将鱼雷罐的每个方块粘在车架上。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.title": "从生铁到轧制钢",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.bricks": "在工作盆上安装机械压力机，过热压制2份沙与1份生石灰，得到4块硅质耐火砖。",
-  "create_refinery_n_reactors.ponder.shared.torpedo_car.assemble": "用硅质耐火砖为卧式储罐加装内衬。将所有罐体及移动式流体接口粘到车架上，再在车站组装列车。",
+  "create_refinery_n_reactors.ponder.shared.torpedo_car.assemble": "搭建横截面为3×3、长5格的耐火衬里罐。将罐体所有方块和移动式流体接口粘到车架上。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.transfer": "停车使两个流体接口相对，用不锈钢管和动力泵装卸铁水。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.refine": "用加热搅拌器加生石灰给铁水脱硫。将脱硫铁水、铁、生石灰和氧气送至转炉吹炼。",
   "create_refinery_n_reactors.ponder.shared.torpedo_car.cast": "倾转炉体，将钢水送到压力机下方的工作盆内铸成板坯，再送入加热的串列轧机轧成厚板。",
   "item.create_refinery_n_reactors.molten_pig_iron_bucket": "铁水桶",
   "item.create_refinery_n_reactors.desulfurized_hot_metal_bucket": "脱硫铁水桶",
   "item.create_refinery_n_reactors.molten_steel_bucket": "钢水桶",
-  "create_refinery_n_reactors.ponder.torpedo_car.header": "从生铁到轧制钢"
+  "create_refinery_n_reactors.ponder.torpedo_car.header": "从生铁到轧制钢",
+  "block.create_refinery_n_reactors.torpedo_tank.section_required": "鱼雷罐需要完整的3×3横截面。"
 }
