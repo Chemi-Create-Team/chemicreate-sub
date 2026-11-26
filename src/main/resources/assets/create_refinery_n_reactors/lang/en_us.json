@@ -6757,5 +6757,12 @@
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.speed": "Each stand runs about one third faster than the last; ±10% error is allowed.",
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.output": "Thirty-two gold foils come out of one block.",
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.use": "Gold foil reflects heat in the multi-layer insulation of cryogenic tanks: two per craft.",
-  "create_refinery_n_reactors.ponder.rolled_gold_foil.header": "Beating Gold Foil"
+  "create_refinery_n_reactors.ponder.rolled_gold_foil.header": "Beating Gold Foil",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.title": "Rolling Stainless Steel Ingots",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.feed": "Feed one cast stainless slab from the top of the feed end. Cast it from 800 mB of molten stainless steel made in the mixer or the AOD converter.",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.line": "Any stand count works. Keep a lit burner under the feed end: the slab is rolled hot.",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.speed": "Each stand runs about one third faster than the last; ±10% error is allowed.",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.output": "Eight stainless steel ingots come out. Rolling is the only way to turn the slab into ingots.",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.use": "Press the ingots into stainless steel sheets for tanks, pipes and corrosion-proof equipment.",
+  "create_refinery_n_reactors.ponder.rolled_stainless_steel_ingot.header": "Rolling Stainless Steel Ingots"
 }

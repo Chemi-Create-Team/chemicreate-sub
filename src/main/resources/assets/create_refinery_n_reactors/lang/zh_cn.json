@@ -6757,5 +6757,12 @@
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.speed": "每座机架比上一座快约三分之一，容差±10%。",
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.output": "1块金块轧出32张金箔。",
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.use": "金箔在低温罐的多层隔热中反射热量，一次可做2个。",
-  "create_refinery_n_reactors.ponder.rolled_gold_foil.header": "轧制金箔"
+  "create_refinery_n_reactors.ponder.rolled_gold_foil.header": "轧制金箔",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.title": "轧制不锈钢锭",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.feed": "从进料端上方送入1块不锈钢铸坯。铸坯由混合机或AOD转炉制得的800 mB熔融不锈钢浇铸而成。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.line": "机架数不限。铸坯需热轧，进料端下方点燃燃烧室。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.speed": "每座机架比上一座快约三分之一，容差±10%。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.output": "出料口送出8块不锈钢锭。轧制是把铸坯变成钢锭的唯一方法。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.use": "把钢锭冲压成不锈钢板，用于储罐、管道和耐腐蚀设备。",
+  "create_refinery_n_reactors.ponder.rolled_stainless_steel_ingot.header": "轧制不锈钢锭"
 }

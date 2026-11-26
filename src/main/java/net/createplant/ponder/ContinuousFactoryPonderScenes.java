@@ -34,7 +34,8 @@ public final class ContinuousFactoryPonderScenes {
         new Rolled("copper_foil", 4, "minecraft:copper_block", 1, null, 0, 12, "lithium_ion_battery_casing"),
         new Rolled("aluminum_foil", 4, "aluminum_ingot", 4, null, 0, 12, "lithium_ion_battery_casing"),
         new Rolled("electrical_steel_sheet", 4, "steel_block", 1, "minecraft:quartz", 2, 6, "fusion_motor_generator"),
-        new Rolled("gold_foil", 5, "minecraft:gold_block", 1, null, 0, 32, "cryogenic_tank"));
+        new Rolled("gold_foil", 5, "minecraft:gold_block", 1, null, 0, 32, "cryogenic_tank"),
+        new Rolled("stainless_steel_ingot", 3, "cast_stainless_steel_slab", 1, null, 0, 8, "stainless_steel_sheet"));
 
     private static ItemStack item(String id, int count) {
         var key = id.contains(":") ? net.minecraft.resources.ResourceLocation.parse(id) : CreatePlant.location(id);

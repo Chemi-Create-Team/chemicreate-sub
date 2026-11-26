@@ -6757,5 +6757,12 @@
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.speed": "各段は前段より約3分の1速く回します。許容差は±10%です。",
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.output": "ブロック1個から金箔が32枚出ます。",
   "create_refinery_n_reactors.ponder.shared.rolled_gold_foil.use": "金箔は極低温タンクの多層断熱で熱を反射します。1回で2個作れます。",
-  "create_refinery_n_reactors.ponder.rolled_gold_foil.header": "金箔の圧延"
+  "create_refinery_n_reactors.ponder.rolled_gold_foil.header": "金箔の圧延",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.title": "ステンレス鋼インゴットの圧延",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.feed": "ステンレス鋼鋳造スラブを1個、搬入口の上から入れます。スラブは、ミキサーかAOD転炉で作った溶融ステンレス800 mBを鋳造して作ります。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.line": "段数はいくつでも構いません。熱間で延ばすので、搬入口の下でバーナーを燃やします。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.speed": "各段は前段より約3分の1速く回します。許容差は±10%です。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.output": "ステンレス鋼インゴットが8個出ます。スラブをインゴットにする方法は圧延だけです。",
+  "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.use": "インゴットはプレスしてステンレス板にし、タンクや配管、耐食設備に使います。",
+  "create_refinery_n_reactors.ponder.rolled_stainless_steel_ingot.header": "ステンレス鋼インゴットの圧延"
 }

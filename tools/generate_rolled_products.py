@@ -54,7 +54,7 @@ PRODUCTS = {
     'thick_steel_plate': (2, 'kindled'), 'stainless_clad_plate': (2, 'kindled'), 'lead_sheet': (2, 'smouldering'),
     'zircaloy_cladding_tube': (3, 'kindled'), 'titanium_sheet': (3, 'seething'),
     'copper_foil': (4, 'kindled'), 'aluminum_foil': (4, 'kindled'), 'electrical_steel_sheet': (4, 'smouldering'),
-    'gold_foil': (5, 'kindled'),
+    'gold_foil': (5, 'kindled'), 'stainless_steel_ingot': (3, 'kindled'),
 }
 
 

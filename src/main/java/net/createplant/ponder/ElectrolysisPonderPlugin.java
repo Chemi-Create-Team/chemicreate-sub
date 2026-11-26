@@ -70,10 +70,16 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             CreatePlant.location("cast_steel_slab"), CreatePlant.location("molten_pig_iron_bucket"))
             .addStoryBoard("plant/torpedo_car", SteelworksPonderScenes::torpedo);
         helper.forComponents(CreatePlant.location("stainless_steel_ingot"), CreatePlant.location("molten_stainless_steel_bucket"),
-            CreatePlant.location("ferrochrome"), CreatePlant.location("cast_stainless_steel_slab"))
+            CreatePlant.location("ferrochrome"), CreatePlant.location("cast_stainless_steel_slab"),
+            CreatePlant.location("stainless_steel_sheet"), CreatePlant.location("stainless_steel_block"))
             .addStoryBoard("plant/stainless_casting", SteelworksPonderScenes::stainless);
         for (var product : ContinuousFactoryPonderScenes.ROLLED) helper.forComponents(CreatePlant.location(product.id()))
             .addStoryBoard("plant/rolled_" + product.id(), (scene, util) -> ContinuousFactoryPonderScenes.rolled(scene, util, product));
+        // Every stainless item leads to the rolling step that finally makes the ingots.
+        helper.forComponents(CreatePlant.location("cast_stainless_steel_slab"), CreatePlant.location("molten_stainless_steel_bucket"),
+                CreatePlant.location("stainless_steel_sheet"), CreatePlant.location("stainless_steel_block"))
+            .addStoryBoard("plant/rolled_stainless_steel_ingot", (scene, util) -> ContinuousFactoryPonderScenes.rolled(scene, util,
+                ContinuousFactoryPonderScenes.ROLLED.getLast()));
         helper.forComponents(CreatePlant.location("coil_winder"), CreatePlant.location("winder_brake"), CreatePlant.location("heavy_wire_rope"))
             .addStoryBoard("plant/coil_winder", ContinuousFactoryPonderScenes::winder);
         for (var tutorial : PlantTutorialCatalog.all()) if (tutorial.family() != null) {
