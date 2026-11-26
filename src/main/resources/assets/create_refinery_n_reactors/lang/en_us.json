@@ -6520,6 +6520,13 @@
   "arm.create_refinery_n_reactors.status.work": "Working",
   "arm.create_refinery_n_reactors.tool": "Tool: %s",
   "arm.create_refinery_n_reactors.job": "Jig at %s, %s, %s - step %s",
+  "arm.create_refinery_n_reactors.point.input": "Marked as a place to take from",
+  "arm.create_refinery_n_reactors.point.output": "Marked as a place to put to",
+  "arm.create_refinery_n_reactors.point.removed": "Unmarked",
+  "arm.create_refinery_n_reactors.point.saved": "The arm takes from %s place(s) and puts to %s",
+  "arm.create_refinery_n_reactors.point.dropped": "%s marked place(s) are out of the arm's reach and were left out",
+  "arm.create_refinery_n_reactors.points": "Take from %s / put to %s",
+  "arm.create_refinery_n_reactors.status.carry": "Carrying the finished item",
   "arm.create_refinery_n_reactors.belt_job": "Working on %s on a belt",
   "arm.create_refinery_n_reactors.tank": "Spray fluid: %s / %s mB",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.title": "Industrial arm assembly",
@@ -6531,6 +6538,7 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.grip": "The gripper takes the open step nearest to it and sets the block. Several arms share one jig; a step goes to one arm only.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "The next stage starts when the stage before is done. The welding torch draws a bead along the seam that cools from white to silver.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "When every step is done the temporary blocks vanish, the product drops and steam rises. Recipes are data packs under assembly/.",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "Without jig work, the arm also works items on belts and depots in reach: it holds the item still and turns it into the belt recipe result, such as a weld repair. Belt recipes are assembly/ JSONs with an input.",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.points": "Like Create's mechanical arm, right-click blocks with the arm in hand before placing it: once marks a place to take from (blue), twice a place to put to (orange), three times unmarks it.",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "The arm works items only on the belts and depots chosen to take from: it holds the item still and turns it into the belt recipe result, such as a weld repair, then carries it to a place to put to, or leaves it there if none was chosen. Belt recipes are assembly/ JSONs with an input.",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.wire": "The wiring head first sets 144 dust-sized ferrite cores (12 x 12) row by row, then threads 25 enamelled copper wires through them: copper X wires and red Y wires through every core, dipping into each one, and last a gold sense wire that zigzags along the diagonals. Cores are fired from pressed Ni-Zn ferrite powder; the wire is copper wire mixed hot with industrial resin."
 }

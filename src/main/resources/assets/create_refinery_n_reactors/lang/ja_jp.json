@@ -6520,6 +6520,13 @@
   "arm.create_refinery_n_reactors.status.work": "作業中",
   "arm.create_refinery_n_reactors.tool": "工具: %s",
   "arm.create_refinery_n_reactors.job": "ジグ %s, %s, %s - 工程 %s",
+  "arm.create_refinery_n_reactors.point.input": "取得する場所に設定しました",
+  "arm.create_refinery_n_reactors.point.output": "置く場所に設定しました",
+  "arm.create_refinery_n_reactors.point.removed": "選択を解除しました",
+  "arm.create_refinery_n_reactors.point.saved": "取得 %s か所、置く %s か所をアームに記録しました",
+  "arm.create_refinery_n_reactors.point.dropped": "%s か所はアームが届かないため外しました",
+  "arm.create_refinery_n_reactors.points": "取得 %s か所 / 置く %s か所",
+  "arm.create_refinery_n_reactors.status.carry": "完成品を運搬中",
   "arm.create_refinery_n_reactors.belt_job": "ベルト上の%sを加工中",
   "arm.create_refinery_n_reactors.tank": "噴霧用の液体: %s / %s mB",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.title": "産業用アームによる組立",
@@ -6531,6 +6538,7 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.grip": "グリッパーは自分に最も近い未着手の工程を取り、ブロックを置きます。1つのジグを複数のアームで分け合い、1つの工程は1台だけが担当します。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "前のステージが終わると次のステージが始まります。溶接トーチは継ぎ目に沿って、白から銀へ冷えていくビードを描きます。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "全工程が終わると仮ブロックが消え、完成品が出て蒸気が上がります。レシピは assembly/ のデータパックで追加できます。",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "ジグの仕事がないときは、届く範囲のベルトやデポ上のアイテムも加工します。アイテムを止めて、溶接修理などベルト用レシピの結果に変えます。ベルト用レシピは input を持つ assembly/ のJSONです。",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.points": "Createのメカニカルアームと同じく、設置する前にアームを持ってブロックを右クリックします。1回で取得する場所（青）、2回で置く場所（橙）、3回で解除です。",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "アームは、取得する場所に選んだベルトやデポの上のアイテムだけを加工します。アイテムを止めて、溶接修理などベルト用レシピの結果に変え、置く場所があればそこへ運び、なければその場に残します。ベルト用レシピは input を持つ assembly/ のJSONです。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.wire": "精密配線ヘッドは、まずほこりほどの大きさのフェライトコア144個（12×12）を1列ずつ並べ、次にエナメル線25本を通します。銅のX線と赤いY線を、コアごとに沈み込みながら全部のコアに通し、最後に金のセンス線を対角線に沿ってジグザグに通します。コアはニッケル亜鉛フェライト粉をプレスして焼いたもの、エナメル線は銅線を工業用樹脂と加熱ミキサーで混ぜたものです。"
 }

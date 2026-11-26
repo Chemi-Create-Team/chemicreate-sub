@@ -83,6 +83,14 @@ public final class ArmPonderScenes {
         scene.world().setBlock(DEPOT, com.simibubi.create.AllBlocks.DEPOT.getDefaultState(), false);
         scene.world().showSection(util.select().position(DEPOT), Direction.DOWN);
         scene.idle(10);
+        // Points are chosen as with Create's arm: right-click with the arm in hand, once to take from, twice to put to.
+        scene.overlay().showControls(util.vector().topOf(DEPOT), Pointing.DOWN, 40).rightClick().withItem(new ItemStack(CEArm.ARM_ITEM.get()));
+        scene.overlay().chaseBoundingBoxOutline(net.createmod.ponder.api.PonderPalette.INPUT, DEPOT, new net.minecraft.world.phys.AABB(DEPOT), 200);
+        scene.idle(20);
+        scene.overlay().showControls(util.vector().topOf(CHEST), Pointing.DOWN, 40).rightClick().withItem(new ItemStack(CEArm.ARM_ITEM.get()));
+        scene.overlay().chaseBoundingBoxOutline(net.createmod.ponder.api.PonderPalette.OUTPUT, CHEST, new net.minecraft.world.phys.AABB(CHEST), 200);
+        scene.idle(10);
+        text(scene, util, DEPOT, "points");
         scene.world().createItemOnBeltLike(DEPOT, Direction.UP, new ItemStack(Blocks.DAMAGED_ANVIL));
         text(scene, util, DEPOT, "belt");
         Trajectory path = Trajectory.of(net.createplant.arm.ArmPattern.defaultFor(ArmTool.WELDING_TORCH), null);
@@ -93,9 +101,18 @@ public final class ArmPonderScenes {
             scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.WORK, tip));
             scene.idle(frame == 1 ? 12 : 3);
         }
+        // the finished anvil goes to the chosen output
         scene.world().removeItemsFromBelt(DEPOT);
-        scene.world().createItemOnBeltLike(DEPOT, Direction.UP, new ItemStack(Blocks.CHIPPED_ANVIL));
-        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> be.aim(IndustrialArmBlockEntity.IDLE, null));
+        Vec3 chestTop = Vec3.atBottomCenterOf(CHEST).add(0, 1, 0);
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> {
+            be.held = new ItemStack(Blocks.CHIPPED_ANVIL);
+            be.aim(IndustrialArmBlockEntity.CARRY, chestTop);
+        });
+        scene.idle(25);
+        scene.world().modifyBlockEntity(ARM, IndustrialArmBlockEntity.class, be -> {
+            be.held = ItemStack.EMPTY;
+            be.aim(IndustrialArmBlockEntity.IDLE, null);
+        });
         scene.idle(30);
 
         // Core memory wiring: cores set row by row, then the X, Y and sense wires threaded through each of them.

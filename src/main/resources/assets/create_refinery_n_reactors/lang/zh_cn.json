@@ -6520,6 +6520,13 @@
   "arm.create_refinery_n_reactors.status.work": "作业中",
   "arm.create_refinery_n_reactors.tool": "工具：%s",
   "arm.create_refinery_n_reactors.job": "夹具 %s, %s, %s - 步骤 %s",
+  "arm.create_refinery_n_reactors.point.input": "已设为取物位置",
+  "arm.create_refinery_n_reactors.point.output": "已设为放置位置",
+  "arm.create_refinery_n_reactors.point.removed": "已取消选择",
+  "arm.create_refinery_n_reactors.point.saved": "机械臂已记录 %s 个取物位置、%s 个放置位置",
+  "arm.create_refinery_n_reactors.point.dropped": "%s 个位置超出机械臂范围，已忽略",
+  "arm.create_refinery_n_reactors.points": "取物 %s 处 / 放置 %s 处",
+  "arm.create_refinery_n_reactors.status.carry": "正在搬运成品",
   "arm.create_refinery_n_reactors.belt_job": "正在加工传送带上的%s",
   "arm.create_refinery_n_reactors.tank": "喷涂流体：%s / %s mB",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.title": "工业机械臂装配",
@@ -6531,6 +6538,7 @@
   "create_refinery_n_reactors.ponder.shared.industrial_arm.grip": "夹爪领取离自己最近的未开始步骤并放置方块。多台机械臂共用一个夹具，一个步骤只归一台。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.weld": "前一阶段完成后才开始下一阶段。焊枪沿接缝画出由白色冷却为银色的焊道。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.done": "全部步骤完成后临时方块消失，成品掉落并升起蒸汽。配方是 assembly/ 下的数据包。",
-  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "没有夹具工作时，机械臂也会加工范围内传送带和置物台上的物品：它会让物品停住，并变成传送带配方的结果，例如焊接修复。传送带配方是带有 input 的 assembly/ JSON。",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.points": "与Create的动力臂一样，放置前手持机械臂右键方块：一次设为取物位置（蓝色），两次设为放置位置（橙色），三次取消。",
+  "create_refinery_n_reactors.ponder.shared.industrial_arm.belt": "机械臂只加工被选为取物位置的传送带和置物台上的物品：让物品停住，变成传送带配方的结果（例如焊接修复），若选了放置位置就搬过去，否则留在原地。传送带配方是带有 input 的 assembly/ JSON。",
   "create_refinery_n_reactors.ponder.shared.industrial_arm.wire": "精密布线头先逐行摆放144个尘粒大小的铁氧体磁芯（12×12），再穿入25根漆包铜线：铜色X线和红色Y线逐个穿过每个磁芯，最后金色读出线沿对角线之字形穿过。磁芯由压制的镍锌铁氧体粉烧成，漆包线由铜线与工业树脂加热混合制成。"
 }

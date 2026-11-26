@@ -144,6 +144,7 @@ public class ArmAssemblyGameTests {
         h.setBlock(arm, CEArm.ARM.get().defaultBlockState());
         ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm)).toolSlot.setStackInSlot(0, new net.minecraft.world.item.ItemStack(CEArm.TOOLS.get(ArmTool.WELDING_TORCH).get()));
         h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
+        ((net.createplant.block.entity.IndustrialArmBlockEntity) h.getBlockEntity(arm)).setPoints(java.util.List.of(h.absolutePos(depot)), java.util.List.of());
         var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
         h.assertTrue(items != null && items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.DAMAGED_ANVIL), false).isEmpty(), "the depot takes the anvil");
         h.succeedWhen(() -> h.assertTrue(items.getStackInSlot(0).is(Blocks.CHIPPED_ANVIL.asItem()), "the arm welds the anvil one stage back, and the depot holds the result"));
@@ -217,6 +218,7 @@ public class ArmAssemblyGameTests {
         var be = poweredArm(h, arm, ArmTool.SPRAY_NOZZLE);
         be.tank.fill(new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.world.level.material.Fluids.WATER, 50), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
+        be.setPoints(java.util.List.of(h.absolutePos(depot)), java.util.List.of());
         var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
         items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.WHITE_CONCRETE_POWDER), false);
         boolean[] reloaded = {false};
@@ -241,5 +243,36 @@ public class ArmAssemblyGameTests {
         for (String id : new String[] {"mixing/ferrite_powder", "pressing/unfired_ferrite_rings", "ferrite_core", "mixing/enamelled_copper_wire"})
             h.assertTrue(recipes.byKey(CreatePlant.location(id)).isPresent(), "the recipe " + id + " is loaded");
         h.succeed();
+    }
+
+    @GameTest(template = "test_empty", timeoutTicks = 600)
+    public static void finishedDepotWorkIsCarriedToTheChosenOutput(GameTestHelper h) {
+        BlockPos arm = new BlockPos(1, 2, 1), depot = new BlockPos(3, 2, 1), chest = new BlockPos(1, 2, 3);
+        var be = poweredArm(h, arm, ArmTool.WELDING_TORCH);
+        h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
+        h.setBlock(chest, Blocks.CHEST.defaultBlockState());
+        h.assertTrue(be.setPoints(java.util.List.of(h.absolutePos(depot)), java.util.List.of(h.absolutePos(chest))) == 0, "both points are in reach");
+        var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
+        items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.DAMAGED_ANVIL), false);
+        var box = (net.minecraft.world.level.block.entity.ChestBlockEntity) h.getBlockEntity(chest);
+        h.succeedWhen(() -> {
+            h.assertTrue(box.getItem(0).is(Blocks.CHIPPED_ANVIL.asItem()), "the repaired anvil is put into the chosen chest");
+            h.assertTrue(items.getStackInSlot(0).isEmpty() && be.held.isEmpty(), "nothing is left on the depot or in the claw");
+        });
+    }
+
+    @GameTest(template = "test_empty", timeoutTicks = 200)
+    public static void anArmWithoutChosenPointsLeavesDepotsAlone(GameTestHelper h) {
+        BlockPos arm = new BlockPos(1, 2, 1), depot = new BlockPos(3, 2, 1), far = new BlockPos(6, 1, 6);
+        var be = poweredArm(h, arm, ArmTool.WELDING_TORCH);
+        h.setBlock(depot, com.simibubi.create.AllBlocks.DEPOT.getDefaultState());
+        h.setBlock(far, Blocks.CHEST.defaultBlockState());
+        h.assertTrue(be.setPoints(java.util.List.of(h.absolutePos(far)), java.util.List.of()) == 1 && be.inputs.isEmpty(), "a point out of reach is left out");
+        var items = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK, h.absolutePos(depot), null);
+        items.insertItem(0, new net.minecraft.world.item.ItemStack(Blocks.DAMAGED_ANVIL), false);
+        h.runAfterDelay(150, () -> {
+            h.assertTrue(items.getStackInSlot(0).is(Blocks.DAMAGED_ANVIL.asItem()), "a depot that was not chosen is not worked");
+            h.succeed();
+        });
     }
 }

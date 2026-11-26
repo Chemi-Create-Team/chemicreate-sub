@@ -77,6 +77,20 @@ public class IndustrialArmRenderer implements BlockEntityRenderer<IndustrialArmB
                 local.popPose();
             }
         }
+        // A tool arm carrying finished belt work: the item hangs just under the tool.
+        ItemStack carried = tool != null && tool != ArmTool.GRIPPER && be.phase == IndustrialArmBlockEntity.CARRY ? be.held : ItemStack.EMPTY;
+        if (!carried.isEmpty()) {
+            local.pushPose();
+            msr.rotateXDegrees(90);
+            local.translate(0, -(TOOL_REACH + .15), 0);
+            float s = carried.getItem() instanceof BlockItem ? .35f : .3f;
+            local.scale(s, s, s);
+            ps.pushPose();
+            ps.last().pose().mul(local.last().pose());
+            Minecraft.getInstance().getItemRenderer().renderStatic(carried, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, ps, buffers, be.getLevel(), 0);
+            ps.popPose();
+            local.popPose();
+        }
         if (has) {
             // As Create's arm: the item hangs off the claw in the claw's own frame, so the offsets come after the joints.
             msr.rotateXDegrees(90);

@@ -39,7 +39,7 @@ public final class CEArm {
     public static final DeferredBlock<IndustrialArmBlock> ARM = BLOCKS.registerBlock("industrial_arm", IndustrialArmBlock::new,
         BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion());
     public static final DeferredItem<BlockItem> JIG_ITEM = ITEMS.registerSimpleBlockItem(JIG);
-    public static final DeferredItem<BlockItem> ARM_ITEM = ITEMS.registerSimpleBlockItem(ARM);
+    public static final DeferredItem<BlockItem> ARM_ITEM = ITEMS.registerItem("industrial_arm", properties -> new net.createplant.item.IndustrialArmItem(ARM.get(), properties));
     public static final Map<ArmTool, DeferredItem<ArmToolItem>> TOOLS = new EnumMap<>(ArmTool.class);
     public static final DeferredItem<Item> WELDED_IRON_BEAM = ITEMS.registerSimpleItem("welded_iron_beam");
     public static final DeferredItem<Item> MAGNETIC_CORE_MEMORY = ITEMS.registerSimpleItem("magnetic_core_memory");
@@ -66,6 +66,8 @@ public final class CEArm {
         bus.addListener(CEArm::capabilities);
         bus.addListener((FMLCommonSetupEvent event) -> event.enqueueWork(() -> BlockStressValues.IMPACTS.register(ARM.get(), () -> 4)));
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(new ArmRecipes()));
+        bus.addListener(net.createplant.arm.ArmPoints::register);
+        NeoForge.EVENT_BUS.addListener(net.createplant.arm.ArmPoints::rightClick);
     }
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
