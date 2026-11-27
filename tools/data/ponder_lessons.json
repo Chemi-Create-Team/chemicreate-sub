@@ -900,9 +900,9 @@
     "zh_cn": "搅拌槽摆成3×3，叠两到三层，可同时处理两批。"
   },
   "guide.reactor_plant_stirred.step_2": {
-    "en_us": "The 34 px circular opening stays open around the drive shaft.",
-    "ja_jp": "撹拌軸の周りは直径34 pxの開口です。",
-    "zh_cn": "搅拌轴周围保留直径34 px的圆形开口。"
+    "en_us": "The 40 px circular opening stays open around the drive shaft.",
+    "ja_jp": "撹拌軸の周りは直径40 pxの開口です。",
+    "zh_cn": "搅拌轴周围保留直径40 px的圆形开口。"
   },
   "guide.reactor_plant_stirred.step_3": {
     "en_us": "Turn the cogwheel beside the stirrer at 32 RPM or more, as for a mechanical mixer. The tank itself takes no shaft.",
@@ -4280,9 +4280,9 @@
     "zh_cn": "叠放4～8节。每节处理1批，无需转动或加热。"
   },
   "vessel_internals.impeller": {
-    "en_us": "The 34 px bore stays open around the shaft. The four baffles sit between the windows.",
-    "ja_jp": "撹拌軸の周りは直径34 pxの開口です。固定邪魔板は窓と窓の間にあります。",
-    "zh_cn": "搅拌轴周围保留直径34 px的开口。四块固定挡板位于观察窗之间。"
+    "en_us": "The 40 px bore stays open around the shaft. The four baffles sit between the windows.",
+    "ja_jp": "撹拌軸の周りは直径40 pxの開口です。固定邪魔板は窓と窓の間にあります。",
+    "zh_cn": "搅拌轴周围保留直径40 px的开口。四块固定挡板位于观察窗之间。"
   },
   "reaction_tower.title": {
     "en_us": "Reaction tower",

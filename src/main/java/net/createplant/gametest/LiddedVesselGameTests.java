@@ -47,7 +47,7 @@ public class LiddedVesselGameTests {
         root.toggleLid();
         h.assertTrue(!root.open(), "The bore has no hatch to toggle");
         int capacity = root.getTankInventory().getCapacity();
-        h.assertTrue(capacity == 76000 && capacity < 9 * 3 * LiddedVesselBlockEntity.getCapacityMultiplier(), "The round bore holds less than the square blocks round it: " + capacity);
+        h.assertTrue(capacity == 105000 && capacity < 9 * 3 * LiddedVesselBlockEntity.getCapacityMultiplier(), "The round bore holds less than the square blocks round it: " + capacity);
         var items = root.itemPort();
         int accepted = 0;
         for (var item : new net.minecraft.world.item.Item[] {net.minecraft.world.item.Items.IRON_INGOT, net.minecraft.world.item.Items.GOLD_INGOT, net.minecraft.world.item.Items.COPPER_INGOT, net.minecraft.world.item.Items.COAL, net.minecraft.world.item.Items.FLINT})
@@ -69,11 +69,11 @@ public class LiddedVesselGameTests {
         var root = root(h, BASE);
         ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
         root.validateStructure();
-        h.assertTrue(root.stirred() && root.getTankInventory().getCapacity() == 76000, "A three-high stirred tank holds 76000 mB");
+        h.assertTrue(root.stirred() && root.getTankInventory().getCapacity() == 105000, "A three-high stirred tank holds 105000 mB");
         root.getTankInventory().fill(new FluidStack(Fluids.WATER, 40000), FluidAction.EXECUTE);
-        h.assertTrue(root.getDisplayedCapacity(2) == 36000, "With 40000 mB of water in, a product buffer has the remaining 36000 mB: " + root.getDisplayedCapacity(2));
+        h.assertTrue(root.getDisplayedCapacity(2) == 65000, "With 40000 mB of water in, a product buffer has the remaining 65000 mB: " + root.getDisplayedCapacity(2));
         var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(BASE.offset(2, 1, 1)), Direction.EAST);
-        h.assertTrue(port != null && port.fill(new FluidStack(Fluids.WATER, 50000), FluidAction.EXECUTE) == 36000 && port.fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE) == 0,
+        h.assertTrue(port != null && port.fill(new FluidStack(Fluids.WATER, 80000), FluidAction.EXECUTE) == 65000 && port.fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE) == 0,
             "Pipes fill only the free part of the shared volume");
         h.succeed();
     }
@@ -84,7 +84,7 @@ public class LiddedVesselGameTests {
         var root = root(h, BASE);
         ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
         root.validateStructure();
-        root.getTankInventory().fill(new FluidStack(Fluids.WATER, 76000), FluidAction.EXECUTE);
+        root.getTankInventory().fill(new FluidStack(Fluids.WATER, 105000), FluidAction.EXECUTE);
         root.itemPort().insertItem(0, new net.minecraft.world.item.ItemStack(net.createplant.registry.CEChlorAlkali.SALT.get(), 4), false);
         ReactorGameTests.speed(root, 32);
         for (int i = 0; i < 1200; i++) root.tickProcess();
@@ -94,7 +94,7 @@ public class LiddedVesselGameTests {
             total += fluid.getAmount();
             if (fluid.is(net.createplant.registry.CEChlorAlkali.BRINE.get())) brine += fluid.getAmount();
         }
-        h.assertTrue(brine == 1000 && total == 76000, "Water becomes brine in a full tank because the reaction adds no volume: brine " + brine + ", total " + total + ", " + root.status());
+        h.assertTrue(brine == 1000 && total == 105000, "Water becomes brine in a full tank because the reaction adds no volume: brine " + brine + ", total " + total + ", " + root.status());
         h.succeed();
     }
 

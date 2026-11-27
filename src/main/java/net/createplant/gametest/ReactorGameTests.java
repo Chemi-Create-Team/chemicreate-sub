@@ -774,9 +774,9 @@ public class ReactorGameTests {
         var west = base.offset(0,1,1);
         var rim = level.getBlockState(west).getCollisionShape(level,west);
         h.assertTrue(level.getBlockState(centre).getCollisionShape(level,centre).isEmpty()
-            && rim.toAabbs().stream().anyMatch(box -> box.contains(6.5 / 16,.95,.5))
-            && rim.toAabbs().stream().noneMatch(box -> box.contains(7.5 / 16,.95,.5)),
-            "The 34 px opening extends into the neighbouring roof block while keeping its outer rim");
+            && rim.toAabbs().stream().anyMatch(box -> box.contains(3.5 / 16,.95,.5))
+            && rim.toAabbs().stream().noneMatch(box -> box.contains(4.5 / 16,.95,.5)),
+            "The 40 px opening extends into the neighbouring roof block while keeping its outer rim");
         var port=level.getCapability(Capabilities.FluidHandler.BLOCK,base.offset(2,0,1),Direction.EAST);
         h.assertTrue(port!=null && port.getTanks()==10,"Every vessel wall reaches three feed buffers, five product buffers and two physical storage phases");
         for (Direction face:Direction.values()) h.assertTrue(!CETransport.STIRRED_TANK.get().hasShaftTowards(level,owner.stirrerPos().below(),level.getBlockState(owner.stirrerPos().below()),face),

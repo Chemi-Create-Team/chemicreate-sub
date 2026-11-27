@@ -70,8 +70,8 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     public static final BooleanProperty LADDER = BooleanProperty.create("ladder");
     /** Half the width of a wide vessel's hatch in pixels: it is 22 px across, centred on the top. */
     public static final int HATCH_HALF = 11;
-    public static final int DISH_FLOOR_HEIGHT = 2, DISH_RIM_HEIGHT = 10, BORE_RADIUS = 17;
-    private static final float[] DISH_RADII = {6, 9.5f, 12, 13.3f, 14.5f, 15.5f, 16.2f, 16.8f, BORE_RADIUS};
+    public static final int DISH_FLOOR_HEIGHT = 2, DISH_RIM_HEIGHT = 10, BORE_RADIUS = 20;
+    private static final float[] DISH_RADII = {7.1f, 11.2f, 14.1f, 15.6f, 17.1f, 18.2f, 19.1f, 19.8f, BORE_RADIUS};
 
     public static float boreRadius(int y) {
         return DISH_RADII[Math.clamp(y - DISH_FLOOR_HEIGHT, 0, DISH_RADII.length - 1)];
