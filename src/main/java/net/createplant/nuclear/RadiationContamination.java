@@ -52,6 +52,10 @@ public final class RadiationContamination {
 
     public static void spill(
             net.minecraft.world.level.Level level, BlockPos pos, FluidStack fluid) {
+        if (net.createplant.mixture.MixtureHelper.isMixture(fluid)) {
+            for (var part : net.createplant.mixture.MixtureHelper.components(fluid)) spill(level, pos, part);
+            return;
+        }
         if (level instanceof ServerLevel server && RadiationSources.profile(fluid) != null)
             deposit(
                     server,

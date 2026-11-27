@@ -82,6 +82,9 @@ public final class ToxicGas {
     /** The poisoning strength of a fluid, or -1 for one that is harmless to breathe. */
     public static int strength(FluidStack fluid) {
         if (fluid.isEmpty()) return -1;
+        // A mixture is as toxic as its worst part, so carbon monoxide in syngas or a nitrogen stream still poisons.
+        if (net.createplant.mixture.MixtureHelper.isMixture(fluid))
+            return net.createplant.mixture.MixtureHelper.partsOrNone(fluid).stream().mapToInt(ToxicGas::strength).max().orElse(-1);
         if (net.createplant.chemistry.WasteGas.contaminated(fluid)) return (net.createplant.chemistry.WasteGas.of(fluid).hazards()>>2)-1;
         Gas gas = GASES.get(BuiltInRegistries.FLUID.getKey(fluid.getFluid()).getPath().replace("flowing_", ""));
         return gas == null ? -1 : gas.strength();

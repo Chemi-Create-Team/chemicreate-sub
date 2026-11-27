@@ -323,4 +323,30 @@ public class ToxicGasGameTests {
         h.succeed();
     }
 
+
+    /** A gas mixture let into the air poisons through whichever of its parts is toxic, here the carbon monoxide in a nitrogen stream. */
+    @GameTest(template = "test_reactor", timeoutTicks = 60)
+    public static void carbonMonoxideInAGasMixturePoisons(GameTestHelper h) {
+        BlockPos corner = new BlockPos(6, 2, 6);
+        room(h, corner, 3, 2, 3);
+        var key = net.minecraft.core.registries.BuiltInRegistries.FLUID;
+        var mixture = net.createplant.mixture.MixtureHelper.createStack(new net.createplant.mixture.MixtureContents(java.util.Map.of(
+            key.getKey(CEFluids.NITROGEN_GAS.get()), 1500, key.getKey(net.createplant.registry.CEProcessFluids.CARBON_MONOXIDE.get()), 500)), false);
+        h.assertTrue(net.createplant.mixture.MixtureHelper.isMixture(mixture) && ToxicGas.strength(mixture) >= 0, "The mixture counts as toxic: " + ToxicGas.strength(mixture));
+        Mob mob = husk(h, corner.offset(1, 0, 1));
+        h.runAfterDelay(10, () -> net.createplant.item.StatefulBuckets.release(h.getLevel(), h.absolutePos(corner.offset(1, 1, 1)), mixture));
+        // The same mixture pushed out of an open pipe end vents as a poisoning cloud too.
+        BlockPos vent = h.absolutePos(new BlockPos(16, 3, 16));
+        var pipe = new com.simibubi.create.content.fluids.OpenEndedPipe(new net.createmod.catnip.math.BlockFace(vent.west(), Direction.EAST));
+        h.runAfterDelay(10, () -> { pipe.manageSource(h.getLevel(), null);
+            int filled = pipe.provideHandler().getCapability().fill(mixture.copy(), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            var vented = GasClouds.in(h.getLevel(), new net.minecraft.world.phys.AABB(vent).inflate(2));
+            h.assertTrue(filled > 0 && vented.stream().anyMatch(c -> ToxicGas.strength(c.content()) >= 0),
+                "An open pipe vents the mixture's carbon monoxide: " + filled + " " + vented.stream().map(c -> c.content().getFluid().toString()).toList() + " air=" + h.getLevel().getBlockState(vent).isAir());
+        });
+        h.runAfterDelay(50, () -> {
+            h.assertTrue(mob.hasEffect(CESafety.TOXIC_GAS), "Breathing the carbon monoxide in the mixture poisons");
+            h.succeed();
+        });
+    }
 }

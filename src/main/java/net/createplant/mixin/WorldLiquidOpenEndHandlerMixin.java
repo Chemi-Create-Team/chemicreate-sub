@@ -22,7 +22,7 @@ public class WorldLiquidOpenEndHandlerMixin {
 
     @Inject(method = "fill", at = @At("HEAD"), cancellable = true)
     private void createPlant$fillProcessLiquid(FluidStack resource, FluidAction action, CallbackInfoReturnable<Integer> cir) {
-        if (net.createplant.mixture.MixtureHelper.isMixture(resource)) { cir.setReturnValue(0);return; }
+        if (net.createplant.mixture.MixtureHelper.isMixture(resource) && !CETransport.gas(resource)) { cir.setReturnValue(0);return; }
         FluidTank tank = (FluidTank) (Object) this;
         FluidStack held = tank.getFluid();
         if (CETransport.gas(resource)) {

@@ -108,6 +108,11 @@ public final class MixtureHelper {
         }
         return new MixtureData(Map.of(BuiltInRegistries.FLUID.getKey(source(copy.getFluid())), copy.getComponentsPatch()));
     }
+    /** The parts of a mixture, or none when the stack carries no matching contents, for checks that must not throw on a bare mixture. */
+    public static java.util.List<FluidStack> partsOrNone(FluidStack stack) {
+        var contents = isMixture(stack) ? stack.get(CEMixtures.MIXTURE_CONTENTS.get()) : null;
+        return contents == null || contents.totalAmount() != stack.getAmount() ? java.util.List.of() : components(stack);
+    }
     public static java.util.List<FluidStack> components(FluidStack stack) {
         var contents = extractContents(stack);var data = data(stack);
         return contents.amounts().entrySet().stream().map(entry -> new FluidStack(BuiltInRegistries.FLUID.get(entry.getKey()).builtInRegistryHolder(), entry.getValue(),
