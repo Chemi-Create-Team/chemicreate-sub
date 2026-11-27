@@ -398,6 +398,33 @@ def stirred_tank():
         tag.write_bytes((json.dumps(values, ensure_ascii=False, indent=2).replace('\n', newline) + newline).encode('utf-8'))
 
 
+def stirred_cap():
+    """The 3x3 stirred tank's roof: the stainless cap sheet with its hatch panel and braces swapped for plain plate around the 40 px bore.
+
+    Only the 48 px joined cap (sheet x 16..64, y 0..48) changes; the riveted outer frame stays, a rolled rim rings the bore
+    and a rivet sits in each corner left between the rim and the frame."""
+    rng = random.Random(41)
+    sheet = Image.open(ROOT / 'tools/data/lidded_vessel_cap_connected.png').convert('RGBA')
+    def grey(level, shift=0):
+        g = GREY[level] + shift
+        return g, g + 4, g + 4, 255
+    for y in range(48):
+        x = 0
+        while x < 48:
+            run, level = rng.randint(3, 8), rng.choice((4, 4, 4, 5, 3))
+            for k in range(min(run, 48 - x)):
+                px, r = x + k, math.hypot(x + k + .5 - 24, y + .5 - 24)
+                if min(px, y, 47 - px, 47 - y) <= 4 and r >= 22: continue  # outer frame
+                colour = (grey(0) if r < 21 else grey(7, -48) if r < 22 else grey(2) if r < 23
+                          else grey(level, rng.choice((0, 0, 2, -2))))
+                sheet.putpixel((16 + px, y), colour)
+            x += run
+    for cx, cy in (7, 7), (40, 7), (7, 40), (40, 40):
+        sheet.putpixel((16 + cx, cy), grey(7)); sheet.putpixel((17 + cx, cy), grey(5))
+        sheet.putpixel((16 + cx, cy + 1), grey(2)); sheet.putpixel((17 + cx, cy + 1), grey(0))
+    sheet.save(A / 'textures/block/lidded_vessel/stirred_cap.png')
+
+
 if __name__ == '__main__':
     models()
     shaft_bearing()
@@ -409,4 +436,5 @@ if __name__ == '__main__':
     data()
     lining_texture()
     stirred_tank()
+    stirred_cap()
     names()

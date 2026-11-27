@@ -50,7 +50,8 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite top = atlas.apply(CreatePlant.location("block/reactor/silver/top")), under = atlas.apply(CreatePlant.location("block/reactor/steel")),
             edge = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/steel")), fitting = atlas.apply(CreatePlant.location("block/reactor/silver/frame"));
-        TextureAtlasSprite joined = width == 3 ? PlantTankModels.VESSEL_CAP.getTarget() : width == 2 ? atlas.apply(CreatePlant.location("block/lidded_vessel/top_2")) : top;
+        // The bored 3x3 roof uses the same sheet layout with the hatch panel replaced by a rim around the bore.
+        TextureAtlasSprite joined = width == 3 ? be.bored() ? atlas.apply(CreatePlant.location("block/lidded_vessel/stirred_cap")) : PlantTankModels.VESSEL_CAP.getTarget() : width == 2 ? atlas.apply(CreatePlant.location("block/lidded_vessel/top_2")) : top;
         VertexConsumer vc = buffer.getBuffer(RenderType.solid());
         float span = width * 16, middle = span / 2;
         boolean bored = be.bored();
