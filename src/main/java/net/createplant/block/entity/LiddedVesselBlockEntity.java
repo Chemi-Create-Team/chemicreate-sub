@@ -129,6 +129,12 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         return owner != null && owner.bored() ? owner.tankInventory.getCapacity() : super.liquidBufferCapacity();
     }
 
+    /** In a stirred tank the storage and every buffer share the bore's one volume. */
+    @Override protected int sharedLiquidLimit() {
+        var owner = level == null ? this : getControllerBE();
+        return owner != null && owner.bored() ? owner.tankInventory.getCapacity() : super.sharedLiquidLimit();
+    }
+
     /** A stirred tank holds up to four stacks of feed, like a basin. */
     @Override protected int feedSlots() { return getType() == CETransport.STIRRED_TANK_ENTITY.get() ? 4 : super.feedSlots(); }
 
@@ -219,6 +225,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         ensureDisplay();
         var kind=module();
         int capacity=kind==ReactorModule.NONE || kind==ReactorModule.STIRRED || !liquidDisplay[7].isEmpty() ? tankInventory.volumeCapacity() : 0;
+        if (sharedLiquidLimit()!=Integer.MAX_VALUE) return Math.max(1,capacity);
         for (int i=0;i<PROCESS_TANKS;i++) if (!liquidDisplay[i==THIRD_FEED ? 10 : i].isEmpty()) capacity+=liquidBufferCapacity();
         return Math.max(1,capacity);
     }
@@ -807,9 +814,17 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                 var phase=owner.physicalPhase(tank==1);
                 return tank==0 && !phase.isEmpty() ? delegate.getFluidInTank(0) : phase;
             }
-            @Override public int getTankCapacity(int tank) { var owner=getControllerBE();return owner!=null && tank>=0 && tank<2 ? owner.tankInventory.volumeCapacity() : 0; }
+            @Override public int getTankCapacity(int tank) {
+                var owner=getControllerBE();if (owner==null || tank<0 || tank>1) return 0;
+                return tank==1 ? owner.tankInventory.volumeCapacity() : (int)Math.min(owner.tankInventory.volumeCapacity(),(long)owner.physicalPhase(false).getAmount()+owner.liquidRoom());
+            }
             @Override public boolean isFluidValid(int tank,FluidStack stack) { return tank>=0 && tank<2 && delegate.isFluidValid(0,stack); }
-            @Override public int fill(FluidStack stack,FluidAction action) { return delegate.fill(stack,action); }
+            @Override public int fill(FluidStack stack,FluidAction action) {
+                var owner=getControllerBE();
+                // Liquid only fills what the process buffers leave free of the shared volume.
+                if (owner!=null && !stack.isEmpty() && !net.createplant.thermal.FluidState.gas(stack)) stack=stack.copyWithAmount(Math.min(stack.getAmount(),owner.liquidRoom()));
+                return stack.isEmpty() ? 0 : delegate.fill(stack,action);
+            }
             @Override public FluidStack drain(int amount,FluidAction action) { return delegate.drain(amount,action); }
             @Override public FluidStack drain(FluidStack stack,FluidAction action) { return delegate.drain(stack,action); }
         };

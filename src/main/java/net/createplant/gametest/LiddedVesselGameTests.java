@@ -62,6 +62,41 @@ public class LiddedVesselGameTests {
     }
 
     @GameTest(template = "test_fractionation")
+    public static void storageAndBuffersShareTheStirredTanksVolume(GameTestHelper h) {
+        stirredSquare(h, 3, 3);
+        var root = root(h, BASE);
+        ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
+        root.validateStructure();
+        h.assertTrue(root.stirred() && root.getTankInventory().getCapacity() == 76000, "A three-high stirred tank holds 76000 mB");
+        root.getTankInventory().fill(new FluidStack(Fluids.WATER, 40000), FluidAction.EXECUTE);
+        h.assertTrue(root.getDisplayedCapacity(2) == 36000, "With 40000 mB of water in, a product buffer has the remaining 36000 mB: " + root.getDisplayedCapacity(2));
+        var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(BASE.offset(2, 1, 1)), Direction.EAST);
+        h.assertTrue(port != null && port.fill(new FluidStack(Fluids.WATER, 50000), FluidAction.EXECUTE) == 36000 && port.fill(new FluidStack(Fluids.WATER, 1000), FluidAction.EXECUTE) == 0,
+            "Pipes fill only the free part of the shared volume");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation")
+    public static void aFullStirredTankStillTurnsItsWaterIntoBrine(GameTestHelper h) {
+        stirredSquare(h, 3, 3);
+        var root = root(h, BASE);
+        ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
+        root.validateStructure();
+        root.getTankInventory().fill(new FluidStack(Fluids.WATER, 76000), FluidAction.EXECUTE);
+        root.itemPort().insertItem(0, new net.minecraft.world.item.ItemStack(net.createplant.registry.CEChlorAlkali.SALT.get(), 4), false);
+        ReactorGameTests.speed(root, 32);
+        for (int i = 0; i < 1200; i++) root.tickProcess();
+        long brine = 0, total = 0;
+        for (int slot = 0; slot < root.displayedFluidSlots(); slot++) {
+            var fluid = root.displayedLiquid(slot);
+            total += fluid.getAmount();
+            if (fluid.is(net.createplant.registry.CEChlorAlkali.BRINE.get())) brine += fluid.getAmount();
+        }
+        h.assertTrue(brine == 1000 && total == 76000, "Water becomes brine in a full tank because the reaction adds no volume: brine " + brine + ", total " + total + ", " + root.status());
+        h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation")
     public static void aTwoByTwoStirredTankIsAPlainTank(GameTestHelper h) {
         stirredSquare(h, 2, 2);
         var root = root(h, BASE);

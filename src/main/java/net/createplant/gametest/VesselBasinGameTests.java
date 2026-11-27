@@ -83,7 +83,8 @@ public class VesselBasinGameTests {
             var owner=(LiddedVesselBlockEntity)ReactorGameTests.assemble(h.getLevel(),pos,modules[i],2);
             var port=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,pos,Direction.NORTH);
             var fluid=Fluids.WATER;
-            int capacity=owner.getTankInventory().getCapacity()+owner.liquidBufferCapacity();
+            // Storage and process buffers share the stirred tank's one volume.
+            int capacity=owner.getTankInventory().getCapacity();
             h.assertTrue(port!=null && port.fill(new FluidStack(fluid,capacity/2),EXECUTE)==capacity/2,"Actual pipes fill half the active liquid capacity of "+modules[i]);
             h.assertTrue(Math.abs(liquidFraction(owner)-.5)<.002,"A half charge occupies half the height with "+modules[i]);
             port.fill(new FluidStack(fluid,capacity),EXECUTE);
