@@ -55,7 +55,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         float span = width * 16, middle = span / 2;
         boolean stirred = be.stirred();
         if (width == 3) {
-            var inner = atlas.apply(CreatePlant.location("block/tank/ammonia_separator_inner"));
+            var inner = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/lining"));
             LiddedVesselInterior.lining(ms, vc, height, windowMask(be, height), stirred, inner, light, overlay);
             if (stirred) {
                 var shaft = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/shaft"));

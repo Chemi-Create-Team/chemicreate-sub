@@ -23,7 +23,7 @@ public class LiddedVesselItem extends BlockItem {
         var level = context.getLevel();
         BlockPos pos = context.getClickedPos(), on = pos.relative(face.getOpposite());
         if (!(level.getBlockState(on).getBlock() instanceof LiddedVesselBlock)) return super.place(context);
-        LiddedVesselBlockEntity part = ConnectivityHandler.partAt(CETransport.LIDDED_VESSEL_ENTITY.get(), level, on);
+        LiddedVesselBlockEntity part = level.getBlockState(on).getBlock() == getBlock() ? ConnectivityHandler.partAt(((LiddedVesselBlock) getBlock()).getBlockEntityType(), level, on) : null;
         var owner = part == null ? null : part.getControllerBE();
         if (owner == null || owner.getWidth() == 1) return super.place(context);
         int width = owner.getWidth();

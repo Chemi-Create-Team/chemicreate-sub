@@ -224,13 +224,13 @@ final class SurvivalSulfurWorkshop {
         crafting.craft(nugget, 9, 19, ingot);
         crafting.craft(alloy, 1, 85, nugget, Items.ANDESITE, null, Items.ANDESITE, nugget);
         crafting.craft(basin, 1, 18, alloy, null, alloy, alloy, alloy, alloy);
-        crafting.craft(shaft, 8, 1, alloy, null, null, alloy);
+        crafting.craft(shaft, 8, 4, alloy, null, null, alloy);
         crafting.craft(whisk, 1, 1, null, alloy, null, sheet, alloy, sheet, sheet, sheet, sheet);
         crafting.craft(CEReactor.IMPELLER.get(), 1, 1, null, shaft, null, sheet, whisk, sheet, null, shaft);
 
-        var shell = CETransport.LIDDED_VESSEL.asItem();
+        var shell = CETransport.STIRRED_TANK.asItem();
         var stainless = CEItems.STAINLESS_STEEL_SHEET.get();
-        crafting.craft(shell, 1, 18, stainless, trapdoor, stainless, stainless, basin, stainless);
+        crafting.craft(shell, 1, 18, stainless, shaft, stainless, stainless, basin, stainless);
         var center = vessel.east().south();
         var drive = center.offset(-3, 0, -5);
         var roof = center.above(2);

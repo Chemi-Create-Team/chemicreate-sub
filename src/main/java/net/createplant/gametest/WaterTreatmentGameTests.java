@@ -45,7 +45,7 @@ public final class WaterTreatmentGameTests {
     private WaterTreatmentGameTests() { }
 
     private static LiddedVesselBlockEntity vessel(GameTestHelper h, BlockPos base) {
-        for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(base.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
+        for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(base.offset(x, y, z), CETransport.STIRRED_TANK.get());
         ReactorGameTests.stir(h.getLevel(), h.absolutePos(base));
         var owner = ((LiddedVesselBlockEntity) h.getBlockEntity(base)).getControllerBE();owner.validateStructure();
         h.assertTrue(owner.formed(), "The treatment stage uses an ordinary stirred tank");

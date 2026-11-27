@@ -140,7 +140,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         var wetComponents = new java.util.ArrayList<ResourceLocation>();
         helper.forComponents(CreatePlant.location("steam_gasifier")).addStoryBoard("plant/entrained_gasifier", GasifierPonderScenes::processing);
         net.createplant.registry.CEWetProcessing.PARTS.values().forEach(block -> wetComponents.add(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block.get())));
-        wetComponents.add(CreatePlant.location("lidded_vessel"));wetComponents.add(CreatePlant.location("reactor_impeller"));wetComponents.add(CreatePlant.location("clarifier_center_drive"));
+        wetComponents.add(CreatePlant.location("stirred_tank"));wetComponents.add(CreatePlant.location("reactor_impeller"));wetComponents.add(CreatePlant.location("clarifier_center_drive"));
         helper.forComponents(wetComponents)
             .addStoryBoard("plant/wet_processing", WetProcessPonderScenes::processing)
             .addStoryBoard("plant/electrowinning", MetalRecoveryPonderScenes::electrowinning);
@@ -272,11 +272,11 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/material_pump", LiddedVesselPonderScenes::sulfur);
         helper.forComponents(CreatePlant.location("lidded_vessel"))
             .addStoryBoard("plant/lidded_vessel_2x2", LiddedVesselPonderScenes::compactVessel);
-        helper.forComponents(CreatePlant.location("vessel_stirrer"), CreatePlant.location("reactor_impeller"), CreatePlant.location("lidded_vessel"))
+        helper.forComponents(CreatePlant.location("vessel_stirrer"), CreatePlant.location("reactor_impeller"), CreatePlant.location("stirred_tank"))
             .addStoryBoard("plant/vessel_internals", LiddedVesselPonderScenes::internals);
-        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("vessel_stirrer"))
+        helper.forComponents(CreatePlant.location("stirred_tank"),CreatePlant.location("vessel_stirrer"))
             .addStoryBoard("plant/vessel_basin",VesselBasinPonderScenes::basin);
-        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("vessel_stirrer"),CreatePlant.location("pipe_pressure_gauge"))
+        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("stirred_tank"),CreatePlant.location("vessel_stirrer"),CreatePlant.location("pipe_pressure_gauge"))
             .addStoryBoard("plant/vessel_maintenance",VesselBasinPonderScenes::maintenance);
 
         helper.forComponents(

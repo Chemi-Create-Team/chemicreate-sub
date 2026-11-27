@@ -24,8 +24,10 @@ def write(path, data):
 
 
 SEPARATOR = f'{NS}:block/tank/ammonia_separator'
-TEXTURES = {'particle': SEPARATOR, 'floor': SEPARATOR + '_inner', 'bottom': SEPARATOR + '_top',
-            'inner': SEPARATOR + '_inner', 'rim': f'{NS}:block/lidded_vessel/internal/steel', 'side': SEPARATOR}
+LINING = f'{NS}:block/lidded_vessel/internal/lining'
+TEXTURES = {'particle': SEPARATOR, 'floor': LINING, 'bottom': SEPARATOR + '_top',
+            'inner': LINING, 'rim': f'{NS}:block/lidded_vessel/internal/steel', 'side': SEPARATOR}
+STIRRED = f'{NS}:block/tank/stirred_tank'
 
 
 def cell(outer, bottom=True):
@@ -306,6 +308,7 @@ INTERNAL_RECIPES = (
 
 NAMES = {
     f'block.{NS}.lidded_vessel': ('Stainless Tank', 'ステンレスタンク'),
+    f'block.{NS}.stirred_tank': ('Stirred Tank', '撹拌槽'),
     f'lidded_vessel.{NS}.lid.open': ('Hatch open', 'ハッチ：開'),
     f'lidded_vessel.{NS}.lid.closed': ('Hatch closed', 'ハッチ：閉'),
     f'item.{NS}.reactor_impeller': ('Impeller', '撹拌翼'),
@@ -313,7 +316,7 @@ NAMES = {
     f'reactor.{NS}.status.vessel': ('Use a 1×1 centrifuge vessel or a 3×3 reaction vessel', '遠心分離は1×1、反応槽は3×3で組み立ててください'),
     f'reactor.{NS}.status.contents': ('Empty the vessel first: it cannot hold anything of its own', '槽の中身を空にしてください'),
     f'reactor.{NS}.status.lid': ('Close the vessel hatch', '槽のハッチを閉じてください'),
-    f'reactor.{NS}.status.structure': ('Build a 3×3 stainless tank at least two layers high and fit a stirrer on the roof', '3×3・2段以上のステンレスタンクを組み、天面中央に撹拌機を置いてください'),
+    f'reactor.{NS}.status.structure': ('Build a 3×3 stirred tank at least two layers high and fit a stirrer on the roof', '3×3・2段以上の撹拌槽を組み、天面中央に撹拌機を置いてください'),
 }
 
 
@@ -326,6 +329,77 @@ def names():
         path.write_bytes((json.dumps(strings, ensure_ascii=False, indent=2).replace('\n', newline) + newline).encode('utf-8'))
 
 
+# The separator sheet's grey levels, from its darkest groove to its brightest highlight.
+GREY = 37, 51, 80, 101, 121, 142, 160, 224
+
+
+def lining_texture():
+    """The vessel's inside: plain brushed stainless with a girth weld along the foot, seamless all round so it wraps the round bore."""
+    rng = random.Random(23)
+    im = Image.new('RGBA', (16, 16))
+    for y in range(15):
+        x = 0
+        while x < 16:
+            run, level = rng.randint(3, 8), rng.choice((4, 4, 4, 5, 3))
+            for k in range(min(run, 16 - x)):
+                grey = GREY[level] + rng.choice((0, 0, 2, -2))
+                im.putpixel((x + k, y), (grey, grey, grey + 2, 255))
+            x += run
+    for x in range(16):
+        im.putpixel((x, 15), (GREY[2], GREY[2], GREY[2] + 2, 255))
+        im.putpixel((x, 0), (GREY[6], GREY[6], GREY[6] + 2, 255))
+    out = A / 'textures/block/lidded_vessel/internal/lining.png'
+    out.parent.mkdir(parents=True, exist_ok=True)
+    im.save(out)
+
+
+def stirred_tank():
+    """The stirred tank: the stainless tank's cells and hatch with a side that stretches the separator's middle panel across the whole face.
+
+    The Create RECTANGLE sheet has columns single, left, middle, right and rows top, middle, bottom, single. Across a face the panel's own
+    7 px frame and rounded corner sit at both ends and its striped plate repeats every block between them."""
+    src = Image.open(A / 'textures/block/tank/ammonia_separator_connected.png').convert('RGBA')
+    def source_column(x, width=48):
+        # Column in a three-wide face of the original sheet: the panel frame starts 9 px in and ends 9 px before the right edge.
+        return 9 + x if x < 7 else 38 - (width - 1 - x) if x >= width - 7 else 16 + (x - 7) % 16
+    sheet = Image.new('RGBA', (64, 64))
+    for tx in range(4):
+        for ty in range(4):
+            for y in range(16):
+                for x in range(16):
+                    if tx == 0: face_x = x if x < 7 else 32 + x if x >= 9 else x
+                    else: face_x = (tx - 1) * 16 + x
+                    sx = source_column(face_x)
+                    tile = 1 if sx < 16 else 2 if sx < 32 else 3
+                    sheet.putpixel((tx * 16 + x, ty * 16 + y), src.getpixel((tile * 16 + sx % 16, ty * 16 + y)))
+    sheet.save(A / 'textures/block/tank/stirred_tank_connected.png')
+    sheet.crop((0, 48, 16, 64)).save(A / 'textures/block/tank/stirred_tank.png')
+    # Same cells, ladder and states as the stainless tank; each cell model only swaps the side texture.
+    state = json.loads((A / 'blockstates/lidded_vessel.json').read_text(encoding='utf-8'))
+    for part in state['multipart']:
+        model = part['apply']['model']
+        if '/cell_' not in model: continue
+        cell = model.split('/')[-1]
+        write(A / f'models/block/stirred_tank/{cell}.json', {'parent': model, 'textures': {'side': STIRRED, 'particle': STIRRED}})
+        part['apply']['model'] = f'{NS}:block/stirred_tank/{cell}'
+    write(A / 'blockstates/stirred_tank.json', state)
+    write(A / 'models/item/stirred_tank.json', {'parent': f'{NS}:item/lidded_vessel', 'textures': {'side': STIRRED, 'particle': STIRRED}})
+    write(D / 'loot_table/blocks/stirred_tank.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1,
+        'entries': [{'type': 'minecraft:item', 'name': f'{NS}:stirred_tank'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
+    # Like the stainless tank, with a shaft mount for the roof stirrer where the tank has its hatch; a stainless tank converts the same way.
+    write(D / 'recipe/stirred_tank.json', {'type': 'minecraft:crafting_shaped', 'category': 'misc', 'pattern': ['ISI', 'IBI'],
+        'key': {'I': {'tag': 'c:plates/stainless_steel'}, 'S': {'item': 'create:shaft'}, 'B': {'item': 'create:basin'}},
+        'result': {'id': f'{NS}:stirred_tank', 'count': 1}})
+    write(D / 'recipe/stirred_tank_from_stainless_tank.json', {'type': 'minecraft:crafting_shapeless', 'category': 'misc',
+        'ingredients': [{'item': f'{NS}:lidded_vessel'}, {'item': 'create:shaft'}], 'result': {'id': f'{NS}:stirred_tank', 'count': 1}})
+    tag = ROOT / 'src/main/resources/data/minecraft/tags/block/mineable/pickaxe.json'
+    raw = tag.read_bytes().decode('utf-8'); newline = '\r\n' if '\r\n' in raw else '\n'
+    values = json.loads(raw)
+    if f'{NS}:stirred_tank' not in values['values']:
+        values['values'].append(f'{NS}:stirred_tank')
+        tag.write_bytes((json.dumps(values, ensure_ascii=False, indent=2).replace('\n', newline) + newline).encode('utf-8'))
+
+
 if __name__ == '__main__':
     models()
     shaft_bearing()
@@ -335,4 +409,6 @@ if __name__ == '__main__':
     internal_textures()
     internals()
     data()
+    lining_texture()
+    stirred_tank()
     names()

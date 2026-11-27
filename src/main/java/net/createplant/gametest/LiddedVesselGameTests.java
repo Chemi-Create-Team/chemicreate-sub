@@ -33,6 +33,18 @@ public class LiddedVesselGameTests {
     }
 
     @GameTest(template = "test_fractionation")
+    public static void onlyAStirredTankStirsAndItDoesNotJoinAStainlessTank(GameTestHelper h) {
+        square(h, 3);
+        var root = root(h, BASE);
+        ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
+        root.validateStructure();
+        h.assertTrue(root.getWidth() == 3 && !root.stirred(), "A stirrer on a plain stainless tank stirs nothing");
+        h.setBlock(BASE.offset(3, 0, 0), CETransport.STIRRED_TANK.get().defaultBlockState());
+        h.assertTrue(root(h, BASE).getWidth() == 3 && root(h, BASE.offset(3, 0, 0)).getWidth() == 1, "A stirred tank never merges with a stainless tank beside it");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation")
     public static void vesselsJoinUpToThreeByThreeButStayOneBlockHigh(GameTestHelper h) {
         square(h, 3);
         h.setBlock(BASE.offset(1, 1, 1), CETransport.LIDDED_VESSEL.get().defaultBlockState());

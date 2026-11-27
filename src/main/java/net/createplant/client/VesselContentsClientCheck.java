@@ -41,7 +41,7 @@ final class VesselContentsClientCheck {
                 var level=server.overworld();level.setDayTime(6000);
                 for(int x=-1;x<=18;x++)for(int z=-1;z<=3;z++)level.setBlock(new BlockPos(x,y-2,z),Blocks.SMOOTH_STONE.defaultBlockState(),Block.UPDATE_ALL);
                 for(var origin:origins)for(int dy=0;dy<2;dy++)for(int x=0;x<3;x++)for(int z=0;z<3;z++)
-                    level.setBlock(origin.offset(x,dy,z),CETransport.LIDDED_VESSEL.get().defaultBlockState().setValue(LiddedVesselBlock.HINGE,Direction.NORTH),Block.UPDATE_ALL);
+                    level.setBlock(origin.offset(x,dy,z),CETransport.STIRRED_TANK.get().defaultBlockState().setValue(LiddedVesselBlock.HINGE,Direction.NORTH),Block.UPDATE_ALL);
                 var player=server.getPlayerList().getPlayer(id);player.getAbilities().flying=true;player.onUpdateAbilities();
                 player.connection.teleport(9,y+4,24,180,10);
                 ready=1;

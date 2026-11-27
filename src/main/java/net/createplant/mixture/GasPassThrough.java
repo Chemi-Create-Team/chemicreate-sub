@@ -23,7 +23,7 @@ public final class GasPassThrough extends BlockEntityBehaviour {
     public static void attach(com.simibubi.create.api.event.BlockEntityBehaviourEvent event) {
         for (var type : java.util.List.<net.minecraft.world.level.block.entity.BlockEntityType<? extends SmartBlockEntity>>of(
                 net.createplant.registry.CEReactor.ENTITY.get(), net.createplant.registry.CEReactor.ABSORPTION_ENTITY.get(),
-                net.createplant.registry.CETransport.LIDDED_VESSEL_ENTITY.get(), net.createplant.registry.CETransport.REACTION_TOWER_ENTITY.get(),
+                net.createplant.registry.CETransport.LIDDED_VESSEL_ENTITY.get(), net.createplant.registry.CETransport.STIRRED_TANK_ENTITY.get(), net.createplant.registry.CETransport.REACTION_TOWER_ENTITY.get(),
                 net.createplant.registry.CETransport.AMMONIA_SEPARATOR_ENTITY.get(), net.createplant.registry.CEDistillation.COLUMN_ENTITY.get(),
                 net.createplant.registry.CEConverter.TRUNNION_ENTITY.get(), net.createplant.registry.CEElectrolysis.CONTROLLER_ENTITY.get(),
                 net.createplant.registry.CEFuelCell.FUEL_CELL_ENTITY.get(), net.createplant.registry.CEFusion.CONTROLLER_ENTITY.get(),

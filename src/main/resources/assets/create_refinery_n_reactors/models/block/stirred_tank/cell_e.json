@@ -1,0 +1,7 @@
+{
+  "parent": "create_refinery_n_reactors:block/lidded_vessel/cell_e",
+  "textures": {
+    "side": "create_refinery_n_reactors:block/tank/stirred_tank",
+    "particle": "create_refinery_n_reactors:block/tank/stirred_tank"
+  }
+}

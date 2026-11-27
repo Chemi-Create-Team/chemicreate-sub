@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "ISI",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "S": {
+      "item": "create:shaft"
+    },
+    "B": {
+      "item": "create:basin"
+    }
+  },
+  "result": {
+    "id": "create_refinery_n_reactors:stirred_tank",
+    "count": 1
+  }
+}

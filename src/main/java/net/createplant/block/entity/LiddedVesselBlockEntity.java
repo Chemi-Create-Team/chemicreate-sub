@@ -82,8 +82,10 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     /** The game time of the last heating pass, so a pass made between the regular ones is charged only the ticks since. */
     private long lastHeated=Long.MIN_VALUE;
 
-    public LiddedVesselBlockEntity(BlockPos pos, BlockState state) {
-        super(CETransport.LIDDED_VESSEL_ENTITY.get(), pos, state);
+    public LiddedVesselBlockEntity(BlockPos pos, BlockState state) { this(CETransport.LIDDED_VESSEL_ENTITY.get(), pos, state); }
+
+    public LiddedVesselBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         tankInventory = new GradeFluidTank(getCapacityMultiplier(), this::onFluidStackChanged, this);
         lid = LerpedFloat.linear().startWithValue(open(state) ? 1 : 0);
     }
@@ -292,7 +294,8 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (level == null || level.isClientSide) return;
         var previous = checkedStirrer;
         var at = stirrerPos();
-        boolean found = isController() && width == 3 && height >= IMPELLER_LAYERS && level.hasChunkAt(at) && level.getBlockState(at).is(CEReactor.STIRRER.get());
+        // Only a stirred tank stirs; a stirrer on a stainless tank stays idle.
+        boolean found = getType() == CETransport.STIRRED_TANK_ENTITY.get() && isController() && width == 3 && height >= IMPELLER_LAYERS && level.hasChunkAt(at) && level.getBlockState(at).is(CEReactor.STIRRER.get());
         if (found != stirrer) {
             stirrer = found;
             sendData();
@@ -335,7 +338,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         int x = worldPosition.getX() - owner.worldPosition.getX(), z = worldPosition.getZ() - owner.worldPosition.getZ();
         if (x < 0 || x >= owner.width || z < 0 || z >= owner.width || worldPosition.getY() < owner.worldPosition.getY()
             || worldPosition.getY() >= owner.worldPosition.getY() + owner.height) return;
-        var current = state();if (!current.is(CETransport.LIDDED_VESSEL.get())) return;
+        var current = state();if (!(current.getBlock() instanceof LiddedVesselBlock)) return;
         connectionsPending = false;
         boolean expected = ladder(x, z, owner.width, owner.hinge());
         var next=current.setValue(LiddedVesselBlock.LADDER, expected).setValue(LiddedVesselBlock.DRIVE, owner.width == 3).setValue(LiddedVesselBlock.AXIS, Direction.Axis.Y);
@@ -604,7 +607,11 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
 
     /** Once a stirred process forms, pipes and funnels on any face reach its buffers as well as the vessel's storage tank. */
     public static void register(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CETransport.LIDDED_VESSEL_ENTITY.get(), (be, side) -> {
+        for (var type : java.util.List.of(CETransport.LIDDED_VESSEL_ENTITY.get(), CETransport.STIRRED_TANK_ENTITY.get())) register(event, type);
+    }
+
+    private static void register(RegisterCapabilitiesEvent event, net.minecraft.world.level.block.entity.BlockEntityType<LiddedVesselBlockEntity> type) {
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, type, (be, side) -> {
             if (side==Direction.UP && be.underOpenHatch()) return null;
             var owner=be.getControllerBE();if (owner==null) return null;
             var reactor = be.reactor();
@@ -625,7 +632,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             var delegate=handler;int lease=owner.portGeneration();
             return new IFluidHandler() {
                 private boolean live() {
-                    if (be.isRemoved() || be.getLevel()==null || !be.getLevel().hasChunkAt(be.getBlockPos()) || !be.getLevel().getBlockState(be.getBlockPos()).is(CETransport.LIDDED_VESSEL.get()) || be.getControllerBE()!=owner || side==Direction.UP && be.underOpenHatch()) return false;
+                    if (be.isRemoved() || be.getLevel()==null || !be.getLevel().hasChunkAt(be.getBlockPos()) || !(be.getLevel().getBlockState(be.getBlockPos()).getBlock() instanceof LiddedVesselBlock) || be.getControllerBE()!=owner || side==Direction.UP && be.underOpenHatch()) return false;
                     return reactor==null ? be.reactor()==null : owner.portGeneration()==lease && owner.formed() && ReactorStructure.loaded(be.getLevel(),owner.getBlockPos());
                 }
                 private boolean gasAllowed(FluidStack stack) { var current=be.getControllerBE();return current!=null && (!current.open() || stack.isEmpty() || !net.createplant.thermal.FluidState.gas(stack)); }
@@ -681,7 +688,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
                 }
             };
         });
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CETransport.LIDDED_VESSEL_ENTITY.get(), (be, side) -> {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type, (be, side) -> {
             var owner=be.getControllerBE();return owner==null ? null : owner.itemPort();
         });
     }

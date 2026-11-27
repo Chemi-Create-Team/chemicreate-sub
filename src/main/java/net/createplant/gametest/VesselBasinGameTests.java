@@ -102,7 +102,7 @@ public class VesselBasinGameTests {
 
     private static LiddedVesselBlockEntity square(GameTestHelper h, BlockPos base, int width, int height) {
         for (int y = 0; y < height; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++)
-            h.setBlock(base.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
+            h.setBlock(base.offset(x, y, z), CETransport.STIRRED_TANK.get());
         return ((LiddedVesselBlockEntity) h.getBlockEntity(base)).getControllerBE();
     }
 
@@ -169,7 +169,7 @@ public class VesselBasinGameTests {
 
     @GameTest(template = "test_fractionation")
     public static void sideWrenchWindowsPersistAtEveryWidthWithoutTakingAnInternal(GameTestHelper h) {
-        var block = CETransport.LIDDED_VESSEL.get();
+        var block = CETransport.STIRRED_TANK.get();
         var player = player(h);
         for (int width = 1; width <= 3; width++) {
             BlockPos base = new BlockPos(3 + width * 6, 3, 3);
@@ -240,13 +240,13 @@ public class VesselBasinGameTests {
             && player.getInventory().countItem(Items.IRON_INGOT) == 8 && count(items(h, BASE, Direction.WEST), Items.IRON_INGOT) == 0 && owner.open(),
             "Sneaking with empty hands returns the stored stack without changing the hatch");
         player.setShiftKeyDown(false);
-        var vessels = new ItemStack(CETransport.LIDDED_VESSEL.get(), 4);
+        var vessels = new ItemStack(CETransport.STIRRED_TANK.get(), 4);
         player.setItemInHand(InteractionHand.MAIN_HAND, vessels);
         h.assertTrue(h.getBlockState(BASE).useItemOn(vessels, h.getLevel(), player, InteractionHand.MAIN_HAND, hit(h, BASE, Direction.UP))
             == ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION && vessels.getCount() == 4,
             "The generic storage interaction leaves vessel placement to the held block item");
         h.assertTrue(vessels.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, hit(h, BASE, Direction.UP))).consumesAction()
-            && vessels.isEmpty() && owner.getHeight() == 2 && count(items(h, BASE, Direction.WEST), CETransport.LIDDED_VESSEL.get().asItem()) == 0,
+            && vessels.isEmpty() && owner.getHeight() == 2 && count(items(h, BASE, Direction.WEST), CETransport.STIRRED_TANK.get().asItem()) == 0,
             "The four held vessels become a physical 2x2 upper layer and are never swallowed as stored items");
         h.succeed();
     }
@@ -266,13 +266,13 @@ public class VesselBasinGameTests {
 
     @GameTest(template = "test_fractionation")
     public static void joiningAndSplittingCannotHideOrDeletePlainInventories(GameTestHelper h) {
-        h.setBlock(BASE, CETransport.LIDDED_VESSEL.get());
-        h.setBlock(BASE.offset(1, 0, 1), CETransport.LIDDED_VESSEL.get());
+        h.setBlock(BASE, CETransport.STIRRED_TANK.get());
+        h.setBlock(BASE.offset(1, 0, 1), CETransport.STIRRED_TANK.get());
         h.assertTrue(items(h, BASE, Direction.NORTH).insertItem(0, new ItemStack(Items.IRON_INGOT, 7), false).isEmpty()
             && items(h, BASE.offset(1, 0, 1), Direction.NORTH).insertItem(0, new ItemStack(Items.GOLD_INGOT, 5), false).isEmpty(),
             "Two separate diagonal single vessels own distinct ordinary inventories");
-        h.setBlock(BASE.east(), CETransport.LIDDED_VESSEL.get());
-        h.setBlock(BASE.south(), CETransport.LIDDED_VESSEL.get());
+        h.setBlock(BASE.east(), CETransport.STIRRED_TANK.get());
+        h.setBlock(BASE.south(), CETransport.STIRRED_TANK.get());
         var joined = ((LiddedVesselBlockEntity) h.getBlockEntity(BASE)).getControllerBE();
         h.assertTrue(joined.getWidth() == 2 && count(items(h, BASE, Direction.NORTH), Items.IRON_INGOT) == 7
             && count(items(h, BASE, Direction.NORTH), Items.GOLD_INGOT) == 5

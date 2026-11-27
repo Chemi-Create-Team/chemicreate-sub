@@ -34,7 +34,7 @@ public final class ReactorStructure {
         return new Result(LiddedVesselBlockEntity.IMPELLER_LAYERS,List.copyOf(members),base,"ready");
     }
     /** Whether the block at a place of the envelope is a lidded vessel; the build guide uses this. */
-    public static boolean matches(Level level,BlockPos pos) { return level.getBlockState(pos).is(net.createplant.registry.CETransport.LIDDED_VESSEL.get()); }
+    public static boolean matches(Level level,BlockPos pos) { return level.getBlockState(pos).getBlock() instanceof LiddedVesselBlock; }
     public static void release(Level level,List<BlockPos> members) {
         for (BlockPos pos:members) {
             if (!level.hasChunkAt(pos)) continue;

@@ -65,7 +65,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("rotary_kiln", "plant/rotary_kiln", CEContinuousFactory.KILN.get(), CEContinuousFactory.KILN.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("rolling_mill", "plant/rolling_mill", CEContinuousFactory.MILL.get(), CEContinuousFactory.MILL.get(), CEContinuousFactory.STAND.get()),
             new Kind("coil_winder", "plant/coil_winder", CEContinuousFactory.WINDER.get(), CEContinuousFactory.WINDER.get(), CEContinuousFactory.BRAKE.get()),
-            new Kind("stirred_reactor", "plant/reactor_plant_stirred", CEReactor.STIRRER.get(), CETransport.LIDDED_VESSEL.get(), CEReactor.STIRRER.get(), AllBlocks.BLAZE_BURNER.get()),
+            new Kind("stirred_reactor", "plant/reactor_plant_stirred", CEReactor.STIRRER.get(), CETransport.STIRRED_TANK.get(), CEReactor.STIRRER.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("tray_reactor", "plant/uranium_preparation", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("reaction_vessel", "plant/reaction_tower", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get()),
             new Kind("fractionating_column", "plant/fractionating_column", CEDistillation.COLUMN.get(), CEDistillation.COLUMN.get()),

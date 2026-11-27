@@ -42,9 +42,11 @@ public class LiddedVesselPlacementGameTests {
 
     private static void square(GameTestHelper h, int width, Direction hinge) { square(h, BASE, width, hinge); }
 
-    private static void square(GameTestHelper h, BlockPos base, int width, Direction hinge) {
+    private static void square(GameTestHelper h, BlockPos base, int width, Direction hinge) { square(h, base, width, hinge, CETransport.LIDDED_VESSEL.get()); }
+
+    private static void square(GameTestHelper h, BlockPos base, int width, Direction hinge, net.minecraft.world.level.block.Block block) {
         for (int x = 0; x < width; x++) for (int z = 0; z < width; z++)
-            h.setBlock(base.offset(x, 0, z), CETransport.LIDDED_VESSEL.get().defaultBlockState().setValue(LiddedVesselBlock.HINGE, hinge));
+            h.setBlock(base.offset(x, 0, z), block.defaultBlockState().setValue(LiddedVesselBlock.HINGE, hinge));
     }
 
     private static int vessels(GameTestHelper h, BlockPos base, int width) {
@@ -243,7 +245,8 @@ public class LiddedVesselPlacementGameTests {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         for (int width = 2; width <= 3; width++) for (Direction hinge : Direction.Plane.HORIZONTAL) {
             clearColumn(h);
-            for (int y = 0; y < 4; y++) square(h, BASE.above(y), width, hinge);
+            // Only a stirred tank stirs, so the 3x3 case is built as one.
+            for (int y = 0; y < 4; y++) square(h, BASE.above(y), width, hinge, width == 3 ? CETransport.STIRRED_TANK.get() : CETransport.LIDDED_VESSEL.get());
             var owner = root(h, BASE);owner.toggleWindows();
             if (width == 3) ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
             owner.validateStructure();

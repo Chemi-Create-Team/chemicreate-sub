@@ -14,6 +14,8 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 public final class PlantTankModels {
     private static final CTSpriteShiftEntry[] SEPARATOR_TANK=shifts("ammonia_separator"), PRESSURE=shifts("pressure_tank"), REACTION=shifts("reaction_tower"),
         STAINLESS=shifts("stainless_steel_tank"), CRYOGENIC=shifts("cryogenic_tank"), GAS_HOLDER=shifts("gas_holder");
+    /** The stirred tank's side: the stainless tank's middle panel stretched across the whole face. */
+    private static final CTSpriteShiftEntry STIRRED_SIDE=shift("stirred_tank");
     /** The iron-grey Create tank sheet is shared by these steel pressure-vessel end plates. */
     static final CTSpriteShiftEntry VESSEL_CAP=CTSpriteShifter.getCT(AllCTTypes.RECTANGLE,CreatePlant.location("block/tank/ammonia_separator_top"),CreatePlant.location("block/lidded_vessel/cap_connected"));
     /** The tube sheet on the ends of the shell-and-tube exchangers' tanks; their sides are Create's own tank side. */
@@ -37,6 +39,8 @@ public final class PlantTankModels {
         wrap(event,net.createplant.registry.CEGasBell.TANK.get(),GAS_HOLDER);
         for (var state:CETransport.LIDDED_VESSEL.get().getStateDefinition().getPossibleStates())
             event.getModels().computeIfPresent(BlockModelShaper.stateToModelLocation(state),(location,model)->new com.simibubi.create.foundation.block.connected.CTModel(new LiddedVesselWindowModel(model),new LiddedVesselCTBehaviour(SEPARATOR_TANK[0],VESSEL_CAP)));
+        for (var state:CETransport.STIRRED_TANK.get().getStateDefinition().getPossibleStates())
+            event.getModels().computeIfPresent(BlockModelShaper.stateToModelLocation(state),(location,model)->new com.simibubi.create.foundation.block.connected.CTModel(new LiddedVesselWindowModel(model),new LiddedVesselCTBehaviour(STIRRED_SIDE,VESSEL_CAP)));
     }
     private static void horizontal(ModelEvent.ModifyBakingResult event,Block block,CTSpriteShiftEntry side,CTSpriteShiftEntry top,CTSpriteShiftEntry inner) {
         for (var state:block.getStateDefinition().getPossibleStates())

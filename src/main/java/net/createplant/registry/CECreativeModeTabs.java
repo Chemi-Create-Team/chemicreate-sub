@@ -79,7 +79,7 @@ public class CECreativeModeTabs {
             "pipe_thermometer", "pipe_pressure_gauge", "pipe_flow_meter", "process_transmitter", "control_valve_actuator", "pid_controller",
             "pid_instrument_rack"),
         List.of("horizontal_fluid_tank", "torpedo_tank", "stainless_boiler", "pressure_tank", "stainless_steel_tank", "cryogenic_tank", "gas_receiver", "gas_tank_container", "high_pressure_separator",
-            "gas_holder", "lidded_vessel", "ammonia_separator"),
+            "gas_holder", "lidded_vessel", "stirred_tank", "ammonia_separator"),
         List.of("high_pressure_turbine_unit", "low_pressure_turbine_unit", "large_flywheel", "high_pressure_turbine_casing", "low_pressure_turbine_casing", "reciprocating_cylinder",
             "reciprocating_compressor"),
         List.of("electric_pump", "high_pressure_pump", "hose_connector", "agricultural_sprayer",

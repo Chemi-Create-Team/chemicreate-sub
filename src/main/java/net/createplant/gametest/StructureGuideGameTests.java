@@ -37,7 +37,7 @@ public final class StructureGuideGameTests {
         var guide = new ReactorGuide();var level = helper.getLevel();
         for (int width = 2; width <= 3; width++) {
             BlockPos origin = BASE.east((width - 2) * 8);
-            for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) helper.setBlock(origin.offset(x, 0, z), CETransport.LIDDED_VESSEL.get());
+            for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) helper.setBlock(origin.offset(x, 0, z), CETransport.STIRRED_TANK.get());
             var owner = ((LiddedVesselBlockEntity) helper.getBlockEntity(origin)).getControllerBE();
             helper.assertTrue(guide.anchor(owner) == null && guide.layouts(level, owner.getBlockPos()).isEmpty(), "Plain storage has no process assembly preview at width " + width);
             if (width == 2) {

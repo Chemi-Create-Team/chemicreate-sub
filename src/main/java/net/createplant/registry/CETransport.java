@@ -113,6 +113,12 @@ public final class CETransport {
     static { ITEMS.register("lidded_vessel",()->new net.createplant.item.LiddedVesselItem(LIDDED_VESSEL.get(),new net.minecraft.world.item.Item.Properties())); }
     public static final Supplier<BlockEntityType<net.createplant.block.entity.LiddedVesselBlockEntity>> LIDDED_VESSEL_ENTITY=TYPES.register("lidded_vessel",()->
         BlockEntityType.Builder.of(net.createplant.block.entity.LiddedVesselBlockEntity::new,LIDDED_VESSEL.get()).build(null));
+    // The stirred tank: the same 3x3 vessel, the only one that stirs when a stirrer sits on its roof. A separate block entity type keeps it from joining a stainless tank.
+    public static final DeferredBlock<net.createplant.block.StirredTankBlock> STIRRED_TANK=BLOCKS.registerBlock("stirred_tank",net.createplant.block.StirredTankBlock::new,
+        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().sound(SoundType.NETHERITE_BLOCK).dynamicShape());
+    static { ITEMS.register("stirred_tank",()->new net.createplant.item.LiddedVesselItem(STIRRED_TANK.get(),new net.minecraft.world.item.Item.Properties())); }
+    public static final Supplier<BlockEntityType<net.createplant.block.entity.LiddedVesselBlockEntity>> STIRRED_TANK_ENTITY=TYPES.register("stirred_tank",()->
+        BlockEntityType.Builder.of((pos,state)->new net.createplant.block.entity.LiddedVesselBlockEntity(CETransport.STIRRED_TANK_ENTITY.get(),pos,state),STIRRED_TANK.get()).build(null));
     /** Legacy storable gases and every process gas flagged in the transport table. */
     public static boolean gas(FluidStack stack) { return net.createplant.thermal.FluidState.gas(stack); }
     private static DeferredBlock<MaterialPipeBlock> pipe(String id,PipeMaterial material) {

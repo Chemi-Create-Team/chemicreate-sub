@@ -71,7 +71,7 @@ public class ReactorGameTests {
     }
     /** One 3x3 layer of a stainless tank. */
     public static void layer(ServerLevel level,BlockPos base,int y) {
-        for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,y-1,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
+        for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,y-1,z),CETransport.STIRRED_TANK.get().defaultBlockState(),3);
     }
     /** Install the stirrer on the roof of the 3x3 tank whose controller is at base. */
     public static void stir(ServerLevel level,BlockPos base) {
@@ -506,7 +506,7 @@ public class ReactorGameTests {
         h.assertTrue(be.progress()==40 && in(be).getFluidInTank(0).getAmount()==300 && gasProducts(be)==160,"Save and load preserve paid progress and both fluid amounts");
         var port=in(be);h.setBlock(BASE.offset(1,0,0),Blocks.AIR);
         h.assertTrue(port.fill(new FluidStack(feed,100),EXECUTE)==0,"A cached port stops on dismantling");
-        h.setBlock(BASE.offset(1,0,0),CETransport.LIDDED_VESSEL.get());be.validateStructure();
+        h.setBlock(BASE.offset(1,0,0),CETransport.STIRRED_TANK.get());be.validateStructure();
         h.assertTrue(port.fill(new FluidStack(feed,100),EXECUTE)==0 && in(be).getFluidInTank(0).getAmount()==300,"Old ports remain retired after reforming; buffered feed remains");
         run(be,60);h.assertTrue(gasProducts(be)==400 && be.displayedItem(be.inputItemSlots()).getCount()==1,"A resumed batch completes exactly once");
         var outlet=out(be);h.setBlock(BASE,Blocks.AIR);h.assertTrue(outlet.drain(1000,EXECUTE).isEmpty(),"Removed machines cannot be drained through stale references");h.succeed();
@@ -521,7 +521,7 @@ public class ReactorGameTests {
         h.assertTrue(in(be).getFluidInTank(0).getAmount()==1000,"A full liquid product buffer consumes no feed");
         out(be).drain(1000,EXECUTE);run(be,300);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==8000,"Making room permits exactly one further batch");
         for (int x=0;x<3;x++) for (int z=0;z<3;z++)
-            if (x!=1 || z!=1) h.setBlock(BASE.offset(x,4,z),CETransport.LIDDED_VESSEL.get());
+            if (x!=1 || z!=1) h.setBlock(BASE.offset(x,4,z),CETransport.STIRRED_TANK.get());
         be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==4,"An attempted fifth layer leaves the roof drive and four-layer process intact");h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
@@ -751,7 +751,7 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void theTankStirsOpenTwoLayersHighWithARoofStirrer(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(BASE);
-        for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,0,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
+        for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,0,z),CETransport.STIRRED_TANK.get().defaultBlockState(),3);
         stir(level,base);
         var owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();owner.validateStructure();
         h.assertTrue(owner.module()==ReactorModule.NONE && !owner.formed(),"A one-layer tank stays plain storage with a roof stirrer");
@@ -776,7 +776,7 @@ public class ReactorGameTests {
             "The 34 px opening extends into the neighbouring roof block while keeping its outer rim");
         var port=level.getCapability(Capabilities.FluidHandler.BLOCK,base.offset(2,0,1),Direction.EAST);
         h.assertTrue(port!=null && port.getTanks()==10,"Every vessel wall reaches three feed buffers, five product buffers and two physical storage phases");
-        for (Direction face:Direction.values()) h.assertTrue(!CETransport.LIDDED_VESSEL.get().hasShaftTowards(level,owner.stirrerPos().below(),level.getBlockState(owner.stirrerPos().below()),face),
+        for (Direction face:Direction.values()) h.assertTrue(!CETransport.STIRRED_TANK.get().hasShaftTowards(level,owner.stirrerPos().below(),level.getBlockState(owner.stirrerPos().below()),face),
             "The tank itself takes no shaft");
         owner.toggleLid();
         speed(owner,32);h.assertTrue(owner.rotationSpeed()==32,"The tank turns at its stirrer's speed");
@@ -791,7 +791,7 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void aTwoByTwoVesselOnlyStoresAndDropsAnOldInternal(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(BASE);
-        for (int y=0;y<2;y++) for (int x=0;x<2;x++) for (int z=0;z<2;z++) level.setBlock(base.offset(x,y,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
+        for (int y=0;y<2;y++) for (int x=0;x<2;x++) for (int z=0;z<2;z++) level.setBlock(base.offset(x,y,z),CETransport.STIRRED_TANK.get().defaultBlockState(),3);
         var owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();
         h.assertTrue(owner.getWidth()==2 && owner.getHeight()==2,"Eight blocks form a 2x2 vessel two high");
         stir(level,base);owner.validateStructure();

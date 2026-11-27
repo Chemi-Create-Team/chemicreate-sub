@@ -67,7 +67,7 @@ final class VesselWorldClientCheck {
                 for (int i = 0; i < origins.length; i++) {
                     int width = i == 3 ? 3 : 2;
                     for (int dy = 0; dy < 2; dy++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++)
-                        level.setBlock(origins[i].offset(x, dy, z), state, Block.UPDATE_ALL);
+                        level.setBlock(origins[i].offset(x, dy, z), i == 3 ? CETransport.STIRRED_TANK.get().defaultBlockState().setValue(LiddedVesselBlock.HINGE, Direction.NORTH) : state, Block.UPDATE_ALL);
                 }
                 if (DRIVE_VIEW) for (int dy = 0; dy < 2; dy++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++)
                     level.setBlock(reference.offset(x, dy, z), AllBlocks.FLUID_TANK.getDefaultState(), Block.UPDATE_ALL);
@@ -200,7 +200,7 @@ final class VesselWorldClientCheck {
                 throw new IllegalStateException("Client is missing vessel " + i);
             var owner = vessel.getControllerBE();boolean windowed = i > 0;
             if (owner == null || owner.getWidth() != (i == 3 ? 3 : 2) || owner.getHeight() != 2 || owner.formed() != (i == 3) || i == 3 && owner.sections() != 2)
-                throw new IllegalStateException("Client vessel structure has not synchronized: " + i);
+                throw new IllegalStateException("Client vessel structure has not synchronized: " + i + (owner == null ? " no owner" : " " + owner.getWidth() + "x" + owner.getHeight() + " formed=" + owner.formed() + " sections=" + owner.sections()));
             int width = owner.getWidth();
             for (int y = 0; y < 2; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) {
                 if (!(mc.level.getBlockEntity(origin.offset(x, y, z)) instanceof LiddedVesselBlockEntity cell) || cell.windowsEnabled() != windowed)

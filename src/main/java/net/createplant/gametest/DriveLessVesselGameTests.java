@@ -43,7 +43,7 @@ public class DriveLessVesselGameTests {
         var burnerPos = BASE.below();
         var heat = com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HEAT_LEVEL;
         var idleBurner = AllBlocks.BLAZE_BURNER.getDefaultState().setValue(heat,com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SMOULDERING);
-        h.setBlock(BASE, CETransport.LIDDED_VESSEL.get());
+        h.setBlock(BASE, CETransport.STIRRED_TANK.get());
         h.setBlock(burnerPos,idleBurner);
         var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(BASE);
         var level = h.getLevel();
@@ -81,7 +81,7 @@ public class DriveLessVesselGameTests {
         var sulfurDioxide = net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get();
         var oxygen = BuiltInRegistries.FLUID.getKey(CEFluids.OXYGEN_GAS.get());
         for (var pos : new BlockPos[] {BASE, BASE.east(4)}) {
-            h.setBlock(pos, CETransport.LIDDED_VESSEL.get());
+            h.setBlock(pos, CETransport.STIRRED_TANK.get());
             var vessel = (LiddedVesselBlockEntity) h.getBlockEntity(pos);
             var inlet = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(pos), Direction.UP);
             var port = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, h.absolutePos(pos), Direction.EAST);
@@ -176,7 +176,7 @@ public class DriveLessVesselGameTests {
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
     public static void resizingATankEngagesTheStirrerOnlyOnAThreeByThree(GameTestHelper h) {
-        for (int y = 0; y < 2; y++) for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
+        for (int y = 0; y < 2; y++) for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) h.setBlock(BASE.offset(x, y, z), CETransport.STIRRED_TANK.get());
         h.setBlock(STIRRER, net.createplant.registry.CEReactor.STIRRER.get());
         var owner = ((LiddedVesselBlockEntity) h.getBlockEntity(BASE)).getControllerBE();
         owner.getTankInventory().fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
@@ -185,7 +185,7 @@ public class DriveLessVesselGameTests {
         h.runAfterDelay(30, () -> {
             h.assertTrue(owner.getWidth() == 2 && !owner.stirred() && stirrer(h).calculateStressApplied() == 0,
                 "A stirrer on a 2x2 tank stirs nothing and carries no load");
-            for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
+            for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, y, z), CETransport.STIRRED_TANK.get());
         });
         h.runAfterDelay(65, () -> {
             h.assertTrue(owner.getWidth() == 3 && owner.stirred() && stirrer(h).vessel() == owner && stirrer(h).calculateStressApplied() == 32,
@@ -250,7 +250,7 @@ public class DriveLessVesselGameTests {
 
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void cachedStoragePortsRespectProcessingAndTheOpenHatch(GameTestHelper h) {
-        for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
+        for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, y, z), CETransport.STIRRED_TANK.get());
         var owner = (LiddedVesselBlockEntity) h.getBlockEntity(BASE);
         var port = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(BASE.offset(1, 1, 1)), Direction.UP);
         var water = new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000);
@@ -271,7 +271,7 @@ public class DriveLessVesselGameTests {
         var port = owner.port(Direction.NORTH);
         port.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
         // An incomplete third layer round the stirrer.
-        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x != 1 || z != 1) h.setBlock(BASE.offset(x, 2, z), CETransport.LIDDED_VESSEL.get());
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x != 1 || z != 1) h.setBlock(BASE.offset(x, 2, z), CETransport.STIRRED_TANK.get());
         owner.validateStructure();
         h.assertTrue(owner.isController() && owner.getBlockPos().equals(h.absolutePos(BASE)) && owner.stirred(), "Tanks placed under it cannot strand a filled process in a non-controller member");
         h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "The feed remains reachable at its original controller");
@@ -282,7 +282,7 @@ public class DriveLessVesselGameTests {
 
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void everyModuleKeepsSquareCornersWithoutHorizontalShafts(GameTestHelper h) {
-        var block = CETransport.LIDDED_VESSEL.get();
+        var block = CETransport.STIRRED_TANK.get();
         int index = 0;
         for (var module : new ReactorModule[] {ReactorModule.STIRRED}) {
             BlockPos base = BASE.offset((index % 2) * 9, 0, (index / 2) * 9);index++;

@@ -31,7 +31,7 @@ public final class CEDisplays {
                 if (BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals(CreatePlant.MOD_ID)
                     && block.defaultBlockState().hasBlockEntity()) DisplaySource.BY_BLOCK.add(block,MACHINE.get());
             }
-            DisplaySource.BY_BLOCK.add(CETransport.LIDDED_VESSEL.get(),MIXTURE.get());
+            DisplaySource.BY_BLOCK.add(CETransport.LIDDED_VESSEL.get(),MIXTURE.get());DisplaySource.BY_BLOCK.add(CETransport.STIRRED_TANK.get(),MIXTURE.get());
             DisplaySource.BY_BLOCK.add(com.simibubi.create.AllBlocks.FLUID_TANK.get(),MIXTURE.get());
             for(var block:java.util.List.of(CETransport.STAINLESS_STEEL_TANK.get(),CETransport.PRESSURE_TANK.get(),CETransport.CRYOGENIC_TANK.get()))DisplaySource.BY_BLOCK.add(block,MIXTURE.get());
             DisplaySource.BY_BLOCK.add(com.simibubi.create.AllBlocks.FLUID_TANK.get(),MACHINE.get());
