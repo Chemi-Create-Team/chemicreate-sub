@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.createmod.catnip.render.FluidRenderHelper;
 import net.neoforged.neoforge.client.model.pipeline.VertexConsumerWrapper;
 
@@ -48,13 +49,20 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         renderWindows(be, ms, buffer, light, overlay);
         if (!be.isController()) return;
         int width = be.getWidth(), height = be.getHeight();
-        if (be.stirred()) renderImpellers(be, width, ms, buffer, light);
         var atlas = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
         TextureAtlasSprite top = atlas.apply(CreatePlant.location("block/reactor/silver/top")), under = atlas.apply(CreatePlant.location("block/reactor/steel")),
             edge = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/steel")), fitting = atlas.apply(CreatePlant.location("block/reactor/silver/frame"));
         TextureAtlasSprite joined = width == 3 ? PlantTankModels.VESSEL_CAP.getTarget() : width == 2 ? atlas.apply(CreatePlant.location("block/lidded_vessel/top_2")) : top;
         VertexConsumer vc = buffer.getBuffer(RenderType.solid());
         float span = width * 16, middle = span / 2;
+        if (width == 3) {
+            var inner = atlas.apply(CreatePlant.location("block/tank/ammonia_separator_inner"));
+            LiddedVesselInterior.lining(ms, vc, height, windowMask(be, height), inner, light, overlay);
+            if (be.stirred()) {
+                var shaft = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/shaft"));
+                renderStirringAssembly(be, height, ms, vc, edge, shaft, light, overlay);
+            }
+        }
         if(width==1) {
             ms.pushPose();ms.translate(0,height-1,0);
             plate(vc,ms,WALL,WALL,16-WALL,16-WALL,16,top,under,light,overlay);
@@ -129,17 +137,52 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             u + (x1 - x * 16) / 4, v + (z1 - z * 16) / 4, light, overlay);
     }
 
-    /** The stirrer's shaft comes up through the bearing in the floor and turns an impeller in each of the two lowest layers. */
-    private static void renderImpellers(LiddedVesselBlockEntity be, int width, PoseStack ms, MultiBufferSource buffer, int light) {
+    private static int windowMask(LiddedVesselBlockEntity be, int height) {
+        if (!be.windowsEnabled()) return 0;
+        int mask = 0;
+        var centre = be.getBlockPos().offset(1, 0, 1);
+        for (int layer = 0; layer < height; layer++) {
+            for (int side = 0; side < LiddedVesselInterior.WINDOW_FACES.length; side++) {
+                var face = LiddedVesselInterior.WINDOW_FACES[side];
+                var pos = centre.above(layer).relative(face);
+                if (!(be.getLevel().getBlockEntity(pos) instanceof LiddedVesselBlockEntity cell) || cell.getControllerBE() != be) continue;
+                for (var opening : LiddedVesselWindowModel.profile(cell).openings())
+                    if (opening.face() == face) mask |= 1 << (layer * 4 + side);
+            }
+        }
+        return mask;
+    }
+
+    private static void renderStirringAssembly(LiddedVesselBlockEntity be, int height, PoseStack ms, VertexConsumer vc,
+            TextureAtlasSprite steel, TextureAtlasSprite shaft, int light, int overlay) {
+        float roof = height * 16 - WALL;
+        for (int side = 0; side < 4; side++) {
+            ms.pushPose();
+            ms.translate(1.5, 0, 1.5);
+            ms.mulPose(Axis.YP.rotationDegrees(side * 90));
+            ms.translate(-1.5, 0, -1.5);
+            for (float y = LiddedVesselInterior.SHOULDER; y < roof; ) {
+                float end = Math.min(roof, (float) Math.floor(y / 16 + 1) * 16);
+                box(vc, ms, 23.5f, y, 10, 24.5f, end, 13, steel, steel, steel, light, overlay);
+                y = end;
+            }
+            // The mounting cleat sits above the inspection slot and leaves the long plate off the wall.
+            box(vc, ms, 23, roof - 2, 9, 25, roof, 11, steel, steel, steel, light, overlay);
+            ms.popPose();
+        }
+
         float angle = AnimationTickHolder.getRenderTime(be.getLevel()) * be.rotationSpeed() * .3f % 360 * (float) Math.PI / 180;
-        float centre = width / 2f;
-        VertexConsumer vc = buffer.getBuffer(RenderType.solid());
         ms.pushPose();
-        ms.translate(centre - .5f, 0, centre - .5f);
-        CachedBuffers.partialFacing(BEARING, be.getBlockState(), Direction.DOWN).light(light).renderInto(ms, vc);
-        for (int y = 0; y < LiddedVesselBlockEntity.IMPELLER_LAYERS; y++) {
-            CachedBuffers.partial(IMPELLER, be.getBlockState()).rotateCentered(angle, Direction.UP).light(light).renderInto(ms, vc);
+        ms.translate(1, 0, 1);
+        CachedBuffers.partial(BEARING, be.getBlockState()).light(light).renderInto(ms, vc);
+        CachedBuffers.partial(IMPELLER, be.getBlockState()).rotateCentered(angle, Direction.UP).light(light).renderInto(ms, vc);
+        ms.translate(.5, 0, .5);
+        ms.mulPose(Axis.YP.rotation(angle));
+        ms.translate(-.5, 0, -.5);
+        for (int y = 1; y < height; y++) {
             ms.translate(0, 1, 0);
+            float end = y == height - 1 ? 16 - WALL : 16;
+            box(vc, ms, 7, 0, 7, 9, end, 9, shaft, shaft, shaft, light, overlay);
         }
         ms.popPose();
     }
@@ -156,7 +199,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             var fluid = liquids.get(i);
             float top = surface + depth * fluid.getAmount() / amount;
             var colored = TankLayerColors.tint(liquidBuffer, fluid, i, liquids.size() > 1);
-            NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluid, inset, surface, inset, width - inset, top, width - inset, colored, ms, light, false, true);
+            renderLayer(fluid, width, surface, top, colored, ms, light, overlay);
             surface = top;
         }
         if (gases.isEmpty() || surface >= height - inset) return;
@@ -167,9 +210,17 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             float top = i == gases.size() - 1 ? height - inset : surface + minSlice + gasDepth * (15f / 16) * gas.getAmount() / gasAmount;
             if (!gas.is(net.createplant.registry.CEFluids.AIR_GAS.get())) {
                 var vapour = TankLayerColors.tint(liquidBuffer, gas, i, gases.size() > 1);
-                NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(TankLayerColors.surface(gas), inset, surface, inset, width - inset, top, width - inset, vapour, ms, light, false, true);
+                renderLayer(TankLayerColors.surface(gas), width, surface, top, vapour, ms, light, overlay);
             }
             surface = top;
+        }
+    }
+
+    private static void renderLayer(FluidStack fluid, int width, float bottom, float top, VertexConsumer vc, PoseStack ms, int light, int overlay) {
+        if (width == 3) LiddedVesselInterior.fluid(fluid, bottom, top, vc, ms, light, overlay);
+        else {
+            float inset = WALL / 16;
+            NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluid, inset, bottom, inset, width - inset, top, width - inset, vc, ms, light, false, true);
         }
     }
 
@@ -181,7 +232,9 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         Swirl swirl = swirls.computeIfAbsent(be, ignored -> new Swirl());
         if (be.mixing()) swirl.angle += Math.clamp(time - swirl.time, 0, 2) * Math.clamp(be.rotationSpeed() / 32, -4, 4) * .04f;
         swirl.time = time;
-        float centre = be.getWidth() / 2f, radius = Math.min((be.getWidth() - .8f) / 2, 2), y = Math.min(be.getHeight() - .3f, Math.max(.24f, surface + .06f));
+        boolean round = be.getWidth() == 3;
+        float centre = be.getWidth() / 2f, y = Math.min(be.getHeight() - .3f, Math.max(.24f, surface + .06f));
+        float radius = round ? LiddedVesselInterior.itemOrbit(y - .05f) : Math.min((be.getWidth() - .8f) / 2, 2);
         var renderer = Minecraft.getInstance().getItemRenderer();
         int index = 0;
         for (int i = 0; i < be.displayedItemSlots(); i++) {
@@ -193,7 +246,8 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             ms.translate(centre + Math.cos(angle) * distance, y + bob, centre + Math.sin(angle) * distance);
             ms.mulPose(Axis.YP.rotation(angle));
             if (!renderer.getModel(stack, be.getLevel(), null, i).isGui3d()) ms.mulPose(Axis.XP.rotationDegrees(90));
-            ms.scale(.65f, .65f, .65f);
+            float scale = round ? .48f : .65f;
+            ms.scale(scale, scale, scale);
             renderer.renderStatic(stack, ItemDisplayContext.GROUND, light, overlay, ms, buffer, be.getLevel(), i);
             ms.popPose();
             index++;

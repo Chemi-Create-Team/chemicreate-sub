@@ -58,8 +58,8 @@ def ladder():
 
 
 def shaft_bearing():
-    pieces = (([4, 4, 15], [6, 12, 17]), ([10, 4, 15], [12, 12, 17]),
-              ([6, 4, 15], [10, 6, 17]), ([6, 10, 15], [10, 12, 17]))
+    pieces = (([4, 2, 4], [7, 4, 12]), ([9, 2, 4], [12, 4, 12]),
+              ([7, 2, 4], [9, 4, 7]), ([7, 2, 9], [9, 4, 12]))
     elements = []
     for a, b in pieces:
         dx, dy, dz = (b[i] - a[i] for i in range(3))
@@ -94,66 +94,18 @@ BRASS = (68, 51, 32), (102, 76, 39), (145, 110, 54), (186, 148, 76), (214, 182, 
 PELLET = (60, 40, 32), (87, 54, 38), (117, 76, 49), (144, 102, 67)
 
 
-def internal_parts():
-    """Installed parts use a local (8, 8) centre. Visible bodies stay between the floor and lid, at Y2..14."""
-    parts = {}
-    def box(target, bounds, side, ends=None): target.append((bounds, side, ends or side))
-    def pixels(target, mask, y0, y1, side, ends=None):
-        for x, z in sorted(mask): box(target, [x, y0, z, x + 1, y1, z + 1], side, ends)
-    def octagon(x, z, radius): return max(abs(x - 7.5), abs(z - 7.5)) < radius and abs(x - 7.5) + abs(z - 7.5) < radius * 1.7
-    def circle(radius):
-        return {(x, z) for x in range(-6, 22) for z in range(-6, 22)
-                if max((xx - 8) ** 2 + (zz - 8) ** 2 for xx in (x, x + 1) for zz in (z, z + 1)) <= radius ** 2}
-
-    impeller = parts['reactor_impeller'] = []
-    box(impeller, [7, 0, 7, 9, 16, 9], 'shaft')
-    for y, phase in ((3, 0), (10, math.pi / 6)):
-        pixels(impeller, circle(7), y + 1, y + 2, 'steel')
-        box(impeller, [5, y, 5, 11, y + 3, 11], 'brass')
-        for blade in range(6):
-            angle = phase + blade * math.tau / 6
-            c, s = math.cos(angle), math.sin(angle)
-            mask = set()
-            for x, z in circle(13):
-                dx, dz = x - 7.5, z - 7.5
-                along, across = dx * c + dz * s, -dx * s + dz * c
-                if 5 <= along <= 12 and abs(across) <= 1.25: mask.add((x, z))
-            pixels(impeller, mask, y, y + 3, 'steel')
-            bx, bz = round(7.5 + 4 * math.cos(angle + math.pi / 6)), round(7.5 + 4 * math.sin(angle + math.pi / 6))
-            box(impeller, [bx, y + 2, bz, bx + 1, y + 3, bz + 1], 'basket_rim')
-    box(impeller, [6, 2, 6, 10, 3, 10], 'basket_rim')
-    box(impeller, [6, 13, 6, 10, 14, 10], 'basket_rim')
-
-    return parts
-
-
-def wide_internal_parts():
-    """Three-block vessel internals: 38..44 px bodies inside the 44 px clear bore, keeping 16 px/block UVs."""
-    parts = {}
-    def box(target, bounds, side, ends=None): target.append((bounds, side, ends or side))
-    def pixels(target, mask, y0, y1, side, ends=None):
-        for x, z in sorted(mask): box(target, [x, y0, z, x + 1, y1, z + 1], side, ends)
-    def octagon(radius):
-        return {(x, z) for x in range(-14, 30) for z in range(-14, 30)
-                if max(abs(x - 7.5), abs(z - 7.5)) < radius and abs(x - 7.5) + abs(z - 7.5) < radius * 1.7}
-    def circle(radius):
-        return {(x, z) for x in range(-14, 30) for z in range(-14, 30)
-                if max((xx - 8) ** 2 + (zz - 8) ** 2 for xx in (x, x + 1) for zz in (z, z + 1)) <= radius ** 2}
-
-
-    impeller = parts['reactor_impeller_wide'] = []
-    box(impeller, [7, 0, 7, 9, 16, 9], 'shaft')
-    for y, phase in ((3, 0), (10, math.pi / 6)):
-        pixels(impeller, circle(8), y + 1, y + 2, 'steel')
-        box(impeller, [5, y, 5, 11, y + 3, 11], 'brass')
-        for blade in range(6):
-            angle = phase + blade * math.tau / 6
-            c, s = math.cos(angle), math.sin(angle)
-            mask = {(x, z) for x, z in circle(20)
-                    if 6 <= (x - 7.5) * c + (z - 7.5) * s <= 19
-                    and abs(-(x - 7.5) * s + (z - 7.5) * c) <= 2}
-            pixels(impeller, mask, y, y + 3, 'steel')
-
+def impeller_parts(y, shaft_start, shaft_end):
+    """A 10 px disk and four radial plates standing across its rim."""
+    parts = [
+        ([7, shaft_start, 7, 9, shaft_end, 9], 'shaft', 'shaft'),
+        ([6, y - 2, 6, 10, y + 2, 10], 'brass', 'brass'),
+    ]
+    for z in range(3, 13):
+        limit = max(abs(z - 8), abs(z + 1 - 8))
+        half_width = 1 if limit == 5 else math.isqrt(25 - limit ** 2)
+        parts.insert(0, ([8 - half_width, y, z, 8 + half_width, y + 1, z + 1], 'steel', 'steel'))
+    for x, z, X, Z in ((11, 7, 15, 8), (8, 11, 9, 15), (1, 8, 5, 9), (7, 1, 8, 5)):
+        parts.append(([x, y - 2, z, X, y + 2, Z], 'steel', 'steel'))
     return parts
 
 
@@ -208,8 +160,13 @@ def shell_connected():
     for tx, (left, right) in enumerate(((False, False), (False, True), (True, True), (True, False))):
         for ty, (up, down) in enumerate(((False, True), (True, True), (True, False), (False, False))):
             sheet.paste(tile(left, right, up, down), (tx * 16, ty * 16))
-    (A / 'textures/block/lidded_vessel').mkdir(parents=True, exist_ok=True)
-    sheet.save(A / 'textures/block/lidded_vessel/shell_connected.png')
+    target = A / 'textures/block/lidded_vessel/shell_connected.png'
+    if target.exists():
+        with Image.open(target) as previous:
+            if previous.size == sheet.size and previous.convert('RGBA').tobytes() == sheet.tobytes():
+                return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    sheet.save(target)
 
 
 def top_textures():
@@ -312,22 +269,15 @@ def internal_model(parts):
 
 
 def internals():
-    from generate_uranium_assets import rotor_model
-    rotor_model()
-    models = {}
-    for item, parts in (internal_parts() | wide_internal_parts()).items():
-        model = models[item] = internal_model(parts)
-        write(A / f'models/block/lidded_vessel/internal/{item}.json', model)
+    for name, parts in (('reactor_impeller', impeller_parts(8, 3, 13)),
+                        ('reactor_impeller_wide', impeller_parts(12, 2, 16))):
+        write(A / f'models/block/lidded_vessel/internal/{name}.json', internal_model(parts))
     display = {
-        'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [.22, .22, .22]},
-        'ground': {'rotation': [0, 0, 0], 'translation': [0, 3, 0], 'scale': [.15, .15, .15]},
-        'fixed': {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [.27, .27, .27]},
+        'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [.8, .8, .8]},
+        'ground': {'rotation': [0, 0, 0], 'translation': [0, 3, 0], 'scale': [.65, .65, .65]},
+        'fixed': {'rotation': [0, 0, 0], 'translation': [0, 0, 0], 'scale': [.8, .8, .8]},
     }
-    for item in models:
-        if item.endswith('_wide'): continue
-        installed = item + '_wide'
-        view = {'parent': f'{NS}:block/lidded_vessel/internal/{installed}', 'display': display}
-        write(A / f'models/item/{item}.json', view)
+    write(A / 'models/item/reactor_impeller.json', {'parent': f'{NS}:block/lidded_vessel/internal/reactor_impeller', 'display': display})
 
 
 def data():
@@ -360,10 +310,9 @@ NAMES = {
     f'lidded_vessel.{NS}.lid.closed': ('Hatch closed', 'ハッチ：閉'),
     f'item.{NS}.reactor_impeller': ('Impeller', '撹拌翼'),
     f'item.{NS}.reactor_separator_core': ('Reaction Trays', '反応棚段'),
-    f'reactor.{NS}.status.vessel': ('Use a 1x1 centrifuge vessel or a 3x3 reaction vessel', '遠心分離は1×1、反応槽は3×3で組み立ててください'),
+    f'reactor.{NS}.status.vessel': ('Use a 1×1 centrifuge vessel or a 3×3 reaction vessel', '遠心分離は1×1、反応槽は3×3で組み立ててください'),
     f'reactor.{NS}.status.contents': ('Empty the vessel first: it cannot hold anything of its own', '槽の中身を空にしてください'),
     f'reactor.{NS}.status.lid': ('Close the vessel hatch', '槽のハッチを閉じてください'),
-    f'reactor.{NS}.status.core': ('Missing functional internals in one or more layers', '内部部品が不足している段があります'),
     f'reactor.{NS}.status.structure': ('Build a 3x3 stainless tank two or more layers high over a stirrer', '撹拌機の上に3×3・2段以上のステンレスタンクを組み立ててください'),
 }
 

@@ -4,7 +4,6 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
-import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
@@ -16,13 +15,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 
-/** Opt-in real-world liquid level, synchronization and installed-size comparison for all four cartridges. */
+/** Opt-in real-world liquid levels, synchronized windows and the driven stirrer. */
 final class VesselContentsClientCheck {
-    private static final ReactorModule[] MODULES={ReactorModule.STIRRED};
     private static BlockPos[] origins;
     private static int phase,ticks,fov;
     private static boolean hideGui;
@@ -60,9 +57,9 @@ final class VesselContentsClientCheck {
         if(phase==0 && ready==1 && ticks>=20){prepare(mc,1);phase=1;ticks=0;return false;}
         if(phase<1 || ready!=phase+1 || ticks<(phase>=4 ? Integer.getInteger("createplant.vesselContentsCaptureDelay",70) : 70))return false;
         verify(mc,phase==1 ? .5 : phase==3 ? 0 : 1);
-        String name=phase==1 ? "half" : phase==2 ? "full" : phase==3 ? "internals" : "submerged-"+MODULES[phase-4].name().toLowerCase(java.util.Locale.ROOT);
+        String name=phase==1 ? "half" : phase==2 ? "full" : phase==3 ? "internals" : "submerged-stirred";
         Screenshot.grab(mc.gameDirectory,"quality-vessel-contents-"+name+".png",mc.getMainRenderTarget(),message->{});
-        if(phase<3+MODULES.length){phase++;ticks=0;prepare(mc,phase);return false;}
+        if(phase<4){phase++;ticks=0;prepare(mc,phase);return false;}
         mc.options.hideGui=hideGui;mc.options.fov().set(fov);
         org.slf4j.LoggerFactory.getLogger(VesselContentsClientCheck.class).info("VESSEL CONTENTS PASS: four native 3x3x2 vessels; half/full/empty amounts, window geometry, bottom drives and submerged internals inspected");
         return true;
@@ -79,25 +76,27 @@ final class VesselContentsClientCheck {
                         level.setBlock(owner.stirrerPos(), CEReactor.STIRRER.get().defaultBlockState(), 3);
                         owner.validateStructure();owner.toggleWindows();
                     }
-                    int capacity=MODULES[i]==ReactorModule.STIRRED ? owner.getTankInventory().getCapacity()+ReactorMachineBlockEntity.CAPACITY : ReactorMachineBlockEntity.CAPACITY;
-                    var port=level.getCapability(Capabilities.FluidHandler.BLOCK,origin,Direction.NORTH);
-                    if(port==null)throw new IllegalStateException("No real fluid input for "+MODULES[i]);
-                    var fluid=Fluids.WATER;
+                    var tank=owner.getTankInventory();
                     if(stage<=2 || stage==4) {
                         if(stage==4) owner.toggleLid();
-                        port.fill(new FluidStack(fluid,stage==1 ? capacity/2 : capacity),EXECUTE);
+                        int target=stage==1 ? tank.getCapacity()/2 : tank.getCapacity();
+                        int added=target-tank.getFluidAmount();
+                        if(tank.fill(new FluidStack(Fluids.WATER,added),EXECUTE)!=added)
+                            throw new IllegalStateException("Could not set the sight-glass water level at "+origin);
                     } else if(stage==3) {
-                        owner.processRecoveryPort().drain(Integer.MAX_VALUE,EXECUTE);owner.getTankInventory().drain(Integer.MAX_VALUE,EXECUTE);owner.toggleLid();
-                        var motor=origin.offset(1,-1,1);
+                        tank.drain(Integer.MAX_VALUE,EXECUTE);owner.toggleLid();
+                        var cog=owner.stirrerPos().north();
+                        level.setBlock(cog,AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.Y),Block.UPDATE_ALL);
+                        var motor=cog.below();
                         level.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP),Block.UPDATE_ALL);
                         ((CreativeMotorBlockEntity)level.getBlockEntity(motor)).generatedSpeed.setValue(32);
                     }
                     owner.sendData();
                 }
                 if(stage>=4) {
-                    var origin=origins[stage-4];var player=server.getPlayerList().getPlayer(mc.player.getUUID());
+                    var origin=origins[0];var player=server.getPlayerList().getPlayer(mc.player.getUUID());
                     player.connection.teleport(origin.getX()+1.5,origin.getY()+.25,origin.getZ()+7,180,7);
-                    org.slf4j.LoggerFactory.getLogger(VesselContentsClientCheck.class).info("VESSEL SUBMERGED VIEW {}",MODULES[stage-4]);
+                    org.slf4j.LoggerFactory.getLogger(VesselContentsClientCheck.class).info("VESSEL SUBMERGED VIEW {}",origin);
                 }
                 ready=stage+1;
             } catch(Throwable error){failure=error;}
@@ -107,13 +106,13 @@ final class VesselContentsClientCheck {
     private static void verify(Minecraft mc,double expected) {
         for(int i=0;i<origins.length;i++) {
             var owner=((LiddedVesselBlockEntity)mc.level.getBlockEntity(origins[i])).getControllerBE();
-            if(owner==null || owner.getWidth()!=3 || owner.getHeight()!=2 || !owner.formed() || owner.module()!=MODULES[i])
-                throw new IllegalStateException("Installed module or dimensions did not synchronize: "+MODULES[i]);
+            if(owner==null || owner.getWidth()!=3 || owner.getHeight()!=2 || !owner.formed() || owner.module()!=ReactorModule.STIRRED)
+                throw new IllegalStateException("Installed module or dimensions did not synchronize: "+origins[i]);
             long amount=0;for(int slot=0;slot<owner.displayedFluidSlots();slot++)amount+=owner.displayedLiquid(slot).getAmount();
             double fraction=(double)amount/owner.getDisplayedCapacity();
-            if(Math.abs(fraction-expected)>.002)throw new IllegalStateException("Wrong client liquid fraction for "+MODULES[i]+": "+fraction+" expected "+expected);
+            if(Math.abs(fraction-expected)>.002)throw new IllegalStateException("Wrong client liquid fraction for "+origins[i]+": "+fraction+" expected "+expected);
             VesselClientCheck.verifyWindowQuads(mc,mc.level,owner);
-            if(phase==3 && owner.rotationSpeed()==0)throw new IllegalStateException("The installed module is not receiving actual shaft power: "+MODULES[i]);
+            if(phase==3 && owner.rotationSpeed()==0)throw new IllegalStateException("The installed module is not receiving actual shaft power: "+origins[i]);
         }
     }
 }

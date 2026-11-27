@@ -216,10 +216,11 @@ final class VesselWorldClientCheck {
             }
             for (int y = 0; y < 2; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) {
                 var pos = origin.offset(x, y, z);var state = mc.level.getBlockState(pos);
-                boolean centre = width == 3 && y == 0 && x == 1 && z == 1;
-                if (CETransport.LIDDED_VESSEL.get().hasShaftTowards(mc.level, pos, state, Direction.DOWN) != centre)
-                    throw new IllegalStateException("Client shows an invalid bottom shaft at " + pos);
+                if (CETransport.LIDDED_VESSEL.get().hasShaftTowards(mc.level, pos, state, Direction.DOWN))
+                    throw new IllegalStateException("The vessel casing exposes an external shaft at " + pos);
             }
+            if (i == 3 && !mc.level.getBlockState(owner.stirrerPos()).is(CEReactor.STIRRER.get()))
+                throw new IllegalStateException("The separate stirrer under the vessel is missing");
             if (windowed) VesselClientCheck.verifyWindowQuads(mc, mc.level, owner);
             var liquid = owner.displayedFluid(7);
             if (!(i == 2 ? net.createplant.thermal.FluidForm.LIQUID_NITROGEN.matches(liquid) : liquid.is(Fluids.WATER)) || liquid.isEmpty()

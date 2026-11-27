@@ -4285,9 +4285,9 @@
     "zh_cn": "叠放4～8节。每节处理1批，无需转动或加热。"
   },
   "vessel_internals.impeller": {
-    "en_us": "Impellers turn in the tank's two lowest layers, whatever its height, and run two batches at a time. A tank one layer high cannot stir.",
-    "ja_jp": "撹拌翼は槽の高さにかかわらず下の2段に付き、2バッチを同時に処理します。1段の槽は撹拌できません。",
-    "zh_cn": "无论罐有多高，叶轮都装在最下面两层，同时处理2批。只有一层的罐无法搅拌。"
+    "en_us": "Open the hatch to see the dished floor. A four-blade turbine turns between four stationary baffles.",
+    "ja_jp": "ハッチを開けると、皿形の底が見えます。4枚羽根の撹拌翼が、4枚の固定邪魔板の間で回ります。",
+    "zh_cn": "打开舱口即可看到碟形罐底。四叶涡轮在四块固定挡板之间旋转。"
   },
   "reaction_tower.title": {
     "en_us": "Reaction tower",

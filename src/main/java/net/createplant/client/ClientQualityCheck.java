@@ -90,7 +90,12 @@ public final class ClientQualityCheck {
             return;
         }
         if (phase==24) {
-            try { if (VesselWorldClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
+            try {
+                if (VesselWorldClientCheck.tick(mc)) {
+                    if (Boolean.getBoolean("createplant.vesselContentsClientCheck")) { VesselContentsClientCheck.start(mc);ticks=0;phase=28; }
+                    else show(mc);
+                }
+            } catch (Exception exception) { fail(mc,exception); }
             return;
         }
         if (phase==30) {

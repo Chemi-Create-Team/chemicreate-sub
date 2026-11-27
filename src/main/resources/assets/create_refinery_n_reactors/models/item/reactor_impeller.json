@@ -1,5 +1,5 @@
 {
-  "parent": "create_refinery_n_reactors:block/lidded_vessel/internal/reactor_impeller_wide",
+  "parent": "create_refinery_n_reactors:block/lidded_vessel/internal/reactor_impeller",
   "display": {
     "gui": {
       "rotation": [
@@ -13,9 +13,9 @@
         0
       ],
       "scale": [
-        0.22,
-        0.22,
-        0.22
+        0.8,
+        0.8,
+        0.8
       ]
     },
     "ground": {
@@ -30,9 +30,9 @@
         0
       ],
       "scale": [
-        0.15,
-        0.15,
-        0.15
+        0.65,
+        0.65,
+        0.65
       ]
     },
     "fixed": {
@@ -47,9 +47,9 @@
         0
       ],
       "scale": [
-        0.27,
-        0.27,
-        0.27
+        0.8,
+        0.8,
+        0.8
       ]
     }
   }
