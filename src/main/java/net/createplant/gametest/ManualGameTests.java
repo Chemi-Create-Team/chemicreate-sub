@@ -20,9 +20,9 @@ public class ManualGameTests {
         var recipe = server.getRecipeManager().byKey(CreatePlant.location("manual")).orElseThrow().value();
         var book = recipe.getResultItem(h.getLevel().registryAccess());
         var content = book.get(DataComponents.WRITTEN_BOOK_CONTENT);
-        h.assertTrue(book.is(Items.WRITTEN_BOOK) && content != null && content.pages().size() == 23
+        h.assertTrue(book.is(Items.WRITTEN_BOOK) && content != null && content.pages().size() == 24
             && content.pages().getFirst().raw().getContents() instanceof TranslatableContents page && page.getKey().equals("book." + CreatePlant.MOD_ID + ".manual.page_0"),
-            "A book and an iron ingot make the twenty-three-page manual, its pages translated");
+            "A book and an iron ingot make the twenty-four-page manual, its pages translated");
         for (String step : GUIDE)
             h.assertTrue(server.getAdvancements().get(CreatePlant.location("guide/" + step)) != null, "The guide advancement loads: " + step);
         var root = server.getAdvancements().get(CreatePlant.location("guide/root")).value();

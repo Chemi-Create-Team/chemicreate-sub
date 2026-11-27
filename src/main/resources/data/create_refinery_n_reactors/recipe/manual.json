@@ -40,7 +40,8 @@
           "{\"translate\": \"book.create_refinery_n_reactors.manual.page_19\"}",
           "{\"translate\": \"book.create_refinery_n_reactors.manual.page_20\"}",
           "{\"translate\": \"book.create_refinery_n_reactors.manual.page_21\"}",
-          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_22\"}"
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_22\"}",
+          "{\"translate\": \"book.create_refinery_n_reactors.manual.page_23\"}"
         ]
       },
       "minecraft:custom_name": "{\"translate\": \"book.create_refinery_n_reactors.manual\", \"italic\": false}"

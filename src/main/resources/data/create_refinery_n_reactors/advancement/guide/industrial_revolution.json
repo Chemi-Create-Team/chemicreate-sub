@@ -9,7 +9,7 @@
     "description": {
       "translate": "advancement.create_refinery_n_reactors.guide.industrial_revolution.description"
     },
-    "frame": "goal",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": false
   },

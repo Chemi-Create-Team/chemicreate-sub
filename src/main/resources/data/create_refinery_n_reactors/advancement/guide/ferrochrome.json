@@ -1,0 +1,34 @@
+{
+  "display": {
+    "icon": {
+      "id": "create_refinery_n_reactors:ferrochrome"
+    },
+    "title": {
+      "translate": "advancement.create_refinery_n_reactors.guide.ferrochrome"
+    },
+    "description": {
+      "translate": "advancement.create_refinery_n_reactors.guide.ferrochrome.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "create_refinery_n_reactors:guide/nickel",
+  "criteria": {
+    "ferrochrome": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:ferrochrome"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "ferrochrome"
+    ]
+  ]
+}

@@ -9,11 +9,11 @@
     "description": {
       "translate": "advancement.create_refinery_n_reactors.guide.stainless_steel.description"
     },
-    "frame": "task",
+    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": false
   },
-  "parent": "create_refinery_n_reactors:guide/nickel",
+  "parent": "create_refinery_n_reactors:guide/rolling_mill",
   "criteria": {
     "stainless_steel_ingot": {
       "trigger": "minecraft:inventory_changed",

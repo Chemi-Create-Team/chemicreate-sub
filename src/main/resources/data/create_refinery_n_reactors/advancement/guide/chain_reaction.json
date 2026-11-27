@@ -9,7 +9,7 @@
     "description": {
       "translate": "advancement.create_refinery_n_reactors.guide.chain_reaction.description"
     },
-    "frame": "goal",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": false
   },
