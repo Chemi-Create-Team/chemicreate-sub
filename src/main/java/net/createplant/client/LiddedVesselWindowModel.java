@@ -54,7 +54,7 @@ public class LiddedVesselWindowModel extends BakedModelWrapperWithData {
             int along = face.getAxis() == Direction.Axis.X ? shape.z() : shape.x();
             double low = Math.max(0, shape.width() * 8 - 4 - along * 16), high = Math.min(16, shape.width() * 8 + 4 - along * 16);
             if (high <= low) continue;
-            double bottom = shape.y() == 0 ? 4 : 0, top = shape.y() == shape.height() - 1 ? 12 : 16;
+            double bottom = shape.y() == 0 ? shape.width() == 3 ? LiddedVesselBlock.DISH_RIM_HEIGHT : 4 : 0, top = shape.y() == shape.height() - 1 ? 12 : 16;
             AABB box = switch (face) {
                 case NORTH -> new AABB(low / 16, bottom / 16, 0, high / 16, top / 16, 2 / 16d);
                 case SOUTH -> new AABB(low / 16, bottom / 16, 14 / 16d, high / 16, top / 16, 1);

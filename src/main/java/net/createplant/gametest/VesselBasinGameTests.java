@@ -106,7 +106,7 @@ public class VesselBasinGameTests {
         return ((LiddedVesselBlockEntity) h.getBlockEntity(base)).getControllerBE();
     }
 
-    /** A stirrer under the tank's bottom centre, and the stirred process formed over it. */
+    /** Mount the stirrer on the tank roof and validate the process. */
     private static void stir(GameTestHelper h, LiddedVesselBlockEntity owner) {
         h.getLevel().setBlock(owner.stirrerPos(), CEReactor.STIRRER.get().defaultBlockState(), 3);owner.validateStructure();
     }
@@ -165,7 +165,7 @@ public class VesselBasinGameTests {
         h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(pos)).generatedSpeed.setValue(128));
     }
 
-    private static void bottomMotor(GameTestHelper h) { ReactorGameTests.driveStirrer(h, BASE.offset(1, -1, 1)); }
+    private static void roofMotor(GameTestHelper h) { ReactorGameTests.driveStirrer(h, BASE); }
 
     @GameTest(template = "test_fractionation")
     public static void sideWrenchWindowsPersistAtEveryWidthWithoutTakingAnInternal(GameTestHelper h) {
@@ -175,7 +175,7 @@ public class VesselBasinGameTests {
             BlockPos base = new BlockPos(3 + width * 6, 3, 3);
             var owner = square(h, base, width, 2);
             owner.getTankInventory().fill(new FluidStack(Fluids.WATER, 1000), EXECUTE);
-            if (width == 3) h.setBlock(base.offset(1, -1, 1), CEReactor.STIRRER.get());
+            if (width == 3) ReactorGameTests.stir(h.getLevel(), h.absolutePos(base));
             BlockPos member = base.offset(0, 1, width / 2);
             boolean before = owner.windowsEnabled();
             var axis = h.getBlockState(member).getValue(LiddedVesselBlock.AXIS);
@@ -364,7 +364,7 @@ public class VesselBasinGameTests {
             stir(h, owner);
             h.assertTrue(owner.formed() && owner.getTankInventory().getFluidAmount() == 10000
                 && count(items(h, BASE, Direction.NORTH), Items.MILK_BUCKET) == 1, "Installing the impeller preserves and uses the existing storage rather than moving or rejecting it");
-            bottomMotor(h);
+            roofMotor(h);
             BlockPos burnerPos = BASE.below();
             h.setBlock(burnerPos, AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.SMOULDERING));
             h.runAfterDelay(60, () -> guarded(h, () -> {

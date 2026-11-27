@@ -890,14 +890,14 @@
     "zh_cn": "建造搅拌反应槽"
   },
   "guide.reactor_plant_stirred.step_0": {
-    "en_us": "Place a stirrer under the bottom centre of a 3×3 lidded vessel. Heat it with Blaze Burners underneath.",
-    "ja_jp": "3×3のふた付き槽の底面中央の下に撹拌機を置きます。加熱には下面のブレイズバーナーを使います。",
-    "zh_cn": "在3×3带盖槽底面中心下方放置搅拌器，用下方的烈焰人燃烧室加热。"
+    "en_us": "Place the stirrer over the centre of the roof. Heat the tank from below.",
+    "ja_jp": "天面中央に撹拌機を置きます。加熱は槽の下から行います。",
+    "zh_cn": "将搅拌器装在罐顶中央，从罐底加热。"
   },
   "guide.reactor_plant_stirred.step_1": {
-    "en_us": "Stack the vessel two to four layers high. Impellers turn in the two lowest layers, which run two batches at a time.",
-    "ja_jp": "槽を2～4段に積みます。撹拌翼は下の2段に付き、2バッチを同時に処理します。",
-    "zh_cn": "将槽叠至2～4层。叶轮装在最下面两层，同时处理2批。"
+    "en_us": "Build the 3×3 vessel two to four layers high. It can process two batches at once.",
+    "ja_jp": "槽は3×3・高さ2～4段で組みます。2バッチを同時に処理できます。",
+    "zh_cn": "槽体摆成3×3，叠两到四层，可同时处理两批。"
   },
   "guide.reactor_plant_stirred.step_2": {
     "en_us": "Keep the hatch shut.",
@@ -1930,9 +1930,9 @@
     "zh_cn": "用九个槽块搭成3×3槽，最多可扩至4层。"
   },
   "vessel_basin.window": {
-    "en_us": "Wrench a side for windows. The stirrer under the bottom centre turns the impellers.",
-    "ja_jp": "側面レンチで点検窓を切り替えます。撹拌翼は底面中央の下の撹拌機で回ります。",
-    "zh_cn": "用扳手点击侧面切换观察窗。叶轮由底面中心下方的搅拌器带动。"
+    "en_us": "Use a wrench on the side to open inspection windows above the dished bottom.",
+    "ja_jp": "側面をレンチで操作すると、皿底より上に点検窓が開きます。",
+    "zh_cn": "用扳手操作侧面，在碟形罐底上方打开观察窗。"
   },
   "vessel_basin.feed": {
     "en_us": "Feed solids with a belt and funnel. Feed fluids with a powered pump and pipes.",
@@ -1945,9 +1945,9 @@
     "zh_cn": "在槽下点燃烈焰燃烧室。每个燃烧室向内容物加热：量大或热容大的内容物升温慢，沸腾的液体会停在沸点，直到吸足变成气体所需的热量。"
   },
   "vessel_basin.rotate": {
-    "en_us": "Turn the cogwheel beside the stirrer at 32 RPM or more. Place heating burners under the other blocks.",
-    "ja_jp": "撹拌機の横の歯車を32 RPM以上で回します。加熱用バーナーは残りのブロックの下に置きます。",
-    "zh_cn": "以32 RPM以上转动搅拌器旁的齿轮。加热用燃烧室放在其余方块下方。"
+    "en_us": "Turn the adjacent cogwheel at 32 RPM or more. The burners go below the tank.",
+    "ja_jp": "隣の歯車を32 RPM以上で回します。バーナーは槽の下に置きます。",
+    "zh_cn": "相邻齿轮至少以32 RPM转动，燃烧室放在罐底下方。"
   },
   "vessel_basin.products": {
     "en_us": "Extract solids with funnels and fluids with pumps. If processing stops, check outputs, heat, rotation, the hatch and sludge.",
@@ -2390,9 +2390,9 @@
     "zh_cn": "向反应塔装入不放催化剂的反应塔板。从最底层侧面的漏斗投入焙烧物，物料会堆在塔板上；在同一层送入氢气，从下方加热，无需旋转动力。"
   },
   "guide.uranium_preparation.step_3": {
-    "en_us": "Feed uranium dioxide and hydrogen fluoride to a stirred tank: a 3×3 stainless tank two or more layers high over a stirrer. Heat below and turn the cogwheel beside the stirrer at 32 RPM or more.",
-    "ja_jp": "撹拌槽（撹拌機の上に3×3・2段以上で組んだステンレスタンク）へ二酸化ウランとフッ化水素を入れます。下から加熱し、撹拌機の横の歯車を32 RPM以上で回します。",
-    "zh_cn": "二氧化铀和氟化氢送入搅拌槽（在搅拌器上方搭建3×3、至少两层的不锈钢罐）。底部加热，并以至少32 RPM转动搅拌器旁的齿轮。"
+    "en_us": "Feed uranium dioxide and hydrogen fluoride to a stirred tank: a 3×3 stainless tank at least two layers high with a roof stirrer. Heat below and turn the cogwheel beside the stirrer at 32 RPM or more.",
+    "ja_jp": "撹拌槽（天面に撹拌機を載せた3×3・2段以上のステンレスタンク）へ二酸化ウランとフッ化水素を入れます。下から加熱し、撹拌機の横の歯車を32 RPM以上で回します。",
+    "zh_cn": "二氧化铀和氟化氢送入搅拌槽（3×3且至少两层的不锈钢罐，搅拌器安装在罐顶中央）。底部加热，并以至少32 RPM转动搅拌器旁的齿轮。"
   },
   "guide.uranium_preparation.step_4": {
     "en_us": "Lay green salt on the trays of another reaction tower, feed fluorine and superheat with blue flames. Pump the gas made out of a side of the bottom layer.",
@@ -2485,9 +2485,9 @@
     "zh_cn": "电解水制取氢气"
   },
   "guide.manufacturing_ammonia.step_1": {
-    "en_us": "Stack a 3×3 tank two layers high over a stirrer and turn the cogwheel beside it at 32 RPM or more. Mix hydrogen and nitrogen into synthesis gas.\n%s → %s",
-    "ja_jp": "撹拌機の上に3×3の槽を2段積み、撹拌機の横の歯車を32 RPM以上で回します。水素と窒素を合成ガスにします。\n%s → %s",
-    "zh_cn": "在搅拌器上方叠两层3×3罐，以32 RPM以上转动搅拌器旁的齿轮，把氢气和氮气混合成合成气。\n%s → %s"
+    "en_us": "Mount a stirrer on the roof of a two-layer 3×3 tank and turn the cogwheel beside it at 32 RPM or more. Mix hydrogen and nitrogen into synthesis gas.\n%s → %s",
+    "ja_jp": "2段の3×3槽の天面に撹拌機を置き、撹拌機の横の歯車を32 RPM以上で回します。水素と窒素を合成ガスにします。\n%s → %s",
+    "zh_cn": "在两层高的3×3槽体顶面中央装上搅拌器，将相邻齿轮转到至少32 RPM。混合氢气与氮气制成合成气。\n%s → %s"
   },
   "guide.manufacturing_ammonia.step_2": {
     "en_us": "Compress synthesis feed one grade. Supply it to the heated reaction tower.",
@@ -4240,19 +4240,19 @@
     "zh_cn": "吸收塔"
   },
   "lidded_vessel.internals": {
-    "en_us": "To stir, stack a 3×3 tank two or more layers high over a stirrer. Smaller tanks are storage only.",
-    "ja_jp": "撹拌するには、撹拌機の上に3×3の槽を2段以上積みます。小さな槽は保管用です。",
-    "zh_cn": "如需搅拌，在搅拌器上方叠起至少两层的3×3罐。更小的罐仅用于储存。"
+    "en_us": "Build a 3×3 tank at least two layers high. Mount the stirrer on the roof centre.",
+    "ja_jp": "3×3・2段以上の槽を組み、天面中央に撹拌機を置きます。",
+    "zh_cn": "搭建至少两层的3×3罐体，在顶面中央安装搅拌器。"
   },
   "vessel_internals.install": {
-    "en_us": "Place the stirrer directly under the bottom centre of a 3×3 stainless tank. Like Create's mechanical mixer, cogwheels meshing with the gear round its middle turn it.",
-    "ja_jp": "撹拌機は3×3のステンレスタンクの底面中央の真下に置きます。Createのメカニカルミキサーと同じく、中ほどの歯車にかみ合う歯車で回します。",
-    "zh_cn": "把搅拌器放在3×3不锈钢罐底面中心的正下方。与Create的动力搅拌器一样，由与其中部齿轮啮合的齿轮带动。"
+    "en_us": "Mount the stirrer on the roof centre of a 3×3 tank. Drive it with a cogwheel alongside it.",
+    "ja_jp": "3×3槽の天面中央に撹拌機を置きます。横の歯車をかみ合わせて駆動します。",
+    "zh_cn": "在3×3罐的顶面中央装上搅拌器，由旁边啮合的齿轮带动。"
   },
   "vessel_basin.impeller": {
-    "en_us": "Place a stirrer under the bottom centre of a tank two or more layers high and close the hatch. Impellers turn in the two lowest layers.",
-    "ja_jp": "2段以上の槽の底面中央の下に撹拌機を置き、ハッチを閉じます。撹拌翼は下の2段で回ります。",
-    "zh_cn": "在至少两层高的槽底面中心下方放置搅拌器并关闭舱口。叶轮在最下面两层转动。"
+    "en_us": "Put the stirrer on the roof centre of a tank at least two layers high. Close the round hatch before running.",
+    "ja_jp": "2段以上の槽の天面中央に撹拌機を置き、運転前に丸いハッチを閉じます。",
+    "zh_cn": "在至少两层高的罐体顶面中央装上搅拌器，运行前关闭圆形舱口。"
   },
   "large_absorption_tower.storey": {
     "en_us": "Each storey is placed as a whole 3 by 3 octagon. Click the top of a storey to stack the next one on its centre.",
@@ -4260,9 +4260,9 @@
     "zh_cn": "塔节放置时整体占3×3八角形。点击塔节顶面，下一节会叠在正中央上方。"
   },
   "lidded_vessel_2x2.rotation": {
-    "en_us": "A 2×2 vessel takes no rotation. A 3×3 vessel stirs with a stirrer under its bottom centre, turned at 32 RPM or more.",
-    "ja_jp": "2×2は動力を受けません。3×3は底面中央の下の撹拌機を32 RPM以上で回して撹拌します。",
-    "zh_cn": "2×2槽不接受动力。3×3槽由底面中心下方以32 RPM以上转动的搅拌器搅拌。"
+    "en_us": "The 2×2 tank is for storage. The 3×3 tank uses a roof stirrer driven at 32 RPM or more.",
+    "ja_jp": "2×2槽は貯蔵用です。3×3槽は天面の撹拌機を32 RPM以上で回します。",
+    "zh_cn": "2×2罐用于储存，3×3罐顶的搅拌器至少以32 RPM转动。"
   },
   "vessel_internals.title": {
     "en_us": "Stirring a stainless tank",
@@ -4270,9 +4270,9 @@
     "zh_cn": "搅拌不锈钢罐"
   },
   "lidded_vessel_2x2.internals": {
-    "en_us": "To stir, stack a 3×3 tank two or more layers high over a stirrer. Smaller tanks are storage only.",
-    "ja_jp": "撹拌するには、撹拌機の上に3×3の槽を2段以上積みます。小さな槽は保管用です。",
-    "zh_cn": "如需搅拌，在搅拌器上方叠起至少两层的3×3罐。更小的罐仅用于储存。"
+    "en_us": "Build a 3×3 tank at least two layers high. Mount the stirrer on the roof centre.",
+    "ja_jp": "3×3・2段以上の槽を組み、天面中央に撹拌機を置きます。",
+    "zh_cn": "搭建至少两层的3×3罐体，在顶面中央安装搅拌器。"
   },
   "large_absorption_tower.ring": {
     "en_us": "Pipes join only the centre and the four straight-side blocks, never the diagonal corners. At the bottom storey, gas goes in through their sides and liquid comes out through their sides or undersides. At the top storey, spent gas leaves through their sides and water enters through their tops.",
@@ -4285,9 +4285,9 @@
     "zh_cn": "叠放4～8节。每节处理1批，无需转动或加热。"
   },
   "vessel_internals.impeller": {
-    "en_us": "Open the hatch to see the dished floor. A four-blade turbine turns between four stationary baffles.",
-    "ja_jp": "ハッチを開けると、皿形の底が見えます。4枚羽根の撹拌翼が、4枚の固定邪魔板の間で回ります。",
-    "zh_cn": "打开舱口即可看到碟形罐底。四叶涡轮在四块固定挡板之间旋转。"
+    "en_us": "Open the round hatch beside the drive. The four baffles sit between the windows.",
+    "ja_jp": "撹拌機の脇から丸いハッチを開けます。固定邪魔板は窓と窓の間にあります。",
+    "zh_cn": "从搅拌器旁打开圆形舱口。四块固定挡板位于观察窗之间。"
   },
   "reaction_tower.title": {
     "en_us": "Reaction tower",
@@ -4470,9 +4470,9 @@
     "zh_cn": "湿法浸出与低速沉降"
   },
   "wet_processing.build": {
-    "en_us": "Use a lidded vessel over a stirrer and heating below. No dedicated leaching tank is needed.",
-    "ja_jp": "ふた付き槽に攪拌羽根を組み込み、下から加熱します。専用の浸出槽は不要です。",
-    "zh_cn": "在带盖槽中安装搅拌叶片并从下方加热，无需专用浸出槽。"
+    "en_us": "Fit a stirrer to the roof of the lidded vessel and heat it from below.",
+    "ja_jp": "ふた付き槽の天面中央に撹拌機を取り付け、下から加熱します。",
+    "zh_cn": "在带盖罐顶部安装搅拌器，从下面加热。"
   },
   "wet_processing.ore": {
     "en_us": "Feed crushed iron, copper, zinc or tin, or galena for lead, through a funnel into the lidded vessel. Gold has no chemical route.",
@@ -4765,9 +4765,9 @@
     "zh_cn": "制备甲基膦酸二甲酯"
   },
   "guide.manufacturing_methylphosphonate.step_1": {
-    "en_us": "Stand the tank over a stirrer, shut the lid and turn the stirrer at 32 RPM or more. Feed liquid through the side pipe and iodine through the funnel. Set the smart pipe to draw only the crude product.\n%s → %s",
-    "ja_jp": "槽を撹拌機の上に組み、ふたを閉めて撹拌機を32 RPM以上で回します。側面の配管から原料液、ファンネルからヨウ素を供給します。スマート液体パイプには粗生成液入りバケツを指定します。\n%s → %s",
-    "zh_cn": "把罐搭在搅拌器上方，关上盖子并以32 RPM以上转动搅拌器。从侧面管道送入原料液，从漏斗送入碘。智能流体管道设为只取粗产物。\n%s → %s"
+    "en_us": "Fit the stirrer to the roof, shut the lid and turn the stirrer at 32 RPM or more. Feed liquid through the side pipe and iodine through the funnel. Set the smart pipe to draw only the crude product.\n%s → %s",
+    "ja_jp": "槽の天面中央に撹拌機を置き、ふたを閉めて撹拌機を32 RPM以上で回します。側面の配管から原料液、ファンネルからヨウ素を供給します。スマート液体パイプには粗生成液入りバケツを指定します。\n%s → %s",
+    "zh_cn": "在罐顶中央装上搅拌器，关盖并至少以32 RPM转动。液体从侧管进料，碘由漏斗送入；用智能流体管过滤粗产物。\n%s → %s"
   },
   "guide.manufacturing_methylphosphonate.step_2": {
     "en_us": "Feed the crude product and filter medium into a second stirred tank. Set its smart pipe to the purified product and return the iodine from the output funnel to the first vessel. Check the goggles if either vessel stops.\n%s → %s",
@@ -4780,9 +4780,9 @@
     "zh_cn": "制备史莱姆冷却液"
   },
   "guide.manufacturing_slime_coolant.step_1": {
-    "en_us": "Stand the tank over a stirrer and turn it at 32 RPM or more. Feed water and the solids, shut the lid and light a Blaze Burner under a corner. Filter the liquid outlet for the coolant blend.\n%s → %s",
-    "ja_jp": "槽を撹拌機の上に組み、撹拌機を32 RPM以上で回します。水と固体原料を入れてふたを閉め、底面の隅をブレイズバーナーで加熱します。スマート液体パイプで冷却原液を取り出します。\n%s → %s",
-    "zh_cn": "把罐搭在搅拌器上方，以32 RPM以上转动。加入水和固体原料，关上盖子，在底部角落用烈焰人燃烧室加热。用智能流体管道取出冷却原液。\n%s → %s"
+    "en_us": "Fit the stirrer to the roof and turn it at 32 RPM or more. Feed water and the solids, shut the lid and light a Blaze Burner under a corner. Filter the liquid outlet for the coolant blend.\n%s → %s",
+    "ja_jp": "槽の天面中央に撹拌機を置き、撹拌機を32 RPM以上で回します。水と固体原料を入れてふたを閉め、底面の隅をブレイズバーナーで加熱します。スマート液体パイプで冷却原液を取り出します。\n%s → %s",
+    "zh_cn": "在罐顶中央装上搅拌器，以至少32 RPM转动。加入水和固体后关盖，在底面角落点燃烈焰人燃烧室。过滤出冷却原液。\n%s → %s"
   },
   "guide.manufacturing_slime_coolant.step_2": {
     "en_us": "Pump the blend into the east face of the upper layer of a two-layer 2×2 column. Draw water from the upper north outlet and coolant from the lower north outlet. Return the water to the mixer or another line.\n%s → %s",

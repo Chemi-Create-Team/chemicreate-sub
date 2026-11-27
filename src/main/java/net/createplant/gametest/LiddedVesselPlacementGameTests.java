@@ -5,7 +5,6 @@ import net.createplant.block.ColumnLadder;
 import net.createplant.block.LiddedVesselBlock;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.chemistry.ReactorModule;
-import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
@@ -246,7 +245,7 @@ public class LiddedVesselPlacementGameTests {
             clearColumn(h);
             for (int y = 0; y < 4; y++) square(h, BASE.above(y), width, hinge);
             var owner = root(h, BASE);owner.toggleWindows();
-            if (width == 3) h.setBlock(BASE.offset(1, -1, 1), CEReactor.STIRRER.get());
+            if (width == 3) ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
             owner.validateStructure();
             owner.getTankInventory().fill(FluidThermal.at(new FluidStack(Fluids.WATER, 1000), 310), EXECUTE);
             owner.itemPort().insertItem(0, new ItemStack(Items.IRON_INGOT, 7), false);

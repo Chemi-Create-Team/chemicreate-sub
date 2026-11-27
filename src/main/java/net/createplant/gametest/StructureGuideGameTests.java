@@ -41,8 +41,8 @@ public final class StructureGuideGameTests {
             var owner = ((LiddedVesselBlockEntity) helper.getBlockEntity(origin)).getControllerBE();
             helper.assertTrue(guide.anchor(owner) == null && guide.layouts(level, owner.getBlockPos()).isEmpty(), "Plain storage has no process assembly preview at width " + width);
             if (width == 2) {
-                helper.setBlock(origin.offset(1, -1, 1), CEReactor.STIRRER.get());
-                helper.assertTrue(guide.anchor(owner) == null && guide.layouts(level, owner.getBlockPos()).isEmpty(), "A stirrer under a 2x2 tank cannot request a process preview");
+                helper.setBlock(origin.offset(1, 1, 1), CEReactor.STIRRER.get());
+                helper.assertTrue(guide.anchor(owner) == null && guide.layouts(level, owner.getBlockPos()).isEmpty(), "A stirrer on a 2x2 tank cannot request a process preview");
             }
         }
         helper.succeed();

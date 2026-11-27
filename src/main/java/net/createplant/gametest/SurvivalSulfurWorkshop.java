@@ -232,10 +232,13 @@ final class SurvivalSulfurWorkshop {
         var stainless = CEItems.STAINLESS_STEEL_SHEET.get();
         crafting.craft(shell, 1, 18, stainless, trapdoor, stainless, stainless, basin, stainless);
         var center = vessel.east().south();
-        var drive = center.offset(-3, -3, -2);
-        check(verticalDrive(level, drive, Direction.NORTH).equals(center.below()), "The drive must end under the tank's bottom centre");
-        // The stirrer takes the place of the drive's last cogwheel, meshing with the large one beside it; its casing and gear are placed like the drive's.
-        place(level, center.below(), CEReactor.STIRRER.get().defaultBlockState());
+        var drive = center.offset(-3, 0, -5);
+        var roof = center.above(2);
+        var shaftEnd = verticalDrive(level, drive, Direction.NORTH);
+        check(shaftEnd.equals(roof.north(3)), "The drive must reach the north side of the tank roof");
+        for (int z = 1; z <= 2; z++)
+            place(level, roof.north(z), axis(AllBlocks.COGWHEEL.getDefaultState(), Direction.Axis.Y));
+        place(level, roof, CEReactor.STIRRER.get().defaultBlockState());
         for (int i = 1; i <= 6; i++) {
             var at = drive.west(i);
             if (i % 3 == 0) wheel(level, at, Direction.NORTH);

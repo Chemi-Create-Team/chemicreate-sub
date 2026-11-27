@@ -31,10 +31,10 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 
 /** Standard Create transport around an internally stirred vessel; the shown inventories use its normal client sync format. */
 public final class VesselBasinPonderScenes {
-    /** The two-layer stirred tank, its stirrer under the bottom centre and the cogwheel beside that on a creative motor in the floor. */
-    private static final BlockPos OWNER=new BlockPos(3,2,3), TOP=new BlockPos(4,3,4), STIRRER=new BlockPos(4,1,4), COG=new BlockPos(4,1,3), COG_MOTOR=new BlockPos(4,0,3);
+    /** The two-layer stirred tank, its roof-mounted stirrer and the cogwheel beside it. */
+    private static final BlockPos OWNER=new BlockPos(3,2,3), TOP=new BlockPos(4,3,4), STIRRER=new BlockPos(4,4,4), COG=new BlockPos(4,4,3), COG_MOTOR=new BlockPos(4,5,3);
     private static final BlockPos GAUGE=new BlockPos(2,2,3), INPUT=new BlockPos(2,2,4), OUTPUT=new BlockPos(6,2,3);
-    private static final BlockPos PUMP_IN=new BlockPos(4,2,1), PUMP_OUT=new BlockPos(4,2,7), DEPLOYER=new BlockPos(4,4,4);
+    private static final BlockPos PUMP_IN=new BlockPos(4,2,1), PUMP_OUT=new BlockPos(4,2,7);
     private static final BlockPos COOLANT=new BlockPos(3,2,2);
     private static final BlockPos RELIEF=new BlockPos(6,2,5);
     private static final String BASIN="ponder.create_refinery_n_reactors.vessel_basin.", MAINTENANCE="ponder.create_refinery_n_reactors.vessel_maintenance.";
@@ -57,15 +57,16 @@ public final class VesselBasinPonderScenes {
         contents(scene,false,false);
         text(scene,util,INPUT,BASIN,"feed",140);
 
-        scene.world().showSection(util.select().position(STIRRER).add(util.select().position(COG)),Direction.UP);
+        scene.world().showSection(util.select().position(STIRRER).add(util.select().position(COG)).add(util.select().position(COG_MOTOR)),Direction.DOWN);
         scene.overlay().showOutline(PonderPalette.GREEN,"stirrer",util.select().position(STIRRER),80);
         scene.idle(7);
         contents(scene,true,false);
         text(scene,util,STIRRER,BASIN,"impeller",130);
-        var burners=util.select().fromTo(3,1,3,5,1,5).substract(util.select().position(STIRRER)).substract(util.select().position(COG));
+        var burners=util.select().fromTo(3,1,3,5,1,5);
         scene.world().showSection(burners,Direction.UP);
         scene.overlay().showControls(util.vector().centerOf(OWNER.below()),Pointing.RIGHT,45).rightClick().withItem(new ItemStack(Items.COAL));
-        scene.world().modifyBlocks(burners,state->state.setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED),false);
+        scene.world().modifyBlocks(burners,state->state.hasProperty(BlazeBurnerBlock.HEAT_LEVEL)
+            ? state.setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED) : state,false);
         text(scene,util,OWNER.below(),BASIN,"heat",130);
 
         scene.world().showSection(util.select().position(GAUGE),Direction.EAST);
@@ -84,11 +85,12 @@ public final class VesselBasinPonderScenes {
         var scene=begin(builder,"vessel_maintenance",MAINTENANCE,"Grades and cooling");
         scene.rotateCameraY(90);
         scene.world().showSection(util.select().fromTo(0,1,0,8,3,8).substract(util.select().fromTo(3,1,2,3,2,2)),Direction.DOWN);
+        scene.world().showSection(util.select().position(STIRRER).add(util.select().position(COG)).add(util.select().position(COG_MOTOR)),Direction.DOWN);
         windows(scene,true);speed(scene,util,false);coldContents(scene,250,0);
         storedFluid(scene,FluidForm.HIGH_PRESSURE_STEAM.stack(20000));gauge(scene,2,true);
         text(scene,util,GAUGE,MAINTENANCE,"pressure",140);
         text(scene,util,OWNER,MAINTENANCE,"boiling",180);
-        scene.overlay().showControls(util.vector().topOf(TOP),Pointing.DOWN,50).rightClick();
+        scene.overlay().showControls(util.vector().topOf(TOP.east()),Pointing.DOWN,50).rightClick();
         scene.world().modifyBlocks(util.select().fromTo(3,2,3,5,3,5),state->state.setValue(LiddedVesselBlock.OPEN,true),false);
         storedFluid(scene,FluidStack.EMPTY);gauge(scene,-1,false);
         text(scene,util,OWNER,MAINTENANCE,"hatch",160);

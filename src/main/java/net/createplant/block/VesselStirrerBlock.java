@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The stirrer of a stainless tank: it stands directly under the bottom centre of a 3x3 tank two or more layers high and, like Create's mechanical mixer,
- * is turned by cogwheels meshing with the gear round its middle. It turns the impellers in the tank's two lowest layers.
+ * The stirrer of a stainless tank: it stands on the top centre of a 3x3 tank two or more layers high and, like Create's mechanical mixer,
+ * is turned by cogwheels meshing with the gear round its middle. It turns the turbine inside the tank.
  */
 public class VesselStirrerBlock extends KineticBlock implements IBE<VesselStirrerBlockEntity>, ICogWheel {
     public VesselStirrerBlock(Properties properties) { super(properties); }
@@ -22,7 +22,7 @@ public class VesselStirrerBlock extends KineticBlock implements IBE<VesselStirre
     @Override public Direction.Axis getRotationAxis(BlockState state) { return Direction.Axis.Y; }
     @Override public boolean hasShaftTowards(LevelReader level, BlockPos pos, BlockState state, Direction face) { return false; }
 
-    /** The tank over it starts or stops stirring. */
+    /** The tank below it starts or stops stirring. */
     @Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moving) {
         super.onPlace(state, level, pos, old, moving);
         if (!state.is(old.getBlock())) ReactorStructure.changed(level, pos);

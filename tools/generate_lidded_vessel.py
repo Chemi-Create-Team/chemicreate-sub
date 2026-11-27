@@ -270,7 +270,7 @@ def internal_model(parts):
 
 def internals():
     for name, parts in (('reactor_impeller', impeller_parts(8, 3, 13)),
-                        ('reactor_impeller_wide', impeller_parts(12, 2, 16))):
+                        ('reactor_impeller_wide', impeller_parts(12, 10, 16))):
         write(A / f'models/block/lidded_vessel/internal/{name}.json', internal_model(parts))
     display = {
         'gui': {'rotation': [30, 225, 0], 'translation': [0, 0, 0], 'scale': [.8, .8, .8]},
@@ -313,7 +313,7 @@ NAMES = {
     f'reactor.{NS}.status.vessel': ('Use a 1×1 centrifuge vessel or a 3×3 reaction vessel', '遠心分離は1×1、反応槽は3×3で組み立ててください'),
     f'reactor.{NS}.status.contents': ('Empty the vessel first: it cannot hold anything of its own', '槽の中身を空にしてください'),
     f'reactor.{NS}.status.lid': ('Close the vessel hatch', '槽のハッチを閉じてください'),
-    f'reactor.{NS}.status.structure': ('Build a 3x3 stainless tank two or more layers high over a stirrer', '撹拌機の上に3×3・2段以上のステンレスタンクを組み立ててください'),
+    f'reactor.{NS}.status.structure': ('Build a 3×3 stainless tank at least two layers high and fit a stirrer on the roof', '3×3・2段以上のステンレスタンクを組み、天面中央に撹拌機を置いてください'),
 }
 
 

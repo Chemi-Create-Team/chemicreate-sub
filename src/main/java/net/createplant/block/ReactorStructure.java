@@ -9,8 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
 /**
- * A 3x3 stainless tank two to four layers high with a stirrer under its bottom centre runs the stirred process, one batch for each of the two
- * impeller layers. The hatch closes the pressure envelope. The northwest bottom member owns the process inventory.
+ * A 3x3 stainless tank two to four layers high with a roof-mounted stirrer runs two parallel stirred batches. The hatch closes the pressure envelope. The northwest bottom member owns the process inventory.
  */
 public final class ReactorStructure {
     public static final int MAX_SECTIONS=4;

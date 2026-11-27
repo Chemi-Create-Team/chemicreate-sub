@@ -24,7 +24,7 @@ def steel(name):
             r, g, b, a = px[x, y]
             if a == 0: continue
             grey = .3 * r + .59 * g + .11 * b
-            # Brighter and slightly blue, as the shell of the stainless tank above it.
+            # Brighter and slightly blue, as the shell of the stainless tank below it.
             level = min(255, round(grey * 1.12 + 18))
             px[x, y] = (round(level * .94), round(level * .97), min(255, level + 6), a)
     out = A / f'textures/block/{NAME}/{name}.png'
@@ -58,7 +58,7 @@ def models():
 
 
 def structure():
-    """The Ponder scene's tank: two layers over the stirrer, a cogwheel beside it on a creative motor in the floor, and burners at the corners."""
+    """The Ponder scene's tank: two layers with a roof stirrer, a cogwheel beside it, and burners at the corners."""
     import generate_petrochemical_ponder as ponder
     ponder.OUT = A / 'ponder/plant'
     s = ponder.Structure(9, 4)

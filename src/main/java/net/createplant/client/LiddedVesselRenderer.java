@@ -29,9 +29,7 @@ import net.createmod.catnip.render.FluidRenderHelper;
 import net.neoforged.neoforge.client.model.pipeline.VertexConsumerWrapper;
 
 /**
- * The contents, the impellers of a stirred tank and the top of a lidded vessel, drawn once from its controller. The top is a fixed plate across the
- * opening of the top layer with a one-block hatch in its middle that swings up about its hinge edge; both keep the block-face pixel density by
- * taking each block's share of the texture.
+ * Draws the contents, rotating assembly and roof once from the vessel's controller.
  */
 public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBlockEntity> {
     private static final float WALL = 2, MAX_ANGLE = 105;
@@ -55,10 +53,11 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         TextureAtlasSprite joined = width == 3 ? PlantTankModels.VESSEL_CAP.getTarget() : width == 2 ? atlas.apply(CreatePlant.location("block/lidded_vessel/top_2")) : top;
         VertexConsumer vc = buffer.getBuffer(RenderType.solid());
         float span = width * 16, middle = span / 2;
+        boolean stirred = be.stirred();
         if (width == 3) {
             var inner = atlas.apply(CreatePlant.location("block/tank/ammonia_separator_inner"));
-            LiddedVesselInterior.lining(ms, vc, height, windowMask(be, height), inner, light, overlay);
-            if (be.stirred()) {
+            LiddedVesselInterior.lining(ms, vc, height, windowMask(be, height), stirred, inner, light, overlay);
+            if (stirred) {
                 var shaft = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/shaft"));
                 renderStirringAssembly(be, height, ms, vc, edge, shaft, light, overlay);
             }
@@ -70,6 +69,17 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         }
         box(vc, ms, middle - 2, -1, span - 7, middle + 2, 0, span - 3, fitting, fitting, edge, light, overlay);
         box(vc, ms, middle - 3, -2, span - 6, middle + 3, -1, span - 4, edge, edge, fitting, light, overlay);
+        if (stirred) {
+            float half = LiddedVesselInterior.ROOF_INSERT_HALF;
+            ms.pushPose();
+            ms.translate(0, height - 1, 0);
+            squarePlate(vc, ms, span, middle - half, middle + half, joined, under, light, overlay);
+            ms.popPose();
+            LiddedVesselInterior.roundRoof(ms, vc, height, be.lidOpening(partialTicks), edge, top, light, overlay);
+            renderContents(be, width, height, ms, buffer, light, overlay);
+            return;
+        }
+
         // Wide vessels keep a 22 px hatch in the middle of their joined top.
         float h0 = middle - LiddedVesselBlock.HATCH_HALF, h1 = middle + LiddedVesselBlock.HATCH_HALF;
         ms.pushPose();
@@ -159,7 +169,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         for (int side = 0; side < 4; side++) {
             ms.pushPose();
             ms.translate(1.5, 0, 1.5);
-            ms.mulPose(Axis.YP.rotationDegrees(side * 90));
+            ms.mulPose(Axis.YP.rotationDegrees(45 + side * 90));
             ms.translate(-1.5, 0, -1.5);
             for (float y = LiddedVesselInterior.SHOULDER; y < roof; ) {
                 float end = Math.min(roof, (float) Math.floor(y / 16 + 1) * 16);
@@ -173,16 +183,16 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
 
         float angle = AnimationTickHolder.getRenderTime(be.getLevel()) * be.rotationSpeed() * .3f % 360 * (float) Math.PI / 180;
         ms.pushPose();
-        ms.translate(1, 0, 1);
+        ms.translate(1, height - .25, 1);
         CachedBuffers.partial(BEARING, be.getBlockState()).light(light).renderInto(ms, vc);
+        ms.translate(0, .25 - height, 0);
         CachedBuffers.partial(IMPELLER, be.getBlockState()).rotateCentered(angle, Direction.UP).light(light).renderInto(ms, vc);
         ms.translate(.5, 0, .5);
         ms.mulPose(Axis.YP.rotation(angle));
         ms.translate(-.5, 0, -.5);
         for (int y = 1; y < height; y++) {
             ms.translate(0, 1, 0);
-            float end = y == height - 1 ? 16 - WALL : 16;
-            box(vc, ms, 7, 0, 7, 9, end, 9, shaft, shaft, shaft, light, overlay);
+            box(vc, ms, 7, 0, 7, 9, 16, 9, shaft, shaft, shaft, light, overlay);
         }
         ms.popPose();
     }
@@ -313,6 +323,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         if (layer > 0 && layer < owner.getHeight() - 1) u0 += 8;
         float u1 = u0 + high - low;
         float v0 = owner.getHeight() == 1 ? 0 : layer == 0 ? 4 : 0;
+        if (owner.getWidth() == 3 && layer == 0) v0 += LiddedVesselBlock.DISH_RIM_HEIGHT - 4;
         float v1 = owner.getHeight() == 1 ? 8 : layer == owner.getHeight() - 1 ? 12 : 16;
         windowQuad(vc, ms, b, face, sprite, u0, v0, u1, v1, light, overlay);
         windowQuad(vc, ms, b, face.getOpposite(), sprite, u0, v0, u1, v1, light, overlay);

@@ -243,14 +243,13 @@ public final class ManufacturingPonderScenes {
         }
         int layers = 3;
         {
-            // The stirrer under the bottom centre, turned by a cogwheel beside it on a motor; burners under the rest of the tank.
-            BlockPos stirrer = owner.offset(1, -1, 1), cog = stirrer.north();
+            BlockPos stirrer = owner.offset(1, layers, 1), cog = stirrer.north();
             var floor = util.select().fromTo(owner.below(), owner.offset(2, -1, 2));
-            scene.world().setBlocks(floor.substract(util.select().position(stirrer)).substract(util.select().position(cog)), com.simibubi.create.AllBlocks.BLAZE_BURNER.getDefaultState(), false);
+            scene.world().setBlocks(floor, com.simibubi.create.AllBlocks.BLAZE_BURNER.getDefaultState(), false);
             scene.world().setBlock(stirrer, CEReactor.STIRRER.get().defaultBlockState(), false);
             scene.world().setBlock(cog, com.simibubi.create.AllBlocks.COGWHEEL.getDefaultState(), false);
-            scene.world().setBlock(cog.below(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, Direction.UP), false);
-            scene.world().setKineticSpeed(util.select().position(stirrer).add(util.select().position(cog.below())), 64);
+            scene.world().setBlock(cog.above(), com.simibubi.create.AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING, Direction.DOWN), false);
+            scene.world().setKineticSpeed(util.select().position(stirrer).add(util.select().position(cog.above())), 64);
             scene.world().setKineticSpeed(util.select().position(cog), -64);
             heat(scene, owner.below(), recipe);
         }

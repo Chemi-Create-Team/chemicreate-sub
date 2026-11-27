@@ -70,6 +70,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     public static final BooleanProperty LADDER = BooleanProperty.create("ladder");
     /** Half the width of a wide vessel's hatch in pixels: it is 22 px across, centred on the top. */
     public static final int HATCH_HALF = 11;
+    public static final int DISH_RIM_HEIGHT = 10;
     /** Open shapes of the blocks under a 2x2 vessel's hatch: the quarter of the hatch over this block is hollow, with and without the floor. */
     private static final Map<Hatch, VoxelShape[]> QUARTERS = new EnumMap<>(Hatch.class);
 
@@ -185,7 +186,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         var owner = vessel == null ? null : vessel.getControllerBE();
         if (owner == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
-        if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == this || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && (blockItem.getBlock() == this || blockItem.getBlock() == net.createplant.registry.CEReactor.STIRRER.get()) || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (StatefulBuckets.emptyProcessBucket(stack))
             return StatefulBuckets.fillFromTank(stack, player, hand, level.getCapability(Capabilities.FluidHandler.BLOCK, owner.getBlockPos(), Direction.DOWN));
         var fluid = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
@@ -251,7 +252,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
 
     @Override public Direction.Axis getRotationAxis(BlockState state) { return Direction.Axis.Y; }
 
-    /** The stirrer under a tank turns its impellers; the tank itself takes no shaft. */
+    /** The stirrer on the tank roof turns its turbine; the tank itself takes no shaft. */
     @Override public boolean hasShaftTowards(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state, Direction side) { return false; }
 
     @Override public Class<LiddedVesselBlockEntity> getBlockEntityClass() { return LiddedVesselBlockEntity.class; }

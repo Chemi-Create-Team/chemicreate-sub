@@ -61,7 +61,7 @@ final class VesselContentsClientCheck {
         Screenshot.grab(mc.gameDirectory,"quality-vessel-contents-"+name+".png",mc.getMainRenderTarget(),message->{});
         if(phase<4){phase++;ticks=0;prepare(mc,phase);return false;}
         mc.options.hideGui=hideGui;mc.options.fov().set(fov);
-        org.slf4j.LoggerFactory.getLogger(VesselContentsClientCheck.class).info("VESSEL CONTENTS PASS: four native 3x3x2 vessels; half/full/empty amounts, window geometry, bottom drives and submerged internals inspected");
+        org.slf4j.LoggerFactory.getLogger(VesselContentsClientCheck.class).info("VESSEL CONTENTS PASS: four native 3x3x2 vessels; half/full/empty amounts, window geometry, roof drives and submerged internals inspected");
         return true;
     }
 
@@ -87,8 +87,8 @@ final class VesselContentsClientCheck {
                         tank.drain(Integer.MAX_VALUE,EXECUTE);owner.toggleLid();
                         var cog=owner.stirrerPos().north();
                         level.setBlock(cog,AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.Y),Block.UPDATE_ALL);
-                        var motor=cog.below();
-                        level.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP),Block.UPDATE_ALL);
+                        var motor=cog.above();
+                        level.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.DOWN),Block.UPDATE_ALL);
                         ((CreativeMotorBlockEntity)level.getBlockEntity(motor)).generatedSpeed.setValue(32);
                     }
                     owner.sendData();

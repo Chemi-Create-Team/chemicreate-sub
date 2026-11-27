@@ -30,7 +30,7 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class DriveLessVesselGameTests {
-    private static final BlockPos BASE = new BlockPos(4, 3, 4), STIRRER = BASE.offset(1, -1, 1);
+    private static final BlockPos BASE = new BlockPos(4, 3, 4), STIRRER = BASE.offset(1, 2, 1);
 
     /** What a Create pump asks for: the fluid the port holds, with its temperature, burning leaves the gas hot. */
     private static FluidStack held(net.neoforged.neoforge.fluids.capability.IFluidHandler port, net.minecraft.world.level.material.Fluid fluid, int amount) {
@@ -130,7 +130,7 @@ public class DriveLessVesselGameTests {
         h.runAfterDelay(5, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(pos)).generatedSpeed.setValue(128));
     }
 
-    private static void drive(GameTestHelper h) { ReactorGameTests.driveStirrer(h, STIRRER); }
+    private static void drive(GameTestHelper h) { ReactorGameTests.driveStirrer(h, BASE); }
 
     private static VesselStirrerBlockEntity stirrer(GameTestHelper h) { return (VesselStirrerBlockEntity) h.getBlockEntity(STIRRER); }
 
@@ -175,7 +175,7 @@ public class DriveLessVesselGameTests {
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
-    public static void resizingATankEngagesTheStirrerOnlyUnderAThreeByThree(GameTestHelper h) {
+    public static void resizingATankEngagesTheStirrerOnlyOnAThreeByThree(GameTestHelper h) {
         for (int y = 0; y < 2; y++) for (int x = 0; x < 2; x++) for (int z = 0; z < 2; z++) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
         h.setBlock(STIRRER, net.createplant.registry.CEReactor.STIRRER.get());
         var owner = ((LiddedVesselBlockEntity) h.getBlockEntity(BASE)).getControllerBE();
@@ -184,12 +184,12 @@ public class DriveLessVesselGameTests {
         // Left still, so that no stirred recipe takes the stored water while the tank is 3x3.
         h.runAfterDelay(30, () -> {
             h.assertTrue(owner.getWidth() == 2 && !owner.stirred() && stirrer(h).calculateStressApplied() == 0,
-                "A stirrer under a 2x2 tank stirs nothing and carries no load");
+                "A stirrer on a 2x2 tank stirs nothing and carries no load");
             for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
         });
         h.runAfterDelay(65, () -> {
             h.assertTrue(owner.getWidth() == 3 && owner.stirred() && stirrer(h).vessel() == owner && stirrer(h).calculateStressApplied() == 32,
-                "Expanding to 3x3 over the stirrer makes a stirred tank whose load the stirrer carries");
+                "Expanding to 3x3 under the stirrer makes a stirred tank whose load the stirrer carries");
             for (int y = 1; y >= 0; y--) for (int x = 2; x >= 0; x--) for (int z = 2; z >= 0; z--) if (x == 2 || z == 2) h.setBlock(BASE.offset(x, y, z), Blocks.AIR);
         });
         h.runAfterDelay(110, () -> {
@@ -270,8 +270,8 @@ public class DriveLessVesselGameTests {
         var owner = vessel(h);
         var port = owner.port(Direction.NORTH);
         port.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000), EXECUTE);
-        // Tanks round the stirrer under the vessel.
-        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x != 1 || z != 1) h.setBlock(BASE.offset(x, -1, z), CETransport.LIDDED_VESSEL.get());
+        // An incomplete third layer round the stirrer.
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) if (x != 1 || z != 1) h.setBlock(BASE.offset(x, 2, z), CETransport.LIDDED_VESSEL.get());
         owner.validateStructure();
         h.assertTrue(owner.isController() && owner.getBlockPos().equals(h.absolutePos(BASE)) && owner.stirred(), "Tanks placed under it cannot strand a filled process in a non-controller member");
         h.assertTrue(owner.port(Direction.NORTH).getFluidInTank(0).getAmount() == 1000, "The feed remains reachable at its original controller");

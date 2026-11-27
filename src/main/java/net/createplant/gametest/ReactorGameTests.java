@@ -64,7 +64,7 @@ public class ReactorGameTests {
     public static ReactorMachineBlockEntity assemble(ServerLevel level,BlockPos base,ReactorModule kind,int sections) {
         if (kind==ReactorModule.PREHEATER) return ThermalControlGameTests.build(level,base,Direction.NORTH,sections);
         if (kind==ReactorModule.TOWER) return AbsorptionTowerGameTests.tower(level,base.offset(1,0,1),sections,false);
-        // A stirred tank stands two or more layers high over its stirrer.
+        // Fit the stirrer on a tank at least two layers high.
         for (int y=1;y<=Math.max(sections,LiddedVesselBlockEntity.IMPELLER_LAYERS);y++) layer(level,base,y);
         stir(level,base);
         var be=(ReactorMachineBlockEntity)level.getBlockEntity(base);be.validateStructure();return be;
@@ -73,13 +73,17 @@ public class ReactorGameTests {
     public static void layer(ServerLevel level,BlockPos base,int y) {
         for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,y-1,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
     }
-    /** A stirrer under the bottom centre of the 3x3 tank whose controller is at base. */
-    public static void stir(ServerLevel level,BlockPos base) { level.setBlock(base.offset(1,-1,1),CEReactor.STIRRER.get().defaultBlockState(),3); }
-    /** A cogwheel meshing with the stirrer's gear from the north, turned by a creative motor under it at 128 RPM, as a mechanical mixer is driven. */
-    public static void driveStirrer(GameTestHelper h,BlockPos stirrer) {
-        BlockPos cog=stirrer.north(),motor=cog.below();
+    /** Install the stirrer on the roof of the 3x3 tank whose controller is at base. */
+    public static void stir(ServerLevel level,BlockPos base) {
+        var owner = ((LiddedVesselBlockEntity) level.getBlockEntity(base)).getControllerBE();
+        level.setBlock(owner.stirrerPos(), CEReactor.STIRRER.get().defaultBlockState(), 3);
+    }
+    /** Drive the roof stirrer through a cogwheel beside it. */
+    public static void driveStirrer(GameTestHelper h,BlockPos base) {
+        var owner = ((LiddedVesselBlockEntity) h.getBlockEntity(base)).getControllerBE();
+        BlockPos cog = base.offset(1, owner.getHeight(), 0), motor = cog.above();
         h.setBlock(cog,AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.Y));
-        h.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.UP));
+        h.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING,Direction.DOWN));
         h.runAfterDelay(5,()->((CreativeMotorBlockEntity)h.getBlockEntity(motor)).generatedSpeed.setValue(128));
     }
     private static ReactorMachineBlockEntity build(GameTestHelper h,ReactorModule kind,int sections) { return assemble(h.getLevel(),h.absolutePos(BASE),kind,sections); }
@@ -212,7 +216,7 @@ public class ReactorGameTests {
         h.assertTrue(!vessel.open(),"The player closed the hatch for processing");
         heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
         ((BlazeBurnerBlockEntity)h.getLevel().getBlockEntity(pos.below())).isCreative=true;
-        driveStirrer(h,BASE.offset(1,-1,1));
+        driveStirrer(h,BASE);
         h.succeedWhen(()->{
             var output=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,pos,Direction.WEST);
             var crystals=output.getStackInSlot(vessel.inputItemSlots());
@@ -507,14 +511,15 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void expandingIsBoundedAndOutputBackpressureIsAtomic(GameTestHelper h) {
         var be=build(h,ReactorModule.STIRRED,4);heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
-        speed(be,32);h.assertTrue(be.sections()==2 && receiver(be).calculateStressApplied()==32 && be.calculateStressApplied()==0,"A four-layer tank still stirs with two impellers, charging 32 SU/RPM to its stirrer");
+        speed(be,32);h.assertTrue(be.sections()==2 && receiver(be).calculateStressApplied()==32 && be.calculateStressApplied()==0,"A four-layer tank still runs two batches, charging 32 SU/RPM to the roof stirrer");
         for (int i=0;i<8;i++) { in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,300); }
         h.assertTrue(out(be).getFluidInTank(0).getAmount()==8000 && out(be).getTankCapacity(0)==8000,"Finite liquid output capacity holds exactly eight batches");
         in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,600);
         h.assertTrue(in(be).getFluidInTank(0).getAmount()==1000,"A full liquid product buffer consumes no feed");
         out(be).drain(1000,EXECUTE);run(be,300);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==8000,"Making room permits exactly one further batch");
-        layer(h.getLevel(),h.absolutePos(BASE),5);
-        be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==4,"A fifth layer cannot join a vessel four blocks high");h.succeed();
+        for (int x=0;x<3;x++) for (int z=0;z<3;z++)
+            if (x!=1 || z!=1) h.setBlock(BASE.offset(x,4,z),CETransport.LIDDED_VESSEL.get());
+        be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==4,"An attempted fifth layer leaves the roof drive and four-layer process intact");h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void heaterRequiresRealHeatAndColumnRequiresColdFeed(GameTestHelper h) {
@@ -741,24 +746,29 @@ public class ReactorGameTests {
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
-    public static void theTankStirsOnlyClosedTwoLayersHighAndOverItsStirrer(GameTestHelper h) {
+    public static void theTankStirsOnlyClosedTwoLayersHighWithARoofStirrer(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(BASE);
         for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,0,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
         stir(level,base);
         var owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();owner.validateStructure();
-        h.assertTrue(owner.module()==ReactorModule.NONE && !owner.formed(),"A one-layer tank has no room for impellers and stays plain storage over a stirrer");
+        h.assertTrue(owner.module()==ReactorModule.NONE && !owner.formed(),"A one-layer tank stays plain storage with a roof stirrer");
+        level.removeBlock(owner.stirrerPos(),false);
         layer(level,base,2);
         owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();
+        level.setBlock(base.offset(1,-1,1), CEReactor.STIRRER.get().defaultBlockState(), 3);
+        owner.validateStructure();
+        h.assertTrue(!owner.stirred() && !owner.formed(),"The old bottom position is not a drive input");
+        stir(level,base);
         owner.getTankInventory().fill(new FluidStack(Fluids.WATER,1000),EXECUTE);owner.validateStructure();
         h.assertTrue(owner.stirred() && owner.formed() && owner.sections()==2 && owner.getTankInventory().getFluidAmount()==1000,
-            "Two layers over the stirrer form a stirred tank with two impellers that keeps its storage water as a mixing pool");
+            "The top drive forms two stirred batches and keeps the water as a mixing pool");
         var stirrer=(VesselStirrerBlockEntity)level.getBlockEntity(owner.stirrerPos());
-        h.assertTrue(stirrer.vessel()==owner && stirrer.calculateStressApplied()==32 && owner.calculateStressApplied()==0,"The stirrer carries the two impellers' 32 SU/RPM; the tank none");
+        h.assertTrue(stirrer.vessel()==owner && stirrer.calculateStressApplied()==32 && owner.calculateStressApplied()==0,"The stirrer carries 32 SU/RPM; the tank none");
         h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(level.getBlockState(base).getShape(level,base),
             net.minecraft.world.phys.shapes.Shapes.block(),net.minecraft.world.phys.shapes.BooleanOp.NOT_SAME),"The stirred vessel keeps its complete square corner");
         var port=level.getCapability(Capabilities.FluidHandler.BLOCK,base.offset(2,0,1),Direction.EAST);
         h.assertTrue(port!=null && port.getTanks()==10,"Every vessel wall reaches three feed buffers, five product buffers and two physical storage phases");
-        for (Direction face:Direction.values()) h.assertTrue(!CETransport.LIDDED_VESSEL.get().hasShaftTowards(level,owner.stirrerPos().above(),level.getBlockState(owner.stirrerPos().above()),face),
+        for (Direction face:Direction.values()) h.assertTrue(!CETransport.LIDDED_VESSEL.get().hasShaftTowards(level,owner.stirrerPos().below(),level.getBlockState(owner.stirrerPos().below()),face),
             "The tank itself takes no shaft");
         owner.toggleLid();
         h.assertTrue(level.getBlockState(base.offset(1,1,1)).getValue(LiddedVesselBlock.HATCH)==LiddedVesselBlock.Hatch.FULL && level.getBlockState(base.offset(2,1,2)).getValue(LiddedVesselBlock.HATCH)==LiddedVesselBlock.Hatch.NONE,"Only the top centre opens");
@@ -775,7 +785,7 @@ public class ReactorGameTests {
         for (int y=0;y<2;y++) for (int x=0;x<2;x++) for (int z=0;z<2;z++) level.setBlock(base.offset(x,y,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
         var owner=((LiddedVesselBlockEntity)level.getBlockEntity(base)).getControllerBE();
         h.assertTrue(owner.getWidth()==2 && owner.getHeight()==2,"Eight blocks form a 2x2 vessel two high");
-        level.setBlock(base.offset(1,-1,1),CEReactor.STIRRER.get().defaultBlockState(),3);owner.validateStructure();
+        stir(level,base);owner.validateStructure();
         h.assertTrue(!owner.formed() && owner.module()==ReactorModule.NONE,"A 2x2 tank cannot stir");
         h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(level.getBlockState(base).getShape(level,base),
             net.minecraft.world.phys.shapes.Shapes.block(),net.minecraft.world.phys.shapes.BooleanOp.NOT_SAME),"A closed 2x2 vessel keeps its complete square corner");

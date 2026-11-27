@@ -71,25 +71,22 @@ class Structure:
         self.block(x, y, z, 'create:blaze_burner', blaze=heat)
 
     def reactor(self, x, y, z, kind, sections, burners=(), heat='kindled', windows=False):
-        """
-        A stirred stainless tank, two or more layers high, over its stirrer under the bottom centre; a cogwheel beside the stirrer, on a creative motor
-        in the floor, turns it as a mechanical mixer is driven.
-        """
+        """A stainless tank with its stirrer and cogwheel mounted at roof level."""
         if kind == 'centrifuge':
             self.centrifuge(x, y, z, sections)
             return
         assert kind == 'stirred', kind
         sections = max(2, sections)
-        burners = tuple((-1, -1) if pos in ((0, 0), (0, -1)) else pos for pos in burners)
+        top = y + sections
+        burners = tuple(burners)
+        self.size = self.size[0], max(self.size[1], top + 2), self.size[2]
         for dx in range(-1, 2):
             for dz in range(-1, 2):
-                if (dx, dz) == (0, 0): self.block(x, y - 1, z, NS + 'vessel_stirrer')
-                elif (dx, dz) == (0, -1): self.block(x, y - 1, z - 1, 'create:cogwheel', axis='y', waterlogged='false')
-                elif (dx, dz) in burners: self.burner(x + dx, y - 1, z + dz, heat)
+                if (dx, dz) in burners: self.burner(x + dx, y - 1, z + dz, heat)
                 else: self.block(x + dx, y - 1, z + dz, 'create:andesite_casing')
-        motor = (x, y - 2, z - 1)
-        if motor in self.positions: self.replace(*motor, 'create:creative_motor', facing='up')
-        else: self.block(*motor, 'create:creative_motor', facing='up')
+        self.block(x, top, z, NS + 'vessel_stirrer')
+        self.block(x, top, z - 1, 'create:cogwheel', axis='y', waterlogged='false')
+        self.block(x, top + 1, z - 1, 'create:creative_motor', facing='down')
         origin = (x - 1, y, z - 1)
         for i in range(sections):
             for dx in range(-1, 2):

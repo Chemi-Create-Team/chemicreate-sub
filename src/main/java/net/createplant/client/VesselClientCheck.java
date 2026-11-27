@@ -46,6 +46,8 @@ final class VesselClientCheck {
             var model = mc.getBlockRenderer().getBlockModel(state);
             var data = model.getModelData(world, cellPos, state, ModelData.EMPTY);
             for (var opening : profile.openings()) {
+                if (vessel.getWidth() == 3 && layer == 0 && opening.box().minY < net.createplant.block.LiddedVesselBlock.DISH_RIM_HEIGHT / 16d)
+                    throw new IllegalStateException("A window overlaps the tapered floor at " + cellPos);
                 openings++;
                 int axis = opening.face().getAxis().ordinal(), u = axis == 0 ? 2 : 0;
                 for (int side = -1; side < 6; side++) for (var quad : model.getQuads(state, side < 0 ? null : Direction.values()[side], RandomSource.create(42), data, null)) {

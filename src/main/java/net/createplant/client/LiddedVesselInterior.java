@@ -2,6 +2,7 @@ package net.createplant.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.createplant.block.LiddedVesselBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -12,7 +13,8 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Shared cross-sections for the stainless lining, sight tunnels and fluid inside a three-wide tank. */
 final class LiddedVesselInterior {
-    static final float FLOOR = 2, SHOULDER = 10, CENTRE = 24;
+    static final float FLOOR = 2, SHOULDER = LiddedVesselBlock.DISH_RIM_HEIGHT, CENTRE = 24;
+    static final float ROOF_INSERT_HALF = 16;
     static final Direction[] WINDOW_FACES = {Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
     private static final int SIDES = 32, PER_QUADRANT = SIDES / 4;
     private static final float WINDOW_HALF = 4, SHELL_RADIUS = 22, FLUID_INSET = .06f;
@@ -65,11 +67,11 @@ final class LiddedVesselInterior {
         return Math.max(0, radius / 16 - .39f);
     }
 
-    static void lining(PoseStack ms, VertexConsumer vc, int height, int windows, TextureAtlasSprite steel, int light, int overlay) {
+    static void lining(PoseStack ms, VertexConsumer vc, int height, int windows, boolean stirred, TextureAtlasSprite steel, int light, int overlay) {
         float roof = height * 16 - 2;
         for (int layer = 0; layer < height; layer++) {
             int start = layer * 16, end = Math.min(start + 16, (int) roof);
-            int sill = start + (layer == 0 ? 4 : 0), lintel = layer == height - 1 ? start + 12 : end;
+            int sill = start + (layer == 0 ? (int) SHOULDER : 0), lintel = layer == height - 1 ? start + 12 : end;
             int openings = windows >>> (layer * 4) & 15;
             for (int bottom = Math.max(start, (int) FLOOR); bottom < end; ) {
                 int top = bottom < SHOULDER ? bottom + 1 : bottom < lintel ? lintel : end;
@@ -93,16 +95,44 @@ final class LiddedVesselInterior {
             }
         }
 
-        // The four corners of the square hatch reach just beyond the circular lip.
-        Ring lip = ring(roof);
+        // Close the tiny gaps between the ordinary square hatch's corners and the round bore.
+        if (!stirred) {
+            Ring lip = ring(roof);
+            for (int i = 0; i < SIDES; i++) {
+                Point a = lip.at(i), b = lip.at(i + 1);
+                horizontal(vc, ms.last(), steel, a, b, b.toSquare(SHELL_RADIUS), a.toSquare(SHELL_RADIUS), roof, 1, light, overlay);
+            }
+        }
+    }
+
+    static void roundRoof(PoseStack ms, VertexConsumer vc, int height, float opening, TextureAtlasSprite steel,
+            TextureAtlasSprite shutter, int light, int overlay) {
+        Ring rim = DISH[DISH.length - 1];
+        float top = height * 16;
+        float clear = mix(1.45f / 15, 1, opening);
         var pose = ms.last();
         for (int i = 0; i < SIDES; i++) {
-            Point a = lip.at(i), b = lip.at(i + 1), A = a.toSquare(SHELL_RADIUS), B = b.toSquare(SHELL_RADIUS);
-            flat(vc, pose, steel, a, roof, 1, -1, light, overlay);
-            flat(vc, pose, steel, b, roof, 1, -1, light, overlay);
-            flat(vc, pose, steel, B, roof, 1, -1, light, overlay);
-            flat(vc, pose, steel, A, roof, 1, -1, light, overlay);
+            Point a = rim.at(i), b = rim.at(i + 1), A = a.toSquare(ROOF_INSERT_HALF), B = b.toSquare(ROOF_INSERT_HALF);
+            horizontal(vc, pose, steel, a, b, B, A, top, 1, light, overlay);
+            horizontal(vc, pose, steel, b, a, A, B, top - 2, -1, light, overlay);
+            strip(vc, pose, steel, a, b, a, b, top - 2, top, 0, (ARC[i + 1] - ARC[i]) / 16, 0, .125f, 0, 0, -1, -1, 0, -1, light, overlay);
+            if (opening < 1) {
+                // The circular shutter retracts into the rim, clear of the overhead motor and the shaft seal.
+                Point low = a.scaled(clear), high = b.scaled(clear);
+                horizontal(vc, pose, shutter, low, high, b, a, top - .5f, 1, light, overlay);
+                horizontal(vc, pose, shutter, high, low, a, b, top - 1.5f, -1, light, overlay);
+                strip(vc, pose, shutter, low, high, low, high, top - 1.5f, top - .5f, 0, .25f,
+                    0, .0625f, 0, 0, -1, -1, 0, -1, light, overlay);
+            }
         }
+    }
+
+    private static void horizontal(VertexConsumer vc, PoseStack.Pose pose, TextureAtlasSprite sprite, Point a, Point b, Point c, Point d,
+            float y, int normal, int light, int overlay) {
+        flat(vc, pose, sprite, a, y, normal, -1, light, overlay);
+        flat(vc, pose, sprite, b, y, normal, -1, light, overlay);
+        flat(vc, pose, sprite, c, y, normal, -1, light, overlay);
+        flat(vc, pose, sprite, d, y, normal, -1, light, overlay);
     }
 
     static void fluid(FluidStack stack, float bottom, float top, VertexConsumer vc, PoseStack ms, int light, int overlay) {
@@ -245,6 +275,7 @@ final class LiddedVesselInterior {
         Point lerp(Point other, float t) { return new Point(mix(x, other.x, t), mix(z, other.z, t), mix(nx, other.nx, t), mix(nz, other.nz, t)); }
         Point toShell(Direction face) { return face.getAxis() == Direction.Axis.X ? new Point(SHELL_RADIUS * face.getStepX(), z, 0, 0) : new Point(x, SHELL_RADIUS * face.getStepZ(), 0, 0); }
         Point toSquare(float radius) { float scale = radius / Math.max(Math.abs(x), Math.abs(z)); return new Point(x * scale, z * scale, 0, 0); }
+        Point scaled(float scale) { return new Point(x * scale, z * scale, nx, nz); }
         Point inset(float amount) { return new Point(x - nx * amount, z - nz * amount, nx, nz); }
     }
 }

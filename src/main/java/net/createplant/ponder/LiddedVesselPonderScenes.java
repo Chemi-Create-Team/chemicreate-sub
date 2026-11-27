@@ -91,7 +91,7 @@ public final class LiddedVesselPonderScenes {
 
         lid(scene, util, vessel, top, true);
         text(scene, util, top, 120, "open");
-        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(2, 1, 2), Direction.DOWN), Pointing.UP, 60).withItem(CEReactor.STIRRER.toStack());
+        scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 60).withItem(CEReactor.STIRRER.toStack());
         text(scene, util, top, 140, "internals");
 
         lid(scene, util, vessel, top, false);
@@ -145,32 +145,32 @@ public final class LiddedVesselPonderScenes {
         scene.markAsFinished();
     }
 
-    /** The stirrer under a stainless tank: placing it, the cogwheel that turns it, and the impellers it turns in the tank's two lowest layers. */
+    /** Fitting the roof-mounted drive and inspecting the round hatch. */
     public static void internals(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("vessel_internals", PonderText.title(INTERNAL_LANG + "title", "Stirring a stainless tank"));
         scene.configureBasePlate(0, 0, 9);
         scene.scaleSceneView(1.1f);
         scene.showBasePlate();
-        BlockPos stirrer = util.grid().at(4, 1, 4), cog = stirrer.north(), centre = stirrer.above(), top = centre.above();
+        BlockPos stirrer = util.grid().at(4, 4, 4), cog = stirrer.north(), top = stirrer.below();
         var origin = util.grid().at(3, 2, 3);
-        Selection drive = util.select().position(stirrer).add(util.select().position(cog));
+        Selection drive = util.select().position(stirrer).add(util.select().position(cog)).add(util.select().position(cog.above()));
         Selection vessel = util.select().fromTo(3, 2, 3, 5, 3, 5);
         scene.idle(10);
+        scene.world().showSection(util.select().fromTo(3, 1, 3, 5, 1, 5), Direction.UP);
+        scene.world().showSection(vessel, Direction.DOWN);
+        scene.idle(15);
         scene.world().showSection(drive, Direction.DOWN);
         scene.overlay().showOutline(net.createmod.ponder.api.PonderPalette.GREEN, "stirrer", util.select().position(stirrer), 140);
         PonderText.caption(scene, util.vector().centerOf(stirrer), INTERNAL_LANG + "install", 140);
-        scene.world().showSection(util.select().fromTo(3, 1, 3, 5, 1, 5).substract(drive), Direction.UP);
-        scene.world().showSection(vessel, Direction.DOWN);
-        scene.idle(15);
         inspectionWindows(scene, origin, 3, 2);
         scene.rotateCameraY(180);
-        lid(scene, util, vessel, top, true);
-        PonderText.caption(scene, util.vector().topOf(top), INTERNAL_LANG + "impeller", 160);
-        lid(scene, util, vessel, top, false);
+        lid(scene, util, vessel, top.east(), true);
+        PonderText.caption(scene, util.vector().topOf(top.east()), INTERNAL_LANG + "impeller", 160);
+        lid(scene, util, vessel, top.east(), false);
         scene.rotateCameraY(-180);
         scene.world().setKineticSpeed(util.select().position(stirrer), 64);
-        scene.world().setKineticSpeed(util.select().position(cog).add(util.select().position(cog.below())), -64);
+        scene.world().setKineticSpeed(util.select().position(cog).add(util.select().position(cog.above())), -64);
         PonderText.caption(scene, util.vector().blockSurface(cog, Direction.NORTH), INTERNAL_LANG + "operate", 160);
         scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 80).withItem(AllItems.GOGGLES.asStack());
         scene.idle(100);

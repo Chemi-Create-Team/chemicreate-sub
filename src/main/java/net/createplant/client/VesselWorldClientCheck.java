@@ -220,7 +220,7 @@ final class VesselWorldClientCheck {
                     throw new IllegalStateException("The vessel casing exposes an external shaft at " + pos);
             }
             if (i == 3 && !mc.level.getBlockState(owner.stirrerPos()).is(CEReactor.STIRRER.get()))
-                throw new IllegalStateException("The separate stirrer under the vessel is missing");
+                throw new IllegalStateException("The separate stirrer on the vessel roof is missing");
             if (windowed) VesselClientCheck.verifyWindowQuads(mc, mc.level, owner);
             var liquid = owner.displayedFluid(7);
             if (!(i == 2 ? net.createplant.thermal.FluidForm.LIQUID_NITROGEN.matches(liquid) : liquid.is(Fluids.WATER)) || liquid.isEmpty()

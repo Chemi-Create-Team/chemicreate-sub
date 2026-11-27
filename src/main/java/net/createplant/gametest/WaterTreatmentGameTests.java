@@ -15,7 +15,6 @@ import net.createplant.cloud.GasClouds;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEProcessFluids;
-import net.createplant.registry.CEReactor;
 import net.createplant.registry.CETransport;
 import net.createplant.registry.CEWaterTreatment;
 import net.createplant.registry.CEWorldFluids;
@@ -47,7 +46,7 @@ public final class WaterTreatmentGameTests {
 
     private static LiddedVesselBlockEntity vessel(GameTestHelper h, BlockPos base) {
         for (int y = 0; y < 2; y++) for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(base.offset(x, y, z), CETransport.LIDDED_VESSEL.get());
-        h.setBlock(base.offset(1, -1, 1), CEReactor.STIRRER.get());
+        ReactorGameTests.stir(h.getLevel(), h.absolutePos(base));
         var owner = ((LiddedVesselBlockEntity) h.getBlockEntity(base)).getControllerBE();owner.validateStructure();
         h.assertTrue(owner.formed(), "The treatment stage uses an ordinary stirred tank");
         return owner;
@@ -213,7 +212,7 @@ public final class WaterTreatmentGameTests {
         BlockPos first = new BlockPos(3, 3, 5), second = first.east(5), third = first.east(10), receiver = first.east(15);
         var one = vessel(h, first);var two = vessel(h, second);var three = vessel(h, third);
         reagent(h, one, Items.CALCITE);reagent(h, two, CEWaterTreatment.FLOCCULANT.get());reagent(h, three, CEWaterTreatment.FILTER_MEDIUM.get());
-        for (BlockPos pos : new BlockPos[] {first, second, third}) ReactorGameTests.driveStirrer(h, pos.offset(1, -1, 1));
+        for (BlockPos pos : new BlockPos[] {first, second, third}) ReactorGameTests.driveStirrer(h, pos);
         transfer(h, first, CEWaterTreatment.NEUTRALIZED_WASTEWATER.get());transfer(h, second, CEWaterTreatment.CLARIFIED_WATER.get());transfer(h, third, Fluids.WATER);
         h.setBlock(receiver, AllBlocks.FLUID_TANK.get());var tank = ((FluidTankBlockEntity) h.getBlockEntity(receiver)).getTankInventory();
         h.assertTrue(fluids(h, first).fill(FluidThermal.at(new FluidStack(CEProcessFluids.WASTEWATER.get(), 1000), 318.15), EXECUTE) == 1000,

@@ -54,19 +54,19 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 /**
  * Create's tank inventory and joining, up to 3x3 across and four blocks high. Whether the hatch is open is the block state of every part, set from
  * the controller; while it is open the contents stand at atmospheric pressure, and opening it under pressure throws out what was held back.
- * A 3x3 vessel two or more layers high with a stirrer under its bottom centre is a stirred tank: the stirrer turns impellers in its two lowest
- * layers, and the vessel runs the stirred process.
+ * A 3x3 vessel two or more layers high runs the stirred process when a stirrer is mounted on the roof centre.
  */
 public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implements IMultiBlockEntityContainer.Fluid {
     /** Reinforced lidded vessels share Create's 16 bar gameplay pressure rating. */
     private final GradeFluidTank tankInventory;
-    /** Stirred tanks turn impellers in this many of their lowest layers, whatever their height. */
+    /** The minimum stirred height and number of parallel batches. */
     public static final int IMPELLER_LAYERS = 2;
     private BlockPos controller, lastKnownPos;
     private int width = 1, height = 1;
     private boolean updateConnectivity, refreshing, connectionsPending;
-    /** Whether a stirrer stands under the bottom centre. Kept by the controller. */
+    /** Whether a stirrer is mounted on the roof centre. Kept by the controller. */
     private boolean stirrer;
+    private BlockPos checkedStirrer;
     private LerpedFloat fluidLevel = LerpedFloat.linear().startWithValue(0);
     private final LerpedFloat lid;
     /** An impeller or reaction tray fitted before stirrers replaced them; it is dropped once the vessel loads. */
@@ -281,14 +281,25 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         return owner != null && owner.width == 3 && owner.height >= IMPELLER_LAYERS && owner.stirrer ? ReactorModule.STIRRED : ReactorModule.NONE;
     }
     public boolean stirred() { return module() == ReactorModule.STIRRED; }
-    /** Where the stirrer of this vessel stands: under the bottom centre. Called on the controller. */
-    public BlockPos stirrerPos() { return worldPosition.offset(width / 2, -1, width / 2); }
+    /** The stirrer sits directly on the centre of the top layer. Called on the controller. */
+    public BlockPos stirrerPos() { return top().above(); }
+
     private void refreshStirrer() {
-        if (level == null || level.isClientSide || !isController()) return;
+        if (level == null || level.isClientSide) return;
+        var previous = checkedStirrer;
         var at = stirrerPos();
-        boolean found = width == 3 && level.hasChunkAt(at) && level.getBlockState(at).is(CEReactor.STIRRER.get());
-        if (found != stirrer) { stirrer = found;sendData(); }
-        if (level.hasChunkAt(at) && level.getBlockEntity(at) instanceof VesselStirrerBlockEntity drive) drive.refreshStress();
+        boolean found = isController() && width == 3 && height >= IMPELLER_LAYERS && level.hasChunkAt(at) && level.getBlockState(at).is(CEReactor.STIRRER.get());
+        if (found != stirrer) {
+            stirrer = found;
+            sendData();
+        }
+        checkedStirrer = found ? at : null;
+        if (previous != null && !previous.equals(checkedStirrer)) refreshStirrerStress(previous);
+        if (found) refreshStirrerStress(at);
+    }
+
+    private void refreshStirrerStress(BlockPos pos) {
+        if (level.hasChunkAt(pos) && level.getBlockEntity(pos) instanceof VesselStirrerBlockEntity drive) drive.refreshStress();
     }
     @Override protected boolean processController() { return isController() && module() != ReactorModule.NONE; }
     @Override protected boolean vesselOpen() { return open(); }
@@ -300,7 +311,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         return level.hasChunkAt(at) && level.getBlockEntity(at) instanceof VesselStirrerBlockEntity drive ? drive.getSpeed() : 0;
     }
     @Override public float calculateStressApplied() { return lastStressApplied = 0; }
-    /** Called when the vessel is resized or the block under its bottom centre changes. */
+    /** Called when the vessel is resized or the block over its top centre changes. */
     @Override public void invalidateStructure() {
         super.invalidateStructure();
         if (refreshing) return;

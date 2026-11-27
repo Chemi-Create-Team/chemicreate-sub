@@ -156,7 +156,7 @@ def ponder_scenes():
         ([4, 12, 4], NS + 'irradiated_lithium_target_rod', 'A funnel extracts completed targets from the same cap. Stopping midway preserves the exposure through saving and reloading.', '照射済みターゲットは同じ蓋からファンネルなどで取り出します。途中停止や保存・再ロードでも照射量を保持します。'),
         ([4, 12, 4], NS + 'tritium_gas_bucket', 'Superheat an irradiated target in the existing stirred vessel to extract T2 and helium. Reserve the first T2 for fusion startup; the fusion blanket already breeds replacement fuel.', '照射済みターゲットを既存の撹拌槽で超加熱し、T₂とヘリウムを抽出します。最初のT₂を核融合炉の始動に使い、運転後は既存ブランケットの増殖を利用します。')], .7)
     s = ponder.Structure(13, 7);s.reactor(3, 2, 3, 'stirred', 1, ((1, 0),));s.reactor(9, 2, 3, 'centrifuge', 1)
-    s.pipe(3,3,3,'down','east');s.pipe(4,3,3,'east','west');s.pipe(5,3,3,'east','west');s.pipe(6,3,3,'west','down')
+    s.pipe(4,4,3,'down','east');s.pipe(5,4,3,'west','down');s.pipe(5,3,3,'up','east');s.pipe(6,3,3,'west','down')
     s.pipe(6,2,3,'up','east');s.pump(7,2,3,'east');s.pipe(8,2,3,'east','west')
     s.pipe(9,4,3,'down','up');s.pump(9,5,3,'up');s.block(9,6,3,'create:fluid_tank')
     s.pipe(10,2,3,'east','west');s.pump(11,2,3,'east');s.block(12,2,3,'create:fluid_tank')
