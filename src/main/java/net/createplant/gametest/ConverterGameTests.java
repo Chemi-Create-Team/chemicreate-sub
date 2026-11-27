@@ -235,8 +235,8 @@ public final class ConverterGameTests {
         converter.runProcess(800);
         var tapped = metalTap(helper).getFluidInTank(0);
         helper.assertTrue(products(converter) == 2 && tapped.is(net.createplant.registry.CEProcessFluids.MOLTEN_STAINLESS_STEEL.get())
-                && tapped.getAmount() == 6_400 && converter.gasOutput().isEmpty(),
-            "AOD taps 6,400 mB of molten stainless steel and two slag without converter gas: " + tapped.getAmount());
+                && tapped.getAmount() == 4_800 && converter.gasOutput().isEmpty(),
+            "AOD taps 4,800 mB of molten stainless steel and two slag without converter gas: " + tapped.getAmount());
         helper.succeed();
     }
 

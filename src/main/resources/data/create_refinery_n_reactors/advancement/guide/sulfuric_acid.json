@@ -15,6 +15,16 @@
   },
   "parent": "create_refinery_n_reactors:guide/electrolysis",
   "criteria": {
+    "dilute_sulfuric_acid_bucket": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "create_refinery_n_reactors:dilute_sulfuric_acid_bucket"
+          }
+        ]
+      }
+    },
     "sulfuric_acid_bucket": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
@@ -28,6 +38,7 @@
   },
   "requirements": [
     [
+      "dilute_sulfuric_acid_bucket",
       "sulfuric_acid_bucket"
     ]
   ]

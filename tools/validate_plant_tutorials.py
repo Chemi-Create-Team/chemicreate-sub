@@ -20,7 +20,11 @@ def read_structure(path):
     def string():
         return stream.read(number('>H')).decode('utf8')
     def value(kind):
+        if kind == 1: return number('>b')
+        if kind == 2: return number('>h')
         if kind == 3: return number('>i')
+        if kind == 5: return number('>f')
+        if kind == 6: return number('>d')
         if kind == 4: return number('>q')
         if kind == 8: return string()
         if kind == 11: return [number('>i') for _ in range(number('>i'))]

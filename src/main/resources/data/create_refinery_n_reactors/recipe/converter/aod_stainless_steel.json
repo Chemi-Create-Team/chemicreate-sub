@@ -24,7 +24,7 @@
   },
   "metal_result": {
     "id": "create_refinery_n_reactors:molten_stainless_steel",
-    "amount": 6400
+    "amount": 4800
   },
   "processingTime": 800
 }

@@ -288,7 +288,6 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
                 CreatePlant.location("high_pressure_turbine_casing"),
                 CreatePlant.location("low_pressure_turbine_end"),
                 CreatePlant.location("tarbin_end"),
-                CreatePlant.location("steam_bucket"),
                 CreatePlant.location("stainless_steel_pipe"))
             .addStoryBoard("turbine/multiblock", ElectrolysisPonderScenes::turbineMultiblock);
 

@@ -66,6 +66,7 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
     private long recipeLookupAt = Long.MIN_VALUE;
     private ContinuousFactoryRecipe matchingRecipe;
     private String refusal = "";
+    private int sampledLine = -1;
     private String status = "unformed", fault = "";
     private String notice = "";
     private int noticeTicks;
@@ -259,7 +260,7 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
             if (last.travel < (kind() == FactoryKind.MILL ? 3.5 : 1.15) || !last.finished.isEmpty()) return;
         }
         var recipe = recipe();
-        if (recipe == null) { if (!refusal.isEmpty()) status = refusal; return; }
+        if (recipe == null) { if (!refusal.isEmpty() && batches.isEmpty()) status = refusal; return; }
         if (heat < recipe.heat()) { status = "heat"; return; }
         if (!fits(recipe.result())) { status = "output_full"; return; }
         int slot = 0;
@@ -274,8 +275,11 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
 
     private ContinuousFactoryRecipe recipe() {
         long time = level.getGameTime();
-        if (sampledInventoryVersion == workInventoryVersion && time - recipeLookupAt < 20) return matchingRecipe;
+        int stands = kind() == FactoryKind.MILL ? layout.drives().size() : 1;
+        // The burner and the stand count pick the product, so a change to either looks the recipe up again at once.
+        if (sampledInventoryVersion == workInventoryVersion && sampledLine == heat * 16 + stands && time - recipeLookupAt < 20) return matchingRecipe;
         recipeLookupAt = time;
+        sampledLine = heat * 16 + stands;
         sampledInventoryVersion = workInventoryVersion;
         refusal = "";
         if (input.getStackInSlot(0).isEmpty()) return matchingRecipe = null;
@@ -285,7 +289,6 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
         };
         var candidates = level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType())
             .stream().map(holder -> holder.value()).filter(r -> r.machine() == kind() && r.matches(stock, level)).toList();
-        int stands = kind() == FactoryKind.MILL ? layout.drives().size() : 1;
         matchingRecipe = pick(candidates, stands, heat);
         if (matchingRecipe == null && !candidates.isEmpty())
             refusal = candidates.stream().anyMatch(r -> stands >= r.minStands() && stands <= r.maxStands()) ? "too_hot" : "stands";
@@ -301,6 +304,13 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
             if (colder == null) colder = recipe;
         }
         return colder;
+    }
+
+    /** The side port takes only what one of this machine's recipes uses as its second material, so a wrong item cannot jam it. */
+    private boolean usedAsAuxiliary(ItemStack stack) {
+        if (level == null) return false;
+        return level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType()).stream()
+            .map(holder -> holder.value()).anyMatch(r -> r.machine() == kind() && r.auxiliary().isPresent() && r.auxiliary().get().ingredient().test(stack));
     }
 
     private boolean fits(ItemStack stack) { return ItemHandlerHelper.insertItemStacked(output, stack, true).isEmpty(); }
@@ -527,12 +537,14 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
         @Override public int getSlots() { return endpoint != null ? output.getSlots() : 1; }
         @Override public ItemStack getStackInSlot(int slot) { return linked() ? output.getStackInSlot(slot) : ItemStack.EMPTY; }
         @Override public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return endpoint == null && !isRemoved() && slot == 0 ? input.insertItem(inputSlot, stack, simulate) : stack;
+            return isItemValid(slot, stack) ? input.insertItem(inputSlot, stack, simulate) : stack;
         }
         @Override public ItemStack extractItem(int slot, int amount, boolean simulate) {
             return linked() ? output.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         }
         @Override public int getSlotLimit(int slot) { return 64; }
-        @Override public boolean isItemValid(int slot, ItemStack stack) { return endpoint == null && !isRemoved() && slot == 0; }
+        @Override public boolean isItemValid(int slot, ItemStack stack) {
+            return endpoint == null && !isRemoved() && slot == 0 && (inputSlot == 0 || usedAsAuxiliary(stack));
+        }
     }
 }

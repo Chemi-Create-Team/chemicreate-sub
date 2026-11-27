@@ -5,6 +5,7 @@
     {
       "id": "createdieselgenerators:distillation_tank",
       "required": false
-    }
+    },
+    "create_refinery_n_reactors:glassy_slag"
   ]
 }

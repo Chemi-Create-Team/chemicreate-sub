@@ -220,14 +220,16 @@ def recipes_and_data():
         'result': {'id': NS + 'steel_ingot', 'count': 64},
         'byproduct': {'id': NS + 'converter_gas', 'amount': 128000},
         'processingTime': 800})
+    # 60 ingots in, 4,800 mB out: six 800 mB slabs roll to 48 ingots, so the converter never creates metal.
     write(D / 'recipe/converter/aod_stainless_steel.json', {
         'type': NS + 'converter',
         'ingredients': [
-            {'item': 'minecraft:iron_ingot', 'count': 112},
-            {'item': NS + 'chromium_ingot', 'count': 32},
-            {'item': NS + 'nickel_ingot', 'count': 16}],
-        'gas': {'fluid': NS + 'argon_gas', 'amount': 1600},
-        'result': {'id': NS + 'stainless_steel_ingot', 'count': 192},
+            {'item': 'minecraft:iron_ingot', 'count': 42},
+            {'item': NS + 'chromium_ingot', 'count': 12},
+            {'item': NS + 'nickel_ingot', 'count': 6}],
+        'gas': {'fluid': NS + 'argon_gas', 'amount': 600},
+        'result': {'id': NS + 'steel_slag', 'count': 2},
+        'metal_result': {'id': NS + 'molten_stainless_steel', 'amount': 4800},
         'processingTime': 800})
     for relative in ('mineable/pickaxe.json', 'needs_iron_tool.json'):
         path = ROOT / 'src/main/resources/data/minecraft/tags/block' / relative

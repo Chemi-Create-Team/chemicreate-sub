@@ -160,6 +160,16 @@ public class ContinuousFactoryGameTests {
         });
     }
 
+    /** The side port only takes second materials that a mill recipe uses, so a stray item cannot jam the line. */
+    @GameTest(template = "test_wet_processing")
+    public static void millSidePortRefusesItemsNoRecipeUses(GameTestHelper h) {
+        var machine = mill(h, 30, 40);
+        var side = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, machine.getBlockPos(), Direction.WEST);
+        h.assertTrue(side != null && side.insertItem(0, new ItemStack(Items.DIRT), true).getCount() == 1, "Dirt is refused at the side port");
+        h.assertTrue(side.insertItem(0, new ItemStack(Items.QUARTZ, 2), true).isEmpty(), "Quartz for electrical steel is accepted");
+        h.succeed();
+    }
+
     /** With the burner removed the line cold-rolls lead into sheet. */
     @GameTest(template = "test_wet_processing", timeoutTicks = 165)
     public static void coldLineRollsLeadSheet(GameTestHelper h) {
