@@ -83,8 +83,6 @@ def basin_structure(identifier, maintenance=False):
         scene.block(6, 2, 5, 'create:fluid_valve', facing='up', axis_along_first='false', enabled='true', waterlogged='false')
         scene.block(3, 1, 2, 'minecraft:smooth_stone')
         scene.block(3, 2, 2, NS + 'cryogenic_tank', bottom='true', top='true', shape='window')
-        scene.block(4, 4, 4, 'create:deployer', facing='down', axis_along_first='false')
-        scene.block(4, 5, 4, 'create:creative_motor', facing='down')
     scene.save(identifier)
     (A / 'ponder/plant' / f'{identifier}.nbt').write_bytes((OUT / f'{identifier}.nbt').read_bytes())
     (OUT / f'{identifier}.nbt').unlink()
@@ -102,7 +100,7 @@ TEXTS = {
         'パイプは側面と上面へつなぎます。ハッチ上のパイプは、閉じているときだけ使えます。'),
     'open': ('Empty-hand right-click opens the hatch for bucket filling and draining.',
         '空手右クリックでハッチを開け、バケツで中身を出し入れできます。'),
-    'internals': ('Fit impellers in a 3×3 vessel; smaller vessels store fluids. Remove internals with a wrench on top.', '撹拌翼は3×3へ取り付けます。小さな槽は保管用です。上面レンチで内部部品を回収します。'),
+    'internals': ('Use a dedicated Stirred Tank to mix ingredients.', '原料の撹拌には専用の撹拌槽を使います。'),
     'blowout': ('Open it while it holds pressure and the gas or vapour bursts out, throwing up whatever stands over it. Toxic contents spread as a cloud.',
         '圧力がかかったまま開けると、気体や蒸気が噴き出し、上にいるものを吹き上げます。有毒なものは周りに雲となって広がります。'),
     'goggles': ('Goggles show the contents, pressure and lid; a Display Link reads the details.',
@@ -118,9 +116,7 @@ COMPACT_TEXTS = {
         '何も持たない手で右クリックするとハッチが開きます。ふた付き槽を持っている間は設置が優先され、ハッチは開きません。'),
     'window': ('Wrench a side to switch the inspection windows for the whole vessel. Stored fluids and items are visible through them. This does not change the hatch.',
         '側面をレンチで右クリックすると、槽全体を点検窓へ切り替えます。液体・アイテムが見え、ハッチは変わりません。'),
-    'internals': ('Fit impellers in a 3×3 vessel; smaller vessels store fluids. Remove internals with a wrench on top.', '撹拌翼は3×3へ取り付けます。小さな槽は保管用です。上面レンチで内部部品を回収します。'),
-    'rotation': ('A 2×2 vessel has no shaft input. For 3×3, supply at least 32 RPM at the bottom centre.',
-        '2×2は動力を受けません。3×3は底面中央1か所から32 RPM以上を入力します。'),
+    'internals': ('Use a dedicated Stirred Tank to mix ingredients.', '原料の撹拌には専用の撹拌槽を使います。'),
     'top': ('The outer rim and lid surface join across the whole 2x2 or 3x3 top. Only the central hatch opens; the rest of the lid stays in place.',
         '上面は2×2・3×3全体で縁と板がつながります。開くのは中央ハッチだけで、周囲のふたはそのままです。'),
 }

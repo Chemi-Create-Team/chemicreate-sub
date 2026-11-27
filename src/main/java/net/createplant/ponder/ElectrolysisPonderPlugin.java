@@ -276,7 +276,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/vessel_internals", LiddedVesselPonderScenes::internals);
         helper.forComponents(CreatePlant.location("stirred_tank"),CreatePlant.location("vessel_stirrer"))
             .addStoryBoard("plant/vessel_basin",VesselBasinPonderScenes::basin);
-        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("stirred_tank"),CreatePlant.location("vessel_stirrer"),CreatePlant.location("pipe_pressure_gauge"))
+        helper.forComponents(CreatePlant.location("lidded_vessel"),CreatePlant.location("pipe_pressure_gauge"))
             .addStoryBoard("plant/vessel_maintenance",VesselBasinPonderScenes::maintenance);
 
         helper.forComponents(

@@ -4240,9 +4240,9 @@
     "zh_cn": "吸收塔"
   },
   "lidded_vessel.internals": {
-    "en_us": "Build a 3×3 tank at least two layers high. Mount the stirrer on the roof centre.",
-    "ja_jp": "3×3・2段以上の槽を組み、天面中央に撹拌機を置きます。",
-    "zh_cn": "搭建至少两层的3×3罐体，在顶面中央安装搅拌器。"
+    "en_us": "Use a dedicated Stirred Tank to mix ingredients.",
+    "ja_jp": "原料の撹拌には専用の撹拌槽を使います。",
+    "zh_cn": "请使用专用搅拌槽来搅拌原料。"
   },
   "vessel_internals.install": {
     "en_us": "Build a 3×3 stirred tank and mount the stirrer on its roof centre. A plain stainless tank does not stir. Drive the stirrer with a cogwheel alongside it.",
@@ -4259,20 +4259,15 @@
     "ja_jp": "段は3×3の八角形がまとめて置かれます。段の天面をクリックすると、次の段が中心の真上に積まれます。",
     "zh_cn": "塔节放置时整体占3×3八角形。点击塔节顶面，下一节会叠在正中央上方。"
   },
-  "lidded_vessel_2x2.rotation": {
-    "en_us": "The 2×2 tank is for storage. The 3×3 tank uses a roof stirrer driven at 32 RPM or more.",
-    "ja_jp": "2×2槽は貯蔵用です。3×3槽は天面の撹拌機を32 RPM以上で回します。",
-    "zh_cn": "2×2罐用于储存，3×3罐顶的搅拌器至少以32 RPM转动。"
-  },
   "vessel_internals.title": {
     "en_us": "Stirred tank",
     "ja_jp": "撹拌槽",
     "zh_cn": "搅拌槽"
   },
   "lidded_vessel_2x2.internals": {
-    "en_us": "Build a 3×3 tank at least two layers high. Mount the stirrer on the roof centre.",
-    "ja_jp": "3×3・2段以上の槽を組み、天面中央に撹拌機を置きます。",
-    "zh_cn": "搭建至少两层的3×3罐体，在顶面中央安装搅拌器。"
+    "en_us": "Use a dedicated Stirred Tank to mix ingredients.",
+    "ja_jp": "原料の撹拌には専用の撹拌槽を使います。",
+    "zh_cn": "请使用专用搅拌槽来搅拌原料。"
   },
   "large_absorption_tower.ring": {
     "en_us": "Pipes join only the centre and the four straight-side blocks, never the diagonal corners. At the bottom storey, gas goes in through their sides and liquid comes out through their sides or undersides. At the top storey, spent gas leaves through their sides and water enters through their tops.",

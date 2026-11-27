@@ -98,6 +98,8 @@ public class CraftingRecipeGameTests {
         }
         for (String name : List.of("lidded_vessel", "reactor_impeller", "vessel_stirrer", "reactor_separator_core", "large_absorption_tower", "gas_centrifuge", "cubic_press", "tube_piped_tank", "jacketed_pipe"))
             h.assertTrue(BuiltInRegistries.ITEM.containsKey(CreatePlant.location(name)), "The current vessel, internal, tower or heat exchanger remains registered: " + name);
+        h.assertTrue(manager.byKey(CreatePlant.location("lidded_vessel")).isPresent() && manager.byKey(CreatePlant.location("stirred_tank")).isPresent()
+            && manager.byKey(CreatePlant.location("stirred_tank_from_stainless_tank")).isEmpty(), "Storage and stirred tanks have their own recipes");
         h.succeed();
     }
     @GameTest(template = "test_reactor")

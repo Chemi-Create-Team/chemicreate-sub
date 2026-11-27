@@ -653,7 +653,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             tankInventory.readFromNBT(lookup, tag.getCompound("TankContent"));
             if (tankInventory.getSpace() < 0) tankInventory.drain(-tankInventory.getSpace(), FluidAction.EXECUTE);
         }
-        stirrer = tag.getBoolean("Stirrer");
+        stirrer = getType() == CETransport.STIRRED_TANK_ENTITY.get() && tag.getBoolean("Stirrer");
         super.read(tag, lookup, clientPacket);
         if(!clientPacket)heating.read(tag,lookup);
         if (clientPacket) fluidLevel.chase(getFillState(), .5, LerpedFloat.Chaser.EXP);

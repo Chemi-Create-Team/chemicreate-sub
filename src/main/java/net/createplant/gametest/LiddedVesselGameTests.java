@@ -11,6 +11,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -120,10 +122,34 @@ public class LiddedVesselGameTests {
     @GameTest(template = "test_fractionation")
     public static void onlyAStirredTankStirsAndItDoesNotJoinAStainlessTank(GameTestHelper h) {
         square(h, 3);
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, 1, z), CETransport.LIDDED_VESSEL.get().defaultBlockState());
         var root = root(h, BASE);
         ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
         root.validateStructure();
-        h.assertTrue(root.getWidth() == 3 && !root.stirred(), "A stirrer on a plain stainless tank stirs nothing");
+        h.assertTrue(root.getWidth() == 3 && root.getHeight() == 2 && !root.stirred() && !root.openTop(), "The roof stirrer leaves the square stainless tank closed and idle");
+        h.assertTrue(root.getTankInventory().getCapacity() == 18 * LiddedVesselBlockEntity.getCapacityMultiplier(), "The stainless tank has the full square storage volume");
+        root.toggleLid();
+        h.assertTrue(root.open() && root.openTop() && !root.bored(), "The ordinary hatch still opens");
+        root.toggleLid();
+
+        var level = h.getLevel();
+        var lookup = level.registryAccess();
+        var stored = new FluidStack(Fluids.WATER, 1000);
+        var legacyProduct = new FluidStack(net.createplant.registry.CEChlorAlkali.BRINE.get(), 400);
+        root.getTankInventory().fill(stored, FluidAction.EXECUTE);
+        root.itemPort().insertItem(0, new ItemStack(Items.FLINT, 3), false);
+        var saved = root.saveWithoutMetadata(lookup);
+        saved.putBoolean("Stirrer", true);
+        saved.put("Tank2", legacyProduct.save(lookup));
+        root.loadWithComponents(saved, lookup);
+        h.assertTrue(!root.stirred() && !root.openTop(), "Old saved stirrer data cannot enable processing, even before the first tick");
+        var sidePos = h.absolutePos(BASE.offset(2, 1, 1));
+        var fluidPort = level.getCapability(Capabilities.FluidHandler.BLOCK, sidePos, Direction.EAST);
+        h.assertTrue(fluidPort != null && fluidPort.drain(legacyProduct, FluidAction.EXECUTE).getAmount() == 400
+            && fluidPort.drain(stored, FluidAction.EXECUTE).getAmount() == 1000, "Both the old process fluid and the stored water are recoverable through a side pipe");
+        var itemPort = level.getCapability(Capabilities.ItemHandler.BLOCK, sidePos, Direction.EAST);
+        h.assertTrue(itemPort != null && itemPort.extractItem(0, 64, false).getCount() == 3, "The old item charge is recoverable through a funnel");
+
         h.setBlock(BASE.offset(3, 0, 0), CETransport.STIRRED_TANK.get().defaultBlockState());
         h.assertTrue(root(h, BASE).getWidth() == 3 && root(h, BASE.offset(3, 0, 0)).getWidth() == 1, "A stirred tank never merges with a stainless tank beside it");
         h.succeed();

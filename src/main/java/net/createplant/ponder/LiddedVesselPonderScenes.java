@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
-/** A 3x3 lidded vessel: joining, pipes, opening the hatch by hand, where a stirrer goes, the blowout under pressure, and reading it; and the stirrer. */
+/** Storage, piping and hatch operation for stainless tanks, and the separate stirred tank assembly. */
 public final class LiddedVesselPonderScenes {
     private static final String LANG = "ponder.create_refinery_n_reactors.lidded_vessel.";
     private static final String COMPACT_LANG = "ponder.create_refinery_n_reactors.lidded_vessel_2x2.";
@@ -91,7 +91,7 @@ public final class LiddedVesselPonderScenes {
 
         lid(scene, util, vessel, top, true);
         text(scene, util, top, 120, "open");
-        scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 60).withItem(CEReactor.STIRRER.toStack());
+        scene.overlay().showControls(util.vector().topOf(top), Pointing.DOWN, 60).withItem(CETransport.STIRRED_TANK.get().asItem().getDefaultInstance());
         text(scene, util, top, 140, "internals");
 
         lid(scene, util, vessel, top, false);
@@ -140,7 +140,6 @@ public final class LiddedVesselPonderScenes {
         compactText(scene, util, top, 100, "hatch");
         compactText(scene, util, controller, 100, "internals");
         lid(scene, util, all, top, false);
-        compactText(scene, util, controller.below(), 150, "rotation");
         compactText(scene, util, top, 100, "top");
         scene.markAsFinished();
     }
@@ -148,7 +147,7 @@ public final class LiddedVesselPonderScenes {
     /** Fitting the roof-mounted drive and inspecting the open bore. */
     public static void internals(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("vessel_internals", PonderText.title(INTERNAL_LANG + "title", "Stirring a stainless tank"));
+        scene.title("vessel_internals", PonderText.title(INTERNAL_LANG + "title", "Stirred tank"));
         scene.configureBasePlate(0, 0, 9);
         scene.scaleSceneView(1.1f);
         scene.showBasePlate();
