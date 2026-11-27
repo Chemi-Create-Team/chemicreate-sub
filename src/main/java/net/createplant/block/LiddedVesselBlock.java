@@ -70,7 +70,12 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     public static final BooleanProperty LADDER = BooleanProperty.create("ladder");
     /** Half the width of a wide vessel's hatch in pixels: it is 22 px across, centred on the top. */
     public static final int HATCH_HALF = 11;
-    public static final int DISH_RIM_HEIGHT = 10;
+    public static final int DISH_FLOOR_HEIGHT = 2, DISH_RIM_HEIGHT = 10, BORE_RADIUS = 17;
+    private static final float[] DISH_RADII = {6, 9.5f, 12, 13.3f, 14.5f, 15.5f, 16.2f, 16.8f, BORE_RADIUS};
+
+    public static float boreRadius(int y) {
+        return DISH_RADII[Math.clamp(y - DISH_FLOOR_HEIGHT, 0, DISH_RADII.length - 1)];
+    }
     /** Open shapes of the blocks under a 2x2 vessel's hatch: the quarter of the hatch over this block is hollow, with and without the floor. */
     private static final Map<Hatch, VoxelShape[]> QUARTERS = new EnumMap<>(Hatch.class);
 
@@ -95,6 +100,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     }
     /** Open shapes by outer walls, with and without the floor of the bottom layer. */
     private static final VoxelShape[] OPEN_SHAPES = new VoxelShape[32];
+    private static final VoxelShape[][] STIRRED_SHAPES = new VoxelShape[2][9];
 
     static {
         for (int walls = 0; walls < 32; walls++) {
@@ -105,11 +111,36 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
             if ((walls & 8) != 0) shape = Shapes.or(shape, Block.box(0, 0, 0, 2, 16, 16));
             OPEN_SHAPES[walls] = shape.optimize();
         }
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) {
+            STIRRED_SHAPES[0][x * 3 + z] = stirredShape(x, z, false);
+            STIRRED_SHAPES[1][x * 3 + z] = stirredShape(x, z, true);
+        }
         for (Hatch hatch : new Hatch[] {Hatch.NW, Hatch.NE, Hatch.SW, Hatch.SE}) {
             int[] b = hatch.box();
             QUARTERS.put(hatch, new VoxelShape[] {Shapes.join(Shapes.block(), Block.box(b[0], 0, b[1], b[2], 16, b[3]), BooleanOp.ONLY_FIRST).optimize(),
                 Shapes.join(Shapes.block(), Block.box(b[0], 2, b[1], b[2], 16, b[3]), BooleanOp.ONLY_FIRST).optimize()});
         }
+    }
+
+    private static VoxelShape stirredShape(int cellX, int cellZ, boolean bottom) {
+        VoxelShape shape = bottom ? Block.box(0, 0, 0, 16, DISH_FLOOR_HEIGHT, 16) : Shapes.empty();
+        if (bottom) {
+            for (int y = DISH_FLOOR_HEIGHT; y < DISH_RIM_HEIGHT; y++)
+                shape = addBoreWall(shape, cellX, cellZ, y, y + 1, boreRadius(y));
+        }
+        return addBoreWall(shape, cellX, cellZ, bottom ? DISH_RIM_HEIGHT : 0, 16, BORE_RADIUS).optimize();
+    }
+
+    private static VoxelShape addBoreWall(VoxelShape shape, int cellX, int cellZ, int y, int top, float radius) {
+        for (int z = 0; z < 16; z++) {
+            double dz = cellZ * 16 + z + .5 - 24;
+            double half = Math.sqrt(Math.max(0, radius * radius - dz * dz));
+            int left = Math.clamp((int) Math.round(24 - half) - cellX * 16, 0, 16);
+            int right = Math.clamp((int) Math.round(24 + half) - cellX * 16, 0, 16);
+            if (left > 0) shape = Shapes.or(shape, Block.box(0, y, z, left, top, z + 1));
+            if (right < 16) shape = Shapes.or(shape, Block.box(right, y, z, 16, top, z + 1));
+        }
+        return shape;
     }
 
     public LiddedVesselBlock(Properties properties) {
@@ -128,6 +159,13 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(HINGE, context.getHorizontalDirection()); }
 
     @Override protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (state.getValue(DRIVE) && level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity cell) {
+            var owner = cell.getControllerBE();
+            if (owner != null && owner.stirred()) {
+                int x = pos.getX() - owner.getBlockPos().getX(), z = pos.getZ() - owner.getBlockPos().getZ();
+                if (x >= 0 && x < 3 && z >= 0 && z < 3) return STIRRED_SHAPES[state.getValue(BOTTOM) ? 1 : 0][x * 3 + z];
+            }
+        }
         Hatch hatch = state.getValue(HATCH);
         if (!state.getValue(OPEN) || hatch == Hatch.NONE) return Shapes.block();
         if (hatch == Hatch.FULL) return OPEN_SHAPES[mask(state) | (state.getValue(BOTTOM) ? 16 : 0)];
@@ -137,9 +175,17 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     /** Entering the open hatch puts the body in the contents; a vessel of acid or alkali burns it until death. */
     @Override protected void entityInside(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.Entity entity) {
         if (level.isClientSide || !(entity instanceof net.minecraft.world.entity.LivingEntity living)
-            || !state.getValue(OPEN) || state.getValue(HATCH) == Hatch.NONE) return;
-        if (level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity vessel && vessel.getControllerBE() != null)
-            net.createplant.safety.CorrosiveContact.soak(living, vessel.getControllerBE().getTankInventory().getFluid());
+            || !(level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity cell)) return;
+        var owner = cell.getControllerBE();
+        if (owner == null) return;
+        if (owner.stirred()) {
+            var origin = owner.getBlockPos();
+            double x = (living.getX() - origin.getX() - 1.5) * 16, z = (living.getZ() - origin.getZ() - 1.5) * 16;
+            int y = (int) Math.floor((living.getY() - origin.getY()) * 16);
+            float radius = boreRadius(y);
+            if (x * x + z * z >= radius * radius || y > DISH_FLOOR_HEIGHT + owner.getFillState() * (owner.getHeight() * 16 - 4)) return;
+        } else if (!state.getValue(OPEN) || state.getValue(HATCH) == Hatch.NONE) return;
+        net.createplant.safety.CorrosiveContact.soak(living, owner.getTankInventory().getFluid());
     }
 
     private static int mask(BlockState state) {
@@ -177,7 +223,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     }
 
     /**
-     * With the hatch open, filled containers can feed the stirred process. The basin-style storage interaction also handles containers and other
+     * Filled containers can feed the stirred process through the open roof. The basin-style storage interaction also handles containers and other
      * items go into the solid charge.
      */
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
@@ -186,7 +232,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         var owner = vessel == null ? null : vessel.getControllerBE();
         if (owner == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
-        if (!owner.open() || stack.getItem() instanceof BlockItem blockItem && (blockItem.getBlock() == this || blockItem.getBlock() == net.createplant.registry.CEReactor.STIRRER.get()) || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (!owner.openTop() || stack.getItem() instanceof BlockItem blockItem && (owner.stirred() || blockItem.getBlock() == this || blockItem.getBlock() == net.createplant.registry.CEReactor.STIRRER.get()) || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (StatefulBuckets.emptyProcessBucket(stack))
             return StatefulBuckets.fillFromTank(stack, player, hand, level.getCapability(Capabilities.FluidHandler.BLOCK, owner.getBlockPos(), Direction.DOWN));
         var fluid = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
@@ -220,11 +266,12 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         if (player.isShiftKeyDown()) {
             if (!level.isClientSide) {
                 ItemStack item = ItemStack.EMPTY;
-                if (owner.open()) for (int slot = 0; slot < 13 && item.isEmpty(); slot++) item = owner.recoverStoredItem(slot, 64);
+                if (owner.openTop()) for (int slot = 0; slot < 13 && item.isEmpty(); slot++) item = owner.recoverStoredItem(slot, 64);
                 if (!item.isEmpty() && !player.addItem(item)) player.drop(item, false);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
+        if (owner.stirred()) return InteractionResult.PASS;
         if (!level.isClientSide) vessel.toggleLid();
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

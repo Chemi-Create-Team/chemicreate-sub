@@ -291,8 +291,9 @@ public class DriveLessVesselGameTests {
             int[] corners=new int[]{0,2};
             for (int x : corners) for (int z : corners) {
                 BlockPos pos = base.offset(x, 0, z);var state = h.getBlockState(pos);var absolute = h.absolutePos(pos);
-                h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(state.getShape(h.getLevel(), absolute),
-                    net.minecraft.world.phys.shapes.Shapes.block(), net.minecraft.world.phys.shapes.BooleanOp.NOT_SAME), "Each closed corner occupies the complete square footprint");
+                double outsideX = x == 0 ? .0625 : .9375, outsideZ = z == 0 ? .0625 : .9375;
+                h.assertTrue(state.getCollisionShape(h.getLevel(), absolute).toAabbs().stream()
+                    .anyMatch(box -> box.contains(outsideX, .95, outsideZ)), "The cylindrical interior keeps the outer square corner");
                 for (Direction face : new Direction[] {x == 0 ? Direction.WEST : Direction.EAST, z == 0 ? Direction.NORTH : Direction.SOUTH}) {
                     h.assertTrue(!block.hasShaftTowards(h.getLevel(), absolute, state.setValue(LiddedVesselBlock.AXIS, face.getAxis()), face),
                         "No outer wall exposes a horizontal shaft, including saved horizontal-axis states");

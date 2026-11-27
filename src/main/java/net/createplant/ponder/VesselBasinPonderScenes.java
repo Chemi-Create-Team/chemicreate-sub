@@ -42,6 +42,7 @@ public final class VesselBasinPonderScenes {
 
     public static void basin(SceneBuilder builder,SceneBuildingUtil util) {
         var scene=begin(builder,"vessel_basin",BASIN,"Mixing and heating in a lidded vessel");
+        clientState(scene,OWNER,tag->tag.putBoolean("Stirrer",false));
         PonderText.build(scene, util, 3,2,3,5,3,5, Direction.DOWN);
         text(scene,util,OWNER,BASIN,"assemble",110);
         scene.overlay().showControls(util.vector().blockSurface(OWNER,Direction.NORTH),Pointing.RIGHT,45).rightClick().withItem(AllItems.WRENCH.asStack());
@@ -85,8 +86,7 @@ public final class VesselBasinPonderScenes {
         var scene=begin(builder,"vessel_maintenance",MAINTENANCE,"Grades and cooling");
         scene.rotateCameraY(90);
         scene.world().showSection(util.select().fromTo(0,1,0,8,3,8).substract(util.select().fromTo(3,1,2,3,2,2)),Direction.DOWN);
-        scene.world().showSection(util.select().position(STIRRER).add(util.select().position(COG)).add(util.select().position(COG_MOTOR)),Direction.DOWN);
-        windows(scene,true);speed(scene,util,false);coldContents(scene,250,0);
+        windows(scene,true);coldContents(scene,250,0);
         storedFluid(scene,FluidForm.HIGH_PRESSURE_STEAM.stack(20000));gauge(scene,2,true);
         text(scene,util,GAUGE,MAINTENANCE,"pressure",140);
         text(scene,util,OWNER,MAINTENANCE,"boiling",180);
@@ -153,8 +153,8 @@ public final class VesselBasinPonderScenes {
             for(int i=0;i<7;i++)tag.remove("Tank"+i);
             tag.put("TankContent",storage(FluidThermal.at(cryogenic ? FluidForm.LIQUID_NITROGEN.stack(6000)
                 : new FluidStack(Fluids.WATER,10000-wastewater),cryogenic ? 77.36 : 293.15),lookup));
-            tag.remove("Internal");tag.putBoolean("Stirrer",true);
-            tag.putBoolean("Windows",true);tag.putBoolean("Formed",true);tag.putBoolean("Running",false);tag.putInt("Sections",LiddedVesselBlockEntity.IMPELLER_LAYERS);
+            tag.remove("Internal");tag.putBoolean("Stirrer",false);
+            tag.putBoolean("Windows",true);tag.putBoolean("Formed",false);tag.putBoolean("Running",false);tag.putInt("Sections",LiddedVesselBlockEntity.IMPELLER_LAYERS);
             tag.putInt("DisplayedHeat",BlazeBurnerBlock.HeatLevel.NONE.ordinal());tag.putString("Status","idle");
             be.readClient(tag,lookup);
         });

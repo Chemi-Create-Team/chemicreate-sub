@@ -145,7 +145,7 @@ public final class LiddedVesselPonderScenes {
         scene.markAsFinished();
     }
 
-    /** Fitting the roof-mounted drive and inspecting the round hatch. */
+    /** Fitting the roof-mounted drive and inspecting the open bore. */
     public static void internals(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("vessel_internals", PonderText.title(INTERNAL_LANG + "title", "Stirring a stainless tank"));
@@ -156,18 +156,19 @@ public final class LiddedVesselPonderScenes {
         var origin = util.grid().at(3, 2, 3);
         Selection drive = util.select().position(stirrer).add(util.select().position(cog)).add(util.select().position(cog.above()));
         Selection vessel = util.select().fromTo(3, 2, 3, 5, 3, 5);
+        var controller = util.select().position(origin);
+        scene.world().modifyBlockEntityNBT(controller, LiddedVesselBlockEntity.class, tag -> tag.putBoolean("Stirrer", false));
         scene.idle(10);
         scene.world().showSection(util.select().fromTo(3, 1, 3, 5, 1, 5), Direction.UP);
         scene.world().showSection(vessel, Direction.DOWN);
         scene.idle(15);
         scene.world().showSection(drive, Direction.DOWN);
+        scene.world().modifyBlockEntityNBT(controller, LiddedVesselBlockEntity.class, tag -> tag.putBoolean("Stirrer", true));
         scene.overlay().showOutline(net.createmod.ponder.api.PonderPalette.GREEN, "stirrer", util.select().position(stirrer), 140);
         PonderText.caption(scene, util.vector().centerOf(stirrer), INTERNAL_LANG + "install", 140);
         inspectionWindows(scene, origin, 3, 2);
         scene.rotateCameraY(180);
-        lid(scene, util, vessel, top.east(), true);
         PonderText.caption(scene, util.vector().topOf(top.east()), INTERNAL_LANG + "impeller", 160);
-        lid(scene, util, vessel, top.east(), false);
         scene.rotateCameraY(-180);
         scene.world().setKineticSpeed(util.select().position(stirrer), 64);
         scene.world().setKineticSpeed(util.select().position(cog).add(util.select().position(cog.above())), -64);

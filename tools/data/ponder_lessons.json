@@ -900,9 +900,9 @@
     "zh_cn": "槽体摆成3×3，叠两到四层，可同时处理两批。"
   },
   "guide.reactor_plant_stirred.step_2": {
-    "en_us": "Keep the hatch shut.",
-    "ja_jp": "ハッチは閉じておきます。",
-    "zh_cn": "保持检修口关闭。"
+    "en_us": "The 34 px circular opening stays open around the drive shaft.",
+    "ja_jp": "撹拌軸の周りは直径34 pxの開口です。",
+    "zh_cn": "搅拌轴周围保留直径34 px的圆形开口。"
   },
   "guide.reactor_plant_stirred.step_3": {
     "en_us": "Turn the cogwheel beside the stirrer at 32 RPM or more, as for a mechanical mixer. The tank itself takes no shaft.",
@@ -1950,9 +1950,9 @@
     "zh_cn": "相邻齿轮至少以32 RPM转动，燃烧室放在罐底下方。"
   },
   "vessel_basin.products": {
-    "en_us": "Extract solids with funnels and fluids with pumps. If processing stops, check outputs, heat, rotation, the hatch and sludge.",
-    "ja_jp": "固体はファンネル、流体はポンプで取り出します。止まったら出口・加熱・回転・ハッチ・汚れを確認します。",
-    "zh_cn": "固体用漏斗、流体用泵取出。停止时检查出口、加热、转速、舱盖和污泥。"
+    "en_us": "Extract solids with funnels and fluids with pumps. If processing stops, check outputs, heat, rotation and sludge.",
+    "ja_jp": "固体はファンネル、流体はポンプで取り出します。止まったら出口・加熱・回転・汚れを確認します。",
+    "zh_cn": "用漏斗取出固体，用泵抽出流体。停机时检查出口、加热、转速和污泥。"
   },
   "vessel_maintenance.title": {
     "en_us": "Fluid grades and cleaning",
@@ -4230,9 +4230,9 @@
     "zh_cn": "运行中的冷却塔从顶部开口冒出宽大的白色凝结云。冷却停止后不再生成，新旧云团上升后消散，显示量服从粒子设置。"
   },
   "vessel_internals.operate": {
-    "en_us": "Close the hatch and turn the cogwheel at 32 RPM or more; the stirrer carries 32 SU per RPM. Catalytic and tray reactions run in the reaction tower.",
-    "ja_jp": "ハッチを閉じ、歯車を32 RPM以上で回します。撹拌機の負荷は1 RPMあたり32 SUです。触媒反応と棚段の反応は反応塔で行います。",
-    "zh_cn": "关闭舱口，以32 RPM以上转动齿轮；搅拌器每RPM承受32 SU。催化反应与塔板反应在反应塔中进行。"
+    "en_us": "Turn the cogwheel at 32 RPM or more. The stirrer carries 32 SU per RPM. Catalytic and tray reactions run in the reaction tower.",
+    "ja_jp": "横の歯車を32 RPM以上で回します。撹拌機の負荷は1 RPMあたり32 SUです。触媒と棚段の反応は反応塔で行います。",
+    "zh_cn": "侧面齿轮至少以32 RPM转动。搅拌器每1 RPM负荷为32 SU。催化和塔板反应在反应塔进行。"
   },
   "large_absorption_tower.title": {
     "en_us": "Absorption tower",
@@ -4250,9 +4250,9 @@
     "zh_cn": "在3×3罐的顶面中央装上搅拌器，由旁边啮合的齿轮带动。"
   },
   "vessel_basin.impeller": {
-    "en_us": "Put the stirrer on the roof centre of a tank at least two layers high. Close the round hatch before running.",
-    "ja_jp": "2段以上の槽の天面中央に撹拌機を置き、運転前に丸いハッチを閉じます。",
-    "zh_cn": "在至少两层高的罐体顶面中央装上搅拌器，运行前关闭圆形舱口。"
+    "en_us": "Mount the stirrer on a tank at least two layers high. You can load it through the open top.",
+    "ja_jp": "2段以上の槽の天面中央に撹拌機を載せます。開口から原料を入れられます。",
+    "zh_cn": "在至少两层高的罐顶中央安装搅拌器，可通过开口投料。"
   },
   "large_absorption_tower.storey": {
     "en_us": "Each storey is placed as a whole 3 by 3 octagon. Click the top of a storey to stack the next one on its centre.",
@@ -4285,9 +4285,9 @@
     "zh_cn": "叠放4～8节。每节处理1批，无需转动或加热。"
   },
   "vessel_internals.impeller": {
-    "en_us": "Open the round hatch beside the drive. The four baffles sit between the windows.",
-    "ja_jp": "撹拌機の脇から丸いハッチを開けます。固定邪魔板は窓と窓の間にあります。",
-    "zh_cn": "从搅拌器旁打开圆形舱口。四块固定挡板位于观察窗之间。"
+    "en_us": "The 34 px bore stays open around the shaft. The four baffles sit between the windows.",
+    "ja_jp": "撹拌軸の周りは直径34 pxの開口です。固定邪魔板は窓と窓の間にあります。",
+    "zh_cn": "搅拌轴周围保留直径34 px的开口。四块固定挡板位于观察窗之间。"
   },
   "reaction_tower.title": {
     "en_us": "Reaction tower",
@@ -4765,9 +4765,9 @@
     "zh_cn": "制备甲基膦酸二甲酯"
   },
   "guide.manufacturing_methylphosphonate.step_1": {
-    "en_us": "Fit the stirrer to the roof, shut the lid and turn the stirrer at 32 RPM or more. Feed liquid through the side pipe and iodine through the funnel. Set the smart pipe to draw only the crude product.\n%s → %s",
-    "ja_jp": "槽の天面中央に撹拌機を置き、ふたを閉めて撹拌機を32 RPM以上で回します。側面の配管から原料液、ファンネルからヨウ素を供給します。スマート液体パイプには粗生成液入りバケツを指定します。\n%s → %s",
-    "zh_cn": "在罐顶中央装上搅拌器，关盖并至少以32 RPM转动。液体从侧管进料，碘由漏斗送入；用智能流体管过滤粗产物。\n%s → %s"
+    "en_us": "Fit the stirrer to the roof and turn the stirrer at 32 RPM or more. Feed liquid through the side pipe and iodine through the funnel. Set the smart pipe to draw only the crude product.\n%s → %s",
+    "ja_jp": "槽の天面中央に撹拌機を置き、撹拌機を32 RPM以上で回します。側面の配管から原料液、ファンネルからヨウ素を供給します。スマート液体パイプには粗生成液入りバケツを指定します。\n%s → %s",
+    "zh_cn": "在罐顶中央装上搅拌器，并至少以32 RPM转动。液体从侧管进料，碘由漏斗送入；用智能流体管过滤粗产物。\n%s → %s"
   },
   "guide.manufacturing_methylphosphonate.step_2": {
     "en_us": "Feed the crude product and filter medium into a second stirred tank. Set its smart pipe to the purified product and return the iodine from the output funnel to the first vessel. Check the goggles if either vessel stops.\n%s → %s",
@@ -4780,9 +4780,9 @@
     "zh_cn": "制备史莱姆冷却液"
   },
   "guide.manufacturing_slime_coolant.step_1": {
-    "en_us": "Fit the stirrer to the roof and turn it at 32 RPM or more. Feed water and the solids, shut the lid and light a Blaze Burner under a corner. Filter the liquid outlet for the coolant blend.\n%s → %s",
-    "ja_jp": "槽の天面中央に撹拌機を置き、撹拌機を32 RPM以上で回します。水と固体原料を入れてふたを閉め、底面の隅をブレイズバーナーで加熱します。スマート液体パイプで冷却原液を取り出します。\n%s → %s",
-    "zh_cn": "在罐顶中央装上搅拌器，以至少32 RPM转动。加入水和固体后关盖，在底面角落点燃烈焰人燃烧室。过滤出冷却原液。\n%s → %s"
+    "en_us": "Fit the stirrer to the roof and turn it at 32 RPM or more. Feed water and the solids and light a Blaze Burner under a corner. Filter the liquid outlet for the coolant blend.\n%s → %s",
+    "ja_jp": "槽の天面中央に撹拌機を置き、撹拌機を32 RPM以上で回します。水と固体原料を入れ、底面の隅をブレイズバーナーで加熱します。スマート液体パイプで冷却原液を取り出します。\n%s → %s",
+    "zh_cn": "在罐顶中央装上搅拌器，以至少32 RPM转动。加入水和固体后，在底面角落点燃烈焰人燃烧室。过滤出冷却原液。\n%s → %s"
   },
   "guide.manufacturing_slime_coolant.step_2": {
     "en_us": "Pump the blend into the east face of the upper layer of a two-layer 2×2 column. Draw water from the upper north outlet and coolant from the lower north outlet. Return the water to the mixer or another line.\n%s → %s",

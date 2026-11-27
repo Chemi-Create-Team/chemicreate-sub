@@ -90,7 +90,11 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
 
     private static boolean open(BlockState state) { return state.hasProperty(LiddedVesselBlock.OPEN) && state.getValue(LiddedVesselBlock.OPEN); }
 
-    public boolean open() { return open(state()); }
+    /** The hinged storage hatch, used by the storage pressure and pipe rules. */
+    public boolean open() { return !stirred() && open(state()); }
+
+    /** A mounted stirrer leaves the bore accessible for manual loading. */
+    public boolean openTop() { return stirred() || open(state()); }
 
     public Direction hinge() { return state().hasProperty(LiddedVesselBlock.HINGE) ? state().getValue(LiddedVesselBlock.HINGE) : Direction.NORTH; }
 
@@ -302,7 +306,6 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (level.hasChunkAt(pos) && level.getBlockEntity(pos) instanceof VesselStirrerBlockEntity drive) drive.refreshStress();
     }
     @Override protected boolean processController() { return isController() && module() != ReactorModule.NONE; }
-    @Override protected boolean vesselOpen() { return open(); }
     /** The stirrer's speed; the vessel itself takes no rotation. */
     @Override public float rotationSpeed() {
         var owner = level == null ? null : getControllerBE();
@@ -475,7 +478,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         level.invalidateCapabilities(worldPosition);
     }
 
-    public void toggleLid() { var owner = getControllerBE();if (owner != null) owner.setLid(!owner.open()); }
+    public void toggleLid() { var owner = getControllerBE();if (owner != null && !owner.stirred()) owner.setLid(!owner.open()); }
 
     private void setLid(boolean open) {
         if(width==1)return;
@@ -548,7 +551,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         }
         String key="lidded_vessel.create_refinery_n_reactors.";
         var status=Component.translatable(owner.module()==ReactorModule.NONE && !owner.running() && !owner.status().equals("heat") ? key+"storage" : "reactor.create_refinery_n_reactors.status."+owner.status());
-        tooltip.add(Component.translatable(key+"summary",status,Component.translatable(key+"lid."+(owner.width==1 ? "fixed" : owner.open() ? "open" : "closed")),owner.width,owner.height));
+        tooltip.add(Component.translatable(key+"summary",status,Component.translatable(key+"lid."+(owner.width==1 ? "fixed" : owner.openTop() ? "open" : "closed")),owner.width,owner.height));
         var heat=owner.currentBurnerHeat();
         var condition=heat==com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.SEETHING ? com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED : heat.isAtLeast(com.simibubi.create.content.processing.burner.BlazeBurnerBlock.HeatLevel.KINDLED) ? com.simibubi.create.content.processing.recipe.HeatCondition.HEATED : com.simibubi.create.content.processing.recipe.HeatCondition.NONE;
         tooltip.add(Component.translatable("create."+condition.getTranslationKey()));

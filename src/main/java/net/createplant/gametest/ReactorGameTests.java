@@ -191,29 +191,32 @@ public class ReactorGameTests {
     }
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
-    public static void superheatedVesselCrystallizesSulfatePouredThroughTheHatch(GameTestHelper h) {
+    public static void superheatedVesselCrystallizesSulfatePouredThroughTheOpenTop(GameTestHelper h) {
         var vessel=(LiddedVesselBlockEntity)build(h,ReactorModule.STIRRED,2);
         var pos=vessel.getBlockPos();
         h.assertTrue(vessel.getTankInventory().fill(new FluidStack(Fluids.WATER,1000),EXECUTE)==1000,
             "The vessel still has water in the storage compartment from before the stirrer was fitted");
         var player=h.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
         var hand=net.minecraft.world.InteractionHand.MAIN_HAND;
-        var hatch=BASE.offset(1,1,1);
-        h.useBlock(hatch,player);
-        h.assertTrue(vessel.open(),"The player opened the hatch");
+        var rim=BASE.offset(2,1,1);
+        h.assertTrue(vessel.openTop(),"The mounted stirrer leaves the top open");
         var sulfate=CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
         var bucket=net.createplant.item.StainlessBuckets.filled(new FluidStack(sulfate,1000));
         h.assertTrue(!bucket.isEmpty(),"The recipe feed has a filled bucket");
         player.setItemInHand(hand,bucket);
-        h.useBlock(hatch,player);
+        var absoluteRim=h.absolutePos(rim);
+        var rimCenter=net.minecraft.world.phys.Vec3.atCenterOf(absoluteRim);
+        var sideHit=new net.minecraft.world.phys.BlockHitResult(rimCenter,Direction.EAST,absoluteRim,false);
+        h.assertTrue(h.getBlockState(rim).useItemOn(AllBlocks.FLUID_PIPE.asStack(),h.getLevel(),player,hand,sideHit)
+            ==net.minecraft.world.ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION,"The open tank leaves placeable pipe items to the normal placement interaction");
+        var roofHit=new net.minecraft.world.phys.BlockHitResult(rimCenter.add(.3,.5,0),Direction.UP,absoluteRim,false);
+        h.useBlock(rim,player,roofHit);
         h.assertTrue(player.getItemInHand(hand).is(CEWorldFluids.STAINLESS_BUCKET.get())
             && vessel.itemPort().getStackInSlot(0).isEmpty() && in(vessel).getFluidInTank(0).is(sulfate)
             && in(vessel).getFluidInTank(0).getAmount()==1000 && vessel.getTankInventory().getFluid().is(Fluids.WATER),
             "The bucket returns empty and its liquid goes into the reaction feed: held "+player.getItemInHand(hand)
                 +", solid input "+vessel.itemPort().getStackInSlot(0)+", fluid input "+in(vessel).getFluidInTank(0));
-        player.setItemInHand(hand,ItemStack.EMPTY);
-        h.useBlock(hatch,player);
-        h.assertTrue(!vessel.open(),"The player closed the hatch for processing");
+        h.assertTrue(vessel.openTop(),"The vessel stays open after loading");
         heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
         ((BlazeBurnerBlockEntity)h.getLevel().getBlockEntity(pos.below())).isCreative=true;
         driveStirrer(h,BASE);
@@ -746,7 +749,7 @@ public class ReactorGameTests {
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
-    public static void theTankStirsOnlyClosedTwoLayersHighWithARoofStirrer(GameTestHelper h) {
+    public static void theTankStirsOpenTwoLayersHighWithARoofStirrer(GameTestHelper h) {
         var level=h.getLevel();var base=h.absolutePos(BASE);
         for (int x=0;x<3;x++) for (int z=0;z<3;z++) level.setBlock(base.offset(x,0,z),CETransport.LIDDED_VESSEL.get().defaultBlockState(),3);
         stir(level,base);
@@ -764,19 +767,25 @@ public class ReactorGameTests {
             "The top drive forms two stirred batches and keeps the water as a mixing pool");
         var stirrer=(VesselStirrerBlockEntity)level.getBlockEntity(owner.stirrerPos());
         h.assertTrue(stirrer.vessel()==owner && stirrer.calculateStressApplied()==32 && owner.calculateStressApplied()==0,"The stirrer carries 32 SU/RPM; the tank none");
-        h.assertTrue(!net.minecraft.world.phys.shapes.Shapes.joinIsNotEmpty(level.getBlockState(base).getShape(level,base),
-            net.minecraft.world.phys.shapes.Shapes.block(),net.minecraft.world.phys.shapes.BooleanOp.NOT_SAME),"The stirred vessel keeps its complete square corner");
+        var centre = base.offset(1,1,1);
+        var west = base.offset(0,1,1);
+        var rim = level.getBlockState(west).getCollisionShape(level,west);
+        h.assertTrue(level.getBlockState(centre).getCollisionShape(level,centre).isEmpty()
+            && rim.toAabbs().stream().anyMatch(box -> box.contains(6.5 / 16,.95,.5))
+            && rim.toAabbs().stream().noneMatch(box -> box.contains(7.5 / 16,.95,.5)),
+            "The 34 px opening extends into the neighbouring roof block while keeping its outer rim");
         var port=level.getCapability(Capabilities.FluidHandler.BLOCK,base.offset(2,0,1),Direction.EAST);
         h.assertTrue(port!=null && port.getTanks()==10,"Every vessel wall reaches three feed buffers, five product buffers and two physical storage phases");
         for (Direction face:Direction.values()) h.assertTrue(!CETransport.LIDDED_VESSEL.get().hasShaftTowards(level,owner.stirrerPos().below(),level.getBlockState(owner.stirrerPos().below()),face),
             "The tank itself takes no shaft");
         owner.toggleLid();
-        h.assertTrue(level.getBlockState(base.offset(1,1,1)).getValue(LiddedVesselBlock.HATCH)==LiddedVesselBlock.Hatch.FULL && level.getBlockState(base.offset(2,1,2)).getValue(LiddedVesselBlock.HATCH)==LiddedVesselBlock.Hatch.NONE,"Only the top centre opens");
         speed(owner,32);h.assertTrue(owner.rotationSpeed()==32,"The tank turns at its stirrer's speed");
-        owner.tickProcess();h.assertTrue(owner.status().equals("lid"),"An open hatch stops the process");
-        owner.toggleLid();owner.tickProcess();h.assertTrue(!owner.status().equals("lid"),"Closing permits the process again");
+        owner.tickProcess();
+        h.assertTrue(owner.openTop() && !owner.status().equals("lid"),"The process does not require a lid to close");
         level.removeBlock(owner.stirrerPos(),false);owner.validateStructure();
-        h.assertTrue(!owner.stirred() && !owner.formed() && owner.getWidth()==3,"Taking the stirrer away stops the process without changing the square enclosure");
+        h.assertTrue(!owner.stirred() && !owner.formed() && owner.getWidth()==3 && !owner.openTop()
+            && !level.getBlockState(centre).getCollisionShape(level,centre).isEmpty(),
+            "Removing the stirrer returns a closed storage tank");
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)

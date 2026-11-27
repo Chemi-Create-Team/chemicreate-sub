@@ -75,7 +75,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             ms.translate(0, height - 1, 0);
             squarePlate(vc, ms, span, middle - half, middle + half, joined, under, light, overlay);
             ms.popPose();
-            LiddedVesselInterior.roundRoof(ms, vc, height, be.lidOpening(partialTicks), edge, top, light, overlay);
+            LiddedVesselInterior.roundRoof(ms, vc, height, edge, light, overlay);
             renderContents(be, width, height, ms, buffer, light, overlay);
             return;
         }
@@ -166,6 +166,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
     private static void renderStirringAssembly(LiddedVesselBlockEntity be, int height, PoseStack ms, VertexConsumer vc,
             TextureAtlasSprite steel, TextureAtlasSprite shaft, int light, int overlay) {
         float roof = height * 16 - WALL;
+        int baffleOutside = 24 - LiddedVesselBlock.BORE_RADIUS + 1;
         for (int side = 0; side < 4; side++) {
             ms.pushPose();
             ms.translate(1.5, 0, 1.5);
@@ -173,11 +174,11 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             ms.translate(-1.5, 0, -1.5);
             for (float y = LiddedVesselInterior.SHOULDER; y < roof; ) {
                 float end = Math.min(roof, (float) Math.floor(y / 16 + 1) * 16);
-                box(vc, ms, 23.5f, y, 10, 24.5f, end, 13, steel, steel, steel, light, overlay);
+                box(vc, ms, 23.5f, y, baffleOutside, 24.5f, end, baffleOutside + 3, steel, steel, steel, light, overlay);
                 y = end;
             }
             // The mounting cleat sits above the inspection slot and leaves the long plate off the wall.
-            box(vc, ms, 23, roof - 2, 9, 25, roof, 11, steel, steel, steel, light, overlay);
+            box(vc, ms, 23, roof - 2, baffleOutside - 1, 25, roof, baffleOutside + 1, steel, steel, steel, light, overlay);
             ms.popPose();
         }
 

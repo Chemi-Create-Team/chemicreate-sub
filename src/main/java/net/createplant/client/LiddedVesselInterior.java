@@ -13,19 +13,20 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Shared cross-sections for the stainless lining, sight tunnels and fluid inside a three-wide tank. */
 final class LiddedVesselInterior {
-    static final float FLOOR = 2, SHOULDER = LiddedVesselBlock.DISH_RIM_HEIGHT, CENTRE = 24;
-    static final float ROOF_INSERT_HALF = 16;
+    static final float FLOOR = LiddedVesselBlock.DISH_FLOOR_HEIGHT, SHOULDER = LiddedVesselBlock.DISH_RIM_HEIGHT, CENTRE = 24;
+    static final float ROOF_INSERT_HALF = LiddedVesselBlock.BORE_RADIUS + 1;
     static final Direction[] WINDOW_FACES = {Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH};
     private static final int SIDES = 32, PER_QUADRANT = SIDES / 4;
     private static final float WINDOW_HALF = 4, SHELL_RADIUS = 22, FLUID_INSET = .06f;
-    private static final float[] RADII = {6, 9, 11, 12.1f, 13, 13.6f, 14.2f, 14.8f, 15};
-    private static final Ring[] DISH = new Ring[RADII.length];
+    private static final Ring[] DISH = new Ring[(int) (SHOULDER - FLOOR) + 1];
     private static final float[] ARC = arc();
 
     static {
         for (int i = 0; i < DISH.length; i++) {
-            float radius = RADII[i];
-            float slope = i == 0 ? 5 : i == DISH.length - 1 ? 0 : (RADII[i + 1] - RADII[i - 1]) / 2;
+            int y = (int) FLOOR + i;
+            float radius = LiddedVesselBlock.boreRadius(y);
+            float slope = i == 0 ? 5 : (LiddedVesselBlock.boreRadius(y + 1) - LiddedVesselBlock.boreRadius(y - 1)) / 2;
+            if (i == DISH.length - 1) slope = 0;
             var points = new Point[SIDES];
             double edge = Math.asin(WINDOW_HALF / radius);
             for (int segment = 0; segment < SIDES; segment++) {
@@ -60,10 +61,9 @@ final class LiddedVesselInterior {
     }
 
     static float itemOrbit(float y) {
-        float localY = y * 16 - FLOOR;
-        int low = Math.clamp((int) localY, 0, RADII.length - 1);
-        int high = Math.min(low + 1, RADII.length - 1);
-        float radius = mix(RADII[low], RADII[high], Math.clamp(localY - low, 0, 1));
+        float localY = y * 16;
+        int low = (int) localY;
+        float radius = mix(LiddedVesselBlock.boreRadius(low), LiddedVesselBlock.boreRadius(low + 1), localY - low);
         return Math.max(0, radius / 16 - .39f);
     }
 
@@ -105,25 +105,15 @@ final class LiddedVesselInterior {
         }
     }
 
-    static void roundRoof(PoseStack ms, VertexConsumer vc, int height, float opening, TextureAtlasSprite steel,
-            TextureAtlasSprite shutter, int light, int overlay) {
+    static void roundRoof(PoseStack ms, VertexConsumer vc, int height, TextureAtlasSprite steel, int light, int overlay) {
         Ring rim = DISH[DISH.length - 1];
         float top = height * 16;
-        float clear = mix(1.45f / 15, 1, opening);
         var pose = ms.last();
         for (int i = 0; i < SIDES; i++) {
             Point a = rim.at(i), b = rim.at(i + 1), A = a.toSquare(ROOF_INSERT_HALF), B = b.toSquare(ROOF_INSERT_HALF);
             horizontal(vc, pose, steel, a, b, B, A, top, 1, light, overlay);
             horizontal(vc, pose, steel, b, a, A, B, top - 2, -1, light, overlay);
             strip(vc, pose, steel, a, b, a, b, top - 2, top, 0, (ARC[i + 1] - ARC[i]) / 16, 0, .125f, 0, 0, -1, -1, 0, -1, light, overlay);
-            if (opening < 1) {
-                // The circular shutter retracts into the rim, clear of the overhead motor and the shaft seal.
-                Point low = a.scaled(clear), high = b.scaled(clear);
-                horizontal(vc, pose, shutter, low, high, b, a, top - .5f, 1, light, overlay);
-                horizontal(vc, pose, shutter, high, low, a, b, top - 1.5f, -1, light, overlay);
-                strip(vc, pose, shutter, low, high, low, high, top - 1.5f, top - .5f, 0, .25f,
-                    0, .0625f, 0, 0, -1, -1, 0, -1, light, overlay);
-            }
         }
     }
 
@@ -190,9 +180,9 @@ final class LiddedVesselInterior {
     // Texture seams are measured on the upright wall and carried down the bowl.
     private static float[] arc() {
         var distances = new float[SIDES + 1];
-        double edge = Math.asin(WINDOW_HALF / RADII[RADII.length - 1]);
+        double edge = Math.asin(WINDOW_HALF / LiddedVesselBlock.BORE_RADIUS);
         for (int i = 0; i <= SIDES; i++)
-            distances[i] = (float) (((i + 4) / PER_QUADRANT * Math.PI / 2 + windowAngle(edge, (i + 4) % PER_QUADRANT - 4)) * RADII[RADII.length - 1]);
+            distances[i] = (float) (((i + 4) / PER_QUADRANT * Math.PI / 2 + windowAngle(edge, (i + 4) % PER_QUADRANT - 4)) * LiddedVesselBlock.BORE_RADIUS);
         return distances;
     }
 
@@ -275,7 +265,6 @@ final class LiddedVesselInterior {
         Point lerp(Point other, float t) { return new Point(mix(x, other.x, t), mix(z, other.z, t), mix(nx, other.nx, t), mix(nz, other.nz, t)); }
         Point toShell(Direction face) { return face.getAxis() == Direction.Axis.X ? new Point(SHELL_RADIUS * face.getStepX(), z, 0, 0) : new Point(x, SHELL_RADIUS * face.getStepZ(), 0, 0); }
         Point toSquare(float radius) { float scale = radius / Math.max(Math.abs(x), Math.abs(z)); return new Point(x * scale, z * scale, 0, 0); }
-        Point scaled(float scale) { return new Point(x * scale, z * scale, nx, nz); }
         Point inset(float amount) { return new Point(x - nx * amount, z - nz * amount, nx, nz); }
     }
 }

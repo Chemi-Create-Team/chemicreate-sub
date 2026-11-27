@@ -78,13 +78,12 @@ final class VesselContentsClientCheck {
                     }
                     var tank=owner.getTankInventory();
                     if(stage<=2 || stage==4) {
-                        if(stage==4) owner.toggleLid();
                         int target=stage==1 ? tank.getCapacity()/2 : tank.getCapacity();
                         int added=target-tank.getFluidAmount();
                         if(tank.fill(new FluidStack(Fluids.WATER,added),EXECUTE)!=added)
                             throw new IllegalStateException("Could not set the sight-glass water level at "+origin);
                     } else if(stage==3) {
-                        tank.drain(Integer.MAX_VALUE,EXECUTE);owner.toggleLid();
+                        tank.drain(Integer.MAX_VALUE,EXECUTE);
                         var cog=owner.stirrerPos().north();
                         level.setBlock(cog,AllBlocks.COGWHEEL.getDefaultState().setValue(BlockStateProperties.AXIS,Direction.Axis.Y),Block.UPDATE_ALL);
                         var motor=cog.above();
@@ -106,8 +105,8 @@ final class VesselContentsClientCheck {
     private static void verify(Minecraft mc,double expected) {
         for(int i=0;i<origins.length;i++) {
             var owner=((LiddedVesselBlockEntity)mc.level.getBlockEntity(origins[i])).getControllerBE();
-            if(owner==null || owner.getWidth()!=3 || owner.getHeight()!=2 || !owner.formed() || owner.module()!=ReactorModule.STIRRED)
-                throw new IllegalStateException("Installed module or dimensions did not synchronize: "+origins[i]);
+            if(owner==null || owner.getWidth()!=3 || owner.getHeight()!=2 || !owner.formed() || owner.module()!=ReactorModule.STIRRED || !owner.openTop())
+                throw new IllegalStateException("Stirrer, dimensions or roof opening did not synchronize: "+origins[i]);
             long amount=0;for(int slot=0;slot<owner.displayedFluidSlots();slot++)amount+=owner.displayedLiquid(slot).getAmount();
             double fraction=(double)amount/owner.getDisplayedCapacity();
             if(Math.abs(fraction-expected)>.002)throw new IllegalStateException("Wrong client liquid fraction for "+origins[i]+": "+fraction+" expected "+expected);

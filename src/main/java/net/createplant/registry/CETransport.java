@@ -109,7 +109,7 @@ public final class CETransport {
     public static final Supplier<BlockEntityType<PlantFluidTankBlockEntity>> CRYOGENIC_TANK_ENTITY=tankEntity("cryogenic_tank",CRYOGENIC_TANK);
     // Create's tank, up to four blocks high, with a hinged lid that opens it into a basin.
     public static final DeferredBlock<net.createplant.block.LiddedVesselBlock> LIDDED_VESSEL=BLOCKS.registerBlock("lidded_vessel",net.createplant.block.LiddedVesselBlock::new,
-        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().sound(SoundType.NETHERITE_BLOCK));
+        BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).noOcclusion().sound(SoundType.NETHERITE_BLOCK).dynamicShape());
     static { ITEMS.register("lidded_vessel",()->new net.createplant.item.LiddedVesselItem(LIDDED_VESSEL.get(),new net.minecraft.world.item.Item.Properties())); }
     public static final Supplier<BlockEntityType<net.createplant.block.entity.LiddedVesselBlockEntity>> LIDDED_VESSEL_ENTITY=TYPES.register("lidded_vessel",()->
         BlockEntityType.Builder.of(net.createplant.block.entity.LiddedVesselBlockEntity::new,LIDDED_VESSEL.get()).build(null));

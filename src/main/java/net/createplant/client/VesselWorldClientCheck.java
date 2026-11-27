@@ -103,23 +103,17 @@ final class VesselWorldClientCheck {
             });
         }
         if (phase == 1 && ready) { phase = 2;ticks = 0; }
-        if (phase >= 3 && phase <= 5) {
+        if (phase == 3 || phase == 4) {
             float pitch = phase == 3 ? -40 : 40;
             mc.player.setYRot(YAW);mc.player.setXRot(pitch);
             mc.player.yRotO = YAW;mc.player.xRotO = pitch;
             if (ticks < 45) return false;
             verify(mc);
-            Screenshot.grab(mc.gameDirectory, phase == 3 ? "quality-vessel-drive.png" : phase == 4 ? "quality-vessel-top.png" : "quality-vessel-top-open.png", mc.getMainRenderTarget(), message -> { });
+            Screenshot.grab(mc.gameDirectory, phase == 3 ? "quality-vessel-drive.png" : "quality-vessel-top-open.png", mc.getMainRenderTarget(), message -> { });
             if (phase == 3) {
                 phase = 4;ticks = 0;
                 var server = mc.getSingleplayerServer();var playerId = mc.player.getUUID();
                 server.execute(() -> server.getPlayerList().getPlayer(playerId).connection.teleport(19, origins[0].getY() + 6, 9, YAW, 40));
-                return false;
-            }
-            if (phase == 4) {
-                phase = 5;ticks = 0;
-                var server = mc.getSingleplayerServer();
-                server.execute(() -> ((LiddedVesselBlockEntity) server.overworld().getBlockEntity(origins[3])).toggleLid());
                 return false;
             }
             mc.options.hideGui = previousHideGui;
@@ -219,8 +213,12 @@ final class VesselWorldClientCheck {
                 if (CETransport.LIDDED_VESSEL.get().hasShaftTowards(mc.level, pos, state, Direction.DOWN))
                     throw new IllegalStateException("The vessel casing exposes an external shaft at " + pos);
             }
-            if (i == 3 && !mc.level.getBlockState(owner.stirrerPos()).is(CEReactor.STIRRER.get()))
-                throw new IllegalStateException("The separate stirrer on the vessel roof is missing");
+            if (i == 3) {
+                var centre = owner.stirrerPos().below();
+                if (!owner.openTop() || !mc.level.getBlockState(owner.stirrerPos()).is(CEReactor.STIRRER.get())
+                    || !mc.level.getBlockState(centre).getCollisionShape(mc.level, centre).isEmpty())
+                    throw new IllegalStateException("The client vessel must have a roof stirrer and an unobstructed bore");
+            }
             if (windowed) VesselClientCheck.verifyWindowQuads(mc, mc.level, owner);
             var liquid = owner.displayedFluid(7);
             if (!(i == 2 ? net.createplant.thermal.FluidForm.LIQUID_NITROGEN.matches(liquid) : liquid.is(Fluids.WATER)) || liquid.isEmpty()
