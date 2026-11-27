@@ -260,8 +260,13 @@ public class DriveLessVesselGameTests {
         h.assertTrue(owner.formed() && port.fill(water, EXECUTE) == 0 && owner.getTankInventory().isEmpty(), "A cached storage port cannot insert hidden water into an active process");
         h.setBlock(STIRRER, Blocks.AIR);
         h.assertTrue(port.fill(water, EXECUTE) == 1000, "The storage port works again once the stirrer is gone");
-        owner.toggleLid();
-        h.assertTrue(port.fill(water, EXECUTE) == 0 && port.drain(1000, EXECUTE).isEmpty(), "Opening the hatch retires a previously cached top pipe connection");
+        // The stirred tank's bore has no hatch; a stainless tank above checks the hatch.
+        for (int x = 0; x < 3; x++) for (int z = 0; z < 3; z++) h.setBlock(BASE.offset(x, 3, z), CETransport.LIDDED_VESSEL.get());
+        var tank = (LiddedVesselBlockEntity) h.getBlockEntity(BASE.offset(0, 3, 0));
+        var top = h.getLevel().getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, h.absolutePos(BASE.offset(1, 3, 1)), Direction.UP);
+        h.assertTrue(top != null && top.fill(water, EXECUTE) == 1000, "The stainless tank's top port fills while its hatch is shut");
+        tank.getControllerBE().toggleLid();
+        h.assertTrue(top.fill(water, EXECUTE) == 0 && top.drain(1000, EXECUTE).isEmpty(), "Opening the hatch retires a previously cached top pipe connection");
         h.succeed();
     }
 

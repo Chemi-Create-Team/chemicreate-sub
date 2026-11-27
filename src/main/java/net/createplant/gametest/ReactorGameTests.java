@@ -513,16 +513,16 @@ public class ReactorGameTests {
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void expandingIsBoundedAndOutputBackpressureIsAtomic(GameTestHelper h) {
-        var be=build(h,ReactorModule.STIRRED,4);heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
-        speed(be,32);h.assertTrue(be.sections()==2 && receiver(be).calculateStressApplied()==32 && be.calculateStressApplied()==0,"A four-layer tank still runs two batches, charging 32 SU/RPM to the roof stirrer");
+        var be=build(h,ReactorModule.STIRRED,3);heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
+        speed(be,32);h.assertTrue(be.sections()==2 && receiver(be).calculateStressApplied()==32 && be.calculateStressApplied()==0,"A three-layer tank still runs two batches, charging 32 SU/RPM to the roof stirrer");
         for (int i=0;i<8;i++) { in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,300); }
         h.assertTrue(out(be).getFluidInTank(0).getAmount()==8000 && out(be).getTankCapacity(0)==8000,"Finite liquid output capacity holds exactly eight batches");
         in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,600);
         h.assertTrue(in(be).getFluidInTank(0).getAmount()==1000,"A full liquid product buffer consumes no feed");
         out(be).drain(1000,EXECUTE);run(be,300);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==8000,"Making room permits exactly one further batch");
         for (int x=0;x<3;x++) for (int z=0;z<3;z++)
-            if (x!=1 || z!=1) h.setBlock(BASE.offset(x,4,z),CETransport.STIRRED_TANK.get());
-        be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==4,"An attempted fifth layer leaves the roof drive and four-layer process intact");h.succeed();
+            if (x!=1 || z!=1) h.setBlock(BASE.offset(x,3,z),CETransport.STIRRED_TANK.get());
+        be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==3,"An attempted fourth layer leaves the roof drive and three-layer process intact");h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void heaterRequiresRealHeatAndColumnRequiresColdFeed(GameTestHelper h) {
@@ -557,7 +557,7 @@ public class ReactorGameTests {
         var jacket=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,hot.getBlockPos().offset(0,0,1),Direction.WEST);
         h.assertTrue(items!=null && jacket!=null,"The vessel takes items and fluids on its outer faces");
         h.assertTrue(items.insertItem(0,new ItemStack(Items.DIRT),false).isEmpty() && hot.recoverInputItem(0,1).is(Items.DIRT),"A stirred vessel stores ordinary basin items and lets the player recover them independently of recipes");
-        h.assertTrue(items.insertItem(0,CEUranium.URANIUM_DIOXIDE.toStack(),false).isEmpty() && items.extractItem(0,1,true).isEmpty(),"Feed slots take reaction ingredients and give nothing back");
+        h.assertTrue(items.insertItem(0,CEUranium.URANIUM_DIOXIDE.toStack(),false).isEmpty() && items.extractItem(0,1,true).is(CEUranium.URANIUM_DIOXIDE.get()),"Like a basin, feed slots take reaction ingredients and give unused ones back");
         h.assertTrue(jacket.fill(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),500),EXECUTE)==500,"Gas goes in through the vessel");run(hot,100);
         h.assertTrue(hot.status().equals("heat") && items.getStackInSlot(0).getCount()==1,"Without a burner the heated green-salt reaction cannot start");
         h.getLevel().setBlock(hot.getBlockPos().below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED),3);run(hot,100);
@@ -783,9 +783,8 @@ public class ReactorGameTests {
         owner.tickProcess();
         h.assertTrue(owner.openTop() && !owner.status().equals("lid"),"The process does not require a lid to close");
         level.removeBlock(owner.stirrerPos(),false);owner.validateStructure();
-        h.assertTrue(!owner.stirred() && !owner.formed() && owner.getWidth()==3 && !owner.openTop()
-            && !level.getBlockState(centre).getCollisionShape(level,centre).isEmpty(),
-            "Removing the stirrer returns a closed storage tank");
+        h.assertTrue(!owner.stirred() && !owner.formed() && owner.getWidth()==3 && owner.openTop() && owner.bored(),
+            "Removing the stirrer leaves the stirred tank's open bore as plain storage");
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)

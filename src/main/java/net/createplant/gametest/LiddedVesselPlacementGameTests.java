@@ -245,8 +245,10 @@ public class LiddedVesselPlacementGameTests {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         for (int width = 2; width <= 3; width++) for (Direction hinge : Direction.Plane.HORIZONTAL) {
             clearColumn(h);
+            // A stirred tank stands at most three high.
+            int layers = width == 3 ? 3 : 4;
             // Only a stirred tank stirs, so the 3x3 case is built as one.
-            for (int y = 0; y < 4; y++) square(h, BASE.above(y), width, hinge, width == 3 ? CETransport.STIRRED_TANK.get() : CETransport.LIDDED_VESSEL.get());
+            for (int y = 0; y < layers; y++) square(h, BASE.above(y), width, hinge, width == 3 ? CETransport.STIRRED_TANK.get() : CETransport.LIDDED_VESSEL.get());
             var owner = root(h, BASE);owner.toggleWindows();
             if (width == 3) ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
             owner.validateStructure();
@@ -254,7 +256,7 @@ public class LiddedVesselPlacementGameTests {
             owner.itemPort().insertItem(0, new ItemStack(Items.IRON_INGOT, 7), false);
             double energy = FluidThermal.energy(owner.getTankInventory().getFluid());
             var lookup = h.getLevel().registryAccess();
-            for (int y = 0; y < 4; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) {
+            for (int y = 0; y < layers; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) {
                 BlockPos at = BASE.offset(x, y, z);var part = (LiddedVesselBlockEntity) h.getBlockEntity(at);
                 var saved = part.saveWithoutMetadata(lookup);Direction side = hinge.getOpposite();
                 int across = side.getAxis() == Direction.Axis.Z ? x : z, out = side.getAxis() == Direction.Axis.Z ? z : x;
@@ -263,7 +265,7 @@ public class LiddedVesselPlacementGameTests {
                 h.setBlock(at, h.getBlockState(at).setValue(LiddedVesselBlock.LADDER, old));
                 part.loadWithComponents(saved, lookup);part.lazyTick();
             }
-            for (int y = 0; y < 4; y++) assertLadderLayer(h, player, width, hinge, y);
+            for (int y = 0; y < layers; y++) assertLadderLayer(h, player, width, hinge, y);
             h.assertTrue(owner.stirred() == (width == 3), "Migration keeps a 3x3 tank stirred over its stirrer");
             h.assertTrue(owner.getTankInventory().getFluidAmount() == 1000 && Math.abs(FluidThermal.energy(owner.getTankInventory().getFluid()) - energy) < 1e-6
                 && owner.itemPort().getStackInSlot(0).is(Items.IRON_INGOT) && owner.itemPort().getStackInSlot(0).getCount() == 7,

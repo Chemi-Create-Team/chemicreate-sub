@@ -952,10 +952,12 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         @Override public ItemStack getStackInSlot(int slot) { return charge.getStackInSlot(slot); }
         private boolean available() { return !isRemoved() && level!=null && (!(ReactorMachineBlockEntity.this instanceof LiddedVesselBlockEntity vessel) || vessel.isController()) && (module()==ReactorModule.NONE || module()==ReactorModule.STIRRED || ready()); }
         @Override public ItemStack insertItem(int slot,ItemStack stack,boolean simulate) { return isItemValid(slot,stack) && available() ? charge.insertItem(slot,stack,simulate) : stack; }
-        @Override public ItemStack extractItem(int slot,int amount,boolean simulate) { return slot>=0 && slot<CHARGE_SLOTS && (module()==ReactorModule.NONE || !formed || slot>=FEED_SLOTS) && available() ? charge.extractItem(slot,amount,simulate) : ItemStack.EMPTY; }
+        @Override public ItemStack extractItem(int slot,int amount,boolean simulate) { return slot>=0 && slot<CHARGE_SLOTS && (module()==ReactorModule.NONE || module()==ReactorModule.STIRRED || !formed || slot>=FEED_SLOTS) && available() ? charge.extractItem(slot,amount,simulate) : ItemStack.EMPTY; }
         @Override public int getSlotLimit(int slot) { return charge.getSlotLimit(slot); }
-        @Override public boolean isItemValid(int slot,ItemStack stack) { return slot>=0 && slot<FEED_SLOTS; }
+        @Override public boolean isItemValid(int slot,ItemStack stack) { return slot>=0 && slot<feedSlots(); }
     }
+    /** Feed slots that accept new items; recipes still read all of them. */
+    protected int feedSlots() { return FEED_SLOTS; }
     private int requiredAmount(ProcessRecipe recipe,int index){
         var required=recipe.inputs().get(index);
         return required.getAmount();

@@ -32,6 +32,56 @@ public class LiddedVesselGameTests {
         for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) h.setBlock(BASE.offset(x, 0, z), CETransport.LIDDED_VESSEL.get().defaultBlockState());
     }
 
+    private static void stirredSquare(GameTestHelper h, int width, int layers) {
+        for (int y = 0; y < layers; y++) for (int x = 0; x < width; x++) for (int z = 0; z < width; z++) h.setBlock(BASE.offset(x, y, z), CETransport.STIRRED_TANK.get().defaultBlockState());
+    }
+
+    @GameTest(template = "test_fractionation", timeoutTicks = 100)
+    public static void aStirredTankIsABoreWithoutItsStirrerCatchesThrownItemsAndStopsAtThreeHigh(GameTestHelper h) {
+        stirredSquare(h, 3, 4);
+        var root = root(h, BASE);
+        h.assertTrue(root.getWidth() == 3 && root.getHeight() == LiddedVesselBlockEntity.STIRRED_MAX_HEIGHT && root(h, BASE.above(3)).getHeight() == 1, "A stirred tank stands at most three blocks high");
+        h.assertTrue(root.bored() && root.openTop() && !root.open() && !root.stirred(), "A 3x3 stirred tank has its open round bore before any stirrer is fitted");
+        root.toggleLid();
+        h.assertTrue(!root.open(), "The bore has no hatch to toggle");
+        int capacity = root.getTankInventory().getCapacity();
+        h.assertTrue(capacity == 76000 && capacity < 9 * 3 * LiddedVesselBlockEntity.getCapacityMultiplier(), "The round bore holds less than the square blocks round it: " + capacity);
+        var items = root.itemPort();
+        int accepted = 0;
+        for (var item : new net.minecraft.world.item.Item[] {net.minecraft.world.item.Items.IRON_INGOT, net.minecraft.world.item.Items.GOLD_INGOT, net.minecraft.world.item.Items.COPPER_INGOT, net.minecraft.world.item.Items.COAL, net.minecraft.world.item.Items.FLINT})
+            if (net.neoforged.neoforge.items.ItemHandlerHelper.insertItemStacked(items, new net.minecraft.world.item.ItemStack(item, 64), false).isEmpty()) accepted++;
+        h.assertTrue(accepted == 4, "The charge holds four stacks: " + accepted);
+        for (int slot = 0; slot < 4; slot++) items.extractItem(slot, 64, false);
+        var thrown = new net.minecraft.world.entity.item.ItemEntity(h.getLevel(), h.absolutePos(BASE).getX() + 1.5, h.absolutePos(BASE).getY() + 2.5, h.absolutePos(BASE).getZ() + 1.5, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT, 5));
+        h.getLevel().addFreshEntity(thrown);
+        h.runAfterDelay(60, () -> {
+            h.assertTrue(thrown.isRemoved() && items.getStackInSlot(0).is(net.minecraft.world.item.Items.IRON_INGOT) && items.getStackInSlot(0).getCount() == 5, "An item thrown into the bore lands in the item slots: " + items.getStackInSlot(0));
+            stirredSquare(h, 2, 1);
+            h.succeed();
+        });
+    }
+
+    @GameTest(template = "test_fractionation")
+    public static void aTwoByTwoStirredTankIsAPlainTank(GameTestHelper h) {
+        stirredSquare(h, 2, 2);
+        var root = root(h, BASE);
+        h.assertTrue(root.getWidth() == 2 && !root.bored() && root.getTankInventory().getCapacity() == 8 * LiddedVesselBlockEntity.getCapacityMultiplier(), "Smaller stirred tanks keep the square hatch and full volume");
+        h.succeed();
+    }
+
+    @GameTest(template = "test_fractionation")
+    public static void funnelsCanTakeTheFeedOutOfAStirringTank(GameTestHelper h) {
+        stirredSquare(h, 3, 2);
+        var root = root(h, BASE);
+        ReactorGameTests.stir(h.getLevel(), h.absolutePos(BASE));
+        root.validateStructure();
+        h.assertTrue(root.stirred(), "The tank stirs");
+        var side = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, h.absolutePos(BASE.offset(2, 1, 1)), Direction.EAST);
+        h.assertTrue(side != null && side.insertItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.FLINT, 3), false).isEmpty(), "A side port accepts feed");
+        h.assertTrue(side.extractItem(0, 64, false).getCount() == 3, "Like a basin, the unused feed can be pulled back out through a side port");
+        h.succeed();
+    }
+
     @GameTest(template = "test_fractionation")
     public static void onlyAStirredTankStirsAndItDoesNotJoinAStainlessTank(GameTestHelper h) {
         square(h, 3);

@@ -93,10 +93,53 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     private static boolean open(BlockState state) { return state.hasProperty(LiddedVesselBlock.OPEN) && state.getValue(LiddedVesselBlock.OPEN); }
 
     /** The hinged storage hatch, used by the storage pressure and pipe rules. */
-    public boolean open() { return !stirred() && open(state()); }
+    public boolean open() { return !bored() && open(state()); }
 
-    /** A mounted stirrer leaves the bore accessible for manual loading. */
-    public boolean openTop() { return stirred() || open(state()); }
+    /** The round bore is always open for manual loading. */
+    public boolean openTop() { return bored() || open(state()); }
+
+    /** Only a 3x3 stirred tank has the round open bore, with or without its stirrer; smaller ones are plain tanks. */
+    public boolean bored() {
+        var owner = level == null ? this : getControllerBE();
+        return owner != null && owner.getType() == CETransport.STIRRED_TANK_ENTITY.get() && owner.width == 3;
+    }
+
+    /** Like a mechanical mixer over a basin: bits of the charge and splashes of the liquid swirl at the surface while a batch runs. */
+    private void mixingParticles() {
+        var random = level.random;
+        if (random.nextInt(3) != 0) return;
+        var liquids = liquidLayers();
+        long amount = liquids.stream().mapToLong(FluidStack::getAmount).sum();
+        float inset = 2 / 16f, surface = inset + Math.min(1, (float) amount / getDisplayedCapacity()) * displayedFillScale() * (height - 2 * inset);
+        var items = new java.util.ArrayList<ItemStack>();
+        for (int slot = 0; slot < displayedItemSlots(); slot++) if (!displayedItem(slot).isEmpty()) items.add(displayedItem(slot));
+        net.minecraft.core.particles.ParticleOptions particle;
+        if (!items.isEmpty() && (liquids.isEmpty() || random.nextBoolean()))
+            particle = new net.minecraft.core.particles.ItemParticleOption(net.minecraft.core.particles.ParticleTypes.ITEM, items.get(random.nextInt(items.size())));
+        else if (!liquids.isEmpty()) particle = com.simibubi.create.content.fluids.FluidFX.getFluidParticle(liquids.getLast());
+        else return;
+        double angle = random.nextDouble() * Math.PI * 2, radius = .25 + random.nextDouble() * .7, spin = Math.signum(rotationSpeed()) * .08;
+        level.addParticle(particle, worldPosition.getX() + 1.5 + Math.cos(angle) * radius, worldPosition.getY() + surface + .05, worldPosition.getZ() + 1.5 + Math.sin(angle) * radius,
+            -Math.sin(angle) * spin, .06, Math.cos(angle) * spin);
+    }
+
+    /** A stirred tank holds up to four stacks of feed, like a basin. */
+    @Override protected int feedSlots() { return getType() == CETransport.STIRRED_TANK_ENTITY.get() ? 4 : super.feedSlots(); }
+
+    /** The drawn liquid in a bored tank tops out at 80 % of the bore, leaving headspace. */
+    public float displayedFillScale() { return bored() ? .8f : 1; }
+
+    /** Capacity of a 3x3 bore {@code height} blocks high: its round volume, dished floor included, at one full block per tank block. */
+    static int boreCapacity(int height) {
+        double pixels = Math.PI * LiddedVesselBlock.BORE_RADIUS * LiddedVesselBlock.BORE_RADIUS * (16 * height - LiddedVesselBlock.DISH_RIM_HEIGHT);
+        for (int y = LiddedVesselBlock.DISH_FLOOR_HEIGHT; y < LiddedVesselBlock.DISH_RIM_HEIGHT; y++) pixels += Math.PI * LiddedVesselBlock.boreRadius(y) * LiddedVesselBlock.boreRadius(y);
+        return (int) (pixels * getCapacityMultiplier() / 4096 / 1000) * 1000;
+    }
+
+    private int capacity(int blocks) {
+        blocks = Math.max(1, blocks);
+        return getType() == CETransport.STIRRED_TANK_ENTITY.get() && blocks % 9 == 0 ? boreCapacity(blocks / 9) : blocks * getCapacityMultiplier();
+    }
 
     public Direction hinge() { return state().hasProperty(LiddedVesselBlock.HINGE) ? state().getValue(LiddedVesselBlock.HINGE) : Direction.NORTH; }
 
@@ -266,7 +309,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
     @Override public boolean hasTank() { return true; }
     @Override public int getTankSize(int tank) { return getCapacityMultiplier(); }
     @Override public void setTankSize(int tank, int blocks) {
-        tankInventory.setCapacity(Math.max(1, blocks) * getCapacityMultiplier());
+        tankInventory.setCapacity(capacity(blocks));
         int overflow = tankInventory.getFluidAmount() - tankInventory.getCapacity();
         if (overflow > 0) {
             if (net.createplant.mixture.MixtureHelper.isMixture(tankInventory.getFluid())) tankInventory.setFluid(tankInventory.getFluid().copyWithAmount(tankInventory.getCapacity()));
@@ -352,7 +395,9 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         behaviours.add(new DirectBeltInputBehaviour(this));
     }
 
-    @Override public int getMaxLength(Direction.Axis axis, int width) { return axis == Direction.Axis.Y ? ReactorStructure.MAX_SECTIONS : getMaxWidth(); }
+    /** A stirred tank stands at most three blocks high. */
+    public static final int STIRRED_MAX_HEIGHT = 3;
+    @Override public int getMaxLength(Direction.Axis axis, int width) { return axis == Direction.Axis.Y ? getType() == CETransport.STIRRED_TANK_ENTITY.get() ? STIRRED_MAX_HEIGHT : ReactorStructure.MAX_SECTIONS : getMaxWidth(); }
 
     @Override public void tick() {
         if (level != null && !level.isClientSide && updateConnectivity && isController()) {
@@ -371,6 +416,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         if (level.isClientSide) {
             lid.chase(open() ? 1 : 0, .12, LerpedFloat.Chaser.LINEAR);
             lid.tickChaser();
+            if (mixing() && bored()) mixingParticles();
             return;
         }
     }
@@ -481,7 +527,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         level.invalidateCapabilities(worldPosition);
     }
 
-    public void toggleLid() { var owner = getControllerBE();if (owner != null && !owner.stirred()) owner.setLid(!owner.open()); }
+    public void toggleLid() { var owner = getControllerBE();if (owner != null && !owner.bored()) owner.setLid(!owner.open()); }
 
     private void setLid(boolean open) {
         if(width==1)return;
@@ -589,7 +635,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         width = Math.clamp(tag.getInt("Size"), 1, 3);height = Math.clamp(tag.getInt("Height"), 1, ReactorStructure.MAX_SECTIONS);
         lastKnownPos = tag.contains("LastKnownPos") ? NbtUtils.readBlockPos(tag, "LastKnownPos").orElse(null) : null;
         updateConnectivity = tag.getBoolean("Uninitialized");
-        tankInventory.setCapacity(getTotalTankSize() * getCapacityMultiplier());
+        tankInventory.setCapacity(capacity(getTotalTankSize()));
         if (isController()) {
             tankInventory.readFromNBT(lookup, tag.getCompound("TankContent"));
             if (tankInventory.getSpace() < 0) tankInventory.drain(-tankInventory.getSpace(), FluidAction.EXECUTE);

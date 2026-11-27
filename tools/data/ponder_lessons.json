@@ -895,9 +895,9 @@
     "zh_cn": "将搅拌器装在罐顶中央，从罐底加热。"
   },
   "guide.reactor_plant_stirred.step_1": {
-    "en_us": "Build the 3×3 vessel two to four layers high. It can process two batches at once.",
-    "ja_jp": "槽は3×3・高さ2～4段で組みます。2バッチを同時に処理できます。",
-    "zh_cn": "槽体摆成3×3，叠两到四层，可同时处理两批。"
+    "en_us": "Build the 3×3 stirred tank two to three layers high. It can process two batches at once.",
+    "ja_jp": "撹拌槽は3×3・高さ2～3段で組みます。2バッチを同時に処理できます。",
+    "zh_cn": "搅拌槽摆成3×3，叠两到三层，可同时处理两批。"
   },
   "guide.reactor_plant_stirred.step_2": {
     "en_us": "The 34 px circular opening stays open around the drive shaft.",
@@ -1925,9 +1925,9 @@
     "zh_cn": "搅拌槽中的混合与加热"
   },
   "vessel_basin.assemble": {
-    "en_us": "Build nine stirred tanks into a 3×3 tank. Add up to four layers to increase capacity.",
-    "ja_jp": "撹拌槽9個を3×3に並べて槽を組みます。4段まで増設できます。",
-    "zh_cn": "用九个搅拌槽搭成3×3槽，最多可扩至4层。"
+    "en_us": "Build nine stirred tanks into a 3×3 tank with an open round bore. Add up to three layers to increase capacity.",
+    "ja_jp": "撹拌槽9個を3×3に並べると、丸い開口のある槽になります。3段まで増設できます。",
+    "zh_cn": "用九个搅拌槽搭成带圆形开口的3×3槽，最多可扩至3层。"
   },
   "vessel_basin.window": {
     "en_us": "Use a wrench on the side to open inspection windows above the dished bottom.",
@@ -1935,9 +1935,9 @@
     "zh_cn": "用扳手操作侧面，在碟形罐底上方打开观察窗。"
   },
   "vessel_basin.feed": {
-    "en_us": "Feed solids with a belt and funnel. Feed fluids with a powered pump and pipes.",
-    "ja_jp": "固体はベルトとファンネルで入れます。流体はポンプを回して配管で送ります。",
-    "zh_cn": "固体用传送带和漏斗送入。流体通过有动力的泵和管道输送。"
+    "en_us": "Feed solids with a belt and funnel, or throw them into the bore. It holds four stacks. Feed fluids with a powered pump and pipes.",
+    "ja_jp": "固体はベルトとファンネルで入れるか、開口へ投げ入れます。4スタックまで入ります。流体はポンプを回して配管で送ります。",
+    "zh_cn": "固体用传送带和漏斗送入，或直接扔进开口，最多四组。流体通过有动力的泵和管道输送。"
   },
   "vessel_basin.heat": {
     "en_us": "Fuel a Blaze Burner below the vessel. Each burner adds heat to the contents: a heavy or high-heat-capacity content warms slowly, and a boiling liquid waits at its boiling point until it has taken the heat to turn to gas.",
@@ -1950,9 +1950,9 @@
     "zh_cn": "相邻齿轮至少以32 RPM转动，燃烧室放在罐底下方。"
   },
   "vessel_basin.products": {
-    "en_us": "Extract solids with funnels and fluids with pumps. If processing stops, check outputs, heat, rotation and sludge.",
-    "ja_jp": "固体はファンネル、流体はポンプで取り出します。止まったら出口・加熱・回転・汚れを確認します。",
-    "zh_cn": "用漏斗取出固体，用泵抽出流体。停机时检查出口、加热、转速和污泥。"
+    "en_us": "Extract solids with funnels, unused ingredients included, and fluids with pumps. If processing stops, check outputs, heat, rotation and sludge.",
+    "ja_jp": "固体は未使用の原料も含めてファンネル、流体はポンプで取り出します。止まったら出口・加熱・回転・汚れを確認します。",
+    "zh_cn": "用漏斗取出固体（含未用原料），用泵抽出流体。停机时检查出口、加热、转速和污泥。"
   },
   "vessel_maintenance.title": {
     "en_us": "Fluid grades and cleaning",

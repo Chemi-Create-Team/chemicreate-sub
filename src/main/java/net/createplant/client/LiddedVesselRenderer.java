@@ -53,11 +53,11 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         TextureAtlasSprite joined = width == 3 ? PlantTankModels.VESSEL_CAP.getTarget() : width == 2 ? atlas.apply(CreatePlant.location("block/lidded_vessel/top_2")) : top;
         VertexConsumer vc = buffer.getBuffer(RenderType.solid());
         float span = width * 16, middle = span / 2;
-        boolean stirred = be.stirred();
+        boolean bored = be.bored();
         if (width == 3) {
             var inner = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/lining"));
-            LiddedVesselInterior.lining(ms, vc, height, windowMask(be, height), stirred, inner, light, overlay);
-            if (stirred) {
+            LiddedVesselInterior.lining(ms, vc, height, windowMask(be, height), bored, inner, light, overlay);
+            if (bored) {
                 var shaft = atlas.apply(CreatePlant.location("block/lidded_vessel/internal/shaft"));
                 renderStirringAssembly(be, height, ms, vc, edge, shaft, light, overlay);
             }
@@ -69,7 +69,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         }
         box(vc, ms, middle - 2, -1, span - 7, middle + 2, 0, span - 3, fitting, fitting, edge, light, overlay);
         box(vc, ms, middle - 3, -2, span - 6, middle + 3, -1, span - 4, edge, edge, fitting, light, overlay);
-        if (stirred) {
+        if (bored) {
             float half = LiddedVesselInterior.ROOF_INSERT_HALF;
             ms.pushPose();
             ms.translate(0, height - 1, 0);
@@ -181,6 +181,8 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             box(vc, ms, 23, roof - 2, baffleOutside - 1, 25, roof, baffleOutside + 1, steel, steel, steel, light, overlay);
             ms.popPose();
         }
+        // The baffles belong to the tank; the bearing, shaft and impeller only come with a stirrer.
+        if (!be.stirred()) return;
 
         float angle = AnimationTickHolder.getRenderTime(be.getLevel()) * be.rotationSpeed() * .3f % 360 * (float) Math.PI / 180;
         ms.pushPose();
@@ -203,7 +205,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         var gases = be.gasLayers();
         long amount = liquids.stream().mapToLong(net.neoforged.neoforge.fluids.FluidStack::getAmount).sum();
         float inset = WALL / 16, surface = inset;
-        float depth = Math.min(1, (float) amount / be.getDisplayedCapacity()) * (height - 2 * inset);
+        float depth = Math.min(1, (float) amount / be.getDisplayedCapacity()) * be.displayedFillScale() * (height - 2 * inset);
         renderItems(be, inset + depth, ms, buffer, light, overlay);
         var liquidBuffer = FluidRenderHelper.getFluidBuilder(buffer);
         for (int i = 0; i < liquids.size(); i++) {
@@ -241,7 +243,8 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
         if (count == 0) return;
         float time = AnimationTickHolder.getRenderTime(be.getLevel());
         Swirl swirl = swirls.computeIfAbsent(be, ignored -> new Swirl());
-        if (be.mixing()) swirl.angle += Math.clamp(time - swirl.time, 0, 2) * Math.clamp(be.rotationSpeed() / 32, -4, 4) * .04f;
+        // Like items in a basin under a mixer, the charge turns with the running stirrer.
+        if (be.rotationSpeed() != 0) swirl.angle += Math.clamp(time - swirl.time, 0, 2) * Math.clamp(be.rotationSpeed() / 32, -4, 4) * .04f;
         swirl.time = time;
         boolean round = be.getWidth() == 3;
         float centre = be.getWidth() / 2f, y = Math.min(be.getHeight() - .3f, Math.max(.24f, surface + .06f));

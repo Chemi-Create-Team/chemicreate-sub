@@ -161,7 +161,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
     @Override protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (state.getValue(DRIVE) && level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity cell) {
             var owner = cell.getControllerBE();
-            if (owner != null && owner.stirred()) {
+            if (owner != null && owner.bored()) {
                 int x = pos.getX() - owner.getBlockPos().getX(), z = pos.getZ() - owner.getBlockPos().getZ();
                 if (x >= 0 && x < 3 && z >= 0 && z < 3) return STIRRED_SHAPES[state.getValue(BOTTOM) ? 1 : 0][x * 3 + z];
             }
@@ -174,18 +174,32 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
 
     /** Entering the open hatch puts the body in the contents; a vessel of acid or alkali burns it until death. */
     @Override protected void entityInside(BlockState state, Level level, BlockPos pos, net.minecraft.world.entity.Entity entity) {
-        if (level.isClientSide || !(entity instanceof net.minecraft.world.entity.LivingEntity living)
-            || !(level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity cell)) return;
+        if (level.isClientSide || !(level.getBlockEntity(pos) instanceof LiddedVesselBlockEntity cell)) return;
         var owner = cell.getControllerBE();
         if (owner == null) return;
-        if (owner.stirred()) {
+        if (entity instanceof net.minecraft.world.entity.item.ItemEntity item) { catchItem(owner, item);return; }
+        if (!(entity instanceof net.minecraft.world.entity.LivingEntity living)) return;
+        if (owner.bored()) {
             var origin = owner.getBlockPos();
             double x = (living.getX() - origin.getX() - 1.5) * 16, z = (living.getZ() - origin.getZ() - 1.5) * 16;
             int y = (int) Math.floor((living.getY() - origin.getY()) * 16);
             float radius = boreRadius(y);
-            if (x * x + z * z >= radius * radius || y > DISH_FLOOR_HEIGHT + owner.getFillState() * (owner.getHeight() * 16 - 4)) return;
+            if (x * x + z * z >= radius * radius || y > DISH_FLOOR_HEIGHT + owner.getFillState() * owner.displayedFillScale() * (owner.getHeight() * 16 - 4)) return;
         } else if (!state.getValue(OPEN) || state.getValue(HATCH) == Hatch.NONE) return;
         net.createplant.safety.CorrosiveContact.soak(living, owner.getTankInventory().getFluid());
+    }
+
+    /** Like a basin, items thrown into the round bore land in the tank's item slots. */
+    private static void catchItem(LiddedVesselBlockEntity owner, net.minecraft.world.entity.item.ItemEntity item) {
+        if (!owner.bored() || !item.isAlive()) return;
+        var origin = owner.getBlockPos();
+        double x = (item.getX() - origin.getX() - 1.5) * 16, z = (item.getZ() - origin.getZ() - 1.5) * 16;
+        if (x * x + z * z >= BORE_RADIUS * BORE_RADIUS || item.getY() >= origin.getY() + owner.getHeight()) return;
+        var inventory = owner.itemPort();
+        if (inventory == null) return;
+        var rest = net.neoforged.neoforge.items.ItemHandlerHelper.insertItemStacked(inventory, item.getItem().copy(), false);
+        if (rest.isEmpty()) item.discard();
+        else item.setItem(rest);
     }
 
     private static int mask(BlockState state) {
@@ -232,7 +246,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
         var owner = vessel == null ? null : vessel.getControllerBE();
         if (owner == null) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         // Anything else in the hand, a vessel to place on it included, never reaches the empty-hand hatch.
-        if (!owner.openTop() || stack.getItem() instanceof BlockItem blockItem && (owner.stirred() || blockItem.getBlock() == this || blockItem.getBlock() == net.createplant.registry.CEReactor.STIRRER.get()) || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (!owner.openTop() || stack.getItem() instanceof BlockItem blockItem && (owner.bored() || blockItem.getBlock() == this || blockItem.getBlock() == net.createplant.registry.CEReactor.STIRRER.get()) || stack.is(com.simibubi.create.AllItems.WRENCH.get())) return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         if (StatefulBuckets.emptyProcessBucket(stack))
             return StatefulBuckets.fillFromTank(stack, player, hand, level.getCapability(Capabilities.FluidHandler.BLOCK, owner.getBlockPos(), Direction.DOWN));
         var fluid = FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY);
@@ -271,7 +285,7 @@ public class LiddedVesselBlock extends com.simibubi.create.content.kinetics.base
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        if (owner.stirred()) return InteractionResult.PASS;
+        if (owner.bored()) return InteractionResult.PASS;
         if (!level.isClientSide) vessel.toggleLid();
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
