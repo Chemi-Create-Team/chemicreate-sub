@@ -75,7 +75,7 @@ public class LiddedVesselRenderer extends SafeBlockEntityRenderer<LiddedVesselBl
             ms.translate(0, height - 1, 0);
             squarePlate(vc, ms, span, middle - half, middle + half, joined, under, light, overlay);
             ms.popPose();
-            LiddedVesselInterior.roundRoof(ms, vc, height, edge, light, overlay);
+            LiddedVesselInterior.roundRoof(ms, vc, height, edge, joined, light, overlay);
             renderContents(be, width, height, ms, buffer, light, overlay);
             return;
         }

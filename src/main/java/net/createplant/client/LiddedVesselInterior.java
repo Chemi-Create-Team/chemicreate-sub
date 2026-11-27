@@ -105,16 +105,22 @@ final class LiddedVesselInterior {
         }
     }
 
-    static void roundRoof(PoseStack ms, VertexConsumer vc, int height, TextureAtlasSprite steel, int light, int overlay) {
+    /** The roof round the bore; its top continues the stainless tank's 3x3 cap sheet, so the roof reads as that top with a round hole cut in it. */
+    static void roundRoof(PoseStack ms, VertexConsumer vc, int height, TextureAtlasSprite steel, TextureAtlasSprite cap, int light, int overlay) {
         Ring rim = DISH[DISH.length - 1];
         float top = height * 16;
         var pose = ms.last();
         for (int i = 0; i < SIDES; i++) {
             Point a = rim.at(i), b = rim.at(i + 1), A = a.toSquare(ROOF_INSERT_HALF), B = b.toSquare(ROOF_INSERT_HALF);
-            horizontal(vc, pose, steel, a, b, B, A, top, 1, light, overlay);
+            for (Point p : new Point[] {a, b, B, A}) capVertex(vc, pose, cap, p, top, light, overlay);
             horizontal(vc, pose, steel, b, a, A, B, top - 2, -1, light, overlay);
             strip(vc, pose, steel, a, b, a, b, top - 2, top, 0, (ARC[i + 1] - ARC[i]) / 16, 0, .125f, 0, 0, -1, -1, 0, -1, light, overlay);
         }
+    }
+
+    // The 3x3 cap occupies the left, middle and right columns and the top three rows of Create's rectangle sheet, a contiguous 48 px square.
+    private static void capVertex(VertexConsumer vc, PoseStack.Pose pose, TextureAtlasSprite cap, Point point, float y, int light, int overlay) {
+        vertex(vc, pose, cap, point, y, (16 + CENTRE + point.x()) / 64, (CENTRE + point.z()) / 64, 0, 1, 0, 0, -1, light, overlay);
     }
 
     private static void horizontal(VertexConsumer vc, PoseStack.Pose pose, TextureAtlasSprite sprite, Point a, Point b, Point c, Point d,

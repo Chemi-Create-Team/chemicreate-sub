@@ -79,6 +79,8 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
 
     private boolean dirty=true, recipeDirty=true, formed, running, syncNeeded, gasBlocked;
+    /** Set when a recipe had its ingredients but no room for its products, so the status names the full output instead of missing materials. */
+    private boolean outputBlocked, selectionFull;
     private int sections, epoch, clock, scale, cycleTicks=100;
     private int reuseProductsAt;
     private float progress;
@@ -479,7 +481,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             return;
         }
         for(int slot=0;slot<FEED_SLOTS;slot++) if(!charge.getStackInSlot(slot).isEmpty()) {
-            if(!react(32,parallel) && running)setStatus("materials",false);
+            if(!react(32,parallel) && running)setStatus(selectionFull ? "output" : "materials",false);
             return;
         }
         if(running)setStatus("materials",false);
@@ -495,11 +497,12 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             RecipeHolder<? extends StandardProcessingRecipe<RecipeInput>> blocked=null;
             var recipes=vesselRecipes();
             var reserved=reservedForSolids(recipes);
+            selectionFull=false;
             for (var holder:recipes) {
                 var candidate=holder.value();
                 if (!reserved.isEmpty() && candidate.getIngredients().isEmpty() && candidate.getFluidIngredients().stream()
                     .anyMatch(ingredient->reserved.stream().anyMatch(ingredient.ingredient()))) continue;
-                if (!available(candidate,parallel,holder.id().toString().equals(batch) ? flow : 0)) continue;
+                if (!available(candidate,parallel,holder.id().toString().equals(batch) ? flow : 0)) { selectionFull|=outputBlocked || gasBlocked;continue; }
                 if (candidate.getRequiredHeat().testBlazeBurner(heat)) { reaction=holder;break; }
                 if(blocked==null)blocked=holder;
             }
@@ -507,7 +510,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             recipeDirty=false;
         }
         if (reaction==null) {
-            if(module()==ReactorModule.STIRRED)setStatus("materials",false);
+            if(module()==ReactorModule.STIRRED)setStatus(selectionFull ? "output" : "materials",false);
             return module()==ReactorModule.STIRRED;
         }
         var recipe=reaction.value();
@@ -518,7 +521,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (!recipe.getRequiredHeat().testBlazeBurner(heat)) { progress=0;setStatus("heat",false);return true; }
         if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) return reactFluids(recipe,duration,rpm,parallel);
         int available=batches(recipe,parallel);
-        if (available==0) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : "materials",false);return true; }
+        if (available==0) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : outputBlocked ? "output" : "materials",false);return true; }
         String id=reaction.id().toString();
         if (module()==ReactorModule.STIRRED) {
             ItemStack[] contents=items();
@@ -682,7 +685,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         return batches(recipe,parallel,mayReuseProducts(recipe));
     }
     private int batches(StandardProcessingRecipe<RecipeInput> recipe,int parallel,boolean reuseLiquidProducts) {
-        gasBlocked=false;
+        gasBlocked=false;outputBlocked=false;
         ItemStack[] items=items();FluidStack[] fluids=mixingFluids();
         int count=0;
         while (count<parallel && runBatch(recipe,items,fluids,recipe.getRollableResultsAsItemStacks(),reuseLiquidProducts)) count++;
@@ -697,9 +700,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         if (consumed==null) return false;
         for (var ingredient:recipe.getFluidIngredients())
             if (withdrawFluid(recipe instanceof PressureReactionRecipe,reuseLiquidProducts,ingredient,(long)ingredient.amount()*Concentration.NORMAL,fluids)>0) return false;
-        if (!putItems(items,batchProducts(recipe,consumed,products))) return false;
+        if (!putItems(items,batchProducts(recipe,consumed,products))) { outputBlocked=true;return false; }
         productsAtContents(heatOfReaction(recipe));
-        try { for (FluidStack template:recipe.getFluidResults()) if (!putFluid(fluids,template)) return false; }
+        try { for (FluidStack template:recipe.getFluidResults()) if (!putFluid(fluids,template)) { outputBlocked=true;return false; } }
         finally { productKelvin=Double.NaN; }
         if (gasIn(fluids)>batchGasLimit()) { gasBlocked=true;return false; }
         return true;
@@ -737,7 +740,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
 
     /** Whether a recipe can run now: a fluid-only one as soon as any feed is there (it runs continuously), one with solids once a whole batch is. */
     private boolean available(StandardProcessingRecipe<RecipeInput> recipe,int parallel,double position) {
-        if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) { gasBlocked=false;return flowBatch(recipe,mixingFluids(),position,1e-3); }
+        if (recipe.getIngredients().isEmpty() && recipe.getRollableResults().isEmpty()) { gasBlocked=false;outputBlocked=false;return flowBatch(recipe,mixingFluids(),position,1e-3); }
         return batches(recipe,parallel)>0;
     }
     /** Takes {@code needed} mB of a fluid ingredient out of the feed buffers; false when the feed holds less. */
@@ -814,7 +817,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         try {
             for (FluidStack template:recipe.getFluidResults()) {
                 int amount=ReactionFlow.made(template.getAmount(),position,f);
-                if (amount>0 && !putFluid(fluids,template.copyWithAmount(amount))) return false;
+                if (amount>0 && !putFluid(fluids,template.copyWithAmount(amount))) { outputBlocked=true;return false; }
             }
         } finally { productKelvin=Double.NaN; }
         if (gasIn(fluids)>batchGasLimit()) { gasBlocked=true;return false; }
@@ -825,11 +828,11 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         double speed=Math.min(4,rpm/32f)*processingSpeedFactor(), wanted=parallel*speed/duration;
         String id=reaction.id().toString();
         double position=batch.equals(id) ? flow : 0;
-        gasBlocked=false;
+        gasBlocked=false;outputBlocked=false;
         FluidStack[] result=null;
         double step=wanted;
         for (;step>1e-4;step/=2) { var trial=mixingFluids();if (flowBatch(recipe,trial,position,step)) { result=trial;break; } }
-        if (result==null) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : "materials",false);return true; }
+        if (result==null) { recipeDirty=true;setStatus(gasBlocked ? "gas_full" : outputBlocked ? "output" : "materials",false);return true; }
         var needed=recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? 600 : recipe.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.HEATED ? 150 : 0;
         if (needed>0 && takeBurnerHeat(needed)<needed) { setStatus("heat",false);return true; }
         batch=id;
@@ -995,7 +998,9 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
     protected long processGas() { return gasIn(tanks); }
     public int gasRoom() { return (int)Math.max(0,Math.min(Integer.MAX_VALUE,processGasLimit()-gasIn(tanks))); }
     private int gasRoomFor(FluidStack stack) { return net.createplant.thermal.FluidState.gas(stack) ? gasRoom() : Integer.MAX_VALUE; }
-    private static int bufferCapacity(FluidStack fluid) { return net.createplant.thermal.FluidState.gas(fluid) ? CAPACITY*64 : CAPACITY; }
+    private int bufferCapacity(FluidStack fluid) { return net.createplant.thermal.FluidState.gas(fluid) ? liquidBufferCapacity()*64 : liquidBufferCapacity(); }
+    /** Liquid room of each feed and product buffer. */
+    public int liquidBufferCapacity() { return CAPACITY; }
     private void setStatus(String reason,boolean work) { setStatus(reason,work,false); }
     private void setStatus(String reason,boolean work,boolean measured) {
         if (!work) ProductionMonitor.limitedBy(this, switch (reason) {
@@ -1038,14 +1043,14 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
             if (!formed) text.add(Component.translatable(KEY+"fault",fault.getX(),fault.getY(),fault.getZ()));
             text.add(Component.translatable(KEY+"batch",batchName(),scale,Math.round(progress),cycleTicks()));
             for (int i=0;i<tanks.length;i++) if (!tanks[i].isEmpty()) text.add(Component.translatable(KEY+(inputTank(i) ? "input" : "output"),tanks[i].getHoverName(),tanks[i].getAmount(),
-                net.createplant.thermal.FluidState.gas(tanks[i]) ? CAPACITY*64 : CAPACITY));
+                bufferCapacity(tanks[i])));
             for (int i=0;i<CHARGE_SLOTS;i++) if (!charge.getStackInSlot(i).isEmpty()) text.add(Component.translatable(KEY+(i<FEED_SLOTS ? "item_input" : "item_output"),charge.getStackInSlot(i).getHoverName(),charge.getStackInSlot(i).getCount()));
             return true;
         } finally { net.createplant.compat.display.MachineReadings.compact(text); }
     }
     /** The goggle lines on the size, drive and connections of a formed vertical machine. */
     protected void structureTooltip(List<Component> text) {
-        text.add(Component.translatable(KEY+"structure",sections,maxSections(),CAPACITY));
+        text.add(Component.translatable(KEY+"structure",sections,maxSections(),liquidBufferCapacity()));
         text.add(Component.translatable(KEY+"performance",Math.min(4,Math.abs(rotationSpeed())/32f),sections,formed ? module().stress*sections : 0));
         text.add(Component.translatable(KEY+"ports"));
     }
@@ -1084,7 +1089,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         Port(int first,int count,boolean input,boolean output,int generation) { this.first=first;this.count=count;this.input=input;this.output=output;this.generation=generation; }
         private boolean live() { return generation==epoch && ready(); }
         @Override public int getTanks() { return count; }
-        @Override public int getTankCapacity(int tank) { return tank>=0 && tank<count ? net.createplant.thermal.FluidState.gas(tanks[first+tank]) ? CAPACITY*64 : CAPACITY : 0; }
+        @Override public int getTankCapacity(int tank) { return tank>=0 && tank<count ? bufferCapacity(tanks[first+tank]) : 0; }
         @Override public FluidStack getFluidInTank(int tank) { return generation==epoch && !isRemoved() && tank>=0 && tank<count ? tanks[first+tank].copy() : FluidStack.EMPTY; }
         @Override public boolean isFluidValid(int tank,FluidStack stack) {
             if (!input || !live() || tank<0 || tank>=count || !inputTank(first+tank) || stack.isEmpty()) return false;
@@ -1096,7 +1101,7 @@ public class ReactorMachineBlockEntity extends KineticBlockEntity {
         @Override public int fill(FluidStack stack,FluidAction action) {
             if (!live() || !input || stack.isEmpty()) return 0;
             for (int i=0;i<count;i++) if (isFluidValid(i,stack) && (tanks[first+i].isEmpty() || FluidThermal.mixable(tanks[first+i],stack))) {
-                int amount=Math.min(gasRoomFor(stack),Math.min(stack.getAmount(),Math.max(0,(net.createplant.thermal.FluidState.gas(stack) ? CAPACITY*64 : CAPACITY)-tanks[first+i].getAmount())));
+                int amount=Math.min(gasRoomFor(stack),Math.min(stack.getAmount(),Math.max(0,bufferCapacity(stack)-tanks[first+i].getAmount())));
                 if (amount>0 && action.execute()) { tanks[first+i]=FluidThermal.add(tanks[first+i],stack,amount);changed(); }
                 return amount;
             }

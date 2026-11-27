@@ -123,6 +123,12 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
             -Math.sin(angle) * spin, .06, Math.cos(angle) * spin);
     }
 
+    /** A stirred tank's feed and product buffers each match the tank's own volume. */
+    @Override public int liquidBufferCapacity() {
+        var owner = level == null ? this : getControllerBE();
+        return owner != null && owner.bored() ? owner.tankInventory.getCapacity() : super.liquidBufferCapacity();
+    }
+
     /** A stirred tank holds up to four stacks of feed, like a basin. */
     @Override protected int feedSlots() { return getType() == CETransport.STIRRED_TANK_ENTITY.get() ? 4 : super.feedSlots(); }
 
@@ -213,7 +219,7 @@ public class LiddedVesselBlockEntity extends ReactorMachineBlockEntity implement
         ensureDisplay();
         var kind=module();
         int capacity=kind==ReactorModule.NONE || kind==ReactorModule.STIRRED || !liquidDisplay[7].isEmpty() ? tankInventory.volumeCapacity() : 0;
-        for (int i=0;i<PROCESS_TANKS;i++) if (!liquidDisplay[i==THIRD_FEED ? 10 : i].isEmpty()) capacity+=CAPACITY;
+        for (int i=0;i<PROCESS_TANKS;i++) if (!liquidDisplay[i==THIRD_FEED ? 10 : i].isEmpty()) capacity+=liquidBufferCapacity();
         return Math.max(1,capacity);
     }
     @Override public int getDisplayedCapacity(int slot) { return slot==11 || slot==9 ? 0 : slot>=7 && slot<9 ? tankInventory.volumeCapacity() : super.getDisplayedCapacity(slot==10 ? THIRD_FEED : slot); }

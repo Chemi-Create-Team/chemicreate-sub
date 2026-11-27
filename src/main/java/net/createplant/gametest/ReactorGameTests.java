@@ -515,11 +515,14 @@ public class ReactorGameTests {
     public static void expandingIsBoundedAndOutputBackpressureIsAtomic(GameTestHelper h) {
         var be=build(h,ReactorModule.STIRRED,3);heat(be,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
         speed(be,32);h.assertTrue(be.sections()==2 && receiver(be).calculateStressApplied()==32 && be.calculateStressApplied()==0,"A three-layer tank still runs two batches, charging 32 SU/RPM to the roof stirrer");
-        for (int i=0;i<8;i++) { in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,300); }
-        h.assertTrue(out(be).getFluidInTank(0).getAmount()==8000 && out(be).getTankCapacity(0)==8000,"Finite liquid output capacity holds exactly eight batches");
+        int room=out(be).getTankCapacity(0),batches=room/1000;
+        h.assertTrue(room==((LiddedVesselBlockEntity)be).getTankInventory().getCapacity(),"Each product buffer holds as much as the stirred tank itself: "+room);
+        for (int i=0;i<batches;i++) { in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,300); }
+        h.assertTrue(out(be).getFluidInTank(0).getAmount()==batches*1000,"Finite liquid output capacity holds exactly its batches");
         in(be).fill(new FluidStack(net.createplant.registry.CEPetroFluids.PROPYLENE.get(),1000),EXECUTE);in(be).fill(new FluidStack(net.createplant.registry.CEProcessFluids.SYNTHESIS_GAS.get(),1000),EXECUTE);run(be,600);
         h.assertTrue(in(be).getFluidInTank(0).getAmount()==1000,"A full liquid product buffer consumes no feed");
-        out(be).drain(1000,EXECUTE);run(be,300);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==8000,"Making room permits exactly one further batch");
+        h.assertTrue(be.status().equals("output"),"A full product buffer is reported as a full output, not as a missing recipe: "+be.status());
+        out(be).drain(1000,EXECUTE);run(be,300);h.assertTrue(in(be).getFluidInTank(0).isEmpty() && out(be).getFluidInTank(0).getAmount()==batches*1000,"Making room permits exactly one further batch");
         for (int x=0;x<3;x++) for (int z=0;z<3;z++)
             if (x!=1 || z!=1) h.setBlock(BASE.offset(x,3,z),CETransport.STIRRED_TANK.get());
         be.validateStructure();h.assertTrue(be.formed() && be.sections()==2 && ((LiddedVesselBlockEntity)be).getHeight()==3,"An attempted fourth layer leaves the roof drive and three-layer process intact");h.succeed();

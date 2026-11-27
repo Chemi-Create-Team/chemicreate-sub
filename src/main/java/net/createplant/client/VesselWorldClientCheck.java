@@ -125,7 +125,8 @@ final class VesselWorldClientCheck {
         mc.player.setYRot(YAW);mc.player.setXRot(PITCH);
         mc.player.yRotO = YAW;mc.player.xRotO = PITCH;
         if (ticks < 45) return false;
-        verify(mc);
+        // The formed flag can reach the client a few ticks after the blocks; wait for it before judging.
+        try { verify(mc); } catch (IllegalStateException unsynced) { if (ticks < 200 && unsynced.getMessage().contains("not synchronized")) return false;throw unsynced; }
         if (DRIVE_VIEW) verifyCaps(mc);
         Screenshot.grab(mc.gameDirectory, "quality-vessel-world.png", mc.getMainRenderTarget(), message -> { });
         if (DRIVE_VIEW) {
