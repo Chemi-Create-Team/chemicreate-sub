@@ -33,6 +33,19 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @GameTestHolder(CreatePlant.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class TankGameTests {
+    /** Snow cannot settle on tank casings, so a snowfall never fills the open tank's interior and unforms it. */
+    @GameTest(template = "test_empty")
+    public static void snowDoesNotSettleOnTankCasing(GameTestHelper helper) {
+        BlockPos casing = new BlockPos(2, 2, 2);
+        helper.setBlock(casing, CEBlocks.TANK_CASING.get());
+        helper.assertFalse(Blocks.SNOW.defaultBlockState().canSurvive(helper.getLevel(), helper.absolutePos(casing.above())),
+            "A snow layer cannot rest on a tank casing");
+        helper.setBlock(casing, Blocks.STONE);
+        helper.assertTrue(Blocks.SNOW.defaultBlockState().canSurvive(helper.getLevel(), helper.absolutePos(casing.above())),
+            "Control: snow rests on stone");
+        helper.succeed();
+    }
+
     @GameTest(template = "test_empty")
     public static void tankCasingUsesCreateBasinSound(GameTestHelper helper) {
         SoundType basinSound = AllBlocks.BASIN.get().defaultBlockState().getSoundType();
