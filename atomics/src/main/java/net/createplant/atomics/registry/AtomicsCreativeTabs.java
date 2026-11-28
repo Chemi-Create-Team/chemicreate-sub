@@ -1,12 +1,25 @@
 package net.createplant.atomics.registry;
 
+import net.createplant.atomics.CreateRnrAtomics;
 import net.createplant.registry.CECreativeModeTabs;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-/** Puts the atomics addon's items into the base creative tab, where they stood when the tab listed them itself. */
+/** Gives the atomics addon its own creative tab and places its items within the core groups. */
 public final class AtomicsCreativeTabs {
     private AtomicsCreativeTabs() { }
 
-    public static void register() {
+    private static final DeferredRegister<CreativeModeTab> TABS =
+        DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreateRnrAtomics.MOD_ID);
+
+    public static void register(IEventBus modEventBus) {
+        CECreativeModeTabs.addonTab(TABS, CreateRnrAtomics.MOD_ID, "itemGroup.%s.base".formatted(CreateRnrAtomics.MOD_ID),
+            () -> new ItemStack(BuiltInRegistries.ITEM.get(net.createplant.CreatePlant.location("fuel_rod"))));
+        TABS.register(modEventBus);
         CECreativeModeTabs.insertBefore("bauxite_ore", "uranium_ore", "deepslate_uranium_ore");
         CECreativeModeTabs.insertAfter("deepslate_halite_ore", "serpentinite");
         CECreativeModeTabs.insertBefore("bauxite", "uraninite");

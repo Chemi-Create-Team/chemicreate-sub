@@ -1,4 +1,5 @@
 {
+  "itemGroup.create_rnr_logistics.base": "Create: Refinery 'n' Reactors - Logistics & Mining",
   "crane.create_refinery_n_reactors.status.mining": "Mining",
   "crane.create_refinery_n_reactors.status.quarry_done": "Quarry finished",
   "crane.create_refinery_n_reactors.status.quarry_scanning": "Searching for the next block",

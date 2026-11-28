@@ -17,6 +17,14 @@ public class ProcessRemovalGameTests {
     public static void everyPlantSourceFluidHasAWorkingBucketInCreative(GameTestHelper h) throws Exception {
         var tab = CECreativeModeTabs.BASE.get();
         tab.buildContents(new CreativeModeTab.ItemDisplayParameters(h.getLevel().enabledFeatures(), true, h.getLevel().registryAccess()));
+        var tabs = new ArrayList<CreativeModeTab>(java.util.List.of(tab));
+        for (var mod : java.util.List.of("create_rnr_atomics", "create_rnr_logistics")) {
+            var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(mod, "base");
+            if (!BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(id)) continue;
+            var addon = BuiltInRegistries.CREATIVE_MODE_TAB.get(id);
+            addon.buildContents(new CreativeModeTab.ItemDisplayParameters(h.getLevel().enabledFeatures(), true, h.getLevel().registryAccess()));
+            tabs.add(addon);
+        }
         var checked = new ArrayList<String>();var missing = new ArrayList<String>();
         for (var fluid : BuiltInRegistries.FLUID) {
             var id = BuiltInRegistries.FLUID.getKey(fluid);
@@ -25,7 +33,7 @@ public class ProcessRemovalGameTests {
             if (fluid instanceof net.createplant.mixture.MixtureFluid || fluid == net.createplant.registry.CEMixtures.OTHER_GASES.get()) continue;
             // Retired state entries fill their substance's bucket with the matching state.
             var stack = FluidUtil.getFilledBucket(new FluidStack(fluid, 1000));
-            boolean listed = tab.getDisplayItems().stream().anyMatch(entry -> entry.is(stack.getItem()));
+            boolean listed = tabs.stream().anyMatch(t -> t.getDisplayItems().stream().anyMatch(entry -> entry.is(stack.getItem())));
             if (id.equals(CreatePlant.location("raw_process_gas"))) {
                 h.assertTrue(!stack.isEmpty() && !listed, "The legacy gas still has a bucket and is hidden from Creative");
             } else if (stack.isEmpty() || !listed) { missing.add(id.toString());continue; }

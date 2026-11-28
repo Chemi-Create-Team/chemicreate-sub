@@ -15,7 +15,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -38,9 +43,39 @@ public class CECreativeModeTabs {
             .hideTitle()
             .title(Component.translatable("itemGroup.create_refinery_n_reactors.base"))
             .icon(() -> CETransport.LIDDED_VESSEL.asItem().getDefaultInstance())
-            .displayItems((parameters, output) -> display(output))
+            .displayItems((parameters, output) -> display(only(output, CreatePlant.MOD_ID)))
             .build()
     );
+
+    /** Which mod registered each item; all three mods share one namespace, so the id cannot tell. Unknown items count as core. */
+    private static final Map<Item, String> OWNERS = new ConcurrentHashMap<>();
+
+    static {
+        // RegisterEvent runs each mod's listeners inside that mod's container, so the active namespace is the registering mod.
+        BuiltInRegistries.ITEM.addCallback((net.neoforged.neoforge.registries.callback.AddCallback<Item>) (registry, id, key, item) -> {
+            if (key.location().getNamespace().equals(CreatePlant.MOD_ID))
+                OWNERS.put(item, net.neoforged.fml.ModLoadingContext.get().getActiveNamespace());
+        });
+    }
+
+    /** Output that passes on only the items of one mod; vanilla and other mods' items belong to core. */
+    private static CreativeModeTab.Output only(CreativeModeTab.Output output, String owner) {
+        return (stack, visibility) -> {
+            if (OWNERS.getOrDefault(stack.getItem(), CreatePlant.MOD_ID).equals(owner)) output.accept(stack, visibility);
+        };
+    }
+
+    public static DeferredHolder<CreativeModeTab, CreativeModeTab> addonTab(
+        DeferredRegister<CreativeModeTab> tabs, String owner, String titleKey, Supplier<ItemStack> icon) {
+        return tabs.register("base", () -> CreativeModeTab.builder()
+            .withTabFactory(SectionedCreativeTab::new)
+            .hideTitle()
+            .withTabsBefore(BASE.getId())
+            .title(Component.translatable(titleKey))
+            .icon(icon)
+            .displayItems((parameters, output) -> display(only(output, owner)))
+            .build());
+    }
 
     /** Material groups follow the equipment, after the liquid and gas buckets. */
     private static final List<List<String>> MATERIAL_GROUPS = new java.util.concurrent.CopyOnWriteArrayList<>(List.of(

@@ -1,4 +1,5 @@
 {
+  "itemGroup.create_rnr_atomics.base": "Create: Refinery 'n' Reactors - 原子能与钢铁",
   "item.create_refinery_n_reactors.uraninite": "粗铀矿",
   "item.create_refinery_n_reactors.yellowcake": "黄饼",
   "item.create_refinery_n_reactors.uranium_trioxide": "三氧化铀",

@@ -1,4 +1,5 @@
 {
+  "itemGroup.create_rnr_logistics.base": "Create: Refinery 'n' Reactors - 物流・採掘",
   "crane.create_refinery_n_reactors.status.mining": "採掘中",
   "crane.create_refinery_n_reactors.status.quarry_done": "採掘完了",
   "crane.create_refinery_n_reactors.status.quarry_scanning": "次の採掘対象を探索中",

@@ -1,4 +1,5 @@
 {
+  "itemGroup.create_rnr_atomics.base": "Create: Refinery 'n' Reactors - 原子炉・製鉄",
   "item.create_refinery_n_reactors.uraninite": "ウラン原石",
   "item.create_refinery_n_reactors.yellowcake": "イエローケーキ",
   "item.create_refinery_n_reactors.uranium_trioxide": "三酸化ウラン",

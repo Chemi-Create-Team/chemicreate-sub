@@ -43,6 +43,13 @@ public final class CreativeTabsClientCheck {
     public static void start(Minecraft mc) {
         screen = new CreativeModeInventoryScreen(mc.player, mc.level.enabledFeatures(), false);
         mc.setScreen(screen);
+        for (var mod : new String[] {"create_rnr_atomics", "create_rnr_logistics"}) {
+            var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(mod, "base");
+            if (!net.minecraft.core.registries.BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(id)) continue;
+            var addon = net.minecraft.core.registries.BuiltInRegistries.CREATIVE_MODE_TAB.get(id);
+            select(addon);
+            check((SectionedCreativeTab) addon);
+        }
         select(CECreativeModeTabs.BASE.get());
         check((SectionedCreativeTab) CECreativeModeTabs.BASE.get());
         ready("unified");

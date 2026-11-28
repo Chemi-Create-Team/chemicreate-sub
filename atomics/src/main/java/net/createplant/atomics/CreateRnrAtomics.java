@@ -11,7 +11,7 @@ public class CreateRnrAtomics {
 
     public CreateRnrAtomics(IEventBus modEventBus, ModContainer container) {
         net.createplant.atomics.registry.AtomicsSetup.init(modEventBus);
-        net.createplant.atomics.registry.AtomicsCreativeTabs.register();
+        net.createplant.atomics.registry.AtomicsCreativeTabs.register(modEventBus);
         net.createplant.atomics.registry.CEAtomicsDisplays.register(modEventBus);
         net.createplant.atomics.registry.CEAtomicsRecipeTypes.register(modEventBus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.atomics.nuclear.FuelPoolStructure::changed);

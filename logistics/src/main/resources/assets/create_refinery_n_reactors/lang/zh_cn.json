@@ -1,4 +1,5 @@
 {
+  "itemGroup.create_rnr_logistics.base": "Create: Refinery 'n' Reactors - 物流与采矿",
   "item.create_refinery_n_reactors.anfo": "铵油炸药",
   "block.create_refinery_n_reactors.blasting_charge": "爆破药包",
   "create_refinery_n_reactors.ponder.shared.guide.manufacturing_mining_explosives.step_1": "将电解水得到的氢气和空气分馏得到的氮气按3:1混合，制取合成气。\n%s → %s",

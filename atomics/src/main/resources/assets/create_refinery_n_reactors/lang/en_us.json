@@ -1,4 +1,5 @@
 {
+  "itemGroup.create_rnr_atomics.base": "Create: Refinery 'n' Reactors - Atomics & Steel",
   "item.create_refinery_n_reactors.uraninite": "Raw Uranium",
   "item.create_refinery_n_reactors.yellowcake": "Yellowcake",
   "item.create_refinery_n_reactors.uranium_trioxide": "Uranium Trioxide",

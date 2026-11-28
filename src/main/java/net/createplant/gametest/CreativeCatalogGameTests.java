@@ -31,19 +31,32 @@ public class CreativeCatalogGameTests {
         base.buildContents(parameters);
         Set<Item> catalogue=new HashSet<>();
         base.getDisplayItems().forEach(stack->catalogue.add(stack.getItem()));
+        // Each loaded mod has its own tab; no item may be listed by two tabs, and the core tab holds no addon item.
+        var addonTabs=new java.util.ArrayList<CreativeModeTab>();
+        for(var mod:List.of("create_rnr_atomics","create_rnr_logistics")) {
+            var id=net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(mod,"base");
+            h.assertTrue(net.neoforged.fml.ModList.get().isLoaded(mod)==BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(id),"Each loaded addon has its tab: "+mod);
+            if(!BuiltInRegistries.CREATIVE_MODE_TAB.containsKey(id)) continue;
+            var tab=BuiltInRegistries.CREATIVE_MODE_TAB.get(id);
+            tab.buildContents(parameters);
+            addonTabs.add(tab);
+            for(var stack:tab.getDisplayItems()) h.assertTrue(catalogue.add(stack.getItem()),"Listed by one tab only: "+BuiltInRegistries.ITEM.getKey(stack.getItem()));
+        }
+        for(var path:List.of("fuel_rod","industrial_arm"))
+            if(BuiltInRegistries.ITEM.containsKey(CreatePlant.location(path))) h.assertTrue(base.getDisplayItems().stream().noneMatch(stack->stack.is(BuiltInRegistries.ITEM.get(CreatePlant.location(path)))),"Core tab holds no addon item: "+path);
+        if(net.neoforged.fml.ModList.get().isLoaded("create_rnr_atomics")) h.assertTrue(addonTabs.stream().anyMatch(t->t.getDisplayItems().stream().anyMatch(stack->stack.is(BuiltInRegistries.ITEM.get(CreatePlant.location("fuel_rod"))))),"Atomics tab has fuel_rod");
+        if(net.neoforged.fml.ModList.get().isLoaded("create_rnr_logistics")) h.assertTrue(addonTabs.stream().anyMatch(t->t.getDisplayItems().stream().anyMatch(stack->stack.is(BuiltInRegistries.ITEM.get(CreatePlant.location("industrial_arm"))))),"Logistics tab has industrial_arm");
         var own=BuiltInRegistries.ITEM.stream().filter(item->BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID)).toList();
         var dyed=CEItems.LARGE_FLYWHEELS.stream().map(holder->(Item)holder.get()).filter(item->item!=CEItems.LARGE_FLYWHEEL.get()).toList();
         var retiredBucket = net.createplant.registry.CESafety.RAW_PROCESS_GAS.get().getBucket();
         for(var item:own) h.assertTrue(catalogue.contains(item) == (!dyed.contains(item) && item != retiredBucket),
             "Current items appear once, with dyed variants and the legacy gas bucket hidden: "+BuiltInRegistries.ITEM.getKey(item));
         var order=base.getDisplayItems().stream().map(stack->BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()).toList();
-        h.assertTrue(before(order,"industrial_dispatch_board","corrosion_resistant_bucket")&&before(order,"sulfuric_acid_bucket","hydrogen_gas_bucket")
-            &&before(order,"hydrogen_gas_bucket","uranium_ore")&&before(order,"salt","aluminum_ingot")
+        h.assertTrue(before(order,"sulfuric_acid_bucket","hydrogen_gas_bucket")&&before(order,"salt","aluminum_ingot")
             &&before(order,"aluminum_ingot","gas_mask"),"Materials run from liquid and gas buckets through ores, powders and metals to wearables: "+order);
         var sections=((net.createplant.registry.SectionedCreativeTab)base).sections().stream().map(section->section.key()).toList();
         h.assertTrue(sections.equals(List.of("equipment","materials","construction")),"Only equipment/tools, materials/fluids and construction headings are displayed");
-        h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.keySet().stream().filter(id->id.getNamespace().equals(CreatePlant.MOD_ID)).count()==1,"The mod has a single creative tab");
-        check(h,catalogue,List.of("lidded_vessel","electrolysis_cell","electrolysis_cell_controller","fuel_cell","reactor_impeller","reciprocating_compressor","gas_holder","diorite_casing","large_flywheel"));
+                check(h,catalogue,List.of("lidded_vessel","electrolysis_cell","electrolysis_cell_controller","fuel_cell","reactor_impeller","reciprocating_compressor","gas_holder","diorite_casing","large_flywheel"));
         check(h,catalogue,List.of("uranium_ore","iron_catalyst","fuel_rod","asbestos_wrapped_electrode","hydrogen_gas_bucket","empty_waste_canister","vitrified_waste_canister","gas_mask","protective_coat","serpentinite"));
         for(String id:List.of("ammonia_oxidizer","catalytic_cracker","distillation_tower","asbestos_mesh","electrolyzer","gas_holder_anchor","gas_holder_guide_rail"))
             h.assertTrue(!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id)),"Retired equipment stays unregistered: "+id);

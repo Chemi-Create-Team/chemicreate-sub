@@ -11,7 +11,7 @@ public class CreateRnrLogistics {
 
     public CreateRnrLogistics(IEventBus modEventBus, ModContainer container) {
         net.createplant.logistics.registry.LogisticsSetup.init();
-        net.createplant.logistics.registry.LogisticsCreativeTabs.register();
+        net.createplant.logistics.registry.LogisticsCreativeTabs.register(modEventBus);
         net.createplant.logistics.registry.CELogisticsRecipeTypes.register(modEventBus);
         net.createplant.logistics.registry.CEBlasting.register(modEventBus);
         net.createplant.logistics.registry.CEIndustrialExpansion.register(modEventBus);
