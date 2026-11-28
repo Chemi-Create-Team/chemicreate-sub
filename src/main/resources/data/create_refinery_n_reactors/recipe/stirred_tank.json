@@ -1,23 +1,25 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "create:mechanical_crafting",
   "pattern": [
-    "ISI",
-    "IBI"
+    " S ",
+    "III",
+    "ITI",
+    "III"
   ],
   "key": {
     "I": {
-      "tag": "c:plates/stainless_steel"
+      "tag": "c:ingots/steel"
     },
     "S": {
       "item": "create:shaft"
     },
-    "B": {
-      "item": "create:basin"
+    "T": {
+      "item": "create_refinery_n_reactors:lidded_vessel"
     }
   },
   "result": {
     "id": "create_refinery_n_reactors:stirred_tank",
     "count": 1
-  }
+  },
+  "accept_mirrored": true
 }

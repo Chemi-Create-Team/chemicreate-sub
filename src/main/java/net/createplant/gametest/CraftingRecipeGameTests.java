@@ -5,8 +5,11 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.content.decoration.encasing.CasingBlock;
+import com.simibubi.create.content.kinetics.crafter.RecipeGridHandler;
+import com.simibubi.create.content.kinetics.crafter.RecipeGridHandler.GroupedItems;
 import com.simibubi.create.content.kinetics.deployer.ManualApplicationRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
+import net.createmod.catnip.math.Pointing;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.ElectrolysisFurnaceBlockEntity;
 import net.createplant.chemistry.ProcessRecipe;
@@ -35,7 +38,7 @@ import net.neoforged.neoforge.gametest.*;
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class CraftingRecipeGameTests {
     private static final List<String> ADVANCED = List.of("large_flywheel", "high_pressure_turbine_blade",
-        "low_pressure_turbine_blade", "cooling_fan", "gas_centrifuge", "cubic_press");
+        "low_pressure_turbine_blade", "cooling_fan", "gas_centrifuge", "cubic_press", "stirred_tank");
     /** Everything the metal refining needs: stirred tank, reaction trays with the oxidation catalyst, absorption tower, electrolyzer and electrolysis furnace. */
     private static final List<String> REFINING = List.of("reactor_impeller", "vessel_stirrer", "reactor_separator_core", "lidded_vessel", "large_absorption_tower",
         "oxidation_catalyst", "iron_catalyst", "electrolysis_cell", "electrolysis_cell_controller", "electrolysis_electrode_head", "asbestos_wrapped_electrode", "electrolysis_furnace_shell", "electrolysis_furnace_anode", "electrolysis_furnace_busbar",
@@ -163,8 +166,20 @@ public class CraftingRecipeGameTests {
         var manager = h.getLevel().getRecipeManager();var access = h.getLevel().registryAccess();
         Set<Item> crafted = new HashSet<>(), mechanical = new HashSet<>();
         for (var holder : manager.getAllRecipesFor(RecipeType.CRAFTING)) if (ours(holder)) crafted.add(holder.value().getResultItem(access).getItem());
-        for (var holder : manager.getAllRecipesFor(AllRecipeTypes.MECHANICAL_CRAFTING.<CraftingInput, CraftingRecipe>getType())) mechanical.add(holder.value().getResultItem(access).getItem());
+        var mechanicalType = AllRecipeTypes.MECHANICAL_CRAFTING.<CraftingInput, CraftingRecipe>getType();
+        for (var holder : manager.getAllRecipesFor(mechanicalType)) mechanical.add(holder.value().getResultItem(access).getItem());
         for (String id : ADVANCED) h.assertTrue(mechanical.contains(item(id)) && !crafted.contains(item(id)), id + " is made only on the mechanical crafter");
+        var steel = item("steel_ingot");
+        var items = new GroupedItems(AllBlocks.SHAFT.asStack());
+        for (int row = 0; row < 3; row++) {
+            var centre = new GroupedItems(new ItemStack(row == 1 ? item("lidded_vessel") : steel));
+            new GroupedItems(new ItemStack(steel)).mergeOnto(centre, Pointing.RIGHT);
+            new GroupedItems(new ItemStack(steel)).mergeOnto(centre, Pointing.LEFT);
+            items.mergeOnto(centre, Pointing.DOWN);
+            items = centre;
+        }
+        var result = RecipeGridHandler.tryToApplyRecipe(h.getLevel(), items);
+        h.assertTrue(result.is(item("stirred_tank")) && result.getCount() == 1, "Create crafts one stirred tank from one stainless tank, eight steel ingots, and one shaft");
         h.succeed();
     }
     @GameTest(template = "test_reactor")
