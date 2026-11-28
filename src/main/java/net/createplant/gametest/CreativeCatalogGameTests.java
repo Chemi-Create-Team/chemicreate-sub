@@ -37,9 +37,9 @@ public class CreativeCatalogGameTests {
         for(var item:own) h.assertTrue(catalogue.contains(item) == (!dyed.contains(item) && item != retiredBucket),
             "Current items appear once, with dyed variants and the legacy gas bucket hidden: "+BuiltInRegistries.ITEM.getKey(item));
         var order=base.getDisplayItems().stream().map(stack->BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()).toList();
-        h.assertTrue(order.indexOf("corrosion_resistant_bucket")>order.indexOf("industrial_dispatch_board")&&order.indexOf("sulfuric_acid_bucket")<order.indexOf("hydrogen_gas_bucket")
-            &&order.indexOf("hydrogen_gas_bucket")<order.indexOf("uranium_ore")&&order.indexOf("salt")<order.indexOf("aluminum_ingot")
-            &&order.indexOf("aluminum_ingot")<order.indexOf("gas_mask"),"Materials run from liquid and gas buckets through ores, powders and metals to wearables: "+order);
+        h.assertTrue(before(order,"industrial_dispatch_board","corrosion_resistant_bucket")&&before(order,"sulfuric_acid_bucket","hydrogen_gas_bucket")
+            &&before(order,"hydrogen_gas_bucket","uranium_ore")&&before(order,"salt","aluminum_ingot")
+            &&before(order,"aluminum_ingot","gas_mask"),"Materials run from liquid and gas buckets through ores, powders and metals to wearables: "+order);
         var sections=((net.createplant.registry.SectionedCreativeTab)base).sections().stream().map(section->section.key()).toList();
         h.assertTrue(sections.equals(List.of("equipment","materials","construction")),"Only equipment/tools, materials/fluids and construction headings are displayed");
         h.assertTrue(BuiltInRegistries.CREATIVE_MODE_TAB.keySet().stream().filter(id->id.getNamespace().equals(CreatePlant.MOD_ID)).count()==1,"The mod has a single creative tab");
@@ -48,7 +48,7 @@ public class CreativeCatalogGameTests {
         for(String id:List.of("ammonia_oxidizer","catalytic_cracker","distillation_tower","asbestos_mesh","electrolyzer","gas_holder_anchor","gas_holder_guide_rail"))
             h.assertTrue(!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id)),"Retired equipment stays unregistered: "+id);
         for(String id:List.of("uranium_hexafluoride_bucket","enriched_uranium_hexafluoride_bucket","depleted_uranium_hexafluoride_bucket","compact_enriched_uranium_hexafluoride_bucket"))
-            h.assertTrue(BuiltInRegistries.ITEM.get(CreatePlant.location(id)) instanceof net.createplant.item.GasBucketItem,"UF6 streams use the shared gas bucket like every process gas: "+id);
+            h.assertTrue(!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id)) || BuiltInRegistries.ITEM.get(CreatePlant.location(id)) instanceof net.createplant.item.GasBucketItem,"UF6 streams use the shared gas bucket like every process gas: "+id);
         for(String id:List.of("gas_holder_shell","gas_holder_anchor","gas_holder_guide_rail"))
             h.assertTrue(!BuiltInRegistries.BLOCK.containsKey(CreatePlant.location(id)) && !BuiltInRegistries.BLOCK_ENTITY_TYPE.containsKey(CreatePlant.location(id)),"Retired gas holder blocks and entities stay unregistered: "+id);
         h.assertTrue(BuiltInRegistries.BLOCK.containsKey(CreatePlant.location("gas_holder"))
@@ -62,8 +62,14 @@ public class CreativeCatalogGameTests {
         Files.writeString(Path.of(System.getProperty("createplant.inventoryReport","maintenance-inventory.json")),new GsonBuilder().setPrettyPrinting().create().toJson(Map.of("items",items,"blocks",blocks,"fluids",fluids))+"\n");
         h.succeed();
     }
+    /** Order of two ids; an id from an addon that is not installed imposes none. */
+    private static boolean before(List<String> order,String first,String second) {
+        int a=order.indexOf(first),b=order.indexOf(second);
+        if(a>=0&&b>=0) return a<b;
+        return (a>=0||!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(first)))&&(b>=0||!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(second)));
+    }
     private static void check(GameTestHelper h,Set<Item> tab,List<String> ids) {
-        for(String id:ids) h.assertTrue(tab.contains(BuiltInRegistries.ITEM.get(CreatePlant.location(id))),"Correct creative tab for "+id);
+        for(String id:ids) if(BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id))) h.assertTrue(tab.contains(BuiltInRegistries.ITEM.get(CreatePlant.location(id))),"Correct creative tab for "+id);
     }
 
     @GameTest(template="test_reactor")

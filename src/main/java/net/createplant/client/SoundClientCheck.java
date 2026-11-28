@@ -95,7 +95,7 @@ final class SoundClientCheck {
                         if (event == null || event.getWeight() <= 0 || event.getSubtitle() == null)
                             throw new IllegalStateException("Unresolved machine sound or subtitle: " + kind);
                     }
-                    RESULTS.put("registered_resources_and_subtitles", MachineSoundSource.Kind.values().length);
+                    RESULTS.put("registered_resources_and_subtitles", MachineSoundSource.Kind.values().size());
                     next(Stage.STOPPED);
                 }
                 case STOPPED -> {

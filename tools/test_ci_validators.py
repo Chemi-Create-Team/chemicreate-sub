@@ -138,14 +138,14 @@ class ValidatorTests(unittest.TestCase):
         self.validate('validate_visual_identity.py', 'Container metal changed')
 
     def test_missing_powder_tint_fails(self):
-        path = Path('src/main/java/net/createplant/ElectrolysisClient.java')
+        path = Path('atomics/src/main/java/net/createplant/atomics/client/AtomicsClient.java')
         text = self.content(path).decode()
         line = next(line for line in text.splitlines(True) if 'CEUranium.URANIUM_TRIOXIDE.get()' in line)
         self.overrides[ROOT / path] = text.replace(line, '').encode()
         self.validate('validate_visual_identity.py', 'Missing runtime item tints')
 
     def test_duplicate_powder_tints_fail(self):
-        path = Path('src/main/java/net/createplant/ElectrolysisClient.java')
+        path = Path('atomics/src/main/java/net/createplant/atomics/client/AtomicsClient.java')
         self.overrides[ROOT / path] = self.content(path).replace(b'0xFFFFB850', b'0xFF8A7464')
         self.validate('validate_visual_identity.py', 'uranium_trioxide')
 

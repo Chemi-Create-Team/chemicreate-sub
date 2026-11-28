@@ -50,7 +50,7 @@ public class AssemblyGameTests {
 
     @GameTest(template = "test_fusion", timeoutTicks = 100)
     public static void internalBlueprintCannotBeTakenAndSuppliesUseStandardSlots(GameTestHelper h) {
-        var be = constructor(h, AssemblyPlan.Kind.FUSION, new BlockPos(5, 2, 5), Direction.SOUTH);
+        var be = constructor(h, AssemblyPlan.available(AssemblyPlan.Kind.FUSION) ? AssemblyPlan.Kind.FUSION : AssemblyPlan.Kind.COOLING_TOWER, new BlockPos(5, 2, 5), Direction.SOUTH);
         be.tick();
         h.assertTrue(be.inventory.getStackInSlot(0).has(AllDataComponents.SCHEMATIC_ANCHOR), "Internal plan is anchored");
         h.assertTrue(be.state == SchematicannonBlockEntity.State.STOPPED && be.canConfigure() && be.flyingBlocks.isEmpty(), "An unfuelled constructor stays configurable and does not start itself");
@@ -71,7 +71,7 @@ public class AssemblyGameTests {
 
     @GameTest(template = "test_fusion", timeoutTicks = 100)
     public static void stoppedConstructorPrintsChecklistsTurnsAndHasAValidPonder(GameTestHelper h) throws Exception {
-        var be = constructor(h, AssemblyPlan.Kind.FUSION, new BlockPos(5, 2, 5), Direction.SOUTH);
+        var be = constructor(h, AssemblyPlan.available(AssemblyPlan.Kind.FUSION) ? AssemblyPlan.Kind.FUSION : AssemblyPlan.Kind.COOLING_TOWER, new BlockPos(5, 2, 5), Direction.SOUTH);
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         player.setPos(be.getBlockPos().getCenter());
         var hit = new net.minecraft.world.phys.BlockHitResult(be.getBlockPos().getCenter(), Direction.UP, be.getBlockPos(), false);
@@ -84,8 +84,8 @@ public class AssemblyGameTests {
             && be.inventory.getStackInSlot(3).is(Items.WRITTEN_BOOK), "Checklist printing works while stopped without starting construction");
         h.assertTrue(be.supplies().extractItem(1, 1, false).is(Items.WRITTEN_BOOK), "Printed material lists can leave through the standard item handler");
         try (var stream = net.createplant.ResourceStack.open(AssemblyGameTests.class, "/assets/create_refinery_n_reactors/ponder/plant/facility_constructor.nbt")) {
-            h.assertTrue(stream != null, "Facility Ponder ships its structure");
-            PlantTutorialGameTests.validateStructure(h, stream);
+            h.assertTrue(stream != null || !AssemblyPlan.available(AssemblyPlan.Kind.RBMK), "Facility Ponder ships its structure");
+            if (stream != null) PlantTutorialGameTests.validateStructure(h, stream);
         }
         h.succeed();
     }

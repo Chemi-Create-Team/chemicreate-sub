@@ -1403,5 +1403,18 @@
   "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.use": "把钢锭冲压成不锈钢板，用于储罐、管道和耐腐蚀设备。",
   "create_refinery_n_reactors.ponder.rolled_stainless_steel_ingot.header": "轧制不锈钢锭",
   "advancement.create_refinery_n_reactors.guide.rolling_mill": "4 轧机",
-  "advancement.create_refinery_n_reactors.guide.rolling_mill.description": "用钢制作多机架连续轧机。不锈钢锭只能由它轧制。思索：多机架连续轧机"
+  "advancement.create_refinery_n_reactors.guide.rolling_mill.description": "用钢制作多机架连续轧机。不锈钢锭只能由它轧制。思索：多机架连续轧机",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1": "在搅拌槽中超加热盐水，回收硼砂和盐，盐可返回制盐水。\n%s → %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2": "在机械搅拌器下超加热硼砂、石英、玻璃与方解石，制成硼硅酸玻璃熔块。\n%s → %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.title": "建材制造2　硼砂与玻璃原料",
+  "create_refinery_n_reactors.ponder.plant_manufacturing_glass.header": "建材制造2　硼砂与玻璃原料",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action": "在搅拌槽中超加热盐水，回收硼砂和盐，盐可返回制盐水。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.0": "在搅拌槽中超加热盐水，回收硼砂和盐，盐可返回制盐水。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.recipe": "原料：%s\n产物：%s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action": "在机械搅拌器下超加热硼砂、石英、玻璃与方解石，制成硼硅酸玻璃熔块。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action.lesson_pages.0": "在机械搅拌器下超加热硼砂、石英、玻璃与方解石，制成硼硅酸玻璃熔块。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.recipe": "原料：%s\n产物：%s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.1": "在搅拌槽中超加热盐水，回收硼砂和盐，盐可返回制盐水。"
 }

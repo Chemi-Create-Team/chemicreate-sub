@@ -32,11 +32,14 @@ neoForge {
         "${mod_id}" {
             sourceSet(sourceSets.main)
         }
-        create_rnr_atomics {
-            sourceSet(sourceSets.atomics)
-        }
-        create_rnr_logistics {
-            sourceSet(sourceSets.logistics)
+        // -PcoreOnly runs the core mod alone (addons are not loaded).
+        if (!project.hasProperty("coreOnly")) {
+            create_rnr_atomics {
+                sourceSet(sourceSets.atomics)
+            }
+            create_rnr_logistics {
+                sourceSet(sourceSets.logistics)
+            }
         }
     }
 

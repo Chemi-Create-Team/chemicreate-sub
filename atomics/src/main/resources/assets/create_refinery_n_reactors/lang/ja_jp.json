@@ -1403,5 +1403,18 @@
   "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.use": "インゴットはプレスしてステンレス板にし、タンクや配管、耐食設備に使います。",
   "create_refinery_n_reactors.ponder.rolled_stainless_steel_ingot.header": "ステンレス鋼インゴットの圧延",
   "advancement.create_refinery_n_reactors.guide.rolling_mill": "4 圧延ライン",
-  "advancement.create_refinery_n_reactors.guide.rolling_mill.description": "鋼鉄で多段連続圧延ラインを作る。ステンレスのインゴットはこれでしか作れない。Ponder：多段連続圧延ライン"
+  "advancement.create_refinery_n_reactors.guide.rolling_mill.description": "鋼鉄で多段連続圧延ラインを作る。ステンレスのインゴットはこれでしか作れない。Ponder：多段連続圧延ライン",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1": "撹拌槽で塩水を超加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。\n%s → %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2": "鉢とメカニカルミキサーで、ホウ砂・水晶・ガラス・方解石を超加熱してホウケイ酸ガラスフリットにします。\n%s → %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.title": "建材の製造2　ホウ砂とガラス原料を作る",
+  "create_refinery_n_reactors.ponder.plant_manufacturing_glass.header": "建材の製造2　ホウ砂とガラス原料を作る",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action": "撹拌槽で塩水を超加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.0": "撹拌槽で塩水を超加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.recipe": "原料：%s\n製品：%s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action": "鉢とメカニカルミキサーで、ホウ砂・水晶・ガラス・方解石を超加熱してホウケイ酸ガラスフリットにします。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action.lesson_pages.0": "鉢とメカニカルミキサーで、ホウ砂・水晶・ガラス・方解石を超加熱してホウケイ酸ガラスフリットにします。",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.recipe": "原料：%s\n製品：%s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.1": "撹拌槽で塩水を超加熱し、ホウ砂と塩を回収します。塩は塩水の製造へ戻せます。"
 }

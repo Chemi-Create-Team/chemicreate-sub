@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a version tag and package the distributable NeoForge mod."""
+"""Validate a version tag and package the distributable NeoForge mods (core and both addons)."""
 import argparse
 import hashlib
 import json
@@ -33,43 +33,57 @@ def release_metadata(tag):
     return config, version
 
 
-def package(config, version, output):
-    jars = sorted(path for path in (ROOT / 'build/libs').glob('*.jar')
-                  if not path.name.endswith(('-sources.jar', '-javadoc.jar', '-dev.jar')))
-    if len(jars) != 1:
-        raise ValueError(f'Expected exactly one distributable JAR, found {len(jars)}')
-    jar = jars[0]
+ADDONS = {'create_rnr_atomics': 'net/createplant/atomics/CreateRnrAtomics.class',
+          'create_rnr_logistics': 'net/createplant/logistics/CreateRnrLogistics.class'}
+
+
+def check_jar(jar, config, version):
+    """Return the mod id of a distributable JAR after checking its metadata against this release."""
     with zipfile.ZipFile(jar) as archive:
         if archive.testzip() is not None:
-            raise ValueError('JAR integrity check failed')
+            raise ValueError(f'{jar.name}: JAR integrity check failed')
         metadata = tomllib.loads(archive.read('META-INF/neoforge.mods.toml').decode('utf-8'))
-        if not any(mod.get('modId') == config['mod_id'] and mod.get('version') == version
-                   for mod in metadata.get('mods', [])):
-            raise ValueError('JAR mod ID or version does not match this release')
-        dependencies = metadata['dependencies'][config['mod_id']]
+        mods = [mod for mod in metadata.get('mods', []) if mod.get('version') == version]
+        if len(mods) != 1 or mods[0].get('modId') not in {config['mod_id'], *ADDONS}:
+            raise ValueError(f'{jar.name}: JAR mod ID or version does not match this release')
+        mod_id = mods[0]['modId']
+        dependencies = metadata['dependencies'][mod_id]
         expected = {'minecraft': '[' + config['minecraft_version'] + ']',
                     'neoforge': '[' + config['neo_version'] + ',)', 'create': '[6.0.10,6.0.11)'}
+        if mod_id in ADDONS:
+            expected[config['mod_id']] = '[' + version + ',)'
         for name, version_range in expected.items():
             if not any(dep.get('modId') == name and dep.get('type') == 'required'
                        and dep.get('versionRange') == version_range for dep in dependencies):
-                raise ValueError(f'Unexpected {name} dependency in JAR')
-        if 'net/createplant/CreatePlant.class' not in archive.namelist():
-            raise ValueError('JAR is missing the main mod class')
+                raise ValueError(f'{jar.name}: unexpected {name} dependency in JAR')
+        main_class = ADDONS.get(mod_id, 'net/createplant/CreatePlant.class')
+        if main_class not in archive.namelist():
+            raise ValueError(f'{jar.name}: JAR is missing the main mod class')
+    return mod_id
+
+
+def package(config, version, output):
+    jars = sorted(path for path in (ROOT / 'build/libs').glob('*.jar')
+                  if not path.name.endswith(('-sources.jar', '-javadoc.jar', '-dev.jar')))
+    ids = [check_jar(jar, config, version) for jar in jars]
+    if sorted(ids) != sorted([config['mod_id'], *ADDONS]):
+        raise ValueError(f'Expected the core and both addon JARs once each, found {ids}')
 
     output.mkdir(parents=True, exist_ok=True)
-    jar_bytes = jar.read_bytes()
-    (output / jar.name).write_bytes(jar_bytes)
+    for jar in jars:
+        (output / jar.name).write_bytes(jar.read_bytes())
     zipped = output / 'create-plant-release.zip'
     with zipfile.ZipFile(zipped, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
-        archive.write(jar, arcname=jar.name)
+        for jar in jars:
+            archive.write(jar, arcname=jar.name)
     with zipfile.ZipFile(zipped) as archive:
-        if archive.namelist() != [jar.name] or archive.testzip() is not None or archive.read(jar.name) != jar_bytes:
-            raise ValueError('Release ZIP does not contain exactly the distributable JAR')
-    assets = [output / jar.name, zipped]
+        if sorted(archive.namelist()) != sorted(jar.name for jar in jars) or archive.testzip() is not None \
+                or any(archive.read(jar.name) != jar.read_bytes() for jar in jars):
+            raise ValueError('Release ZIP does not contain exactly the distributable JARs')
+    assets = [output / jar.name for jar in jars] + [zipped]
     sums = ''.join(f'{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.name}\n' for path in assets)
     (output / 'SHA256SUMS').write_text(sums, encoding='ascii')
-    print(json.dumps({'jar': jar.name, 'jar_bytes': len(jar_bytes),
-                      'output': str(output), 'sha256': hashlib.sha256(jar_bytes).hexdigest()}))
+    print(json.dumps({'jars': [jar.name for jar in jars], 'output': str(output)}))
 
 
 def main():

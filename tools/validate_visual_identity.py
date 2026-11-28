@@ -2,6 +2,7 @@
 """Audit finished items and exact vanilla liquid-bucket metal, without Pillow."""
 import ast,collections,hashlib,json,re,struct,zlib
 from pathlib import Path
+from resource_roots import find,glob
 from powder_assets import validate_assets as validate_powders
 from generate_world_liquids import liquid_entries,bucket_pixels
 R=Path(__file__).resolve().parents[1];A=R/'src/main/resources/assets/create_refinery_n_reactors';NS='create_refinery_n_reactors:'
@@ -35,23 +36,23 @@ registered_buckets.update({entry['name']+'_bucket':'ProcessBucketItem' for entry
 from generate_process_gas_buckets import gas_entries
 registered_buckets.update({entry['name']+'_bucket':'GasBucketItem' for entry in gas_entries()})
 assert set(registered_buckets.values())<={'BucketItem','ProcessBucketItem','AlloyBucketItem','GasBucketItem'}
-buckets=sorted((A/'models/item').glob('*bucket.json'));assert registered_buckets and {f.stem for f in buckets}==set(registered_buckets)
+buckets=sorted(glob('models/item','*bucket.json'));assert registered_buckets and {f.stem for f in buckets}==set(registered_buckets)
 liquid_buckets={name for name,kind in registered_buckets.items() if kind!='GasBucketItem'}
 alloy_buckets={entry['name']+'_bucket' for entry in liquids if entry['corrosive']}|{'corrosion_resistant_bucket'}
 alloy_body=bucket_pixels(alloy=True)
 for f in buckets:
  m=json.loads(f.read_text());assert m['textures']['layer0']==NS+'item/'+f.stem
- px=rgba(A/'textures/item'/(f.stem+'.png'))
+ px=rgba(find('textures/item/'+f.stem+'.png'))
  if f.stem in liquid_buckets:
   body=alloy_body if f.stem in alloy_buckets else template['pixels']
   assert all(p==tuple(body[i]) for i,p in enumerate(px) if i not in mask),f'Container metal changed: {f}'
   assert all(p[3]==template['pixels'][i][3] for i,p in enumerate(px)),f'Vanilla bucket silhouette changed: {f}'
-assert len({tuple(rgba(A/'textures/item'/(f.stem+'.png'))) for f in buckets})==len(buckets)
+assert len({tuple(rgba(find('textures/item/'+f.stem+'.png'))) for f in buckets})==len(buckets)
 
 def resolve(path,seen=()):
  assert path not in seen,'Model parent cycle'
  m=json.loads(path.read_text(encoding='utf-8-sig'));parent=m.get('parent','');base={}
- if parent.startswith(NS):base=resolve(A/'models'/(parent[len(NS):]+'.json'),seen+(path,))
+ if parent.startswith(NS):base=resolve(find('models/'+parent[len(NS):]+'.json'),seen+(path,))
  return base|m|{'textures':base.get('textures',{})|m.get('textures',{})}
 
 item_tints={name.lower():int(color,16) for color,name in re.findall(r'event\.register\(\(stack, layer\) -> (0x[0-9A-Fa-f]+), net\.createplant\.registry\.CEUranium\.([A-Z_]+)\.get\(\)\);',(R/'src/main/java/net/createplant/ElectrolysisClient.java').read_text())}
@@ -61,7 +62,7 @@ assert set(tinted_powders)<=item_tints.keys(),'Missing runtime item tints'
 powders=validate_powders(rgba)
 unfinished_items={name for source in (R/'src/main/java/net/createplant/registry').glob('*.java') for name in re.findall(r'ITEMS\.register\(\s*"([a-z_]+)",\s*\(\)\s*->\s*new SequencedAssemblyItem\(',source.read_text())}
 signatures=collections.defaultdict(list)
-for f in sorted((A/'models/item').glob('*.json')):
+for f in sorted(glob('models/item','*.json')):
  if f.stem in unfinished_items:continue
  m=resolve(f)
  # Entity-rendered items share a placeholder model; their geometry is checked in the live client.
@@ -70,7 +71,7 @@ for f in sorted((A/'models/item').glob('*.json')):
  # Expand aliases and content hashes, ignore unused material declarations.
  def texture(k):
   if k.startswith('#'):return texture(t[k[1:]])
-  return hashlib.sha256((A/'textures'/(k[len(NS):]+'.png')).read_bytes()).hexdigest() if k.startswith(NS) else k
+  return hashlib.sha256(find('textures/'+k[len(NS):]+'.png').read_bytes()).hexdigest() if k.startswith(NS) else k
  used={v['texture'] for e in m.get('elements',[]) for v in e['faces'].values()}
  if not used:used={v for k,v in t.items() if k!='particle'}
  render={'elements':m.get('elements'), 'textures':sorted(texture(v) for v in used)}
@@ -86,11 +87,11 @@ shared_groups=[g for g in signatures.values() if len(g)>1 and set(g) in shared_p
 duplicates=[g for g in signatures.values() if len(g)>1 and set(g) not in shared_parts]
 assert not duplicates,duplicates
 for name in ('iron_catalyst','ammonium_nitrate','sulfur_dust'):
- m=resolve(A/'models/item'/(name+'.json'));assert m['textures']['layer0']==NS+'item/'+name
+ m=resolve(find('models/item/'+name+'.json'));assert m['textures']['layer0']==NS+'item/'+name
 for name in ('stainless','cast_iron','brass','copper'):
- px=rgba(A/'textures/block/chemical'/(name+'.png'))
+ px=rgba(find('textures/block/chemical/'+name+'.png'))
  assert len(set(px[y*16+x] for y in range(5,10) for x in range(4,12)))>=8,'Flat metal surface: '+name
-refractory=rgba(A/'textures/block/zirconia_refractory_bricks.png')
+refractory=rgba(find('textures/block/zirconia_refractory_bricks.png'))
 assert len(set(refractory))>=8,'Zirconia refractory bricks need visible ceramic grain'
 assert sum(sum(pixel[:3]) for pixel in refractory)/(len(refractory)*3)>165,'Zirconia refractory bricks must remain pale'
 assert len(set(refractory[3*16:4*16]))>=2 and sum(sum(pixel[:3]) for pixel in refractory[3*16:4*16])/48<150, \

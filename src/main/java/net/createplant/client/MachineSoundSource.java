@@ -19,36 +19,39 @@ import net.minecraft.world.phys.Vec3;
 
 /** A controller owns one voice, including every rotor in one turbine housing. */
 public record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<SteamTurbineBlockEntity> rotors) {
-    public enum Kind {
-        REACTOR(CEMachineSounds.REACTOR_CIRCULATION, .26f), FUSION(CEMachineSounds.FUSION_DRIVE, .27f),
-        TURBINE_HIGH(CEMachineSounds.TURBINE_HIGH, .28f), TURBINE_LOW(CEMachineSounds.TURBINE_LOW, .30f),
-        COMPRESSOR(CEMachineSounds.COMPRESSOR, .24f), AGITATOR(CEMachineSounds.AGITATOR, .20f),
-        HOT_PROCESS(CEMachineSounds.HOT_PROCESS, .22f), FLUID_PROCESS(CEMachineSounds.FLUID_PROCESS, .17f),
-        BLOWER(CEMachineSounds.BLOWER, .22f), CRANE(CEMachineSounds.CRANE_DRIVE, .23f), FLARE(CEMachineSounds.FLARE_ROAR, .65f, 96),
-        CENTRIFUGE(CEMachineSounds.CENTRIFUGE, .21f), CUBIC_PRESS(CEMachineSounds.CUBIC_PRESS, .27f),
-        BOILER(CEMachineSounds.BOILER, .22f), COLDBOX(CEMachineSounds.COLDBOX, .22f),
-        SHELL_EXCHANGER(CEMachineSounds.SHELL_EXCHANGER, .16f), LARGE_EXCHANGER(CEMachineSounds.LARGE_EXCHANGER, .19f),
-        JACKET(CEMachineSounds.JACKET, .15f), ABSORBER(CEMachineSounds.ABSORBER, .18f),
-        PACKED_TOWER(CEMachineSounds.PACKED_TOWER, .19f), REACTION_TOWER(CEMachineSounds.REACTION_TOWER, .20f),
-        VERTICAL_SEPARATOR(CEMachineSounds.VERTICAL_SEPARATOR, .17f), SEPARATOR_DRUM(CEMachineSounds.SEPARATOR_DRUM, .17f),
-        DISTILLATION(CEMachineSounds.DISTILLATION, .20f), ELECTRIC_FURNACE(CEMachineSounds.ELECTRIC_FURNACE, .25f),
-        ELECTROLYSIS(CEMachineSounds.ELECTROLYSIS, .18f), COOLING_TOWER(CEMachineSounds.COOLING_TOWER, .29f),
-        CONDENSER(CEMachineSounds.CONDENSER, .19f), WASTE_MELTER(CEMachineSounds.WASTE_MELTER, .20f),
-        SOLVENT_EXTRACTOR(CEMachineSounds.SOLVENT_EXTRACTOR, .19f), CONVERTER(CEMachineSounds.CONVERTER, .29f),
-        FUEL_CELL(CEMachineSounds.FUEL_CELL, .14f), FUSION_CRANE(CEMachineSounds.FUSION_CRANE, .24f),
-        QUARRY(CEMachineSounds.QUARRY, .27f), GASIFIER(CEMachineSounds.GASIFIER, .23f),
-        MOTOR_GENERATOR(CEMachineSounds.MOTOR_GENERATOR, .23f), FLYWHEEL(CEMachineSounds.FLYWHEEL, .20f),
-        VACUUM_PUMP(CEMachineSounds.VACUUM_PUMP, .17f), ELECTRIC_PUMP(CEMachineSounds.ELECTRIC_PUMP, .18f),
-        MATERIAL_PUMP(CEMachineSounds.MATERIAL_PUMP, .14f, 20), RELIEF_SCRUBBER(CEMachineSounds.RELIEF_SCRUBBER, .22f),
-        GAS_HOLDER(CEMachineSounds.GAS_HOLDER, .16f), CONSTRUCTOR(CEMachineSounds.CONSTRUCTOR, .19f),
-        DISPATCH(CEMachineSounds.DISPATCH, .16f),
-        PRESSURISED_GAS(CEMachineSounds.PRESSURISED_GAS, .19f, 16), HIGH_PRESSURE_GAS(CEMachineSounds.HIGH_PRESSURE_GAS, .28f, 20);
+    public static final class Kind {
+        private static final List<Kind> ALL = new ArrayList<>();
+        public static List<Kind> values() { return List.copyOf(ALL); }
+
+        public static final Kind REACTOR = new Kind(CEMachineSounds.REACTOR_CIRCULATION, .26f); 
+        public static final Kind TURBINE_HIGH = new Kind(CEMachineSounds.TURBINE_HIGH, .28f); public static final Kind TURBINE_LOW = new Kind(CEMachineSounds.TURBINE_LOW, .30f);
+        public static final Kind COMPRESSOR = new Kind(CEMachineSounds.COMPRESSOR, .24f); public static final Kind AGITATOR = new Kind(CEMachineSounds.AGITATOR, .20f);
+        public static final Kind HOT_PROCESS = new Kind(CEMachineSounds.HOT_PROCESS, .22f); public static final Kind FLUID_PROCESS = new Kind(CEMachineSounds.FLUID_PROCESS, .17f);
+        public static final Kind BLOWER = new Kind(CEMachineSounds.BLOWER, .22f); public static final Kind FLARE = new Kind(CEMachineSounds.FLARE_ROAR, .65f, 96);
+        
+        public static final Kind BOILER = new Kind(CEMachineSounds.BOILER, .22f); public static final Kind COLDBOX = new Kind(CEMachineSounds.COLDBOX, .22f);
+        public static final Kind SHELL_EXCHANGER = new Kind(CEMachineSounds.SHELL_EXCHANGER, .16f); public static final Kind LARGE_EXCHANGER = new Kind(CEMachineSounds.LARGE_EXCHANGER, .19f);
+        public static final Kind JACKET = new Kind(CEMachineSounds.JACKET, .15f); public static final Kind ABSORBER = new Kind(CEMachineSounds.ABSORBER, .18f);
+        public static final Kind PACKED_TOWER = new Kind(CEMachineSounds.PACKED_TOWER, .19f); public static final Kind REACTION_TOWER = new Kind(CEMachineSounds.REACTION_TOWER, .20f);
+        public static final Kind VERTICAL_SEPARATOR = new Kind(CEMachineSounds.VERTICAL_SEPARATOR, .17f); public static final Kind SEPARATOR_DRUM = new Kind(CEMachineSounds.SEPARATOR_DRUM, .17f);
+        public static final Kind DISTILLATION = new Kind(CEMachineSounds.DISTILLATION, .20f); public static final Kind ELECTRIC_FURNACE = new Kind(CEMachineSounds.ELECTRIC_FURNACE, .25f);
+        public static final Kind ELECTROLYSIS = new Kind(CEMachineSounds.ELECTROLYSIS, .18f); public static final Kind COOLING_TOWER = new Kind(CEMachineSounds.COOLING_TOWER, .29f);
+        public static final Kind CONDENSER = new Kind(CEMachineSounds.CONDENSER, .19f); 
+        
+        public static final Kind FUEL_CELL = new Kind(CEMachineSounds.FUEL_CELL, .14f); 
+        public static final Kind GASIFIER = new Kind(CEMachineSounds.GASIFIER, .23f);
+        public static final Kind MOTOR_GENERATOR = new Kind(CEMachineSounds.MOTOR_GENERATOR, .23f); public static final Kind FLYWHEEL = new Kind(CEMachineSounds.FLYWHEEL, .20f);
+        public static final Kind VACUUM_PUMP = new Kind(CEMachineSounds.VACUUM_PUMP, .17f); public static final Kind ELECTRIC_PUMP = new Kind(CEMachineSounds.ELECTRIC_PUMP, .18f);
+        public static final Kind MATERIAL_PUMP = new Kind(CEMachineSounds.MATERIAL_PUMP, .14f, 20); public static final Kind RELIEF_SCRUBBER = new Kind(CEMachineSounds.RELIEF_SCRUBBER, .22f);
+        public static final Kind GAS_HOLDER = new Kind(CEMachineSounds.GAS_HOLDER, .16f); public static final Kind CONSTRUCTOR = new Kind(CEMachineSounds.CONSTRUCTOR, .19f);
+        
+        public static final Kind PRESSURISED_GAS = new Kind(CEMachineSounds.PRESSURISED_GAS, .19f, 16); public static final Kind HIGH_PRESSURE_GAS = new Kind(CEMachineSounds.HIGH_PRESSURE_GAS, .28f, 20);
 
         final Supplier<SoundEvent> event;
         final float volume;
         final int range;
-        Kind(Supplier<SoundEvent> event, float volume) { this(event, volume, MachineSounds.RANGE); }
-        Kind(Supplier<SoundEvent> event, float volume, int range) { this.event = event;this.volume = volume;this.range = range; }
+        public Kind(Supplier<SoundEvent> event, float volume) { this(event, volume, MachineSounds.RANGE); }
+        public Kind(Supplier<SoundEvent> event, float volume, int range) { this.event = event;this.volume = volume;this.range = range;ALL.add(this); }
     }
 
     private record Rule<T extends BlockEntity>(Class<T> type, java.util.function.Function<T, Kind> kind) {

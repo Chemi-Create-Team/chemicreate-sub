@@ -155,7 +155,7 @@ def textures():
 
 
 def buttons():
-    source = (ROOT / 'src/main/java/net/createplant/nuclear/ReactorConsoleButton.java').read_text()
+    source = (ROOT / 'atomics/src/main/java/net/createplant/atomics/nuclear/ReactorConsoleButton.java').read_text()
     pattern = r'(\w+)\(\s*(\d+),([\d.]+),([\d.]+),([\d.]+),"([^"]+)","([^"]+)"\s*\)'
     pattern = pattern.replace(',', r'\s*,\s*')
     return [(name, int(col), float(u), float(v), float(r), label, kind)

@@ -65,6 +65,7 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
 
     public boolean configure(int selection, int index) {
         if (!canConfigure() || selection < 0 || selection >= AssemblyPlan.Kind.values().length
+            || !AssemblyPlan.available(AssemblyPlan.Kind.values()[selection])
             || index < 0 || index >= AssemblyPlan.sizes(AssemblyPlan.Kind.values()[selection]).size()) return false;
         kind = AssemblyPlan.Kind.values()[selection];sizeIndices[selection] = index;
         planChanged();
@@ -167,6 +168,7 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
     @Override protected void read(CompoundTag tag, HolderLookup.Provider lookup, boolean packet) {
         super.read(tag, lookup, packet);
         kind = AssemblyPlan.Kind.values()[Math.clamp(tag.getInt("Facility"), 0, AssemblyPlan.Kind.values().length - 1)];
+        if (!AssemblyPlan.available(kind)) kind = AssemblyPlan.Kind.COOLING_TOWER;
         sizeIndices[0] = Math.clamp(tag.getInt("CoreSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.RBMK).size() - 1);
         sizeIndices[1] = Math.clamp(tag.getInt("FusionSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.FUSION).size() - 1);
         sizeIndices[2] = tag.contains("TowerSize") ? Math.clamp(tag.getInt("TowerSize"), 0, AssemblyPlan.sizes(AssemblyPlan.Kind.COOLING_TOWER).size() - 1) : 1;

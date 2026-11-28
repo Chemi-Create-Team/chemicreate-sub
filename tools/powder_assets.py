@@ -80,7 +80,7 @@ def validate_inventory():
 
 def validate_assets(read_rgba):
     report = validate_inventory()
-    client = (ROOT / 'src/main/java/net/createplant/ElectrolysisClient.java').read_text()
+    client = (ROOT / 'atomics/src/main/java/net/createplant/atomics/client/AtomicsClient.java').read_text()
     tints = {name.lower(): int(colour, 16) & 0xffffff for colour, name in re.findall(
         r'event\.register\(\(stack, layer\) -> (0x[0-9A-Fa-f]+), net\.createplant\.registry\.CEUranium\.([A-Z_]+)\.get\(\)\);', client)}
     for name, material in MANIFEST['powders'].items():

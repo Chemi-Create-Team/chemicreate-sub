@@ -1,5 +1,19 @@
 # Mod分離の計画（2026-11-28）
 
+## 実施結果（0.6.0）
+
+分離は実施済み。以下の計画のうち、実際に採った方法と残りをここにまとめる。
+
+- 構成：1つのGradleプロジェクトに3つのソースセット。本体は`src/main`、原子炉・製鉄は`atomics/src/main`、物流・採掘は`logistics/src/main`。`build`で3つのjar（`create-refinery-n-reactors-<版>.jar`、`create_rnr_atomics-<版>.jar`、`create_rnr_logistics-<版>.jar`）ができる。版は3つ共通。
+- 名前空間：アドオンのブロック・アイテム・流体のIDは`create_refinery_n_reactors:`のまま（Mod IDだけ新しい）。既存ワールドは移行なしで読める。そのため下の「手順3（別名）」は不要になった。lang・`sounds.json`・タグ・`tutorials.json`・`chemistry/*.json`は各jarが自分の分を持ち、読み込み時に統合する（`ResourceStack`）。
+- Javaパッケージ：アドオンは`net.createplant.atomics.*`・`net.createplant.logistics.*`（Modをまたぐ同名パッケージは不可のため）。
+- 依存の向き：本体はアドオンのクラスを見られない（コンパイラが保証）。データ側は`tools/check_addon_split.py`で確認する。アドオン同士も参照しない。
+- 本体だけでの確認：`-PcoreOnly`で本体だけを起動する。本体だけのGameTestは618件、3つそろえると819件。
+- 本体だけの場合の制限：重水・重水素・ヘリウム（ガス遠心分離機が原子炉側のため）、溶鋼・転炉ガスは作れない。ステンレスインゴットは原子炉側がないときだけ、溶融ステンレスの圧縮（Createのコンパクター）で作れる。施設建設機と`helium_cold_box`のPonderは原子炉側にある。
+- 生成スクリプト：アドオン専用の一部は出力先をアドオンへ変更済み。約30本はまだ本体のパスへ書く（AGENTS.md参照）。
+
+---
+
 方針：化学の本体と、アドオン2つ（原子炉・製鉄、物流・採掘）の計3つに分ける。コードは未変更。
 
 | Mod | Mod ID | 表示名 | Gradle |

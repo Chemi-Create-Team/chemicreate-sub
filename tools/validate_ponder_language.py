@@ -3,9 +3,10 @@
 import json,re,sys
 from pathlib import Path
 from generate_ponder_language import ASSETS,HEADERS,SHARED
+from resource_roots import load_json
 headers=dict(HEADERS)
 recipes=set()
-for t in json.loads((ASSETS/'ponder/tutorials.json').read_text()):
+for t in load_json('ponder/tutorials.json'):
  headers['plant_'+t['id']]='guide.'+t['id']+'.title'
  for step in t['steps']:
   if step.get('process',{}).get('recipe'):recipes.add(SHARED+'guide.'+t['id']+'.'+step['key'])
@@ -18,7 +19,7 @@ def valid_format(key,value):
  return not re.search(r'%(?:[0-9]+\$)?[sdf]',value)
 
 for language in ['en_us','ja_jp']:
- s=json.loads((ASSETS/'lang'/(language+'.json')).read_text())
+ s=load_json('lang/'+language+'.json')
  for scene,author in headers.items():assert s['create_refinery_n_reactors.ponder.'+scene+'.header']==s[SHARED+author]
  for k,v in s.items():
   if manufacturing_only and not k.startswith(SHARED+'guide.manufacturing_'):continue
@@ -28,7 +29,7 @@ for language in ['en_us','ja_jp']:
    assert v and not v.startswith('ponder.') and not v.startswith('create_refinery_n_reactors.ponder.')
    assert valid_format(k,v),f'{k}: unsupported Ponder format arguments'
 # Chinese captions use the same complete runtime key set.
-en=json.loads((ASSETS/'lang/en_us.json').read_text());zh=json.loads((ASSETS/'lang/zh_cn.json').read_text());chinese=0
+en=load_json('lang/en_us.json');zh=load_json('lang/zh_cn.json');chinese=0
 for scene,author in headers.items():
  guide=SHARED+author.rsplit('.',1)[0]+'.'
  keys=['create_refinery_n_reactors.ponder.'+scene+'.header']+[k for k in en if k.startswith(guide)]
@@ -47,7 +48,7 @@ for scene,title in headers.items():
  assert entries and title in lessons,f'{scene}: missing authored lesson'
  totals={}
  for language in ('en_us','ja_jp','zh_cn'):
-  strings=json.loads((ASSETS/'lang'/(language+'.json')).read_text())
+  strings=load_json('lang/'+language+'.json')
   total=0
   for key,texts in entries.items():
    assert strings[SHARED+key]==texts[language],f'{key}: generated text differs from the lesson source'

@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:ores/uranium",
     "#c:ores/bauxite",
     "#c:ores/pentlandite",
     "#c:ores/ilmenite",

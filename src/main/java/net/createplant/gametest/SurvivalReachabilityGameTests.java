@@ -49,6 +49,10 @@ public final class SurvivalReachabilityGameTests {
     // Keep items recovered from old machines out of the new-world production audit.
     private static final Set<String> LEGACY_ONLY = Set.of("glassy_slag", "raw_process_gas_bucket", "superheated_steam_bucket");
 
+    /** Made only by machines of the Atomics addon (converter, gas centrifuge, fuel cycle); the audit skips them while it is absent. */
+    private static final Set<String> ATOMICS_SOURCED = Set.of("converter_gas_bucket", "molten_steel_bucket", "heavy_water_bucket", "deuterium_depleted_water_bucket",
+        "deuterium_gas_bucket", "tritium_gas_bucket", "helium_gas_bucket", "helium_recovery_feed_bucket", "uranyl_nitrate_hydrate", "plutonium_nitrate_crystals");
+
     private SurvivalReachabilityGameTests() { }
 
     /** What an installed addon adds to the audit: its recipe types, equipment and fixed processes. Registered by the addon's own extension class. */
@@ -263,7 +267,8 @@ public final class SurvivalReachabilityGameTests {
             .filter(item -> ours(BuiltInRegistries.ITEM.getKey(item)))
             .map(BuiltInRegistries.ITEM::getKey)
             .filter(id -> !REPORT_ONLY_ITEMS.contains(id.getPath()) && !NON_GOALS.contains(id.getPath()) && !CREATIVE_ONLY.contains(id.getPath())
-                && !LEGACY_ONLY.contains(id.getPath()))
+                && !LEGACY_ONLY.contains(id.getPath())
+                && !(ATOMICS_SOURCED.contains(id.getPath()) && !BuiltInRegistries.ITEM.containsKey(CreatePlant.location("gas_centrifuge"))))
             .filter(id -> !items.contains(BuiltInRegistries.ITEM.get(id)))
             .map(ResourceLocation::toString).sorted().toList();
         var upstream = REPORT_ONLY_ITEMS.stream().filter(id -> !items.contains(item(id))).sorted().toList();

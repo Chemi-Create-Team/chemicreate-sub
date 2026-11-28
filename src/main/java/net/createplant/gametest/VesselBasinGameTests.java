@@ -478,7 +478,7 @@ public class VesselBasinGameTests {
     public static void aNativePumpReachesTheSecondFeedAndConservesGas(GameTestHelper h) {
         var owner=square(h,BASE,3,2);stir(h,owner);
         owner.port(Direction.WEST).fill(new FluidStack(Fluids.WATER,500),EXECUTE);
-        var sourcePos=BASE.west(4);h.setBlock(sourcePos,CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.X));var source=((FluidTankBlockEntity)h.getBlockEntity(sourcePos)).getTankInventory();source.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),40000),EXECUTE);
+        var sourcePos=BASE.west(4);h.setBlock(sourcePos,CETransport.GAS_RECEIVER.get().defaultBlockState().setValue(net.createplant.block.PulsationTubeBlock.AXIS,Direction.Axis.X));var source=((FluidTankBlockEntity)h.getBlockEntity(sourcePos)).getTankInventory();source.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(),40000),EXECUTE);
         for(int offset:new int[]{1,3}){var state=CETransport.STAINLESS_PIPE.get().defaultBlockState();for(Direction side:Direction.values())state=state.setValue(FluidPipeBlock.PROPERTY_BY_DIRECTION.get(side),side.getAxis()==Direction.Axis.X);h.setBlock(BASE.west(offset),state);}
         var pump=BASE.west(2);var cog=pump.above();var motor=cog.west();
         h.setBlock(pump,AllBlocks.MECHANICAL_PUMP.getDefaultState().setValue(com.simibubi.create.content.fluids.pump.PumpBlock.FACING,Direction.EAST));
@@ -486,7 +486,7 @@ public class VesselBasinGameTests {
         h.setBlock(motor,AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.FACING,Direction.EAST));
         h.runAfterDelay(5,()->((CreativeMotorBlockEntity)h.getBlockEntity(motor)).generatedSpeed.setValue(64));
         h.runAfterDelay(180,()->{var current=owner.port(Direction.WEST);int received=current.getFluidInTank(1).getAmount();
-            h.assertTrue(current.getFluidInTank(1).is(CEFluids.HYDROGEN_GAS.get()) && received>0 && current.getFluidInTank(0).getAmount()==500,"The native pump reaches gas feed one while feed zero contains water");
+            h.assertTrue(current.getFluidInTank(1).is(CEFluids.OXYGEN_GAS.get()) && received>0 && current.getFluidInTank(0).getAmount()==500,"The native pump reaches gas feed one while feed zero contains water");
             h.assertTrue(received+source.getFluidAmount()==40000,"Native gas pipes contain no hidden material; source and feed close their ledger");h.succeed();});
     }
 }

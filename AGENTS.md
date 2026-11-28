@@ -60,6 +60,7 @@
 - Mixinは対象と影響を絞ってください。対象メソッドと必要な理由がわかるようにし、Create更新時に確認できる構造にしてください。
 - リソースは`src/main/resources/assets/<mod_id>/`、レシピ等は`src/main/resources/data/<mod_id>/`へ置いてください。`blockstates/`、`models/`、`textures/`、`lang/`などは既存配置に合わせ、データパックのディレクトリ名は対象Minecraft版に従ってください。
 - アドオンのリソースは各jarに同梱します（パスと名前空間は共通）。アトミクス関連は`atomics/src/main/resources/`、ロジスティクス関連は`logistics/src/main/resources/`へ置き、lang・`sounds.json`・タグ・`tutorials.json`・`chemistry/*.json`は各jarが自分の分だけを持ちます（コアの読み込み側は`ResourceStack`で全jarを統合します）。`tools/`の生成スクリプトのうちアドオン専用の10本（large_press / torpedo_ponder / rolled_products / continuous_factory / fuel_pool / irradiation_cartridge / compact_fuel / centrifuge_and_press / compact_rbmk_ponder は`atomics/`、quarry_assetsは`logistics/`）は出力先を切り替え済みです。残りの生成スクリプトのうち、アドオン分を含むもの（fusion_assets・converter・converter_ponder・rbmk_assets・uranium_*・radiation_assets・reactor_console・steelworks_textures・plant_systems・manufacturing_ponder・manual・crane_assets・blasting・industrial_expansionなど）は今もコアの`src/main/resources`へ書くため、実行後にアドオン分のファイルとlangキーを該当アドオンへ移してください。
+- コアはアドオンなしで動かせる状態を保ちます（コアはアドオンを参照しない）。`-PcoreOnly`を付けるとGradleの実行（`runGameTestServer`・`runClient`）がコアだけを読み込みます。コアのリソースにアドオンのID・langキーが残っていないかは`python3 tools/check_addon_split.py`（nbtlibが必要。違反があれば終了コード1）で確認してください。
 - プレイヤー向けの名称、単位、停止理由は翻訳キーで管理してください。Javaへ表示文言を散在させないでください。
 - 既存構造の整理は変更対象に必要な範囲に留めてください。この表に合わせるためだけの一括移動やリネームは行わないでください。
 

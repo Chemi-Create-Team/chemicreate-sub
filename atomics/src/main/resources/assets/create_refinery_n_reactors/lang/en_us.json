@@ -1403,5 +1403,18 @@
   "create_refinery_n_reactors.ponder.shared.rolled_stainless_steel_ingot.use": "Press the ingots into stainless steel sheets for tanks, pipes and corrosion-proof equipment.",
   "create_refinery_n_reactors.ponder.rolled_stainless_steel_ingot.header": "Rolling Stainless Steel Ingots",
   "advancement.create_refinery_n_reactors.guide.rolling_mill": "4. Rolling Mill",
-  "advancement.create_refinery_n_reactors.guide.rolling_mill.description": "Build a tandem rolling mill from steel. Stainless ingots are only made on it. Ponder: Tandem Rolling Mill"
+  "advancement.create_refinery_n_reactors.guide.rolling_mill.description": "Build a tandem rolling mill from steel. Stainless ingots are only made on it. Ponder: Tandem Rolling Mill",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1": "Superheat the brine batch in a stirred tank to recover borax and salt. Keep the salt for the brine loop.\n%s → %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2": "Superheat borax with quartz, glass and calcite under a Mechanical Mixer to make borosilicate frit.\n%s → %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.title": "Building materials 2 — borax and glass frit",
+  "create_refinery_n_reactors.ponder.plant_manufacturing_glass.header": "Building materials 2 — borax and glass frit",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action": "Superheat the brine batch in a stirred tank to recover borax and salt. Keep the salt for the brine loop.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.count": "2",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.0": "Superheat the brine batch in a stirred tank to recover borax and salt.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.action.lesson_pages.1": "Keep the salt for the brine loop.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_1.recipe": "Feed: %s\nProduct: %s",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action": "Superheat borax with quartz, glass and calcite under a Mechanical Mixer to make borosilicate frit.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action.lesson_pages.count": "1",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.action.lesson_pages.0": "Superheat borax with quartz, glass and calcite under a Mechanical Mixer to make borosilicate frit.",
+  "create_refinery_n_reactors.ponder.shared.guide.manufacturing_glass.step_2.recipe": "Feed: %s\nProduct: %s"
 }

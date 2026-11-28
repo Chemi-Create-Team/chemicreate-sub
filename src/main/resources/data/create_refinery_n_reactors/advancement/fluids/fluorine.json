@@ -18,7 +18,7 @@
     "show_toast": true,
     "announce_to_chat": false
   },
-  "parent": "create_refinery_n_reactors:fluids/gass",
+  "parent": "create_refinery_n_reactors:fluids/gases",
   "criteria": {
     "bucket": {
       "trigger": "minecraft:inventory_changed",

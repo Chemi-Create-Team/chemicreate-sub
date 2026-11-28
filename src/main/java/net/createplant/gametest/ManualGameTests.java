@@ -14,6 +14,10 @@ public class ManualGameTests {
     private static final String[] GUIDE = {"root", "dispatch", "steel", "vessel", "electrolysis", "sulfuric_acid", "leaching", "zirconia", "aluminum", "nickel",
         "stainless_steel", "power", "nuclear", "fusion", "plastic", "compressor", "fertilizer", "mining"};
 
+    /** Guide steps an addon ships, with an item that shows the addon is installed. */
+    private static final java.util.Map<String, String> ADDON_GUIDE = java.util.Map.of("dispatch", "industrial_arm", "mining", "industrial_arm", "nuclear", "gas_centrifuge", "fusion", "gas_centrifuge");
+    private static boolean installed(String marker) { return marker != null && net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(CreatePlant.location(marker)); }
+
     @GameTest(template = "test_reactor")
     public static void theManualCraftsAsATranslatedBookAndTheGuideTreeLoads(GameTestHelper h) {
         var server = h.getLevel().getServer();
@@ -24,7 +28,7 @@ public class ManualGameTests {
             && content.pages().getFirst().raw().getContents() instanceof TranslatableContents page && page.getKey().equals("book." + CreatePlant.MOD_ID + ".manual.page_0"),
             "A book and an iron ingot make the twenty-four-page manual, its pages translated");
         for (String step : GUIDE)
-            h.assertTrue(server.getAdvancements().get(CreatePlant.location("guide/" + step)) != null, "The guide advancement loads: " + step);
+            h.assertTrue(server.getAdvancements().get(CreatePlant.location("guide/" + step)) != null || !installed(ADDON_GUIDE.get(step)), "The guide advancement loads: " + step);
         var root = server.getAdvancements().get(CreatePlant.location("guide/root")).value();
         h.assertTrue(root.rewards().loot().stream().anyMatch(table -> table.location().equals(CreatePlant.location("gameplay/manual"))),
             "Joining grants the guide's root, which hands out the manual");

@@ -25,6 +25,7 @@ public class CreateRnrAtomics {
         net.createplant.atomics.registry.CELargePress.register(modEventBus);
         net.createplant.atomics.registry.CEContinuousFactory.register(modEventBus);
         net.createplant.atomics.registry.CEConverter.register(modEventBus);
+        net.createplant.atomics.registry.AtomicsSounds.register(modEventBus);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.atomics.block.ConverterStructure::changed);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.atomics.block.ConverterStructure::chunkLoaded);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(net.createplant.atomics.block.ConverterStructure::chunkUnloaded);

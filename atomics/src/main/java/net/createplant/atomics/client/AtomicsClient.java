@@ -4,6 +4,7 @@ import net.createplant.client.CasingModels;
 import net.createplant.client.ClientQualityCheck;
 import net.createplant.client.GoggleSpec;
 import net.createplant.client.MachineSoundSource;
+import net.createplant.atomics.registry.AtomicsSounds;
 import net.createplant.client.ProcessGoggles;
 import net.createplant.client.ProcessPortOverlay;
 import net.createplant.client.StructureGuideRenderer;
@@ -21,6 +22,15 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 public class AtomicsClient {
+    private static final MachineSoundSource.Kind CENTRIFUGE = new MachineSoundSource.Kind(AtomicsSounds.CENTRIFUGE, 0.21f);
+    private static final MachineSoundSource.Kind CUBIC_PRESS = new MachineSoundSource.Kind(AtomicsSounds.CUBIC_PRESS, 0.27f);
+    private static final MachineSoundSource.Kind FUSION = new MachineSoundSource.Kind(AtomicsSounds.FUSION_DRIVE, 0.27f);
+    private static final MachineSoundSource.Kind WASTE_MELTER = new MachineSoundSource.Kind(AtomicsSounds.WASTE_MELTER, 0.2f);
+    private static final MachineSoundSource.Kind SOLVENT_EXTRACTOR = new MachineSoundSource.Kind(AtomicsSounds.SOLVENT_EXTRACTOR, 0.19f);
+    private static final MachineSoundSource.Kind CONVERTER = new MachineSoundSource.Kind(AtomicsSounds.CONVERTER, 0.29f);
+    private static final MachineSoundSource.Kind CRANE = new MachineSoundSource.Kind(AtomicsSounds.CRANE_DRIVE, 0.23f);
+    private static final MachineSoundSource.Kind FUSION_CRANE = new MachineSoundSource.Kind(AtomicsSounds.FUSION_CRANE, 0.24f);
+
     public static void init(IEventBus modEventBus) {
         if (Boolean.getBoolean("createplant.powerPlantClientCheck")) NeoForge.EVENT_BUS.addListener(net.createplant.atomics.client.PowerPlantClientCheck::tick);
         ClientQualityCheck.register(new ClientQualityCheck.AddonCheck("createplant.radiationClientCheck", 90, RadiationClientCheck::start, RadiationClientCheck::tick, ClientQualityCheck.Finish.SHOW));
@@ -41,19 +51,19 @@ public class AtomicsClient {
                     instanceof net.createplant.atomics.block.entity.ConverterTrunnionBearingBlockEntity))
                 throw new IllegalStateException("The converter Ponder is missing its trunnion bearing");
         });
-        MachineSoundSource.register(GasCentrifugeBlockEntity.class, centrifuge -> centrifuge.spinningCascade() ? MachineSoundSource.Kind.CENTRIFUGE : null);
-        MachineSoundSource.register(CubicPressBlockEntity.class, press -> press.running() ? MachineSoundSource.Kind.CUBIC_PRESS : null);
+        MachineSoundSource.register(GasCentrifugeBlockEntity.class, centrifuge -> centrifuge.spinningCascade() ? CENTRIFUGE : null);
+        MachineSoundSource.register(CubicPressBlockEntity.class, press -> press.running() ? CUBIC_PRESS : null);
         MachineSoundSource.register(FuelChannelBlockEntity.class, channel -> channel.core() != null && channel.core().formed() && channel.core().power() > 0 ? MachineSoundSource.Kind.REACTOR : null);
         MachineSoundSource.registerPosition(FuelChannelBlockEntity.class, channel -> channel.core().box() != null ? Vec3.atCenterOf(channel.core().box().getCenter()) : null);
         MachineSoundSource.register(FusionReactorControllerBlockEntity.class, fusion ->
-            fusion.formed() && (fusion.fusionWatts() > 0 || fusion.electricalWatts() > 0) ? MachineSoundSource.Kind.FUSION : null);
+            fusion.formed() && (fusion.fusionWatts() > 0 || fusion.electricalWatts() > 0) ? FUSION : null);
         MachineSoundSource.register(FuelCycleMachineBlockEntity.class, cycle ->
-            !cycle.formed() ? null : cycle.status().equals("vitrifying") ? MachineSoundSource.Kind.WASTE_MELTER
-                : cycle.status().equals("extracting") ? MachineSoundSource.Kind.SOLVENT_EXTRACTOR : null);
+            !cycle.formed() ? null : cycle.status().equals("vitrifying") ? WASTE_MELTER
+                : cycle.status().equals("extracting") ? SOLVENT_EXTRACTOR : null);
         MachineSoundSource.register(ConverterTrunnionBearingBlockEntity.class, converter ->
-            converter.formed() && (converter.status().equals("blowing") || converter.isRunning() && !converter.tilted()) ? MachineSoundSource.Kind.CONVERTER : null);
+            converter.formed() && (converter.status().equals("blowing") || converter.isRunning() && !converter.tilted()) ? CONVERTER : null);
         MachineSoundSource.register(CraneDriveBlockEntity.class, crane ->
-            crane.structure() != null && crane.working() ? (crane.fusion() ? MachineSoundSource.Kind.FUSION_CRANE : MachineSoundSource.Kind.CRANE) : null);
+            crane.structure() != null && crane.working() ? (crane.fusion() ? FUSION_CRANE : CRANE) : null);
         MachineSoundSource.register(FusionMotorGeneratorBlockEntity.class, motor -> motor.electricalWatts() > 0 ? MachineSoundSource.Kind.MOTOR_GENERATOR : null);
         MachineSoundSource.register(FusionVacuumPumpBlockEntity.class, pump -> pump.getSpeed() != 0 ? MachineSoundSource.Kind.VACUUM_PUMP : null);
         GoggleSpec.registerStatus((owner, lines) -> {

@@ -18,6 +18,7 @@ public class CreateRnrLogistics {
         net.createplant.logistics.registry.CEQuarry.register(modEventBus);
         net.createplant.logistics.relay.CERelayComputer.register(modEventBus);
         net.createplant.logistics.registry.CEArm.register(modEventBus);
+        net.createplant.logistics.registry.LogisticsSounds.register(modEventBus);
         net.createplant.logistics.compat.display.LogisticsReadings.register();
         if (FMLEnvironment.dist.isClient()) net.createplant.logistics.client.LogisticsClient.init(modEventBus);
     }

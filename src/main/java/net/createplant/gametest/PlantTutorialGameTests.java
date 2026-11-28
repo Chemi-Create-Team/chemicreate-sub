@@ -55,6 +55,11 @@ public final class PlantTutorialGameTests {
         helper.assertTrue(issues.isEmpty(), String.join("; ", issues));
         helper.succeed();
     }
+    /** Storyboards the addons ship; they are absent while the addon is not installed. */
+    private static final java.util.Set<String> ADDON_STORYBOARDS = java.util.Set.of("crane/crane_refuelling", "crane/gantry_crane", "crane/quarry_frame",
+        "nuclear/fuel_pool", "nuclear/fusion_console", "nuclear/fusion_motor_generator", "nuclear/fusion_tokamak", "nuclear/rbmk_compact_core",
+        "nuclear/rbmk_control_rods", "nuclear/rbmk_control_room", "nuclear/rbmk_core", "plant/facility_constructor", "plant/gas_centrifuge",
+        "plant/cubic_press", "plant/fuel_cycle", "plant/fusion_maintenance", "plant/helium_cold_box");
     @GameTest(template = "test_petrochemical")
     public static void originalStoryboardsStillUseValidRegisteredBlockStates(GameTestHelper helper) throws Exception {
         var issues = new java.util.ArrayList<String>();
@@ -105,6 +110,7 @@ public final class PlantTutorialGameTests {
             "turbine/multiblock")) {
             try (var stream = net.createplant.ResourceStack.open(PlantTutorialCatalog.class, 
                 "/assets/" + CreatePlant.MOD_ID + "/ponder/" + path + ".nbt")) {
+                if (stream == null && ADDON_STORYBOARDS.contains(path)) continue;
                 helper.assertTrue(stream != null, "Missing original storyboard " + path);
                 issues.addAll(structureIssues(NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap()), path));
             }

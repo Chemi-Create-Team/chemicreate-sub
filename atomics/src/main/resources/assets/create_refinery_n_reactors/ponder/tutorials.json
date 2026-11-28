@@ -595,5 +595,87 @@
         }
       }
     ]
+  },
+  {
+    "id": "manufacturing_glass",
+    "family": "construction",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "borax",
+      "cement_clinker",
+      "cement_powder",
+      "corrosion_resistant_floor",
+      "corrosion_resistant_floor_slab",
+      "ground_clinker",
+      "gypsum",
+      "industrial_concrete",
+      "industrial_concrete_slab",
+      "industrial_concrete_stairs",
+      "phosphoric_acid_bucket",
+      "stirred_tank"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/borax_from_brine",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/borosilicate_glass_frit",
+          "offset": 32,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      }
+    ]
   }
 ]

@@ -7234,36 +7234,6 @@
         }
       },
       {
-        "key": "step_6",
-        "target": [
-          1,
-          6,
-          6
-        ],
-        "process": {
-          "kind": "converter",
-          "recipe": "create_refinery_n_reactors:converter/refine_hot_metal",
-          "offset": 128,
-          "width": 16,
-          "height": 13,
-          "machine": [
-            1,
-            6,
-            6
-          ],
-          "input": [
-            4,
-            7,
-            6
-          ],
-          "output": [
-            5,
-            4,
-            6
-          ]
-        }
-      },
-      {
         "key": "step_7",
         "target": [
           5,
@@ -7290,36 +7260,6 @@
             5,
             2,
             5
-          ]
-        }
-      },
-      {
-        "key": "step_8",
-        "target": [
-          1,
-          6,
-          6
-        ],
-        "process": {
-          "kind": "converter",
-          "recipe": "create_refinery_n_reactors:converter/aod_stainless_steel",
-          "offset": 128,
-          "width": 16,
-          "height": 13,
-          "machine": [
-            1,
-            6,
-            6
-          ],
-          "input": [
-            4,
-            7,
-            6
-          ],
-          "output": [
-            5,
-            4,
-            6
           ]
         }
       },
@@ -7887,88 +7827,6 @@
     ]
   },
   {
-    "id": "manufacturing_glass",
-    "family": "construction",
-    "size": 11,
-    "height": 9,
-    "components": [
-      "borax",
-      "cement_clinker",
-      "cement_powder",
-      "corrosion_resistant_floor",
-      "corrosion_resistant_floor_slab",
-      "ground_clinker",
-      "gypsum",
-      "industrial_concrete",
-      "industrial_concrete_slab",
-      "industrial_concrete_stairs",
-      "phosphoric_acid_bucket",
-      "stirred_tank"
-    ],
-    "steps": [
-      {
-        "key": "step_1",
-        "target": [
-          4,
-          2,
-          4
-        ],
-        "process": {
-          "kind": "vessel",
-          "recipe": "create_refinery_n_reactors:pressure_reaction/borax_from_brine",
-          "offset": 0,
-          "width": 11,
-          "height": 9,
-          "machine": [
-            4,
-            2,
-            4
-          ],
-          "input": [
-            3,
-            2,
-            4
-          ],
-          "output": [
-            7,
-            4,
-            4
-          ]
-        }
-      },
-      {
-        "key": "step_2",
-        "target": [
-          5,
-          2,
-          5
-        ],
-        "process": {
-          "kind": "mixing",
-          "recipe": "create_refinery_n_reactors:mixing/borosilicate_glass_frit",
-          "offset": 32,
-          "width": 11,
-          "height": 8,
-          "machine": [
-            5,
-            2,
-            5
-          ],
-          "input": [
-            5,
-            2,
-            4
-          ],
-          "output": [
-            5,
-            2,
-            5
-          ]
-        }
-      }
-    ]
-  },
-  {
     "id": "manufacturing_washwater",
     "family": "water",
     "size": 11,
@@ -8404,36 +8262,6 @@
     ],
     "steps": [
       {
-        "key": "step_1",
-        "target": [
-          2,
-          2,
-          3
-        ],
-        "process": {
-          "kind": "centrifuge",
-          "recipe": "process:concentrate_heavy_water",
-          "offset": 0,
-          "width": 8,
-          "height": 5,
-          "machine": [
-            2,
-            2,
-            3
-          ],
-          "input": [
-            2,
-            2,
-            3
-          ],
-          "output": [
-            2,
-            3,
-            3
-          ]
-        }
-      },
-      {
         "key": "step_2",
         "target": [
           4,
@@ -8504,36 +8332,6 @@
       "helium_gas_bucket"
     ],
     "steps": [
-      {
-        "key": "step_1",
-        "target": [
-          2,
-          2,
-          3
-        ],
-        "process": {
-          "kind": "centrifuge",
-          "recipe": "process:recover_helium",
-          "offset": 0,
-          "width": 8,
-          "height": 5,
-          "machine": [
-            2,
-            2,
-            3
-          ],
-          "input": [
-            2,
-            2,
-            3
-          ],
-          "output": [
-            2,
-            3,
-            3
-          ]
-        }
-      },
       {
         "key": "step_2",
         "target": [

@@ -8,8 +8,8 @@ import re
 import struct
 import sys
 
-ROOT = Path(__file__).resolve().parents[1]
-ASSETS = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
+from resource_roots import find, load_json, rglob
+
 PREFIX = 'create_refinery_n_reactors.ponder.shared.guide.'
 
 
@@ -47,10 +47,10 @@ def read_structure(path):
 
 
 if __name__ == '__main__':
-    catalogue = json.loads((ASSETS/'ponder/tutorials.json').read_text())
+    catalogue = load_json('ponder/tutorials.json')
     manufacturing_only = '--manufacturing' in sys.argv
     if manufacturing_only: catalogue = [tutorial for tutorial in catalogue if tutorial.get('family')]
-    languages = {language: json.loads((ASSETS/'lang'/(language+'.json')).read_text())
+    languages = {language: load_json('lang/'+language+'.json')
                  for language in ('en_us', 'ja_jp')}
     assert len(catalogue) >= 24
     assert len({t['id'] for t in catalogue}) == len(catalogue)
@@ -64,7 +64,7 @@ if __name__ == '__main__':
             assert re.fullmatch('(?:[a-z0-9_]+:)?[a-z0-9_]+', component), \
                 'Component identifiers must be valid registry names'
             components.add(component)
-        data = read_structure(ASSETS/'ponder/plant'/(name+'.nbt'))
+        data = read_structure(find('ponder/plant/'+name+'.nbt'))
         if tutorial.get('family'):
             processes = [step['process'] for step in tutorial['steps']]
             assert data['size'] == [max(p['offset'] + p['width'] for p in processes),
@@ -112,7 +112,7 @@ if __name__ == '__main__':
                 box = step['reveal']
                 assert len(box) == 6 and all(0 <= low <= high < bound for low, high, bound in zip(box[:3],box[3:],data["size"]))
             if 'item' in step and step['item'].startswith('create_refinery_n_reactors:'):
-                assert (ASSETS/'models/item'/(step['item'].split(':')[1]+'.json')).is_file()
+                assert find('models/item/'+step['item'].split(':')[1]+'.json').is_file()
         for language, strings in languages.items():
             for key in keys:
                 assert strings.get(key), (language,key)
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     print(f'Validated {len(catalogue)} additional Ponder scenes, {len(captions)} paired captions, '
           f'{len(components)} component links and all structure targets')
 
-    for path in (ASSETS/'ponder').rglob('*.nbt'):
+    for path in rglob('ponder','*.nbt'):
         payload = gzip.decompress(path.read_bytes())
         assert b'create_plant:' not in payload, f'Legacy block namespace in {path}'
         assert not re.search(rb'create_refinery_n_reactors:(?:small_compressor|large_compressor|compressor_mechanism)(?![a-z_])',payload), f'Removed compressor in {path}'
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     for basic,expanded,part in [
         ('module_cooling','module_cooling_expansion','cooling_fan')]:
         def count(scene):
-            data=read_structure(ASSETS/'ponder/plant'/(scene+'.nbt'))
+            data=read_structure(find('ponder/plant/'+scene+'.nbt'))
             return sum(data['palette'][b['state']]['Name']=='create_refinery_n_reactors:'+part for b in data['blocks'])
         assert count(expanded)>count(basic)>0, f'{expanded}: expansion must add real {part}'
         for suffix in ('', '_expansion', '_integration'):
@@ -160,7 +160,7 @@ if __name__ == '__main__':
         if not tutorial.get('family'):continue
         previous=families.setdefault(tutorial['family'],tutorial['components'])
         assert previous==tutorial['components'], 'Family chapters must share every intermediate entrypoint'
-        data=read_structure(ASSETS/'ponder/plant'/(tutorial['id']+'.nbt'))
+        data=read_structure(find('ponder/plant/'+tutorial['id']+'.nbt'))
         blocks={tuple(block['pos']):data['palette'][block['state']] for block in data['blocks']}
         for step in tutorial['steps']:
             process=step['process']

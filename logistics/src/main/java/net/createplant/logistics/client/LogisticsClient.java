@@ -1,6 +1,7 @@
 package net.createplant.logistics.client;
 
 import net.createplant.client.MachineSoundSource;
+import net.createplant.logistics.registry.LogisticsSounds;
 import net.createplant.logistics.registry.CEQuarry;
 import net.createplant.block.entity.*;
 import net.createplant.logistics.block.entity.*;
@@ -10,9 +11,12 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 public class LogisticsClient {
+    private static final MachineSoundSource.Kind QUARRY = new MachineSoundSource.Kind(LogisticsSounds.QUARRY, 0.27f);
+    private static final MachineSoundSource.Kind DISPATCH = new MachineSoundSource.Kind(LogisticsSounds.DISPATCH, 0.16f);
+
     public static void init(IEventBus modEventBus) {
-        MachineSoundSource.register(QuarryDriveBlockEntity.class, quarry -> quarry.working() ? MachineSoundSource.Kind.QUARRY : null);
-        MachineSoundSource.register(IndustrialDispatchBlockEntity.class, dispatch -> dispatch.status().equals("running") ? MachineSoundSource.Kind.DISPATCH : null);
+        MachineSoundSource.register(QuarryDriveBlockEntity.class, quarry -> quarry.working() ? QUARRY : null);
+        MachineSoundSource.register(IndustrialDispatchBlockEntity.class, dispatch -> dispatch.status().equals("running") ? DISPATCH : null);
         modEventBus.addListener(LogisticsClient::clientSetup);
         modEventBus.addListener(LogisticsClient::registerRenderers);
         net.createplant.logistics.client.IndustrialArmRenderer.init();

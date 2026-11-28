@@ -263,7 +263,7 @@ public class ToxicGasGameTests {
                 "Every gas in the mod is either harmful, known to be harmless, or judged by what it carries: " + id);
             if (harmful) count++;
         }
-        h.assertTrue(count >= 30, "The mod's harmful gases are all classified: " + count);
+        h.assertTrue(count >= (net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(CreatePlant.location("gas_centrifuge")) ? 30 : 27), "The mod's harmful gases are all classified: " + count);
         h.succeed();
     }
 
