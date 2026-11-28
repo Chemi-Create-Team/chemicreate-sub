@@ -104,34 +104,63 @@ def opposed_drive():
 
 
 class Mesh:
-    def __init__(self):
+    def __init__(self, *, planar_uv=False):
         self.rows = ['mtllib industrial.mtl', 'vt 0 0', 'vt 1 0', 'vt 1 1', 'vt 0 1']
         self.vertices = 0
+        self.texture_vertices = 4
+        self.planar_uv = planar_uv
 
-    def tube(self, path, radial, material, *, sides=12):
+    def tube(self, path, radial, material, *, sides=12, caps=(True, True)):
         start = self.vertices + 1
+        profile = [(math.cos(angle), math.sin(angle)) for angle in
+                   (math.tau * (i + .5) / sides for i in range(sides))]
         for centre, radius in path:
-            for i in range(sides):
-                angle = 2 * math.pi * (i + .5) / sides
-                vector = radial(centre, math.cos(angle) * radius, math.sin(angle) * radius)
+            for a, b in profile:
+                vector = radial(centre, a * radius, b * radius)
                 self.rows.append('v ' + ' '.join(f'{n / 16:.5f}' for n in vector))
                 self.vertices += 1
+
+        planar_rings = {}
+
+        def planar_ring(row):
+            if row not in planar_rings:
+                radius = path[row][1]
+                planar_rings[row] = [self.uv(a * radius, b * radius) for a, b in profile]
+            return planar_rings[row]
+
         self.rows.append('usemtl ' + material)
         for row in range(len(path) - 1):
+            planar = self.planar_uv and path[row][0] == path[row + 1][0]
+            if planar:
+                from_tex, to_tex = planar_ring(row), planar_ring(row + 1)
             for i in range(sides):
                 a = start + row * sides
                 b = (i + 1) % sides
-                self.face(a+i, a+b, a+sides+b, a+sides+i)
-        for row, reverse in ((0, True), (len(path)-1, False)):
+                tex = (from_tex[i], from_tex[b], to_tex[b], to_tex[i]) if planar else None
+                self.face(a+i, a+b, a+sides+b, a+sides+i, tex=tex)
+        for row, reverse, cap in ((0, True, caps[0]), (len(path)-1, False, caps[1])):
+            if not cap:
+                continue
             self.rows.append('v ' + ' '.join(f'{n / 16:.5f}' for n in path[row][0]))
             self.vertices += 1
             ring = start + row * sides
+            if self.planar_uv:
+                ring_tex = planar_ring(row)
+                centre_tex = self.uv(0, 0)
             for i in range(0, sides, 2):
-                fan = (ring+i, ring+(i+1)%sides, ring+(i+2)%sides)
-                self.face(self.vertices, *(reversed(fan) if reverse else fan))
+                fan = (i, (i + 1) % sides, (i + 2) % sides)
+                if reverse:
+                    fan = fan[::-1]
+                tex = (centre_tex, *(ring_tex[j] for j in fan)) if self.planar_uv else None
+                self.face(self.vertices, *(ring + j for j in fan), tex=tex)
 
-    def face(self, *vertices):
-        self.rows.append('f ' + ' '.join(f'{vertex}/{i}' for i, vertex in enumerate(vertices, 1)))
+    def uv(self, a, b):
+        self.texture_vertices += 1
+        self.rows.append(f'vt {.5 + a / 16:.6f} {.5 + b / 16:.6f}')
+        return self.texture_vertices
+
+    def face(self, *vertices, tex=None):
+        self.rows.append('f ' + ' '.join(f'{vertex}/{uv}' for vertex, uv in zip(vertices, tex or range(1, 5))))
 
     def save(self, name):
         folder = ASSETS / 'models' / FOLDER
@@ -140,34 +169,64 @@ class Mesh:
             'loader': 'neoforge:obj', 'model': MOD + 'models/' + FOLDER + name + '.obj', 'automatic_culling': False, 'flip_v': True})
 
 
+FLANGE_NECK = .88
+
+
+def octagonal_head(mesh, centre, radial, start, depth, radius):
+    def point(distance):
+        return centre(start + depth * distance)
+
+    def section(profile, material, cap=False):
+        mesh.tube([(point(distance), radius * size) for distance, size in profile],
+                  radial, material, sides=8, caps=(False, cap))
+
+    section(((0, FLANGE_NECK), (.10, FLANGE_NECK)), 'cast')
+    section(((.10, FLANGE_NECK), (.18, 1), (.38, 1), (.48, .92), (.48, .62)), 'satin')
+    section(((.48, .62), (.57, .59), (.57, .49), (.50, .46), (.50, .345)), 'steel')
+    section(((.50, .345), (.63, .345), (.74, .25), (.91, .25), (1, .20), (1, .12)), 'satin')
+    section(((1, .12), (.88, .12)), 'cast', cap=True)
+    for bolt in range(8):
+        angle = math.tau * (bolt + .5) / 8
+        a, b = .77 * radius * math.cos(angle), .77 * radius * math.sin(angle)
+        mesh.tube([(radial(point(distance), a, b), .105 * radius) for distance in (.46, .66)],
+                  radial, 'cast', sides=6, caps=(False, True))
+
+
+def industrial_cylinder():
+    barrel = Mesh(planar_uv=True)
+    centre = lambda x: (x, 8, 8)
+    radial_x = lambda c, a, b: (c[0], c[1] + a, c[2] + b)
+    flange = 5.2
+    barrel.tube([(centre(x), r) for x, r in ((0, 4.5), (1, 5.4), (2.3, 5.4), (4.25, 5.85),
+        (8.75, 5.65), (11.55, flange * FLANGE_NECK))], radial_x, 'painted', sides=8, caps=(True, False))
+    octagonal_head(barrel, centre, radial_x, 11.55, 4.45, flange)
+
+    tilt = math.radians(26)
+    forward, outward = math.cos(tilt), math.sin(tilt)
+    for quadrant in range(4):
+        angle = math.tau * (quadrant + .5) / 4
+        y, z = math.cos(angle), math.sin(angle)
+
+        def chamber_centre(distance):
+            offset = 3.05 + distance * outward
+            return 4.25 + distance * forward, 8 + offset * y, 8 + offset * z
+
+        def chamber_radial(c, a, b):
+            return c[0] - a * outward, c[1] + a * forward * y - b * z, c[2] + a * forward * z + b * y
+
+        flange = 2.8
+        barrel.tube([(chamber_centre(distance), radius) for distance, radius in
+            ((0, 2), (2.25, 2.6), (3.6, 3.38), (5.45, 3.68), (6.78, 3.52), (8.6, flange * FLANGE_NECK))],
+            chamber_radial, 'painted', sides=8, caps=(False, False))
+        octagonal_head(barrel, chamber_centre, chamber_radial, 8.6, 1.87, flange)
+    barrel.save('industrial_cylinder')
+
+
 def industrial_parts():
     radial_z = lambda c, a, b: (c[0] + a, c[1] + b, c[2])
-    radial_x = lambda c, a, b: (c[0], c[1] + a, c[2] + b)
-    radial_y = lambda c, a, b: (c[0] + b, c[1], c[2] + a)
     folder = ASSETS / 'models' / FOLDER
     (folder / 'industrial.mtl').write_text(''.join(f'newmtl {m}\nmap_Kd #{m}\n' for m in ('satin', 'painted', 'cast', 'steel')))
-
-    barrel = Mesh()
-    barrel.tube([((x, 8, 8), r) for x, r in ((0, 4.5), (1, 5.4), (2, 5.4), (3, 7.7),
-        (4, 7.7), (5, 6.65), (10.75, 6.65), (11.8, 7.7))], radial_x, 'painted', sides=16)
-    barrel.tube([((11.8, 8, 8), 7.7), ((12.2, 8, 8), 7.7)], radial_x, 'cast', sides=16)
-    barrel.tube([((x, 8, 8), r) for x, r in ((12.2, 7.7), (12.55, 8), (13.3, 8), (13.8, 7.4))],
-        radial_x, 'satin', sides=16)
-    barrel.tube([((x, 8, 8), r) for x, r in ((13.8, 5.2), (14.35, 5.2), (14.65, 4.6))],
-        radial_x, 'steel', sides=16)
-    for bolt in range(8):
-        angle = bolt * math.tau / 8
-        y, z = 8 + 6.35 * math.cos(angle), 8 + 6.35 * math.sin(angle)
-        barrel.tube([((13.75, y, z), .75), ((14.4, y, z), .75), ((14.6, y, z), .56)], radial_x, 'cast', sides=6)
-    barrel.tube([((x, 8, 8), r) for x, r in ((14.6, 2.75), (14.9, 2.75), (15.15, 1.9))],
-        radial_x, 'cast', sides=8)
-    barrel.tube([((x, 8, 8), r) for x, r in ((15.1, 1.9), (15.65, 1.9), (16, 1.4))],
-        radial_x, 'satin', sides=8)
-    for x in (5.5, 9.5):
-        for z in (4.25, 11.75):
-            barrel.tube([((x, y, z), r) for y, r in ((12.2, 1.25), (12.75, 1.7), (13.1, 1.4))],
-                radial_y, 'satin', sides=8)
-    barrel.save('industrial_cylinder')
+    industrial_cylinder()
 
     wheel = Mesh()
     wheel.tube([((8,9,z),r) for z,r in ((.5,10.7),(1.6,12),(8.5,12),(11.2,10),(11.9,9.5))], radial_z, 'painted', sides=16)
