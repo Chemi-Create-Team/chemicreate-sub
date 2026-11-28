@@ -5,7 +5,7 @@ from pathlib import Path
 import generate_petrochemical_ponder as serializer
 from generate_petrochemical_ponder import Structure
 
-serializer.OUT = Path(__file__).resolve().parents[1] / 'src/main/resources/assets/create_refinery_n_reactors/ponder/plant'
+serializer.OUT = Path(__file__).resolve().parents[1] / 'atomics/src/main/resources/assets/create_refinery_n_reactors/ponder/plant'
 mod = 'create_refinery_n_reactors:'
 scene = Structure(13, 9)
 for x in range(1, 12):

@@ -8,8 +8,8 @@ from generate_uranium_assets import icon
 from powder_assets import write_powder_item
 
 ROOT = Path(__file__).resolve().parents[1]
-A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
-D = ROOT / 'src/main/resources/data/create_refinery_n_reactors/recipe'
+A = ROOT / 'atomics/src/main/resources/assets/create_refinery_n_reactors'
+D = ROOT / 'atomics/src/main/resources/data/create_refinery_n_reactors/recipe'
 NS = 'create_refinery_n_reactors:'
 NAMES = {
     'compact_enriched_fuel_rod': ('Compact Reactor Fuel Rod (5%)', '小型炉用高濃縮燃料棒（5%）', '小型反应堆燃料棒（5%）'),

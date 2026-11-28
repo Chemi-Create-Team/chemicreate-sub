@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from generate_petrochemical_ponder import NS, OUT, Structure, string
 
-ROOT = Path(__file__).resolve().parents[1] / 'src/main/resources'
+ROOT = Path(__file__).resolve().parents[1] / 'atomics/src/main/resources'
 A = ROOT / 'assets' / NS[:-1]
 D = ROOT / 'data' / NS[:-1]
 FACTORIES = ('rotary_kiln', 'rolling_mill', 'coil_winder')

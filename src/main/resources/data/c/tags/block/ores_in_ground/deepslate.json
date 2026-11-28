@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "create_refinery_n_reactors:deepslate_uranium_ore",
     "create_refinery_n_reactors:deepslate_bauxite_ore",
     "create_refinery_n_reactors:deepslate_pentlandite_ore",
     "create_refinery_n_reactors:deepslate_ilmenite_ore",

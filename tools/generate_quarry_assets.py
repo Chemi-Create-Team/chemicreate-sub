@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
-D = ROOT / 'src/main/resources/data'
+A = ROOT / 'logistics/src/main/resources/assets/create_refinery_n_reactors'
+D = ROOT / 'logistics/src/main/resources/data'
 NS = 'create_refinery_n_reactors'
 CASING, BELT, CHUTE = 'create:block/andesite_casing', 'create:block/belt', 'create:block/chute'
 FACES = ('north', 'south', 'east', 'west', 'up', 'down')

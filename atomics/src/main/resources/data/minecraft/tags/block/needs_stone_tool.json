@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:rotary_kiln_exhaust",
+    "create_refinery_n_reactors:rotary_kiln",
+    "create_refinery_n_reactors:rolling_mill",
+    "create_refinery_n_reactors:coil_winder",
+    "create_refinery_n_reactors:rolling_stand",
+    "create_refinery_n_reactors:winder_brake",
+    "create_refinery_n_reactors:continuous_factory_frame",
+    "create_refinery_n_reactors:continuous_factory_outlet",
+    "create_refinery_n_reactors:large_mechanical_press",
+    "create_refinery_n_reactors:large_depot",
+    "create_refinery_n_reactors:large_press_frame"
+  ]
+}

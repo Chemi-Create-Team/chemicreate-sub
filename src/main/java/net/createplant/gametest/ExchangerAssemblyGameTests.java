@@ -170,7 +170,7 @@ public class ExchangerAssemblyGameTests {
         int index=0;
         for(String lesson:new String[]{"heat_exchanger","large_heat_exchanger","jacketed_pipe"}) for(Rotation rotation:Rotation.values()) {
             var template=new net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate();
-            try(var stream=ExchangerAssemblyGameTests.class.getResourceAsStream("/assets/create_refinery_n_reactors/ponder/plant/"+lesson+".nbt")) {
+            try(var stream=net.createplant.ResourceStack.open(ExchangerAssemblyGameTests.class, "/assets/create_refinery_n_reactors/ponder/plant/"+lesson+".nbt")) {
                 template.load(h.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BLOCK),net.minecraft.nbt.NbtIo.readCompressed(stream,net.minecraft.nbt.NbtAccounter.unlimitedHeap()));
             }
             var base=h.absolutePos(new BlockPos(3072+index%4*40,2,3072+index/4*40));index++;

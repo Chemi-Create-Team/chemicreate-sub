@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw
 from generate_petrochemical_ponder import NS, OUT, Structure, string
 
 ROOT = Path(__file__).resolve().parents[1]
-ASSETS = ROOT / 'src/main/resources/assets' / NS[:-1]
+ASSETS = ROOT / 'atomics/src/main/resources/assets' / NS[:-1]
 MODELS = ASSETS / 'models/block/large_press'
 TEXTURES = ASSETS / 'textures/block/large_press'
 EDGES = {(-1, -1): 'north_west', (0, -1): 'north', (1, -1): 'north_east',

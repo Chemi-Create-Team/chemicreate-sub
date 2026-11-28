@@ -32,7 +32,7 @@ final class MachineScene {
     private void load() {
         blocks = new ArrayList<>();
         var level = Minecraft.getInstance().level;
-        try (var input = MachineScene.class.getResourceAsStream("/assets/" + CreatePlant.MOD_ID + "/ponder/" + storyboard + ".nbt")) {
+        try (var input = net.createplant.ResourceStack.open(MachineScene.class, "/assets/" + CreatePlant.MOD_ID + "/ponder/" + storyboard + ".nbt")) {
             if (input == null || level == null) return;
             CompoundTag root = NbtIo.readCompressed(input, NbtAccounter.unlimitedHeap());
             var lookup = level.holderLookup(Registries.BLOCK);

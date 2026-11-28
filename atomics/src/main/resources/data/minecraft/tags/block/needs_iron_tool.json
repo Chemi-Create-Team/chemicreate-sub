@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "create_refinery_n_reactors:uranium_ore",
+    "create_refinery_n_reactors:deepslate_uranium_ore",
+    "create_refinery_n_reactors:converter_shell",
+    "create_refinery_n_reactors:converter_trunnion_bearing",
+    "create_refinery_n_reactors:zirconia_refractory_bricks",
+    "create_refinery_n_reactors:silica_refractory_bricks",
+    "create_refinery_n_reactors:torpedo_tank"
+  ]
+}

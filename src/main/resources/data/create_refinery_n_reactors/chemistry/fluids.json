@@ -131,10 +131,6 @@
     "formula": "NH₃ + N₂ + H₂",
     "hazards": []
   },
-  "compact_enriched_uranium_hexafluoride": {
-    "formula": "UF₆",
-    "hazards": []
-  },
   "contaminated_gas": {
     "formula": "…",
     "hazards": []
@@ -310,10 +306,6 @@
       "FLAMMABLE"
     ]
   },
-  "depleted_uranium_hexafluoride": {
-    "formula": "UF₆",
-    "hazards": []
-  },
   "deuterium_depleted_water": {
     "formula": "H₂O",
     "hazards": []
@@ -338,11 +330,6 @@
       "FLAMMABLE"
     ]
   },
-  "dissolved_spent_fuel": {
-    "formula": "UO₂²⁺ + Pu⁴⁺ + NO₃⁻ + H₂O",
-    "hazards": [],
-    "aqueous": true
-  },
   "electroenergetics:plant_oil": {
     "formula": "C₃H₅(OCOR)₃ + …",
     "hazards": [],
@@ -352,10 +339,6 @@
     "formula": "CₙHₘ + …",
     "hazards": [],
     "composition": "hydrocarbon_mixture"
-  },
-  "enriched_uranium_hexafluoride": {
-    "formula": "UF₆",
-    "hazards": []
   },
   "ethylbenzene": {
     "formula": "C₈H₁₀",
@@ -427,11 +410,6 @@
       "FLAMMABLE",
       "TOXIC"
     ]
-  },
-  "high_level_raffinate": {
-    "formula": "NO₃⁻ + H₂O + …",
-    "hazards": [],
-    "aqueous": true
   },
   "hydrochloric_acid": {
     "formula": "HCl + H₂O",
@@ -569,11 +547,6 @@
     "formula": "H₃PO₄",
     "hazards": []
   },
-  "plutonium_nitrate_solution": {
-    "formula": "Pu(NO₃)₄ + H₂O",
-    "hazards": [],
-    "aqueous": true
-  },
   "propylene": {
     "formula": "C₃H₆",
     "hazards": []
@@ -664,12 +637,6 @@
       "FLAMMABLE"
     ]
   },
-  "tbp_extraction_solvent": {
-    "formula": "C₁₂H₂₇O₄P + CₙHₘ",
-    "hazards": [
-      "FLAMMABLE"
-    ]
-  },
   "lead_chloride_solution": {
     "formula": "PbCl₂ + H₂O",
     "hazards": [],
@@ -704,12 +671,6 @@
       "TOXIC"
     ]
   },
-  "tributyl_phosphate": {
-    "formula": "C₁₂H₂₇O₄P",
-    "hazards": [
-      "FLAMMABLE"
-    ]
-  },
   "trimethyl_phosphite": {
     "formula": "C₃H₉O₃P",
     "hazards": [
@@ -719,15 +680,6 @@
   "tritium_gas": {
     "formula": "T₂",
     "hazards": []
-  },
-  "uranium_hexafluoride": {
-    "formula": "UF₆",
-    "hazards": []
-  },
-  "uranyl_nitrate_solution": {
-    "formula": "UO₂(NO₃)₂ + H₂O",
-    "hazards": [],
-    "aqueous": true
   },
   "vinyl_chloride": {
     "formula": "C₂H₃Cl",

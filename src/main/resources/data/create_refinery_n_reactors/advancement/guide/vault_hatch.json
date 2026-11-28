@@ -13,7 +13,7 @@
     "show_toast": true,
     "announce_to_chat": false
   },
-  "parent": "create_refinery_n_reactors:guide/dispatch",
+  "parent": "create_refinery_n_reactors:guide/root",
   "criteria": {
     "vault_hatch": {
       "trigger": "minecraft:inventory_changed",

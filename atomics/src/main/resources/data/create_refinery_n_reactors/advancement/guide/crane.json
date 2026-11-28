@@ -13,7 +13,7 @@
     "show_toast": true,
     "announce_to_chat": false
   },
-  "parent": "create_refinery_n_reactors:guide/mining",
+  "parent": "create_refinery_n_reactors:guide/root",
   "criteria": {
     "crane_drive": {
       "trigger": "minecraft:inventory_changed",

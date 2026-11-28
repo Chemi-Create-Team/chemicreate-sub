@@ -157,6 +157,57 @@ dependencies {
     }
 }
 
+// Core and each addon jar paginate their own Ponder text into lesson_pages keys.
+def paginateLang = { File sourceDir, File outputDir ->
+    def prefix = mod_id + '.ponder.shared.'
+    def languages = ['en_us', 'ja_jp', 'zh_cn']
+    def strings = languages.collectEntries { lang ->
+        [(lang): new groovy.json.JsonSlurper().parse(new File(sourceDir, "assets/${mod_id}/lang/${lang}.json"), 'UTF-8')]
+    }
+    def pages = [:]
+    languages.each { lang ->
+        pages[lang] = [:]
+        strings[lang].findAll { key, value -> key.startsWith(prefix) && !key.endsWith('.title') }.each { key, value ->
+            def text = value.replace('%%', '％').replaceAll(/%(?!%|(?:\d+\$)?(?:\d+(?:\.\d+)?)?[sdf])/, '％')
+            strings[lang][key] = text
+            int argument = 0
+            text = text.replaceAll(/%([sdf])/) { whole, type -> '%' + (++argument) + '$' + type }
+            int limit = lang == 'en_us' ? 150 : 68
+            def chunks = []
+            def current = ''
+            text.split(/(?<=[。！？；;])\s*|(?<=[.!?])\s+/).each { sentence ->
+                def remaining = sentence.trim()
+                while (remaining.length() > limit) {
+                    int cut = Math.max(remaining.lastIndexOf(' ', limit), remaining.lastIndexOf('、', limit))
+                    if (cut < limit / 2) cut = limit
+                    def fragment = remaining.substring(0, cut).trim()
+                    if (current) { chunks.add(current); current = '' }
+                    chunks.add(fragment)
+                    remaining = remaining.substring(cut).trim()
+                }
+                if (current && current.length() + remaining.length() + 1 > limit) { chunks.add(current); current = '' }
+                current += (current && lang == 'en_us' ? ' ' : '') + remaining
+            }
+            if (current) chunks.add(current)
+            pages[lang][key] = chunks ?: ['']
+        }
+    }
+    pages.en_us.each { key, english ->
+        int maximum = languages.collect { pages[it][key]?.size() ?: english.size() }.max()
+        languages.each { lang ->
+            def chunks = pages[lang][key] ?: english
+            strings[lang][key + '.lesson_pages.count'] = chunks.size().toString()
+            for (int i = 0; i < maximum; i++) {
+                strings[lang][key + '.lesson_pages.' + i] = chunks[Math.min(i, chunks.size() - 1)]
+            }
+        }
+    }
+    languages.each { lang ->
+        def target = new File(outputDir, "assets/${mod_id}/lang/${lang}.json")
+        target.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(strings[lang])) + '\n', 'UTF-8')
+    }
+}
+
 tasks.named("processResources", ProcessResources).configure {
     def replaceProperties = [
         mod_id: mod_id,
@@ -174,53 +225,13 @@ tasks.named("processResources", ProcessResources).configure {
         expand replaceProperties
     }
     doLast {
-        def prefix = mod_id + '.ponder.shared.'
-        def languages = ['en_us', 'ja_jp', 'zh_cn']
-        def strings = languages.collectEntries { lang ->
-            [(lang): new groovy.json.JsonSlurper().parse(file("src/main/resources/assets/${mod_id}/lang/${lang}.json"), 'UTF-8')]
-        }
-        def pages = [:]
-        languages.each { lang ->
-            pages[lang] = [:]
-            strings[lang].findAll { key, value -> key.startsWith(prefix) && !key.endsWith('.title') }.each { key, value ->
-                def text = value.replace('%%', '％').replaceAll(/%(?!%|(?:\d+\$)?(?:\d+(?:\.\d+)?)?[sdf])/, '％')
-                strings[lang][key] = text
-                int argument = 0
-                text = text.replaceAll(/%([sdf])/) { whole, type -> '%' + (++argument) + '$' + type }
-                int limit = lang == 'en_us' ? 150 : 68
-                def chunks = []
-                def current = ''
-                text.split(/(?<=[。！？；;])\s*|(?<=[.!?])\s+/).each { sentence ->
-                    def remaining = sentence.trim()
-                    while (remaining.length() > limit) {
-                        int cut = Math.max(remaining.lastIndexOf(' ', limit), remaining.lastIndexOf('、', limit))
-                        if (cut < limit / 2) cut = limit
-                        def fragment = remaining.substring(0, cut).trim()
-                        if (current) { chunks.add(current); current = '' }
-                        chunks.add(fragment)
-                        remaining = remaining.substring(cut).trim()
-                    }
-                    if (current && current.length() + remaining.length() + 1 > limit) { chunks.add(current); current = '' }
-                    current += (current && lang == 'en_us' ? ' ' : '') + remaining
-                }
-                if (current) chunks.add(current)
-                pages[lang][key] = chunks ?: ['']
-            }
-        }
-        pages.en_us.each { key, english ->
-            int maximum = languages.collect { pages[it][key]?.size() ?: english.size() }.max()
-            languages.each { lang ->
-                def chunks = pages[lang][key] ?: english
-                strings[lang][key + '.lesson_pages.count'] = chunks.size().toString()
-                for (int i = 0; i < maximum; i++) {
-                    strings[lang][key + '.lesson_pages.' + i] = chunks[Math.min(i, chunks.size() - 1)]
-                }
-            }
-        }
-        languages.each { lang ->
-            def target = new File(destinationDir, "assets/${mod_id}/lang/${lang}.json")
-            target.setText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(strings[lang])) + '\n', 'UTF-8')
-        }
+        paginateLang(file("src/main/resources"), destinationDir)
+    }
+}
+
+["atomics", "logistics"].each { addon ->
+    tasks.named("process${addon.capitalize()}Resources", ProcessResources).configure {
+        doLast { paginateLang(file("${addon}/src/main/resources"), destinationDir) }
     }
 }
 

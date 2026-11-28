@@ -1,14 +1,13 @@
 package net.createplant.chemistry;
 
 import com.google.gson.JsonParser;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import net.createplant.CreatePlant;
+import net.createplant.ResourceStack;
 import net.createplant.mixture.MixtureHelper;
 import net.createplant.safety.FlammableGas;
 import net.createplant.safety.ToxicGas;
@@ -56,10 +55,8 @@ public final class FluidChemicalRegistry {
     private static Map<ResourceLocation, ChemicalFluidInfo> load() {
         String file = "/data/" + CreatePlant.MOD_ID + "/chemistry/fluids.json";
         var entries = new HashMap<ResourceLocation, ChemicalFluidInfo>();
-        try (var stream = FluidChemicalRegistry.class.getResourceAsStream(file)) {
-            if (stream == null) throw new IllegalStateException("Missing " + file);
-            var json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
-            for (var row : json.entrySet()) {
+        for (var text : ResourceStack.read(FluidChemicalRegistry.class, file)) {
+            for (var row : JsonParser.parseString(text).getAsJsonObject().entrySet()) {
                 var id = row.getKey().contains(":") ? ResourceLocation.parse(row.getKey()) : CreatePlant.location(row.getKey());
                 var data = row.getValue().getAsJsonObject();
                 var hazards = data.getAsJsonArray("hazards").asList().stream()
@@ -69,8 +66,6 @@ public final class FluidChemicalRegistry {
                     data.has("composition") ? data.get("composition").getAsString() : "",
                     data.has("vaporization_heat_j_per_mol") ? data.get("vaporization_heat_j_per_mol").getAsDouble() : 0));
             }
-        } catch (java.io.IOException e) {
-            throw new IllegalStateException("Failed to read " + file, e);
         }
         return Map.copyOf(entries);
     }

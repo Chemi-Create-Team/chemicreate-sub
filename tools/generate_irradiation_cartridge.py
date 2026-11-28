@@ -6,8 +6,8 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
-D = ROOT / 'src/main/resources/data/create_refinery_n_reactors'
+A = ROOT / 'atomics/src/main/resources/assets/create_refinery_n_reactors'
+D = ROOT / 'atomics/src/main/resources/data/create_refinery_n_reactors'
 NS = 'create_refinery_n_reactors:'
 NAMES = {
     'irradiation_cartridge': ('Irradiation Cartridge', '照射カートリッジ', '辐照组件盒'),

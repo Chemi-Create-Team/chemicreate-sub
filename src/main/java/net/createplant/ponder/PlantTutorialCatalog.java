@@ -1,10 +1,10 @@
 package net.createplant.ponder;
 
 import com.google.gson.Gson;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import net.createplant.CreatePlant;
+import net.createplant.ResourceStack;
 
 /** Shared catalogue data; intentionally safe to validate on a dedicated server. */
 public final class PlantTutorialCatalog {
@@ -26,12 +26,8 @@ public final class PlantTutorialCatalog {
     public static List<Tutorial> all() { return TUTORIALS; }
 
     private static List<Tutorial> read() {
-        try (var stream = PlantTutorialCatalog.class.getResourceAsStream(RESOURCE)) {
-            if (stream == null) throw new IllegalStateException("Missing plant Ponder catalogue");
-            var tutorials = new Gson().fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), Tutorial[].class);
-            return List.of(tutorials);
-        } catch (java.io.IOException exception) {
-            throw new IllegalStateException("Cannot read plant Ponder catalogue", exception);
-        }
+        var tutorials = new ArrayList<Tutorial>();
+        for (var text : ResourceStack.read(PlantTutorialCatalog.class, RESOURCE)) tutorials.addAll(List.of(new Gson().fromJson(text, Tutorial[].class)));
+        return List.copyOf(tutorials);
     }
 }

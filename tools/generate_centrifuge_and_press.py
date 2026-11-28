@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from PIL import Image
 from generate_petrochemical_ponder import Structure, OUT
-R=Path(__file__).resolve().parents[1];A=R/'src/main/resources/assets/create_refinery_n_reactors';D=R/'src/main/resources/data/create_refinery_n_reactors';NS='create_refinery_n_reactors:'
+R=Path(__file__).resolve().parents[1];A=R/'atomics/src/main/resources/assets/create_refinery_n_reactors';D=R/'atomics/src/main/resources/data/create_refinery_n_reactors';NS='create_refinery_n_reactors:'
 
 def write(path,data):
     path.parent.mkdir(parents=True,exist_ok=True);path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
@@ -209,7 +209,7 @@ for name in ('gas_centrifuge','cubic_press'):
 for catalyst,chance,ticks in (('nickel',.75,400),('iron',.5,600)):
     write(D/f'recipe/cubic_pressing/synthetic_diamond{"_iron"if catalyst=="iron"else""}.json',{'type':NS+'cubic_pressing','ingredients':[{'item':NS+'reactor_graphite'},{'tag':'c:ingots/'+catalyst}],
         'results':[{'id':'minecraft:diamond'},{'id':NS+'nickel_ingot'if catalyst=='nickel'else'minecraft:iron_ingot','chance':chance}],'processing_time':ticks,'heat_requirement':'superheated'})
-pickaxe=R/'src/main/resources/data/minecraft/tags/block/mineable/pickaxe.json';data=json.loads(pickaxe.read_text());data['values']=list(dict.fromkeys(data['values']+[NS+'gas_centrifuge',NS+'cubic_press']));write(pickaxe,data)
+pickaxe=R/'atomics/src/main/resources/data/minecraft/tags/block/mineable/pickaxe.json';data=json.loads(pickaxe.read_text());data['values']=list(dict.fromkeys(data['values']+[NS+'gas_centrifuge',NS+'cubic_press']));write(pickaxe,data)
 # All support shafts and burners are ordinary Create parts in the teaching structures.
 s=Structure(8,5)
 for i in range(8):

@@ -1,0 +1,50 @@
+{
+  "compact_enriched_uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "depleted_uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "dissolved_spent_fuel": {
+    "formula": "UO₂²⁺ + Pu⁴⁺ + NO₃⁻ + H₂O",
+    "hazards": [],
+    "aqueous": true
+  },
+  "enriched_uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "high_level_raffinate": {
+    "formula": "NO₃⁻ + H₂O + …",
+    "hazards": [],
+    "aqueous": true
+  },
+  "plutonium_nitrate_solution": {
+    "formula": "Pu(NO₃)₄ + H₂O",
+    "hazards": [],
+    "aqueous": true
+  },
+  "tbp_extraction_solvent": {
+    "formula": "C₁₂H₂₇O₄P + CₙHₘ",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "tributyl_phosphate": {
+    "formula": "C₁₂H₂₇O₄P",
+    "hazards": [
+      "FLAMMABLE"
+    ]
+  },
+  "uranium_hexafluoride": {
+    "formula": "UF₆",
+    "hazards": []
+  },
+  "uranyl_nitrate_solution": {
+    "formula": "UO₂(NO₃)₂ + H₂O",
+    "hazards": [],
+    "aqueous": true
+  }
+}

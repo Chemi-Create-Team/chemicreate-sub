@@ -3,10 +3,6 @@
     "subtitle": "subtitles.create_refinery_n_reactors.machine.reactor_circulation",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/reactor_circulation", "attenuation_distance": 32 }]
   },
-  "machine.fusion_drive": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.fusion_drive",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/fusion_drive", "attenuation_distance": 32 }]
-  },
   "machine.turbine_high": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.turbine_high",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/turbine_high", "attenuation_distance": 32 }]
@@ -35,21 +31,9 @@
     "subtitle": "subtitles.create_refinery_n_reactors.machine.blower",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/blower", "attenuation_distance": 32 }]
   },
-  "machine.crane_drive": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.crane_drive",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/crane_drive", "attenuation_distance": 32 }]
-  },
   "machine.flare_roar": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.flare_roar",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/flare_roar", "attenuation_distance": 96 }]
-  },
-  "machine.centrifuge": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.centrifuge",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/centrifuge", "attenuation_distance": 32 }]
-  },
-  "machine.cubic_press": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.cubic_press",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/cubic_press", "attenuation_distance": 32 }]
   },
   "machine.boiler": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.boiler",
@@ -111,29 +95,9 @@
     "subtitle": "subtitles.create_refinery_n_reactors.machine.condenser",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/condenser", "attenuation_distance": 32 }]
   },
-  "machine.waste_melter": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.waste_melter",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/waste_melter", "attenuation_distance": 32 }]
-  },
-  "machine.solvent_extractor": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.solvent_extractor",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/solvent_extractor", "attenuation_distance": 32 }]
-  },
-  "machine.converter": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.converter",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/converter", "attenuation_distance": 32 }]
-  },
   "machine.fuel_cell": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.fuel_cell",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/fuel_cell", "attenuation_distance": 32 }]
-  },
-  "machine.fusion_crane": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.fusion_crane",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/fusion_crane", "attenuation_distance": 32 }]
-  },
-  "machine.quarry": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.quarry",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/quarry", "attenuation_distance": 32 }]
   },
   "machine.gasifier": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.gasifier",
@@ -171,10 +135,6 @@
     "subtitle": "subtitles.create_refinery_n_reactors.machine.constructor",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/constructor", "attenuation_distance": 32 }]
   },
-  "machine.dispatch": {
-    "subtitle": "subtitles.create_refinery_n_reactors.machine.dispatch",
-    "sounds": [{ "name": "create_refinery_n_reactors:machine/dispatch", "attenuation_distance": 32 }]
-  },
   "machine.pressurised_gas": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.pressurised_gas",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/pressurised_gas", "attenuation_distance": 16 }]
@@ -182,9 +142,5 @@
   "machine.high_pressure_gas": {
     "subtitle": "subtitles.create_refinery_n_reactors.machine.high_pressure_gas",
     "sounds": [{ "name": "create_refinery_n_reactors:machine/high_pressure_gas", "attenuation_distance": 20 }]
-  },
-  "relay.click": {
-    "subtitle": "subtitles.create_refinery_n_reactors.relay.click",
-    "sounds": [{ "name": "create_refinery_n_reactors:relay/click0", "attenuation_distance": 16 }, { "name": "create_refinery_n_reactors:relay/click1", "attenuation_distance": 16 }, { "name": "create_refinery_n_reactors:relay/click2", "attenuation_distance": 16 }]
   }
 }

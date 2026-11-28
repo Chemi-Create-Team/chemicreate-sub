@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 from generate_petrochemical_ponder import NS, OUT, Structure, string
 
-A = Path(__file__).resolve().parents[1] / 'src/main/resources/assets/create_refinery_n_reactors'
+A = Path(__file__).resolve().parents[1] / 'atomics/src/main/resources/assets/create_refinery_n_reactors'
 
 
 def plate(draw, y, depth, top, edge, light):

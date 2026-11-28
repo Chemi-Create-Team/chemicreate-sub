@@ -31,7 +31,7 @@ public final class PlantTutorialGameTests {
                     "Ponder component must be a real registered item: " + name);
             }
             String path = "/assets/" + CreatePlant.MOD_ID + "/ponder/" + tutorial.storyboard() + ".nbt";
-            try (var stream = PlantTutorialCatalog.class.getResourceAsStream(path)) {
+            try (var stream = net.createplant.ResourceStack.open(PlantTutorialCatalog.class, path)) {
                 helper.assertTrue(stream != null, "Missing structure: " + path);
                 var structure = NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap());
                 issues.addAll(structureIssues(structure, tutorial.id()));
@@ -103,7 +103,7 @@ public final class PlantTutorialGameTests {
             "plant/vessel_maintenance",
             "plant/world_liquids",
             "turbine/multiblock")) {
-            try (var stream = PlantTutorialCatalog.class.getResourceAsStream(
+            try (var stream = net.createplant.ResourceStack.open(PlantTutorialCatalog.class, 
                 "/assets/" + CreatePlant.MOD_ID + "/ponder/" + path + ".nbt")) {
                 helper.assertTrue(stream != null, "Missing original storyboard " + path);
                 issues.addAll(structureIssues(NbtIo.readCompressed(stream, NbtAccounter.unlimitedHeap()), path));

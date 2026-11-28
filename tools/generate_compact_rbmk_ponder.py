@@ -5,7 +5,7 @@ from pathlib import Path
 import generate_petrochemical_ponder as ponder
 
 ROOT = Path(__file__).resolve().parents[1]
-A = ROOT / 'src/main/resources/assets/create_refinery_n_reactors'
+A = ROOT / 'atomics/src/main/resources/assets/create_refinery_n_reactors'
 NS = 'create_refinery_n_reactors:'
 
 

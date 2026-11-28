@@ -1,9 +1,7 @@
 package net.createplant.ponder;
 
-import com.google.gson.JsonParser;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import net.createplant.CreatePlant;
+import net.createplant.ResourceStack;
 import net.createmod.ponder.api.registration.SharedTextRegistrationHelper;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
@@ -51,15 +49,8 @@ public final class PonderText {
     }
 
     public static void register(SharedTextRegistrationHelper helper) {
-        String path = "/assets/" + CreatePlant.MOD_ID + "/lang/en_us.json";
-        try (var stream = PonderText.class.getResourceAsStream(path)) {
-            if (stream == null) throw new IllegalStateException("Missing Ponder English strings");
-            var strings = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
-            strings.entrySet().stream().filter(entry -> entry.getKey().startsWith(SHARED_PREFIX))
-                .forEach(entry -> helper.registerSharedText(entry.getKey().substring(SHARED_PREFIX.length()),
-                    entry.getValue().getAsString()));
-        } catch (java.io.IOException exception) {
-            throw new IllegalStateException("Cannot register Ponder captions", exception);
-        }
+        ResourceStack.object(PonderText.class, "/assets/" + CreatePlant.MOD_ID + "/lang/en_us.json").entrySet().stream()
+            .filter(entry -> entry.getKey().startsWith(SHARED_PREFIX))
+            .forEach(entry -> helper.registerSharedText(entry.getKey().substring(SHARED_PREFIX.length()), entry.getValue().getAsString()));
     }
 }

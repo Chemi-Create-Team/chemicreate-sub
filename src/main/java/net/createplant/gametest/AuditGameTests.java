@@ -1,8 +1,6 @@
 package net.createplant.gametest;
 
 import com.google.gson.*;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import net.createplant.CreatePlant;
 import net.createplant.registry.CEBlocks;
@@ -15,10 +13,10 @@ import net.neoforged.neoforge.gametest.*;
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class AuditGameTests {
     private static JsonObject json(String path) {
-        try (var stream=AuditGameTests.class.getResourceAsStream(path)) { return stream==null ? null : JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject(); }
+        try { return net.createplant.ResourceStack.object(AuditGameTests.class,path); }
         catch (Exception e) { return null; }
     }
-    private static boolean exists(String path) { return AuditGameTests.class.getResource(path)!=null; }
+    private static boolean exists(String path) { return net.createplant.ResourceStack.exists(AuditGameTests.class,path); }
     private static void model(String id,List<String> problems,Set<String> seen,String from) {
         if (!seen.add(id)) return;
         var loc=net.minecraft.resources.ResourceLocation.parse(id);

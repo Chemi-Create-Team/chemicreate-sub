@@ -1,17 +1,6 @@
 {
   "replace": false,
   "values": [
-    "create_refinery_n_reactors:rotary_kiln_exhaust",
-    "create_refinery_n_reactors:rotary_kiln",
-    "create_refinery_n_reactors:rolling_mill",
-    "create_refinery_n_reactors:coil_winder",
-    "create_refinery_n_reactors:rolling_stand",
-    "create_refinery_n_reactors:winder_brake",
-    "create_refinery_n_reactors:continuous_factory_frame",
-    "create_refinery_n_reactors:continuous_factory_outlet",
-    "create_refinery_n_reactors:large_mechanical_press",
-    "create_refinery_n_reactors:large_depot",
-    "create_refinery_n_reactors:large_press_frame",
     "create_refinery_n_reactors:halite_ore",
     "create_refinery_n_reactors:deepslate_halite_ore",
     "create_refinery_n_reactors:corrosion_resistant_floor",
@@ -20,7 +9,6 @@
     "create_refinery_n_reactors:cryogenic_regenerator",
     "create_refinery_n_reactors:industrial_concrete",
     "create_refinery_n_reactors:industrial_concrete_slab",
-    "create_refinery_n_reactors:industrial_concrete_stairs",
-    "create_refinery_n_reactors:industrial_dispatch_board"
+    "create_refinery_n_reactors:industrial_concrete_stairs"
   ]
 }

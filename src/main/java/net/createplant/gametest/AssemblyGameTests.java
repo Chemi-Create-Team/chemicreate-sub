@@ -83,7 +83,7 @@ public class AssemblyGameTests {
         h.assertTrue(be.state == SchematicannonBlockEntity.State.STOPPED && be.inventory.getStackInSlot(2).isEmpty()
             && be.inventory.getStackInSlot(3).is(Items.WRITTEN_BOOK), "Checklist printing works while stopped without starting construction");
         h.assertTrue(be.supplies().extractItem(1, 1, false).is(Items.WRITTEN_BOOK), "Printed material lists can leave through the standard item handler");
-        try (var stream = AssemblyGameTests.class.getResourceAsStream("/assets/create_refinery_n_reactors/ponder/plant/facility_constructor.nbt")) {
+        try (var stream = net.createplant.ResourceStack.open(AssemblyGameTests.class, "/assets/create_refinery_n_reactors/ponder/plant/facility_constructor.nbt")) {
             h.assertTrue(stream != null, "Facility Ponder ships its structure");
             PlantTutorialGameTests.validateStructure(h, stream);
         }

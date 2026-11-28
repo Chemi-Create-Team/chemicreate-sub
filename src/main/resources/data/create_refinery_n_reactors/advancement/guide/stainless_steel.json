@@ -13,7 +13,7 @@
     "show_toast": true,
     "announce_to_chat": false
   },
-  "parent": "create_refinery_n_reactors:guide/rolling_mill",
+  "parent": "create_refinery_n_reactors:guide/ferrochrome",
   "criteria": {
     "stainless_steel_ingot": {
       "trigger": "minecraft:inventory_changed",

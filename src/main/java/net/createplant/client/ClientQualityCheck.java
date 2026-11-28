@@ -1,8 +1,6 @@
 package net.createplant.client;
 
 import com.google.gson.*;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import net.createplant.CreatePlant;
@@ -227,8 +225,8 @@ public final class ClientQualityCheck {
                 mc.getToasts().clear();
                 if (PonderIndex.editingModeActive()) throw new IllegalStateException("Quality check must run outside Ponder editing mode");
                 var scope=new HashSet<>(Arrays.asList(System.getProperty("createplant.clientQualityScenes","").split(",")));scope.remove("");
-                try (var stream=ClientQualityCheck.class.getResourceAsStream("/assets/"+CreatePlant.MOD_ID+"/lang/"+LANGUAGES[language]+".json")) {
-                    var expected=JsonParser.parseReader(new InputStreamReader(stream,StandardCharsets.UTF_8)).getAsJsonObject();
+                {
+                    var expected=net.createplant.ResourceStack.object(ClientQualityCheck.class,"/assets/"+CreatePlant.MOD_ID+"/lang/"+LANGUAGES[language]+".json");
                     for (var entry:expected.entrySet()) if (entry.getKey().startsWith(PonderText.SHARED_PREFIX)) {
                         String name=entry.getKey().substring(PonderText.SHARED_PREFIX.length());
                         if (!scope.isEmpty() && scope.stream().noneMatch(scene->name.startsWith(scene+"."))) continue;

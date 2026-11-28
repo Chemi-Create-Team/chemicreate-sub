@@ -54,7 +54,7 @@ public class ColumnConsolidationGameTests {
     @GameTest(template="test_fractionation",timeoutTicks=360)
     public static void compactStoryboardPumpsKeepAllFiveProductsSeparate(GameTestHelper h) throws Exception {
         var origin=new BlockPos(1,1,1);
-        try(var stream=ColumnConsolidationGameTests.class.getResourceAsStream("/assets/"+CreatePlant.MOD_ID+"/ponder/plant/fractionating_column.nbt")) {
+        try(var stream=net.createplant.ResourceStack.open(ColumnConsolidationGameTests.class, "/assets/"+CreatePlant.MOD_ID+"/ponder/plant/fractionating_column.nbt")) {
             var structure=net.minecraft.nbt.NbtIo.readCompressed(stream,net.minecraft.nbt.NbtAccounter.unlimitedHeap());
             var palette=structure.getList("palette",net.minecraft.nbt.Tag.TAG_COMPOUND);
             var blocks=structure.getList("blocks",net.minecraft.nbt.Tag.TAG_COMPOUND);

@@ -1,0 +1,34 @@
+{
+  "machine.fusion_drive": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.fusion_drive",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/fusion_drive", "attenuation_distance": 32 }]
+  },
+  "machine.crane_drive": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.crane_drive",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/crane_drive", "attenuation_distance": 32 }]
+  },
+  "machine.centrifuge": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.centrifuge",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/centrifuge", "attenuation_distance": 32 }]
+  },
+  "machine.cubic_press": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.cubic_press",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/cubic_press", "attenuation_distance": 32 }]
+  },
+  "machine.waste_melter": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.waste_melter",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/waste_melter", "attenuation_distance": 32 }]
+  },
+  "machine.solvent_extractor": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.solvent_extractor",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/solvent_extractor", "attenuation_distance": 32 }]
+  },
+  "machine.converter": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.converter",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/converter", "attenuation_distance": 32 }]
+  },
+  "machine.fusion_crane": {
+    "subtitle": "subtitles.create_refinery_n_reactors.machine.fusion_crane",
+    "sounds": [{ "name": "create_refinery_n_reactors:machine/fusion_crane", "attenuation_distance": 32 }]
+  }
+}

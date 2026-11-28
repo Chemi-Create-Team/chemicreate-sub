@@ -1,0 +1,265 @@
+[
+  {
+    "id": "industrial_dispatch",
+    "size": 9,
+    "height": 5,
+    "components": [
+      "industrial_dispatch_board"
+    ],
+    "steps": [
+      {
+        "target": [
+          4,
+          1,
+          3
+        ],
+        "key": "step_1",
+        "reveal": [
+          4,
+          1,
+          3,
+          4,
+          1,
+          4
+        ]
+      },
+      {
+        "target": [
+          3,
+          1,
+          4
+        ],
+        "key": "step_2",
+        "item": "create_refinery_n_reactors:polyethylene",
+        "reveal": [
+          3,
+          1,
+          4,
+          3,
+          1,
+          4
+        ]
+      },
+      {
+        "target": [
+          4,
+          1,
+          3
+        ],
+        "key": "step_3"
+      },
+      {
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "key": "step_4",
+        "reveal": [
+          4,
+          2,
+          4,
+          4,
+          2,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "id": "manufacturing_mining_explosives",
+    "family": "mining_explosives",
+    "size": 11,
+    "height": 9,
+    "components": [
+      "ammonium_nitrate",
+      "anfo",
+      "blasting_charge",
+      "minecraft:gunpowder",
+      "stirred_tank"
+    ],
+    "steps": [
+      {
+        "key": "step_1",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/synthesis_gas",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_2",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "item": "create_refinery_n_reactors:iron_catalyst",
+        "process": {
+          "kind": "catalytic",
+          "recipe": "operation:haber_bosch",
+          "offset": 32,
+          "width": 9,
+          "height": 7,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_3",
+        "target": [
+          4,
+          2,
+          4
+        ],
+        "process": {
+          "kind": "vessel",
+          "recipe": "create_refinery_n_reactors:pressure_reaction/ammonium_nitrate",
+          "offset": 0,
+          "width": 11,
+          "height": 9,
+          "machine": [
+            4,
+            2,
+            4
+          ],
+          "input": [
+            3,
+            2,
+            4
+          ],
+          "output": [
+            7,
+            4,
+            4
+          ]
+        }
+      },
+      {
+        "key": "step_4",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:gunpowder_from_ammonium_nitrate",
+          "offset": 64,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_5",
+        "target": [
+          5,
+          2,
+          5
+        ],
+        "process": {
+          "kind": "mixing",
+          "recipe": "create_refinery_n_reactors:mixing/anfo",
+          "offset": 96,
+          "width": 11,
+          "height": 8,
+          "machine": [
+            5,
+            2,
+            5
+          ],
+          "input": [
+            5,
+            2,
+            4
+          ],
+          "output": [
+            5,
+            2,
+            5
+          ]
+        }
+      },
+      {
+        "key": "step_6",
+        "target": [
+          5,
+          1,
+          5
+        ],
+        "process": {
+          "kind": "crafting",
+          "recipe": "create_refinery_n_reactors:blasting_charge",
+          "offset": 64,
+          "width": 11,
+          "height": 4,
+          "machine": [
+            5,
+            1,
+            5
+          ],
+          "input": [
+            3,
+            1,
+            5
+          ],
+          "output": [
+            7,
+            1,
+            5
+          ]
+        }
+      }
+    ]
+  }
+]

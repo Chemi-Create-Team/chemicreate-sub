@@ -2,13 +2,12 @@ package net.createplant.client;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.createplant.CreatePlant;
+import net.createplant.ResourceStack;
 import net.createplant.chemistry.FluidChemicalRegistry;
 import net.createplant.mixture.MixtureHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -45,10 +44,8 @@ final class MoleculeStructures {
         var file = "/data/" + CreatePlant.MOD_ID + "/chemistry/molecule_structures.json";
         var fluids = new HashMap<ResourceLocation, Model>();
         var items = new HashMap<ResourceLocation, Model>();
-        try (var source = MoleculeStructures.class.getResourceAsStream(file)) {
-            if (source == null) throw new IllegalStateException("Missing " + file);
-            var rows = JsonParser.parseReader(new InputStreamReader(source, StandardCharsets.UTF_8)).getAsJsonArray();
-            for (var value : rows) {
+        for (var text : ResourceStack.read(MoleculeStructures.class, file)) {
+            for (var value : JsonParser.parseString(text).getAsJsonArray()) {
                 var row = value.getAsJsonArray();
                 var formula = row.get(0).getAsString();
                 var model = new Model(formula, drawing(row.get(3).getAsJsonArray(), row.get(4).getAsJsonArray(), false),
@@ -57,8 +54,6 @@ final class MoleculeStructures {
                 for (var id : row.get(1).getAsJsonArray()) fluids.put(ResourceLocation.parse(id.getAsString()), model);
                 for (var id : row.get(2).getAsJsonArray()) items.put(ResourceLocation.parse(id.getAsString()), model);
             }
-        } catch (java.io.IOException e) {
-            throw new IllegalStateException("Failed to read " + file, e);
         }
         return new Catalog(Map.copyOf(fluids), Map.copyOf(items));
     }

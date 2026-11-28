@@ -1,10 +1,7 @@
 package net.createplant.gametest;
 
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.createplant.CreatePlant;
 import net.createplant.block.CoolingTowerStructure;
 import net.createplant.block.entity.CoolingTowerBlockEntity;
@@ -24,7 +21,7 @@ public class SeasonalPlantGameTests {
     @GameTest(template = "test_empty")
     public static void allPlantAndDieselFluidNamesHaveJapaneseTranslations(GameTestHelper h) throws Exception {
         JsonObject lang;
-        try (var stream = SeasonalPlantGameTests.class.getResourceAsStream("/assets/" + CreatePlant.MOD_ID + "/lang/ja_jp.json")) { lang = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject(); }
+        lang = net.createplant.ResourceStack.object(SeasonalPlantGameTests.class, "/assets/" + CreatePlant.MOD_ID + "/lang/ja_jp.json");
         for (var fluid : BuiltInRegistries.FLUID) {
             var id = BuiltInRegistries.FLUID.getKey(fluid);
             if ((!id.getNamespace().equals(CreatePlant.MOD_ID) && !id.getNamespace().equals("createdieselgenerators")) || id.getPath().startsWith("flowing_")) continue;

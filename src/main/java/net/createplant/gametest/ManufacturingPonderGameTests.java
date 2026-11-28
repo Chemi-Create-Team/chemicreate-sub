@@ -49,7 +49,7 @@ public final class ManufacturingPonderGameTests {
                 var id = name.contains(":") ? ResourceLocation.parse(name) : CreatePlant.location(name);
                 if (BuiltInRegistries.ITEM.get(id) == Items.AIR) missing.add(tutorial.id() + "=" + name);
             }
-            try (var stream = PlantTutorialCatalog.class.getResourceAsStream(
+            try (var stream = net.createplant.ResourceStack.open(PlantTutorialCatalog.class, 
                 "/assets/" + CreatePlant.MOD_ID + "/ponder/" + tutorial.storyboard() + ".nbt")) {
                 helper.assertTrue(stream != null, "Missing manufacturing structure " + tutorial.id());
                 PlantTutorialGameTests.validateStructure(helper, stream);
@@ -81,10 +81,10 @@ public final class ManufacturingPonderGameTests {
     @GameTest(template = "test_petrochemical")
     public static void everyChapterHasCompleteThreeLanguageRuntimeCaptions(GameTestHelper helper) throws Exception {
         for (String language : List.of("en_us", "ja_jp", "zh_cn")) {
-            try (var stream = PlantTutorialCatalog.class.getResourceAsStream(
-                "/assets/" + CreatePlant.MOD_ID + "/lang/" + language + ".json")) {
-                @SuppressWarnings("unchecked")
-                Map<String, String> strings = new Gson().fromJson(new InputStreamReader(stream, StandardCharsets.UTF_8), Map.class);
+            {
+                Map<String, String> strings = new java.util.HashMap<>();
+                net.createplant.ResourceStack.object(PlantTutorialCatalog.class, "/assets/" + CreatePlant.MOD_ID + "/lang/" + language + ".json")
+                    .asMap().forEach((key, value) -> strings.put(key, value.getAsString()));
                 for (var tutorial : tutorials()) {
                     String prefix = CreatePlant.MOD_ID + ".ponder.shared.guide." + tutorial.id() + ".";
                     String header = CreatePlant.MOD_ID + ".ponder.plant_" + tutorial.id() + ".header";
@@ -136,7 +136,7 @@ public final class ManufacturingPonderGameTests {
     @GameTest(template = "test_petrochemical")
     public static void fractionationLessonsUseMinimumHeightAndRealPorts(GameTestHelper helper) throws Exception {
         for (var tutorial : tutorials()) {
-            try (var stream = PlantTutorialCatalog.class.getResourceAsStream(
+            try (var stream = net.createplant.ResourceStack.open(PlantTutorialCatalog.class, 
                 "/assets/" + CreatePlant.MOD_ID + "/ponder/" + tutorial.storyboard() + ".nbt")) {
                 var structure = PlantTutorialGameTests.validateStructure(helper, stream);
                 var palette = structure.getList("palette", net.minecraft.nbt.Tag.TAG_COMPOUND);

@@ -1,8 +1,6 @@
 package net.createplant.gametest;
 
 import com.google.gson.JsonParser;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import net.createplant.CreatePlant;
 import net.createplant.block.ProcessPorts;
@@ -69,9 +67,8 @@ public final class ChemicalUiGameTests {
     public static void registeredPlantFluidsAndTheirBucketsHaveMatchingStructureFormulas(GameTestHelper h) throws Exception {
         var models = new HashMap<ResourceLocation, String>();
         String file = "/data/" + CreatePlant.MOD_ID + "/chemistry/molecule_structures.json";
-        try (var input = ChemicalUiGameTests.class.getResourceAsStream(file)) {
-            var data = JsonParser.parseReader(new InputStreamReader(input, StandardCharsets.UTF_8)).getAsJsonArray();
-            for (var element : data) {
+        for (var text : net.createplant.ResourceStack.read(ChemicalUiGameTests.class, file)) {
+            for (var element : JsonParser.parseString(text).getAsJsonArray()) {
                 var row = element.getAsJsonArray();
                 for (var id : row.get(1).getAsJsonArray()) {
                     models.put(ResourceLocation.parse(id.getAsString()), row.get(0).getAsString());

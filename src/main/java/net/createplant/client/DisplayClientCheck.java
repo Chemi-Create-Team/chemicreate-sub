@@ -43,8 +43,8 @@ public final class DisplayClientCheck {
         }
         var overflowing=new ArrayList<String>();
         for (var language:new String[]{"en_us","ja_jp"}) {
-            try (var stream=DisplayClientCheck.class.getResourceAsStream("/assets/"+CreatePlant.MOD_ID+"/lang/"+language+".json")) {
-                var translations=com.google.gson.JsonParser.parseReader(new java.io.InputStreamReader(stream,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+            {
+                var translations=net.createplant.ResourceStack.object(DisplayClientCheck.class,"/assets/"+CreatePlant.MOD_ID+"/lang/"+language+".json");
                 for (var key:net.createplant.compat.display.MachineReadings.KEYS) {
                     String text=translations.get("display.create_refinery_n_reactors."+key).getAsString();
                     if (mc.font.width(text)>127) overflowing.add(language+" "+text);
