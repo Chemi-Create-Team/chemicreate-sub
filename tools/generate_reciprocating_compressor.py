@@ -13,7 +13,7 @@ MATERIALS['particle'] = MATERIALS['cast']
 SHELL = {name: MOD + 'block/gas_compressor/' + name for name in ('painted', 'satin', 'pane')}
 SHELL.update({name: MATERIALS[name] for name in ('cast', 'steel', 'base')})
 SHELL['particle'] = SHELL['painted']
-INDUSTRIAL = SHELL | {name: MOD + 'block/gas_compressor/' + name for name in ('drum', 'concrete', 'marking')}
+INDUSTRIAL = SHELL | {name: MOD + 'block/gas_compressor/' + name for name in ('cooling_rib', 'concrete')}
 SIDES = ('north', 'south', 'east', 'west', 'up', 'down')
 
 
@@ -49,9 +49,8 @@ def opposed_textures():
     for name, shades in {
         'painted': ((213, 219, 219), (230, 234, 233), (193, 201, 205)),
         'satin': ((133, 148, 157), (157, 172, 181), (105, 122, 134)),
-        'drum': ((153, 170, 182), (173, 190, 198), (128, 147, 161)),
+        'cooling_rib': ((153, 170, 182), (173, 190, 198), (128, 147, 161)),
         'concrete': ((133, 132, 124), (147, 145, 135), (118, 118, 111)),
-        'marking': ((176, 146, 62), (202, 172, 80), (152, 128, 55)),
     }.items():
         surface = Image.new('RGB', (16, 16), shades[0])
         draw = ImageDraw.Draw(surface)
@@ -88,19 +87,19 @@ def opposed_drive():
     pane = box((2, 15.625, 2, 14, 15.875, 14), 'pane', (2, 2, 14, 14))
     pane['faces'] = {key: pane['faces'][key] for key in ('up', 'down')}
     model('opposed_window', body + [pane], SHELL, render_type='minecraft:cutout')
-    guide = [box((0, 3, 3, 16, 4, 13), 'satin'), box((0, 12, 3, 16, 13, 13), 'painted')]
-    for z in (3, 12):
-        guide += [box((0, 4, z, 16, 6, z + 1), 'satin'), box((0, 10, z, 16, 12, z + 1), 'painted')]
+    guide = [box((0, 4, 4, 16, 5, 12), 'satin'), box((0, 11, 4, 16, 12, 12), 'painted')]
+    for z in (4, 11):
+        guide += [box((0, 5, z, 16, 6.5, z + 1), 'satin'), box((0, 9.5, z, 16, 11, z + 1), 'painted')]
         for x, width in ((0, 3), (8, 1), (13, 3)):
-            guide.append(box((x, 6, z, x + width, 10, z + 1), 'painted' if width > 1 else 'satin'))
+            guide.append(box((x, 6.5, z, x + width, 9.5, z + 1), 'painted' if width > 1 else 'satin'))
     model('opposed_guide', guide, SHELL)
     crank = [box((4, 6, 4.5, 12, 10, 6.5), 'cast'), box((4, 6, 9.5, 12, 10, 11.5), 'cast'),
              box((4.5, 7, 5, 6.5, 9, 8), 'steel'), box((9.5, 7, 8, 11.5, 9, 11), 'steel')]
     model('opposed_crank', crank, SHELL)
     model('opposed_rod', [box((0, -1, -1, 12, 1, 1), 'steel')], SHELL)
     model('opposed_piston_rod', [box((0, -1, -1, 20, 1, 1), 'steel')], SHELL)
-    model('opposed_crosshead', [box((-2.5, -2, -3, 2.5, 2, 3), 'cast'),
-          box((-1.5, -1, -3.25, 1.5, 1, 3.25), 'satin')], SHELL)
+    model('opposed_crosshead', [box((-2.5, -2, -2.5, 2.5, 2, 2.5), 'cast'),
+          box((-1.5, -1, -2.875, 1.5, 1, 2.875), 'satin')], SHELL)
     piston_mesh()
     industrial_parts()
 
@@ -110,7 +109,7 @@ class Mesh:
         self.rows = ['mtllib industrial.mtl', 'vt 0 0', 'vt 1 0', 'vt 1 1', 'vt 0 1']
         self.vertices = 0
 
-    def tube(self, path, radial, material, *, sides=12, open_facets=(), caps=True):
+    def tube(self, path, radial, material, *, sides=12, open_facets=()):
         start = self.vertices + 1
         for centre, radius in path:
             for i in range(sides):
@@ -125,14 +124,13 @@ class Mesh:
                 a = start + row * sides
                 b = (i + 1) % sides
                 self.face(a+i, a+b, a+sides+b, a+sides+i)
-        if caps:
-            for row, reverse in ((0, True), (len(path)-1, False)):
-                self.rows.append('v ' + ' '.join(f'{n / 16:.5f}' for n in path[row][0]))
-                self.vertices += 1
-                ring = start + row * sides
-                for i in range(0, sides, 2):
-                    fan = (ring+i, ring+(i+1)%sides, ring+(i+2)%sides)
-                    self.face(self.vertices, *(reversed(fan) if reverse else fan))
+        for row, reverse in ((0, True), (len(path)-1, False)):
+            self.rows.append('v ' + ' '.join(f'{n / 16:.5f}' for n in path[row][0]))
+            self.vertices += 1
+            ring = start + row * sides
+            for i in range(0, sides, 2):
+                fan = (ring+i, ring+(i+1)%sides, ring+(i+2)%sides)
+                self.face(self.vertices, *(reversed(fan) if reverse else fan))
 
     def face(self, *vertices):
         self.rows.append('f ' + ' '.join(f'{vertex}/{i}' for i, vertex in enumerate(vertices, 1)))
@@ -140,7 +138,7 @@ class Mesh:
     def save(self, name):
         folder = ASSETS / 'models' / FOLDER
         (folder / (name + '.obj')).write_text('\n'.join(self.rows) + '\n')
-        write(folder / (name + '.json'), {'parent': 'minecraft:block/block', 'textures': INDUSTRIAL,
+        write(folder / (name + '.json'), {'parent': 'minecraft:block/block', 'textures': SHELL,
             'loader': 'neoforge:obj', 'model': MOD + 'models/' + FOLDER + name + '.obj', 'automatic_culling': False, 'flip_v': True})
 
 
@@ -149,7 +147,7 @@ def industrial_parts():
     radial_x = lambda c, a, b: (c[0], c[1] + a, c[2] + b)
     radial_y = lambda c, a, b: (c[0] + b, c[1], c[2] + a)
     folder = ASSETS / 'models' / FOLDER
-    (folder / 'industrial.mtl').write_text(''.join(f'newmtl {m}\nmap_Kd #{m}\n' for m in ('drum', 'steel', 'satin', 'painted', 'cast', 'marking')))
+    (folder / 'industrial.mtl').write_text(''.join(f'newmtl {m}\nmap_Kd #{m}\n' for m in ('satin', 'painted')))
 
     barrel = Mesh()
     barrel.tube([((x, 8, 8), r) for x, r in ((.1, 5), (1, 6.8), (3, 6.8), (4, 6.05),
@@ -159,26 +157,6 @@ def industrial_parts():
             barrel.tube([((x,y,z),r) for y,r in ((12,1.65),(13,2.5),(14.5,2.5),(15,1.9))], radial_y, 'satin', sides=8)
     barrel.save('industrial_cylinder')
 
-    header = Mesh()
-    header.tube([((8, 40, z), 11) for z in (0, 16)], radial_z, 'drum', caps=False)
-    header.save('industrial_drum')
-    collar = Mesh()
-    collar.tube([((8, y, 8), r) for y, r in ((15, 3), (22, 3), (22.5, 4.75), (24.5, 4.75), (25, 3.5), (31, 3.5))], radial_y, 'satin', sides=8)
-    collar.save('industrial_riser')
-    cap = Mesh()
-    cap.tube([((8, 40, z), r) for z, r in ((0,11.2),(1.4,11.2),(3.2,10.4),(5,7),(5.75,2.5))], radial_z, 'drum')
-    cap.save('industrial_drum_end')
-    elbow = Mesh()
-    elbow.tube([((8,40,z), r) for z,r in ((-8,5),(-6,5),(-4.6,7),(-2.8,10),(-1.35,11.2),(0,11.2))], radial_z, 'drum', caps=False)
-    bend = [((8, 24 + 16 * math.cos(a), -8 - 16 * math.sin(a)), 5.25) for a in (math.pi*i/12 for i in range(6,-1,-1))]
-    def elbow_radial(c, a, b):
-        return (c[0] + a, c[1] + (c[1]-24)*b/16, c[2] + (c[2]+8)*b/16)
-    elbow.tube(bend, elbow_radial, 'drum', caps=False)
-    elbow.tube([((8,y,-24),r) for y,r in ((1,7),(2.25,7),(2.6,5.0),(9,5),(22,5),(24,5.25))], radial_y, 'drum', sides=12)
-    for y in (5, 7):
-        elbow.tube([((8,dy,-24),5.05) for dy in (y,y+.6)], radial_y, 'marking', caps=False)
-    elbow.save('industrial_elbow')
-
     wheel = Mesh()
     wheel.tube([((8,9,z),r) for z,r in ((.5,10.7),(1.6,12),(8.5,12),(11.2,10),(11.9,9.5))], radial_z, 'painted', sides=16)
     wheel.tube([((8,9,z),r) for z,r in ((11.85,4.5),(14.5,4.5),(15.5,3.5))], radial_z, 'satin')
@@ -187,14 +165,8 @@ def industrial_parts():
     motor = [box((-.5, 0, .1, 16.5, 2, 16), 'base'), box((.25, 2, 0, 15.75, 15.5, 16), 'satin'),
              box((1.25, 15.5, 0, 14.75, 18.5, 16), 'satin'), box((4, 18.5, 5, 12, 21, 13), 'painted')]
     for z in (1, 3.5, 6, 8.5, 11, 13.5):
-        motor += [box((-.4, 3, z, .25, 15, z + 1), 'drum'), box((15.75, 3, z, 16.4, 15, z + 1), 'drum')]
+        motor += [box((-.4, 3, z, .25, 15, z + 1), 'cooling_rib'), box((15.75, 3, z, 16.4, 15, z + 1), 'cooling_rib')]
     model('industrial_motor', motor, INDUSTRIAL)
-    stand = [box((.15, 0, 0, 15.85, 1, 16), 'concrete')]
-    for x in (-1, 15):
-        for z in (2, 12):
-            stand += [box((x-.5, 1, z-.5, x+2, 2, z+2), 'satin'), box((x, 2, z, x+1.5, 28, z+1.5), 'cast')]
-    stand += [box((-2, 27, 2, 18, 29.5, 4), 'satin'), box((-2, 27, 12, 18, 29.5, 14), 'satin')]
-    model('industrial_support', stand, INDUSTRIAL)
     model('industrial_bed', [box((.08, 0, 0, 15.92, 1.2, 16), 'concrete')], INDUSTRIAL)
     instruments = [box((3, 16, 9, 6, 18, 12), 'satin'), box((3.4, 18, 9.4, 5.6, 18.8, 11.6), 'cast'),
                    box((11, 16, 4, 12, 18.6, 5), 'steel'), box((10.5, 18.6, 3.5, 12.5, 20.5, 5.5), 'satin')]

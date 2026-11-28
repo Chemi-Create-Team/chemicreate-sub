@@ -30,12 +30,11 @@ public final class ReciprocatingPonderScenes {
         var left = util.select().fromTo(3, 2, 4, 3, 2, 6);
         var right = util.select().fromTo(7, 2, 4, 7, 2, 6);
         var shaft = util.select().fromTo(5, 2, 7, 5, 2, 8);
-        var suction = util.select().fromTo(3, 2, 2, 3, 4, 6).add(util.select().fromTo(7, 2, 2, 7, 4, 6)).substract(left.add(right));
+        var suction = util.select().fromTo(3, 3, 4, 3, 3, 6).add(util.select().fromTo(7, 3, 4, 7, 3, 6));
         var discharge = util.select().fromTo(3, 1, 4, 3, 1, 6).add(util.select().fromTo(7, 1, 4, 7, 1, 6));
-        var supply = util.select().fromTo(3, 1, 1, 3, 1, 2).add(util.select().fromTo(7, 1, 1, 7, 1, 2));
         scene.idle(10);
 
-        scene.world().showSection(util.select().fromTo(1, 1, 1, 9, 1, 9).substract(discharge).substract(supply), Direction.UP);
+        scene.world().showSection(util.select().fromTo(1, 1, 1, 9, 1, 9).substract(discharge), Direction.UP);
         scene.world().showSection(engines, Direction.DOWN);
         scene.overlay().showOutline(PonderPalette.GREEN, "engine", engines, 110);
         text(scene, util, target, 110, "engine");
@@ -51,10 +50,10 @@ public final class ReciprocatingPonderScenes {
         scene.overlay().showOutline(PonderPalette.BLUE, "shaft", util.select().position(front.south(3)), 120);
         text(scene, util, front.south(3), 120, "shaft");
 
-        scene.world().showSection(suction.copy().add(discharge).add(supply), Direction.DOWN);
+        scene.world().showSection(suction.copy().add(discharge), Direction.DOWN);
         scene.overlay().showOutline(PonderPalette.INPUT, "suction", suction, 60);
         scene.overlay().showOutline(PonderPalette.OUTPUT, "discharge", discharge, 60);
-        text(scene, util, front.west(2).above(2), 130, "pipes");
+        text(scene, util, front.west(2).above(), 130, "pipes");
 
         scene.overlay().showControls(util.vector().topOf(target), Pointing.DOWN, 45).rightClick().withItem(AllItems.WRENCH.asStack());
         scene.idle(14);

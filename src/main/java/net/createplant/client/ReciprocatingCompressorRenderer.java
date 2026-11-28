@@ -3,8 +3,6 @@ package net.createplant.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
-import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
@@ -35,9 +33,7 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
     private static final PartialModel OPPOSED_CRANK = part("opposed_crank"), OPPOSED_ROD = part("opposed_rod"),
         CROSSHEAD = part("opposed_crosshead"), PISTON_ROD = part("opposed_piston_rod"),
         OPPOSED_PISTON = part("opposed_piston"), GUIDE = part("opposed_guide");
-    private static final PartialModel CYLINDER = part("industrial_cylinder"), DRUM = part("industrial_drum"),
-        DRUM_END = part("industrial_drum_end"), RISER = part("industrial_riser"), ELBOW = part("industrial_elbow"),
-        SUPPORT = part("industrial_support"), BED = part("industrial_bed"), INSTRUMENTS = part("industrial_instruments"),
+    private static final PartialModel CYLINDER = part("industrial_cylinder"), BED = part("industrial_bed"), INSTRUMENTS = part("industrial_instruments"),
         FLYWHEEL = part("industrial_flywheel_cover"), MOTOR = part("industrial_motor");
     private static final double CRANK_RADIUS = .25, ROD_LENGTH = 1.5;
     private static final double OPPOSED_THROW = 2.5 / 16, OPPOSED_ROD_LENGTH = 12 / 16d;
@@ -142,10 +138,7 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
             int guideLight = LevelRenderer.getLightColor(level, gap), pistonLight = LevelRenderer.getLightColor(level, cylinder);
             renderSide(state, pose, vertices, angle, sign, guideLight, pistonLight);
             CachedBuffers.partial(CYLINDER, state).translate(sign * 2, 0, 0).light(pistonLight).renderInto(pose, vertices);
-            if (bank) {
-                CachedBuffers.partial(BED, state).translate(sign, 0, 0).light(guideLight).renderInto(pose, vertices);
-                drawDrum(level, cylinder, front, frontRows == 0, rearRows == 0, sign * 2, state, pose, vertices, pistonLight);
-            }
+            if (bank) CachedBuffers.partial(BED, state).translate(sign, 0, 0).light(guideLight).renderInto(pose, vertices);
         }
         pose.popPose();
     }
@@ -158,27 +151,6 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
             count++;
         }
         return count;
-    }
-
-    private static boolean roomForPipe(Level level, BlockPos pos) {
-        if (!level.isLoaded(pos)) return false;
-        var state = level.getBlockState(pos);
-        return state.isAir() || state.getBlock() instanceof FluidPipeBlock || AllBlocks.MECHANICAL_PUMP.has(state);
-    }
-
-    private static void drawDrum(Level level, BlockPos cylinder, Direction front, boolean first, boolean last, int x, BlockState state,
-                                 PoseStack pose, VertexConsumer vertices, int light) {
-        for (int y = 1; y <= 3; y++) if (!roomForPipe(level, cylinder.above(y))) return;
-        int headerLight = LevelRenderer.getLightColor(level, cylinder.above(2));
-        CachedBuffers.partial(DRUM, state).translate(x, 0, 0).light(headerLight).renderInto(pose, vertices);
-        CachedBuffers.partial(RISER, state).translate(x, 0, 0).light(headerLight).renderInto(pose, vertices);
-        if (first || last) CachedBuffers.partial(SUPPORT, state).translate(x, 0, 0).light(light).renderInto(pose, vertices);
-        if (last && roomForPipe(level, cylinder.relative(front.getOpposite()).above(2)))
-            CachedBuffers.partial(DRUM_END, state).translate(x, 0, 1).light(headerLight).renderInto(pose, vertices);
-        if (!first) return;
-        for (int y = 0; y <= 3; y++) if (!roomForPipe(level, cylinder.relative(front, 2).above(y))) return;
-        if (roomForPipe(level, cylinder.relative(front).above(2)))
-            CachedBuffers.partial(ELBOW, state).translate(x, 0, 0).light(headerLight).renderInto(pose, vertices);
     }
 
     private static void renderSide(BlockState state, PoseStack pose, VertexConsumer vertices, float angle, int sign, int light, int pistonLight) {

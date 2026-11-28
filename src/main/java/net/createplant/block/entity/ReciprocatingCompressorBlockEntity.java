@@ -206,11 +206,10 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
     @Override protected AABB createRenderBoundingBox() {
         if (opposed()) {
             var state = getBlockState();
-            Direction front = state.getValue(ReciprocatingCompressorBlock.FACING);
+            Direction rear = state.getValue(ReciprocatingCompressorBlock.FACING).getOpposite();
             return AABB.encapsulatingFullBlocks(worldPosition.relative(ReciprocatingCompressorBlock.cylinderSide(state, 0), 2),
                 worldPosition.relative(ReciprocatingCompressorBlock.cylinderSide(state, 1), 2))
-                .inflate(front.getAxis() == Direction.Axis.X ? 2 : .25, 0, front.getAxis() == Direction.Axis.Z ? 2 : .25)
-                .expandTowards(0, 2.25, 0);
+                .inflate(.25, .375, .25).expandTowards(rear.getStepX() * 2, 0, rear.getStepZ() * 2);
         }
         return AABB.encapsulatingFullBlocks(worldPosition.relative(ReciprocatingCompressorBlock.crankDirection(getBlockState()).getOpposite()), shaftPos()).inflate(.25);
     }

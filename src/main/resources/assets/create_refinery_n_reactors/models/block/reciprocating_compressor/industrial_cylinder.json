@@ -7,10 +7,7 @@
     "cast": "create_refinery_n_reactors:block/gas_compressor/cast",
     "steel": "create_refinery_n_reactors:block/gas_compressor/steel",
     "base": "create_refinery_n_reactors:block/gas_compressor/base",
-    "particle": "create_refinery_n_reactors:block/gas_compressor/painted",
-    "drum": "create_refinery_n_reactors:block/gas_compressor/drum",
-    "concrete": "create_refinery_n_reactors:block/gas_compressor/concrete",
-    "marking": "create_refinery_n_reactors:block/gas_compressor/marking"
+    "particle": "create_refinery_n_reactors:block/gas_compressor/painted"
   },
   "loader": "neoforge:obj",
   "model": "create_refinery_n_reactors:models/block/reciprocating_compressor/industrial_cylinder.obj",

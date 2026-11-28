@@ -1,12 +1,4 @@
-newmtl drum
-map_Kd #drum
-newmtl steel
-map_Kd #steel
 newmtl satin
 map_Kd #satin
 newmtl painted
 map_Kd #painted
-newmtl cast
-map_Kd #cast
-newmtl marking
-map_Kd #marking
