@@ -2,7 +2,6 @@ package net.createplant.gametest;
 
 import net.createplant.CreatePlant;
 import net.createplant.block.GasTankContainerBlock;
-import net.createplant.block.entity.FuelChannelBlockEntity;
 import net.createplant.registry.CETransport;
 import net.createplant.thermal.FluidState;
 import net.createplant.thermal.TwoPhase;
@@ -34,7 +33,7 @@ public class HighPressureSeparatorGameTests {
         var gas = level.getCapability(Capabilities.FluidHandler.BLOCK, at, Direction.UP);
         var liquid = level.getCapability(Capabilities.FluidHandler.BLOCK, at, Direction.DOWN);
         h.assertTrue(inlet != null && gas != null && liquid != null, "A finished separator exposes a side inlet, a top outlet and a bottom outlet");
-        var wet = FuelChannelBlockEntity.outletStack(1000, .5, 0);
+        var wet = TwoPhaseGameTests.wetStream(1000, .5);
         h.assertTrue(TwoPhase.is(wet) && inlet.fill(wet, SIMULATE) == 1000 && gas.getFluidInTank(0).isEmpty() && liquid.getFluidInTank(0).isEmpty(),
             "The inlet previews the whole wet parcel without storing it");
         h.assertTrue(inlet.fill(wet, EXECUTE) == 1000, "The inlet takes the whole parcel");

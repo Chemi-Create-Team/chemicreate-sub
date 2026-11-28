@@ -238,14 +238,14 @@ public class DriveLessVesselGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void removingTheStirrerAndSavingKeepsTheReactionCharge(GameTestHelper h) {
         var owner = (LiddedVesselBlockEntity) ReactorGameTests.assemble(h.getLevel(), h.absolutePos(BASE), ReactorModule.STIRRED, 2);
-        owner.itemPort().insertItem(0, net.createplant.registry.CEUranium.URANIUM_TRIOXIDE.toStack(), false);
+        owner.itemPort().insertItem(0, net.createplant.registry.CEItems.SULFUR_DUST.toStack(), false);
         h.setBlock(STIRRER, Blocks.AIR);owner.validateStructure();
         h.assertTrue(!owner.formed() && owner.getWidth() == 3, "Taking the stirrer away stops processing while retaining the square storage vessel");
         var saved = owner.saveWithoutMetadata(h.getLevel().registryAccess());
         owner.loadWithComponents(saved, h.getLevel().registryAccess());
         h.assertTrue(owner.module() == ReactorModule.NONE && owner.hasProcessContents(), "An unstirred saved vessel still owns its reaction charge");
         h.setBlock(STIRRER, net.createplant.registry.CEReactor.STIRRER.get());owner.validateStructure();
-        h.assertTrue(owner.formed() && owner.itemPort().getStackInSlot(0).is(net.createplant.registry.CEUranium.URANIUM_TRIOXIDE.get()), "Putting the stirrer back makes the saved ingredient reachable again");
+        h.assertTrue(owner.formed() && owner.itemPort().getStackInSlot(0).is(net.createplant.registry.CEItems.SULFUR_DUST.get()), "Putting the stirrer back makes the saved ingredient reachable again");
         h.succeed();
     }
 

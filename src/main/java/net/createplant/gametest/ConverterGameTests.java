@@ -9,6 +9,7 @@ import java.util.List;
 import com.simibubi.create.content.contraptions.glue.SuperGlueEntity;
 
 import net.createplant.CreatePlant;
+import net.createplant.ponder.ManufacturingRecipe;
 import net.createplant.block.ConverterShellBlock;
 import net.createplant.block.ConverterShellBlock.Part;
 import net.createplant.block.ConverterStructure;
@@ -138,6 +139,18 @@ public final class ConverterGameTests {
 
     @GameTest(template = "test_fractionation", timeoutTicks = 100)
     public static void exactGluedVesselTiltsAndReturnsAsBlocks(GameTestHelper helper) {
+        // Converter checks that used to sit in the core recipe and ponder tests.
+        for (var holder : helper.getLevel().getRecipeManager().getRecipes())
+            if (holder.id().getNamespace().equals(CreatePlant.MOD_ID) && holder.value() instanceof ConverterRecipe converter && converter.gasIngredient().ingredient().hasNoFluids())
+                helper.assertTrue(false, "Converter gas input resolves to nothing: " + holder.id());
+        {
+            var level = helper.getLevel();
+        var converter = ManufacturingRecipe.resolve(level, CreatePlant.MOD_ID + ":converter/refine_hot_metal");
+        var actual = (net.createplant.recipe.ConverterRecipe) level.getRecipeManager().byKey(
+            CreatePlant.location("converter/refine_hot_metal")).orElseThrow().value();
+        helper.assertTrue(converter.items().getFirst().getCount() == actual.itemIngredients().getFirst().count(),
+            "Bulk converter charges retain sized ingredient quantities");
+        }
         ConverterTrunnionBearingBlockEntity converter = build(helper, false, true);
         helper.assertTrue(converter.formed(), "The fixed frame and upright vessel form");
         helper.assertTrue(ConverterStructure.movingCells().stream().filter(cell -> cell.material() == ConverterStructure.Material.STEEL).count() == 75

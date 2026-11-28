@@ -4,7 +4,6 @@ import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import java.util.*;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
@@ -20,7 +19,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -34,34 +32,6 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 public class ReactorGameTests {
     private static final BlockPos BASE=new BlockPos(4,2,4);
 
-    @GameTest(template="test_reactor")
-    public static void compactFuelManufacturingKeepsTheExistingMachinesAndAllIngredients(GameTestHelper h) {
-        var enrichment=ProcessRecipe.all().stream().filter(recipe->recipe.id().equals("enrich_compact_uranium")).findFirst().orElseThrow();
-        h.assertTrue(enrichment.module()==ProcessModule.GAS_CENTRIFUGE && enrichment.inputs().size()==1
-            && enrichment.inputs().getFirst().is(net.createplant.registry.CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get())
-            && enrichment.inputs().getFirst().getAmount()==1000 && enrichment.outputs().getFirst().is(net.createplant.registry.CEUranium.COMPACT_ENRICHED_URANIUM_HEXAFLUORIDE.get())
-            && enrichment.outputs().getFirst().getAmount()==789 && enrichment.outputs().getLast().is(net.createplant.registry.CEUranium.DEPLETED_URANIUM_HEXAFLUORIDE.get())
-            && enrichment.outputs().getLast().getAmount()==211,"The existing centrifuge further enriches real 4% feed and preserves the 1000 mB product/tails balance");
-        var manager=h.getLevel().getRecipeManager();
-        var dioxide=(net.createplant.recipe.PressureReactionRecipe)manager.byKey(CreatePlant.location("pressure_reaction/compact_uranium_dioxide")).orElseThrow().value();
-        h.assertTrue(dioxide.module()==ReactorModule.STIRRED && dioxide.getFluidIngredients().size()==3 && dioxide.getIngredients().isEmpty()
-            && dioxide.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.NONE,"Reconversion combines enriched gas, liquid water and hydrogen in one stirred batch");
-        var pellet=(net.createplant.recipe.PressureReactionRecipe)manager.byKey(CreatePlant.location("pressure_reaction/compact_uranium_pellet")).orElseThrow().value();
-        h.assertTrue(pellet.module()==ReactorModule.ABSORBER && pellet.getIngredients().size()==1 && pellet.getFluidIngredients().isEmpty()
-            && pellet.getRequiredHeat()==com.simibubi.create.content.processing.recipe.HeatCondition.HEATED,"A heated tray fires pressed pellets without another gas feed");
-        h.assertTrue(manager.byKey(CreatePlant.location("smelting/compact_uranium_pellet")).orElseThrow().value() instanceof net.minecraft.world.item.crafting.SmeltingRecipe,
-            "The ordinary furnace and Create's burner fan can also fire the pressed pellet");
-        var pressing=manager.byKey(CreatePlant.location("pressing/green_compact_uranium_pellet")).orElseThrow().value();
-        h.assertTrue(pressing instanceof com.simibubi.create.content.kinetics.press.PressingRecipe
-            && pressing.getResultItem(h.getLevel().registryAccess()).is(net.createplant.registry.CEUranium.GREEN_COMPACT_URANIUM_PELLET.get())
-            && pressing.getResultItem(h.getLevel().registryAccess()).getCount()==2,"The ordinary mechanical press makes the two green compact pellets");
-        var rod=manager.byKey(CreatePlant.location("compact_enriched_fuel_rod")).orElseThrow().value();
-        h.assertTrue(rod instanceof net.minecraft.world.item.crafting.ShapedRecipe
-            && rod.getResultItem(h.getLevel().registryAccess()).is(net.createplant.registry.CENuclear.COMPACT_ENRICHED_FUEL_ROD.get())
-            && rod.getIngredients().stream().filter(ingredient->ingredient.test(net.createplant.registry.CEUranium.COMPACT_URANIUM_PELLET.toStack())).count()==7
-            && rod.getIngredients().stream().filter(ingredient->ingredient.test(CEItems.ZIRCALOY_CLADDING_TUBE.toStack())).count()==2,"Seven compact pellets and two existing cladding tubes make the identifiable short rod");
-        h.succeed();
-    }
     public static ReactorMachineBlockEntity assemble(ServerLevel level,BlockPos base,ReactorModule kind,int sections) {
         if (kind==ReactorModule.PREHEATER) return ThermalControlGameTests.build(level,base,Direction.NORTH,sections);
         if (kind==ReactorModule.TOWER) return AbsorptionTowerGameTests.tower(level,base.offset(1,0,1),sections,false);
@@ -88,7 +58,7 @@ public class ReactorGameTests {
         h.runAfterDelay(5,()->((CreativeMotorBlockEntity)h.getBlockEntity(motor)).generatedSpeed.setValue(128));
     }
     private static ReactorMachineBlockEntity build(GameTestHelper h,ReactorModule kind,int sections) { return assemble(h.getLevel(),h.absolutePos(BASE),kind,sections); }
-    private static IFluidHandler in(ReactorMachineBlockEntity be) { return be.horizontal() ? ThermalControlGameTests.tube(be,0) : be.port(be.inlet()); }
+    static IFluidHandler in(ReactorMachineBlockEntity be) { return be.horizontal() ? ThermalControlGameTests.tube(be,0) : be.port(be.inlet()); }
     /** Product-only view over the actual native top/side roles, or the shared ports of other modules. */
     private static IFluidHandler out(ReactorMachineBlockEntity be) {
         if (be.horizontal()) return ThermalControlGameTests.tube(be,1);
@@ -561,11 +531,11 @@ public class ReactorGameTests {
         var jacket=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,hot.getBlockPos().offset(0,0,1),Direction.WEST);
         h.assertTrue(items!=null && jacket!=null,"The vessel takes items and fluids on its outer faces");
         h.assertTrue(items.insertItem(0,new ItemStack(Items.DIRT),false).isEmpty() && hot.recoverInputItem(0,1).is(Items.DIRT),"A stirred vessel stores ordinary basin items and lets the player recover them independently of recipes");
-        h.assertTrue(items.insertItem(0,CEUranium.URANIUM_DIOXIDE.toStack(),false).isEmpty() && items.extractItem(0,1,true).is(CEUranium.URANIUM_DIOXIDE.get()),"Like a basin, feed slots take reaction ingredients and give unused ones back");
-        h.assertTrue(jacket.fill(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),500),EXECUTE)==500,"Gas goes in through the vessel");run(hot,100);
-        h.assertTrue(hot.status().equals("heat") && items.getStackInSlot(0).getCount()==1,"Without a burner the heated green-salt reaction cannot start");
+        h.assertTrue(items.insertItem(0,CEMetals.NICKEL_OXIDE.toStack(),false).isEmpty() && items.extractItem(0,1,true).is(CEMetals.NICKEL_OXIDE.get()),"Like a basin, feed slots take reaction ingredients and give unused ones back");
+        h.assertTrue(jacket.fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),500),EXECUTE)==500,"Gas goes in through the vessel");run(hot,100);
+        h.assertTrue(hot.status().equals("heat") && items.getStackInSlot(0).getCount()==1,"Without a burner the heated nickel reduction cannot start");
         h.getLevel().setBlock(hot.getBlockPos().below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED),3);run(hot,100);
-        h.assertTrue(items.getStackInSlot(0).isEmpty() && in(hot).getFluidInTank(0).isEmpty() && items.extractItem(9,1,false).is(CEUranium.URANIUM_TETRAFLUORIDE.get()),"A kindled burner under the vessel stirs uranium dioxide with hydrogen fluoride into green salt in a product slot");
+        h.assertTrue(items.getStackInSlot(0).isEmpty() && in(hot).getFluidInTank(0).isEmpty() && items.extractItem(9,1,false).is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(CreatePlant.location("nickel_ingot"))),"A kindled burner under the vessel stirs nickel oxide with hydrogen into nickel in a product slot");
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
@@ -657,7 +627,7 @@ public class ReactorGameTests {
         h.succeed();
     }
     /** A burner under the north-west bottom corner at the heat a recipe asks for, or none. */
-    private static void burner(GameTestHelper h,com.simibubi.create.content.processing.recipe.HeatCondition heat) {
+    static void burner(GameTestHelper h,com.simibubi.create.content.processing.recipe.HeatCondition heat) {
         if (heat!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE) h.getLevel().setBlock(h.absolutePos(BASE).below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,heat==com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED ? BlazeBurnerBlock.HeatLevel.SEETHING : BlazeBurnerBlock.HeatLevel.KINDLED),3);
     }
     /** Clears a module's footprint, every layer a vessel can have and the burner positions underneath, so the next one is built fresh. */

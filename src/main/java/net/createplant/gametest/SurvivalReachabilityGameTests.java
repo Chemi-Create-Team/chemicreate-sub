@@ -9,7 +9,6 @@ import net.createplant.CreatePlant;
 import net.createplant.block.entity.ElectrolysisFurnaceBlockEntity;
 import net.createplant.chemistry.ProcessModule;
 import net.createplant.chemistry.ProcessRecipe;
-import net.createplant.recipe.ConverterRecipe;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.registry.*;
 import net.createplant.thermal.ThermalStreams;
@@ -52,9 +51,25 @@ public final class SurvivalReachabilityGameTests {
 
     private SurvivalReachabilityGameTests() { }
 
+    /** What an installed addon adds to the audit: its recipe types, equipment and fixed processes. Registered by the addon's own extension class. */
+    interface Extension {
+        default Boolean equipment(Recipe<?> recipe, Set<Item> reached) { return null; }
+        default boolean blocked(Recipe<?> recipe, Set<Item> items, Set<Object> fluids) { return false; }
+        default boolean produces(Recipe<?> recipe, Set<Item> items, Set<Object> fluids) { return false; }
+        default boolean fixed(Set<Item> items, Set<Object> fluids) { return false; }
+        default void roots(Set<Item> items) { }
+        default void audit(GameTestHelper helper, Set<Item> items, Set<Object> fluids) { }
+    }
+    static final List<Extension> EXTENSIONS = new java.util.concurrent.CopyOnWriteArrayList<>();
+    /** Loads each addon's extension class by name, so the audit runs with whichever addons are installed. */
+    private static void loadExtensions() {
+        for (String addon : List.of("Atomics", "Logistics"))
+            try { Class.forName("net.createplant.gametest." + addon + "SurvivalExtension"); } catch (ClassNotFoundException absent) { }
+    }
+
     private static boolean ours(ResourceLocation id) { return id.getNamespace().equals(CreatePlant.MOD_ID); }
-    private static Item item(String id) { return BuiltInRegistries.ITEM.get(CreatePlant.location(id)); }
-    private static boolean has(Set<Item> items, String... ids) {
+    static Item item(String id) { return BuiltInRegistries.ITEM.get(CreatePlant.location(id)); }
+    static boolean has(Set<Item> items, String... ids) {
         for (String id : ids) if (!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id)) || !items.contains(item(id))) return false;
         return true;
     }
@@ -75,42 +90,24 @@ public final class SurvivalReachabilityGameTests {
         }
         return true;
     }
-    private static boolean has(Set<Object> reached, FluidStack choice) {
+    static boolean has(Set<Object> reached, FluidStack choice) {
         return reached.contains(choice.getFluid()) || FluidForm.of(choice.getFluid()).stream().anyMatch(form -> reached.contains(form) && form.matches(choice));
     }
-    private static boolean gasInput(ConverterRecipe recipe, Set<Object> reached) {
-        for (FluidStack choice : recipe.gasIngredient().getFluids()) if (has(reached, choice)) return true;
-        return false;
-    }
     private static boolean equipmentFor(Recipe<?> recipe, Set<Item> reached) {
+        for (var extension : EXTENSIONS) { var handled = extension.equipment(recipe, reached); if (handled != null) return handled; }
         if (recipe instanceof PressureReactionRecipe reaction)
             return reaction.module()==net.createplant.chemistry.ReactorModule.ABSORBER ? has(reached, "reaction_tower", "reactor_separator_core") : has(reached, "lidded_vessel", "vessel_stirrer");
         if (recipe instanceof net.createplant.recipe.ClarifyingRecipe) return has(reached, "clarifier_center_drive", "tank_casing", "clarifier_feed_port");
-        if (recipe instanceof net.createplant.recipe.CubicPressRecipe) return has(reached, "cubic_press");
-        if (recipe instanceof net.createplant.arm.ArmRecipe arm) return has(reached, "industrial_arm") && (!arm.usesTorch() || has(reached, "welding_torch"));
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe)
             return reached.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
                 && has(reached, "steam_gasifier");
-        if (recipe instanceof ConverterRecipe converter)
-            return !converter.legacy() && has(reached, "converter_shell", "converter_trunnion_bearing", "silica_refractory_bricks");
-        if (recipe instanceof net.createplant.recipe.ContinuousFactoryRecipe continuous)
-            return has(reached, continuous.machine().id, "continuous_factory_outlet", "continuous_factory_frame")
-                && switch (continuous.machine()) {
-                    case KILN -> has(reached, "rotary_kiln_exhaust");
-                    case MILL -> has(reached, "rolling_stand");
-                    case WINDER -> has(reached, "winder_brake");
-                };
-        if (recipe instanceof net.createplant.recipe.FuelCycleRecipe)
-            return has(reached, "pulse_extraction_column", "extraction_column_shell", "extraction_pulse_plate", "extraction_column_outlet",
-                "vitrification_melter", "vitrification_refractory_shell", "vitrification_electrode");
         return true;
     }
     private static boolean addRecipe(RecipeHolder<?> holder, Set<Item> items, Set<Object> fluids,
         net.minecraft.core.HolderLookup.Provider registries) {
         Recipe<?> recipe = holder.value();
         if (!equipmentFor(recipe, items) || !itemInputs(recipe, items)) return false;
-        if (recipe instanceof ConverterRecipe converter && (!gasInput(converter, fluids) || converter.metalIngredient()
-            .filter(metal -> Arrays.stream(metal.getFluids()).noneMatch(stack -> fluids.contains(stack.getFluid()))).isPresent())) return false;
+        for (var extension : EXTENSIONS) if (extension.blocked(recipe, items, fluids)) return false;
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe gasifier
             && Arrays.stream(gasifier.steam().getFluids()).noneMatch(stack -> fluids.contains(stack.getFluid()))) return false;
         if (recipe instanceof ProcessingRecipe<?, ?> processing && !fluidInputs(processing, fluids)) return false;
@@ -124,12 +121,6 @@ public final class SurvivalReachabilityGameTests {
             }
         }
         boolean changed = false;
-        if (recipe instanceof net.createplant.arm.ArmRecipe arm && arm.transitional().isPresent()) changed |= items.add(arm.transitional().get());
-        if (recipe instanceof net.createplant.recipe.ContinuousFactoryRecipe continuous)
-            changed |= switch (continuous.machine()) {
-                case KILN, MILL -> items.add(CEContinuousFactory.SCRAP.get());
-                case WINDER -> items.add(CEContinuousFactory.LOOSE_WINDING.get());
-            };
         ItemStack result = recipe.getResultItem(registries);
         if (!result.isEmpty()) changed |= items.add(result.getItem());
         if (recipe instanceof com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe assembly) {
@@ -142,10 +133,7 @@ public final class SurvivalReachabilityGameTests {
             for (FluidStack output : processing.getFluidResults()) if (!output.isEmpty()) changed |= fluids.addAll(stateEntries(output));
         }
         if (recipe instanceof net.createplant.recipe.EntrainedGasificationRecipe gasifier) changed |= fluids.add(gasifier.gasResult().getFluid());
-        if (recipe instanceof ConverterRecipe converter) {
-            if (!converter.byproduct().isEmpty()) changed |= fluids.add(converter.byproduct().getFluid());
-            if (!converter.metalResult().isEmpty()) changed |= fluids.add(converter.metalResult().getFluid());
-        }
+        for (var extension : EXTENSIONS) changed |= extension.produces(recipe, items, fluids);
         return changed;
     }
     private static boolean processEquipment(ProcessModule module, Set<Item> reached) {
@@ -195,13 +183,7 @@ public final class SurvivalReachabilityGameTests {
         }
         if(has(items,"stainless_boiler") && fluids.contains(Fluids.WATER))changed|=fluids.add(FluidForm.HIGH_PRESSURE_STEAM);
         if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.PRESSURISED_WATER) && fluids.contains(CEIsotopeGases.DEUTERIUM_GAS.get()) && fluids.contains(CEIsotopeGases.TRITIUM_GAS.get()) && fluids.contains(FluidForm.LIQUID_HELIUM))changed|=fluids.add(FluidForm.HOT_REACTOR_COOLANT);
-        if (has(items, "fuel_rod", "reactor_fuel_channel", "reactor_graphite", "biological_shield") && fluids.contains(Fluids.WATER))
-            changed |= items.add(CENuclear.SPENT_FUEL_ROD.get());
-        if(has(items,"control_rod","reactor_fuel_channel"))changed|=items.add(CENuclear.SPENT_CONTROL_ROD.get());
-        if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.HOT_REACTOR_COOLANT))changed|=items.add(CEFusion.SPENT_BLANKET.get()) | items.add(CEFusion.SPENT_DIVERTOR.get());
-        if(has(items,"fusion_reactor_controller","irradiation_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.HOT_REACTOR_COOLANT))changed|=items.add(CEFusion.IRRADIATED_CARTRIDGE.get());
-        if (has(items, "lithium_target_rod", "fuel_rod", "control_rod", "reactor_fuel_channel", "reactor_top_cap", "reactor_graphite", "biological_shield")
-            && fluids.contains(Fluids.WATER)) changed |= items.add(CEFusionFuel.IRRADIATED_TARGET.get());
+        for (var extension : EXTENSIONS) changed |= extension.fixed(items, fluids);
         if (has(items, "ammonia_separator") && fluids.contains(CEProcessFluids.COLD_SYNTHESIS_MIXTURE.get())) {
             changed |= fluids.add(FluidForm.LIQUID_AMMONIA);
             changed |= fluids.add(FluidForm.COMPRESSED_SYNTHESIS_FEED);
@@ -252,6 +234,7 @@ public final class SurvivalReachabilityGameTests {
         helper.assertTrue(!BuiltInRegistries.FLUID.containsKey(CreatePlant.location("liquid_air"))
                 && !BuiltInRegistries.ITEM.containsKey(CreatePlant.location("liquid_air_bucket")),
             "Liquid air, which no survival process made, is no longer registered");
+        loadExtensions();
         Set<Item> items = new HashSet<>();
         Set<Object> fluids = new HashSet<>();
         for (Item item : BuiltInRegistries.ITEM) if (!ours(BuiltInRegistries.ITEM.getKey(item))) items.add(item);
@@ -261,8 +244,7 @@ public final class SurvivalReachabilityGameTests {
         CEMetals.ORES.values().forEach(ore -> items.add(ore.get()));
         items.add(CEChlorAlkali.HALITE_ORE.get());
         items.add(CEChlorAlkali.DEEPSLATE_HALITE_ORE.get());
-        items.add(CEUranium.URANIUM_ORE.get().asItem());items.add(CEUranium.DEEPSLATE_URANIUM_ORE.get().asItem());
-        items.add(CENuclear.SERPENTINITE.get().asItem());
+        for (var extension : EXTENSIONS) extension.roots(items);
 
         var manager = helper.getLevel().getRecipeManager();
         var registries = helper.getLevel().registryAccess();
@@ -274,7 +256,7 @@ public final class SurvivalReachabilityGameTests {
             changed |= addFilledBuckets(items, fluids);
         } while (changed);
 
-        helper.assertTrue(items.contains(Items.DIAMOND) && has(items, "cubic_press", "gas_centrifuge") && fluids.contains(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get()), "Artificial diamonds and enriched uranium are reachable from survival resources");
+        for (var extension : EXTENSIONS) extension.audit(helper, items, fluids);
         helper.assertTrue(fluids.contains(CEProcessFluids.WATER_GAS.get()) && has(items, "water_gas_bucket"),
             "Carbon powder, steam and an external burner make the water gas bucket reachable");
         List<String> missing = BuiltInRegistries.ITEM.stream()

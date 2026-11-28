@@ -22,13 +22,13 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class ReactionTowerGameTests {
-    private static final BlockPos BASE=new BlockPos(21,2,4),CENTRE=BASE.offset(1,0,1);
+    static final BlockPos BASE=new BlockPos(21,2,4),CENTRE=BASE.offset(1,0,1);
     private static void build(GameTestHelper h,int layers){for(int y=0;y<layers;y++)for(int x=0;x<3;x++)for(int z=0;z<3;z++)h.setBlock(BASE.offset(x,y,z),CETransport.REACTION_TOWER.get());}
-    private static ReactionTowerBlockEntity owner(GameTestHelper h){return ((ReactionTowerBlockEntity)h.getBlockEntity(CENTRE)).owner();}
+    static ReactionTowerBlockEntity owner(GameTestHelper h){return ((ReactionTowerBlockEntity)h.getBlockEntity(CENTRE)).owner();}
     private static IFluidHandler fluid(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(relative),side);}
-    private static IItemHandler items(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,h.absolutePos(relative),side);}
+    static IItemHandler items(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,h.absolutePos(relative),side);}
     private static void heat(GameTestHelper h){h.setBlock(BASE.offset(0,-1,0),AllBlocks.BLAZE_BURNER.get().defaultBlockState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED));}
-    private static ItemStack tray(){return new ItemStack(CEReactor.TRAY.get());}
+    static ItemStack tray(){return new ItemStack(CEReactor.TRAY.get());}
     /** Builds and forms a 3x3 tower at once from its north-west bottom corner, with a tray and, unless empty, the catalyst in every layer; returns its owner. */
     public static ReactionTowerBlockEntity tower(ServerLevel level,BlockPos corner,int layers,ItemStack catalyst){
         for(int y=0;y<layers;y++)for(int x=0;x<3;x++)for(int z=0;z<3;z++)level.setBlock(corner.offset(x,y,z),CETransport.REACTION_TOWER.get().defaultBlockState(),3);
@@ -42,7 +42,7 @@ public class ReactionTowerGameTests {
     /** Kindles a blaze burner under the tower's bottom corner. */
     public static void heat(ReactionTowerBlockEntity owner){owner.getLevel().setBlockAndUpdate(owner.getBlockPos().offset(-1,-1,-1),AllBlocks.BLAZE_BURNER.get().defaultBlockState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED));}
     /** Fits a tray and the given catalyst into each of the first layers. */
-    private static void load(ReactionTowerBlockEntity owner,int layers,ItemStack catalyst){for(int i=0;i<layers;i++){owner.insert(tray());if(!catalyst.isEmpty())owner.insert(catalyst.copy());}}
+    static void load(ReactionTowerBlockEntity owner,int layers,ItemStack catalyst){for(int i=0;i<layers;i++){owner.insert(tray());if(!catalyst.isEmpty())owner.insert(catalyst.copy());}}
 
     @GameTest(template="test_fractionation")
     public static void placementSetsTheTowerFrontAndItsLeftSideLadder(GameTestHelper h) {
@@ -239,28 +239,6 @@ public class ReactionTowerGameTests {
             h.assertTrue(aged[0]<fresh[0]-20 && aged[2]>fresh[2]+5 && aged[1]>fresh[1],"Worn catalyst leaves the upper stage cooler and heats the lower ones: "+java.util.Arrays.toString(fresh)+" -> "+java.util.Arrays.toString(aged));
             h.succeed();
         });
-    }
-
-    @GameTest(template="test_fractionation")
-    public static void solidFeedFillsTheLowestTrayFirstAndKeepsCatalystsOut(GameTestHelper h){
-        var owner=tower(h.getLevel(),h.absolutePos(BASE),3,ItemStack.EMPTY);
-        var solids=items(h,BASE.offset(0,0,1),Direction.WEST);
-        h.assertTrue(items(h,BASE.offset(0,1,1),Direction.WEST)==null && solids!=null && solids.getSlots()==6,"Only the bottom layer's sides take solids: one feed and one product slot per tray");
-        h.assertTrue(!solids.isItemValid(0,new ItemStack(net.minecraft.world.item.Items.DIRT)) && !solids.insertItem(0,new ItemStack(net.minecraft.world.item.Items.DIRT),false).isEmpty(),"No tray reaction takes dirt");
-        var rest=net.neoforged.neoforge.items.ItemHandlerHelper.insertItem(solids,net.createplant.registry.CEUranium.YELLOWCAKE.toStack(20),false);
-        h.assertTrue(rest.isEmpty() && owner.layer(0).load().getCount()==ReactionTowerBlockEntity.TRAY_LOAD && owner.layer(1).load().getCount()==4 && owner.layer(2).load().isEmpty(),
-            "A funnel fills the lowest tray to sixteen, then the next");
-        h.assertTrue(solids.extractItem(0,1,false).isEmpty(),"Feed on a tray cannot be pulled back out of the side");
-        h.assertTrue(!owner.canInsert(new ItemStack(CEItems.OXIDATION_CATALYST.get())),"A catalyst cannot share the tower with solid feed");
-        owner.toggleHatch();
-        h.assertTrue(ReactionTowerBlockEntity.tray(owner.takeTop()) && !owner.layer(2).hasTray() && owner.takeTop().getCount()==4 && owner.layer(1).load().isEmpty() && owner.layer(1).hasTray(),
-            "Through the hatch the highest tray comes out first; the next tray gives its feed before itself");
-        h.setBlock(CENTRE,net.minecraft.world.level.block.Blocks.AIR);
-        // Containers.dropItemStack splits a drop into random pieces of 10 to 30, so the sixteen may come as one stack or as two.
-        int dropped=h.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,new net.minecraft.world.phys.AABB(h.absolutePos(CENTRE)).inflate(2),
-            e->e.getItem().is(net.createplant.registry.CEUranium.YELLOWCAKE.get())).stream().mapToInt(e->e.getItem().getCount()).sum();
-        h.assertTrue(dropped==ReactionTowerBlockEntity.TRAY_LOAD,"Breaking a layer's centre drops the feed on its tray: "+dropped);
-        h.succeed();
     }
 
     @GameTest(template="test_empty")

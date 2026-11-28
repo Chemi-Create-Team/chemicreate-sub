@@ -551,7 +551,7 @@ public class FusionGameTests {
             fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN, FluidForm.PRESSURISED_WATER.stack(FusionPhysics.RATED_COOLANT_MB_PER_TICK));
             controller.port(net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_OUT).drain(FusionReactorControllerBlockEntity.COOLANT_CAPACITY, FluidAction.EXECUTE);
             controller.tick();
-            if (tick % net.createplant.relay.RelayComputerBlockEntity.PERIOD == 0) {
+            if (tick % RELAY_PERIOD == 0) {
                 status = net.createplant.relay.FusionRelayTarget.fusionStep(controller, 50);
                 if (!seen.getLast().equals(status)) seen.add(status);
             }
@@ -561,6 +561,9 @@ public class FusionGameTests {
         helper.assertTrue(seen.indexOf("fusion_charging") > seen.indexOf("fusion_vacuum"), "Magnets charge only after the vacuum: " + seen);
         helper.succeed();
     }
+
+    /** How many ticks pass between relay computer steps (RelayComputerBlockEntity.PERIOD, which lives in the Logistics addon). */
+    private static final int RELAY_PERIOD = 10;
 
     private static void fill(FusionReactorControllerBlockEntity controller,
                              net.createplant.block.FusionFluidPortBlock.Kind kind, FluidStack stack) {

@@ -26,6 +26,13 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 @GameTestHolder(CreatePlant.MOD_ID)
 @PrefixGameTestTemplate(false)
 public class TwoPhaseGameTests {
+    /** A two-phase high-pressure parcel of the given steam quality, the shape the reactor's outlet produces. */
+    public static net.neoforged.neoforge.fluids.FluidStack wetStream(int amount,double quality){
+        var base=net.createplant.thermal.FluidForm.HIGH_PRESSURE_STEAM.stack(1);
+        int pressure=net.createplant.thermal.FluidState.pressure(base);
+        var liquid=net.createplant.thermal.FluidState.with(base,net.createplant.thermal.FluidState.levelFor(base,net.createplant.thermal.FluidState.boilingKelvin(base,pressure),pressure,false),pressure).copyWithAmount(amount);
+        return net.createplant.thermal.TwoPhase.mark(liquid,quality);
+    }
     @GameTest(template="test_reactor")
     public static void aPartlyBoiledStreamLeavesAsGasAndLiquidAndSplits(GameTestHelper h) {
         var tank=new ThermalFluidTank(16000,stack->{ });
@@ -113,7 +120,7 @@ public class TwoPhaseGameTests {
         var at=h.absolutePos(new BlockPos(4,2,4));
         var separator=HaberBoschGameTests.separator(level,at);
         var inlet=level.getCapability(Capabilities.FluidHandler.BLOCK,at.above(),Direction.NORTH);
-        var wet=net.createplant.block.entity.FuelChannelBlockEntity.outletStack(1000,.5,0);
+        var wet=wetStream(1000,.5);
         h.assertTrue(inlet!=null && TwoPhase.is(wet) && inlet.fill(wet,SIMULATE)==0 && inlet.fill(wet,EXECUTE)==0 && separator.water().isEmpty() && separator.steam().isEmpty(),
             "A pressurised-rated separator takes no RBMK wet steam");
         h.succeed();

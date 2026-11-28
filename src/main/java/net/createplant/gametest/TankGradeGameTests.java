@@ -47,7 +47,7 @@ public final class TankGradeGameTests {
         var stainless=tank(h,CETransport.STAINLESS_STEEL_TANK.get());
         h.assertTrue(stainless.getTankInventory().fill(new FluidStack(CEFluids.NITRIC_ACID.get(),1000),EXECUTE)==1000,"Stainless accepts acid");
         stainless.getTankInventory().setFluid(FluidStack.EMPTY);
-        h.assertTrue(!TankGrade.STAINLESS.accepts(new FluidStack(CEUranium.URANIUM_HEXAFLUORIDE.get(),1000)),"Stainless is not rated for uranium hexafluoride");
+        h.assertTrue(!TankGrade.STAINLESS.accepts(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),1000)),"Stainless is not rated for hydrogen fluoride");
         h.succeed();
     }
 
