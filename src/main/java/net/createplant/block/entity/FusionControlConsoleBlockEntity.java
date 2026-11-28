@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CEAtomicsDisplays;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.redstone.displayLink.DisplayLinkBlockEntity;
@@ -121,7 +122,7 @@ public class FusionControlConsoleBlockEntity extends SmartBlockEntity implements
             if (!(level.getBlockEntity(pos) instanceof DisplayLinkBlockEntity link)
                 || !worldPosition.equals(masterAt(level, link.getTargetPosition()))) { iterator.remove(); continue; }
             endpoint = true;
-            if (link.activeSource != CEDisplays.MACHINE.get() || link.activeTarget != CEDisplays.FUSION_CONSOLE.get()) continue;
+            if (link.activeSource != CEDisplays.MACHINE.get() || link.activeTarget != CEAtomicsDisplays.FUSION_CONSOLE.get()) continue;
             BlockPos sourcePos = link.getSourcePosition();
             if (!level.hasChunkAt(sourcePos)) continue;
             var owner = net.createplant.compat.display.MachineReadings.owner(level.getBlockEntity(sourcePos));

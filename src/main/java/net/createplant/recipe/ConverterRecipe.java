@@ -1,4 +1,5 @@
 package net.createplant.recipe;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import java.util.List;
 import java.util.Optional;
@@ -108,8 +109,8 @@ public final class ConverterRecipe implements Recipe<RecipeInput> {
     @Override public boolean canCraftInDimensions(int width, int height) { return false; }
     @Override public ItemStack getResultItem(HolderLookup.Provider registries) { return result(); }
     @Override public boolean isSpecial() { return true; }
-    @Override public RecipeSerializer<?> getSerializer() { return CERecipeTypes.CONVERTER.getSerializer(); }
-    @Override public RecipeType<?> getType() { return CERecipeTypes.CONVERTER.getType(); }
+    @Override public RecipeSerializer<?> getSerializer() { return CEAtomicsRecipeTypes.CONVERTER.getSerializer(); }
+    @Override public RecipeType<?> getType() { return CEAtomicsRecipeTypes.CONVERTER.getType(); }
 
     public static final class Serializer implements RecipeSerializer<ConverterRecipe> {
         @Override public MapCodec<ConverterRecipe> codec() { return CODEC; }

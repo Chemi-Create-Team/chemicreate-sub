@@ -100,7 +100,7 @@ public final class MixtureHelper {
     public static MixtureData data(FluidStack stack) {
         if (stack.isEmpty()) return MixtureData.EMPTY;
         if(isMixture(stack))return stack.getOrDefault(CEMixtures.MIXTURE_DATA.get(),MixtureData.EMPTY).forContents(extractContents(stack));
-        var copy = stack.copy();net.createplant.nuclear.RadiationSources.stamp(copy);
+        var copy = stack.copy();net.createplant.safety.RadiationHooks.get().stamp(copy);
         if (isAir(stack)) {
             var patches = new java.util.TreeMap<net.minecraft.resources.ResourceLocation, net.minecraft.core.component.DataComponentPatch>();
             for (var id : extractContents(stack).amounts().keySet()) patches.put(id, copy.getComponentsPatch());

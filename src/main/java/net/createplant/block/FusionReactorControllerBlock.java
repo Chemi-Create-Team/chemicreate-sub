@@ -6,7 +6,7 @@ import com.george_vi.electroenergetics.foundation.nodes.NodeConfigurator;
 import com.simibubi.create.foundation.block.IBE;
 import java.util.Map;
 import net.createplant.block.entity.FusionReactorControllerBlockEntity;
-import net.createplant.compat.electro.ElectroDevices;
+import net.createplant.compat.electro.AtomicsElectroDevices;
 import net.createplant.compat.electro.FusionMagnetDevice;
 import net.createplant.registry.CEFusion;
 import net.minecraft.core.BlockPos;
@@ -50,7 +50,7 @@ public class FusionReactorControllerBlock extends SimpleElectricalDeviceBlock<Fu
         super.createBlockStateDefinition(builder); builder.add(FACING, ACTIVE);
     }
 
-    @Override public SimulatedDeviceType<FusionMagnetDevice> getDevice() { return ElectroDevices.FUSION_MAGNET.get(); }
+    @Override public SimulatedDeviceType<FusionMagnetDevice> getDevice() { return AtomicsElectroDevices.FUSION_MAGNET.get(); }
     @Override public Map<Integer, Vec3> getNodePositions(Level level, BlockPos pos, BlockState state) { return NODES.getNodes(state.getValue(FACING)); }
     @Override public Vec3 getNodePosition(Level level, BlockPos pos, BlockState state, int node) { return NODES.getNodePos(state.getValue(FACING), node); }
     @Override public MutableComponent getNodeLabel(Level level, BlockPos pos, BlockState state, int node) {

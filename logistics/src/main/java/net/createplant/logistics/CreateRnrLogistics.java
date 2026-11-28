@@ -9,5 +9,12 @@ public class CreateRnrLogistics {
     public static final String MOD_ID = "create_rnr_logistics";
 
     public CreateRnrLogistics(IEventBus modEventBus, ModContainer container) {
+        net.createplant.registry.LogisticsSetup.init();
+        net.createplant.registry.CELogisticsRecipeTypes.register(modEventBus);
+        net.createplant.registry.CEBlasting.register(modEventBus);
+        net.createplant.registry.CEIndustrialExpansion.register(modEventBus);
+        net.createplant.registry.CEQuarry.register(modEventBus);
+        net.createplant.relay.CERelayComputer.register(modEventBus);
+        net.createplant.registry.CEArm.register(modEventBus);
     }
 }

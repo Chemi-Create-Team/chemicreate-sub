@@ -20,6 +20,14 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class CECreativeModeTabs {
+    /** Equipment items addons add after the core equipment (e.g. radiation meters). */
+    public static final java.util.List<java.util.function.Supplier<? extends Item>> EXTRA_EQUIPMENT = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    private static boolean isExtra(Item item) {
+        for (var extra : EXTRA_EQUIPMENT) if (extra.get() == item) return true;
+        return false;
+    }
+
     public static final DeferredRegister<CreativeModeTab> TABS =
         DeferredRegister.create(Registries.CREATIVE_MODE_TAB, CreatePlant.MOD_ID);
 
@@ -108,14 +116,13 @@ public class CECreativeModeTabs {
     private static void display(CreativeModeTab.Output output) {
         display(output, false);
         display(output, true);
-        EQUIPMENT_GROUPS.getFirst().stream().map(CECreativeModeTabs::item).forEach(output::accept);
-        output.accept(CERadiation.DOSIMETER.get());
-        output.accept(CERadiation.SURVEY_METER.get());
+        EQUIPMENT_GROUPS.getFirst().stream().map(CECreativeModeTabs::item).filter(i -> i != Items.AIR).forEach(output::accept);
+        EXTRA_EQUIPMENT.forEach(item -> output.accept(item.get()));
     }
 
     private static void display(CreativeModeTab.Output output, boolean materials) {
         var groups = (materials ? MATERIAL_GROUPS : EQUIPMENT_GROUPS.subList(1, EQUIPMENT_GROUPS.size())).stream()
-            .map(paths -> paths.stream().map(CECreativeModeTabs::item).toList()).toList();
+            .map(paths -> paths.stream().map(CECreativeModeTabs::item).filter(i -> i != Items.AIR).toList()).toList();
         var listed = new HashSet<Item>();
         for (var paths : MATERIAL_GROUPS) for (var path : paths) listed.add(item(path));
         for (var paths : EQUIPMENT_GROUPS) for (var path : paths) listed.add(item(path));
@@ -130,7 +137,7 @@ public class CECreativeModeTabs {
         BuiltInRegistries.ITEM.stream()
             .filter(item -> BuiltInRegistries.ITEM.getKey(item).getNamespace().equals(CreatePlant.MOD_ID) && !listed.contains(item))
             .forEach(item -> {
-                if (item == CERadiation.DOSIMETER.get() || item == CERadiation.SURVEY_METER.get()) return;
+                if (isExtra(item)) return;
                 if (item instanceof GasBucketItem) gases.add(item);
                 else if (item instanceof BucketItem bucket && bucket.content != Fluids.EMPTY) liquids.add(item);
                 else if (!(item instanceof BlockItem) == materials) rest.add(item);
@@ -152,7 +159,7 @@ public class CECreativeModeTabs {
     }
 
     static String section(Item item) {
-        if (item == CERadiation.DOSIMETER.get() || item == CERadiation.SURVEY_METER.get()) return "equipment";
+        if (isExtra(item)) return "equipment";
         if (item == CEWorldFluids.EMPTY_ALLOY_BUCKET.get() || item == CEWorldFluids.STAINLESS_BUCKET.get() || item instanceof GasBucketItem
             || item instanceof BucketItem bucket && bucket.content != Fluids.EMPTY) return "materials";
         String path = BuiltInRegistries.ITEM.getKey(item).getPath();

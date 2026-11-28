@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -92,7 +93,7 @@ public class FuelCycleMachineBlockEntity extends KineticBlockEntity implements I
         return formed;
     }
     private List<RecipeHolder<FuelCycleRecipe>> recipes() {
-        return level.getRecipeManager().getAllRecipesFor((melter() ? CERecipeTypes.VITRIFICATION : CERecipeTypes.SOLVENT_EXTRACTION).<RecipeInput, FuelCycleRecipe>getType());
+        return level.getRecipeManager().getAllRecipesFor((melter() ? CEAtomicsRecipeTypes.VITRIFICATION : CEAtomicsRecipeTypes.SOLVENT_EXTRACTION).<RecipeInput, FuelCycleRecipe>getType());
     }
     private int[] itemRequirements(FuelCycleRecipe recipe) {
         int[] count = new int[2];

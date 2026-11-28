@@ -1,4 +1,5 @@
 package net.createplant.recipe;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
@@ -12,7 +13,7 @@ public final class CubicPressRecipe extends StandardProcessingRecipe<CubicPressR
         @Override public ItemStack getItem(int slot) { return slot == 0 ? feed : catalyst; }
         @Override public int size() { return 2; }
     }
-    public CubicPressRecipe(ProcessingRecipeParams params) { super(CERecipeTypes.CUBIC_PRESSING, params); }
+    public CubicPressRecipe(ProcessingRecipeParams params) { super(CEAtomicsRecipeTypes.CUBIC_PRESSING, params); }
     @Override protected int getMaxInputCount() { return 2; }
     @Override protected int getMaxOutputCount() { return 2; }
     @Override protected boolean canRequireHeat() { return true; }

@@ -101,7 +101,7 @@ public final class ToxicGas {
             for (var component : net.createplant.mixture.MixtureHelper.components(fluid)) release(level, pos, component);
             return;
         }
-        net.createplant.nuclear.RadiationContamination.spill(level, pos, fluid);
+        net.createplant.safety.RadiationHooks.get().spill(level, pos, fluid);
         if (level instanceof ServerLevel server && (strength(fluid) >= 0 || FlammableGas.fuel(fluid))) GasClouds.release(server, pos, fluid);
     }
 

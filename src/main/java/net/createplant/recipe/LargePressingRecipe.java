@@ -1,4 +1,5 @@
 package net.createplant.recipe;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -29,8 +30,8 @@ public record LargePressingRecipe(Ingredient ingredient, ItemStack result) imple
     @Override public ItemStack getResultItem(HolderLookup.Provider lookup) { return result; }
     @Override public boolean isSpecial() { return true; }
     @Override public boolean canCraftInDimensions(int width, int height) { return false; }
-    @Override public RecipeSerializer<?> getSerializer() { return CERecipeTypes.LARGE_PRESSING.getSerializer(); }
-    @Override public RecipeType<?> getType() { return CERecipeTypes.LARGE_PRESSING.getType(); }
+    @Override public RecipeSerializer<?> getSerializer() { return CEAtomicsRecipeTypes.LARGE_PRESSING.getSerializer(); }
+    @Override public RecipeType<?> getType() { return CEAtomicsRecipeTypes.LARGE_PRESSING.getType(); }
 
     public static final class Serializer implements RecipeSerializer<LargePressingRecipe> {
         @Override public MapCodec<LargePressingRecipe> codec() { return CODEC; }

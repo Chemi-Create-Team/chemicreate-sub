@@ -28,6 +28,9 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
     public boolean accepts(int index, FluidStack actual) {
         return index>=0 && index<inputs.size() && actual.is(inputs.get(index).getFluid()) && conditions.get(index).matches(actual);
     }
+    private static final List<java.util.function.Supplier<List<ProcessRecipe>>> ADDON = new java.util.concurrent.CopyOnWriteArrayList<>();
+    /** Addons add recipes before the first {@link #all()} call; the supplier runs once when the list is built. */
+    public static void register(java.util.function.Supplier<List<ProcessRecipe>> recipes) { ADDON.add(recipes); }
     public static List<ProcessRecipe> all() { return Recipes.ALL; }
     private record Charge(FluidStack stack, FluidRequirement condition) { }
     private static Charge f(net.createplant.thermal.FluidForm form,int amount) { return new Charge(form.stack(amount),form.requirement()); }
@@ -45,7 +48,8 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
     public boolean heatAllowed(HeatLevel level) { return requiredHeat.testBlazeBurner(level); }
     private static final class Recipes {
         static final List<ProcessRecipe> ALL = java.util.stream.Stream.of(
-            legacy(), SynthesisProcesses.load("synthetic_fuels"), SynthesisProcesses.load("downstream_materials"))
+            legacy(), SynthesisProcesses.load("synthetic_fuels"), SynthesisProcesses.load("downstream_materials"),
+            ADDON.stream().flatMap(supplier -> supplier.get().stream()).toList())
             .flatMap(List::stream).toList();
 
         private static List<ProcessRecipe> legacy() {
@@ -92,10 +96,7 @@ public record ProcessRecipe(String id, ProcessModule module, int ticks,
             r("separate_hydrocracker_effluent",FRACTION_SEPARATOR,80,List.of(f(CEProcessFluids.COOLED_HYDROCRACKER_EFFLUENT.get(),1000)),List.of(f(CEProcessFluids.LOW_SULFUR_DIESEL.get(),600),f(CEPetroFluids.NAPHTHA.get(),450),f(CEProcessFluids.HYDROGEN_SULFIDE.get(),250),f(CEFluids.HYDROGEN_GAS.get(),200))),
             // Ethylene oxide: partial oxidation of ethylene; the oxidation catalyst stands in for silver.
             r("oxidize_ethylene",REACTION_VESSEL,100,List.of(f(CEPetroFluids.ETHYLENE.get(),200),f(CEFluids.OXYGEN_GAS.get(),100)),List.of(f(CEProcessFluids.ETHYLENE_OXIDE.get(),200))).catalyst(CEItems.OXIDATION_CATALYST.get()).heat(HeatCondition.HEATED).reaction(937),
-            r("oxidize_sulfur_dioxide",REACTION_VESSEL,100,List.of(f(CESharedChemicals.SULFUR_DIOXIDE.get(),100),f(CEFluids.OXYGEN_GAS.get(),50)),List.of(f(CESharedChemicals.SULFUR_TRIOXIDE.get(),100))).catalyst(CEItems.OXIDATION_CATALYST.get()).reaction(441),
-            // 0.7 % feed to 4 % product with 0.25 % tails: one part in eight of the feed leaves as product.
-            r("enrich_uranium",GAS_CENTRIFUGE,200,List.of(f(CEUranium.URANIUM_HEXAFLUORIDE.get(),1000)),List.of(f(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get(),125),f(CEUranium.DEPLETED_URANIUM_HEXAFLUORIDE.get(),875))),
-            r("enrich_compact_uranium",GAS_CENTRIFUGE,240,List.of(f(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get(),1000)),List.of(f(CEUranium.COMPACT_ENRICHED_URANIUM_HEXAFLUORIDE.get(),789),f(CEUranium.DEPLETED_URANIUM_HEXAFLUORIDE.get(),211)))
+            r("oxidize_sulfur_dioxide",REACTION_VESSEL,100,List.of(f(CESharedChemicals.SULFUR_DIOXIDE.get(),100),f(CEFluids.OXYGEN_GAS.get(),50)),List.of(f(CESharedChemicals.SULFUR_TRIOXIDE.get(),100))).catalyst(CEItems.OXIDATION_CATALYST.get()).reaction(441)
             );
         }
     }

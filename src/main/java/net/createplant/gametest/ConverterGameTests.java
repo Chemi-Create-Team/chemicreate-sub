@@ -1,4 +1,5 @@
 package net.createplant.gametest;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 
@@ -341,7 +342,7 @@ public final class ConverterGameTests {
     @GameTest(template = "test_reactor")
     public static void converterRecipesLoadAndGasIsARealHeaterFuel(GameTestHelper helper) {
         var recipes = helper.getLevel().getRecipeManager().getAllRecipesFor(
-            CERecipeTypes.CONVERTER.<RecipeInput, ConverterRecipe>getType());
+            CEAtomicsRecipeTypes.CONVERTER.<RecipeInput, ConverterRecipe>getType());
         helper.assertTrue(recipes.stream().filter(recipe -> !recipe.value().legacy()).count() == 2,
             "The current steel and AOD charges both load");
         helper.assertTrue(helper.getLevel().getRecipeManager().byKey(CreatePlant.location("pressure_reaction/stainless_steel_ingot_aod")).isEmpty(),

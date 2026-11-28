@@ -1,4 +1,5 @@
 package net.createplant.arm;
+import net.createplant.registry.CELogisticsRecipeTypes;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -73,7 +74,7 @@ public record ArmRecipe(Item input, Optional<Item> transitional, List<Step> step
     }
 
     public static List<RecipeHolder<ArmRecipe>> all(Level level) {
-        return level.getRecipeManager().getAllRecipesFor(CERecipeTypes.ARM_ASSEMBLY.<RecipeInput, ArmRecipe>getType());
+        return level.getRecipeManager().getAllRecipesFor(CELogisticsRecipeTypes.ARM_ASSEMBLY.<RecipeInput, ArmRecipe>getType());
     }
 
     /** A recipe and the step of it to do next. */
@@ -129,8 +130,8 @@ public record ArmRecipe(Item input, Optional<Item> transitional, List<Step> step
     @Override public boolean canCraftInDimensions(int width, int height) { return false; }
     @Override public ItemStack getResultItem(HolderLookup.Provider lookup) { return result; }
     @Override public boolean isSpecial() { return true; }
-    @Override public RecipeSerializer<?> getSerializer() { return CERecipeTypes.ARM_ASSEMBLY.getSerializer(); }
-    @Override public RecipeType<?> getType() { return CERecipeTypes.ARM_ASSEMBLY.getType(); }
+    @Override public RecipeSerializer<?> getSerializer() { return CELogisticsRecipeTypes.ARM_ASSEMBLY.getSerializer(); }
+    @Override public RecipeType<?> getType() { return CELogisticsRecipeTypes.ARM_ASSEMBLY.getType(); }
 
     public static final class Serializer implements RecipeSerializer<ArmRecipe> {
         @Override public MapCodec<ArmRecipe> codec() { return CODEC; }

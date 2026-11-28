@@ -23,7 +23,7 @@ public class VitrificationBusbarBlock extends SimpleElectricalDeviceBlock<Vitrif
     public VitrificationBusbarBlock(Properties properties) { super(properties);registerDefaultState(defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH)); }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) { super.createBlockStateDefinition(builder);builder.add(BlockStateProperties.HORIZONTAL_FACING); }
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) { return defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()); }
-    @Override public SimulatedDeviceType<VitrificationMelterDevice> getDevice() { return ElectroDevices.VITRIFICATION.get(); }
+    @Override public SimulatedDeviceType<VitrificationMelterDevice> getDevice() { return AtomicsElectroDevices.VITRIFICATION.get(); }
     @Override public Map<Integer, Vec3> getNodePositions(Level level, BlockPos pos, BlockState state) { return NODES.getNodes(state.getValue(BlockStateProperties.HORIZONTAL_FACING)); }
     @Override public Vec3 getNodePosition(Level level, BlockPos pos, BlockState state, int node) { return NODES.getNodePos(state.getValue(BlockStateProperties.HORIZONTAL_FACING), node); }
     @Override public Class<FuelCycleMachineBlockEntity> getBlockEntityClass() { return FuelCycleMachineBlockEntity.class; }

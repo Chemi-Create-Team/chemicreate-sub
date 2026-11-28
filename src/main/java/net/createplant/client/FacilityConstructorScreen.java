@@ -9,7 +9,6 @@ import net.createplant.CreatePlant;
 import net.createplant.assembly.AssemblyPlan;
 import net.createplant.block.entity.FacilityConstructorBlockEntity;
 import net.createplant.inventory.FacilityConstructorMenu;
-import net.createplant.nuclear.ReactorCoreVariants;
 import net.createplant.registry.CEAssembly;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -47,9 +46,9 @@ public class FacilityConstructorScreen extends SchematicannonScreen {
             kinds.add(addRenderableWidget(Button.builder(Component.translatable("facility.create_refinery_n_reactors." + kind.id), button -> select(kind.ordinal()))
                 .bounds(leftPos + 234, topPos + 22 + kind.ordinal() * 16, 140, 15).build()));
         }
-        for (int i = 0; i < ReactorCoreVariants.RECOMMENDED_DIAMETERS.size(); i++) {
+        for (int i = 0; i < AssemblyPlan.sizes(AssemblyPlan.Kind.RBMK).size(); i++) {
             int index = i;
-            sizes.add(addRenderableWidget(Button.builder(Component.literal(ReactorCoreVariants.RECOMMENDED_DIAMETERS.get(i).toString()), button -> select(10 + index))
+            sizes.add(addRenderableWidget(Button.builder(Component.literal(AssemblyPlan.sizes(AssemblyPlan.Kind.RBMK).get(i).toString()), button -> select(10 + index))
                 .bounds(leftPos + 234 + i * 28, topPos + 119, 26, 20).build()));
         }
         for (int i = 0; i < 2; i++) {

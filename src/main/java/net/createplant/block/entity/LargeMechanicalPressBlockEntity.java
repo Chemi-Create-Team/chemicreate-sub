@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.belt.transport.TransportedItemStack;
@@ -51,7 +52,7 @@ public final class LargeMechanicalPressBlockEntity extends KineticBlockEntity im
         DepotBehaviour depot = BlockEntityBehaviour.get(level, worldPosition.below(2), DepotBehaviour.TYPE);
         if (depot == null || !depot.isOutputEmpty()) return false;
         var input = new SingleRecipeInput(item.stack);
-        var recipe = level.getRecipeManager().getRecipeFor(CERecipeTypes.LARGE_PRESSING.<SingleRecipeInput, LargePressingRecipe>getType(), input, level);
+        var recipe = level.getRecipeManager().getRecipeFor(CEAtomicsRecipeTypes.LARGE_PRESSING.<SingleRecipeInput, LargePressingRecipe>getType(), input, level);
         if (recipe.isEmpty()) return false;
         if (!simulate) {
             results.add(recipe.get().value().assemble(input, level.registryAccess()));

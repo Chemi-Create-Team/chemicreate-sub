@@ -59,7 +59,7 @@ public final class StatefulBuckets {
     public static boolean release(Level level,BlockPos pos,FluidStack fluid) {
         if(!level.hasChunkAt(pos) || !level.getBlockState(pos).isAir())return false;
         if(level instanceof ServerLevel server) {
-            net.createplant.nuclear.RadiationContamination.spill(server,pos,fluid);
+            net.createplant.safety.RadiationHooks.get().spill(server,pos,fluid);
             GasClouds.release(server,pos,fluid);
         }
         return true;

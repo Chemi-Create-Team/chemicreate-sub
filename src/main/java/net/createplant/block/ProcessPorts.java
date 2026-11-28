@@ -6,21 +6,14 @@ import com.simibubi.create.content.kinetics.base.IRotate;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.AbsorptionTowerBlockEntity;
 import net.createplant.block.entity.ColumnRingBlockEntity;
-import net.createplant.block.entity.ConverterShellBlockEntity;
-import net.createplant.block.entity.CubicPressBlockEntity;
 import net.createplant.block.entity.ElectrolysisFurnacePartBlockEntity;
 import net.createplant.block.entity.ElectrodeHeadBlockEntity;
 import net.createplant.block.entity.FractionatingColumnBlockEntity;
-import net.createplant.block.entity.FuelCycleMachineBlockEntity;
-import net.createplant.block.entity.FusionFluidPortBlockEntity;
-import net.createplant.block.entity.FuelPoolBlockEntity;
 import net.createplant.block.entity.GasifierBlockEntity;
 import net.createplant.block.entity.HorizontalTankBlockEntity;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
-import net.createplant.block.entity.IndustrialDispatchBlockEntity;
 import net.createplant.block.entity.PressurePumpPortBlockEntity;
 import net.createplant.block.entity.ReactionTowerBlockEntity;
-import net.createplant.block.entity.RodCapBlockEntity;
 import net.createplant.block.entity.TankCasingBlockEntity;
 import net.createplant.block.entity.WetProcessPartBlockEntity;
 import net.createplant.transport.HoseSocket;
@@ -35,7 +28,23 @@ import net.neoforged.neoforge.items.IItemHandler;
 public final class ProcessPorts {
     public enum Kind { INLET, OUTLET, HOSE, SHAFT, HATCH, DRAIN }
 
+    private record Port(Class<?> type, java.util.function.BiFunction<BlockEntity, Direction, Kind> kind) { }
+    private static final java.util.List<Port> PORTS = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final java.util.List<Class<?>> TOP_HATCHES = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final java.util.List<Class<?>> ITEM_PORTS = new java.util.concurrent.CopyOnWriteArrayList<>();
+
     private ProcessPorts() { }
+
+    /** Addon block entities with their own port rules; the function's answer (null included) is final. */
+    public static <T extends BlockEntity> void register(Class<T> type, java.util.function.BiFunction<T, Direction, Kind> kind) {
+        PORTS.add(new Port(type, (be, face) -> kind.apply(type.cast(be), face)));
+    }
+
+    /** Block entities whose top face is a service hatch. */
+    public static void registerTopHatch(Class<? extends BlockEntity> type) { TOP_HATCHES.add(type); }
+
+    /** Block entities that expose an item handler on their ports. */
+    public static void registerItemPorts(Class<? extends BlockEntity> type) { ITEM_PORTS.add(type); }
 
     public static boolean plant(BlockEntity be) {
         return !be.isRemoved() && BuiltInRegistries.BLOCK.getKey(be.getBlockState().getBlock()).getNamespace().equals(CreatePlant.MOD_ID);
@@ -82,14 +91,9 @@ public final class ProcessPorts {
             if (casing.fluidPort(face) == null) return null;
             return casing.clarifier().rimPort(pos) == WetProcessStructure.RimPort.SLURRY_INLET ? Kind.INLET : Kind.OUTLET;
         }
-        if (be instanceof FusionFluidPortBlockEntity port) {
-            if (face != state.getValue(FusionFluidPortBlock.FACING)) return null;
-            return switch (port.kind()) {
-                case ASH, HELIUM_OUT, COOLANT_OUT -> Kind.OUTLET;
-                default -> Kind.INLET;
-            };
-        }
-        if (be instanceof ElectrodeHeadBlockEntity && face == Direction.UP || be instanceof RodCapBlockEntity && face == Direction.UP)
+        for (var addon : PORTS) if (addon.type.isInstance(be)) return addon.kind.apply(be, face);
+        for (var type : TOP_HATCHES) if (type.isInstance(be) && face == Direction.UP) return Kind.HATCH;
+        if (be instanceof ElectrodeHeadBlockEntity && face == Direction.UP)
             return Kind.HATCH;
         if (items(be, face) != null) return Kind.HATCH;
         var fluid = fluid(be, face);
@@ -110,9 +114,8 @@ public final class ProcessPorts {
 
     public static IItemHandler items(BlockEntity be, Direction face) {
         if (be instanceof TankCasingBlockEntity casing && casing.clarifier() != null) return casing.itemPort(face);
-        if (be instanceof GasifierBlockEntity || be instanceof WetProcessPartBlockEntity || be instanceof FuelCycleMachineBlockEntity
-            || be instanceof ElectrolysisFurnacePartBlockEntity || be instanceof CubicPressBlockEntity || be instanceof ConverterShellBlockEntity
-            || be instanceof FuelPoolBlockEntity || be instanceof IndustrialDispatchBlockEntity)
+        if (be instanceof GasifierBlockEntity || be instanceof WetProcessPartBlockEntity || be instanceof ElectrolysisFurnacePartBlockEntity
+            || ITEM_PORTS.stream().anyMatch(type -> type.isInstance(be)))
             return be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), face);
         return null;
     }

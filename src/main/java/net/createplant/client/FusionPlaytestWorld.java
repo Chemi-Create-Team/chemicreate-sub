@@ -1,4 +1,5 @@
 package net.createplant.client;
+import net.createplant.registry.CEAtomicsDisplays;
 
 import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidForm;
@@ -309,7 +310,7 @@ public final class FusionPlaytestWorld {
         put(level, linkPos, AllBlocks.DISPLAY_LINK.getDefaultState().setValue(DisplayLinkBlock.FACING, Direction.EAST));
         var link = (DisplayLinkBlockEntity) level.getBlockEntity(linkPos);
         link.activeSource = CEDisplays.MACHINE.get();
-        link.activeTarget = CEDisplays.FUSION_CONSOLE.get();
+        link.activeTarget = CEAtomicsDisplays.FUSION_CONSOLE.get();
         link.getSourceConfig().putInt("Metric", MachineReadings.KEYS.indexOf("fusion_power"));
         link.target(CONTROLLER.offset(7, -FusionPhysics.MIDPLANE, -2));
         link.updateGatheredData();

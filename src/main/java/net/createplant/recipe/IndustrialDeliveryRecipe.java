@@ -1,4 +1,5 @@
 package net.createplant.recipe;
+import net.createplant.registry.CELogisticsRecipeTypes;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
@@ -7,7 +8,7 @@ import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 
 public class IndustrialDeliveryRecipe extends StandardProcessingRecipe<RecipeInput> {
-    public IndustrialDeliveryRecipe(ProcessingRecipeParams params) { super(CERecipeTypes.INDUSTRIAL_DELIVERY, params); }
+    public IndustrialDeliveryRecipe(ProcessingRecipeParams params) { super(CELogisticsRecipeTypes.INDUSTRIAL_DELIVERY, params); }
     @Override protected int getMaxInputCount() { return 256; }
     @Override protected int getMaxOutputCount() { return 1; }
     @Override protected int getMaxFluidInputCount() { return 1; }

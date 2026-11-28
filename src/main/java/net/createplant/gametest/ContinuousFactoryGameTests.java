@@ -186,7 +186,7 @@ public class ContinuousFactoryGameTests {
             @Override public ItemStack getItem(int slot) { return slot == 0 ? feed : auxiliary; }
             @Override public int size() { return 2; }
         };
-        return h.getLevel().getRecipeManager().getAllRecipesFor(net.createplant.registry.CERecipeTypes.CONTINUOUS_PROCESSING
+        return h.getLevel().getRecipeManager().getAllRecipesFor(net.createplant.registry.CEAtomicsRecipeTypes.CONTINUOUS_PROCESSING
                 .<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.ContinuousFactoryRecipe>getType()).stream()
             .map(holder -> holder.value()).filter(r -> r.machine() == net.createplant.factory.FactoryKind.MILL && r.matches(input, h.getLevel())).toList();
     }

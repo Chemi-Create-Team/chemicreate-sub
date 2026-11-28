@@ -16,10 +16,10 @@ public class SoapItem extends Item {
 
     @Override public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (player.getActiveEffects().isEmpty() && !net.createplant.nuclear.RadiationContamination.dirty(player)) return InteractionResultHolder.pass(stack);
+        if (player.getActiveEffects().isEmpty() && !net.createplant.safety.RadiationHooks.get().dirty(player)) return InteractionResultHolder.pass(stack);
         if (!level.isClientSide) {
             player.removeEffectsCuredBy(EffectCures.MILK);
-            if (player instanceof net.minecraft.server.level.ServerPlayer server) net.createplant.nuclear.RadiationContamination.wash(server, .9);
+            if (player instanceof net.minecraft.server.level.ServerPlayer server) net.createplant.safety.RadiationHooks.get().wash(server, .9);
             level.playSound(null, player.blockPosition(), SoundEvents.BUCKET_EMPTY, SoundSource.PLAYERS, .6f, 1.4f);
             if (!player.getAbilities().instabuild) stack.shrink(1);
         }
@@ -28,10 +28,8 @@ public class SoapItem extends Item {
     @Override public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
         if (!(context.getLevel() instanceof net.minecraft.server.level.ServerLevel level) || context.getPlayer() == null) return net.minecraft.world.InteractionResult.PASS;
         var target = context.getClickedPos().relative(context.getClickedFace());
-        if (net.createplant.nuclear.RadiationContamination.at(level, target).total() <= 0) target = context.getClickedPos();
-        var removed = net.createplant.nuclear.RadiationContamination.take(level, target, .9);
-        if (removed.total() <= 0) return net.minecraft.world.InteractionResult.PASS;
-        net.createplant.nuclear.RadiationContamination.deposit(level, target.below(), removed);
+        target = net.createplant.safety.RadiationHooks.get().washBlock(level, context.getClickedPos(), target);
+        if (target == null) return net.minecraft.world.InteractionResult.PASS;
         if (!context.getPlayer().getAbilities().instabuild) context.getItemInHand().shrink(1);
         level.playSound(null, target, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, .6f, 1.4f);
         return net.minecraft.world.InteractionResult.SUCCESS;

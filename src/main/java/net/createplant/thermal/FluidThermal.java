@@ -126,14 +126,14 @@ public final class FluidThermal {
         int suspended=(int)(((long)stored.getOrDefault(impurity,0)*stored.getAmount()+(long)incoming.getOrDefault(impurity,0)*accepted+result.getAmount()/2)/result.getAmount());
         if(suspended>0)result.set(impurity,suspended);else result.remove(impurity);
         var server=net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
-        if(server!=null && server.isSameThread())net.createplant.nuclear.RadiationSources.mix(result,stored,incoming,accepted,server.overworld().getGameTime());
+        if(server!=null && server.isSameThread())net.createplant.safety.RadiationHooks.get().mix(result,stored,incoming,accepted,server.overworld().getGameTime());
         return result;
     }
     /** Adds {@code amount} of a compatible stack to {@code stored}, preserving the stored fluid type and components. */
     public static FluidStack add(FluidStack stored,FluidStack incoming,int amount) {
         if (stored.isEmpty()) return incoming.copyWithAmount(amount);
         return !compatible(stored,incoming) || stored.has(net.createplant.registry.CEThermal.SUSPENDED_IMPURITY.get())
-            || tracked(stored) || tracked(incoming) || net.createplant.nuclear.RadiationSources.profile(stored)!=null
+            || tracked(stored) || tracked(incoming) || net.createplant.safety.RadiationHooks.get().tracked(stored)
             ? mix(stored,incoming,amount) : stored.copyWithAmount(stored.getAmount()+amount);
     }
     public static Component readout(FluidStack stack) {

@@ -4,7 +4,6 @@ import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 
 import net.createplant.CreatePlant;
-import net.createplant.recipe.ConverterRecipe;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -23,15 +22,7 @@ public enum CERecipeTypes implements IRecipeTypeInfo, StringRepresentable {
     ENTRAINED_GASIFICATION("entrained_gasification", net.createplant.recipe.EntrainedGasificationRecipe.Serializer::new),
     PRESSURE_REACTION("pressure_reaction", PressureReactionRecipe.Serializer::new),
     SPRAYING("spraying", net.createplant.recipe.SprayingRecipe.Serializer::new),
-    SOLVENT_EXTRACTION("solvent_extraction", () -> new StandardProcessingRecipe.Serializer<>(p -> new net.createplant.recipe.FuelCycleRecipe(CERecipeTypes.valueOf("SOLVENT_EXTRACTION"), p))),
-    VITRIFICATION("vitrification", () -> new StandardProcessingRecipe.Serializer<>(p -> new net.createplant.recipe.FuelCycleRecipe(CERecipeTypes.valueOf("VITRIFICATION"), p))),
-    FORGING_BLASTING("forging_blasting", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.ForgingBlastingRecipe::new)),
-    CUBIC_PRESSING("cubic_pressing", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.CubicPressRecipe::new)),
-    LARGE_PRESSING("large_pressing", net.createplant.recipe.LargePressingRecipe.Serializer::new),
-    CONTINUOUS_PROCESSING("continuous_processing", net.createplant.recipe.ContinuousFactoryRecipe.Serializer::new),
-    CONVERTER("converter", ConverterRecipe.Serializer::new),
-    INDUSTRIAL_DELIVERY("industrial_delivery", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.IndustrialDeliveryRecipe::new)),
-    ARM_ASSEMBLY("arm_assembly", net.createplant.arm.ArmRecipe.Serializer::new);
+    FORGING_BLASTING("forging_blasting", () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.ForgingBlastingRecipe::new));
 
     public static final java.util.function.Supplier<RecipeSerializer<?>> FORGING_PRESSING_SERIALIZER = Registers.SERIALIZERS.register("forging_pressing",
         () -> new StandardProcessingRecipe.Serializer<>(net.createplant.recipe.ForgingPressingRecipe::new));

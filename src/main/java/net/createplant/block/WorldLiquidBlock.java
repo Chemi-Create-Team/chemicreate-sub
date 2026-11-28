@@ -64,8 +64,7 @@ public final class WorldLiquidBlock extends LiquidBlock {
         if (!state.getFluidState().isSource()) return ItemStack.EMPTY;
         FluidStack fluid = new FluidStack(state.getFluidState().getType(), 1000);
         if (accessor instanceof net.minecraft.server.level.ServerLevel level) {
-            var material = net.createplant.nuclear.RadiationWorldData.get(level).blockActivity.get(pos);
-            if (material != null) fluid.set(net.createplant.registry.CERadiation.MATERIAL.get(), material);
+            net.createplant.safety.RadiationHooks.get().stampWorldFluid(level, pos, fluid);
         }
         if (!holds.test(fluid)) return ItemStack.EMPTY;
         ItemStack bucket = CEWorldFluids.bucket(fluid);

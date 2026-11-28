@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import java.util.List;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -29,7 +30,7 @@ public final class CubicPressBlockEntity extends KineticBlockEntity {
         @Override public boolean isItemValid(int slot, ItemStack stack) {
             if (slot == 2) return false;
             if (slot == 1 && !returned.isEmpty()) return ItemStack.isSameItemSameComponents(stack, returned);
-            return level != null && level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CUBIC_PRESSING.<CubicPressRecipe.Input, CubicPressRecipe>getType())
+            return level != null && level.getRecipeManager().getAllRecipesFor(CEAtomicsRecipeTypes.CUBIC_PRESSING.<CubicPressRecipe.Input, CubicPressRecipe>getType())
                 .stream().anyMatch(holder -> holder.value().getIngredients().size() > slot && holder.value().getIngredients().get(slot).test(stack));
         }
         @Override protected int getStackLimit(int slot, ItemStack stack) {
@@ -102,7 +103,7 @@ public final class CubicPressBlockEntity extends KineticBlockEntity {
     }
     private void start() {
         var input = new CubicPressRecipe.Input(inventory.getStackInSlot(0), inventory.getStackInSlot(1));
-        var found = level.getRecipeManager().getRecipeFor(CERecipeTypes.CUBIC_PRESSING.<CubicPressRecipe.Input, CubicPressRecipe>getType(), input, level);
+        var found = level.getRecipeManager().getRecipeFor(CEAtomicsRecipeTypes.CUBIC_PRESSING.<CubicPressRecipe.Input, CubicPressRecipe>getType(), input, level);
         if (found.isEmpty()) { status = "materials";return; }
         var recipe = found.get().value();
         if (!recipe.getRequiredHeat().testBlazeBurner(BlazeBurnerBlock.HeatLevel.SEETHING) || recipe.getRollableResults().isEmpty()) { status = "materials";return; }

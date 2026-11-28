@@ -39,7 +39,7 @@ public class WorldLiquidOpenEndHandlerMixin {
                 ((WorldLiquidOpenEndAccess) this$0).createPlant$setPulling(false);
                 if (world instanceof ServerLevel server) {
                     var emitted = resource.copyWithAmount(accepted + held.getAmount());
-                    net.createplant.nuclear.RadiationContamination.spill(server, pos, emitted);
+                    net.createplant.safety.RadiationHooks.get().spill(server, pos, emitted);
                     GasClouds.release(server, pos, emitted);
                 }
             }

@@ -112,7 +112,7 @@ public class ThermalFluidTank extends SmartFluidTank {
             int level=FluidState.levelFor(fluid,kelvin,FluidState.pressure(fluid),FluidState.gas(fluid));
             if(level!=FluidState.temperature(fluid))FluidState.setTemperature(fluid,level);
             heat.set(fluid,kelvin,blend!=null ? blend.quality() : wasEmpty ? entryQuality : Double.NaN);
-            net.createplant.nuclear.RadiationSources.stamp(fluid);
+            net.createplant.safety.RadiationHooks.get().stamp(fluid);
             onContentsChanged();
         }
         return accepted;

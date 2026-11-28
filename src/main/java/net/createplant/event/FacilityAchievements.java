@@ -20,7 +20,7 @@ public final class FacilityAchievements {
     private record Facility(String id, Predicate<BlockEntity> built) { }
     private static final int RANGE = 24, CHUNKS = 2, PERIOD = 40;
     private static final String HUB = "hub", CRITERION = "built";
-    private static final List<Facility> ALL = List.of(
+    private static final List<Facility> ALL = new java.util.concurrent.CopyOnWriteArrayList<>(List.of(
         of("fractionating_column", FractionatingColumnBlockEntity.class, FractionatingColumnBlockEntity::ready),
         of("ammonia_separator", AmmoniaSeparatorBlockEntity.class, AmmoniaSeparatorBlockEntity::ready),
         of("high_pressure_separator", HighPressureSeparatorBlockEntity.class, separator -> separator.isController() && separator.complete()),
@@ -36,18 +36,13 @@ public final class FacilityAchievements {
         of("cold_box", CryogenicColdBoxBlockEntity.class, CryogenicColdBoxBlockEntity::formed),
         of("electrolysis_furnace", ElectrolysisFurnaceBlockEntity.class, ElectrolysisFurnaceBlockEntity::formed),
         of("electrolysis_cell", ElectrolysisControllerBlockEntity.class, ElectrolysisControllerBlockEntity::formed),
-        of("vitrification", FuelCycleMachineBlockEntity.class, FuelCycleMachineBlockEntity::formed),
-        of("fuel_pool", FuelPoolBlockEntity.class, FuelPoolBlockEntity::built),
-        of("fusion_reactor", FusionReactorControllerBlockEntity.class, FusionReactorControllerBlockEntity::formed),
         of("gasifier", GasifierBlockEntity.class, GasifierBlockEntity::formed),
         of("pressure_pump", HighPressurePumpBlockEntity.class, pump -> pump.drive() && pump.formed()),
-        of("converter", ConverterTrunnionBearingBlockEntity.class, ConverterTrunnionBearingBlockEntity::formed),
         of("clarifier", WetProcessBlockEntity.class, WetProcessBlockEntity::formed),
-        of("flare", FlareTipBlockEntity.class, FlareTipBlockEntity::formed),
-        of("crane", CraneDriveBlockEntity.class, CraneDriveBlockEntity::built),
-        of("quarry", QuarryDriveBlockEntity.class, QuarryDriveBlockEntity::built),
-        of("reactor_control_room", ReactorControlConsoleBlockEntity.class, ReactorControlConsoleBlockEntity::stationComplete));
+        of("flare", FlareTipBlockEntity.class, FlareTipBlockEntity::formed)));
     private FacilityAchievements() { }
+    /** Lets an addon add a facility whose advancement is facilities/<id>. */
+    public static <T extends BlockEntity> void register(String id, Class<T> type, Predicate<T> built) { ALL.add(of(id, type, built)); }
     private static <T extends BlockEntity> Facility of(String id, Class<T> type, Predicate<T> built) {
         return new Facility(id, be -> type.isInstance(be) && built.test(type.cast(be)));
     }

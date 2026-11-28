@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
@@ -287,7 +288,7 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
             @Override public ItemStack getItem(int slot) { return input.getStackInSlot(slot); }
             @Override public int size() { return 2; }
         };
-        var candidates = level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType())
+        var candidates = level.getRecipeManager().getAllRecipesFor(CEAtomicsRecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType())
             .stream().map(holder -> holder.value()).filter(r -> r.machine() == kind() && r.matches(stock, level)).toList();
         matchingRecipe = pick(candidates, stands, heat);
         if (matchingRecipe == null && !candidates.isEmpty())
@@ -309,7 +310,7 @@ public final class ContinuousFactoryBlockEntity extends KineticBlockEntity {
     /** The side port takes only what one of this machine's recipes uses as its second material, so a wrong item cannot jam it. */
     private boolean usedAsAuxiliary(ItemStack stack) {
         if (level == null) return false;
-        return level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType()).stream()
+        return level.getRecipeManager().getAllRecipesFor(CEAtomicsRecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType()).stream()
             .map(holder -> holder.value()).anyMatch(r -> r.machine() == kind() && r.auxiliary().isPresent() && r.auxiliary().get().ingredient().test(stack));
     }
 

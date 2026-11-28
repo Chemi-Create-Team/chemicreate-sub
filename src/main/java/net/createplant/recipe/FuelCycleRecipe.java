@@ -2,12 +2,12 @@ package net.createplant.recipe;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
-import net.createplant.registry.CERecipeTypes;
+import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 
 public class FuelCycleRecipe extends StandardProcessingRecipe<RecipeInput> {
-    public FuelCycleRecipe(CERecipeTypes type, ProcessingRecipeParams params) { super(type, params); }
+    public FuelCycleRecipe(IRecipeTypeInfo type, ProcessingRecipeParams params) { super(type, params); }
     @Override protected int getMaxInputCount() { return 8; }
     @Override protected int getMaxOutputCount() { return 1; }
     @Override protected int getMaxFluidInputCount() { return 2; }

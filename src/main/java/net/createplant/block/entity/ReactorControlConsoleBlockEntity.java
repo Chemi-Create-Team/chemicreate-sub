@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CEAtomicsDisplays;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -324,7 +325,7 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
                 continue;
             }
             endpoint = true;
-            if (link.activeSource != CEDisplays.MACHINE.get() || link.activeTarget != CEDisplays.REACTOR_CONSOLE.get()) continue;
+            if (link.activeSource != CEDisplays.MACHINE.get() || link.activeTarget != CEAtomicsDisplays.REACTOR_CONSOLE.get()) continue;
             BlockPos source = link.getSourcePosition();
             if (!level.hasChunkAt(source)) continue;
             FuelChannelBlockEntity lead = MachineReadings.reactorController(level.getBlockEntity(source));

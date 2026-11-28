@@ -1,4 +1,5 @@
 package net.createplant.gametest;
+import net.createplant.registry.CEAtomicsDisplays;
 
 import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidForm;
@@ -502,7 +503,7 @@ public class FusionGameTests {
         helper.getLevel().setBlock(pos, AllBlocks.DISPLAY_LINK.getDefaultState().setValue(DisplayLinkBlock.FACING, facing), 3);
         var link = (DisplayLinkBlockEntity) helper.getLevel().getBlockEntity(pos);
         link.activeSource = CEDisplays.MACHINE.get();
-        link.activeTarget = CEDisplays.FUSION_CONSOLE.get();
+        link.activeTarget = CEAtomicsDisplays.FUSION_CONSOLE.get();
         link.getSourceConfig().putInt("Metric", MachineReadings.KEYS.indexOf("fusion_power"));
         link.target(target);
         link.updateGatheredData();
@@ -537,7 +538,7 @@ public class FusionGameTests {
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM, new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
         controller.blanketPort().insertItem(0, new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()), false);
         controller.blanketPort().insertItem(1, new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()), false);
-        String first = net.createplant.relay.RelayComputerBlockEntity.fusionStep(controller, 50);
+        String first = net.createplant.relay.FusionRelayTarget.fusionStep(controller, 50);
         helper.assertTrue(first.equals("fusion_vacuum") && controller.vacuumCommand() && !controller.plasmaCommand(),
             "A cold reactor is pumped down first, with the plasma held off: " + first);
         String status = first;
@@ -551,7 +552,7 @@ public class FusionGameTests {
             controller.port(net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_OUT).drain(FusionReactorControllerBlockEntity.COOLANT_CAPACITY, FluidAction.EXECUTE);
             controller.tick();
             if (tick % net.createplant.relay.RelayComputerBlockEntity.PERIOD == 0) {
-                status = net.createplant.relay.RelayComputerBlockEntity.fusionStep(controller, 50);
+                status = net.createplant.relay.FusionRelayTarget.fusionStep(controller, 50);
                 if (!seen.getLast().equals(status)) seen.add(status);
             }
         }

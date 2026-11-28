@@ -1,4 +1,5 @@
 package net.createplant.gametest;
+import net.createplant.registry.CEAtomicsDisplays;
 
 import net.createplant.registry.CEProtectiveClothing;
 import net.createplant.thermal.FluidForm;
@@ -89,7 +90,7 @@ public class RbmkGameTests {
         h.setBlock(pos, AllBlocks.DISPLAY_LINK.getDefaultState().setValue(DisplayLinkBlock.FACING, facing));
         var link = (DisplayLinkBlockEntity) h.getBlockEntity(pos);
         link.activeSource = CEDisplays.MACHINE.get();
-        link.activeTarget = CEDisplays.REACTOR_CONSOLE.get();
+        link.activeTarget = CEAtomicsDisplays.REACTOR_CONSOLE.get();
         link.getSourceConfig().putInt("Metric", MachineReadings.KEYS.indexOf(metric));
         link.target(target);
         link.updateGatheredData();

@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CELogisticsRecipeTypes;
 
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -42,7 +43,7 @@ public class IndustrialDispatchBlockEntity extends SmartBlockEntity implements I
     public ThermalFluidTank cargo() { return cargo; }
     public ItemStackHandler rewards() { return reward; }
     public List<RecipeHolder<IndustrialDeliveryRecipe>> orders() {
-        return level == null ? List.of() : level.getRecipeManager().getAllRecipesFor(CERecipeTypes.INDUSTRIAL_DELIVERY.<RecipeInput, IndustrialDeliveryRecipe>getType()).stream()
+        return level == null ? List.of() : level.getRecipeManager().getAllRecipesFor(CELogisticsRecipeTypes.INDUSTRIAL_DELIVERY.<RecipeInput, IndustrialDeliveryRecipe>getType()).stream()
             .sorted(java.util.Comparator.comparing(holder -> holder.id().toString())).toList();
     }
     public RecipeHolder<IndustrialDeliveryRecipe> order() {

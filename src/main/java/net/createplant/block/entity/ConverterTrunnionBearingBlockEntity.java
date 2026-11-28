@@ -1,4 +1,5 @@
 package net.createplant.block.entity;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import net.createplant.thermal.FluidForm;
 import java.util.List;
@@ -422,7 +423,7 @@ public class ConverterTrunnionBearingBlockEntity extends MechanicalBearingBlockE
 
     private List<RecipeHolder<ConverterRecipe>> recipes() {
         if (level == null) return List.of();
-        return level.getRecipeManager().getAllRecipesFor(CERecipeTypes.CONVERTER.<RecipeInput, ConverterRecipe>getType());
+        return level.getRecipeManager().getAllRecipesFor(CEAtomicsRecipeTypes.CONVERTER.<RecipeInput, ConverterRecipe>getType());
     }
 
     private RecipeHolder<ConverterRecipe> active() {

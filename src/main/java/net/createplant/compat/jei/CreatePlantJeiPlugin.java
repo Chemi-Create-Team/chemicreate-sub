@@ -1,4 +1,6 @@
 package net.createplant.compat.jei;
+import net.createplant.registry.CELogisticsRecipeTypes;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import net.createplant.registry.CEIsotopeGases;
 import net.createplant.registry.CESharedChemicals;
@@ -156,14 +158,14 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         var world = Minecraft.getInstance().level;
         if (world != null) for (var kind : FactoryKind.values()) {
             registration.addRecipes(type(kind.id), world.getRecipeManager()
-                .getAllRecipesFor(CERecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType()).stream()
+                .getAllRecipesFor(CEAtomicsRecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType()).stream()
                 .filter(holder -> holder.value().machine() == kind)
                 .sorted(java.util.Comparator.comparing((RecipeHolder<ContinuousFactoryRecipe> holder) -> holder.value().minimumDamage() > 0)
                     .thenComparing(holder -> holder.id().getPath()))
                 .map(holder -> continuous(holder.value())).toList());
         }
         if (world != null) registration.addRecipes(type("large_pressing"), world.getRecipeManager()
-            .getAllRecipesFor(CERecipeTypes.LARGE_PRESSING.<SingleRecipeInput, LargePressingRecipe>getType()).stream().map(holder -> {
+            .getAllRecipesFor(CEAtomicsRecipeTypes.LARGE_PRESSING.<SingleRecipeInput, LargePressingRecipe>getType()).stream().map(holder -> {
                 var recipe = holder.value();
                 return new PlantProcess(List.of(Arrays.asList(recipe.ingredient().getItems())), List.of(), List.of(),
                     List.of(recipe.result().copy()), List.of(), note("large_pressing"));
@@ -197,7 +199,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             registration.addRecipes(type("cell_electrolysis"), ElectrolysisProcess.all().stream().filter(ElectrolysisProcess::electrowinning).map(recipe -> new PlantProcess(List.of(), List.of(f(recipe.feed(), recipe.input())), List.of(), List.of(new ItemStack(recipe.metal(), recipe.metalAmount())), List.of(f(recipe.recovered(), recipe.recoveredAmount())), note("electrowinning", Math.round(recipe.cycleWork() / 1000)))).toList());
         }
         if (Minecraft.getInstance().level != null) registration.addRecipes(type("cubic_pressing"), Minecraft.getInstance().level.getRecipeManager()
-            .getAllRecipesFor(CERecipeTypes.CUBIC_PRESSING.<net.createplant.recipe.CubicPressRecipe.Input, net.createplant.recipe.CubicPressRecipe>getType()).stream().map(holder -> {
+            .getAllRecipesFor(CEAtomicsRecipeTypes.CUBIC_PRESSING.<net.createplant.recipe.CubicPressRecipe.Input, net.createplant.recipe.CubicPressRecipe>getType()).stream().map(holder -> {
                 var recipe = holder.value();
                 return new PlantProcess(recipe.getIngredients().stream().map(ingredient -> Arrays.asList(ingredient.getItems())).toList(), List.of(), List.of(),
                     recipe.getRollableResultsAsItemStacks(), List.of(), note("cubic_pressing", recipe.getProcessingDuration(), Math.round(recipe.getRollableResults().size() > 1 ? recipe.getRollableResults().get(1).getChance() * 100 : 0)));
@@ -263,8 +265,8 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         }).toList());
         registration.addRecipes(type("haber_bosch"), PlantProcess.ammoniaSynthesis());
         registration.addRecipes(type("converter"), ordinaryRoutesFirst(converterReactions()));
-        registration.addRecipes(type("solvent_extraction"), ordinaryRoutesFirst(fuelCycleReactions(CERecipeTypes.SOLVENT_EXTRACTION)));
-        registration.addRecipes(type("vitrification"), ordinaryRoutesFirst(fuelCycleReactions(CERecipeTypes.VITRIFICATION)));
+        registration.addRecipes(type("solvent_extraction"), ordinaryRoutesFirst(fuelCycleReactions(CEAtomicsRecipeTypes.SOLVENT_EXTRACTION)));
+        registration.addRecipes(type("vitrification"), ordinaryRoutesFirst(fuelCycleReactions(CEAtomicsRecipeTypes.VITRIFICATION)));
         registration.addRecipes(type("industrial_delivery"), deliveries());
         var liquefaction=new ArrayList<PlantProcess>();
         for(var gas:List.of(CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEIsotopeGases.HELIUM_GAS.get())){
@@ -396,7 +398,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         }).toList();
     }
 
-    private static List<PlantProcess> fuelCycleReactions(CERecipeTypes type) {
+    private static List<PlantProcess> fuelCycleReactions(com.simibubi.create.foundation.recipe.IRecipeTypeInfo type) {
         var level = Minecraft.getInstance().level;
         if (level == null) return List.of();
         return level.getRecipeManager().getAllRecipesFor(type.<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.FuelCycleRecipe>getType()).stream().map(holder -> {
@@ -408,7 +410,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
     }
     private static List<PlantProcess> deliveries() {
         var level = Minecraft.getInstance().level;if (level == null) return List.of();
-        return level.getRecipeManager().getAllRecipesFor(CERecipeTypes.INDUSTRIAL_DELIVERY.<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.IndustrialDeliveryRecipe>getType()).stream().map(holder -> {
+        return level.getRecipeManager().getAllRecipesFor(CELogisticsRecipeTypes.INDUSTRIAL_DELIVERY.<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.IndustrialDeliveryRecipe>getType()).stream().map(holder -> {
             var recipe = holder.value();var inputs = new java.util.LinkedHashMap<String, List<ItemStack>>();
             for (var ingredient : recipe.getIngredients()) {
                 var options = Arrays.asList(ingredient.getItems());
@@ -427,7 +429,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         var level = Minecraft.getInstance().level;
         if (level == null) return list;
         for (RecipeHolder<ConverterRecipe> holder : level.getRecipeManager().getAllRecipesFor(
-            CERecipeTypes.CONVERTER.<net.minecraft.world.item.crafting.RecipeInput, ConverterRecipe>getType())) {
+            CEAtomicsRecipeTypes.CONVERTER.<net.minecraft.world.item.crafting.RecipeInput, ConverterRecipe>getType())) {
             ConverterRecipe recipe = holder.value();
             if (recipe.legacy()) continue;
             List<List<ItemStack>> items = recipe.itemIngredients().stream()

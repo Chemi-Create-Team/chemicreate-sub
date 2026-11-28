@@ -1,4 +1,5 @@
 package net.createplant.recipe;
+import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -57,8 +58,8 @@ public record ContinuousFactoryRecipe(FactoryKind machine, SizedIngredient feed,
     @Override public ItemStack getResultItem(HolderLookup.Provider lookup) { return result; }
     @Override public boolean isSpecial() { return true; }
     @Override public boolean canCraftInDimensions(int width, int height) { return false; }
-    @Override public RecipeSerializer<?> getSerializer() { return CERecipeTypes.CONTINUOUS_PROCESSING.getSerializer(); }
-    @Override public RecipeType<?> getType() { return CERecipeTypes.CONTINUOUS_PROCESSING.getType(); }
+    @Override public RecipeSerializer<?> getSerializer() { return CEAtomicsRecipeTypes.CONTINUOUS_PROCESSING.getSerializer(); }
+    @Override public RecipeType<?> getType() { return CEAtomicsRecipeTypes.CONTINUOUS_PROCESSING.getType(); }
 
     public static final class Serializer implements RecipeSerializer<ContinuousFactoryRecipe> {
         @Override public MapCodec<ContinuousFactoryRecipe> codec() { return CODEC; }

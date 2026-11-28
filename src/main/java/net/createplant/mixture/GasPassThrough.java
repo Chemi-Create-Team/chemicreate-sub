@@ -20,18 +20,22 @@ public final class GasPassThrough extends BlockEntityBehaviour {
 
     public static GasPassThrough of(BlockEntity machine) { return machine == null ? null : get(machine, TYPE); }
 
+    private static final java.util.List<java.util.function.Supplier<net.minecraft.world.level.block.entity.BlockEntityType<? extends SmartBlockEntity>>> ADDON = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /** Addon machines that take a mixed gas feed. */
+    public static void register(java.util.function.Supplier<? extends net.minecraft.world.level.block.entity.BlockEntityType<? extends SmartBlockEntity>> type) { ADDON.add(type::get); }
+
     /** Every machine that takes a mixed gas feed and has a gas outlet for what it does not use, on the block that owns the process. */
     public static void attach(com.simibubi.create.api.event.BlockEntityBehaviourEvent event) {
-        for (var type : java.util.List.<net.minecraft.world.level.block.entity.BlockEntityType<? extends SmartBlockEntity>>of(
+        for (var type : java.util.stream.Stream.concat(java.util.stream.Stream.<net.minecraft.world.level.block.entity.BlockEntityType<? extends SmartBlockEntity>>of(
                 net.createplant.registry.CEReactor.ENTITY.get(), net.createplant.registry.CEReactor.ABSORPTION_ENTITY.get(),
                 net.createplant.registry.CETransport.LIDDED_VESSEL_ENTITY.get(), net.createplant.registry.CETransport.STIRRED_TANK_ENTITY.get(), net.createplant.registry.CETransport.REACTION_TOWER_ENTITY.get(),
                 net.createplant.registry.CETransport.AMMONIA_SEPARATOR_ENTITY.get(), net.createplant.registry.CEDistillation.COLUMN_ENTITY.get(),
-                net.createplant.registry.CEConverter.TRUNNION_ENTITY.get(), net.createplant.registry.CEElectrolysis.CONTROLLER_ENTITY.get(),
-                net.createplant.registry.CEFuelCell.FUEL_CELL_ENTITY.get(), net.createplant.registry.CEFusion.CONTROLLER_ENTITY.get(),
-                CEIsotopeGases.COLD_BOX_ENTITY.get(), net.createplant.registry.CECompressor.RELIEF_SCRUBBER_ENTITY.get(),
+                net.createplant.registry.CEElectrolysis.CONTROLLER_ENTITY.get(),
+                net.createplant.registry.CEFuelCell.FUEL_CELL_ENTITY.get(), CEIsotopeGases.COLD_BOX_ENTITY.get(), net.createplant.registry.CECompressor.RELIEF_SCRUBBER_ENTITY.get(),
                 net.createplant.registry.CEProcessBlocks.COOLER_RADIATOR_DRIVE.get(),
-                net.createplant.registry.CEGasifier.PART.get(), net.createplant.registry.CEFuelCycle.MACHINE_ENTITY.get(),
-                net.createplant.registry.CEWetProcessing.DRIVE_ENTITY.get(), net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get()))
+                net.createplant.registry.CEGasifier.PART.get(),net.createplant.registry.CEWetProcessing.DRIVE_ENTITY.get()),
+                ADDON.stream().map(java.util.function.Supplier::get)).toList())
             event.forType(type, machine -> event.attach(new GasPassThrough(machine)));
     }
 

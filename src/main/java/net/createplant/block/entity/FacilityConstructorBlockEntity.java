@@ -9,7 +9,6 @@ import net.createplant.assembly.AssemblyPlan;
 import net.createplant.assembly.AssemblySchematic;
 import net.createplant.block.FacilityConstructorBlock;
 import net.createplant.inventory.FacilityConstructorMenu;
-import net.createplant.nuclear.ReactorCoreVariants;
 import net.createplant.registry.CEAssembly;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -42,7 +41,7 @@ public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
     public AssemblyPlan.Kind kind() { return kind; }
     public int sizeIndex() { return sizeIndex(kind); }
     public int sizeIndex(AssemblyPlan.Kind selection) { return sizeIndices[selection.ordinal()]; }
-    public int coreSize() { return ReactorCoreVariants.RECOMMENDED_DIAMETERS.get(sizeIndices[0]); }
+    public int coreSize() { return AssemblyPlan.sizes(AssemblyPlan.Kind.RBMK).get(sizeIndices[0]); }
     public int heightIndex() { return switch (kind) { case CLARIFIER -> clarifierHeightIndex; case CASING_TANK -> casingTankHeightIndex; default -> heightIndex; }; }
     public int planHeight() { return kind.heights().get(heightIndex()); }
     public int coreHeight() { return AssemblyPlan.CORE_HEIGHTS.get(heightIndex); }

@@ -76,12 +76,20 @@ public enum TankGrade {
         return corrosion==FluidHazards.Corrosion.NONE || resistance.contains(corrosion) ? FluidHazards.Corrosion.NONE : corrosion;
     }
 
+    private record Addon(Class<?> owner, java.util.function.Supplier<? extends Block> block, TankGrade grade) { }
+    private static final java.util.List<Addon> ADDON = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /** Lets an addon give its own tank block and block entity a grade. */
+    public static void register(Class<?> owner, java.util.function.Supplier<? extends Block> block, TankGrade grade) {
+        ADDON.add(new Addon(owner, block, grade));
+    }
+
     public static TankGrade of(com.simibubi.create.foundation.blockEntity.SmartBlockEntity owner) {
         if (owner instanceof AmmoniaSeparatorBlockEntity) return null;
         if (owner instanceof GasHolderBlockEntity) return HOLDER;
         if (owner instanceof HighPressureSeparatorBlockEntity) return SEPARATOR;
         if (owner instanceof GasTankContainerBlockEntity) return GAS;
-        if (owner instanceof net.createplant.block.entity.TorpedoTankBlockEntity) return REFRACTORY;
+        for (var addon : ADDON) if (addon.owner.isInstance(owner)) return addon.grade;
         if (owner instanceof HorizontalTankBlockEntity) return LIQUID;
         if (!(owner instanceof FluidTankBlockEntity)) return null;
         var grade=of(owner.getBlockState().getBlock());
@@ -90,7 +98,7 @@ public enum TankGrade {
 
     /** The grade of a tank block, for its item as well as the placed tank; null for any other block. */
     public static TankGrade of(Block block) {
-        if (block == net.createplant.registry.CEConverter.TORPEDO_TANK.get()) return REFRACTORY;
+        for (var addon : ADDON) if (block == addon.block.get()) return addon.grade;
         if (block==com.simibubi.create.AllBlocks.FLUID_TANK.get() || block==CETransport.HORIZONTAL_FLUID_TANK.get()) return LIQUID;
         if (block==CETransport.GAS_RECEIVER.get() || block==CETransport.GAS_TANK_CONTAINER.get()) return GAS;
         if (block==CETransport.HIGH_PRESSURE_SEPARATOR.get()) return SEPARATOR;
