@@ -169,9 +169,6 @@ class Mesh:
             'loader': 'neoforge:obj', 'model': MOD + 'models/' + FOLDER + name + '.obj', 'automatic_culling': False, 'flip_v': True})
 
 
-FLANGE_NECK = .88
-
-
 def octagonal_head(mesh, centre, radial, start, depth, radius):
     def point(distance):
         return centre(start + depth * distance)
@@ -180,45 +177,41 @@ def octagonal_head(mesh, centre, radial, start, depth, radius):
         mesh.tube([(point(distance), radius * size) for distance, size in profile],
                   radial, material, sides=8, caps=(False, cap))
 
-    section(((0, FLANGE_NECK), (.10, FLANGE_NECK)), 'cast')
-    section(((.10, FLANGE_NECK), (.18, 1), (.38, 1), (.48, .92), (.48, .62)), 'satin')
-    section(((.48, .62), (.57, .59), (.57, .49), (.50, .46), (.50, .345)), 'steel')
-    section(((.50, .345), (.63, .345), (.74, .25), (.91, .25), (1, .20), (1, .12)), 'satin')
-    section(((1, .12), (.88, .12)), 'cast', cap=True)
+    section(((0, .88), (.10, .88)), 'cast')
+    section(((.10, .88), (.18, 1), (.38, 1), (.48, .93), (.48, .61)), 'painted')
+    section(((.48, .61), (.59, .58), (.59, .45)), 'satin', cap=True)
+    mesh.tube([(point(distance), r) for distance, r in
+        ((.57, 1.85), (.68, 1.85), (.75, 1.45), (.95, 1.45), (1, 1.25), (1, .83), (.9, .83))],
+        radial, 'satin', caps=(False, False))
+    mesh.tube([(point(.9), .83), (point(.9), .55)], radial, 'cast', caps=(False, True))
     for bolt in range(8):
         angle = math.tau * (bolt + .5) / 8
-        a, b = .77 * radius * math.cos(angle), .77 * radius * math.sin(angle)
-        mesh.tube([(radial(point(distance), a, b), .105 * radius) for distance in (.46, .66)],
-                  radial, 'cast', sides=6, caps=(False, True))
+        a, b = .79 * radius * math.cos(angle), .79 * radius * math.sin(angle)
+        mesh.tube([(radial(point(distance), a, b), r * radius) for distance, r in
+            ((.46, .092), (.58, .092), (.625, .074))], radial, 'satin', sides=6, caps=(False, True))
 
 
 def industrial_cylinder():
     barrel = Mesh(planar_uv=True)
     centre = lambda x: (x, 8, 8)
     radial_x = lambda c, a, b: (c[0], c[1] + a, c[2] + b)
-    flange = 5.2
-    barrel.tube([(centre(x), r) for x, r in ((0, 4.5), (1, 5.4), (2.3, 5.4), (4.25, 5.85),
-        (8.75, 5.65), (11.55, flange * FLANGE_NECK))], radial_x, 'painted', sides=8, caps=(True, False))
-    octagonal_head(barrel, centre, radial_x, 11.55, 4.45, flange)
+    # Axial position, core radius, upper and lower lobe rise on the same casting.
+    profiles = ((0, 4.5, 0, 0), (1, 5.35, 0, 0), (2.55, 5.65, 0, 0),
+                (4.1, 5.55, .65, .4), (6.35, 5.5, 2.35, 1.65), (8.35, 5.5, 3.65, 3.1),
+                (10.1, 5.5, 3.4, 3.7), (11.55, 5.55, 2.2, 3.0), (12.4, 5.55, .85, 1.55),
+                (13.05, 5.35, 0, 0))
+    lobe_rise = {x: (upper, lower) for x, _, upper, lower in profiles}
 
-    tilt = math.radians(26)
-    forward, outward = math.cos(tilt), math.sin(tilt)
-    for quadrant in range(4):
-        angle = math.tau * (quadrant + .5) / 4
-        y, z = math.cos(angle), math.sin(angle)
+    def casting_radial(c, y, z):
+        angle = math.atan2(abs(z), y)
+        upper, lower = lobe_rise[c[0]]
+        rise = upper if y > 0 else lower
+        scale = 1 + rise * math.sin(2 * angle)**2 / math.hypot(y, z)
+        return radial_x(c, y * scale, z * scale)
 
-        def chamber_centre(distance):
-            offset = 3.05 + distance * outward
-            return 4.25 + distance * forward, 8 + offset * y, 8 + offset * z
-
-        def chamber_radial(c, a, b):
-            return c[0] - a * outward, c[1] + a * forward * y - b * z, c[2] + a * forward * z + b * y
-
-        flange = 2.8
-        barrel.tube([(chamber_centre(distance), radius) for distance, radius in
-            ((0, 2), (2.25, 2.6), (3.6, 3.38), (5.45, 3.68), (6.78, 3.52), (8.6, flange * FLANGE_NECK))],
-            chamber_radial, 'painted', sides=8, caps=(False, False))
-        octagonal_head(barrel, chamber_centre, chamber_radial, 8.6, 1.87, flange)
+    barrel.tube([(centre(x), radius) for x, radius, _, _ in profiles],
+                casting_radial, 'painted', sides=24, caps=(True, True))
+    octagonal_head(barrel, centre, radial_x, 11.9, 4.1, 6.5)
     barrel.save('industrial_cylinder')
 
 
