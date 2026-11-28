@@ -8,8 +8,7 @@
     "steel": "create_refinery_n_reactors:block/gas_compressor/steel",
     "base": "create_refinery_n_reactors:block/gas_compressor/base",
     "particle": "create_refinery_n_reactors:block/gas_compressor/painted",
-    "cooling_rib": "create_refinery_n_reactors:block/gas_compressor/cooling_rib",
-    "concrete": "create_refinery_n_reactors:block/gas_compressor/concrete"
+    "cooling_rib": "create_refinery_n_reactors:block/gas_compressor/cooling_rib"
   },
   "elements": [
     {

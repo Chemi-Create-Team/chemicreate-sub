@@ -33,7 +33,7 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
     private static final PartialModel OPPOSED_CRANK = part("opposed_crank"), OPPOSED_ROD = part("opposed_rod"),
         CROSSHEAD = part("opposed_crosshead"), PISTON_ROD = part("opposed_piston_rod"),
         OPPOSED_PISTON = part("opposed_piston"), GUIDE = part("opposed_guide");
-    private static final PartialModel CYLINDER = part("industrial_cylinder"), BED = part("industrial_bed"), INSTRUMENTS = part("industrial_instruments"),
+    private static final PartialModel CYLINDER = part("industrial_cylinder"), INSTRUMENTS = part("industrial_instruments"),
         FLYWHEEL = part("industrial_flywheel_cover"), MOTOR = part("industrial_motor");
     private static final double CRANK_RADIUS = .25, ROD_LENGTH = 1.5;
     private static final double OPPOSED_THROW = 2.5 / 16, OPPOSED_ROD_LENGTH = 12 / 16d;
@@ -137,8 +137,9 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
             int sign = side == 0 ? -1 : 1;
             int guideLight = LevelRenderer.getLightColor(level, gap), pistonLight = LevelRenderer.getLightColor(level, cylinder);
             renderSide(state, pose, vertices, angle, sign, guideLight, pistonLight);
-            CachedBuffers.partial(CYLINDER, state).translate(sign * 2, 0, 0).light(pistonLight).renderInto(pose, vertices);
-            if (bank) CachedBuffers.partial(BED, state).translate(sign, 0, 0).light(guideLight).renderInto(pose, vertices);
+            var barrel = CachedBuffers.partial(CYLINDER, state).translate(sign * 2, 0, 0);
+            if (sign < 0) barrel.center().rotateY(Mth.PI).uncenter();
+            barrel.light(pistonLight).renderInto(pose, vertices);
         }
         pose.popPose();
     }
