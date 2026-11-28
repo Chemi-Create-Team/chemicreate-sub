@@ -222,6 +222,47 @@ public class ReciprocatingCompressorGameTests {
         });
     }
 
+    @GameTest(template = "test_fractionation", timeoutTicks = 120)
+    public static void threeRowsDriveSixCylindersAndShareOneShaft(GameTestHelper h) {
+        var level = h.getLevel();
+        var state = CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.OPPOSED, true);
+        var rows = new ReciprocatingCompressorBlockEntity[3];
+        var cylinders = new ReciprocatingCylinderBlockEntity[6];
+        for (int row = 0; row < rows.length; row++) {
+            var pos = BASE.south(row);
+            h.setBlock(pos, state);
+            rows[row] = (ReciprocatingCompressorBlockEntity) h.getBlockEntity(pos);
+            cylinders[row * 2] = placedCylinder(h, pos.west(2));
+            cylinders[row * 2 + 1] = placedCylinder(h, pos.east(2));
+        }
+        for (var cylinder : cylinders) cylinder.inlet().fill(gas(1000), FluidAction.EXECUTE);
+        h.setBlock(BASE.south(3), AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Z));
+        h.setBlock(BASE.south(4), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.NORTH));
+        ((CreativeMotorBlockEntity) h.getBlockEntity(BASE.south(4))).generatedSpeed.setValue(64);
+        h.runAfterDelay(25, () -> {
+            var shaft = (ReciprocatingShaftBlockEntity) h.getBlockEntity(BASE.south(3));
+            double work = 0;
+            for (var row : rows) {
+                h.assertTrue(row.driveShaft() == shaft && row.work() > 0, "Each row takes power from the rear shaft");
+                work += row.work();
+            }
+            h.assertTrue(Math.abs(shaft.calculateStressApplied() - work * 20 / Math.abs(shaft.getSpeed())) < .01, "The shaft bears the sum of the three rows' stress");
+            for (var cylinder : cylinders)
+                h.assertTrue(FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(cylinder.outlet().getFluid())
+                    && cylinder.inlet().getFluidAmount() + cylinder.outlet().getFluidAmount() == 1000, "All six cylinders compress and conserve gas");
+            level.destroyBlock(h.absolutePos(BASE.south()), false);
+            int frontAmount = cylinders[0].outlet().getFluidAmount(), rearAmount = cylinders[4].outlet().getFluidAmount();
+            h.runAfterDelay(30, () -> {
+                h.assertTrue(rows[0].driveShaft() == null && cylinders[0].outlet().getFluidAmount() == frontAmount,
+                    "A break in the line stops the isolated front row");
+                h.assertTrue(rows[2].driveShaft() == shaft && cylinders[4].outlet().getFluidAmount() > rearAmount
+                    && Math.abs(shaft.calculateStressApplied() - rows[2].work() * 20 / Math.abs(shaft.getSpeed())) < .01,
+                    "The rear row continues and stale load is cleared");
+                h.succeed();
+            });
+        });
+    }
+
     private static ReciprocatingCylinderBlockEntity placedCylinder(GameTestHelper h, BlockPos pos) {
         h.setBlock(pos, CEReciprocating.CYLINDER.get().defaultBlockState());
         return (ReciprocatingCylinderBlockEntity) h.getBlockEntity(pos);

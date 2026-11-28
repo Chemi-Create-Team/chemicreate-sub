@@ -74,9 +74,23 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         return null;
     }
 
-    private ReciprocatingShaftBlockEntity shaft() {
-        BlockPos pos = shaftPos();
-        return level.isLoaded(pos) && level.getBlockEntity(pos) instanceof ReciprocatingShaftBlockEntity be && worldPosition.equals(be.engine()) ? be : null;
+    public ReciprocatingShaftBlockEntity driveShaft() { return driveShaft(getBlockState()); }
+
+    private ReciprocatingShaftBlockEntity driveShaft(BlockState state) {
+        BlockPos input = ReciprocatingCompressorBlock.shaftPos(state, worldPosition);
+        if (!level.isLoaded(input)) return null;
+        BlockPos owner = worldPosition;
+        if (state.getValue(ReciprocatingCompressorBlock.OPPOSED)) {
+            Direction rear = state.getValue(ReciprocatingCompressorBlock.FACING).getOpposite();
+            for (int row = 1; row < ReciprocatingCompressorBlock.MAX_ROWS
+                && ReciprocatingCompressorBlock.sameLine(state, level.getBlockState(input)); row++) {
+                owner = input;
+                input = input.relative(rear);
+                if (!level.isLoaded(input)) return null;
+            }
+        }
+        return level.getBlockEntity(input) instanceof ReciprocatingShaftBlockEntity shaft
+            && (level.isClientSide || owner.equals(shaft.engine())) ? shaft : null;
     }
 
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
@@ -93,13 +107,11 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
     }
 
     public void releaseShaft(BlockState engine) {
-        BlockPos pos = ReciprocatingCompressorBlock.shaftPos(engine, worldPosition);
-        if (!level.isLoaded(pos)) return;
-        BlockState shaft = level.getBlockState(pos);
-        if (shaft.getBlock() instanceof ReciprocatingShaftBlock && level.getBlockEntity(pos) instanceof ReciprocatingShaftBlockEntity be && worldPosition.equals(be.engine())) {
-            be.setLoad(0);
-            level.setBlock(pos, ReciprocatingShaftBlock.released(shaft), Block.UPDATE_ALL);
-        }
+        var shaft = driveShaft(engine);
+        if (shaft == null) return;
+        shaft.setLoad(worldPosition, 0);
+        if (worldPosition.equals(shaft.engine()))
+            level.setBlock(shaft.getBlockPos(), ReciprocatingShaftBlock.released(shaft.getBlockState()), Block.UPDATE_ALL);
     }
 
     @Override public void lazyTick() {
@@ -124,7 +136,7 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         status = reason;
         ProductionMonitor.limitedBy(this, reason.equals("no_cylinder") || reason.equals("no_shaft") ? "structure" : reason);
         load = 0;
-        if (shaft != null) shaft.setLoad(0);
+        if (shaft != null) shaft.setLoad(worldPosition, 0);
     }
 
     private void step() {
@@ -134,7 +146,7 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         var right = opposed() ? claimCylinder(1) : null;
         int sides = (left == null ? 0 : 1) | (right == null ? 0 : 2);
         if (connectedSides != sides) { connectedSides = sides;dirty = true; }
-        ReciprocatingShaftBlockEntity shaft = shaft();
+        ReciprocatingShaftBlockEntity shaft = driveShaft();
         if (sides == 0) { idle("no_cylinder", shaft);return; }
         if (shaft == null) { idle("no_shaft", null);return; }
         int side = left == null ? 1 : 0;
@@ -175,7 +187,7 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
         int n=batches*change.consumed();
         if(n<=0){idle("output",shaft);return;}
         load=n*perMb*20/Math.max(1,rpm);
-        shaft.setLoad((float)load);
+        shaft.setLoad(worldPosition, (float)load);
         if(shaft.isOverStressed()){status="power";ProductionMonitor.limitedBy(this, status);return;}
         pressureCredit[side]-=n;
         // Compression changes the pressure level only: the gas leaves at the real temperature it came in at.
@@ -194,8 +206,11 @@ public class ReciprocatingCompressorBlockEntity extends SmartBlockEntity impleme
     @Override protected AABB createRenderBoundingBox() {
         if (opposed()) {
             var state = getBlockState();
+            Direction front = state.getValue(ReciprocatingCompressorBlock.FACING);
             return AABB.encapsulatingFullBlocks(worldPosition.relative(ReciprocatingCompressorBlock.cylinderSide(state, 0), 2),
-                worldPosition.relative(ReciprocatingCompressorBlock.cylinderSide(state, 1), 2));
+                worldPosition.relative(ReciprocatingCompressorBlock.cylinderSide(state, 1), 2))
+                .inflate(front.getAxis() == Direction.Axis.X ? 2 : .25, 0, front.getAxis() == Direction.Axis.Z ? 2 : .25)
+                .expandTowards(0, 2.25, 0);
         }
         return AABB.encapsulatingFullBlocks(worldPosition.relative(ReciprocatingCompressorBlock.crankDirection(getBlockState()).getOpposite()), shaftPos()).inflate(.25);
     }

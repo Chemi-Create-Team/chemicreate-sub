@@ -63,16 +63,18 @@ final class ReciprocatingClientCheck {
     }
 
     private static void opposed(ServerLevel level) {
-        for (int x = -3; x <= 3; x++) for (int z = -1; z <= 3; z++)
+        for (int x = -4; x <= 4; x++) for (int z = -3; z <= 5; z++)
             level.setBlock(origin.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState(), 3);
-        var state = CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.OPPOSED, true)
-            .setValue(ReciprocatingCompressorBlock.WINDOW, true);
-        level.setBlock(origin, state, 3);
-        for (var side : new Direction[]{Direction.WEST, Direction.EAST})
-            level.setBlock(origin.relative(side, 2), CEReciprocating.CYLINDER.get().defaultBlockState(), 3);
-        level.setBlock(origin.south(), AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Z), 3);
-        level.setBlock(origin.south(2), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.NORTH), 3);
-        ((CreativeMotorBlockEntity) level.getBlockEntity(origin.south(2))).generatedSpeed.setValue(32);
+        var state = CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.OPPOSED, true);
+        for (int row = 0; row < 3; row++) {
+            var drive = origin.south(row);
+            level.setBlock(drive, state.setValue(ReciprocatingCompressorBlock.WINDOW, row == 1), 3);
+            level.setBlock(drive.west(2), CEReciprocating.CYLINDER.get().defaultBlockState(), 3);
+            level.setBlock(drive.east(2), CEReciprocating.CYLINDER.get().defaultBlockState(), 3);
+        }
+        level.setBlock(origin.south(3), AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Z), 3);
+        level.setBlock(origin.south(4), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.NORTH), 3);
+        ((CreativeMotorBlockEntity) level.getBlockEntity(origin.south(4))).generatedSpeed.setValue(32);
         level.setDayTime(6000);
     }
 
@@ -83,14 +85,22 @@ final class ReciprocatingClientCheck {
         int hold=Integer.getInteger("createplant.reciprocatingClientHold",0);
         if (OPPOSED) {
             if (ticks == 65) {
-                if (!(mc.level.getBlockEntity(origin) instanceof ReciprocatingCompressorBlockEntity drive) || drive.connectedSides() != 3
-                    || !(mc.level.getBlockEntity(origin.south()) instanceof ReciprocatingShaftBlockEntity shaft) || shaft.getSpeed() == 0)
-                    throw new IllegalStateException("The opposed compressor did not sync both cylinders and a moving shaft");
+                if (!(mc.level.getBlockEntity(origin.south(3)) instanceof ReciprocatingShaftBlockEntity shaft) || shaft.getSpeed() == 0)
+                    throw new IllegalStateException("The opposed compressor did not sync a moving shaft");
+                for (int row = 0; row < 3; row++) {
+                    if (!(mc.level.getBlockEntity(origin.south(row)) instanceof ReciprocatingCompressorBlockEntity drive)
+                        || drive.connectedSides() != 3 || drive.driveShaft() != shaft)
+                        throw new IllegalStateException("The opposed compressor did not sync all six cylinders on the common shaft");
+                }
                 mc.options.hideGui = true;
+            }
+            if (ticks == 65 || ticks == 465) {
+                boolean rear = ticks == 465;
                 mc.getSingleplayerServer().execute(() -> {
                     var player = mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());
                     player.getAbilities().flying = true;player.onUpdateAbilities();
-                    player.connection.teleport(origin.getX() + 3.5, origin.getY() + 3, origin.getZ() - 7, 23, 24);
+                    player.connection.teleport(origin.getX() + 8, origin.getY() + 7,
+                        origin.getZ() + (rear ? 9 : -7), rear ? 135 : 44, 31);
                 });
             }
             return ticks >= Math.max(100, hold);

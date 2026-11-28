@@ -21,42 +21,44 @@ public final class ReciprocatingPonderScenes {
     public static void compressor(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("reciprocating_compressor", PonderText.title(LANG + "title", "Reciprocating compressor"));
-        scene.configureBasePlate(0, 0, 9);
-        scene.scaleSceneView(.8f);
+        scene.configureBasePlate(0, 0, 11);
+        scene.scaleSceneView(.9f);
         scene.showBasePlate();
-        var left = util.grid().at(2, 2, 3);
-        var right = util.grid().at(6, 2, 3);
-        var target = util.grid().at(4, 2, 3);
-        var engine = util.select().position(target);
-        var shaft = util.select().fromTo(4, 2, 4, 4, 2, 5);
-        var suction = util.select().position(left.above()).add(util.select().position(right.above()));
-        var discharge = util.select().position(left.below()).add(util.select().position(right.below()));
+        var front = util.grid().at(5, 2, 4);
+        var target = front.south();
+        var engines = util.select().fromTo(front, front.south(2));
+        var left = util.select().fromTo(3, 2, 4, 3, 2, 6);
+        var right = util.select().fromTo(7, 2, 4, 7, 2, 6);
+        var shaft = util.select().fromTo(5, 2, 7, 5, 2, 8);
+        var suction = util.select().fromTo(3, 2, 2, 3, 4, 6).add(util.select().fromTo(7, 2, 2, 7, 4, 6)).substract(left.add(right));
+        var discharge = util.select().fromTo(3, 1, 4, 3, 1, 6).add(util.select().fromTo(7, 1, 4, 7, 1, 6));
+        var supply = util.select().fromTo(3, 1, 1, 3, 1, 2).add(util.select().fromTo(7, 1, 1, 7, 1, 2));
         scene.idle(10);
 
-        scene.world().showSection(util.select().fromTo(1, 1, 2, 7, 1, 5).substract(discharge), Direction.UP);
-        scene.world().showSection(engine, Direction.DOWN);
-        scene.overlay().showOutline(PonderPalette.GREEN, "engine", engine, 110);
+        scene.world().showSection(util.select().fromTo(1, 1, 1, 9, 1, 9).substract(discharge).substract(supply), Direction.UP);
+        scene.world().showSection(engines, Direction.DOWN);
+        scene.overlay().showOutline(PonderPalette.GREEN, "engine", engines, 110);
         text(scene, util, target, 110, "engine");
 
-        scene.world().showSection(util.select().position(left), Direction.EAST);
-        showSides(scene, target, 1);
+        scene.world().showSection(left, Direction.EAST);
+        for (int row = 0; row < 3; row++) showSides(scene, front.south(row), 1);
         scene.idle(18);
-        scene.world().showSection(util.select().position(right), Direction.WEST);
-        showSides(scene, target, 3);
-        text(scene, util, right, 120, "cylinder");
+        scene.world().showSection(right, Direction.WEST);
+        for (int row = 0; row < 3; row++) showSides(scene, front.south(row), 3);
+        text(scene, util, target.east(2), 120, "cylinder");
 
         scene.world().showSection(shaft, Direction.DOWN);
-        scene.overlay().showOutline(PonderPalette.BLUE, "shaft", util.select().position(target.south()), 120);
-        text(scene, util, target.south(), 120, "shaft");
+        scene.overlay().showOutline(PonderPalette.BLUE, "shaft", util.select().position(front.south(3)), 120);
+        text(scene, util, front.south(3), 120, "shaft");
 
-        scene.world().showSection(suction.add(discharge), Direction.DOWN);
+        scene.world().showSection(suction.copy().add(discharge).add(supply), Direction.DOWN);
         scene.overlay().showOutline(PonderPalette.INPUT, "suction", suction, 60);
         scene.overlay().showOutline(PonderPalette.OUTPUT, "discharge", discharge, 60);
-        text(scene, util, left.above(), 130, "pipes");
+        text(scene, util, front.west(2).above(2), 130, "pipes");
 
         scene.overlay().showControls(util.vector().topOf(target), Pointing.DOWN, 45).rightClick().withItem(AllItems.WRENCH.asStack());
         scene.idle(14);
-        scene.world().modifyBlocks(engine, state -> state.setValue(ReciprocatingCompressorBlock.WINDOW, true), false);
+        scene.world().modifyBlocks(util.select().position(target), state -> state.setValue(ReciprocatingCompressorBlock.WINDOW, true), false);
         showSides(scene, target, 3);
         scene.world().setKineticSpeed(shaft, 32);
         text(scene, util, target, 140, "rotate");

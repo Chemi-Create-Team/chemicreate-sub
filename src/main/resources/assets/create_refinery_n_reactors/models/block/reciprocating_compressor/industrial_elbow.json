@@ -1,0 +1,19 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "painted": "create_refinery_n_reactors:block/gas_compressor/painted",
+    "satin": "create_refinery_n_reactors:block/gas_compressor/satin",
+    "pane": "create_refinery_n_reactors:block/gas_compressor/pane",
+    "cast": "create_refinery_n_reactors:block/gas_compressor/cast",
+    "steel": "create_refinery_n_reactors:block/gas_compressor/steel",
+    "base": "create_refinery_n_reactors:block/gas_compressor/base",
+    "particle": "create_refinery_n_reactors:block/gas_compressor/painted",
+    "drum": "create_refinery_n_reactors:block/gas_compressor/drum",
+    "concrete": "create_refinery_n_reactors:block/gas_compressor/concrete",
+    "marking": "create_refinery_n_reactors:block/gas_compressor/marking"
+  },
+  "loader": "neoforge:obj",
+  "model": "create_refinery_n_reactors:models/block/reciprocating_compressor/industrial_elbow.obj",
+  "automatic_culling": false,
+  "flip_v": true
+}

@@ -3,6 +3,9 @@ package net.createplant.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.AllPartialModels;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
+import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
@@ -11,13 +14,16 @@ import net.createplant.CreatePlant;
 import net.createplant.block.ReciprocatingCompressorBlock;
 import net.createplant.block.entity.ReciprocatingCompressorBlockEntity;
 import net.createplant.block.entity.ReciprocatingShaftBlockEntity;
+import net.createplant.registry.CEReciprocating;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import com.mojang.math.Axis;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import org.joml.Quaternionf;
@@ -29,6 +35,10 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
     private static final PartialModel OPPOSED_CRANK = part("opposed_crank"), OPPOSED_ROD = part("opposed_rod"),
         CROSSHEAD = part("opposed_crosshead"), PISTON_ROD = part("opposed_piston_rod"),
         OPPOSED_PISTON = part("opposed_piston"), GUIDE = part("opposed_guide");
+    private static final PartialModel CYLINDER = part("industrial_cylinder"), DRUM = part("industrial_drum"),
+        DRUM_END = part("industrial_drum_end"), RISER = part("industrial_riser"), ELBOW = part("industrial_elbow"),
+        SUPPORT = part("industrial_support"), BED = part("industrial_bed"), INSTRUMENTS = part("industrial_instruments"),
+        FLYWHEEL = part("industrial_flywheel_cover"), MOTOR = part("industrial_motor");
     private static final double CRANK_RADIUS = .25, ROD_LENGTH = 1.5;
     private static final double OPPOSED_THROW = 2.5 / 16, OPPOSED_ROD_LENGTH = 12 / 16d;
     private static PartialModel part(String name) {
@@ -92,10 +102,16 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
 
     private static void renderOpposed(ReciprocatingCompressorBlockEntity be, BlockState state, PoseStack pose, VertexConsumer vertices, int light) {
         var level = be.getLevel();
+        var centre = be.getBlockPos();
         Direction front = state.getValue(ReciprocatingCompressorBlock.FACING);
+        int frontRows = neighbouringRows(level, centre, front, state);
+        int rearRows = neighbouringRows(level, centre, front.getOpposite(), state);
+        boolean bank = frontRows + rearRows + 1 == ReciprocatingCompressorBlock.MAX_ROWS;
         float angle = 0;
-        if (level.getBlockEntity(be.shaftPos()) instanceof ReciprocatingShaftBlockEntity shaft)
+        var shaft = be.driveShaft();
+        if (shaft != null)
             angle = front.getOpposite().getAxisDirection().getStep() * KineticBlockEntityRenderer.getAngleForBe(shaft, shaft.getBlockPos(), front.getAxis());
+        if (bank) angle += frontRows * Mth.TWO_PI / 3;
         int sides = be.connectedSides();
         pose.pushPose();
         pose.translate(.5, 0, .5);
@@ -106,18 +122,63 @@ public class ReciprocatingCompressorRenderer extends SafeBlockEntityRenderer<Rec
                 .scale(1, .875f, 1).uncenter().light(light).renderInto(pose, vertices);
             CachedBuffers.partial(OPPOSED_CRANK, state).center().rotateZ(angle).uncenter().light(light).renderInto(pose, vertices);
         }
+        if (bank && !state.getValue(ReciprocatingCompressorBlock.WINDOW) && level.getBlockState(centre.above()).isAir())
+            CachedBuffers.partial(INSTRUMENTS, state).light(light).renderInto(pose, vertices);
+        if (bank && rearRows == 0 && shaft != null) {
+            int shaftLight = LevelRenderer.getLightColor(level, shaft.getBlockPos());
+            CachedBuffers.partial(FLYWHEEL, state).translate(0, 0, 1).light(shaftLight).renderInto(pose, vertices);
+            var motor = shaft.getBlockPos().relative(front.getOpposite());
+            if (level.getBlockEntity(motor) instanceof GeneratingKineticBlockEntity)
+                CachedBuffers.partial(MOTOR, state).translate(0, 0, 2).light(LevelRenderer.getLightColor(level, motor)).renderInto(pose, vertices);
+        }
         for (int side = 0; side < 2; side++) {
             if ((sides & (1 << side)) == 0) continue;
             var direction = ReciprocatingCompressorBlock.cylinderSide(state, side);
-            var gap = be.getBlockPos().relative(direction);
+            var gap = centre.relative(direction);
             var cylinder = gap.relative(direction);
             if (!level.isLoaded(gap) || !level.getBlockState(gap).isAir()
-                || !level.isLoaded(cylinder) || !level.getBlockState(cylinder).is(net.createplant.registry.CEReciprocating.CYLINDER.get())) continue;
+                || !level.isLoaded(cylinder) || !level.getBlockState(cylinder).is(CEReciprocating.CYLINDER.get())) continue;
             int sign = side == 0 ? -1 : 1;
             int guideLight = LevelRenderer.getLightColor(level, gap), pistonLight = LevelRenderer.getLightColor(level, cylinder);
             renderSide(state, pose, vertices, angle, sign, guideLight, pistonLight);
+            CachedBuffers.partial(CYLINDER, state).translate(sign * 2, 0, 0).light(pistonLight).renderInto(pose, vertices);
+            if (bank) {
+                CachedBuffers.partial(BED, state).translate(sign, 0, 0).light(guideLight).renderInto(pose, vertices);
+                drawDrum(level, cylinder, front, frontRows == 0, rearRows == 0, sign * 2, state, pose, vertices, pistonLight);
+            }
         }
         pose.popPose();
+    }
+
+    private static int neighbouringRows(Level level, BlockPos centre, Direction direction, BlockState state) {
+        int count = 0;
+        for (int i = 1; i <= ReciprocatingCompressorBlock.MAX_ROWS; i++) {
+            var next = centre.relative(direction, i);
+            if (!level.isLoaded(next) || !ReciprocatingCompressorBlock.sameLine(state, level.getBlockState(next))) break;
+            count++;
+        }
+        return count;
+    }
+
+    private static boolean roomForPipe(Level level, BlockPos pos) {
+        if (!level.isLoaded(pos)) return false;
+        var state = level.getBlockState(pos);
+        return state.isAir() || state.getBlock() instanceof FluidPipeBlock || AllBlocks.MECHANICAL_PUMP.has(state);
+    }
+
+    private static void drawDrum(Level level, BlockPos cylinder, Direction front, boolean first, boolean last, int x, BlockState state,
+                                 PoseStack pose, VertexConsumer vertices, int light) {
+        for (int y = 1; y <= 3; y++) if (!roomForPipe(level, cylinder.above(y))) return;
+        int headerLight = LevelRenderer.getLightColor(level, cylinder.above(2));
+        CachedBuffers.partial(DRUM, state).translate(x, 0, 0).light(headerLight).renderInto(pose, vertices);
+        CachedBuffers.partial(RISER, state).translate(x, 0, 0).light(headerLight).renderInto(pose, vertices);
+        if (first || last) CachedBuffers.partial(SUPPORT, state).translate(x, 0, 0).light(light).renderInto(pose, vertices);
+        if (last && roomForPipe(level, cylinder.relative(front.getOpposite()).above(2)))
+            CachedBuffers.partial(DRUM_END, state).translate(x, 0, 1).light(headerLight).renderInto(pose, vertices);
+        if (!first) return;
+        for (int y = 0; y <= 3; y++) if (!roomForPipe(level, cylinder.relative(front, 2).above(y))) return;
+        if (roomForPipe(level, cylinder.relative(front).above(2)))
+            CachedBuffers.partial(ELBOW, state).translate(x, 0, 0).light(headerLight).renderInto(pose, vertices);
     }
 
     private static void renderSide(BlockState state, PoseStack pose, VertexConsumer vertices, float angle, int sign, int light, int pistonLight) {

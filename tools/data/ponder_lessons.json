@@ -835,29 +835,29 @@
     "zh_cn": "往复式压缩机"
   },
   "reciprocating_compressor.cylinder": {
-    "en_us": "When a cylinder is in place, its rod guide appears in the gap.",
-    "ja_jp": "シリンダーを置いた側の空きマスに、コンロッドの角筒が現れます。",
-    "zh_cn": "安装气缸后，对应空格会出现连杆导向套。"
+    "en_us": "Set a cylinder on each side of every row with a one-block gap. Three rows have six cylinders and two overhead drums.",
+    "ja_jp": "各列の左右に1マスずつ空けてシリンダーを置きます。3列で6気筒となり、上部には左右のドラムが付きます。",
+    "zh_cn": "每列两侧各放一个气缸，中间留一格。三列共六个气缸，上方有两条缓冲筒。"
   },
   "reciprocating_compressor.engine": {
-    "en_us": "Place the drive with one air block between it and each cylinder.",
-    "ja_jp": "駆動部の左右にシリンダーを置き、間を1マスずつ空けます。",
-    "zh_cn": "将气缸放在驱动部两侧，每侧留一格空气。"
+    "en_us": "Line up three drives along their shafts, all facing the same way.",
+    "ja_jp": "同じ向きの駆動部を、シャフトの軸に沿って3台並べます。",
+    "zh_cn": "沿传动轴的方向排列三台驱动部，保持朝向一致。"
   },
   "reciprocating_compressor.shaft": {
-    "en_us": "Connect a Create shaft directly behind the drive, pointing into the crankcase.",
-    "ja_jp": "駆動部の背面に、ケースへ向けてCreateのシャフトをつなぎます。",
-    "zh_cn": "在驱动部背面连接一根朝向曲轴箱的机械动力传动杆。"
+    "en_us": "Run all three rows from the Create shaft at the rear. A motor behind it sits inside the large casing.",
+    "ja_jp": "最後尾のCreateシャフト1本で3列を駆動します。その後ろのモーターに大型カバーが付きます。",
+    "zh_cn": "用最后一列后方的机械动力传动轴驱动三列。传动轴后的电机带有大型外壳。"
   },
   "reciprocating_compressor.pipes": {
-    "en_us": "Pump gas into the top port and draw the product from below.",
-    "ja_jp": "上面へガスを送り、下面から生成物を取り出します。",
-    "zh_cn": "从顶面泵入气体，从底面抽取产物。"
+    "en_us": "Route pipes along each drum and down to the cylinder tops. Draw compressed gas from underneath each cylinder.",
+    "ja_jp": "実際の配管をドラムに沿わせ、各シリンダーの上面へつなぎます。圧縮ガスは各シリンダーの下面から取り出します。",
+    "zh_cn": "沿缓冲筒布管，接到各气缸顶部。加压气体从各气缸底部抽取。"
   },
   "reciprocating_compressor.rotate": {
-    "en_us": "Wrench the top to switch the inspection window. At 16 RPM or more the crank drives both pistons.",
-    "ja_jp": "上面をレンチで操作すると覗き窓が切り替わります。16 RPM以上でクランクが左右を駆動します。",
-    "zh_cn": "用扳手切换顶面观察窗。转速达到16 RPM时，曲轴带动两侧的活塞。"
+    "en_us": "Wrench a top hatch to see its crank. The cylinders compress at 16 RPM or more.",
+    "ja_jp": "上面の点検蓋をレンチで切り替えると、クランクが見えます。圧縮は16 RPM以上で行います。",
+    "zh_cn": "用扳手切换顶盖可查看曲轴。转速达到16 RPM时开始压缩。"
   },
   "reciprocating_compressor.setting": {
     "en_us": "Goggles show the connected cylinders and why the drive stopped. Each stage raises gas pressure by four levels.",

@@ -34,6 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 /** The opposed-cylinder drive; old blockstates retain the face-mounted arrangement. */
 public class ReciprocatingCompressorBlock extends FaceAttachedHorizontalDirectionalBlock implements IBE<ReciprocatingCompressorBlockEntity>, IWrenchable, ProperWaterloggedBlock {
     public static final MapCodec<ReciprocatingCompressorBlock> CODEC = simpleCodec(ReciprocatingCompressorBlock::new);
+    public static final int MAX_ROWS = 3;
     public static final BooleanProperty OPPOSED = BooleanProperty.create("opposed"), WINDOW = BooleanProperty.create("window");
 
     public ReciprocatingCompressorBlock(Properties properties) {
@@ -57,6 +58,10 @@ public class ReciprocatingCompressorBlock extends FaceAttachedHorizontalDirectio
     public static Direction cylinderSide(BlockState state, int side) {
         Direction right = state.getValue(FACING).getClockWise();
         return side == 0 ? right.getOpposite() : right;
+    }
+
+    public static boolean sameLine(BlockState row, BlockState candidate) {
+        return candidate.is(row.getBlock()) && candidate.getValue(OPPOSED) && candidate.getValue(FACING) == row.getValue(FACING);
     }
 
     public static boolean isShaftValid(BlockState engine, BlockState shaft) {
