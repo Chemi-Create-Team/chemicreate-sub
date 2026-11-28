@@ -77,7 +77,7 @@ public class ReactorGameTests {
     static KineticBlockEntity receiver(ReactorMachineBlockEntity be) {
         return be instanceof LiddedVesselBlockEntity vessel && vessel.getLevel().getBlockEntity(vessel.stirrerPos()) instanceof VesselStirrerBlockEntity stirrer ? stirrer : be;
     }
-    static void speed(ReactorMachineBlockEntity be,float speed) {
+    public static void speed(ReactorMachineBlockEntity be,float speed) {
         var input=receiver(be);float previous=input.getSpeed();input.setSpeed(speed);input.onSpeedChanged(previous);
     }
     static void heat(ReactorMachineBlockEntity be,com.simibubi.create.content.processing.recipe.HeatCondition heat) {

@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.createplant.atomics.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "FactoryBlockChangesMixin",
+    "RadiationBlockChangesMixin",
+    "RadiationBucketMixin",
+    "RadiationFluidIdentityMixin",
+    "RadiationFluidMixMixin",
+    "RadiationInventoryChangesMixin",
+    "RadiationItemStorageMixin",
+    "TorpedoContraptionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -40,7 +40,7 @@ public class ElectrolysisCellGameTests {
         return owner;
     }
 
-    static ElectrolysisControllerBlockEntity one(GameTestHelper h) {
+    public static ElectrolysisControllerBlockEntity one(GameTestHelper h) {
         var owner = assemble(h.getLevel(), h.absolutePos(new BlockPos(3, 1, 3)), 1, Direction.NORTH);
         owner.heads().getFirst().electrodes.insertItem(0, new ItemStack(CEElectrolysis.ELECTRODE_PLATE.get()), false);
         owner.setRunning(true);lower(owner);
@@ -54,8 +54,8 @@ public class ElectrolysisCellGameTests {
         for (var head : owner.heads()) { int amount = Math.min(16, plates);head.electrodes.insertItem(0, new ItemStack(CEElectrolysis.ELECTRODE_PLATE.get(), amount), false);plates -= amount; }
     }
 
-    static int feed(ElectrolysisControllerBlockEntity owner, FluidStack fluid) { return owner.cells().getFirst().port(Direction.DOWN).fill(fluid, EXECUTE); }
-    static void run(ElectrolysisControllerBlockEntity owner, int ticks, double volts) {
+    public static int feed(ElectrolysisControllerBlockEntity owner, FluidStack fluid) { return owner.cells().getFirst().port(Direction.DOWN).fill(fluid, EXECUTE); }
+    public static void run(ElectrolysisControllerBlockEntity owner, int ticks, double volts) {
         for (int n = 0; n < ticks; n++) { owner.supply(owner.getLevel().getGameTime(), owner.resistance(), volts * volts);owner.step(); }
     }
 

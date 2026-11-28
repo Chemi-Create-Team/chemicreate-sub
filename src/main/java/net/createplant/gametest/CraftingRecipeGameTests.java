@@ -48,7 +48,7 @@ public class CraftingRecipeGameTests {
         return recipe instanceof ShapedRecipe shaped ? CraftingInput.of(shaped.getWidth(), shaped.getHeight(), items) : CraftingInput.of(3, 3, pad(items));
     }
     private static List<ItemStack> pad(List<ItemStack> items) { while (items.size() < 9) items.add(ItemStack.EMPTY);return items; }
-    static boolean contains(Recipe<?> recipe, Item item) {
+    public static boolean contains(Recipe<?> recipe, Item item) {
         ItemStack stack = new ItemStack(item);
         return recipe.getIngredients().stream().anyMatch(ingredient -> ingredient.test(stack));
     }

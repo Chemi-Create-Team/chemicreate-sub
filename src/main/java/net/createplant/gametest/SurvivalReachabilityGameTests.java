@@ -52,7 +52,7 @@ public final class SurvivalReachabilityGameTests {
     private SurvivalReachabilityGameTests() { }
 
     /** What an installed addon adds to the audit: its recipe types, equipment and fixed processes. Registered by the addon's own extension class. */
-    interface Extension {
+    public interface Extension {
         default Boolean equipment(Recipe<?> recipe, Set<Item> reached) { return null; }
         default boolean blocked(Recipe<?> recipe, Set<Item> items, Set<Object> fluids) { return false; }
         default boolean produces(Recipe<?> recipe, Set<Item> items, Set<Object> fluids) { return false; }
@@ -60,16 +60,16 @@ public final class SurvivalReachabilityGameTests {
         default void roots(Set<Item> items) { }
         default void audit(GameTestHelper helper, Set<Item> items, Set<Object> fluids) { }
     }
-    static final List<Extension> EXTENSIONS = new java.util.concurrent.CopyOnWriteArrayList<>();
+    public static final List<Extension> EXTENSIONS = new java.util.concurrent.CopyOnWriteArrayList<>();
     /** Loads each addon's extension class by name, so the audit runs with whichever addons are installed. */
     private static void loadExtensions() {
         for (String addon : List.of("Atomics", "Logistics"))
-            try { Class.forName("net.createplant.gametest." + addon + "SurvivalExtension"); } catch (ClassNotFoundException absent) { }
+            try { Class.forName("net.createplant." + addon.toLowerCase() + ".gametest." + addon + "SurvivalExtension"); } catch (ClassNotFoundException absent) { }
     }
 
     private static boolean ours(ResourceLocation id) { return id.getNamespace().equals(CreatePlant.MOD_ID); }
     static Item item(String id) { return BuiltInRegistries.ITEM.get(CreatePlant.location(id)); }
-    static boolean has(Set<Item> items, String... ids) {
+    public static boolean has(Set<Item> items, String... ids) {
         for (String id : ids) if (!BuiltInRegistries.ITEM.containsKey(CreatePlant.location(id)) || !items.contains(item(id))) return false;
         return true;
     }
@@ -90,7 +90,7 @@ public final class SurvivalReachabilityGameTests {
         }
         return true;
     }
-    static boolean has(Set<Object> reached, FluidStack choice) {
+    public static boolean has(Set<Object> reached, FluidStack choice) {
         return reached.contains(choice.getFluid()) || FluidForm.of(choice.getFluid()).stream().anyMatch(form -> reached.contains(form) && form.matches(choice));
     }
     private static boolean equipmentFor(Recipe<?> recipe, Set<Item> reached) {

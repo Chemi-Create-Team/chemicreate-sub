@@ -1,0 +1,16 @@
+package net.createplant.logistics.registry;
+
+import net.createplant.block.ProcessPorts;
+import net.createplant.logistics.block.entity.IndustrialDispatchBlockEntity;
+import net.createplant.logistics.block.entity.QuarryDriveBlockEntity;
+import net.createplant.event.FacilityAchievements;
+
+/** Hooks the logistics addon installs into core extension points. */
+public final class LogisticsSetup {
+    private LogisticsSetup() { }
+
+    public static void init() {
+        ProcessPorts.registerItemPorts(IndustrialDispatchBlockEntity.class);
+        FacilityAchievements.register("quarry", QuarryDriveBlockEntity.class, QuarryDriveBlockEntity::built);
+    }
+}

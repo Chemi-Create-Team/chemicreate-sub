@@ -14,12 +14,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 /** One of a gantry drive's two range settings, set with a wrench on its own face and saved under its own key. */
-final class CraneRangeSetting extends ScrollValueBehaviour {
+public final class CraneRangeSetting extends ScrollValueBehaviour {
     private final BehaviourType<ScrollValueBehaviour> type;
     private final String key;
     private final int minimum, netId;
 
-    CraneRangeSetting(Component label, SmartBlockEntity owner, BiPredicate<BlockState, Direction> face, BehaviourType<ScrollValueBehaviour> type,
+    public CraneRangeSetting(Component label, SmartBlockEntity owner, BiPredicate<BlockState, Direction> face, BehaviourType<ScrollValueBehaviour> type,
         String key, int minimum, int maximum, int netId) {
         super(label, owner, new CenteredSideValueBoxTransform(face) {
             @Override protected Vec3 getSouthLocation() { return new Vec3(.5, 14.5 / 16d, 15.5 / 16d); }

@@ -30,9 +30,9 @@ import net.neoforged.neoforge.items.IItemHandler;
 @GameTestHolder(CreatePlant.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class IndustrialExpansionGameTests {
-    static final BlockPos BASE = new BlockPos(3, 2, 3);
+    public static final BlockPos BASE = new BlockPos(3, 2, 3);
     private IndustrialExpansionGameTests() { }
-    static int count(IItemHandler port) {
+    public static int count(IItemHandler port) {
         int count = 0;for (int slot = 0; slot < port.getSlots(); slot++) count += port.getStackInSlot(slot).getCount();return count;
     }
 

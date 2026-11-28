@@ -19,6 +19,12 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
+sourceSets.create("atomicsTest") {
+    java.srcDir "atomics/src/test/java"
+    compileClasspath += sourceSets.atomics.output + sourceSets.atomics.compileClasspath
+    runtimeClasspath += output + sourceSets.atomics.output + sourceSets.atomics.runtimeClasspath
+}
+
 neoForge {
     version = neo_version
 
@@ -223,15 +229,15 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 def reactorPhysicsTest = tasks.register("reactorPhysicsTest", JavaExec) {
-    dependsOn tasks.named("testClasses")
-    classpath = sourceSets.test.runtimeClasspath
-    mainClass = "net.createplant.nuclear.ReactorPhysicsTest"
+    dependsOn tasks.named("atomicsTestClasses")
+    classpath = sourceSets.atomicsTest.runtimeClasspath
+    mainClass = "net.createplant.atomics.nuclear.ReactorPhysicsTest"
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
 }
 def reactorControlTest = tasks.register("reactorControlTest", JavaExec) {
-    dependsOn tasks.named("testClasses")
-    classpath = sourceSets.test.runtimeClasspath
-    mainClass = "net.createplant.nuclear.ReactorControlTest"
+    dependsOn tasks.named("atomicsTestClasses")
+    classpath = sourceSets.atomicsTest.runtimeClasspath
+    mainClass = "net.createplant.atomics.nuclear.ReactorControlTest"
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
 }
 tasks.named("check") {

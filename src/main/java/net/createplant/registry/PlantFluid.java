@@ -25,13 +25,13 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class PlantFluid {
     private static final List<PlantFluid> ALL = new ArrayList<>();
     final DeferredHolder<FluidType, FluidType> type;
-    final DeferredHolder<Fluid, BaseFlowingFluid.Source> source;
+    public final DeferredHolder<Fluid, BaseFlowingFluid.Source> source;
     private final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> flowing;
     private final int color;
     private final CEWorldFluids.Entry world;
     private final Supplier<? extends net.minecraft.world.item.Item> bucket;
 
-    PlantFluid(DeferredRegister<FluidType> types, DeferredRegister<Fluid> fluids, String name, int color,
+    public PlantFluid(DeferredRegister<FluidType> types, DeferredRegister<Fluid> fluids, String name, int color,
         Supplier<FluidType.Properties> typeProperties, UnaryOperator<BaseFlowingFluid.Properties> fluidProperties) {
         this.color = color;
         type = types.register(name, () -> new FluidType(typeProperties.get().descriptionId("fluid." + CreatePlant.MOD_ID + "." + name).canConvertToSource(false)) {

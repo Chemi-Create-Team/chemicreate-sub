@@ -33,14 +33,14 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class AssemblyGameTests {
-    static FacilityConstructorBlockEntity constructor(GameTestHelper h, AssemblyPlan.Kind kind, BlockPos at, Direction facing) {
+    public static FacilityConstructorBlockEntity constructor(GameTestHelper h, AssemblyPlan.Kind kind, BlockPos at, Direction facing) {
         h.setBlock(at, CEAssembly.CONSTRUCTOR.get().defaultBlockState().setValue(FacilityConstructorBlock.FACING, facing));
         var be = (FacilityConstructorBlockEntity) h.getBlockEntity(at);
         h.assertTrue(be.configure(kind.ordinal(), 0), "Facility selection is accepted while stopped");
         return be;
     }
 
-    static void build(GameTestHelper h, FacilityConstructorBlockEntity be) {
+    public static void build(GameTestHelper h, FacilityConstructorBlockEntity be) {
         for (var target : be.plan()) {
             h.getLevel().setBlock(target.pos(), target.state(), Block.UPDATE_CLIENTS);
             if (target.blockEntityData() != null)
@@ -122,7 +122,7 @@ public class AssemblyGameTests {
         h.succeed();
     }
 
-    static void print(GameTestHelper h, FacilityConstructorBlockEntity be) {
+    public static void print(GameTestHelper h, FacilityConstructorBlockEntity be) {
         h.assertTrue(be.plan().stream().allMatch(t -> h.getLevel().isEmptyBlock(t.pos())), "The complete cannon fixture starts in clear space above the other parallel test structures");
         BlockPos chestPos = be.getBlockPos().west();
         h.getLevel().setBlockAndUpdate(chestPos, Blocks.CHEST.defaultBlockState());

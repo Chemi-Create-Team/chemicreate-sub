@@ -29,7 +29,7 @@ public final class PowerPlantGameTests {
     private static void near(GameTestHelper h, double a, double b, String message) {
         h.assertTrue(Double.isFinite(a) && Math.abs(a-b) <= Math.max(.001, Math.abs(b)*1e-8), message + ": " + a + " / " + b);
     }
-    static FluidStack water(int amount, double kelvin) { return FluidThermal.at(new FluidStack(Fluids.WATER, amount), kelvin); }
+    public static FluidStack water(int amount, double kelvin) { return FluidThermal.at(new FluidStack(Fluids.WATER, amount), kelvin); }
     @GameTest(template = "test_empty")
     public static void actuatedValveRetainsItsSharedTickBudgetAfterReload(GameTestHelper h) {
         BlockPos pos = new BlockPos(2, 2, 2);

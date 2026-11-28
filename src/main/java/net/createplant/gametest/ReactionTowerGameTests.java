@@ -22,11 +22,11 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 
 @GameTestHolder(CreatePlant.MOD_ID) @PrefixGameTestTemplate(false)
 public class ReactionTowerGameTests {
-    static final BlockPos BASE=new BlockPos(21,2,4),CENTRE=BASE.offset(1,0,1);
+    public static final BlockPos BASE=new BlockPos(21,2,4),CENTRE=BASE.offset(1,0,1);
     private static void build(GameTestHelper h,int layers){for(int y=0;y<layers;y++)for(int x=0;x<3;x++)for(int z=0;z<3;z++)h.setBlock(BASE.offset(x,y,z),CETransport.REACTION_TOWER.get());}
     static ReactionTowerBlockEntity owner(GameTestHelper h){return ((ReactionTowerBlockEntity)h.getBlockEntity(CENTRE)).owner();}
     private static IFluidHandler fluid(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,h.absolutePos(relative),side);}
-    static IItemHandler items(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,h.absolutePos(relative),side);}
+    public static IItemHandler items(GameTestHelper h,BlockPos relative,Direction side){return h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,h.absolutePos(relative),side);}
     private static void heat(GameTestHelper h){h.setBlock(BASE.offset(0,-1,0),AllBlocks.BLAZE_BURNER.get().defaultBlockState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED));}
     static ItemStack tray(){return new ItemStack(CEReactor.TRAY.get());}
     /** Builds and forms a 3x3 tower at once from its north-west bottom corner, with a tray and, unless empty, the catalyst in every layer; returns its owner. */

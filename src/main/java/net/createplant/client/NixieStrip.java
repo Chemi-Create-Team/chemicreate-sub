@@ -20,7 +20,7 @@ import net.minecraft.world.item.DyeColor;
  * stands inside the glass in Create's two nixie colours. Coordinates are panel pixels: {@code u} from the operator's left, {@code y}
  * from the bottom, and depth from {@code face}, the glass over the recess, inwards.
  */
-final class NixieStrip {
+public final class NixieStrip {
     private static final ResourceLocation TUBE = ResourceLocation.fromNamespaceAndPath("create", "block/nixie_tube");
     /** A tube is at most this wide for its height, like Create's own 6 x 9 pixel tubes. */
     private static final float ASPECT = 6 / 9f;
@@ -37,7 +37,7 @@ final class NixieStrip {
      * Fills the recess [u0, u1] x [y0, y1], {@code depth} pixels deep behind {@code face}, with tubes and centres {@code text} in them;
      * the spare tubes and spaces stay unlit.
      */
-    static void draw(PoseStack pose, MultiBufferSource buffers, String text, float u0, float u1, float y0, float y1, float face, float depth,
+    public static void draw(PoseStack pose, MultiBufferSource buffers, String text, float u0, float u1, float y0, float y1, float face, float depth,
         DyeColor colour, int light) {
         int length = text.codePointCount(0, text.length());
         float height = y1 - y0 - 2 * MARGIN, span = u1 - u0 - 2 * MARGIN;
