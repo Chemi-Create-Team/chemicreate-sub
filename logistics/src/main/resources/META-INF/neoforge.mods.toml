@@ -1,0 +1,38 @@
+modLoader = "javafml"
+loaderVersion = "[0,)"
+license = "${mod_license}"
+
+[[mods]]
+modId = "create_rnr_logistics"
+version = "${mod_version}"
+displayName = "Create: Refinery 'n' Reactors - Logistics & Mining"
+authors = "${mod_authors}"
+description = '''Addon for Create: Refinery 'n' Reactors.'''
+
+[[dependencies.create_rnr_logistics]]
+modId = "${core_id}"
+type = "required"
+versionRange = "[${mod_version},)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.create_rnr_logistics]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neo_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.create_rnr_logistics]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${minecraft_version}]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.create_rnr_logistics]]
+modId = "create"
+type = "required"
+versionRange = "[6.0.10,6.0.11)"
+ordering = "AFTER"
+side = "BOTH"

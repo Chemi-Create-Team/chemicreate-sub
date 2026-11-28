@@ -9,12 +9,28 @@ version = mod_version
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+// Addon mods: compile against main (and its classpath); main never sees them.
+["atomics", "logistics"].each { addon ->
+    sourceSets.create(addon) {
+        java.srcDir "${addon}/src/main/java"
+        resources.srcDir "${addon}/src/main/resources"
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
 neoForge {
     version = neo_version
 
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+        }
+        create_rnr_atomics {
+            sourceSet(sourceSets.atomics)
+        }
+        create_rnr_logistics {
+            sourceSet(sourceSets.logistics)
         }
     }
 
@@ -232,3 +248,19 @@ tasks.named("check") { dependsOn mixtureContentsTest }
 
 sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
 sourceSets.test.runtimeClasspath += sourceSets.main.compileClasspath
+
+["atomics", "logistics"].each { addon ->
+    def addonId = "create_rnr_" + addon
+    tasks.named("process" + addon.capitalize() + "Resources", ProcessResources).configure {
+        def props = [mod_version: mod_version, mod_authors: mod_authors, mod_license: mod_license,
+                     minecraft_version: minecraft_version, neo_version: neo_version, core_id: mod_id]
+        inputs.properties props
+        filesMatching("META-INF/neoforge.mods.toml") { expand props }
+    }
+    def addonJar = tasks.register(addon + "Jar", Jar) {
+        from sourceSets.named(addon).map { it.output }
+        archiveBaseName = addonId
+        destinationDirectory = layout.buildDirectory.dir("libs")
+    }
+    tasks.named("build") { dependsOn addonJar }
+}
