@@ -6,7 +6,7 @@
 - 名前の正規表現で機械的に振り分けた目安。境界のものは要確認。
   - 浸出（`*_leach*`）は硫酸の主な使い道なので、製鉄と一緒に切り出すかは要検討。
   - 電解槽（`electrolysis_*`）は食塩電解（水素・塩素）にも使うなら本体に残す。
-- 気付いた点：硝酸を作るレシピがない（使うレシピは4つ）。アンモニア → 硝酸（オストワルト法）が抜けている。
+- 訂正：硝酸はオストワルト法で作れる（`ProcessRecipe` の `absorb_nitric_acid`、Java側の工程）。JSONのレシピだけを数えて「ない」と誤判定していた。
 
 ### 切り出し：原子力・核融合（66）
 biological_shield, biological_shield_coolant_outlet, biological_shield_drive, control_rod_controller, control_rod_link, deepslate_uranium_ore, deepslate_zircon_ore, deuterium_depleted_water, deuterium_gas, dissolved_spent_fuel, empty_waste_canister, extraction_column_outlet, extraction_column_shell, extraction_column_structure, extraction_pulse_plate, fuel_pool, fusion_ash_port, fusion_breeding_blanket, fusion_central_solenoid, fusion_console_panel, fusion_control_console, fusion_coolant_inlet, fusion_coolant_outlet, fusion_crane_drive, fusion_deuterium_port, fusion_divertor, fusion_helium_inlet, fusion_helium_outlet, fusion_motor_generator, fusion_reactor_controller, fusion_reinforced_casing, fusion_toroidal_field_coil, fusion_tritium_port, fusion_vacuum_pump, fusion_vacuum_vessel, fusion_viewport, gas_centrifuge, heavy_water, helium_gas, high_level_raffinate, plutonium_nitrate_solution, pulse_extraction_column, reactor_console_display, reactor_control_console, reactor_feed_bundle, reactor_fuel_channel, reactor_fuel_channel_tube, reactor_graphite, reactor_top_cap, serpentinite, slime_coolant, slime_coolant_feed, tbp_extraction_solvent, tributyl_phosphate, tritium_gas, uranium_ore, uranyl_nitrate_solution, vitrification_electrode, vitrification_melter, vitrification_refractory_shell, vitrified_waste_canister, zircon_ore, zirconia_refractory_bricks, zirconium_pipe, zirconium_pump, zirconium_sulfate_solution
