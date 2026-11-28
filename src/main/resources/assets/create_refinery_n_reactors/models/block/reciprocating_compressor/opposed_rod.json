@@ -1,0 +1,82 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "painted": "create_refinery_n_reactors:block/gas_compressor/painted",
+    "satin": "create_refinery_n_reactors:block/gas_compressor/satin",
+    "pane": "create_refinery_n_reactors:block/gas_compressor/pane",
+    "cast": "create_refinery_n_reactors:block/gas_compressor/cast",
+    "steel": "create_refinery_n_reactors:block/gas_compressor/steel",
+    "base": "create_refinery_n_reactors:block/gas_compressor/base",
+    "particle": "create_refinery_n_reactors:block/gas_compressor/painted"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        -1,
+        -1
+      ],
+      "to": [
+        12,
+        1,
+        1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#steel",
+          "uv": [
+            2.0,
+            7.0,
+            14.0,
+            9.0
+          ]
+        },
+        "south": {
+          "texture": "#steel",
+          "uv": [
+            2.0,
+            7.0,
+            14.0,
+            9.0
+          ]
+        },
+        "east": {
+          "texture": "#steel",
+          "uv": [
+            7.0,
+            7.0,
+            9.0,
+            9.0
+          ]
+        },
+        "west": {
+          "texture": "#steel",
+          "uv": [
+            7.0,
+            7.0,
+            9.0,
+            9.0
+          ]
+        },
+        "up": {
+          "texture": "#steel",
+          "uv": [
+            2.0,
+            7.0,
+            14.0,
+            9.0
+          ]
+        },
+        "down": {
+          "texture": "#steel",
+          "uv": [
+            2.0,
+            7.0,
+            14.0,
+            9.0
+          ]
+        }
+      }
+    }
+  ]
+}

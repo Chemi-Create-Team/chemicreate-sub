@@ -31,6 +31,8 @@ public class ReciprocatingCylinderBlockEntity extends SmartBlockEntity implement
     private final IFluidHandler suction = port(true), discharge = port(false);
     private boolean dirty;
     private long lastSync = -20;
+    private BlockPos drive;
+    private long lastDriveTick;
 
     public ReciprocatingCylinderBlockEntity(BlockPos pos, BlockState state) { super(CEReciprocating.CYLINDER_ENTITY.get(), pos, state); }
 
@@ -46,6 +48,16 @@ public class ReciprocatingCylinderBlockEntity extends SmartBlockEntity implement
     public ThermalFluidTank inlet() { return inlet; }
 
     public ThermalFluidTank outlet() { return outlet; }
+
+    boolean acceptDrive(ReciprocatingCompressorBlockEntity candidate) {
+        var position = candidate.getBlockPos();
+        long now = level.getGameTime();
+        if (drive != null && !position.equals(drive) && (lastDriveTick == now || level.isLoaded(drive)
+            && level.getBlockEntity(drive) instanceof ReciprocatingCompressorBlockEntity previous && previous.connects(this))) return false;
+        drive = position;
+        lastDriveTick = now;
+        return true;
+    }
 
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
 

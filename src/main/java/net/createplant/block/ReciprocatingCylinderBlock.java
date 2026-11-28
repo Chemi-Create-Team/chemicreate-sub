@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** The gas chamber a reciprocating compressor mounts on: suction above and below, discharge on the sides. */
+/** The gas chamber beside the compressor: suction above, discharge below. */
 public class ReciprocatingCylinderBlock extends Block implements IBE<ReciprocatingCylinderBlockEntity>, IWrenchable {
     public ReciprocatingCylinderBlock(Properties properties) { super(properties); }
 

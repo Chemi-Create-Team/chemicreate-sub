@@ -2,7 +2,10 @@ package net.createplant.gametest;
 
 import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.AllItems;
+import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
+import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createplant.CreatePlant;
 import net.createplant.block.ReciprocatingCompressorBlock;
 import net.createplant.block.ReciprocatingShaftBlock;
@@ -16,7 +19,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
@@ -143,5 +153,77 @@ public class ReciprocatingCompressorGameTests {
                 "The real shaft converts all 1000 mB of raw air into 62.5 mB of physical compressed volume");
             h.succeed();
         });
+    }
+
+    @GameTest(template = "test_fractionation", timeoutTicks = 100)
+    public static void opposedDriveTogglesTheRoofAndCompressesThroughBothCylinders(GameTestHelper h) {
+        var level = h.getLevel();
+        var pos = h.absolutePos(BASE);
+        var player = h.makeMockPlayer(GameType.SURVIVAL);
+        player.setYRot(0);
+        h.setBlock(BASE.below(), Blocks.SMOOTH_STONE);
+        var block = CEReciprocating.COMPRESSOR.get();
+        var placement = new BlockPlaceContext(player, InteractionHand.MAIN_HAND, new ItemStack(block),
+            new BlockHitResult(pos.getCenter(), Direction.UP, pos.below(), false));
+        var state = block.getStateForPlacement(placement);
+        h.assertTrue(state.getValue(ReciprocatingCompressorBlock.OPPOSED), "Ordinary block placement places the new opposed drive");
+        h.setBlock(BASE, state);
+        var left = placedCylinder(h, BASE.west(2));
+        var right = placedCylinder(h, BASE.east(2));
+        left.inlet().fill(gas(650), FluidAction.EXECUTE);
+        right.inlet().fill(gas(650), FluidAction.EXECUTE);
+        var shaft = pos.south();
+        level.setBlock(shaft, AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Z), 3);
+        level.setBlock(shaft.south(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.NORTH), 3);
+        ((CreativeMotorBlockEntity) level.getBlockEntity(shaft.south())).generatedSpeed.setValue(64);
+        var drive = (ReciprocatingCompressorBlockEntity) level.getBlockEntity(pos);
+        h.assertTrue(drive.shaftPos().equals(shaft), "The drive takes power from the shaft directly behind it");
+
+        var wrench = AllItems.WRENCH.asStack();
+        player.setItemInHand(InteractionHand.MAIN_HAND, wrench);
+        var roof = new UseOnContext(player, InteractionHand.MAIN_HAND, new BlockHitResult(pos.above().getCenter(), Direction.UP, pos, false));
+        wrench.useOn(roof);
+        h.assertTrue(level.getBlockState(pos).getValue(ReciprocatingCompressorBlock.WINDOW), "The Create wrench opens the 12 px roof window");
+        wrench.useOn(roof);
+        h.assertTrue(!level.getBlockState(pos).getValue(ReciprocatingCompressorBlock.WINDOW), "A second click closes the window");
+
+        h.runAfterDelay(20, () -> {
+            h.assertTrue(drive.connectedSides() == 3 && FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(left.outlet().getFluid())
+                && FluidForm.COMPRESSED_SYNTHESIS_FEED.matches(right.outlet().getFluid()), "Both cylinders share the powered drive");
+            int leftAmount = left.outlet().getFluidAmount(), rightAmount = right.outlet().getFluidAmount();
+            h.setBlock(BASE.west(), Blocks.STONE);
+            h.runAfterDelay(8, () -> {
+                h.assertTrue(drive.connectedSides() == 2 && left.outlet().getFluidAmount() == leftAmount && right.outlet().getFluidAmount() > rightAmount,
+                    "A blocked gap stops only its cylinder and the other cylinder still compresses");
+                h.assertTrue(left.inlet().getFluidAmount() + left.outlet().getFluidAmount() == 650
+                    && right.inlet().getFluidAmount() + right.outlet().getFluidAmount() == 650, "Each cylinder conserves its gas");
+                h.succeed();
+            });
+        });
+    }
+
+    @GameTest(template = "test_fractionation")
+    public static void aCylinderHasOneDriveAndCanBeReusedWhenItIsRemoved(GameTestHelper h) {
+        var state = CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.OPPOSED, true);
+        h.setBlock(BASE.west(2), state);
+        h.setBlock(BASE.east(2), state);
+        placedCylinder(h, BASE);
+        var west = (ReciprocatingCompressorBlockEntity) h.getBlockEntity(BASE.west(2));
+        var east = (ReciprocatingCompressorBlockEntity) h.getBlockEntity(BASE.east(2));
+        h.runAfterDelay(5, () -> {
+            h.assertTrue((west.connectedSides() == 2) != (east.connectedSides() == 1), "Only one drive claims the shared cylinder");
+            var owner = west.connectedSides() == 2 ? west : east;
+            var other = owner == west ? east : west;
+            h.getLevel().destroyBlock(owner.getBlockPos(), false);
+            h.runAfterDelay(5, () -> {
+                h.assertTrue(other.connectedSides() != 0, "The remaining drive claims the cylinder after teardown");
+                h.succeed();
+            });
+        });
+    }
+
+    private static ReciprocatingCylinderBlockEntity placedCylinder(GameTestHelper h, BlockPos pos) {
+        h.setBlock(pos, CEReciprocating.CYLINDER.get().defaultBlockState());
+        return (ReciprocatingCylinderBlockEntity) h.getBlockEntity(pos);
     }
 }

@@ -835,19 +835,19 @@
     "zh_cn": "往复式压缩机"
   },
   "reciprocating_compressor.cylinder": {
-    "en_us": "The reciprocating cylinder is the gas chamber. Gas comes in at the top and the compressed gas leaves from the bottom.",
-    "ja_jp": "往復式シリンダーが気体の部屋です。気体は上面から入り、圧縮された気体は下面から出ます。",
-    "zh_cn": "往复气缸储存气体，气体从顶面进入，压缩后从底面排出。"
+    "en_us": "When a cylinder is in place, its rod guide appears in the gap.",
+    "ja_jp": "シリンダーを置いた側の空きマスに、コンロッドの角筒が現れます。",
+    "zh_cn": "安装气缸后，对应空格会出现连杆导向套。"
   },
   "reciprocating_compressor.engine": {
-    "en_us": "Attach the compressor drive to the cylinder.",
-    "ja_jp": "シリンダーに圧縮機の駆動部を取り付けます。",
-    "zh_cn": "将压缩机驱动端安装在气缸上。"
+    "en_us": "Place the drive with one air block between it and each cylinder.",
+    "ja_jp": "駆動部の左右にシリンダーを置き、間を1マスずつ空けます。",
+    "zh_cn": "将气缸放在驱动部两侧，每侧留一格空气。"
   },
   "reciprocating_compressor.shaft": {
-    "en_us": "Place a Create shaft two blocks out from the engine, perpendicular to its crank. It becomes the drive shaft.",
-    "ja_jp": "駆動部から2マス先に、クランクと直角のシャフトを置きます。圧縮機の駆動軸に変わります。",
-    "zh_cn": "在驱动部外两格放置与曲柄垂直的Create传动杆，它会变成驱动轴。"
+    "en_us": "Connect a Create shaft directly behind the drive, pointing into the crankcase.",
+    "ja_jp": "駆動部の背面に、ケースへ向けてCreateのシャフトをつなぎます。",
+    "zh_cn": "在驱动部背面连接一根朝向曲轴箱的机械动力传动杆。"
   },
   "reciprocating_compressor.pipes": {
     "en_us": "Pump gas into the top port and draw the product from below.",
@@ -855,14 +855,14 @@
     "zh_cn": "从顶面泵入气体，从底面抽取产物。"
   },
   "reciprocating_compressor.rotate": {
-    "en_us": "Drive at least 16 RPM. Check the shaft and outlet if it stops.",
-    "ja_jp": "16 RPM以上で回します。停止時はシャフトと搬出先を確認します。",
-    "zh_cn": "输入至少16 RPM，停机时检查传动轴与出口。"
+    "en_us": "Wrench the top to switch the inspection window. At 16 RPM or more the crank drives both pistons.",
+    "ja_jp": "上面をレンチで操作すると覗き窓が切り替わります。16 RPM以上でクランクが左右を駆動します。",
+    "zh_cn": "用扳手切换顶面观察窗。转速达到16 RPM时，曲轴带动两侧的活塞。"
   },
   "reciprocating_compressor.setting": {
-    "en_us": "One stage raises pressure by four levels. Two stages take atmospheric gas to high pressure. Gas amounts are measured at atmospheric pressure.",
-    "ja_jp": "圧縮機1段で圧力が4レベル上がります。常圧から高圧には2段使います。気体の量は常圧換算です。",
-    "zh_cn": "压缩一级升高四档。常压到高压需要两级。气体流量以常压换算。"
+    "en_us": "Goggles show the connected cylinders and why the drive stopped. Each stage raises gas pressure by four levels.",
+    "ja_jp": "ゴーグルで接続数と停止理由を見られます。ガスの圧力は1段で4レベル上がります。",
+    "zh_cn": "用护目镜查看连接的气缸数和停机原因。每级将气体压力提高四档。"
   },
   "guide.flow_regulation.title": {
     "en_us": "Flow regulator",

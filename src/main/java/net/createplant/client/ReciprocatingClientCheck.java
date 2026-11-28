@@ -5,15 +5,20 @@ import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createplant.block.ReciprocatingCompressorBlock;
+import net.createplant.block.entity.ReciprocatingCompressorBlockEntity;
+import net.createplant.block.entity.ReciprocatingShaftBlockEntity;
 import net.createplant.registry.CEReciprocating;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 
 /** Opt-in integrated-world check: an engine on top of a cylinder, and two engines facing each other, with their crank shafts turning from a creative motor. */
 final class ReciprocatingClientCheck {
+    private static final boolean OPPOSED = Boolean.getBoolean("createplant.opposedCompressorClientCheck");
     /** Camera (x, y, z, yaw, pitch) relative to the first cylinder, with a narrow FOV. */
     private static final float[][] VIEWS = {{-5, 5, 6, -140, 24}, {4, 5, 7, 160, 24}, {9, 9, 6, 180, 55}};
     private static BlockPos origin;
@@ -29,6 +34,7 @@ final class ReciprocatingClientCheck {
         origin = new BlockPos(Boolean.getBoolean("createplant.reactorConsoleClientCheck") ? 24 : 0, mc.player.blockPosition().getY() + 1, 6);
         mc.getSingleplayerServer().execute(() -> {
             var level = mc.getSingleplayerServer().overworld();
+            if (OPPOSED) { opposed(level);return; }
             var shaft = AllBlocks.SHAFT.getDefaultState();
             level.setBlock(origin, CEReciprocating.CYLINDER.get().defaultBlockState(), 3);
             level.setBlock(origin.above(), CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.FACE, AttachFace.FLOOR).setValue(ReciprocatingCompressorBlock.FACING, Direction.NORTH), 3);
@@ -56,11 +62,39 @@ final class ReciprocatingClientCheck {
         ticks = 0;
     }
 
+    private static void opposed(ServerLevel level) {
+        for (int x = -3; x <= 3; x++) for (int z = -1; z <= 3; z++)
+            level.setBlock(origin.offset(x, -1, z), Blocks.SMOOTH_STONE.defaultBlockState(), 3);
+        var state = CEReciprocating.COMPRESSOR.get().defaultBlockState().setValue(ReciprocatingCompressorBlock.OPPOSED, true)
+            .setValue(ReciprocatingCompressorBlock.WINDOW, true);
+        level.setBlock(origin, state, 3);
+        for (var side : new Direction[]{Direction.WEST, Direction.EAST})
+            level.setBlock(origin.relative(side, 2), CEReciprocating.CYLINDER.get().defaultBlockState(), 3);
+        level.setBlock(origin.south(), AllBlocks.SHAFT.getDefaultState().setValue(RotatedPillarKineticBlock.AXIS, Direction.Axis.Z), 3);
+        level.setBlock(origin.south(2), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(DirectionalKineticBlock.FACING, Direction.NORTH), 3);
+        ((CreativeMotorBlockEntity) level.getBlockEntity(origin.south(2))).generatedSpeed.setValue(32);
+        level.setDayTime(6000);
+    }
+
     /** Returns true once every view is captured. */
     static boolean tick(Minecraft mc) {
         ticks++;
         if (mc.screen != null && !(mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen)) mc.setScreen(null);
         int hold=Integer.getInteger("createplant.reciprocatingClientHold",0);
+        if (OPPOSED) {
+            if (ticks == 65) {
+                if (!(mc.level.getBlockEntity(origin) instanceof ReciprocatingCompressorBlockEntity drive) || drive.connectedSides() != 3
+                    || !(mc.level.getBlockEntity(origin.south()) instanceof ReciprocatingShaftBlockEntity shaft) || shaft.getSpeed() == 0)
+                    throw new IllegalStateException("The opposed compressor did not sync both cylinders and a moving shaft");
+                mc.options.hideGui = true;
+                mc.getSingleplayerServer().execute(() -> {
+                    var player = mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());
+                    player.getAbilities().flying = true;player.onUpdateAbilities();
+                    player.connection.teleport(origin.getX() + 3.5, origin.getY() + 3, origin.getZ() - 7, 23, 24);
+                });
+            }
+            return ticks >= Math.max(100, hold);
+        }
         if(hold>0) {
             if(ticks==60) {
                 mc.options.hideGui=true;

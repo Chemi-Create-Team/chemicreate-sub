@@ -11,7 +11,9 @@ import net.createplant.registry.CEReciprocating;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -22,45 +24,65 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/**
- * The drive of a reciprocating compressor, mounted on its existing cylinder and shaft: it stands on a cylinder, and a Create shaft two blocks
- * out along its mounting direction carries the crank. The shaft must run along the engine's local X axis, which is across its FACING.
- */
+/** The opposed-cylinder drive; old blockstates retain the face-mounted arrangement. */
 public class ReciprocatingCompressorBlock extends FaceAttachedHorizontalDirectionalBlock implements IBE<ReciprocatingCompressorBlockEntity>, IWrenchable, ProperWaterloggedBlock {
     public static final MapCodec<ReciprocatingCompressorBlock> CODEC = simpleCodec(ReciprocatingCompressorBlock::new);
+    public static final BooleanProperty OPPOSED = BooleanProperty.create("opposed"), WINDOW = BooleanProperty.create("window");
 
     public ReciprocatingCompressorBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(FACE, AttachFace.FLOOR).setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
+        registerDefaultState(defaultBlockState().setValue(FACE, AttachFace.FLOOR).setValue(FACING, Direction.NORTH)
+            .setValue(WATERLOGGED, false).setValue(OPPOSED, false).setValue(WINDOW, false));
     }
 
     /** The way the crank and shaft lie from the engine: away from the cylinder. */
     public static Direction crankDirection(BlockState state) { return getConnectedDirection(state); }
 
-    public static BlockPos shaftPos(BlockState state, BlockPos pos) { return pos.relative(crankDirection(state), 2); }
+    public static BlockPos shaftPos(BlockState state, BlockPos pos) {
+        return state.getValue(OPPOSED) ? pos.relative(state.getValue(FACING).getOpposite()) : pos.relative(crankDirection(state), 2);
+    }
 
-    public static Direction.Axis shaftAxis(BlockState state) { return state.getValue(FACING).getClockWise().getAxis(); }
+    public static Direction.Axis shaftAxis(BlockState state) {
+        Direction facing = state.getValue(FACING);
+        return (state.getValue(OPPOSED) ? facing : facing.getClockWise()).getAxis();
+    }
+
+    public static Direction cylinderSide(BlockState state, int side) {
+        Direction right = state.getValue(FACING).getClockWise();
+        return side == 0 ? right.getOpposite() : right;
+    }
 
     public static boolean isShaftValid(BlockState engine, BlockState shaft) {
         return (AllBlocks.SHAFT.has(shaft) || shaft.is(CEReciprocating.SHAFT.get())) && shaft.getValue(ShaftBlock.AXIS) == shaftAxis(engine);
     }
 
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACE, FACING, WATERLOGGED);
+        builder.add(FACE, FACING, WATERLOGGED, OPPOSED, WINDOW);
     }
 
     @Override public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState state = super.getStateForPlacement(context);
-        return state == null ? null : withWater(state, context);
+        return withWater(defaultBlockState().setValue(OPPOSED, true).setValue(FACING, context.getHorizontalDirection().getOpposite()), context);
+    }
+
+    @Override public InteractionResult onWrenched(BlockState state, UseOnContext context) {
+        if (!state.getValue(OPPOSED)) return IWrenchable.super.onWrenched(state, context);
+        if (context.getClickedFace() != Direction.UP) return InteractionResult.PASS;
+        if (!context.getLevel().isClientSide) {
+            context.getLevel().setBlock(context.getClickedPos(), state.cycle(WINDOW), Block.UPDATE_ALL);
+            IWrenchable.playRotateSound(context.getLevel(), context.getClickedPos());
+        }
+        return InteractionResult.SUCCESS;
     }
 
     @Override public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return level.getBlockState(pos.relative(crankDirection(state).getOpposite())).getBlock() instanceof ReciprocatingCylinderBlock;
+        return state.getValue(OPPOSED) || level.getBlockState(pos.relative(crankDirection(state).getOpposite())).getBlock() instanceof ReciprocatingCylinderBlock;
     }
 
     @Override public BlockState updateShape(BlockState state, Direction side, BlockState other, LevelAccessor level, BlockPos pos, BlockPos otherPos) {
@@ -81,6 +103,7 @@ public class ReciprocatingCompressorBlock extends FaceAttachedHorizontalDirectio
     }
 
     @Override public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (state.getValue(OPPOSED)) return Shapes.block();
         AttachFace face = state.getValue(FACE);
         Direction facing = state.getValue(FACING);
         if(face==AttachFace.CEILING)return box(0,-8,0,16,16,16);
