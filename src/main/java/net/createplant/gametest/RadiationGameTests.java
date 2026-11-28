@@ -4,6 +4,7 @@ import net.createplant.CreatePlant;
 import net.createplant.item.RadiationMeterItem;
 import net.createplant.nuclear.*;
 import net.createplant.registry.*;
+import net.createplant.registry.CEProtectiveClothing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -166,10 +167,10 @@ public class RadiationGameTests {
     public static void clothingStopsOnlyBetaAndKeepsContaminationOnTheGarment(GameTestHelper h) {
         var bare = player(h);
         var suited = player(h);
-        suited.setItemSlot(EquipmentSlot.CHEST, CENuclear.PROTECTIVE_COAT.toStack());
-        suited.setItemSlot(EquipmentSlot.HEAD, CENuclear.PROTECTIVE_CAP.toStack());
-        suited.setItemSlot(EquipmentSlot.LEGS, CENuclear.PROTECTIVE_TROUSERS.toStack());
-        suited.setItemSlot(EquipmentSlot.FEET, CENuclear.PROTECTIVE_SHOE_COVERS.toStack());
+        suited.setItemSlot(EquipmentSlot.CHEST, CEProtectiveClothing.PROTECTIVE_COAT.toStack());
+        suited.setItemSlot(EquipmentSlot.HEAD, CEProtectiveClothing.PROTECTIVE_CAP.toStack());
+        suited.setItemSlot(EquipmentSlot.LEGS, CEProtectiveClothing.PROTECTIVE_TROUSERS.toStack());
+        suited.setItemSlot(EquipmentSlot.FEET, CEProtectiveClothing.PROTECTIVE_SHOE_COVERS.toStack());
         var field = new RadiationPhysics.Spectrum(.01, .01, .01, 0);
         Radiation.apply(bare, field, Radiation.protection(bare));
         Radiation.apply(suited, field, Radiation.protection(suited));

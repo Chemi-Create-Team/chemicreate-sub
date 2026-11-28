@@ -14,6 +14,7 @@ import net.createplant.arm.ArmRecipe;
 import net.createplant.arm.Trajectory;
 import net.createplant.block.entity.IndustrialArmBlockEntity;
 import net.createplant.registry.CEArm;
+import net.createplant.registry.CEMetals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -118,7 +119,7 @@ public final class ArmPonderScenes {
         scene.world().showSection(util.select().fromTo(WIRE_SUPPLY.below(), WIRE_SUPPLY), Direction.DOWN);
         scene.overlay().showControls(util.vector().topOf(WIRE_SUPPLY), Pointing.DOWN, 40).rightClick().withItem(new ItemStack(CEArm.ARM_ITEM.get()));
         scene.overlay().chaseBoundingBoxOutline(PonderPalette.INPUT, WIRE_SUPPLY, new AABB(WIRE_SUPPLY), 120);
-        scene.world().createItemOnBeltLike(WIRE_SUPPLY, Direction.UP, new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25));
+        scene.world().createItemOnBeltLike(WIRE_SUPPLY, Direction.UP, new ItemStack(CEMetals.ENAMELLED_COPPER_WIRE.get(), 25));
         text(scene, util, WIRE_SUPPLY, id, "wire");
 
         scene.overlay().showControls(util.vector().topOf(DEPOT), Pointing.DOWN, 40).withItem(new ItemStack(AllItems.IRON_SHEET.get()));

@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import net.createplant.CreatePlant;
@@ -8,7 +9,6 @@ import net.createplant.chemistry.ReactorModule;
 import net.createplant.client.GoggleSpec;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEMetals;
-import net.createplant.registry.CEUranium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -56,7 +56,7 @@ public class GoggleSpecGameTests {
         var saved = vessel.saveWithoutMetadata(level.registryAccess());
         var fluids = new FluidStack[] {new FluidStack(Fluids.WATER, 101), FluidForm.STEAM.stack(102),
             new FluidStack(CEFluids.OXYGEN_GAS.get(), 103), new FluidStack(CEFluids.NITROGEN_GAS.get(), 104),
-            new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 105), new FluidStack(CEUranium.SULFURIC_ACID.get(), 106),
+            new FluidStack(CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get(), 105), new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 106),
             new FluidStack(CEFluids.HYDROGEN_GAS.get(), 107)};
         for (int i = 0; i < fluids.length; i++) saved.put("Tank" + i, fluids[i].save(level.registryAccess()));
         vessel.loadWithComponents(saved, level.registryAccess());

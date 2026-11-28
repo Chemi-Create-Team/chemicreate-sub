@@ -3,9 +3,9 @@ package net.createplant.gametest;
 import net.createplant.CreatePlant;
 import net.createplant.block.GasDetectorBlock;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CENuclear;
+import net.createplant.registry.CEProtectiveClothing;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransport;
-import net.createplant.registry.CEUranium;
 import net.createplant.registry.CESafety;
 import net.createplant.safety.CorrosiveContact;
 import net.createplant.safety.ToxicGas;
@@ -45,7 +45,7 @@ public final class IndustrialGasSafetyGameTests {
         var emission = h.absolutePos(detector.north());
         h.startSequence().thenIdle(15).thenExecute(() -> {
             h.assertTrue(!h.getBlockState(lamp).getValue(BlockStateProperties.LIT), "An empty room has no alarm");
-            ToxicGas.releasePoison(world, emission, new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 1000));
+            ToxicGas.releasePoison(world, emission, new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(), 1000));
         }).thenWaitUntil(() -> {
             int nearPower = h.getBlockState(detector).getValue(GasDetectorBlock.POWER);
             int farPower = h.getBlockState(remote).getValue(GasDetectorBlock.POWER);
@@ -73,7 +73,7 @@ public final class IndustrialGasSafetyGameTests {
         var player = h.makeMockPlayer(GameType.SURVIVAL);
         var cylinder = CESafety.GAS_CYLINDER.toStack();
         var port = cylinder.getCapability(Capabilities.FluidHandler.ITEM);
-        h.assertTrue(port.fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 1000), EXECUTE) == 0
+        h.assertTrue(port.fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(), 1000), EXECUTE) == 0
             && port.fill(gas, SIMULATE) == 4000 && port.getFluidInTank(0).isEmpty(), "The portable cylinder only accepts inert gas, and simulation is read-only");
         player.setItemInHand(InteractionHand.MAIN_HAND, cylinder);
         useCylinder(h, player, source);
@@ -96,9 +96,9 @@ public final class IndustrialGasSafetyGameTests {
     @GameTest(template = "test_reactor")
     public static void completeClothingSetBlocksOnlyCorrosiveContact(GameTestHelper h) {
         var worker = h.spawnWithNoFreeWill(EntityType.HUSK, new Vec3(5.5, 2, 5.5));
-        worker.setItemSlot(EquipmentSlot.CHEST, CENuclear.PROTECTIVE_COAT.toStack());
-        worker.setItemSlot(EquipmentSlot.LEGS, CENuclear.PROTECTIVE_TROUSERS.toStack());
-        worker.setItemSlot(EquipmentSlot.FEET, CENuclear.PROTECTIVE_SHOE_COVERS.toStack());
+        worker.setItemSlot(EquipmentSlot.CHEST, CEProtectiveClothing.PROTECTIVE_COAT.toStack());
+        worker.setItemSlot(EquipmentSlot.LEGS, CEProtectiveClothing.PROTECTIVE_TROUSERS.toStack());
+        worker.setItemSlot(EquipmentSlot.FEET, CEProtectiveClothing.PROTECTIVE_SHOE_COVERS.toStack());
         worker.hurt(worker.damageSources().source(CorrosiveContact.DAMAGE), 2);
         h.assertTrue(worker.getHealth() == worker.getMaxHealth(), "The three-piece clothing set blocks corrosive contact");
         worker.hurt(worker.damageSources().source(ToxicGas.DAMAGE), 2);

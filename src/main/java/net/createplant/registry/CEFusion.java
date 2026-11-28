@@ -16,54 +16,23 @@ import net.createplant.block.entity.FusionControlConsoleBlockEntity;
 import net.createplant.block.entity.FusionMotorGeneratorBlockEntity;
 import net.createplant.block.entity.FusionReactorControllerBlockEntity;
 import net.createplant.block.entity.FusionVacuumPumpBlockEntity;
-import net.createplant.item.GasBucketItem;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /** Components and working fluids of the fixed-size D-T tokamak. */
 public final class CEFusion {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CreatePlant.MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CreatePlant.MOD_ID);
     private static final DeferredRegister<BlockEntityType<?>> TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CreatePlant.MOD_ID);
-    private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, CreatePlant.MOD_ID);
-    private static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(Registries.FLUID, CreatePlant.MOD_ID);
-    private static final DeferredRegister.Blocks FLUID_BLOCKS = DeferredRegister.createBlocks(CreatePlant.MOD_ID);
-
-    private static final PlantFluid DEUTERIUM = new PlantFluid(FLUID_TYPES, FLUIDS, "deuterium_gas", 0x99A7DFFF,
-        () -> gasProperties(0, 293),
-        fluid -> fluid.block(CEFusion.DEUTERIUM_BLOCK).bucket(CEFusion.DEUTERIUM_BUCKET)
-            .slopeFindDistance(6).levelDecreasePerBlock(1).tickRate(3));
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DEUTERIUM_GAS = DEUTERIUM.source;
-    private static final PlantFluid TRITIUM = new PlantFluid(FLUID_TYPES, FLUIDS, "tritium_gas", 0x99D6B56B,
-        () -> gasProperties(0, 293),
-        fluid -> fluid.block(CEFusion.TRITIUM_BLOCK).bucket(CEFusion.TRITIUM_BUCKET)
-            .slopeFindDistance(6).levelDecreasePerBlock(1).tickRate(3));
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TRITIUM_GAS = TRITIUM.source;
-    private static final PlantFluid HELIUM = new PlantFluid(FLUID_TYPES, FLUIDS, "helium_gas", 0x88E8DFA7,
-        () -> gasProperties(-1, 293),
-        fluid -> fluid.block(CEFusion.HELIUM_BLOCK).bucket(CEFusion.HELIUM_BUCKET)
-            .slopeFindDistance(8).levelDecreasePerBlock(1).tickRate(2));
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HELIUM_GAS = HELIUM.source;
-
-    private static final DeferredBlock<LiquidBlock> DEUTERIUM_BLOCK = fluidBlock("deuterium_gas", DEUTERIUM);
-    private static final DeferredBlock<LiquidBlock> TRITIUM_BLOCK = fluidBlock("tritium_gas", TRITIUM);
-    private static final DeferredBlock<LiquidBlock> HELIUM_BLOCK = fluidBlock("helium_gas", HELIUM);
 
     private static BlockBehaviour.Properties shell() {
         return BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK).strength(12, 1_200).sound(SoundType.NETHERITE_BLOCK);
@@ -116,12 +85,6 @@ public final class CEFusion {
     public static final DeferredItem<Item> IRRADIATION_CARTRIDGE = ITEMS.register("irradiation_cartridge",
         () -> new Item(new Item.Properties().durability(24_000).setNoRepair().stacksTo(1)));
     public static final DeferredItem<Item> IRRADIATED_CARTRIDGE = ITEMS.registerSimpleItem("irradiated_cartridge");
-    public static final DeferredItem<GasBucketItem> DEUTERIUM_BUCKET = ITEMS.register("deuterium_gas_bucket",
-        () -> new GasBucketItem(DEUTERIUM_GAS.get(), bucket()));
-    public static final DeferredItem<GasBucketItem> TRITIUM_BUCKET = ITEMS.register("tritium_gas_bucket",
-        () -> new GasBucketItem(TRITIUM_GAS.get(), bucket()));
-    public static final DeferredItem<GasBucketItem> HELIUM_BUCKET = ITEMS.register("helium_gas_bucket",
-        () -> new GasBucketItem(HELIUM_GAS.get(), bucket()));
 
     public static final Supplier<BlockEntityType<FusionReactorControllerBlockEntity>> CONTROLLER_ENTITY = TYPES.register("fusion_reactor_controller",
         () -> BlockEntityType.Builder.of(FusionReactorControllerBlockEntity::new, CONTROLLER.get()).build(null));
@@ -141,30 +104,9 @@ public final class CEFusion {
         return BLOCKS.registerBlock(id, properties -> new FusionFluidPortBlock(properties, kind), shell().noOcclusion());
     }
 
-    private static FluidType.Properties gasProperties(int density, int temperature) {
-        return FluidType.Properties.create().density(density).viscosity(12).temperature(temperature)
-            .motionScale(.03).canDrown(false).canSwim(false).supportsBoating(false);
-    }
-
-    private static DeferredBlock<LiquidBlock> fluidBlock(String id, PlantFluid fluid) {
-        DeferredBlock<LiquidBlock> block = FLUID_BLOCKS.register(id, () -> new LiquidBlock(fluid.source.get(), BlockBehaviour.Properties.of()
-            .noCollission().strength(100).liquid().replaceable()));
-        return block;
-    }
-
-    private static Item.Properties bucket() { return new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1); }
-
     public static void register(IEventBus bus) {
-        FLUID_TYPES.register(bus); FLUIDS.register(bus); FLUID_BLOCKS.register(bus);
         BLOCKS.register(bus); ITEMS.register(bus); TYPES.register(bus);
         bus.addListener(FusionFluidPortBlockEntity::registerCapabilities);
         bus.addListener(FusionReactorControllerBlockEntity::registerCapabilities);
-        bus.addListener(CEFusion::registerBucketCapabilities);
-    }
-
-    private static void registerBucketCapabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
-        Item[] buckets = {DEUTERIUM_BUCKET.get(), TRITIUM_BUCKET.get(), HELIUM_BUCKET.get()};
-        event.registerItem(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM,
-            (stack, context) -> stack.getItem() instanceof net.createplant.item.GasBucketItem ? new net.createplant.item.GasBucketWrapper(stack) : new net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper(stack), buckets);
     }
 }

@@ -2,11 +2,10 @@ package net.createplant.chemistry;
 
 import java.util.List;
 import net.createplant.registry.CEChlorAlkali;
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.registry.CEMetals;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEFusion;
-import net.createplant.registry.CEFusionFuel;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluid;
@@ -36,12 +35,12 @@ public record ElectrolysisProcess(Fluid feed, int input, Fluid cathode, int cath
 
     private static final class Recipes {
         private static final List<ElectrolysisProcess> VALUES = List.of(new ElectrolysisProcess(Fluids.WATER, 3, CEFluids.HYDROGEN_GAS.get(), 2, CEFluids.OXYGEN_GAS.get(), 0),
-            new ElectrolysisProcess(CEFusionFuel.HEAVY_WATER.get(), 3, CEFusion.DEUTERIUM_GAS.get(), 2, CEFluids.OXYGEN_GAS.get(), 0),
+            new ElectrolysisProcess(CEIsotopeGases.HEAVY_WATER.get(), 3, CEIsotopeGases.DEUTERIUM_GAS.get(), 2, CEFluids.OXYGEN_GAS.get(), 0),
             new ElectrolysisProcess(CEChlorAlkali.BRINE.get(), 2, CEFluids.HYDROGEN_GAS.get(), 1, CEChlorAlkali.CHLORINE.get(), 2),
-            new ElectrolysisProcess(CEUranium.HYDROGEN_FLUORIDE.get(), 2, CEFluids.HYDROGEN_GAS.get(), 1, CEUranium.FLUORINE.get(), 0),
+            new ElectrolysisProcess(CESharedChemicals.HYDROGEN_FLUORIDE.get(), 2, CEFluids.HYDROGEN_GAS.get(), 1, CESharedChemicals.FLUORINE.get(), 0),
             // SO2 + 2 H2O -> H2SO4 + H2: hydrogen at the cathode, the acid stays in the anolyte and leaves with the spent liquor.
-            new ElectrolysisProcess(CEUranium.SULFUROUS_ACID.get(), SULFUROUS_PER_PLATE, CEFluids.HYDROGEN_GAS.get(), 1, Fluids.EMPTY, 0,
-                Items.AIR, 0, CEUranium.SULFURIC_ACID.get(), 1, SULFUROUS_JOULES_PER_PLATE),
+            new ElectrolysisProcess(CESharedChemicals.SULFUROUS_ACID.get(), SULFUROUS_PER_PLATE, CEFluids.HYDROGEN_GAS.get(), 1, Fluids.EMPTY, 0,
+                Items.AIR, 0, CESharedChemicals.SULFURIC_ACID.get(), 1, SULFUROUS_JOULES_PER_PLATE),
             metal(CEMetals.IRON_SULFATE_SOLUTION.get(), Items.IRON_INGOT),
             metal(CEMetals.COPPER_SULFATE_SOLUTION.get(), Items.COPPER_INGOT),
             metal(CEMetals.ZINC_SULFATE_SOLUTION.get(), com.simibubi.create.AllItems.ZINC_INGOT.get()),

@@ -1,6 +1,6 @@
 package net.createplant.item;
 
-import net.createplant.block.ExtractionColumnStructureBlock;
+import net.createplant.block.ColumnRingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
@@ -16,7 +16,7 @@ public class ColumnStoreyItem extends BlockItem {
         var level = context.getLevel();
         BlockPos below = context.getClickedPos().below();
         var state = level.getBlockState(below);
-        BlockPos centre = state.is(getBlock()) ? below : ExtractionColumnStructureBlock.centre(level, below, state);
+        BlockPos centre = state.is(getBlock()) ? below : ColumnRingBlock.centre(level, below, state);
         return centre == null || !level.getBlockState(centre).is(getBlock()) ? context : BlockPlaceContext.at(context, centre.above(), Direction.UP);
     }
 }

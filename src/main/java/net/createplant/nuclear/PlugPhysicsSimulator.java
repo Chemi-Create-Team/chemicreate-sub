@@ -1,5 +1,6 @@
 package net.createplant.nuclear;
 
+import net.createplant.block.Finite;
 import net.minecraft.nbt.CompoundTag;
 
 /** Server-authoritative pressure relief and deterministic client motion for the four 350 kg RBMK channel plugs in a cap. */

@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidForm;
 import com.mojang.logging.LogUtils;
 import com.simibubi.create.AllBlocks;
@@ -239,9 +240,9 @@ public class FusionGameTests {
         helper.assertTrue(pump != null, "The west penetration is the mechanical vacuum pump");
         pump.setSpeed(64);
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.DEUTERIUM,
-            new FluidStack(CEFusion.DEUTERIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
+            new FluidStack(CEIsotopeGases.DEUTERIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM,
-            new FluidStack(CEFusion.TRITIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
+            new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.HELIUM_IN,
             FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(FusionReactorControllerBlockEntity.LIQUID_HELIUM_CAPACITY), 4.2));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
@@ -334,9 +335,9 @@ public class FusionGameTests {
             .generatedSpeed.setValue(64);
         pump.setSpeed(64);
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.DEUTERIUM,
-            new FluidStack(CEFusion.DEUTERIUM_GAS.get(), 8_000));
+            new FluidStack(CEIsotopeGases.DEUTERIUM_GAS.get(), 8_000));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM,
-            new FluidStack(CEFusion.TRITIUM_GAS.get(), 8_000));
+            new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(), 8_000));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.HELIUM_IN,
             FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(60_000), 4.2));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
@@ -377,9 +378,9 @@ public class FusionGameTests {
         var pump = (FusionVacuumPumpBlockEntity) helper.getLevel().getBlockEntity(controller.centre().relative(Direction.WEST, FusionPhysics.HALF_WIDTH));
         pump.setSpeed(64);
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.DEUTERIUM,
-            new FluidStack(CEFusion.DEUTERIUM_GAS.get(), 8_000));
+            new FluidStack(CEIsotopeGases.DEUTERIUM_GAS.get(), 8_000));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM,
-            new FluidStack(CEFusion.TRITIUM_GAS.get(), 8_000));
+            new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(), 8_000));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.HELIUM_IN,
             FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(60_000), 4.2));
         fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.COOLANT_IN,
@@ -451,8 +452,8 @@ public class FusionGameTests {
         linkConsole(helper,pos.north(),Direction.NORTH,console.getBlockPos());console.lazyTick();
         var player=FakePlayerFactory.getMinecraft(level);
         helper.assertTrue(console.stationComplete() && console.linked() && console.target()==80,"The linked physical desk reads the reactor's 80 percent target");
-        fill(controller,FusionFluidPortBlock.Kind.DEUTERIUM,new FluidStack(CEFusion.DEUTERIUM_GAS.get(),60000));
-        fill(controller,FusionFluidPortBlock.Kind.TRITIUM,new FluidStack(CEFusion.TRITIUM_GAS.get(),60000));
+        fill(controller,FusionFluidPortBlock.Kind.DEUTERIUM,new FluidStack(CEIsotopeGases.DEUTERIUM_GAS.get(),60000));
+        fill(controller,FusionFluidPortBlock.Kind.TRITIUM,new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(),60000));
         fill(controller,FusionFluidPortBlock.Kind.HELIUM_IN,FluidForm.LIQUID_HELIUM.stack(60000));
         controller.blanketPort().insertItem(0,new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()),false);controller.blanketPort().insertItem(1,new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()),false);
         controller.commissionForTest();controller.preheatBlanketForTest(523.15);
@@ -532,8 +533,8 @@ public class FusionGameTests {
         controller.tick();
         helper.assertTrue(controller.formed(), "The tokamak forms: " + controller.status());
         var pump = (FusionVacuumPumpBlockEntity) helper.getLevel().getBlockEntity(controller.centre().relative(Direction.WEST, FusionPhysics.HALF_WIDTH));
-        fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.DEUTERIUM, new FluidStack(CEFusion.DEUTERIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
-        fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM, new FluidStack(CEFusion.TRITIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
+        fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.DEUTERIUM, new FluidStack(CEIsotopeGases.DEUTERIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
+        fill(controller, net.createplant.block.FusionFluidPortBlock.Kind.TRITIUM, new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(), FusionReactorControllerBlockEntity.FUEL_CAPACITY));
         controller.blanketPort().insertItem(0, new ItemStack(CEFusion.LITHIUM_LEAD_BLANKET.get()), false);
         controller.blanketPort().insertItem(1, new ItemStack(CEFusion.DIVERTOR_CASSETTE.get()), false);
         String first = net.createplant.relay.RelayComputerBlockEntity.fusionStep(controller, 50);

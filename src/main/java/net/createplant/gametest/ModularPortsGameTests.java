@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
@@ -45,25 +46,25 @@ public final class ModularPortsGameTests {
         var items = h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, vessel.getBlockPos(), Direction.NORTH);
         var fluids = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, vessel.getBlockPos(), Direction.NORTH);
         h.assertTrue(vessel.formed() && items != null && fluids != null, "The impeller vessel exposes standard feed ports");
-        h.assertTrue(items.insertItem(0, CEUranium.FLUORITE.toStack(), false).isEmpty()
-            && fluids.fill(new FluidStack(CEUranium.SULFURIC_ACID.get(), 250), EXECUTE) == 250, "Load one fluorite and 250 mB sulfuric acid");
+        h.assertTrue(items.insertItem(0, CESharedChemicals.FLUORITE.toStack(), false).isEmpty()
+            && fluids.fill(new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 250), EXECUTE) == 250, "Load one fluorite and 250 mB sulfuric acid");
         ReactorGameTests.speed(vessel, 32);
         for (int tick = 0; tick < 300; tick++) vessel.tickProcess();
         var gas = h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, vessel.getBlockPos().above(vessel.sections() - 1), Direction.UP);
-        h.assertTrue(gas != null && !gas.drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(), 1), SIMULATE).isEmpty(),
+        h.assertTrue(gas != null && !gas.drain(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(), 1), SIMULATE).isEmpty(),
             "Hydrogen fluoride gas leaves through the top; with no liquid left, the sides may give it too");
-        var feed = gas.drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(), 1000), EXECUTE);
+        var feed = gas.drain(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(), 1000), EXECUTE);
         h.assertTrue(feed.getAmount() == 1000 && items.getStackInSlot(0).isEmpty()
-            && fluids.drain(new FluidStack(CEUranium.SULFURIC_ACID.get(), 1), SIMULATE).isEmpty(),
+            && fluids.drain(new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 1), SIMULATE).isEmpty(),
             "Fluorite and sulfuric acid give exactly 1000 mB hydrogen fluoride: " + vessel.status() + ", recovered=" + feed.getAmount());
         var owner = ElectrolysisCellGameTests.one(h);
         h.assertTrue(ElectrolysisCellGameTests.feed(owner, feed) == 1000, "Recovered hydrogen fluoride feeds the electrolysis cell");
         ElectrolysisCellGameTests.run(owner, 500, 400);
         h.assertTrue(owner.stored(0) == 0 && owner.stored(1) == 500 && owner.fluid(1).is(CEFluids.HYDROGEN_GAS.get())
-            && owner.stored(2) == 500 && owner.fluid(2).is(CEUranium.FLUORINE.get()), "One fluorite yields 500 mB each of hydrogen and fluorine without water");
+            && owner.stored(2) == 500 && owner.fluid(2).is(CESharedChemicals.FLUORINE.get()), "One fluorite yields 500 mB each of hydrogen and fluorine without water");
         var shown = net.createplant.ponder.ManufacturingRecipe.resolve(h.getLevel(), "operation:fluoride_electrolysis");
-        h.assertTrue(shown.fluids().getFirst().is(CEUranium.HYDROGEN_FLUORIDE.get()) && shown.fluids().getFirst().getAmount() == 200
-            && shown.fluidProducts().size() == 2 && shown.fluidProducts().get(1).is(CEUranium.FLUORINE.get())
+        h.assertTrue(shown.fluids().getFirst().is(CESharedChemicals.HYDROGEN_FLUORIDE.get()) && shown.fluids().getFirst().getAmount() == 200
+            && shown.fluidProducts().size() == 2 && shown.fluidProducts().get(1).is(CESharedChemicals.FLUORINE.get())
             && shown.fluidProducts().get(1).getAmount() == 100, "Ponder shows the same fluoride-electrolysis batch");h.succeed();
     }
     @GameTest(template="test_petrochemical")

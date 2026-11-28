@@ -12,8 +12,8 @@ import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEReactor;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransport;
-import net.createplant.registry.CEUranium;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -152,7 +152,7 @@ final class SurvivalSulfurWorkshop {
         wet.tickElectrolysis();
         if (phase == 4) return wet.tick();
         int air = gas(controller, CEFluids.AIR_GAS.get());
-        int sulfurDioxide = gas(controller, CEUranium.SULFUR_DIOXIDE.get());
+        int sulfurDioxide = gas(controller, CESharedChemicals.SULFUR_DIOXIDE.get());
         if (phase == 2) {
             if (air < 2400) {
                 check(now - intake < 1800, "Open-ended gas pipe did not deliver one air charge; tank=" + air + " mB, " + controller.status());

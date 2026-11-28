@@ -249,7 +249,7 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         helper.forComponents(CreatePlant.location("crane_drive"), CreatePlant.location("fuel_pool"), CreatePlant.location("reactor_top_cap"))
             .addStoryBoard("crane/crane_refuelling", CranePonderScenes::refuel);
         helper.forComponents(CreatePlant.location("quarry_drive"))
-            .addStoryBoard("crane/quarry_frame", CranePonderScenes::quarryFrame);
+            .addStoryBoard("crane/quarry_frame", QuarryPonderScenes::quarryFrame);
         helper.forComponents(CreatePlant.location("personal_dosimeter"), CreatePlant.location("survey_meter"), CreatePlant.location("fuel_pool"))
             .addStoryBoard("nuclear/radiation_measurement", RadiationPonderScenes::measurement);
         helper.forComponents(CreatePlant.location("personal_dosimeter"), CreatePlant.location("survey_meter"), CreatePlant.location("soap"), CreatePlant.location("gas_mask"))

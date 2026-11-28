@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.processing.basin.BasinBlockEntity;
@@ -10,7 +11,6 @@ import net.createplant.CreatePlant;
 import net.createplant.block.entity.ReactorMachineBlockEntity;
 import net.createplant.chemistry.ReactorModule;
 import net.createplant.registry.CEChlorAlkali;
-import net.createplant.registry.CEFuelCycle;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEProcessFluids;
@@ -116,7 +116,7 @@ public final class IndustrialFertilizerGameTests {
         var urea = take(h, vessel.itemPort(), CEItems.UREA.get(), 2);
         drain(h, port, Fluids.WATER, 250);
 
-        fill(h, port, CEFuelCycle.PHOSPHORIC_ACID.get(), 250);
+        fill(h, port, CESharedChemicals.PHOSPHORIC_ACID.get(), 250);
         insert(h, vessel.itemPort(), new ItemStack(Items.CALCITE));
         run(vessel);
         var phosphate = take(h, vessel.itemPort(), CEItems.PHOSPHATE_FERTILIZER.get(), 2);

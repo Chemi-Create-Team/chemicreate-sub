@@ -17,7 +17,7 @@ public final class RelayComputerGameTests {
     /** The relay bank adds and subtracts like integers, carries ripple one relay at a time, and the programs decide through it. */
     @GameTest(template = "test_empty", timeoutTicks = 20)
     public static void relayBankComputesTheControlLaw(GameTestHelper h) {
-        var alu = new net.createplant.relay.RelayAlu();
+        var alu = new net.createplant.control.RelayAlu();
         var rnd = new java.util.Random(7);
         for (int k = 0; k < 2000; k++) {
             int x = rnd.nextInt(2000) - 1000, y = rnd.nextInt(2000) - 1000;

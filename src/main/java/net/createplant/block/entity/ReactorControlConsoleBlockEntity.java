@@ -11,7 +11,7 @@ import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createplant.block.ReactorControlConsoleBlock;
 import net.createplant.compat.display.MachineReadings;
-import net.createplant.nuclear.Finite;
+import net.createplant.block.Finite;
 import net.createplant.nuclear.ReactorCore;
 import net.createplant.nuclear.ReactorConsoleButton;
 import net.createplant.nuclear.ReactorConsoleLink;

@@ -3,6 +3,8 @@ package net.createplant.thermal;
 import java.util.List;
 import java.util.function.Supplier;
 import net.createplant.registry.*;
+import net.createplant.registry.CEIsotopeGases;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -13,9 +15,9 @@ public final class PhaseChange {
     }
     private static final List<Pair> PAIRS = List.of(new Pair(CEFluids.AMMONIA_GAS, FluidForm.LIQUID_AMMONIA),
         new Pair(CEFluids.OXYGEN_GAS, FluidForm.LIQUID_OXYGEN), new Pair(CEFluids.NITROGEN_GAS, FluidForm.LIQUID_NITROGEN), new Pair(CEChlorAlkali.CHLORINE, FluidForm.LIQUID_CHLORINE),
-        new Pair(CEUranium.SULFUR_DIOXIDE, FluidForm.LIQUID_SULFUR_DIOXIDE), new Pair(CEChlorAlkali.VINYL_CHLORIDE, FluidForm.LIQUID_VINYL_CHLORIDE),
+        new Pair(CESharedChemicals.SULFUR_DIOXIDE, FluidForm.LIQUID_SULFUR_DIOXIDE), new Pair(CEChlorAlkali.VINYL_CHLORIDE, FluidForm.LIQUID_VINYL_CHLORIDE),
         new Pair(CEPetroFluids.PROPYLENE, FluidForm.LIQUID_PROPYLENE),
-        new Pair(CEFusion.HELIUM_GAS, FluidForm.LIQUID_HELIUM));
+        new Pair(CEIsotopeGases.HELIUM_GAS, FluidForm.LIQUID_HELIUM));
     private PhaseChange(){ }
     public static List<Pair> pairs(){return PAIRS;}
     public static Pair ofLiquid(FluidStack stack){return PAIRS.stream().filter(p->p.liquid().matches(stack)).findFirst().orElse(null);}

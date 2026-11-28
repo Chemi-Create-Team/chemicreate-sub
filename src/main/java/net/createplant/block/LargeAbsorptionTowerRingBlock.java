@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
  * The ring of a large absorption tower storey. It holds a passive block entity because Create's pipes connect only to blocks that have one;
  * every port it shows belongs to the storey at its centre.
  */
-public class LargeAbsorptionTowerRingBlock extends ExtractionColumnStructureBlock implements IBE<ColumnRingBlockEntity> {
+public class LargeAbsorptionTowerRingBlock extends ColumnRingBlock implements IBE<ColumnRingBlockEntity> {
     public LargeAbsorptionTowerRingBlock(Properties properties) { super(properties); }
 
     @Override public Class<ColumnRingBlockEntity> getBlockEntityClass() { return ColumnRingBlockEntity.class; }

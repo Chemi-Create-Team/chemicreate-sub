@@ -43,8 +43,8 @@ import net.createplant.registry.CEOstwaldFluids;
 import net.createplant.registry.CEProcessBlocks;
 import net.createplant.registry.CEProcessFluids;
 import net.createplant.registry.CEReactor;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransport;
-import net.createplant.registry.CEUranium;
 import net.createplant.registry.CEWorldFluids;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -287,12 +287,12 @@ public final class SteamAcidPlaytestWorld {
 
     private static void sulfur(ServerLevel level, long ticks) {
         if (sulfurStep == 0 && move(port(level, BURNER_VESSEL, Direction.UP), port(level, SULFUR_ABSORBER.west(), Direction.WEST),
-            CEUranium.SULFUR_DIOXIDE.get(), 500)) {
+            CESharedChemicals.SULFUR_DIOXIDE.get(), 500)) {
             RESULTS.put("sulfur_dioxide_tick", ticks);
             sulfurStep = 1;
         }
         if (sulfurStep == 1 && move(port(level, SULFUR_ABSORBER.west(), Direction.WEST), port(level, SULFUR_CELL, Direction.DOWN),
-            CEUranium.SULFUROUS_ACID.get(), 500)) {
+            CESharedChemicals.SULFUROUS_ACID.get(), 500)) {
             RESULTS.put("sulfurous_acid_tick", ticks);
             sulfurStep = 2;
         }
@@ -353,7 +353,7 @@ public final class SteamAcidPlaytestWorld {
         var rpm = Math.abs(entity(level, BRUSH, KineticBlockEntity.class).getSpeed());
         require(rpm > 0, "The alternator shaft must be turning");
         require(tank(level, CONDENSATE).getFluidAmount() > 0, "LP condensate must reach its tank");
-        require(tank(level,SULFUR_PRODUCT).getFluid().is(CEUranium.SULFURIC_ACID.get())
+        require(tank(level,SULFUR_PRODUCT).getFluid().is(CESharedChemicals.SULFURIC_ACID.get())
             && tank(level,CHLORINE_PRODUCT).getFluid().is(CEChlorAlkali.HYDROCHLORIC_ACID.get())
             && tank(level,NITRIC_PRODUCT).getFluid().is(CEFluids.NITRIC_ACID.get()), "Products must be the three specified acids");
         RESULTS.put("ticks", ticks);

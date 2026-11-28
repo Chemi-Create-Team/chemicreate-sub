@@ -5,7 +5,7 @@ import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createplant.item.PortableToolFluidHandler;
 import net.createplant.registry.CEPortableTools;
 import net.createplant.registry.CEPetroFluids;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
@@ -28,7 +28,7 @@ public final class PortableSprayerPonderScenes {
         scene.title("portable_sprayers",PonderText.title(KEY+"title","Portable fluid sprayers"));
         scene.configureBasePlate(0,0,9);scene.scaleSceneView(.8f);scene.showBasePlate();
         scene.world().showSection(util.select().fromTo(0,1,0,8,4,8),Direction.DOWN);
-        var water=new FluidStack(Fluids.WATER,2000);var fuel=new FluidStack(CEPetroFluids.DIESEL.get(),4000);var acid=new FluidStack(CEUranium.SULFURIC_ACID.get(),4000);
+        var water=new FluidStack(Fluids.WATER,2000);var fuel=new FluidStack(CEPetroFluids.DIESEL.get(),4000);var acid=new FluidStack(CESharedChemicals.SULFURIC_ACID.get(),4000);
         fill(scene,new BlockPos(1,1,2),water);fill(scene,new BlockPos(4,1,2),acid);fill(scene,new BlockPos(7,1,2),fuel);
         text(scene,util,new BlockPos(4,2,4),"overview");
         var extinguisher=loaded(CEPortableTools.FIRE_EXTINGUISHER.get().getDefaultInstance(),water);

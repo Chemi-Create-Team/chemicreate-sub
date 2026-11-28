@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.createplant.block.Finite;
 import net.createplant.block.entity.FuelChannelBlockEntity;
 import net.createplant.block.entity.RodCapBlockEntity;
 import net.createplant.block.entity.ShieldDriveBlockEntity;

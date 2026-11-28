@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
@@ -11,7 +12,6 @@ import net.createplant.block.entity.CryogenicColdBoxBlockEntity;
 import net.createplant.block.entity.FuelChannelBlockEntity;
 import net.createplant.nuclear.ReactorCoreStructure;
 import net.createplant.registry.CEElectrolysis;
-import net.createplant.registry.CEFusion;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEFusionFuel;
 import net.createplant.registry.CEMetals;
@@ -36,10 +36,10 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 public class FusionFuelGameTests {
     private static final BlockPos BOX = new BlockPos(6, 3, 5);
     private static CryogenicColdBoxBlockEntity box(GameTestHelper h) {
-        h.setBlock(BOX, CEFusionFuel.COLD_BOX.get().defaultBlockState().setValue(CryogenicColdBoxBlock.HORIZONTAL_FACING, Direction.NORTH));
+        h.setBlock(BOX, CEIsotopeGases.COLD_BOX.get().defaultBlockState().setValue(CryogenicColdBoxBlock.HORIZONTAL_FACING, Direction.NORTH));
         var be = (CryogenicColdBoxBlockEntity)h.getBlockEntity(BOX);
         for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) for (int z = 1; z <= 3; z++)
-            h.getLevel().setBlock(be.body(x, y, z), (x == 0 && y == 0 && z == 2 ? CEFusionFuel.REGENERATOR.get() : CEMetals.STEEL_BLOCK.get().getBlock()).defaultBlockState(), 3);
+            h.getLevel().setBlock(be.body(x, y, z), (x == 0 && y == 0 && z == 2 ? CEIsotopeGases.REGENERATOR.get() : CEMetals.STEEL_BLOCK.get().getBlock()).defaultBlockState(), 3);
         be.setSpeed(256);be.step();
         return be;
     }
@@ -50,12 +50,12 @@ public class FusionFuelGameTests {
     @GameTest(template = "test_empty")
     public static void coldBoxLiquefiesNitrogenOxygenAndHeliumWithPaidShaftWork(GameTestHelper h) {
         var be=box(h);
-        for(var type:new net.minecraft.world.level.material.Fluid[]{CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEFusion.HELIUM_GAS.get()}){
+        for(var type:new net.minecraft.world.level.material.Fluid[]{CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEIsotopeGases.HELIUM_GAS.get()}){
             be.gas().setFluid(FluidStack.EMPTY);be.liquid().setFluid(FluidStack.EMPTY);be.water().setFluid(new FluidStack(Fluids.WATER,32000));be.warm().setFluid(FluidStack.EMPTY);
             var conversion=net.createplant.thermal.ThermalStreams.liquefaction(new FluidStack(type,1));int amount=conversion.inputAmount()*10;
             be.port(Direction.UP).fill(new FluidStack(type,amount),EXECUTE);be.step();
             h.assertTrue(be.gas().isEmpty() && be.liquid().getFluid().is(conversion.output().getFluid()) && be.liquid().getFluidAmount()==10,"The fixed liquefaction table processes "+type);
-            int coolant=type==CEFusion.HELIUM_GAS.get() ? 2000 : 500;
+            int coolant=type==CEIsotopeGases.HELIUM_GAS.get() ? 2000 : 500;
             // The discharge carries the gas's heat and the shaft work, so it is warmer than the supply but never boils.
             var warm=be.warm().getFluid();
             h.assertTrue(be.water().getFluidAmount()==32000-coolant && net.createplant.thermal.FluidState.liquidWater(warm) && be.warm().getFluidAmount()==coolant
@@ -67,7 +67,7 @@ public class FusionFuelGameTests {
     @GameTest(template = "test_empty")
     public static void coldBoxStopsWithoutWorkAndKeepsAllBuffersThroughSavingAndBreaking(GameTestHelper h) {
         var be = box(h);
-        var preview = new FluidStack(CEFusion.HELIUM_GAS.get(), 10000);
+        var preview = new FluidStack(CEIsotopeGases.HELIUM_GAS.get(), 10000);
         h.assertTrue(be.port(Direction.UP).fill(preview, SIMULATE) == 10000 && be.gas().isEmpty(), "Fill simulation leaves the helium buffer untouched");
         be.port(Direction.UP).fill(preview, EXECUTE);be.water().fill(new FluidStack(Fluids.WATER, 32000), EXECUTE);
         be.setSpeed(0);be.step();
@@ -86,10 +86,10 @@ public class FusionFuelGameTests {
 
     @GameTest(template = "test_empty")
     public static void aPartialGasBatchWaitsAndRemovedHandlersCannotDrain(GameTestHelper h) {
-        var be=box(h);var inlet=be.port(Direction.UP);var outlet=be.port(Direction.DOWN);inlet.fill(new FluidStack(CEFusion.HELIUM_GAS.get(),1),EXECUTE);be.water().fill(new FluidStack(Fluids.WATER,32000),EXECUTE);be.step();be.step();
+        var be=box(h);var inlet=be.port(Direction.UP);var outlet=be.port(Direction.DOWN);inlet.fill(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(),1),EXECUTE);be.water().fill(new FluidStack(Fluids.WATER,32000),EXECUTE);be.step();be.step();
         h.assertTrue(be.gas().getFluidAmount()==1 && be.liquid().isEmpty() && be.watts()==0,"Less than one conversion batch waits without consuming gas, water or work");
         be.liquid().fill(FluidForm.LIQUID_HELIUM.stack(1),EXECUTE);h.setBlock(BOX,Blocks.AIR);
-        h.assertTrue(outlet.drain(1,EXECUTE).isEmpty() && inlet.fill(new FluidStack(CEFusion.HELIUM_GAS.get(),1),EXECUTE)==0 && outlet.getFluidInTank(0).isEmpty(),"Removed handlers cannot resurrect feed or drain destroyed stock");h.succeed();
+        h.assertTrue(outlet.drain(1,EXECUTE).isEmpty() && inlet.fill(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(),1),EXECUTE)==0 && outlet.getFluidInTank(0).isEmpty(),"Removed handlers cannot resurrect feed or drain destroyed stock");h.succeed();
     }
 
     @GameTest(template = "test_empty")
@@ -118,7 +118,7 @@ public class FusionFuelGameTests {
         h.runAfterDelay(20, () -> {
             var motor = (com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity)h.getBlockEntity(motorPos);
             h.assertTrue(Math.abs(be.getSpeed()) == 256 && be.getOrCreateNetwork() == motor.getOrCreateNetwork(), "The real front shaft joins the motor's rotating network");
-            be.port(Direction.UP).fill(new FluidStack(CEFusion.HELIUM_GAS.get(), 100_000), EXECUTE);
+            be.port(Direction.UP).fill(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(), 100_000), EXECUTE);
             be.port(Direction.EAST).fill(new FluidStack(Fluids.WATER, 32_000), EXECUTE);
             be.step();
             h.assertTrue(be.watts() > 0 && !be.liquid().isEmpty(), "Sufficient real network capacity pays for cooldown");
@@ -136,12 +136,12 @@ public class FusionFuelGameTests {
     @GameTest(template = "test_empty")
     public static void heavyWaterElectrolysisSeparatesD2AndKeepsPreviewAndReloadSafe(GameTestHelper h) {
         var owner = ElectrolysisCellGameTests.one(h);
-        ElectrolysisCellGameTests.feed(owner, new FluidStack(CEFusionFuel.HEAVY_WATER.get(), 30));ElectrolysisCellGameTests.run(owner, 10, 400);
-        h.assertTrue(owner.stored(1) == 20 && owner.stored(2) == 10 && owner.fluid(1).is(CEFusion.DEUTERIUM_GAS.get()), "Heavy water produces D2 and oxygen without mislabelling hydrogen");
+        ElectrolysisCellGameTests.feed(owner, new FluidStack(CEIsotopeGases.HEAVY_WATER.get(), 30));ElectrolysisCellGameTests.run(owner, 10, 400);
+        h.assertTrue(owner.stored(1) == 20 && owner.stored(2) == 10 && owner.fluid(1).is(CEIsotopeGases.DEUTERIUM_GAS.get()), "Heavy water produces D2 and oxygen without mislabelling hydrogen");
         var lookup = h.getLevel().registryAccess();for (var cell : owner.cells()) cell.loadWithComponents(cell.saveWithoutMetadata(lookup), lookup);
         var cell = (net.createplant.block.entity.ElectrolysisCellBlockEntity)h.getLevel().getBlockEntity(owner.structure().minimum());
         var out = cell.port(Direction.WEST);
-        h.assertTrue(out.drain(7, SIMULATE).is(CEFusion.DEUTERIUM_GAS.get()) && owner.stored(1) == 20, "D2 survives reload; preview does not drain it");
+        h.assertTrue(out.drain(7, SIMULATE).is(CEIsotopeGases.DEUTERIUM_GAS.get()) && owner.stored(1) == 20, "D2 survives reload; preview does not drain it");
         h.assertTrue(out.drain(new FluidStack(Fluids.WATER, 1), EXECUTE).isEmpty() && owner.stored(1) == 20, "A drain request cannot relabel the saved gas");h.succeed();
     }
 
@@ -201,10 +201,10 @@ public class FusionFuelGameTests {
     }
     @GameTest(template="test_empty")
     public static void aColdBoxReloadRetiresOldPortsWithoutReplayingTheBatch(GameTestHelper h){
-        var be=box(h);var in=be.port(Direction.UP);var out=be.port(Direction.DOWN);int ratio=net.createplant.thermal.ThermalStreams.liquefaction(new FluidStack(CEFusion.HELIUM_GAS.get(),1)).inputAmount();
-        in.fill(new FluidStack(CEFusion.HELIUM_GAS.get(),ratio*10),EXECUTE);be.water().fill(new FluidStack(Fluids.WATER,32000),EXECUTE);be.step();
+        var be=box(h);var in=be.port(Direction.UP);var out=be.port(Direction.DOWN);int ratio=net.createplant.thermal.ThermalStreams.liquefaction(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(),1)).inputAmount();
+        in.fill(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(),ratio*10),EXECUTE);be.water().fill(new FluidStack(Fluids.WATER,32000),EXECUTE);be.step();
         h.assertTrue(be.liquid().getFluidAmount()==10,"Ten exact batches complete");be.loadWithComponents(be.saveWithoutMetadata(h.getLevel().registryAccess()),h.getLevel().registryAccess());be.setSpeed(256);be.step();
-        h.assertTrue(in.fill(new FluidStack(CEFusion.HELIUM_GAS.get(),ratio),EXECUTE)==0 && out.drain(1,EXECUTE).isEmpty(),"A held capability cannot reach the reloaded owner");
+        h.assertTrue(in.fill(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(),ratio),EXECUTE)==0 && out.drain(1,EXECUTE).isEmpty(),"A held capability cannot reach the reloaded owner");
         h.assertTrue(be.port(Direction.DOWN).drain(100,EXECUTE).getAmount()==10 && be.gas().isEmpty() && be.water().getFluidAmount()==30000 && be.warm().getFluidAmount()==2000,"Reload preserves all stocks and cannot replay liquefaction");h.succeed();
     }
 }

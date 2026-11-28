@@ -80,12 +80,12 @@ public class QuarryRenderer extends KineticBlockEntityRenderer<QuarryDriveBlockE
         if (!VisualizationManager.supportsVisualization(level)) {
             BlockState state = be.getBlockState();
             VertexConsumer solid = buffer.getBuffer(RenderType.cutout());
-            parts(quarry, gantry, depth, be.drill(), (model, at, turn) -> CraneRenderer.draw(CachedBuffers.partial(model, state), at, turn, be, ms, solid));
+            parts(quarry, gantry, depth, be.drill(), (model, at, turn) -> GantryRenderHelper.draw(CachedBuffers.partial(model, state), at, turn, be, ms, solid));
             var shift=AllSpriteShifts.BELT;
             float scroll=(float)(be.renderedBeltTravel(partialTicks)%1)*beltDirection(quarry)*.5f*(shift.getTarget().getV1()-shift.getTarget().getV0());
             for (int i = -1; i <= quarry.span(); i++)
-                CraneRenderer.draw(CachedBuffers.partial(BRIDGE_BELT,state).shiftUVScrolling(shift,scroll),origin.add(across.scale(i)),yaw,be,ms,solid);
-            if (be.drill()) CraneRenderer.draw(CachedBuffers.partialFacing(AllPartialModels.DRILL_HEAD, state, Direction.DOWN), gantry.hook(), headSpin(be), be, ms, solid);
+                GantryRenderHelper.draw(CachedBuffers.partial(BRIDGE_BELT,state).shiftUVScrolling(shift,scroll),origin.add(across.scale(i)),yaw,be,ms,solid);
+            if (be.drill()) GantryRenderHelper.draw(CachedBuffers.partialFacing(AllPartialModels.DRILL_HEAD, state, Direction.DOWN), gantry.hook(), headSpin(be), be, ms, solid);
         }
         long now = be.conveyorTime();
         float conveyorPartial = be.conveyorPartial(partialTicks);

@@ -1,5 +1,6 @@
 package net.createplant.relay;
 
+import net.createplant.control.RelayAlu;
 import net.createplant.block.entity.FusionReactorControllerBlockEntity;
 import net.createplant.block.entity.FusionReactorControllerBlockEntity.Command;
 import net.createplant.nuclear.ReactorPhysics;

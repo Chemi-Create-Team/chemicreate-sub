@@ -17,8 +17,8 @@ import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEPetroFluids;
 import net.createplant.registry.CEPortableTools;
 import net.createplant.registry.CEProcessFluids;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransport;
-import net.createplant.registry.CEUranium;
 import net.createplant.thermal.Grade;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -57,7 +57,7 @@ public final class ChemicalUiGameTests {
         }
         for (var fuel : java.util.List.of(CEPetroFluids.CRUDE_OIL.get(), CEPetroFluids.DIESEL.get(), CEPetroFluids.GASOLINE.get()))
             h.assertTrue(FluidChemicalRegistry.base(fuel) != null, "Refinery fuels supplied by CDG have formulas");
-        var acid = new FluidStack(CEUranium.SULFURIC_ACID.get(), 1);
+        var acid = new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 1);
         var info = FluidChemicalRegistry.of(acid);
         h.assertTrue(info.formula().equals("H₂SO₄") && info.hazards().contains(ChemicalHazard.CORROSIVE), "Formula and in-game hazard are separate registered data");
         var bar = ChemicalReadout.heat(Grade.Heat.COLD, Grade.Heat.HOT, Grade.Heat.VERY_HOT).getString();

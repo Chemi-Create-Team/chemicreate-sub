@@ -6,7 +6,7 @@ import net.createplant.block.BatteryStructure;
 import net.createplant.block.entity.BatteryTerminalBlockEntity;
 import net.createplant.registry.CEBattery;
 import net.createplant.registry.CESafety;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.safety.CorrosiveContact;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -67,7 +67,7 @@ public class BatteryGameTests {
         var mob = h.spawnWithNoFreeWill(EntityType.HUSK, new Vec3(2.5, 2, 2.5));
         CorrosiveContact.soak(mob, new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000));
         h.assertTrue(!mob.hasEffect(CESafety.ACID_BURN), "Water does not burn");
-        CorrosiveContact.soak(mob, new FluidStack(CEUranium.SULFURIC_ACID.get(), 1000));
+        CorrosiveContact.soak(mob, new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 1000));
         var burn = mob.getEffect(CESafety.ACID_BURN);
         h.assertTrue(burn != null && burn.isInfiniteDuration(), "Acid gives an effect that never runs out");
         mob.removeEffectsCuredBy(EffectCures.MILK);

@@ -12,7 +12,7 @@ import net.createplant.block.CraneDriveBlock;
 import net.createplant.block.CraneFrame;
 import net.createplant.block.CraneStructure;
 import net.createplant.block.entity.ReactorControlConsoleBlockEntity.CraneMode;
-import net.createplant.nuclear.Finite;
+import net.createplant.block.Finite;
 import net.createplant.nuclear.ReactorCores;
 import net.createplant.nuclear.ReactorPhysics;
 import net.createplant.nuclear.ReactorFuel;

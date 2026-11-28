@@ -5,16 +5,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
-import net.createmod.catnip.render.SuperByteBuffer;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.CraneDriveBlockEntity;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
@@ -59,36 +55,30 @@ public class CraneRenderer extends KineticBlockEntityRenderer<CraneDriveBlockEnt
         // The girder model runs along X; turn it to lie across the rails.
         float yaw = crane.across().getAxis() == Direction.Axis.X ? 0 : 90;
         for (int i = 0; i <= crane.span(); i++)
-            draw(CachedBuffers.partial(i == 0 || i == crane.span() ? END_TRUCK : GIRDER, state), origin.add(across.scale(i)), yaw, be, ms, solid);
+            GantryRenderHelper.draw(CachedBuffers.partial(i == 0 || i == crane.span() ? END_TRUCK : GIRDER, state), origin.add(across.scale(i)), yaw, be, ms, solid);
         Vec3 trolley = origin.add(across.scale(v));
-        draw(CachedBuffers.partial(TROLLEY, state), trolley, yaw, be, ms, solid);
+        GantryRenderHelper.draw(CachedBuffers.partial(TROLLEY, state), trolley, yaw, be, ms, solid);
         // Reactor service keeps a fixed ten-block wide section and five-block narrow section while the bridge moves horizontally.
         double hookY = -1 - depth;
         int mastSegment = 0;
         for (double y = hookY + 1; y < 0; y += 1) {
             double top = Math.min(y + 1, 0);
             if (top - y < 0.05) continue;
-            draw(CachedBuffers.partial(mastSegment < CraneDriveBlockEntity.LOWER_MAST_LENGTH - 1 ? LOWER_MAST : MAST, state), trolley.add(0, y, 0), 0, be, ms, solid);
+            GantryRenderHelper.draw(CachedBuffers.partial(mastSegment < CraneDriveBlockEntity.LOWER_MAST_LENGTH - 1 ? LOWER_MAST : MAST, state), trolley.add(0, y, 0), 0, be, ms, solid);
             mastSegment++;
         }
         Vec3 hook = trolley.add(0, hookY, 0);
-        draw(CachedBuffers.partial(MAST_HEAD, state), hook, yaw, be, ms, solid);
+        GantryRenderHelper.draw(CachedBuffers.partial(MAST_HEAD, state), hook, yaw, be, ms, solid);
         if (be.fusion() && be.working()) {
-            if (be.fusionComponent() == 0) draw(CachedBuffers.partial(BLANKET_LOAD, state), hook.add(0, -1.5, 0), yaw, be, ms, solid);
+            if (be.fusionComponent() == 0) GantryRenderHelper.draw(CachedBuffers.partial(BLANKET_LOAD, state), hook.add(0, -1.5, 0), yaw, be, ms, solid);
             else {
-                for (int part = 0; part < 4; part++) draw(CachedBuffers.partial(part == 3 ? DIVERTOR_HALF : DIVERTOR_LOAD, state), hook.add(part - 1.75, -2.1, 0), yaw, be, ms, solid);
-                draw(CachedBuffers.partial(DIVERTOR_LEFT, state), hook.add(-1.75, -1.85, 0), yaw, be, ms, solid);
-                draw(CachedBuffers.partial(DIVERTOR_RIGHT, state), hook.add(1, -1.85, 0), yaw, be, ms, solid);
+                for (int part = 0; part < 4; part++) GantryRenderHelper.draw(CachedBuffers.partial(part == 3 ? DIVERTOR_HALF : DIVERTOR_LOAD, state), hook.add(part - 1.75, -2.1, 0), yaw, be, ms, solid);
+                GantryRenderHelper.draw(CachedBuffers.partial(DIVERTOR_LEFT, state), hook.add(-1.75, -1.85, 0), yaw, be, ms, solid);
+                GantryRenderHelper.draw(CachedBuffers.partial(DIVERTOR_RIGHT, state), hook.add(1, -1.85, 0), yaw, be, ms, solid);
             }
         }
         // A fuel rod held in the crane above the grapple, going down through the standpipe into its hole or the pool, or up out of it.
         if (be.carried() != 0) for (int i = 0; i < be.carriedLength(); i++)
-            draw(CachedBuffers.partial(FuelChannelRenderer.TUBE, state), hook.add(0, i - be.slide(), 0), 0, be, ms, solid);
-    }
-
-    static void draw(SuperByteBuffer model, Vec3 at, float yaw, BlockEntity be, PoseStack ms, VertexConsumer consumer) {
-        BlockPos lit = be.getBlockPos().offset((int) Math.floor(at.x), (int) Math.floor(at.y), (int) Math.floor(at.z));
-        model.translate(at.x, at.y, at.z).center().rotateYDegrees(yaw).uncenter()
-            .light(LevelRenderer.getLightColor(be.getLevel(), lit)).renderInto(ms, consumer);
+            GantryRenderHelper.draw(CachedBuffers.partial(FuelChannelRenderer.TUBE, state), hook.add(0, i - be.slide(), 0), 0, be, ms, solid);
     }
 }

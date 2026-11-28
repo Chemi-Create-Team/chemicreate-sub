@@ -15,14 +15,13 @@ import net.createplant.item.PortableToolFluidHandler;
 import net.createplant.item.SprayToolItem;
 import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEFuelCycle;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEMetals;
 import net.createplant.registry.CEPetroFluids;
 import net.createplant.registry.CEPortableTools;
 import net.createplant.registry.CEProcessFluids;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransmission;
-import net.createplant.registry.CEUranium;
 import net.createplant.registry.CEWaterTreatment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -126,7 +125,7 @@ public final class DownstreamMaterialsGameTests {
         var liquor = take(h, ReactionTowerGameTests.port(oxidizer), CEProcessFluids.CUMENE_PROCESS_LIQUOR.get(), 250);
         var separator = tower(h, new BlockPos(14, 3, 4), CEItems.CUMENE_CATALYST_CORE.toStack(), false);
         fill(h, ReactionTowerGameTests.port(separator), liquor);
-        fill(h, ReactionTowerGameTests.port(separator), stack(CEUranium.SULFURIC_ACID.get(), 50));
+        fill(h, ReactionTowerGameTests.port(separator), stack(CESharedChemicals.SULFURIC_ACID.get(), 50));
         separator.process(110);
         var phenol = take(h, ReactionTowerGameTests.port(separator), CEProcessFluids.PHENOL.get(), 150);
         take(h, ReactionTowerGameTests.port(separator), CEProcessFluids.ACETONE.get(), 100);
@@ -203,7 +202,7 @@ public final class DownstreamMaterialsGameTests {
     public static void phosphateBlendFillsAndTreatsCropsThroughTheNativeSpout(GameTestHelper h) {
         var basin = basin(h, new BlockPos(9, 3, 4));
         insert(h, basin.getInputInventory(), CEItems.PHOSPHATE_FERTILIZER.toStack());
-        insert(h, basin.getInputInventory(), CEFuelCycle.BORAX.toStack());
+        insert(h, basin.getInputInventory(), CESharedChemicals.BORAX.toStack());
         fill(h, basin.inputTank.getCapability(), stack(Fluids.WATER, 250));
         h.assertTrue(BasinRecipe.apply(basin, recipe(h, "mixing/phosphate_compound")), "The basin produces phosphate compound");
         var compound = take(h, basin.getOutputInventory(), CEItems.PHOSPHATE_COMPOUND.get(), 3);

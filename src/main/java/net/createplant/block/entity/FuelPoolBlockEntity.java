@@ -8,7 +8,7 @@ import java.util.WeakHashMap;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import net.createplant.nuclear.Finite;
+import net.createplant.block.Finite;
 import net.createplant.nuclear.ReactorFuel;
 import net.createplant.nuclear.FuelPoolStructure;
 import net.createplant.registry.CENuclear;

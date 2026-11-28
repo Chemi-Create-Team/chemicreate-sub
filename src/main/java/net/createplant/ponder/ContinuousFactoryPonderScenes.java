@@ -8,7 +8,6 @@ import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.ContinuousFactoryBlockEntity;
 import net.createplant.factory.FactoryKind;
-import net.createplant.registry.CEArm;
 import net.createplant.registry.CEMetals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +19,7 @@ public final class ContinuousFactoryPonderScenes {
 
     public static void kiln(SceneBuilder builder, SceneBuildingUtil util) { show(builder, util, FactoryKind.KILN, 10, new ItemStack(Items.CALCITE)); }
     public static void mill(SceneBuilder builder, SceneBuildingUtil util) { show(builder, util, FactoryKind.MILL, 10, CEMetals.STEEL_BLOCK.toStack()); }
-    public static void winder(SceneBuilder builder, SceneBuildingUtil util) { show(builder, util, FactoryKind.WINDER, 6, CEArm.ENAMELLED_COPPER_WIRE.toStack()); }
+    public static void winder(SceneBuilder builder, SceneBuildingUtil util) { show(builder, util, FactoryKind.WINDER, 6, CEMetals.ENAMELLED_COPPER_WIRE.toStack()); }
 
     /** One rolled product: what goes in (and the side material), the line it needs, the speed match, the product and its use. */
     public record Rolled(String id, int stands, String feed, int feedCount, String auxiliary, int auxiliaryCount, int count, String use) { }

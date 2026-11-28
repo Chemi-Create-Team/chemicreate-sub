@@ -1,5 +1,6 @@
 package net.createplant.block.entity;
 
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidForm;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -296,7 +297,7 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
         int amount = Math.min(requested, Math.min(liquidHelium.getAmount(), room));
         if (amount <= 0) return 0;
         liquidHelium = shrink(liquidHelium, amount);
-        FluidStack gas = FluidThermal.at(new FluidStack(CEFusion.HELIUM_GAS.get(), amount * HELIUM_VOLUME_RATIO), 293.15);
+        FluidStack gas = FluidThermal.at(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(), amount * HELIUM_VOLUME_RATIO), 293.15);
         heliumExhaust = FluidThermal.add(heliumExhaust, gas, gas.getAmount());
         setChanged();
         return amount;
@@ -357,14 +358,14 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
             fuelDue -= fuel;
         }
         if (helium > 0) {
-            FluidStack made = FluidThermal.at(new FluidStack(CEFusion.HELIUM_GAS.get(), helium), 293.15);
+            FluidStack made = FluidThermal.at(new FluidStack(CEIsotopeGases.HELIUM_GAS.get(), helium), 293.15);
             ash = FluidThermal.add(ash, made, helium);
             ashDue -= helium;
         }
         if (bred > 0) {
             int accepted = Math.min(bred, FUEL_CAPACITY - tritium.getAmount());
             if (accepted > 0) {
-                FluidStack made = FluidThermal.at(new FluidStack(CEFusion.TRITIUM_GAS.get(), accepted), 293.15);
+                FluidStack made = FluidThermal.at(new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(), accepted), 293.15);
                 tritium = FluidThermal.add(tritium, made, accepted);
                 bredTritiumDue -= accepted;
             }
@@ -788,8 +789,8 @@ public class FusionReactorControllerBlockEntity extends SmartBlockEntity impleme
         }
         private boolean accepts(FluidStack stack) {
             return switch (kind) {
-                case DEUTERIUM -> stack.is(CEFusion.DEUTERIUM_GAS.get());
-                case TRITIUM -> stack.is(CEFusion.TRITIUM_GAS.get());
+                case DEUTERIUM -> stack.is(CEIsotopeGases.DEUTERIUM_GAS.get());
+                case TRITIUM -> stack.is(CEIsotopeGases.TRITIUM_GAS.get());
                 case HELIUM_IN -> FluidForm.LIQUID_HELIUM.matches(stack);
                 case COOLANT_IN -> FluidForm.PRESSURISED_WATER.matches(stack);
                 default -> false;

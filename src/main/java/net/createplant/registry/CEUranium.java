@@ -21,7 +21,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
- * Uranium fuel from ore to sintered pellet, with the sulfuric acid, hydrogen fluoride and fluorine it consumes.
+ * Uranium fuel from ore to sintered pellet.
  * Liquid streams also use the shared world-liquid and bucket registrations.
  */
 public final class CEUranium {
@@ -37,7 +37,6 @@ public final class CEUranium {
     public static final DeferredItem<BlockItem> URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(URANIUM_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_URANIUM_ORE_ITEM = ITEMS.registerSimpleBlockItem(DEEPSLATE_URANIUM_ORE);
     public static final DeferredItem<Item> URANINITE = ITEMS.registerSimpleItem("uraninite");
-    public static final DeferredItem<Item> FLUORITE = ITEMS.registerSimpleItem("fluorite");
     public static final DeferredItem<Item> YELLOWCAKE = ITEMS.registerSimpleItem("yellowcake");
     public static final DeferredItem<Item> URANIUM_TRIOXIDE = ITEMS.registerSimpleItem("uranium_trioxide");
     public static final DeferredItem<Item> URANIUM_DIOXIDE = ITEMS.registerSimpleItem("uranium_dioxide");
@@ -49,12 +48,6 @@ public final class CEUranium {
     public static final DeferredItem<Item> GREEN_COMPACT_URANIUM_PELLET = ITEMS.registerSimpleItem("green_compact_uranium_pellet");
     public static final DeferredItem<Item> COMPACT_URANIUM_PELLET = ITEMS.registerSimpleItem("compact_uranium_pellet");
 
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SULFUR_DIOXIDE = stream("sulfur_dioxide", 0x99D8D2B0);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SULFUR_TRIOXIDE = stream("sulfur_trioxide", 0xAAE2DCC6);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SULFURIC_ACID = stream("sulfuric_acid", 0xDDD9D0A0);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> SULFUROUS_ACID = stream("sulfurous_acid", 0xCCDCE0C4);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HYDROGEN_FLUORIDE = stream("hydrogen_fluoride", 0x99DCE6D8);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> FLUORINE = stream("fluorine", 0xAAD8D88A);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> URANYL_NITRATE_SOLUTION = stream("uranyl_nitrate_solution", 0xEEC8C860);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> URANIUM_HEXAFLUORIDE = stream("uranium_hexafluoride", 0xAADAD6C8);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ENRICHED_URANIUM_HEXAFLUORIDE = stream("enriched_uranium_hexafluoride", 0xAAD6DCB4);

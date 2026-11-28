@@ -12,6 +12,7 @@ import net.createplant.mixture.MixtureContents;
 import net.createplant.mixture.MixtureHelper;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEProcessFluids;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransport;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -65,7 +66,7 @@ public class DriveLessVesselGameTests {
                 "A finite Blaze Cake supplies real superheat");
         });
         h.runAfterDelay(150, () -> {
-            var sulfurDioxide = net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get();
+            var sulfurDioxide = CESharedChemicals.SULFUR_DIOXIDE.get();
             var product = tank.drain(held(tank, sulfurDioxide, 500), EXECUTE);
             h.assertTrue(product.getAmount() == 500 && product.is(sulfurDioxide) && vessel.getTankInventory().isEmpty()
                 && vessel.itemPort().getStackInSlot(0).isEmpty() && vessel.rotationSpeed() == 0,
@@ -78,7 +79,7 @@ public class DriveLessVesselGameTests {
 
     @GameTest(template = "test_reactor", timeoutTicks = 180)
     public static void airBurnsSulfurInASealedStainlessTank(GameTestHelper h) {
-        var sulfurDioxide = net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get();
+        var sulfurDioxide = CESharedChemicals.SULFUR_DIOXIDE.get();
         var oxygen = BuiltInRegistries.FLUID.getKey(CEFluids.OXYGEN_GAS.get());
         for (var pos : new BlockPos[] {BASE, BASE.east(4)}) {
             h.setBlock(pos, CETransport.STIRRED_TANK.get());

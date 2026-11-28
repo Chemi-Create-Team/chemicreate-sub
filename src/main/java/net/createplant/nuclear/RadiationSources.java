@@ -1,5 +1,6 @@
 package net.createplant.nuclear;
 
+import net.createplant.block.Finite;
 import net.createplant.registry.CERadiation;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

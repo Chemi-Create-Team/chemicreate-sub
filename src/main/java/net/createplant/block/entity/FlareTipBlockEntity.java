@@ -139,8 +139,8 @@ public class FlareTipBlockEntity extends SmartBlockEntity implements IHaveGoggle
     @Override protected void read(CompoundTag tag,HolderLookup.Provider lookup,boolean packet) {
         super.read(tag,lookup,packet);gas.readFromNBT(lookup,tag.getCompound("FlareGas"));
         burnt=Math.max(0,tag.getLong("Burnt"));vented=Math.max(0,tag.getLong("Vented"));
-        flame=packet ? net.createplant.nuclear.Finite.of(tag.getFloat("Flame"),0,0,MAX_FLAME) : 0;
-        flow=packet ? net.createplant.nuclear.Finite.of(tag.getDouble("Flow"),0,0,MAX_FLOW) : 0;
+        flame=packet ? net.createplant.block.Finite.of(tag.getFloat("Flame"),0,0,MAX_FLAME) : 0;
+        flow=packet ? net.createplant.block.Finite.of(tag.getDouble("Flow"),0,0,MAX_FLOW) : 0;
         formed=packet && tag.getBoolean("Formed");exhaust=packet && tag.getBoolean("Exhaust");
     }
     @Override public boolean addToGoggleTooltip(List<Component> text,boolean sneaking) {

@@ -40,7 +40,6 @@ public final class CEArm {
     public static final DeferredItem<Item> FERRITE_POWDER = ITEMS.registerSimpleItem("ferrite_powder");
     public static final DeferredItem<Item> UNFIRED_FERRITE_RING = ITEMS.registerSimpleItem("unfired_ferrite_ring");
     public static final DeferredItem<Item> FERRITE_CORE = ITEMS.registerSimpleItem("ferrite_core");
-    public static final DeferredItem<Item> ENAMELLED_COPPER_WIRE = ITEMS.registerSimpleItem("enamelled_copper_wire");
     public static final Supplier<BlockEntityType<IndustrialArmBlockEntity>> ARM_ENTITY = TYPES.register("industrial_arm",
         () -> BlockEntityType.Builder.of(IndustrialArmBlockEntity::new, ARM.get()).build(null));
 

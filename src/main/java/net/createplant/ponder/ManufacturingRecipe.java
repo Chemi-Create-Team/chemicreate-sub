@@ -1,5 +1,7 @@
 package net.createplant.ponder;
 
+import net.createplant.registry.CEIsotopeGases;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,10 +134,10 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
         }
         var feed = switch (name) {
             case "water_electrolysis" -> Fluids.WATER;
-            case "heavy_water_electrolysis" -> CEFusionFuel.HEAVY_WATER.get();
+            case "heavy_water_electrolysis" -> CEIsotopeGases.HEAVY_WATER.get();
             case "brine_electrolysis" -> CEChlorAlkali.BRINE.get();
-            case "fluoride_electrolysis" -> CEUranium.HYDROGEN_FLUORIDE.get();
-            case "sulfurous_electrolysis" -> CEUranium.SULFUROUS_ACID.get();
+            case "fluoride_electrolysis" -> CESharedChemicals.HYDROGEN_FLUORIDE.get();
+            case "sulfurous_electrolysis" -> CESharedChemicals.SULFUROUS_ACID.get();
             default -> throw new IllegalArgumentException("Unknown manufacturing operation " + name);
         };
         var process = ElectrolysisProcess.of(new FluidStack(feed, 1));

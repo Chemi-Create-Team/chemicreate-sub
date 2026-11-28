@@ -36,7 +36,6 @@ import net.createplant.registry.CEElectrolysis;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEProcessFluids;
-import net.createplant.registry.CEUranium;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

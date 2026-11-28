@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -430,7 +431,7 @@ public class VesselBasinGameTests {
         var residual = new java.util.TreeMap<>(MixtureHelper.airContents(3000).amounts());
         residual.compute(BuiltInRegistries.FLUID.getKey(CEFluids.OXYGEN_GAS.get()), (id, amount) -> amount - 500);
         h.assertTrue(light.getAmount() == 600 && MixtureHelper.extractContents(light).equals(new MixtureContents(residual).split(600).extracted())
-            && heavy.is(net.createplant.registry.CEUranium.SULFUR_DIOXIDE.get()) && heavy.getAmount() == 500,
+            && heavy.is(CESharedChemicals.SULFUR_DIOXIDE.get()) && heavy.getAmount() == 500,
             "The upper outlet exports the residual gas as a mixture while the lower outlet exports the separate sulfur dioxide product");
         h.succeed();
     }

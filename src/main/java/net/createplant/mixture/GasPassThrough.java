@@ -1,5 +1,6 @@
 package net.createplant.mixture;
 
+import net.createplant.registry.CEIsotopeGases;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -27,7 +28,7 @@ public final class GasPassThrough extends BlockEntityBehaviour {
                 net.createplant.registry.CETransport.AMMONIA_SEPARATOR_ENTITY.get(), net.createplant.registry.CEDistillation.COLUMN_ENTITY.get(),
                 net.createplant.registry.CEConverter.TRUNNION_ENTITY.get(), net.createplant.registry.CEElectrolysis.CONTROLLER_ENTITY.get(),
                 net.createplant.registry.CEFuelCell.FUEL_CELL_ENTITY.get(), net.createplant.registry.CEFusion.CONTROLLER_ENTITY.get(),
-                net.createplant.registry.CEFusionFuel.COLD_BOX_ENTITY.get(), net.createplant.registry.CECompressor.RELIEF_SCRUBBER_ENTITY.get(),
+                CEIsotopeGases.COLD_BOX_ENTITY.get(), net.createplant.registry.CECompressor.RELIEF_SCRUBBER_ENTITY.get(),
                 net.createplant.registry.CEProcessBlocks.COOLER_RADIATOR_DRIVE.get(),
                 net.createplant.registry.CEGasifier.PART.get(), net.createplant.registry.CEFuelCycle.MACHINE_ENTITY.get(),
                 net.createplant.registry.CEWetProcessing.DRIVE_ENTITY.get(), net.createplant.registry.CEHighStressMachines.CENTRIFUGE_ENTITY.get()))

@@ -1,7 +1,7 @@
 package net.createplant.safety;
 
 import net.createplant.CreatePlant;
-import net.createplant.registry.CENuclear;
+import net.createplant.registry.CEProtectiveClothing;
 import net.createplant.registry.CESafety;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.core.BlockPos;
@@ -27,9 +27,9 @@ public final class CorrosiveContact {
     public static void protectWithClothing(LivingIncomingDamageEvent event) {
         if (!event.getSource().is(DAMAGE)) return;
         var living = event.getEntity();
-        if (living.getItemBySlot(EquipmentSlot.CHEST).is(CENuclear.PROTECTIVE_COAT.get())
-            && living.getItemBySlot(EquipmentSlot.LEGS).is(CENuclear.PROTECTIVE_TROUSERS.get())
-            && living.getItemBySlot(EquipmentSlot.FEET).is(CENuclear.PROTECTIVE_SHOE_COVERS.get())) event.setCanceled(true);
+        if (living.getItemBySlot(EquipmentSlot.CHEST).is(CEProtectiveClothing.PROTECTIVE_COAT.get())
+            && living.getItemBySlot(EquipmentSlot.LEGS).is(CEProtectiveClothing.PROTECTIVE_TROUSERS.get())
+            && living.getItemBySlot(EquipmentSlot.FEET).is(CEProtectiveClothing.PROTECTIVE_SHOE_COVERS.get())) event.setCanceled(true);
     }
 
     public static boolean harmful(FluidState state) {

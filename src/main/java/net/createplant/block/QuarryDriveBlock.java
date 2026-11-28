@@ -4,7 +4,7 @@ import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.AbstractEncasedShaftBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.createplant.block.entity.QuarryDriveBlockEntity;
-import net.createplant.registry.CECrane;
+import net.createplant.registry.CEQuarry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -49,7 +49,7 @@ public class QuarryDriveBlock extends AbstractEncasedShaftBlock implements IBE<Q
     }
 
     @Override public Class<QuarryDriveBlockEntity> getBlockEntityClass() { return QuarryDriveBlockEntity.class; }
-    @Override public BlockEntityType<? extends QuarryDriveBlockEntity> getBlockEntityType() { return CECrane.QUARRY_DRIVE_ENTITY.get(); }
+    @Override public BlockEntityType<? extends QuarryDriveBlockEntity> getBlockEntityType() { return CEQuarry.QUARRY_DRIVE_ENTITY.get(); }
 
     @Override protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!AllBlocks.MECHANICAL_DRILL.isIn(stack)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import java.util.*;
 import com.simibubi.create.AllBlocks;
@@ -130,13 +131,13 @@ public class ReactorGameTests {
         var vessel=build(h,ReactorModule.STIRRED,2);heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.HEATED);
         h.assertTrue(vessel.itemPort().insertItem(0,new ItemStack(Items.BONE_MEAL,3),false).isEmpty(),"Bone meal goes in");
         var feed=vessel.port(Direction.NORTH);
-        feed.fill(new FluidStack(Fluids.WATER,750),EXECUTE);feed.fill(new FluidStack(CEUranium.SULFURIC_ACID.get(),250),EXECUTE);
+        feed.fill(new FluidStack(Fluids.WATER,750),EXECUTE);feed.fill(new FluidStack(CESharedChemicals.SULFURIC_ACID.get(),250),EXECUTE);
         run(vessel,220);
         h.assertTrue(vessel.displayedFluid(2).isEmpty() && vessel.displayedFluid(3).isEmpty(),"The acid is not diluted while bone meal waits: "+vessel.displayedFluid(2).getFluid());
-        feed.fill(new FluidStack(CEUranium.SULFURIC_ACID.get(),750),EXECUTE);
+        feed.fill(new FluidStack(CESharedChemicals.SULFURIC_ACID.get(),750),EXECUTE);
         run(vessel,220);
         boolean phosphoric=false;
-        for (int slot=0;slot<4;slot++) phosphoric|=vessel.displayedFluid(slot).is(CEFuelCycle.PHOSPHORIC_ACID.get());
+        for (int slot=0;slot<4;slot++) phosphoric|=vessel.displayedFluid(slot).is(CESharedChemicals.PHOSPHORIC_ACID.get());
         h.assertTrue(phosphoric,"Once enough acid arrives the bone meal becomes phosphoric acid");
         h.succeed();
     }
@@ -147,7 +148,7 @@ public class ReactorGameTests {
         heat(vessel,com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
         var items=vessel.itemPort();
         var zircon=CEMetals.MINERALS.get("zircon").get();
-        var acid=CEUranium.SULFURIC_ACID.get();
+        var acid=CESharedChemicals.SULFURIC_ACID.get();
         var sulfate=CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
         var feed=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,vessel.getBlockPos(),Direction.WEST);
         h.assertTrue(items.insertItem(0,new ItemStack(zircon,3),false).isEmpty() && feed!=null
@@ -186,7 +187,7 @@ public class ReactorGameTests {
         h.assertTrue(zirconyl.is(CEMetals.ZIRCONYL_SULFATE.get()) && items.insertItem(1,zirconyl,false).isEmpty(),"The hydrate gives the zirconyl feed for calcining");
         run(vessel,105);
         h.assertTrue(items.getStackInSlot(sand+1).is(CEMetals.ZIRCONIA.get())
-            && products(vessel).getOrDefault(CEUranium.SULFUR_TRIOXIDE.get(),0)==500,"The staged recipe produces zirconia and both SO3 portions");
+            && products(vessel).getOrDefault(CESharedChemicals.SULFUR_TRIOXIDE.get(),0)==500,"The staged recipe produces zirconia and both SO3 portions");
         h.succeed();
     }
 
@@ -235,7 +236,7 @@ public class ReactorGameTests {
         heat(vessel, com.simibubi.create.content.processing.recipe.HeatCondition.SUPERHEATED);
         var zircon = CEMetals.MINERALS.get("zircon").get();
         var sulfate = CEMetals.ZIRCONIUM_SULFATE_SOLUTION.get();
-        var acid = CEUranium.SULFURIC_ACID.get();
+        var acid = CESharedChemicals.SULFURIC_ACID.get();
         h.assertTrue(vessel.itemPort().insertItem(0, new ItemStack(zircon, 3), false).isEmpty()
             && in(vessel).fill(new FluidStack(acid, 600), EXECUTE) == 600
             && vessel.getTankInventory().fill(new FluidStack(Fluids.WATER, 1000), EXECUTE) == 1000,
@@ -543,10 +544,10 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void theReactionTowerOxidizesSulfurDioxide(GameTestHelper h) {
         var tower=ReactionTowerGameTests.tower(h.getLevel(),h.absolutePos(new BlockPos(12,2,4)),3,ItemStack.EMPTY);var port=ReactionTowerGameTests.port(tower);
-        h.assertTrue(port.fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),100),EXECUTE)==0,"Sulfur dioxide needs the oxidation catalyst");
+        h.assertTrue(port.fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(),100),EXECUTE)==0,"Sulfur dioxide needs the oxidation catalyst");
         for (int i=0;i<3;i++) tower.insert(CEItems.OXIDATION_CATALYST.toStack());
-        port.fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),100),EXECUTE);port.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(),50),EXECUTE);tower.process(100);
-        h.assertTrue(tower.tank(2).getAmount()==100 && tower.tank(2).getFluid()==CEUranium.SULFUR_TRIOXIDE.get(),"100 mB of sulfur dioxide and 50 mB of oxygen give 100 mB of sulfur trioxide");
+        port.fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(),100),EXECUTE);port.fill(new FluidStack(CEFluids.OXYGEN_GAS.get(),50),EXECUTE);tower.process(100);
+        h.assertTrue(tower.tank(2).getAmount()==100 && tower.tank(2).getFluid()==CESharedChemicals.SULFUR_TRIOXIDE.get(),"100 mB of sulfur dioxide and 50 mB of oxygen give 100 mB of sulfur trioxide");
         h.succeed();
     }
     @GameTest(template="test_reactor",timeoutTicks=50)
@@ -561,7 +562,7 @@ public class ReactorGameTests {
         h.assertTrue(items!=null && jacket!=null,"The vessel takes items and fluids on its outer faces");
         h.assertTrue(items.insertItem(0,new ItemStack(Items.DIRT),false).isEmpty() && hot.recoverInputItem(0,1).is(Items.DIRT),"A stirred vessel stores ordinary basin items and lets the player recover them independently of recipes");
         h.assertTrue(items.insertItem(0,CEUranium.URANIUM_DIOXIDE.toStack(),false).isEmpty() && items.extractItem(0,1,true).is(CEUranium.URANIUM_DIOXIDE.get()),"Like a basin, feed slots take reaction ingredients and give unused ones back");
-        h.assertTrue(jacket.fill(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),500),EXECUTE)==500,"Gas goes in through the vessel");run(hot,100);
+        h.assertTrue(jacket.fill(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),500),EXECUTE)==500,"Gas goes in through the vessel");run(hot,100);
         h.assertTrue(hot.status().equals("heat") && items.getStackInSlot(0).getCount()==1,"Without a burner the heated green-salt reaction cannot start");
         h.getLevel().setBlock(hot.getBlockPos().below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED),3);run(hot,100);
         h.assertTrue(items.getStackInSlot(0).isEmpty() && in(hot).getFluidInTank(0).isEmpty() && items.extractItem(9,1,false).is(CEUranium.URANIUM_TETRAFLUORIDE.get()),"A kindled burner under the vessel stirs uranium dioxide with hydrogen fluoride into green salt in a product slot");
@@ -575,9 +576,9 @@ public class ReactorGameTests {
         h.assertTrue(in(furnace).getFluidInTank(0).isEmpty() && in(furnace).getFluidInTank(1).isEmpty(),"The furnace burns 500 mB hydrogen sulfide with 750 mB oxygen");
         var made=new HashMap<net.minecraft.world.level.material.Fluid,Integer>();
         for (int i=0;i<out(furnace).getTanks();i++) { var stack=out(furnace).getFluidInTank(i);if (!stack.isEmpty()) made.merge(stack.getFluid(),stack.getAmount(),Integer::sum); }
-        h.assertTrue(made.getOrDefault(CEUranium.SULFUR_DIOXIDE.get(),0)==500 && made.getOrDefault(Fluids.WATER,0)==100,"into 500 mB sulfur dioxide and 100 mB water: "+made);
+        h.assertTrue(made.getOrDefault(CESharedChemicals.SULFUR_DIOXIDE.get(),0)==500 && made.getOrDefault(Fluids.WATER,0)==100,"into 500 mB sulfur dioxide and 100 mB water: "+made);
         var converter=assemble(h.getLevel(),h.absolutePos(new BlockPos(12,2,4)),ReactorModule.STIRRED,1);
-        in(converter).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),500),EXECUTE);in(converter).fill(new FluidStack(CEProcessFluids.HYDROGEN_SULFIDE.get(),1000),EXECUTE);run(converter,120);
+        in(converter).fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(),500),EXECUTE);in(converter).fill(new FluidStack(CEProcessFluids.HYDROGEN_SULFIDE.get(),1000),EXECUTE);run(converter,120);
         h.assertTrue(in(converter).getFluidInTank(0).getAmount()==500,"Without heat the converter does not start");
         h.getLevel().setBlock(converter.getBlockPos().below(),AllBlocks.BLAZE_BURNER.getDefaultState().setValue(BlazeBurnerBlock.HEAT_LEVEL,BlazeBurnerBlock.HeatLevel.KINDLED),3);run(converter,120);
         var items=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,converter.getBlockPos().offset(2,0,1),Direction.EAST);
@@ -598,7 +599,7 @@ public class ReactorGameTests {
     private static ReactorMachineBlockEntity ironCatalysed(GameTestHelper h,ItemStack iron,FluidStack oxidant){
         var reactor=build(h,ReactorModule.STIRRED,1);
         var items=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,reactor.getBlockPos().offset(2,0,1),Direction.EAST);
-        in(reactor).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);in(reactor).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),250),EXECUTE);in(reactor).fill(oxidant,EXECUTE);
+        in(reactor).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);in(reactor).fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(),250),EXECUTE);in(reactor).fill(oxidant,EXECUTE);
         run(reactor,220);
         h.assertTrue(out(reactor).getFluidInTank(0).isEmpty(),"Without iron the sulfur dioxide stays unoxidised");
         h.assertTrue(items.insertItem(0,iron,false).isEmpty(),"The vessel takes the iron through its item port");run(reactor,220);
@@ -619,7 +620,7 @@ public class ReactorGameTests {
         h.runAfterDelay(2,()->{
             var items=h.getLevel().getCapability(Capabilities.ItemHandler.BLOCK,reactor.getBlockPos().offset(2,0,1),Direction.EAST);
             var pipe=h.getLevel().getCapability(Capabilities.FluidHandler.BLOCK,reactor.getBlockPos(),Direction.NORTH);
-            in(reactor).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);in(reactor).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),250),EXECUTE);
+            in(reactor).fill(new FluidStack(Fluids.WATER,1000),EXECUTE);in(reactor).fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(),250),EXECUTE);
             h.assertTrue(pipe.fill(new FluidStack(CEFluids.AIR_GAS.get(),600),EXECUTE)==600,"The vessel takes 600 mB air by its gases");
             items.insertItem(0,CEMetals.IRON_OXIDE_RED.toStack(),false);run(reactor,220);
             var key=net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(CEFluids.NITROGEN_GAS.get());
@@ -634,8 +635,8 @@ public class ReactorGameTests {
     @GameTest(template="test_reactor",timeoutTicks=50)
     public static void theAbsorptionTowerAbsorbsSulfurTrioxideIntoSulfuricAcid(GameTestHelper h) {
         var absorber=build(h,ReactorModule.TOWER,4);
-        in(absorber).fill(new FluidStack(CEUranium.SULFUR_TRIOXIDE.get(),250),EXECUTE);in(absorber).fill(new FluidStack(Fluids.WATER,250),EXECUTE);run(absorber,120);
-        int acid=0;for (int i=0;i<out(absorber).getTanks();i++) if (out(absorber).getFluidInTank(i).is(CEUranium.SULFURIC_ACID.get())) acid+=out(absorber).getFluidInTank(i).getAmount();
+        in(absorber).fill(new FluidStack(CESharedChemicals.SULFUR_TRIOXIDE.get(),250),EXECUTE);in(absorber).fill(new FluidStack(Fluids.WATER,250),EXECUTE);run(absorber,120);
+        int acid=0;for (int i=0;i<out(absorber).getTanks();i++) if (out(absorber).getFluidInTank(i).is(CESharedChemicals.SULFURIC_ACID.get())) acid+=out(absorber).getFluidInTank(i).getAmount();
         h.assertTrue(acid==250 && in(absorber).getFluidInTank(0).isEmpty() && in(absorber).getFluidInTank(1).isEmpty(),"250 mB sulfur trioxide and 250 mB water give 250 mB sulfuric acid: "+acid);
         h.succeed();
     }
@@ -813,7 +814,7 @@ public class ReactorGameTests {
     }
     @GameTest(template="test_empty")
     public static void sulfurGasesHaveTheirOwnPhaseProperties(GameTestHelper h) {
-        double so2=net.createplant.thermal.FluidMaterials.molarMass(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(),1));
+        double so2=net.createplant.thermal.FluidMaterials.molarMass(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(),1));
         double h2s=net.createplant.thermal.FluidMaterials.molarMass(new FluidStack(CEProcessFluids.HYDROGEN_SULFIDE.get(),1));
         h.assertTrue(so2>.064 && so2<.065 && h2s>.034 && h2s<.035,"Fixed sulfur gas molar quantities remain distinct");h.succeed();
     }

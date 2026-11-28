@@ -9,7 +9,6 @@ import net.createplant.block.entity.ContinuousFactoryBlockEntity;
 import net.createplant.contraptions.FactoryBodyEntity;
 import net.createplant.factory.FactoryGeometry;
 import net.createplant.factory.FactoryKind;
-import net.createplant.registry.CEArm;
 import net.createplant.registry.CEMetals;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -117,7 +116,7 @@ public final class ContinuousFactoryClientCheck {
             case KILN -> machine.inlet(Direction.UP).insertItem(0, new ItemStack(Items.CALCITE, 48), false);
             case MILL -> machine.inlet(Direction.UP).insertItem(0, CEMetals.STEEL_BLOCK.toStack(48), false);
             case WINDER -> {
-                machine.inlet(Direction.UP).insertItem(0, CEArm.ENAMELLED_COPPER_WIRE.toStack(64), false);
+                machine.inlet(Direction.UP).insertItem(0, CEMetals.ENAMELLED_COPPER_WIRE.toStack(64), false);
                 machine.inlet(Direction.WEST).insertItem(0, com.simibubi.create.AllBlocks.BRASS_CASING.asStack(32), false);
             }
         }

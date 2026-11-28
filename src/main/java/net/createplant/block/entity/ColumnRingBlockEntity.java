@@ -2,7 +2,7 @@ package net.createplant.block.entity;
 
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import java.util.List;
-import net.createplant.block.ExtractionColumnStructureBlock;
+import net.createplant.block.ColumnRingBlock;
 import net.createplant.registry.CEReactor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -14,7 +14,7 @@ public class ColumnRingBlockEntity extends BlockEntity implements IHaveGoggleInf
     public ColumnRingBlockEntity(BlockPos pos, BlockState state) { super(CEReactor.RING_ENTITY.get(), pos, state); }
 
     public BlockEntity storey() {
-        BlockPos centre = level == null ? null : ExtractionColumnStructureBlock.centre(level, worldPosition, getBlockState());
+        BlockPos centre = level == null ? null : ColumnRingBlock.centre(level, worldPosition, getBlockState());
         return centre == null ? null : level.getBlockEntity(centre);
     }
 

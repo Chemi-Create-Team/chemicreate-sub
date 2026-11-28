@@ -5,7 +5,7 @@ import com.simibubi.create.AllItems;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorBlockEntity;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.QuarryDriveBlockEntity;
-import net.createplant.registry.CECrane;
+import net.createplant.registry.CEQuarry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -22,7 +22,7 @@ public class QuarrySpeedGameTests {
     @GameTest(template = "test_rbmk", timeoutTicks = 2400)
     public static void threeLayersAtSixtyFourRpm(GameTestHelper h) {
         var drive = new BlockPos(3, 8, 3);
-        h.setBlock(drive, CECrane.QUARRY_DRIVE.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
+        h.setBlock(drive, CEQuarry.QUARRY_DRIVE.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
         h.setBlock(drive.south(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.NORTH));
         ((QuarryDriveBlockEntity) h.getBlockEntity(drive)).size(5, 3);
         for (int x = 4; x <= 8; x++) for (int z = 4; z <= 6; z++) for (int y = 5; y <= 7; y++) h.setBlock(new BlockPos(x, y, z), Blocks.DIRT);

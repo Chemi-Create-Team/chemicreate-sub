@@ -18,7 +18,6 @@ import net.createplant.factory.FactoryGeometry;
 import net.createplant.factory.FactoryLayout;
 import net.createplant.factory.FactoryPose;
 import net.createplant.factory.FactoryProcess;
-import net.createplant.registry.CEArm;
 import net.createplant.registry.CEContinuousFactory;
 import net.createplant.registry.CEFusion;
 import net.createplant.registry.CEItems;
@@ -361,7 +360,7 @@ public class ContinuousFactoryGameTests {
     private static BlockPos at(int x, int y, int z) { return CONTROL.offset(x, y, z); }
 
     private static void woundFeed(GameTestHelper h, ContinuousFactoryBlockEntity machine) {
-        insert(h, machine, Direction.UP, CEArm.ENAMELLED_COPPER_WIRE.toStack(16));
+        insert(h, machine, Direction.UP, CEMetals.ENAMELLED_COPPER_WIRE.toStack(16));
         insert(h, machine, Direction.WEST, AllBlocks.BRASS_CASING.asStack(2));
     }
 

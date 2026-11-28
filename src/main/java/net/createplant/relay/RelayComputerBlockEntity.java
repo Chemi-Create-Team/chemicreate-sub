@@ -1,5 +1,6 @@
 package net.createplant.relay;
 
+import net.createplant.control.RelayAlu;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;

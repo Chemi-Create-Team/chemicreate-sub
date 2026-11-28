@@ -12,7 +12,7 @@ import java.util.Set;
 import net.createplant.block.FusionConsolePanelBlock;
 import net.createplant.block.FusionControlConsoleBlock;
 import net.createplant.fusion.FusionPhysics;
-import net.createplant.nuclear.Finite;
+import net.createplant.block.Finite;
 import net.createplant.registry.CEDisplays;
 import net.createplant.registry.CEFusion;
 import net.minecraft.core.BlockPos;

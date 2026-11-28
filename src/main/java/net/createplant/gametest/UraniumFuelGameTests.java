@@ -13,6 +13,7 @@ import net.createplant.chemistry.ReactorModule;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEItems;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CEUranium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -120,7 +121,7 @@ public final class UraniumFuelGameTests {
             "Reduction survives reload and consumes exactly one batch, leaving the dioxide on the tray");
         h.assertTrue(items.extractItem(tray.layers(),1,false).is(CEUranium.URANIUM_DIOXIDE.get()) && tray.layer(0).made().isEmpty(),"A funnel takes the product from the bottom side");
         var gasBase=BASE.offset(8,0,0);var gas=tower(h,gasBase);
-        solids(h,gas).insertItem(0,CEUranium.URANIUM_TETRAFLUORIDE.toStack(),false);ReactionTowerGameTests.port(gas).fill(new FluidStack(CEUranium.FLUORINE.get(),250),EXECUTE);
+        solids(h,gas).insertItem(0,CEUranium.URANIUM_TETRAFLUORIDE.toStack(),false);ReactionTowerGameTests.port(gas).fill(new FluidStack(CESharedChemicals.FLUORINE.get(),250),EXECUTE);
         burner(h,gas,HeatLevel.KINDLED);run(gas,2);
         h.assertTrue(gas.status().equals("heat") && gas.tank(2).isEmpty() && gas.layer(0).load().is(CEUranium.URANIUM_TETRAFLUORIDE.get()),"Ordinary heat cannot gasify green salt");
         burner(h,gas,HeatLevel.SEETHING);run(gas,1);
@@ -149,9 +150,9 @@ public final class UraniumFuelGameTests {
                 h.assertTrue(input.fill(feeds[order[2]],EXECUTE)==250,"The third fluid enters the third process feed buffer");
                 run(be,40);reload(h,be);items=funnel(h,be);run(be,65);
                 h.assertTrue(count(items,dioxide)==1 && amount(be,uranium)==0 && amount(be,Fluids.WATER)==0 && amount(be,CEFluids.HYDROGEN_GAS.get())==0,"Every arrival order consumes all three feeds exactly once: grade="+grade+", order="+index+", status="+be.status());
-                h.assertTrue(amount(be,CEUranium.HYDROGEN_FLUORIDE.get())==750,"Both grades return the combined 750 mB HF byproduct");
+                h.assertTrue(amount(be,CESharedChemicals.HYDROGEN_FLUORIDE.get())==750,"Both grades return the combined 750 mB HF byproduct");
                 h.assertTrue(items.extractItem(9,1,false).is(dioxide),"The product is available to standard funnel extraction");
-                be.port(Direction.NORTH).drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),750),EXECUTE);
+                be.port(Direction.NORTH).drain(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),750),EXECUTE);
                 run(be,105);h.assertTrue(count(items,dioxide)==0,"No additional batch appears after reload");
             }
         }
@@ -165,10 +166,10 @@ public final class UraniumFuelGameTests {
         var saved=be.saveWithoutMetadata(h.getLevel().registryAccess());
         // Fill the vessel's volume with hydrogen fluoride beside the gaseous feed, so no further gas fits.
         int full=((net.createplant.thermal.ThermalFluidTank)be.getTankInventory()).gasCapacity()-500;
-        for(int tank=2;tank<7 && full>0;tank++){int part=Math.min(full,8000*64);saved.put("Tank"+tank,new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),part).save(h.getLevel().registryAccess()));full-=part;}
+        for(int tank=2;tank<7 && full>0;tank++){int part=Math.min(full,8000*64);saved.put("Tank"+tank,new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),part).save(h.getLevel().registryAccess()));full-=part;}
         be.loadWithComponents(saved,h.getLevel().registryAccess());be.validateStructure();run(be,150);
         h.assertTrue(amount(be,CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get())==250 && amount(be,CEFluids.HYDROGEN_GAS.get())==250 && amount(be,Fluids.WATER)==250 && count(funnel(h,be),CEUranium.ENRICHED_URANIUM_DIOXIDE.get())==0,"A full product buffer preserves every input");
-        be.port(Direction.NORTH).drain(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),750),EXECUTE);run(be,105);
+        be.port(Direction.NORTH).drain(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),750),EXECUTE);run(be,105);
         h.assertTrue(count(funnel(h,be),CEUranium.ENRICHED_URANIUM_DIOXIDE.get())==1 && amount(be,Fluids.WATER)==0,"Freeing exactly one batch's space resumes once");h.succeed();
     }
 
@@ -178,9 +179,9 @@ public final class UraniumFuelGameTests {
         var roast=AllFanProcessingTypes.BLASTING.process(CEUranium.URANINITE.toStack(8),h.getLevel());
         solids(h,tray).insertItem(0,roast.getFirst(),false);ReactionTowerGameTests.port(tray).fill(new FluidStack(CEFluids.HYDROGEN_GAS.get(),2000),EXECUTE);burner(h,tray,HeatLevel.KINDLED);run(tray,8);
         var reduced=solids(h,tray).extractItem(tray.layers(),8,false);h.assertTrue(reduced.is(CEUranium.URANIUM_DIOXIDE.get()) && reduced.getCount()==8,"Eight roasted feeds reduce on the trays");
-        funnel(h,stir).insertItem(0,reduced,false);pipe(h,stir).fill(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),4000),EXECUTE);burner(h,stirBase,HeatLevel.KINDLED);run(stir,820);
+        funnel(h,stir).insertItem(0,reduced,false);pipe(h,stir).fill(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),4000),EXECUTE);burner(h,stirBase,HeatLevel.KINDLED);run(stir,820);
         var salt=funnel(h,stir).extractItem(9,8,false);h.assertTrue(salt.is(CEUranium.URANIUM_TETRAFLUORIDE.get()) && salt.getCount()==8,"The heated stirred tank makes green salt");
-        solids(h,gas).insertItem(0,salt,false);ReactionTowerGameTests.port(gas).fill(new FluidStack(CEUranium.FLUORINE.get(),2000),EXECUTE);burner(h,gas,HeatLevel.SEETHING);run(gas,8);
+        solids(h,gas).insertItem(0,salt,false);ReactionTowerGameTests.port(gas).fill(new FluidStack(CESharedChemicals.FLUORINE.get(),2000),EXECUTE);burner(h,gas,HeatLevel.SEETHING);run(gas,8);
         var feed=ReactionTowerGameTests.port(gas).drain(new FluidStack(CEUranium.URANIUM_HEXAFLUORIDE.get(),2000),EXECUTE);h.assertTrue(feed.getAmount()==2000,"Superheated trays provide the centrifuge feed");
         var centrifuge=GasCentrifugeGameTests.build(h,BASE.offset(24,0,0),4);centrifuge.port(0).fill(feed,EXECUTE);GasCentrifugeGameTests.run(centrifuge,410);
         var enriched=centrifuge.port(1).drain(250,EXECUTE);h.assertTrue(enriched.is(CEUranium.ENRICHED_URANIUM_HEXAFLUORIDE.get()) && enriched.getAmount()==250,"The unchanged enrichment stage separates 250 mB product");

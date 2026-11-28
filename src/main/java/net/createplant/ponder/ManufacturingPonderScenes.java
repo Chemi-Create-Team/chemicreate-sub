@@ -32,6 +32,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.world.level.material.Fluids;
 import net.createplant.block.entity.ConverterTrunnionBearingBlockEntity;
@@ -352,7 +353,7 @@ public final class ManufacturingPonderScenes {
             for (var cell : be.cells()) for (var tank : cell.tanks) tank.setFluid(FluidStack.EMPTY);
             be.heads().getFirst().electrodes.setStackInSlot(0, CEElectrolysis.ELECTRODE_PLATE.toStack());
             for (var fluid : complete ? recipe.fluidProducts() : recipe.fluids()) {
-                int bank = !complete ? 0 : fluid.is(CEFluids.HYDROGEN_GAS.get()) || fluid.is(CEFusion.DEUTERIUM_GAS.get()) ? 1
+                int bank = !complete ? 0 : fluid.is(CEFluids.HYDROGEN_GAS.get()) || fluid.is(CEIsotopeGases.DEUTERIUM_GAS.get()) ? 1
                     : fluid.is(CEChlorAlkali.CAUSTIC_SODA.get()) ? 3 : 2;
                 be.cells().getFirst().tanks.get(bank).setFluid(fluid.copy());
             }

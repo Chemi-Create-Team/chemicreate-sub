@@ -6,7 +6,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createplant.block.FuelChannelBlock;
-import net.createplant.nuclear.Finite;
+import net.createplant.block.Finite;
 import net.createplant.nuclear.ReactorCore;
 import net.createplant.nuclear.ReactorCoreStructure;
 import net.createplant.nuclear.ReactorCores;

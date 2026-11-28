@@ -1,6 +1,7 @@
 package net.createplant.nuclear;
 
 import net.createplant.CreatePlant;
+import net.createplant.block.Finite;
 import net.createplant.item.ProtectiveClothingItem;
 import net.createplant.registry.CENuclear;
 import net.createplant.registry.CERadiation;

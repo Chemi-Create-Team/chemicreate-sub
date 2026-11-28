@@ -1,5 +1,6 @@
 package net.createplant.client;
 
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidForm;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -295,8 +296,8 @@ public final class FusionPlaytestWorld {
         BlockPos front = CONTROLLER.north();
         BlockPos centre = FusionStructure.centre(CONTROLLER, Direction.SOUTH);
         int half = FusionPhysics.HALF_WIDTH;
-        fill(level, front.below(2).west(3), new FluidStack(CEFusion.DEUTERIUM_GAS.get(), 1_000));
-        fill(level, front.below().east(3), new FluidStack(CEFusion.TRITIUM_GAS.get(), 1_000));
+        fill(level, front.below(2).west(3), new FluidStack(CEIsotopeGases.DEUTERIUM_GAS.get(), 1_000));
+        fill(level, front.below().east(3), new FluidStack(CEIsotopeGases.TRITIUM_GAS.get(), 1_000));
         fill(level, centre.south(half + 2).below(),
             FluidThermal.at(FluidForm.LIQUID_HELIUM.stack(1_000), FusionPhysics.LIQUID_HELIUM_KELVIN));
         fill(level, centre.east(half + 3).below(), new FluidStack(Fluids.WATER, 1_000));

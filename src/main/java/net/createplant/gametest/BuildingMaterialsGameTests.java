@@ -6,7 +6,7 @@ import com.simibubi.create.content.processing.basin.BasinRecipe;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.createplant.CreatePlant;
 import net.createplant.registry.CEBuildingMaterials;
-import net.createplant.registry.CEFuelCycle;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -80,7 +80,7 @@ public final class BuildingMaterialsGameTests {
     public static void cementAndConcreteUseRealBasinPortsAndPauseWhenFull(GameTestHelper h) {
         var cementBasin = basin(h, new BlockPos(2, 2, 2));
         insert(h, cementBasin, new ItemStack(CEBuildingMaterials.GROUND_CLINKER.get(), 8));
-        insert(h, cementBasin, new ItemStack(CEFuelCycle.GYPSUM.get()));
+        insert(h, cementBasin, new ItemStack(CESharedChemicals.GYPSUM.get()));
         h.assertTrue(BasinRecipe.apply(cementBasin, recipe(h, "mixing/cement_powder")) && count(cementBasin.getOutputInventory()) == 8,
             "Ground clinker and the existing gypsum become eight binder portions");
         BlockPos pos = new BlockPos(6, 2, 2);

@@ -3,7 +3,7 @@ package net.createplant.registry;
 import java.util.*;
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
-import net.createplant.block.ExtractionColumnStructureBlock;
+import net.createplant.block.ColumnRingBlock;
 import net.createplant.block.LargeAbsorptionTowerBlock;
 import net.createplant.block.LargeAbsorptionTowerRingBlock;
 import net.createplant.block.ReactorMachineBlock;
@@ -52,7 +52,7 @@ public final class CEReactor {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,ABSORPTION_ENTITY.get(),(be,side)->be.storeyPort(be.getBlockPos(),side));
         // The ring of a large storey hands pipes on to the storey at its centre.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,RING_ENTITY.get(),(be,side)->{
-            BlockPos centre=ExtractionColumnStructureBlock.centre(be.getLevel(),be.getBlockPos(),be.getBlockState());
+            BlockPos centre=ColumnRingBlock.centre(be.getLevel(),be.getBlockPos(),be.getBlockState());
             return centre!=null && be.getLevel().getBlockEntity(centre) instanceof AbsorptionTowerBlockEntity storey ? storey.storeyPort(be.getBlockPos(),side) : null;
         });
     }

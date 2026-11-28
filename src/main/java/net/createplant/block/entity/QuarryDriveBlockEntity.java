@@ -14,8 +14,8 @@ import net.createplant.block.QuarryBeltLayout;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.blockEntity.behaviour.scrollValue.ScrollValueBehaviour;
-import net.createplant.nuclear.Finite;
-import net.createplant.registry.CECrane;
+import net.createplant.block.Finite;
+import net.createplant.registry.CEQuarry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -139,7 +139,7 @@ public class QuarryDriveBlockEntity extends SplitShaftBlockEntity implements IHa
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CECrane.QUARRY_DRIVE_ENTITY.get(), (quarry, side) -> quarry.port);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CEQuarry.QUARRY_DRIVE_ENTITY.get(), (quarry, side) -> quarry.port);
     }
 
     public static void registerChunkLoader(RegisterTicketControllersEvent event) { QuarryChunkLoader.register(event); }

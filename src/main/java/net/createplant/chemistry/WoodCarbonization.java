@@ -3,7 +3,7 @@ package net.createplant.chemistry;
 import net.createplant.block.CharredWoodBlock;
 import net.createplant.block.entity.CharredWoodBlockEntity;
 import net.createplant.registry.CECarbonization;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +39,7 @@ public final class WoodCarbonization {
     public static boolean tryFromSource(ServerLevel level, BlockPos sourcePos) {
         if (!level.hasChunkAt(sourcePos)) return false;
         var fluid = level.getFluidState(sourcePos);
-        if (!fluid.isSource() || fluid.getType() != CEUranium.SULFURIC_ACID.get()) return false;
+        if (!fluid.isSource() || fluid.getType() != CESharedChemicals.SULFURIC_ACID.get()) return false;
         for (Direction side : Direction.values()) {
             BlockPos woodPos = sourcePos.relative(side);
             if (!level.hasChunkAt(woodPos) || !accepts(level.getBlockState(woodPos))) continue;

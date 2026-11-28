@@ -11,8 +11,8 @@ import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEItems;
 import net.createplant.registry.CEMetals;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransport;
-import net.createplant.registry.CEUranium;
 import net.createplant.registry.CEWetProcessing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -123,7 +123,7 @@ final class SurvivalWetWorkshop {
         long now = level.getGameTime();
         var acidFluid = CEMetals.DILUTE_SULFURIC_ACID.get();
         int acidStock = liquid(reactor, acidFluid);
-        int receivedSulfur = SurvivalSulfurWorkshop.gas(reactor, CEUranium.SULFUR_DIOXIDE.get());
+        int receivedSulfur = SurvivalSulfurWorkshop.gas(reactor, CESharedChemicals.SULFUR_DIOXIDE.get());
         if (receivedSulfur > 0) measurements.putIfAbsent("first_so2_pipe_delivery_ticks", now - started);
         if (!acidTransfer) {
             for (int batch = 1; batch <= 3; batch++) if (acidStock >= batch * 1000)
@@ -176,7 +176,7 @@ final class SurvivalWetWorkshop {
             leachCharge = now;
         }
         if (now - started >= 16000) check(false, "Wet workshop stalled: SO2 burner/acid="
-            + SurvivalSulfurWorkshop.gas(burner, CEUranium.SULFUR_DIOXIDE.get()) + "/" + receivedSulfur
+            + SurvivalSulfurWorkshop.gas(burner, CESharedChemicals.SULFUR_DIOXIDE.get()) + "/" + receivedSulfur
             + ", acid=" + reactor.status() + "/" + acidStock + ", water=" + liquid(reactor, net.minecraft.world.level.material.Fluids.WATER)
             + ", air=" + SurvivalSulfurWorkshop.gas(reactor, CEFluids.AIR_GAS.get()) + ", Fe=" + reactor.displayedItem(0)
             + ", leach=" + mixer.status() + "/" + acidAtLeach + ", O2=" + oxidant + ", slurry=" + slurryStock

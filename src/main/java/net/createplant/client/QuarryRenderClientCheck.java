@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import net.createplant.CreatePlant;
 import net.createplant.block.entity.QuarryDriveBlockEntity;
-import net.createplant.registry.CECrane;
+import net.createplant.registry.CEQuarry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -122,7 +122,7 @@ public final class QuarryRenderClientCheck {
                 level.setBlock(drive.offset(x, y - RAIL_Y, z), AllBlocks.INDUSTRIAL_IRON_BLOCK.getDefaultState(), 2);
             for (int x = 1; x <= SIZE; x++) for (int z = 1; z <= SIZE; z++) for (int y = FLOOR_Y; y <= ORE_TOP_Y; y++)
                 level.setBlock(drive.offset(x, y - RAIL_Y, z), Blocks.STONE.defaultBlockState(), 2);
-            level.setBlockAndUpdate(drive, CECrane.QUARRY_DRIVE.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
+            level.setBlockAndUpdate(drive, CEQuarry.QUARRY_DRIVE.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
             level.setBlockAndUpdate(drive.south(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.NORTH));
             var quarry = (QuarryDriveBlockEntity) level.getBlockEntity(drive);
             quarry.size(SIZE, SIZE);

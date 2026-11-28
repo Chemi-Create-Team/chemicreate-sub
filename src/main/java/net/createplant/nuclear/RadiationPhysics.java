@@ -1,5 +1,6 @@
 package net.createplant.nuclear;
 
+import net.createplant.block.Finite;
 public final class RadiationPhysics {
     public static final double TIME_MULTIPLIER = 1;
     public static final double SHORT_HALF_LIFE = 8.02 * 86400,

@@ -13,11 +13,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 /** One octagonal storey of the large absorption tower, placed as a whole 3 × 3 ring like the extraction column's storeys. */
-public class LargeAbsorptionTowerBlock extends ExtractionColumnSectionBlock implements IBE<AbsorptionTowerBlockEntity>, IRotate {
+public class LargeAbsorptionTowerBlock extends ColumnSectionBlock implements IBE<AbsorptionTowerBlockEntity>, IRotate {
     public LargeAbsorptionTowerBlock(Properties properties) { super(properties); }
 
     @Override protected BlockState ringCell(int x, int z) {
-        return CEReactor.LARGE_ABSORPTION_RING.get().defaultBlockState().setValue(ExtractionColumnStructureBlock.FACING, ring(x, z).getValue(ExtractionColumnStructureBlock.FACING));
+        return CEReactor.LARGE_ABSORPTION_RING.get().defaultBlockState().setValue(ColumnRingBlock.FACING, ringFacing(x, z));
     }
 
     @Override public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean moved) {

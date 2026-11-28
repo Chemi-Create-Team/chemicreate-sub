@@ -3,6 +3,7 @@ package net.createplant.gametest;
 import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.*;
 import net.createplant.CreatePlant;
 import net.createplant.registry.*;
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.*;
 import net.minecraft.core.*;
 import net.minecraft.gametest.framework.*;
@@ -34,7 +35,7 @@ public class RefrigerationGameTests {
         h.assertTrue(heat.tank(1).getFluid().is(Fluids.WATER) && heat.tank(1).getFluidAmount()==10 && FluidState.temperature(heat.tank(1).getFluid())<FluidState.AMBIENT
             && heat.tank(3).getFluid().is(CEFluids.NITROGEN_GAS.get()) && heat.tank(3).getFluidAmount()==10*ratio,"The common table preserves the nitrogen liquid/gas recipe ratio: "
             +heat.tank(3).getFluid().getAmount()+" "+heat.tank(3).getFluid().getHoverName().getString());
-        for(var gas:new net.minecraft.world.level.material.Fluid[]{CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEFusion.HELIUM_GAS.get()})h.assertTrue(ThermalStreams.cooling(new FluidStack(gas,1000))==null && ThermalStreams.liquefaction(new FluidStack(gas,1000))!=null,"Cryogenic products require the powered cold box");h.succeed();
+        for(var gas:new net.minecraft.world.level.material.Fluid[]{CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEIsotopeGases.HELIUM_GAS.get()})h.assertTrue(ThermalStreams.cooling(new FluidStack(gas,1000))==null && ThermalStreams.liquefaction(new FluidStack(gas,1000))!=null,"Cryogenic products require the powered cold box");h.succeed();
     }
     @GameTest(template="test_fractionation")
     public static void aClosedAmmoniaCoolantLoopReturnsItsExactStartingLiquid(GameTestHelper h){

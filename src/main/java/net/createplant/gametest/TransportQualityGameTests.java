@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
@@ -41,8 +42,8 @@ public final class TransportQualityGameTests {
         h.assertTrue(PipeMaterial.COPPER.problem(FluidForm.SUPERHEATED_STEAM.stack(1000)).equals("overheat")
             && PipeMaterial.STAINLESS.carries(FluidForm.SUPERHEATED_STEAM.stack(1000)),"Superheated steam needs stainless steel");
         h.assertTrue(PipeMaterial.COPPER.problem(FluidForm.COMPRESSED_HYDROGEN.stack(1000)).equals("pressure"),"High-pressure hydrogen exceeds copper");
-        h.assertTrue(PipeMaterial.STAINLESS.problem(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),1000)).equals("corrosion")
-            && PipeMaterial.NICKEL_ALLOY.carries(new FluidStack(CEUranium.HYDROGEN_FLUORIDE.get(),1000)),"Hydrogen fluoride gas needs nickel alloy");
+        h.assertTrue(PipeMaterial.STAINLESS.problem(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),1000)).equals("corrosion")
+            && PipeMaterial.NICKEL_ALLOY.carries(new FluidStack(CESharedChemicals.HYDROGEN_FLUORIDE.get(),1000)),"Hydrogen fluoride gas needs nickel alloy");
         h.succeed();
     }
     @GameTest(template="test_petrochemical")
@@ -159,7 +160,7 @@ public final class TransportQualityGameTests {
         var ceramic=PipeMaterial.CERAMIC;
         h.assertTrue(ceramic.incompatibility(FluidHazards.named("zirconium_sulfate_solution")).equals("safe"),"Fired clay takes hot sulfate liquors");
         h.assertTrue(ceramic.incompatibility(FluidHazards.named("pressurised_water")).equals("pressure"),"Ceramic still rejects high-pressure liquids");
-        transfer(h,straight(CETransport.CERAMIC_PIPE.get().defaultBlockState()),CEUranium.SULFURIC_ACID.get(),false,false);
+        transfer(h,straight(CETransport.CERAMIC_PIPE.get().defaultBlockState()),CESharedChemicals.SULFURIC_ACID.get(),false,false);
     }
     @GameTest(template="test_petrochemical",timeoutTicks=250)
     public static void stainlessPipeCarriesLikeCreatesPipe(GameTestHelper h) {

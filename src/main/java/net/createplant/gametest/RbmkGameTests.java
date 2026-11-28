@@ -1,5 +1,6 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CEProtectiveClothing;
 import net.createplant.thermal.FluidForm;
 import java.util.HashSet;
 import java.util.List;
@@ -99,11 +100,11 @@ public class RbmkGameTests {
     public static void protectiveClothingDoesNotShieldGamma(GameTestHelper h) {
         var player = FakePlayerFactory.getMinecraft(h.getLevel());
         double bare = dose(player);
-        player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(CENuclear.PROTECTIVE_COAT.get()));
+        player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(CEProtectiveClothing.PROTECTIVE_COAT.get()));
         double coat = dose(player);
-        player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(CENuclear.PROTECTIVE_CAP.get()));
-        player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(CENuclear.PROTECTIVE_TROUSERS.get()));
-        player.setItemSlot(EquipmentSlot.FEET, new ItemStack(CENuclear.PROTECTIVE_SHOE_COVERS.get()));
+        player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(CEProtectiveClothing.PROTECTIVE_CAP.get()));
+        player.setItemSlot(EquipmentSlot.LEGS, new ItemStack(CEProtectiveClothing.PROTECTIVE_TROUSERS.get()));
+        player.setItemSlot(EquipmentSlot.FEET, new ItemStack(CEProtectiveClothing.PROTECTIVE_SHOE_COVERS.get()));
         double suit = dose(player);
         for (EquipmentSlot slot : List.of(EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) player.setItemSlot(slot, ItemStack.EMPTY);
         player.setData(CENuclear.DOSE, 0d);

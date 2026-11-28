@@ -61,17 +61,12 @@ public final class CEFuelCycle {
     public static final DeferredItem<Item> MOX_PELLET = ITEMS.registerSimpleItem("mox_pellet");
     public static final DeferredItem<Item> MOX_FUEL_ROD = ITEMS.registerSimpleItem("mox_fuel_rod");
     public static final DeferredItem<Item> GLASS_FRIT = ITEMS.registerSimpleItem("borosilicate_glass_frit");
-    public static final DeferredItem<Item> BORAX = ITEMS.registerSimpleItem("borax");
-    public static final DeferredItem<Item> GYPSUM = ITEMS.registerSimpleItem("gypsum");
     public static final List<DeferredItem<Item>> MATERIALS = List.of(CHOPPED_FUEL, CLADDING_HULLS, PLUTONIUM_DIOXIDE, DEPLETED_DIOXIDE,
-        MOX_POWDER, GREEN_MOX, MOX_PELLET, MOX_FUEL_ROD, GLASS_FRIT, BORAX, GYPSUM);
+        MOX_POWDER, GREEN_MOX, MOX_PELLET, MOX_FUEL_ROD, GLASS_FRIT);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> DISSOLVED_FUEL = stream("dissolved_spent_fuel", 0xDD948349);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> EXTRACTION_SOLVENT = stream("tbp_extraction_solvent", 0xCCD7C599);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PLUTONIUM_NITRATE = stream("plutonium_nitrate_solution", 0xDD8D795D);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> HIGH_LEVEL_WASTE = stream("high_level_raffinate", 0xDD76634B);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PHOSPHORIC_ACID = stream("phosphoric_acid", 0xDDD1CFB8);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> BUTYRALDEHYDE = stream("butyraldehyde", 0xCCD4CCAE);
-    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> BUTANOL = stream("butanol", 0xCCD3D4C2);
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> TRIBUTYL_PHOSPHATE = stream("tributyl_phosphate", 0xCCCECAA8);
     public static final Supplier<BlockEntityType<FuelCycleMachineBlockEntity>> MACHINE_ENTITY = TYPES.register("fuel_cycle_machine",
         () -> BlockEntityType.Builder.of(FuelCycleMachineBlockEntity::new, EXTRACTION_COLUMN.get(), MELTER.get()).build(null));

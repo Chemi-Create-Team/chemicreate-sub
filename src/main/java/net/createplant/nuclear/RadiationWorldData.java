@@ -1,5 +1,6 @@
 package net.createplant.nuclear;
 
+import net.createplant.block.Finite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

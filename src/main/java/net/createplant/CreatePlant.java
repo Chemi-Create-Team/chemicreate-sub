@@ -44,6 +44,9 @@ public class CreatePlant {
         net.createplant.registry.CECompressor.register(modEventBus);
         net.createplant.registry.CEReciprocating.register(modEventBus);
         net.createplant.registry.CEUranium.register(modEventBus);
+        net.createplant.registry.CESharedChemicals.register(modEventBus);
+        net.createplant.registry.CEIsotopeGases.register(modEventBus);
+        net.createplant.registry.CEProtectiveClothing.register(modEventBus);
         net.createplant.registry.CEMetals.register(modEventBus);
         net.createplant.registry.CEWorldgen.register(modEventBus);
         net.createplant.registry.CEWetProcessing.register(modEventBus);
@@ -64,6 +67,7 @@ public class CreatePlant {
         net.createplant.registry.CEBuildingMaterials.register(modEventBus);
         net.createplant.registry.CEFusionFuel.register(modEventBus);
         net.createplant.registry.CECrane.register(modEventBus);
+        net.createplant.registry.CEQuarry.register(modEventBus);
         net.createplant.registry.CEElectrolysis.register(modEventBus);
         modEventBus.addListener(net.createplant.block.entity.HorizontalTankBlockEntity::registerCapabilities);
         modEventBus.addListener(net.createplant.block.entity.GasTankContainerBlockEntity::registerCapabilities);

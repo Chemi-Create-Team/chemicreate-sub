@@ -1,4 +1,4 @@
-package net.createplant.relay;
+package net.createplant.control;
 
 /**
  * A relay adder/subtractor simulated relay by relay. Each relay's contacts follow its coil one step later, so carries

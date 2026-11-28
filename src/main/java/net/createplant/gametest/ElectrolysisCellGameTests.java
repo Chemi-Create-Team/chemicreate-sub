@@ -8,6 +8,7 @@ import net.createplant.block.entity.ElectrodeHeadBlockEntity;
 import net.createplant.block.entity.ElectrolysisCellBlockEntity;
 import net.createplant.block.entity.ElectrolysisControllerBlockEntity;
 import net.createplant.registry.*;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -77,7 +78,7 @@ public class ElectrolysisCellGameTests {
     @GameTest(template = "test_petrochemical")
     public static void sulfurousAcidSplitsIntoHydrogenAndSulfuricAcidOnLessPower(GameTestHelper h) {
         var owner = one(h);
-        h.assertTrue(feed(owner, new FluidStack(CEUranium.SULFUROUS_ACID.get(), 200)) == 200, "Input accepts sulfurous acid");
+        h.assertTrue(feed(owner, new FluidStack(CESharedChemicals.SULFUROUS_ACID.get(), 200)) == 200, "Input accepts sulfurous acid");
         run(owner, 100, 400);
         h.assertTrue(owner.stored(0) == 0 && owner.stored(1) == 100 && owner.stored(2) == 0 && owner.stored(3) == 100,
             "100 cycles turn 200 mB sulfurous acid into 100 mB hydrogen and 100 mB sulfuric acid, with no anode gas: "
@@ -99,7 +100,7 @@ public class ElectrolysisCellGameTests {
         outlet(h, first.outletTooltip(Direction.NORTH), "cathode", CEFluids.HYDROGEN_GAS.get().getFluidType().getDescription());
         outlet(h, first.outletTooltip(Direction.SOUTH), "anode", CEChlorAlkali.CHLORINE.get().getFluidType().getDescription());
         outlet(h, last.outletTooltip(Direction.EAST), "liquid", CEChlorAlkali.CAUSTIC_SODA.get().getFluidType().getDescription());
-        var stored = new FluidStack(CEUranium.SULFURIC_ACID.get(), 100);
+        var stored = new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 100);
         last.tanks.get(3).setFluid(stored);
         outlet(h, last.outletTooltip(Direction.EAST), "liquid", stored.getHoverName());
         var head = owner.heads().getFirst();

@@ -64,7 +64,7 @@ public final class ProcessPorts {
             if (face == Direction.DOWN && state.getValue(LiddedVesselBlock.BOTTOM) && fluid(be, face) != null) return Kind.DRAIN;
         }
         if (be instanceof ColumnRingBlockEntity && face.getAxis().isHorizontal() && fluid(be, face) != null) {
-            var centre = ExtractionColumnStructureBlock.centre(level, pos, state);
+            var centre = ColumnRingBlock.centre(level, pos, state);
             if (centre != null && level.getBlockEntity(centre) instanceof AbsorptionTowerBlockEntity storey && !storey.bottom()) return Kind.OUTLET;
         }
         if (be instanceof FractionatingColumnBlockEntity) {

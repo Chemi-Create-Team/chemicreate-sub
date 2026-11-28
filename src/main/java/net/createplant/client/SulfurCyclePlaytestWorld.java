@@ -30,8 +30,8 @@ import net.createplant.block.entity.ElectrolysisControllerBlockEntity;
 import net.createplant.gametest.AbsorptionTowerGameTests;
 import net.createplant.registry.CEElectrolysis;
 import net.createplant.registry.CEFluids;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CETransport;
-import net.createplant.registry.CEUranium;
 import net.createplant.transport.ContainmentWear;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -222,11 +222,11 @@ public final class SulfurCyclePlaytestWorld {
             var cell = (ElectrolysisControllerBlockEntity) level.getBlockEntity(CELL.north());
             require(tower != null && cell != null, "The generated world was left before the checks finished");
             peakVolts = Math.max(peakVolts, cell.volts());
-            int sulfurous = amount(level, TOWER, Direction.DOWN, CEUranium.SULFUROUS_ACID.get());
+            int sulfurous = amount(level, TOWER, Direction.DOWN, CESharedChemicals.SULFUROUS_ACID.get());
             if (sulfurous > 0) REPORT.putIfAbsent("sulfurousAcidAtTick", serverTicks);
             if (cell.stored(0) > 0) REPORT.putIfAbsent("cellFedAtTick", serverTicks);
             int hydrogen = amount(level, HYDROGEN, Direction.EAST, CEFluids.HYDROGEN_GAS.get());
-            int acid = amount(level, ACID, Direction.NORTH, CEUranium.SULFURIC_ACID.get());
+            int acid = amount(level, ACID, Direction.NORTH, CESharedChemicals.SULFURIC_ACID.get());
             if (hydrogen > 0) REPORT.putIfAbsent("hydrogenAtTick", serverTicks);
             if (acid > 0) REPORT.putIfAbsent("sulfuricAcidAtTick", serverTicks);
             if (serverTicks % 200 == 0)
@@ -244,7 +244,7 @@ public final class SulfurCyclePlaytestWorld {
             REPORT.put("ticks", serverTicks);
             REPORT.put("sulfuricAcidMb", acid);
             REPORT.put("hydrogenMb", hydrogen);
-            REPORT.put("offGasMb", amount(level, OFF_GAS, Direction.SOUTH, CEUranium.SULFUR_DIOXIDE.get()));
+            REPORT.put("offGasMb", amount(level, OFF_GAS, Direction.SOUTH, CESharedChemicals.SULFUR_DIOXIDE.get()));
             REPORT.put("cellPeakVolts", peakVolts);
             REPORT.put("cellElectricJ", cell.consumed());
             REPORT.put("alternatorRpm", Math.abs(((KineticBlockEntity) level.getBlockEntity(ROTOR)).getSpeed()));
@@ -259,7 +259,7 @@ public final class SulfurCyclePlaytestWorld {
 
     /** Fills the creative supplies, fits the electrode plate, wires the alternator to the panel and presses START, as a player would. */
     private static void start(ServerLevel level) {
-        supply(level, SO2_SUPPLY, new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 1_000));
+        supply(level, SO2_SUPPLY, new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(), 1_000));
         supply(level, WATER_SUPPLY, new FluidStack(Fluids.WATER, 1_000));
         var cell = (ElectrolysisControllerBlockEntity) level.getBlockEntity(CELL.north());
         var rack = level.getCapability(Capabilities.ItemHandler.BLOCK, CELL.above(), Direction.UP);

@@ -7,6 +7,7 @@ import net.createplant.block.entity.IndustrialArmBlockEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.createplant.registry.CEArm;
+import net.createplant.registry.CEMetals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -46,7 +47,7 @@ public class ArmAssemblyGameTests {
 
     private static ItemStack[] memoryParts() {
         return new ItemStack[] {new ItemStack(CEArm.FERRITE_CORE.get(), 64), new ItemStack(CEArm.FERRITE_CORE.get(), 64), new ItemStack(CEArm.FERRITE_CORE.get(), 16),
-            new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25)};
+            new ItemStack(CEMetals.ENAMELLED_COPPER_WIRE.get(), 25)};
     }
 
     /** A placed arm rests with its claw toward where the player looked: the rest yaw is the yaw of a target in that direction. */
@@ -164,7 +165,7 @@ public class ArmAssemblyGameTests {
         var holder = recipe(h, MEMORY);
         BlockPos depot = new BlockPos(2, 2, 2), lead = new BlockPos(4, 2, 2), parts = new BlockPos(5, 2, 2), second = new BlockPos(0, 2, 2);
         depot(h, depot, holder.value().after(holder.id(), 0)); // the cores are set
-        var box = chest(h, parts, new ItemStack(CEArm.ENAMELLED_COPPER_WIRE.get(), 25));
+        var box = chest(h, parts, new ItemStack(CEMetals.ENAMELLED_COPPER_WIRE.get(), 25));
         var be = poweredArm(h, lead, ArmTool.HAND);
         be.setPoints(java.util.List.of(h.absolutePos(depot), h.absolutePos(parts)), java.util.List.of());
         IndustrialArmBlockEntity[] helper = {null};

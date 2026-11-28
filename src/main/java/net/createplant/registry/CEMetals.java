@@ -47,6 +47,7 @@ public final class CEMetals {
     public static final DeferredItem<BlockItem> STAINLESS_STEEL_BLOCK = metalBlock("stainless_steel_block");
     public static final DeferredItem<BlockItem> TITANIUM_BLOCK = metalBlock("titanium_block");
     public static final DeferredItem<Item> ALUMINA = ITEMS.registerSimpleItem("alumina");
+    public static final DeferredItem<Item> ENAMELLED_COPPER_WIRE = ITEMS.registerSimpleItem("enamelled_copper_wire");
     /** Pressed plates: aluminium fins and jackets, titanium blades, nickel electrodes. */
     public static final DeferredItem<Item> ALUMINUM_SHEET = ITEMS.registerSimpleItem("aluminum_sheet");
     public static final DeferredItem<Item> TITANIUM_SHEET = ITEMS.registerSimpleItem("titanium_sheet");

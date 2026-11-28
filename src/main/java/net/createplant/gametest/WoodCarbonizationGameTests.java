@@ -6,7 +6,7 @@ import net.createplant.block.CharredWoodBlock;
 import net.createplant.block.entity.CharredWoodBlockEntity;
 import net.createplant.chemistry.WoodCarbonization;
 import net.createplant.registry.CECarbonization;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -51,7 +51,7 @@ public final class WoodCarbonizationGameTests {
         BlockPos source = new BlockPos(10, 3, 10);
         h.setBlock(source.west(), Blocks.OAK_LOG);
         h.setBlock(source.east(), Blocks.OAK_PLANKS);
-        h.setBlock(source, CEUranium.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock());
+        h.setBlock(source, CESharedChemicals.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock());
         WoodCarbonization.tryFromSource(h.getLevel(), h.absolutePos(source));
         int count = 0;
         for (BlockPos neighbour : List.of(source.west(), source.east()))
@@ -65,10 +65,10 @@ public final class WoodCarbonizationGameTests {
     public static void flowingAcidAndNonWoodCannotStartCarbonization(GameTestHelper h) {
         BlockPos flowing = new BlockPos(4, 3, 4), source = new BlockPos(12, 3, 4);
         h.setBlock(flowing.west(), Blocks.OAK_LOG);
-        h.setBlock(flowing, CEUranium.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock().setValue(LiquidBlock.LEVEL, 1));
+        h.setBlock(flowing, CESharedChemicals.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock().setValue(LiquidBlock.LEVEL, 1));
         h.assertTrue(!WoodCarbonization.tryFromSource(h.getLevel(), h.absolutePos(flowing))
                 && h.getBlockState(flowing.west()).is(Blocks.OAK_LOG), "Flowing acid cannot process a wood block");
-        h.setBlock(source, CEUranium.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock());
+        h.setBlock(source, CESharedChemicals.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock());
         h.assertTrue(!WoodCarbonization.tryFromSource(h.getLevel(), h.absolutePos(source)) && h.getBlockState(source).getFluidState().isSource(),
             "A source with no wood is not consumed");
         h.assertTrue(!WoodCarbonization.tryStart(h.getLevel(), h.absolutePos(source.below())), "Stone and air are not wood feedstock");

@@ -17,7 +17,7 @@ import net.createplant.block.CraneStructure;
 import net.createplant.block.QuarryDriveBlock;
 import net.createplant.block.entity.QuarryConveyor;
 import net.createplant.block.entity.QuarryDriveBlockEntity;
-import net.createplant.registry.CECrane;
+import net.createplant.registry.CEQuarry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -53,7 +53,7 @@ public class QuarryGameTests {
 
     /** A quarry drive with its range extending east and south: five along the rails, three across, turned from the inside. */
     private static void configuredQuarry(GameTestHelper h, int speed) {
-        h.setBlock(DRIVE, CECrane.QUARRY_DRIVE.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
+        h.setBlock(DRIVE, CEQuarry.QUARRY_DRIVE.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.Z));
         h.setBlock(DRIVE.south(), AllBlocks.CREATIVE_MOTOR.getDefaultState().setValue(BlockStateProperties.FACING, Direction.NORTH));
         ((QuarryDriveBlockEntity) h.getBlockEntity(DRIVE)).size(5, 3);
         h.runAfterDelay(2, () -> ((CreativeMotorBlockEntity) h.getBlockEntity(DRIVE.south())).generatedSpeed.setValue(speed));
@@ -112,7 +112,7 @@ public class QuarryGameTests {
         for (BlockPos pos : List.of(firstRail, secondRail, chain)) h.setBlock(pos, Blocks.CHEST);
         supplyAll(h);
         var quarry = (QuarryDriveBlockEntity) h.getBlockEntity(DRIVE);
-        var client = new QuarryDriveBlockEntity(CECrane.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
+        var client = new QuarryDriveBlockEntity(CEQuarry.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
         h.startSequence()
             .thenWaitUntil(() -> obstruction(h, quarry, client, firstRail, "frame_blocked"))
             .thenExecute(() -> h.setBlock(firstRail, Blocks.AIR))
@@ -144,7 +144,7 @@ public class QuarryGameTests {
             .thenExecute(() -> {
                 var quarry = (QuarryDriveBlockEntity) h.getBlockEntity(DRIVE);
                 var tag = clientData(h, quarry);
-                var client = new QuarryDriveBlockEntity(CECrane.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
+                var client = new QuarryDriveBlockEntity(CEQuarry.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
                 client.readClient(tag, h.getLevel().registryAccess());
                 var text = new java.util.ArrayList<net.minecraft.network.chat.Component>();
                 client.addToGoggleTooltip(text, false);
@@ -152,7 +152,7 @@ public class QuarryGameTests {
                     && translated.getKey().equals("crane.create_refinery_n_reactors.quarry_belt_missing")), "The client shows the missing drill and connector");
                 for (int i = 0; i < 5; i++) quarry.addToGoggleTooltip(new java.util.ArrayList<>(), true);
                 h.assertTrue(count(quarry, AllBlocks.METAL_GIRDER.asItem()) == 6 && h.getBlockState(DRIVE.east()).isAir(), "Goggles do not consume stock or start construction");
-                var restored = new QuarryDriveBlockEntity(CECrane.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
+                var restored = new QuarryDriveBlockEntity(CEQuarry.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
                 restored.setLevel(h.getLevel());restored.loadWithComponents(quarry.saveWithFullMetadata(h.getLevel().registryAccess()), h.getLevel().registryAccess());
                 restored.tick();missing(h, restored, FRAME_GIRDERS - 1 - 6, 1, 1);
                 h.assertTrue(count(restored, AllBlocks.METAL_GIRDER.asItem()) == 6, "Reload recalculates the deficit without multiplying stock");
@@ -312,7 +312,7 @@ public class QuarryGameTests {
             .thenExecute(() -> {
                 var saved = quarry.saveWithoutMetadata(lookup);
                 h.assertTrue(saved.getInt("NextLiquidRow") > 0, "The drain cursor is saved");
-                var restored = new QuarryDriveBlockEntity(CECrane.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
+                var restored = new QuarryDriveBlockEntity(CEQuarry.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
                 restored.loadWithComponents(saved, lookup);
                 h.assertTrue(restored.saveWithoutMetadata(lookup).getInt("NextLiquidRow") == saved.getInt("NextLiquidRow"),
                     "A restored drive resumes the same drainage row");
@@ -360,7 +360,7 @@ public class QuarryGameTests {
     @GameTest(template = "test_rbmk", timeoutTicks = 160)
     public static void configuredQuarryUsesItsOwnRailsBesideOtherFrames(GameTestHelper h) {
         var drive = new BlockPos(6, 8, 6);
-        var state = CECrane.QUARRY_DRIVE.get().defaultBlockState();
+        var state = CEQuarry.QUARRY_DRIVE.get().defaultBlockState();
         h.setBlock(drive, state);
         var quarry = (QuarryDriveBlockEntity) h.getBlockEntity(drive);
         quarry.size(5, 3);
@@ -402,7 +402,7 @@ public class QuarryGameTests {
             .thenWaitUntil(() -> {
                 var tag = clientData(h, quarry);
                 h.assertTrue(tag.getLong("EtaSeconds") > 0, "The quarry publishes an ETA after recording progress");
-                var replica = new QuarryDriveBlockEntity(CECrane.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
+                var replica = new QuarryDriveBlockEntity(CEQuarry.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
                 replica.readClient(tag, h.getLevel().registryAccess());
                 var tooltip = new ArrayList<Component>();
                 replica.addToGoggleTooltip(tooltip, false);
@@ -413,7 +413,7 @@ public class QuarryGameTests {
             })
             .thenExecute(() -> {
                 var lookup = h.getLevel().registryAccess();
-                var restored = new QuarryDriveBlockEntity(CECrane.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
+                var restored = new QuarryDriveBlockEntity(CEQuarry.QUARRY_DRIVE_ENTITY.get(), h.absolutePos(DRIVE), quarry.getBlockState());
                 restored.setLevel(h.getLevel());
                 restored.loadWithComponents(quarry.saveWithoutMetadata(lookup), lookup);
                 h.assertTrue(restored.structure() == null && restored.getRotationSpeedModifier(Direction.NORTH) == -1,
@@ -577,7 +577,7 @@ public class QuarryGameTests {
 
     @GameTest(template = "test_rbmk")
     public static void aLegacyBacklogIsSavedInFullButSendsOnlyVisibleParcels(GameTestHelper h) throws IOException {
-        h.setBlock(DRIVE, CECrane.QUARRY_DRIVE.get().defaultBlockState());
+        h.setBlock(DRIVE, CEQuarry.QUARRY_DRIVE.get().defaultBlockState());
         var quarry = (QuarryDriveBlockEntity) h.getBlockEntity(DRIVE);
         var lookup = h.getLevel().registryAccess();
         var saved = quarry.saveWithoutMetadata(lookup);

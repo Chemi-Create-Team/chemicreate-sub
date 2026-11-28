@@ -7,6 +7,8 @@ import net.createplant.client.SteamTurbineRenderer;
 import net.createplant.client.TankCasingRenderer;
 import net.createplant.ponder.ElectrolysisPonderPlugin;
 import net.createplant.registry.CEBlockEntityTypes;
+import net.createplant.registry.CEIsotopeGases;
+import net.createplant.registry.CEQuarry;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -98,7 +100,7 @@ public class ElectrolysisClient {
         event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(net.createplant.registry.CECrane.DRIVE_ENTITY.get())
             .factory(com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual::shaft).skipVanillaRender(be -> false).apply());
         // The quarry drive's two shaft halves may turn opposite ways, the outer one driving the side belt.
-        event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(net.createplant.registry.CECrane.QUARRY_DRIVE_ENTITY.get())
+        event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(CEQuarry.QUARRY_DRIVE_ENTITY.get())
             .factory(net.createplant.client.QuarryVisual::new).skipVanillaRender(be -> false).apply());
         event.enqueueWork(() -> dev.engine_room.flywheel.lib.visualization.SimpleBlockEntityVisualizer.builder(net.createplant.registry.CEFusion.VACUUM_PUMP_ENTITY.get())
             .factory(com.simibubi.create.content.kinetics.base.SingleAxisRotatingVisual::shaft).skipVanillaRender(be -> true).apply());
@@ -130,7 +132,7 @@ public class ElectrolysisClient {
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectrolysis.CELL_ENTITY.get(), net.createplant.client.ElectrolysisCellRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectrolysis.HEAD_ENTITY.get(), net.createplant.client.ElectrodeHeadRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEElectrolysis.CONTROLLER_ENTITY.get(), net.createplant.client.ElectrolysisControllerRenderer::new);
-        event.registerBlockEntityRenderer(net.createplant.registry.CEFusionFuel.COLD_BOX_ENTITY.get(), com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(CEIsotopeGases.COLD_BOX_ENTITY.get(), com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEHeating.REGULATOR_ENTITY.get(),net.createplant.client.FlowRegulatorRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CETransport.PIPE_GAUGE_ENTITY.get(),net.createplant.client.PipeGaugeRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEGasBell.TANK_ENTITY.get(),net.createplant.client.GasHolderRenderer::new);
@@ -160,7 +162,7 @@ public class ElectrolysisClient {
         event.registerBlockEntityRenderer(net.createplant.registry.CENuclear.REACTOR_CONSOLE_DISPLAY_ENTITY.get(), net.createplant.client.ReactorConsoleDisplayRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CENuclear.SHIELD_DRIVE_ENTITY.get(), com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CECrane.DRIVE_ENTITY.get(), net.createplant.client.CraneRenderer::new);
-        event.registerBlockEntityRenderer(net.createplant.registry.CECrane.QUARRY_DRIVE_ENTITY.get(), net.createplant.client.QuarryRenderer::new);
+        event.registerBlockEntityRenderer(CEQuarry.QUARRY_DRIVE_ENTITY.get(), net.createplant.client.QuarryRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEArm.ARM_ENTITY.get(), net.createplant.client.IndustrialArmRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEConverter.TRUNNION_ENTITY.get(), com.simibubi.create.content.contraptions.bearing.BearingRenderer::new);
         event.registerBlockEntityRenderer(net.createplant.registry.CEReciprocating.COMPRESSOR_ENTITY.get(), net.createplant.client.ReciprocatingCompressorRenderer::new);

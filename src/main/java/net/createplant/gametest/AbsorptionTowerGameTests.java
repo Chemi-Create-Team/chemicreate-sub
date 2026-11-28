@@ -1,14 +1,14 @@
 package net.createplant.gametest;
 
 import net.createplant.CreatePlant;
-import net.createplant.block.ExtractionColumnSectionBlock;
-import net.createplant.block.ExtractionColumnStructureBlock;
+import net.createplant.block.ColumnSectionBlock;
+import net.createplant.block.ColumnRingBlock;
 import net.createplant.block.entity.AbsorptionTowerBlockEntity;
 import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEFluids;
 import net.createplant.registry.CEOstwaldFluids;
 import net.createplant.registry.CEReactor;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.registry.CEWaterTreatment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,8 +39,8 @@ public class AbsorptionTowerGameTests {
     public static void storey(ServerLevel level, BlockPos centre, boolean large) {
         level.setBlock(centre, CEReactor.LARGE_ABSORPTION_TOWER.get().defaultBlockState(), 3);
         for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) if (x != 0 || z != 0)
-            level.setBlock(centre.offset(x, 0, z), CEReactor.LARGE_ABSORPTION_RING.get().defaultBlockState().setValue(ExtractionColumnStructureBlock.FACING,
-                ExtractionColumnSectionBlock.ring(x, z).getValue(ExtractionColumnStructureBlock.FACING)), 3);
+            level.setBlock(centre.offset(x, 0, z), CEReactor.LARGE_ABSORPTION_RING.get().defaultBlockState().setValue(ColumnRingBlock.FACING,
+                ColumnSectionBlock.ringFacing(x, z)), 3);
     }
 
     /** A tower of the given storeys whose bottom storey stands at {@code centre}, returned validated. */
@@ -112,9 +112,9 @@ public class AbsorptionTowerGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void sulfurTrioxideBecomesSulfuricAcid(GameTestHelper h) {
         var tower = tower(h, 4, false);var bottom = tower.getBlockPos();
-        port(h, bottom.north(), Direction.NORTH).fill(new FluidStack(CEUranium.SULFUR_TRIOXIDE.get(), 500), EXECUTE);
+        port(h, bottom.north(), Direction.NORTH).fill(new FluidStack(CESharedChemicals.SULFUR_TRIOXIDE.get(), 500), EXECUTE);
         port(h, bottom.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 500), EXECUTE);run(tower, 101);
-        h.assertTrue(port(h, bottom.north(), Direction.NORTH).drain(new FluidStack(CEUranium.SULFURIC_ACID.get(), 10000), SIMULATE).getAmount() == 500,
+        h.assertTrue(port(h, bottom.north(), Direction.NORTH).drain(new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 10000), SIMULATE).getAmount() == 500,
             "Two 250 mB batches run in parallel: 500 mB sulfur trioxide and water give 500 mB sulfuric acid");
         h.succeed();
     }
@@ -122,9 +122,9 @@ public class AbsorptionTowerGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 40)
     public static void sulfurDioxideBecomesSulfurousAcid(GameTestHelper h) {
         var tower = tower(h, 4, false);var bottom = tower.getBlockPos();
-        port(h, bottom.north(), Direction.NORTH).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 500), EXECUTE);
+        port(h, bottom.north(), Direction.NORTH).fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(), 500), EXECUTE);
         port(h, bottom.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 500), EXECUTE);run(tower, 101);
-        h.assertTrue(port(h, bottom.north(), Direction.NORTH).drain(new FluidStack(CEUranium.SULFUROUS_ACID.get(), 10000), SIMULATE).getAmount() == 500,
+        h.assertTrue(port(h, bottom.north(), Direction.NORTH).drain(new FluidStack(CESharedChemicals.SULFUROUS_ACID.get(), 10000), SIMULATE).getAmount() == 500,
             "Two 250 mB batches run in parallel: 500 mB sulfur dioxide and water give 500 mB sulfurous acid");
         h.succeed();
     }
@@ -132,9 +132,9 @@ public class AbsorptionTowerGameTests {
     @GameTest(template = "test_reactor", timeoutTicks = 300)
     public static void aTowerLeftToTickAbsorbsSulfurDioxideIntoSulfurousAcid(GameTestHelper h) {
         var tower = tower(h, 4, true);var bottom = tower.getBlockPos();
-        h.assertTrue(port(h, bottom.east(), Direction.EAST).fill(new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 250), EXECUTE) == 250
+        h.assertTrue(port(h, bottom.east(), Direction.EAST).fill(new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(), 250), EXECUTE) == 250
             && port(h, bottom.above(3), Direction.UP).fill(new FluidStack(Fluids.WATER, 250), EXECUTE) == 250, "The tower takes sulfur dioxide below and water above");
-        h.succeedWhen(() -> h.assertTrue(port(h, bottom, Direction.DOWN).drain(new FluidStack(CEUranium.SULFUROUS_ACID.get(), 1000), SIMULATE).getAmount() == 250,
+        h.succeedWhen(() -> h.assertTrue(port(h, bottom, Direction.DOWN).drain(new FluidStack(CESharedChemicals.SULFUROUS_ACID.get(), 1000), SIMULATE).getAmount() == 250,
             "The tower runs on its own ticks and makes sulfurous acid: " + tower.status()));
     }
 
@@ -143,7 +143,7 @@ public class AbsorptionTowerGameTests {
         var tower = tower(h, 4, true);
         var bottom = tower.getBlockPos();
         var top = bottom.above(3);
-        var gas = new FluidStack(CEUranium.SULFUR_DIOXIDE.get(), 250);
+        var gas = new FluidStack(CESharedChemicals.SULFUR_DIOXIDE.get(), 250);
         var wash = new FluidStack(CEChlorAlkali.CAUSTIC_SODA.get(), 250);
         var inlet = port(h, bottom.east(), Direction.EAST);
         var topPort = port(h, top.west(), Direction.WEST);
@@ -163,7 +163,7 @@ public class AbsorptionTowerGameTests {
         basin.inputTank.getCapability().fill(recovered, EXECUTE);
         var recovery = h.getLevel().getRecipeManager().byKey(CreatePlant.location("mixing/scrubber_gypsum")).orElseThrow().value();
         h.assertTrue(com.simibubi.create.content.processing.basin.BasinRecipe.apply(basin, recovery)
-            && basin.getOutputInventory().getStackInSlot(0).is(net.createplant.registry.CEFuelCycle.GYPSUM.get()),
+            && basin.getOutputInventory().getStackInSlot(0).is(CESharedChemicals.GYPSUM.get()),
             "Create's basin consumes the recovered wash liquid and yields gypsum");
         h.succeed();
     }

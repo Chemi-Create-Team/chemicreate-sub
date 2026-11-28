@@ -1,5 +1,7 @@
 package net.createplant.compat.jei;
 
+import net.createplant.registry.CEIsotopeGases;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,7 +89,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("solvent_extraction", "plant/fuel_cycle", CEFuelCycle.EXTRACTION_COLUMN.get(), CEFuelCycle.EXTRACTION_COLUMN.get()),
             new Kind("vitrification", "plant/fuel_cycle", CEFuelCycle.MELTER.get(), CEFuelCycle.MELTER.get()),
             new Kind("industrial_delivery", "plant/industrial_dispatch", CEIndustrialExpansion.DISPATCH.get(), CEIndustrialExpansion.DISPATCH.get(), AllBlocks.ITEM_VAULT.get()),
-            new Kind("helium_refrigeration", "plant/fusion_helium", CEFusionFuel.COLD_BOX.get(), CEFusionFuel.COLD_BOX.get(), CEFusionFuel.REGENERATOR.get()),
+            new Kind("helium_refrigeration", "plant/fusion_helium", CEIsotopeGases.COLD_BOX.get(), CEIsotopeGases.COLD_BOX.get(), CEIsotopeGases.REGENERATOR.get()),
             new Kind("ammonia_separator", "chemistry/ammonia_separator", CETransport.AMMONIA_SEPARATOR.get(), CETransport.AMMONIA_SEPARATOR.get(), CETransport.REACTION_TOWER.get()),
             new Kind("process_heating", "plant/ore_recovery", AllBlocks.BLAZE_BURNER.get(), CETransport.LIDDED_VESSEL.get(), AllBlocks.BASIN.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("heat_exchange", "plant/heat_exchanger", CEHeating.TUBE_TANK.get(), CEHeating.TUBE_TANK.get(), CEHeating.JACKET.get()),
@@ -241,8 +243,8 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new PlantProcess(List.of(List.of(CEItems.ASBESTOS.toStack())), List.of(f(CEChlorAlkali.BRINE.get(), ElectrolysisProcess.BRINE_PER_PLATE * diaphragmTicks)), List.of(), List.of(),
                 List.of(f(CEFluids.HYDROGEN_GAS.get(), diaphragmTicks), f(CEChlorAlkali.CHLORINE.get(), diaphragmTicks),
                     f(CEChlorAlkali.CAUSTIC_SODA.get(), ElectrolysisProcess.SODA_PER_PLATE * diaphragmTicks * 5 / 4)), note("electrolysis_brine_diaphragm", diaphragmTicks, diaphragmEnergy)),
-            PlantProcess.fluids(List.of(f(CEUranium.HYDROGEN_FLUORIDE.get(), ElectrolysisProcess.FLUORIDE_PER_PLATE * ticks)), List.of(f(CEFluids.HYDROGEN_GAS.get(), ticks), f(CEUranium.FLUORINE.get(), ticks)), note("electrolysis_fluoride", ticks, energy)),
-            PlantProcess.fluids(List.of(f(CEUranium.SULFUROUS_ACID.get(), ElectrolysisProcess.SULFUROUS_PER_PLATE * ticks)), List.of(f(CEFluids.HYDROGEN_GAS.get(), ticks), f(CEUranium.SULFURIC_ACID.get(), ticks)),
+            PlantProcess.fluids(List.of(f(CESharedChemicals.HYDROGEN_FLUORIDE.get(), ElectrolysisProcess.FLUORIDE_PER_PLATE * ticks)), List.of(f(CEFluids.HYDROGEN_GAS.get(), ticks), f(CESharedChemicals.FLUORINE.get(), ticks)), note("electrolysis_fluoride", ticks, energy)),
+            PlantProcess.fluids(List.of(f(CESharedChemicals.SULFUROUS_ACID.get(), ElectrolysisProcess.SULFUROUS_PER_PLATE * ticks)), List.of(f(CEFluids.HYDROGEN_GAS.get(), ticks), f(CESharedChemicals.SULFURIC_ACID.get(), ticks)),
                 note("electrolysis_sulfurous", ticks, Math.round(ticks * ElectrolysisProcess.SULFUROUS_JOULES_PER_PLATE / 1000)))));
         registration.addRecipes(type("fuel_cell"), List.of(PlantProcess.fluids(List.of(f(CEFluids.HYDROGEN_GAS.get(), 100), f(CEFluids.OXYGEN_GAS.get(), 50)),
             List.of(f(Fluids.WATER, (int) (100 * FuelCellBlockEntity.WATER_PER_HYDROGEN))), note("fuel_cell", Math.round(100 * FuelCellBlockEntity.JOULES_PER_HYDROGEN / 1000 * 10) / 10.0))));
@@ -265,13 +267,13 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         registration.addRecipes(type("vitrification"), ordinaryRoutesFirst(fuelCycleReactions(CERecipeTypes.VITRIFICATION)));
         registration.addRecipes(type("industrial_delivery"), deliveries());
         var liquefaction=new ArrayList<PlantProcess>();
-        for(var gas:List.of(CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEFusion.HELIUM_GAS.get())){
-            var conversion=ThermalStreams.liquefaction(f(gas,1));int water=gas==CEFusion.HELIUM_GAS.get() ? 200 : 50;
+        for(var gas:List.of(CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEIsotopeGases.HELIUM_GAS.get())){
+            var conversion=ThermalStreams.liquefaction(f(gas,1));int water=gas==CEIsotopeGases.HELIUM_GAS.get() ? 200 : 50;
             liquefaction.add(PlantProcess.fluids(List.of(f(gas,conversion.inputAmount()),f(Fluids.WATER,water)),List.of(conversion.result(1),f(FluidForm.WARM_WATER,water)),note("helium_refrigeration")));
         }
         registration.addRecipes(type("helium_refrigeration"),liquefaction);
-        registration.addRecipes(type("cell_electrolysis"), List.of(PlantProcess.fluids(List.of(f(CEFusionFuel.HEAVY_WATER.get(), ElectrolysisProcess.WATER_PER_PLATE * ticks)),
-            List.of(f(CEFusion.DEUTERIUM_GAS.get(), 2 * ticks), f(CEFluids.OXYGEN_GAS.get(), ticks)), note("electrolysis", ticks, energy))));
+        registration.addRecipes(type("cell_electrolysis"), List.of(PlantProcess.fluids(List.of(f(CEIsotopeGases.HEAVY_WATER.get(), ElectrolysisProcess.WATER_PER_PLATE * ticks)),
+            List.of(f(CEIsotopeGases.DEUTERIUM_GAS.get(), 2 * ticks), f(CEFluids.OXYGEN_GAS.get(), ticks)), note("electrolysis", ticks, energy))));
         var ordinarySteam = net.createplant.thermal.SteamGrades.ORDINARY.stack(1000);
         var highPressureSteam = net.createplant.thermal.SteamGrades.HIGH_PRESSURE.stack(1000);
         var water = List.of(f(Fluids.WATER,1000));
@@ -499,7 +501,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         }
         var jeiTooltips = new java.util.TreeMap<String, List<String>>();
         var fluidRenderer = runtime.getIngredientManager().getIngredientRenderer(mezz.jei.api.neoforge.NeoForgeTypes.FLUID_STACK);
-        for (var fluid : List.of(CEUranium.SULFUROUS_ACID.get(), CEUranium.SULFUR_DIOXIDE.get())) {
+        for (var fluid : List.of(CESharedChemicals.SULFUROUS_ACID.get(), CESharedChemicals.SULFUR_DIOXIDE.get())) {
             @SuppressWarnings("removal") var lines = fluidRenderer.getTooltip(new FluidStack(fluid, 200), net.minecraft.world.item.TooltipFlag.Default.NORMAL);
             jeiTooltips.put(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(fluid).toString(), lines.stream().map(Component::getString).toList());
         }

@@ -3,7 +3,7 @@ package net.createplant.gametest;
 import net.createplant.CreatePlant;
 import net.createplant.registry.CEChlorAlkali;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.safety.CorrosiveContact;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -25,7 +25,7 @@ public class CorrosiveContactGameTests {
     public static void acidContactRespectsTheLiquidSurfaceAndDoesNotStack(GameTestHelper helper) {
         var level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
-        var acid = CEUranium.SULFURIC_ACID.get().defaultFluidState();
+        var acid = CESharedChemicals.SULFURIC_ACID.get().defaultFluidState();
         var mob = helper.spawnWithNoFreeWill(EntityType.HUSK, new Vec3(2.5, 2.95, 2.5));
         mob.setNoGravity(true);
         mob.tickCount = (20 - mob.getId() % 20) % 20;

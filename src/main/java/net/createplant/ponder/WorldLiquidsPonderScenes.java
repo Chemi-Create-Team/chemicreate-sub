@@ -8,7 +8,7 @@ import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createplant.CreatePlant;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,7 +32,7 @@ public final class WorldLiquidsPonderScenes {
         scene.world().showSection(util.select().fromTo(0, 1, 0, 8, 3, 8).substract(pool), Direction.DOWN);
         scene.world().modifyBlockEntity(tank, FluidTankBlockEntity.class, be -> {
             be.setWindows(true);
-            be.getTankInventory().fill(new FluidStack(CEUranium.SULFURIC_ACID.get(), 4000), FluidAction.EXECUTE);
+            be.getTankInventory().fill(new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), 4000), FluidAction.EXECUTE);
             be.setFluidLevel(LerpedFloat.linear().startWithValue(be.getFillState()));
         });
         scene.idle(15);

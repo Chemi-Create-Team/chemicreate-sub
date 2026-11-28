@@ -2,7 +2,7 @@ package net.createplant.item;
 
 import java.util.List;
 import net.createplant.registry.CEFluids;
-import net.createplant.registry.CEFusion;
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.registry.CESafety;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -23,7 +23,7 @@ public final class GasCylinderItem extends Item {
     public static FluidHandlerItemStack handler(ItemStack cylinder) {
         return new FluidHandlerItemStack(CESafety.CYLINDER_CONTENTS, cylinder, CAPACITY) {
             @Override public boolean canFillFluidType(FluidStack fluid) {
-                return fluid.is(CEFluids.NITROGEN_GAS.get()) || fluid.is(CEFluids.ARGON_GAS.get()) || fluid.is(CEFusion.HELIUM_GAS.get());
+                return fluid.is(CEFluids.NITROGEN_GAS.get()) || fluid.is(CEFluids.ARGON_GAS.get()) || fluid.is(CEIsotopeGases.HELIUM_GAS.get());
             }
         };
     }

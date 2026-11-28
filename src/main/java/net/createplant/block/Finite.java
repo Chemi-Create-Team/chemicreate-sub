@@ -1,4 +1,4 @@
-package net.createplant.nuclear;
+package net.createplant.block;
 
 import java.util.Arrays;
 

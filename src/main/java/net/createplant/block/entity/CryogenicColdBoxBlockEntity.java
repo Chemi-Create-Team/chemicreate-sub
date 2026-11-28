@@ -6,8 +6,7 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createplant.block.CryogenicColdBoxBlock;
-import net.createplant.registry.CEFusion;
-import net.createplant.registry.CEFusionFuel;
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.registry.CEMetals;
 import net.createplant.thermal.FluidThermal;
 import net.createplant.thermal.PhaseChange;
@@ -44,7 +43,7 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
     private boolean formed;
     private String status = "structure";
 
-    public CryogenicColdBoxBlockEntity(BlockPos pos, BlockState state) { super(CEFusionFuel.COLD_BOX_ENTITY.get(), pos, state); }
+    public CryogenicColdBoxBlockEntity(BlockPos pos, BlockState state) { super(CEIsotopeGases.COLD_BOX_ENTITY.get(), pos, state); }
     @Override public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
     public Direction front() { return getBlockState().getValue(CryogenicColdBoxBlock.HORIZONTAL_FACING); }
     public ThermalFluidTank gas() { return gas; }
@@ -64,7 +63,7 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
             BlockPos pos = body(x, y, z);
             if (!level.hasChunkAt(pos)) { status = "unloaded";return false; }
             boolean centre = x == 0 && y == 0 && z == 2;
-            if (!level.getBlockState(pos).is(centre ? CEFusionFuel.REGENERATOR.get() : CEMetals.STEEL_BLOCK.get().getBlock())) { status = "structure";return false; }
+            if (!level.getBlockState(pos).is(centre ? CEIsotopeGases.REGENERATOR.get() : CEMetals.STEEL_BLOCK.get().getBlock())) { status = "structure";return false; }
         }
         return true;
     }
@@ -91,7 +90,7 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
 
     private static net.createplant.thermal.PhaseChange.Transfer liquefy(FluidStack input) {
         if(!net.createplant.thermal.FluidState.gas(input) ||
-            !(input.is(CEFusion.HELIUM_GAS.get()) || input.is(net.createplant.registry.CEFluids.NITROGEN_GAS.get())
+            !(input.is(CEIsotopeGases.HELIUM_GAS.get()) || input.is(net.createplant.registry.CEFluids.NITROGEN_GAS.get())
                 || input.is(net.createplant.registry.CEFluids.OXYGEN_GAS.get()))) return null;
         int pressure=net.createplant.thermal.FluidState.pressure(input);
         for(int level=net.createplant.thermal.FluidState.temperature(input)-1;level>=0;level--) {
@@ -102,7 +101,7 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
 
     private void runCycle() {
         var recipe=liquefy(gas.getFluid());
-        int workPerLiquid=gas.getFluid().is(CEFusion.HELIUM_GAS.get()) ? 4000 : 1000;
+        int workPerLiquid=gas.getFluid().is(CEIsotopeGases.HELIUM_GAS.get()) ? 4000 : 1000;
         int maximum = (int) (256 * WATTS_PER_RPM * .25 / workPerLiquid);
         if (recipe != null) ProductionMonitor.plan(this, recipe.output(maximum).getAmount() * 4d, 0, 0);
         if(Math.abs(getSpeed())<32 || isOverStressed()){status="speed";return;}
@@ -141,7 +140,7 @@ public class CryogenicColdBoxBlockEntity extends KineticBlockEntity implements I
 
     @Override public float calculateStressApplied() { return lastStressApplied = watts <= 0 ? 0 : (float)(watts / Math.max(1, Math.abs(getSpeed()))); }
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEFusionFuel.COLD_BOX_ENTITY.get(), (be, side) -> net.createplant.mixture.GasMixturePort.both(be.port(side), be));
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CEIsotopeGases.COLD_BOX_ENTITY.get(), (be, side) -> net.createplant.mixture.GasMixturePort.both(be.port(side), be));
     }
     public IFluidHandler port(Direction side) {
         if (side == null || side == front() || side == front().getOpposite()) return null;

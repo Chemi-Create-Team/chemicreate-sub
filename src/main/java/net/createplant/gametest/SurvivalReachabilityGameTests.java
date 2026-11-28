@@ -1,5 +1,7 @@
 package net.createplant.gametest;
 
+import net.createplant.registry.CEIsotopeGases;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidForm;
 import java.util.*;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
@@ -163,10 +165,10 @@ public final class SurvivalReachabilityGameTests {
         }
         if (has(items, "electrolysis_cell", "electrolysis_cell_controller", "electrolysis_electrode_head", "asbestos_wrapped_electrode")) {
             if (fluids.contains(Fluids.WATER)) changed |= fluids.add(CEFluids.HYDROGEN_GAS.get()) | fluids.add(CEFluids.OXYGEN_GAS.get());
-            if (fluids.contains(CEFusionFuel.HEAVY_WATER.get())) changed |= fluids.add(CEFusion.DEUTERIUM_GAS.get()) | fluids.add(CEFluids.OXYGEN_GAS.get());
+            if (fluids.contains(CEIsotopeGases.HEAVY_WATER.get())) changed |= fluids.add(CEIsotopeGases.DEUTERIUM_GAS.get()) | fluids.add(CEFluids.OXYGEN_GAS.get());
             if (fluids.contains(CEChlorAlkali.BRINE.get())) changed |= fluids.add(CEFluids.HYDROGEN_GAS.get())
                 | fluids.add(CEChlorAlkali.CHLORINE.get()) | fluids.add(CEChlorAlkali.CAUSTIC_SODA.get());
-            if (fluids.contains(CEUranium.HYDROGEN_FLUORIDE.get())) changed |= fluids.add(CEUranium.FLUORINE.get());
+            if (fluids.contains(CESharedChemicals.HYDROGEN_FLUORIDE.get())) changed |= fluids.add(CESharedChemicals.FLUORINE.get());
         }
         if (has(items, "electrolysis_cell", "electrolysis_cell_controller", "electrolysis_electrode_head", "asbestos_wrapped_electrode")) {
             for (var recipe : net.createplant.chemistry.ElectrolysisProcess.all()) if (recipe.electrowinning() && fluids.contains(recipe.feed())) {
@@ -192,7 +194,7 @@ public final class SurvivalReachabilityGameTests {
             else if(fluid instanceof FluidForm form)changed|=fluids.addAll(stateEntries(net.createplant.thermal.Compression.convert(form.stack(1),true)));
         }
         if(has(items,"stainless_boiler") && fluids.contains(Fluids.WATER))changed|=fluids.add(FluidForm.HIGH_PRESSURE_STEAM);
-        if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.PRESSURISED_WATER) && fluids.contains(CEFusion.DEUTERIUM_GAS.get()) && fluids.contains(CEFusion.TRITIUM_GAS.get()) && fluids.contains(FluidForm.LIQUID_HELIUM))changed|=fluids.add(FluidForm.HOT_REACTOR_COOLANT);
+        if(has(items,"fusion_reactor_controller","lithium_lead_blanket_cartridge","tungsten_divertor_cassette") && fluids.contains(FluidForm.PRESSURISED_WATER) && fluids.contains(CEIsotopeGases.DEUTERIUM_GAS.get()) && fluids.contains(CEIsotopeGases.TRITIUM_GAS.get()) && fluids.contains(FluidForm.LIQUID_HELIUM))changed|=fluids.add(FluidForm.HOT_REACTOR_COOLANT);
         if (has(items, "fuel_rod", "reactor_fuel_channel", "reactor_graphite", "biological_shield") && fluids.contains(Fluids.WATER))
             changed |= items.add(CENuclear.SPENT_FUEL_ROD.get());
         if(has(items,"control_rod","reactor_fuel_channel"))changed|=items.add(CENuclear.SPENT_CONTROL_ROD.get());
@@ -219,10 +221,10 @@ public final class SurvivalReachabilityGameTests {
         if (has(items, "cryogenic_cold_box_drive", "cryogenic_regenerator")
             && items.contains(CEMetals.STEEL_BLOCK.get())
             && items.contains(com.simibubi.create.AllBlocks.SHAFT.asItem())
-            && fluids.contains(Fluids.WATER) && fluids.contains(CEFusion.HELIUM_GAS.get()))
+            && fluids.contains(Fluids.WATER) && fluids.contains(CEIsotopeGases.HELIUM_GAS.get()))
             changed |= fluids.add(FluidForm.LIQUID_HELIUM);
         if (has(items, "lidded_vessel", "vessel_stirrer") && items.contains(com.simibubi.create.AllBlocks.BLAZE_BURNER.asItem())
-            && fluids.contains(Fluids.WATER) && fluids.contains(CEUranium.SULFURIC_ACID.get()))
+            && fluids.contains(Fluids.WATER) && fluids.contains(CESharedChemicals.SULFURIC_ACID.get()))
             changed |= fluids.add(CEProcessFluids.WASTEWATER.get());
         return changed;
     }

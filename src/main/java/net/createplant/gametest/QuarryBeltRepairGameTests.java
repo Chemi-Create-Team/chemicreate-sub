@@ -14,7 +14,7 @@ import net.createplant.CreatePlant;
 import net.createplant.block.CraneFrame;
 import net.createplant.block.QuarryBeltLayout;
 import net.createplant.block.entity.QuarryDriveBlockEntity;
-import net.createplant.registry.CECrane;
+import net.createplant.registry.CEQuarry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -148,7 +148,7 @@ public class QuarryBeltRepairGameTests {
 
     @GameTest(template = "test_quarry_belt_repair", timeoutTicks = 400)
     public static void anExistingQuarryRepairsItsTailReloadsAndMinesTheNextBlock(GameTestHelper h) {
-        h.setBlock(DRIVE, CECrane.QUARRY_DRIVE.get().defaultBlockState());
+        h.setBlock(DRIVE, CEQuarry.QUARRY_DRIVE.get().defaultBlockState());
         var quarry = (QuarryDriveBlockEntity) h.getBlockEntity(DRIVE);
         quarry.size(64, 64);
         var layout = layout(h);
@@ -175,7 +175,7 @@ public class QuarryBeltRepairGameTests {
         // A separate belt immediately beyond the quarry belongs to a neighboring installation.
         buildBelt(h, layout.belt(68), layout.belt(64));
         BlockPos nextDrive = layout.belt(64).south();
-        level.setBlockAndUpdate(nextDrive, CECrane.QUARRY_DRIVE.get().defaultBlockState());
+        level.setBlockAndUpdate(nextDrive, CEQuarry.QUARRY_DRIVE.get().defaultBlockState());
         var neighbor = (QuarryDriveBlockEntity) level.getBlockEntity(nextDrive);
         neighbor.conveyor().collect(List.of(new ItemStack(Items.EMERALD, 9)));
 

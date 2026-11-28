@@ -1,6 +1,6 @@
 package net.createplant.client;
 
-import net.createplant.registry.CENuclear;
+import net.createplant.registry.CEProtectiveClothing;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -24,6 +24,6 @@ public final class ProtectiveCapModel {
                 if (model == null) model = new HumanoidModel<>(LayerDefinition.create(HumanoidModel.createMesh(new CubeDeformation(CLOTH_OFFSET), 0), 64, 32).bakeRoot());
                 return model;
             }
-        }, CENuclear.PROTECTIVE_CAP.get());
+        }, CEProtectiveClothing.PROTECTIVE_CAP.get());
     }
 }

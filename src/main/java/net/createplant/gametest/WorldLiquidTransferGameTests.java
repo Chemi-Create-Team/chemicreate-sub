@@ -8,7 +8,7 @@ import com.simibubi.create.content.fluids.transfer.FluidFillingBehaviour;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import net.createplant.CreatePlant;
-import net.createplant.registry.CEUranium;
+import net.createplant.registry.CESharedChemicals;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +28,7 @@ import static net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction
 @GameTestHolder(CreatePlant.MOD_ID)
 @PrefixGameTestTemplate(false)
 public final class WorldLiquidTransferGameTests {
-    private static FluidStack acid(int amount) { return new FluidStack(CEUranium.SULFURIC_ACID.get(), amount); }
+    private static FluidStack acid(int amount) { return new FluidStack(CESharedChemicals.SULFURIC_ACID.get(), amount); }
 
     private static SmartBlockEntity pulley(GameTestHelper h, BlockPos pos) {
         h.getLevel().setBlock(pos, AllBlocks.HOSE_PULLEY.getDefaultState(), 3);
@@ -62,7 +62,7 @@ public final class WorldLiquidTransferGameTests {
     public static void openPipeRejectsWrongFiltersAndPreservesEveryPartialBucket(GameTestHelper h) {
         var level = h.getLevel();
         BlockPos pos = h.absolutePos(new BlockPos(4, 3, 4));
-        level.setBlock(pos, CEUranium.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
+        level.setBlock(pos, CESharedChemicals.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
         var pipe = new OpenEndedPipe(new BlockFace(pos.west(), Direction.EAST));
         pipe.manageSource(level, null);
         var handler = pipe.provideHandler().getCapability();
@@ -112,12 +112,12 @@ public final class WorldLiquidTransferGameTests {
         var level = h.getLevel();
         BlockPos root = h.absolutePos(new BlockPos(20, 3, 4));
         for (Direction direction : Direction.values()) level.setBlock(root.relative(direction), Blocks.STONE.defaultBlockState(), 3);
-        level.setBlock(root, CEUranium.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
+        level.setBlock(root, CESharedChemicals.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
         var be = pulley(h, root.above(2));
         var drainer = searchedDrainer(be, root);
         var tank = new SmartFluidTank(1000, stack -> { });
         var hose = new HosePulleyFluidHandler(tank, new FluidFillingBehaviour(be), drainer, () -> root, () -> true);
-        h.assertTrue(!drainer.infiniteFor(CEUranium.SULFURIC_ACID.get()), "Process liquid can never become a bottomless hose supply");
+        h.assertTrue(!drainer.infiniteFor(CESharedChemicals.SULFURIC_ACID.get()), "Process liquid can never become a bottomless hose supply");
         var wrong = new FluidStack(net.createplant.registry.CEFluids.NITRIC_ACID.get(), 1000);
         h.assertTrue(hose.drain(wrong, EXECUTE).isEmpty() && level.getFluidState(root).isSource(),
             "A hose filter mismatch does not consume the selected source");
@@ -157,7 +157,7 @@ public final class WorldLiquidTransferGameTests {
         var level = h.getLevel();
         BlockPos root = h.absolutePos(new BlockPos(20, 3, 12));
         for (Direction direction : Direction.values()) level.setBlock(root.relative(direction), Blocks.STONE.defaultBlockState(), 3);
-        level.setBlock(root, CEUranium.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
+        level.setBlock(root, CESharedChemicals.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
         var be = pulley(h, root.above(2));
         var tank = new SmartFluidTank(1000, stack -> { });
         tank.setFluid(FluidThermal.at(new FluidStack(Fluids.WATER, 500), 350));
@@ -173,7 +173,7 @@ public final class WorldLiquidTransferGameTests {
         h.assertTrue(hose.drain(new FluidStack(Fluids.WATER, 1000), EXECUTE).isEmpty() && level.getFluidState(root).isSource(),
             "A subsequent water filter still cannot consume the acid source");
         FluidStack acid = hose.drain(1000, EXECUTE);
-        h.assertTrue(acid.getAmount() == 1000 && acid.is(CEUranium.SULFURIC_ACID.get()) && tank.isEmpty()
+        h.assertTrue(acid.getAmount() == 1000 && acid.is(CESharedChemicals.SULFURIC_ACID.get()) && tank.isEmpty()
                 && !level.getFluidState(root).isSource(), "The complete acid bucket remains available after the old water was removed");
         h.succeed();
     }
@@ -190,7 +190,7 @@ public final class WorldLiquidTransferGameTests {
         double measuredWaterKelvin = FluidThermal.kelvin(firstWater);
         h.assertTrue(firstWater.is(Fluids.WATER) && firstWater.getAmount() == 500 && handler.getFluidInTank(0).getAmount() == 500,
             "Drawing half a water source leaves the other half measured in the pipe");
-        level.setBlock(pos, CEUranium.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
+        level.setBlock(pos, CESharedChemicals.SULFURIC_ACID.get().defaultFluidState().createLegacyBlock(), 3);
         h.assertTrue(handler.drain(acid(1000), EXECUTE).isEmpty() && handler.getFluidInTank(0).getAmount() == 500
                 && level.getFluidState(pos).isSource(), "An acid filter keeps both the foreign buffer and the new world source intact");
         var before = pipe.serializeNBT(level.registryAccess());
@@ -200,7 +200,7 @@ public final class WorldLiquidTransferGameTests {
         h.assertTrue(oldWater.is(Fluids.WATER) && oldWater.getAmount() == 500 && Math.abs(FluidThermal.kelvin(oldWater) - measuredWaterKelvin) < 1e-8
                 && handler.getFluidInTank(0).isEmpty() && level.getFluidState(pos).isSource(), "Old measured water is returned before world acid");
         FluidStack acid = handler.drain(1000, EXECUTE);
-        h.assertTrue(acid.is(CEUranium.SULFURIC_ACID.get()) && acid.getAmount() == 1000 && handler.getFluidInTank(0).isEmpty(),
+        h.assertTrue(acid.is(CESharedChemicals.SULFURIC_ACID.get()) && acid.getAmount() == 1000 && handler.getFluidInTank(0).isEmpty(),
             "Changing the exposed liquid did not discard or duplicate either bucket fraction");
         h.succeed();
     }

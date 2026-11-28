@@ -1,5 +1,6 @@
 package net.createplant.nuclear;
 
+import net.createplant.block.Finite;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 

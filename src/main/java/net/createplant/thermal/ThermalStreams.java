@@ -1,6 +1,7 @@
 package net.createplant.thermal;
 
 import net.createplant.registry.*;
+import net.createplant.registry.CEIsotopeGases;
 import net.createplant.transport.FluidHazards;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -47,7 +48,7 @@ public final class ThermalStreams {
         var pair=PhaseChange.ofLiquid(stack);if(pair!=null)return new Conversion(1,pair.vapour().get(),pair.ratio());
         return null;
     }
-    public static boolean cryogenic(FluidStack stack){return stack.is(CEFluids.NITROGEN_GAS.get()) || stack.is(CEFluids.OXYGEN_GAS.get()) || stack.is(CEFusion.HELIUM_GAS.get());}
+    public static boolean cryogenic(FluidStack stack){return stack.is(CEFluids.NITROGEN_GAS.get()) || stack.is(CEFluids.OXYGEN_GAS.get()) || stack.is(CEIsotopeGases.HELIUM_GAS.get());}
     public static Conversion liquefaction(FluidStack stack){var pair=cryogenic(stack) && FluidState.gas(stack) ? PhaseChange.ofVapour(stack) : null;return pair==null ? null : new Conversion(pair.ratio(),pair.liquid(),1);}
     public static java.util.List<FluidStack> coolingInputs(){
         var inputs=new java.util.TreeMap<String,FluidStack>();

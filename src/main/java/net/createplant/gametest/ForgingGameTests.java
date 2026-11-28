@@ -10,6 +10,7 @@ import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 
 import net.createplant.CreatePlant;
 import net.createplant.registry.CEItems;
+import net.createplant.registry.CESharedChemicals;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -183,7 +184,7 @@ public class ForgingGameTests {
                     for (int slot = 0; slot < basin.getOutputInventory().getSlots(); slot++)
                         if (basin.getOutputInventory()
                                 .getStackInSlot(slot)
-                                .is(net.createplant.registry.CEUranium.FLUORITE.get()))
+                                .is(CESharedChemicals.FLUORITE.get()))
                             output += basin.getOutputInventory().getStackInSlot(slot).getCount();
                     h.assertTrue(
                             output == 1
