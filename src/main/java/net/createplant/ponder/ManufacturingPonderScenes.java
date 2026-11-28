@@ -35,7 +35,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.createplant.registry.CEIsotopeGases;
 import net.createplant.thermal.FluidThermal;
 import net.minecraft.world.level.material.Fluids;
-import net.createplant.block.entity.ConverterTrunnionBearingBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -124,10 +123,19 @@ public final class ManufacturingPonderScenes {
         scene.world().modifyBlockEntity(pos, FluidTankBlockEntity.class, tank -> tank.getTankInventory().setFluid(stack.copy()));
     }
 
+    /** The scene of one equipment kind that an addon owns. */
+    public interface KindScene {
+        void snapshot(CreateSceneBuilder scene, SceneBuildingUtil util, PlantTutorialCatalog.Process process, ManufacturingRecipe recipe, BlockPos at, boolean complete);
+    }
+
+    private static final java.util.Map<String, KindScene> ADDON_KINDS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    public static void register(String kind, KindScene scene) { ADDON_KINDS.put(kind, scene); }
+
     private static void snapshot(CreateSceneBuilder scene, SceneBuildingUtil util, PlantTutorialCatalog.Process process, ManufacturingRecipe recipe, String displayedItem, boolean complete) {
         var at = absolute(process, process.machine());
         switch (process.kind()) {
-            case "vessel", "centrifuge" -> vessel(scene, util, process, recipe, at, complete);
+            case "vessel" -> vessel(scene, util, process, recipe, at, complete);
             case "catalytic" -> reactionTower(scene, util, recipe, at, complete);
             case "absorber" -> tower(scene, process, recipe, at, complete);
             case "mixing" -> {
@@ -185,8 +193,6 @@ public final class ManufacturingPonderScenes {
                 if (complete) scene.world().setBlock(at.west(), Blocks.AIR.defaultBlockState(), false);
                 else scene.world().restoreBlocks(util.select().position(at.west()));
             }
-            case "converter" -> scene.world().modifyBlockEntity(at, ConverterTrunnionBearingBlockEntity.class,
-                be -> be.ponderVisual(new BlockPos(process.offset() + 5, 1, 6), Direction.NORTH, complete ? 60 : 0, !complete));
             case "compressor" -> scene.world().modifyBlockEntity(at.relative(Direction.EAST, 2), net.createplant.block.entity.ReciprocatingShaftBlockEntity.class, shaft -> shaft.bind(at));
             case "cooling", "heat_exchanger" -> {
                 if(recipe!=null){
@@ -211,7 +217,11 @@ public final class ManufacturingPonderScenes {
                 });
             }
             case "heating" -> { }
-            default -> throw new IllegalArgumentException("Unknown manufacturing equipment " + process.kind());
+            default -> {
+                var addon = ADDON_KINDS.get(process.kind());
+                if (addon == null) throw new IllegalArgumentException("Unknown manufacturing equipment " + process.kind());
+                addon.snapshot(scene, util, process, recipe, at, complete);
+            }
         }
     }
 
@@ -237,11 +247,6 @@ public final class ManufacturingPonderScenes {
     }
 
     private static void vessel(CreateSceneBuilder scene, SceneBuildingUtil util, PlantTutorialCatalog.Process process, ManufacturingRecipe recipe, BlockPos owner, boolean complete) {
-        if (process.kind().equals("centrifuge")) {
-            var fixed = net.createplant.chemistry.ProcessRecipe.all().stream().filter(r -> process.recipe().equals("process:" + r.id())).findFirst().orElse(null);
-            if (fixed != null) scene.world().modifyBlockEntity(owner, net.createplant.block.entity.GasCentrifugeBlockEntity.class, be -> be.preview(fixed, complete));
-            return;
-        }
         int layers = 3;
         {
             BlockPos stirrer = owner.offset(1, layers, 1), cog = stirrer.north();

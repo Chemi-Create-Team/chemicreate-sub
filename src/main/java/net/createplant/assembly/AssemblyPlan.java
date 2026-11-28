@@ -37,6 +37,9 @@ public final class AssemblyPlan {
 
     public static void register(Kind kind, Plan plan) { ADDON.put(kind, plan); }
 
+    /** The kinds whose blocks an addon owns can only be built while it is installed. */
+    public static boolean available(Kind kind) { return !kind.hasServiceCrane() || ADDON.containsKey(kind); }
+
     public static List<Integer> sizes(Kind kind) {
         return switch (kind) {
             case RBMK, FUSION -> ADDON.containsKey(kind) ? ADDON.get(kind).sizes() : List.of(0);

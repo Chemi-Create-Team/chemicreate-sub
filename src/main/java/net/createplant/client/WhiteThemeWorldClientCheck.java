@@ -34,7 +34,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import org.slf4j.LoggerFactory;
 
 /** Opt-in real-world material/CT gallery; uses ordinary blocks and idle multiblocks rather than Ponder previews. */
-final class WhiteThemeWorldClientCheck {
+public final class WhiteThemeWorldClientCheck {
     private record View(double x, double y, double z, double lookX, double lookY, double lookZ, int fov, String name) { }
 
     private static final View[] VIEWS = {
@@ -57,7 +57,7 @@ final class WhiteThemeWorldClientCheck {
 
     private WhiteThemeWorldClientCheck() { }
 
-    static void start(Minecraft mc) {
+    public static void start(Minecraft mc) {
         if (mc.player == null || mc.level == null || mc.getSingleplayerServer() == null)
             throw new IllegalStateException("The white-theme gallery needs a disposable integrated world");
         mc.options.pauseOnLostFocus = false;mc.setScreen(null);
@@ -75,7 +75,7 @@ final class WhiteThemeWorldClientCheck {
         });
     }
 
-    static boolean tick(Minecraft mc) throws Exception {
+    public static boolean tick(Minecraft mc) throws Exception {
         if (serverFailure != null) throw new IllegalStateException("White-theme gallery setup failed", serverFailure);
         if (mc.screen != null) mc.setScreen(null);
         if (++ticks > 400) throw new IllegalStateException("White-theme gallery did not synchronize");

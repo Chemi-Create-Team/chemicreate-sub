@@ -25,7 +25,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 
 public class FacilityConstructorBlockEntity extends SchematicannonBlockEntity {
-    private AssemblyPlan.Kind kind = AssemblyPlan.Kind.RBMK;
+    private AssemblyPlan.Kind kind = AssemblyPlan.available(AssemblyPlan.Kind.RBMK) ? AssemblyPlan.Kind.RBMK : AssemblyPlan.Kind.COOLING_TOWER;
     private final int[] sizeIndices = {0, 0, 1, 0, 0};
     private int heightIndex = 1, clarifierHeightIndex, casingTankHeightIndex;
     private List<AssemblyPlan.Target> plan;

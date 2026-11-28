@@ -44,29 +44,53 @@ public final class MachineReadings {
         "pool_temperature");
     private MachineReadings() { }
 
+    /** Returned by an addon reading hook that does not handle the request, so the shared readings continue. */
+    public static final Reading PASS = new Reading(Double.NaN, Double.NaN);
+
+    /** What an addon contributes for its own machines. Every hook runs in the order the shared checks would have, and passes when the machine is not its own. */
+    public interface Addon {
+        default Reading read(BlockEntity original, String key, Direction face) { return PASS; }
+        default Reading readOwned(BlockEntity original, BlockEntity be, String key, Direction face) { return PASS; }
+        default Component status(BlockEntity original) { return null; }
+        default Component statusOwned(BlockEntity original, BlockEntity be) { return null; }
+        default net.minecraft.network.chat.MutableComponent line(String metric, BlockEntity source) { return null; }
+    }
+
+    private record OwnerRule<T extends BlockEntity>(Class<T> type, java.util.function.Function<T, ? extends BlockEntity> owner) {
+        BlockEntity apply(BlockEntity be) { return owner.apply(type.cast(be)); }
+    }
+
+    private static final List<Addon> ADDONS = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final List<OwnerRule<?>> OWNERS = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    public static void register(Addon addon) { ADDONS.add(addon); }
+
+    /** The block entity that owns a part, for part classes an addon adds; the result is final, also when null. */
+    public static <T extends BlockEntity> void registerOwner(Class<T> type, java.util.function.Function<T, ? extends BlockEntity> owner) { OWNERS.add(new OwnerRule<>(type, owner)); }
+
+    static net.minecraft.network.chat.MutableComponent line(String metric, BlockEntity source) {
+        for (var addon : ADDONS) {
+            var text = addon.line(metric, source);
+            if (text != null) return text;
+        }
+        return null;
+    }
+
     public static BlockEntity owner(BlockEntity be) {
+        for (var rule : OWNERS) if (rule.type().isInstance(be)) return rule.apply(be);
         if (be instanceof GasifierBlockEntity gasifier) return gasifier.owner() == null ? gasifier : gasifier.owner();
         if (be instanceof ReactionTowerBlockEntity tower) return tower.owner();
         if (be instanceof WetProcessPartBlockEntity part) return part.owner();
         if (be instanceof TankCasingBlockEntity casing && casing.clarifier() != null) return casing.clarifier();
-        if (be instanceof GasCentrifugePortBlockEntity port) return port.owner();
-        if (be instanceof GasCentrifugeBlockEntity centrifuge) return centrifuge.leader();
         if (be instanceof ElectrodeHeadBlockEntity head) return head.controller();
         if (be instanceof ElectrolysisCellBlockEntity cell) return cell.controller();
         if (be instanceof ElectrolysisFurnacePartBlockEntity part && part.owner() != null && part.getLevel() != null
             && part.getLevel().hasChunkAt(part.owner())) return part.getLevel().getBlockEntity(part.owner());
         if (be instanceof StackedReactorBlockEntity column) return column.bottomStorey();
         if (be instanceof ElectrolysisControllerBlockEntity control) return control.master();
-        if(be instanceof ReactorControlConsoleBlockEntity console && console.owner()!=null)return console.owner();
         if (be instanceof LiddedVesselBlockEntity vessel) return vessel.getControllerBE();
         if (be instanceof CoolingTowerPortBlockEntity port) return port.owner();
-        if (be instanceof FuelCycleOutletBlockEntity port) return port.owner();
         if (be instanceof CondenserCoolingPortBlockEntity port) return port.owner();
-        if (be instanceof FusionMotorGeneratorBlockEntity generator) return generator.controller();
-        if (be instanceof FusionFluidPortBlockEntity || be instanceof FusionVacuumPumpBlockEntity) {
-            var controller = FusionReactorControllerBlockEntity.find(be.getLevel(), be.getBlockPos());
-            return controller != null && controller.owns(be.getBlockPos()) ? controller : null;
-        }
         if (be instanceof RadiatorBlockEntity radiator) return radiator.owner();
         if (be instanceof ThermalPartBlockEntity part) {
             var controller=part.owner();return controller!=null && controller.owns(part.getBlockPos()) ? controller : null;
@@ -74,8 +98,6 @@ public final class MachineReadings {
         if (be instanceof FractionatingColumnBlockEntity column) return column.getControllerBE();
         if (be instanceof HighPressureTurbineEndBlockEntity end) return end.exhaustSource();
         if (be instanceof HighPressureTurbinePartBlockEntity part) return part.rotor();
-        if (be instanceof ConverterShellBlockEntity converter) return converter.controller();
-        if (be instanceof FuelChannelBlockEntity || be instanceof RodCapBlockEntity) return reactorController(be);
         if (be instanceof com.simibubi.create.content.fluids.tank.FluidTankBlockEntity tank) {
             if (!tank.isController() && (tank.getLevel()==null || !tank.getLevel().hasChunkAt(tank.getController()))) return null;
             return tank.getControllerBE();
@@ -83,25 +105,9 @@ public final class MachineReadings {
         return be;
     }
 
-    public static FuelChannelBlockEntity reactorController(BlockEntity part) {
-        if (part == null || part.getLevel() == null) return null;
-        if (part instanceof FuelChannelBlockEntity channel && channel.core() != null && channel.core().formed()) return channel;
-        FuelChannelBlockEntity column = part instanceof FuelChannelBlockEntity channel ? channel
-            : part instanceof RodCapBlockEntity cap ? cap.column() : null;
-        BlockPos controller = column == null ? null : column.controllerPos();
-        return controller != null && part.getLevel().hasChunkAt(controller)
-            && part.getLevel().getBlockEntity(controller) instanceof FuelChannelBlockEntity lead
-            && lead.core() != null && lead.core().formed() ? lead : null;
-    }
-
     public static Component status(BlockEntity original) {
         if (owner(original) instanceof GasifierBlockEntity gasifier) return GasifierBlockEntity.message(gasifier.status());
         if (owner(original) instanceof WetProcessBlockEntity wet) return Component.translatable("wet_process.create_refinery_n_reactors.status." + wet.status());
-        if (original instanceof GasCentrifugePortBlockEntity port && port.owner() != null) return status(port.owner());
-        if (original instanceof GasCentrifugeBlockEntity c) return Component.translatable("centrifuge.create_refinery_n_reactors.status." + c.status());
-        if (original instanceof CubicPressBlockEntity p) return Component.translatable("cubic_press.create_refinery_n_reactors.status." + p.status());
-        if (original instanceof LargeMechanicalPressBlockEntity p) return p.status();
-        if (original instanceof ContinuousFactoryBlockEntity p) return p.statusText();
         if (original instanceof ElectricPumpBlockEntity pump) return Component.translatable("electric_utility.create_refinery_n_reactors."+pump.status());
         if (original instanceof GasHolderBlockEntity part) {var bell=part.getControllerBE();return Component.translatable("gas_bell.create_refinery_n_reactors."+(bell==null ? "unloaded" : bell.status()));}
         if (original instanceof FlareTipBlockEntity flare) return Component.translatable("flare.create_refinery_n_reactors."+flare.status());
@@ -110,37 +116,28 @@ public final class MachineReadings {
             var reading = boiler.boilerReading();
             if (reading != null) return Component.translatable("tubular_boiler." + reading.status());
         }
-        if (original instanceof IndustrialDispatchBlockEntity dispatch) return Component.translatable("industrial_dispatch." + dispatch.status());
+        for (var addon : ADDONS) {
+            var text = addon.status(original);
+            if (text != null) return text;
+        }
         var be=owner(original);
         if (be==null || be.isRemoved() || be.getLevel()==null) return Component.literal("--");
         if (be instanceof ElectrolysisControllerBlockEntity control) return Component.translatable("electrolysis.status." + control.status());
         if (be instanceof CoolingTowerBlockEntity tower) return Component.translatable("plant_systems.status." + tower.status());
         if (be instanceof ProcessControlBlockEntity control) return Component.translatable("plant_systems.status." + control.status());
-        if (be instanceof FuelCycleMachineBlockEntity machine) return Component.translatable("plant_systems.status." + machine.status());
         if (be instanceof CondenserWaterboxBlockEntity condenser) return Component.translatable("plant_systems.status." + condenser.status());
         if(be instanceof ReliefScrubberBlockEntity scrubber)return Component.translatable("scrubber.create_refinery_n_reactors.status."+scrubber.status());
         if(be instanceof SteamTurbineBlockEntity turbine)return Component.translatable("turbine.create_refinery_n_reactors."+turbine.thermodynamics().status());
-        if (be instanceof ConverterTrunnionBearingBlockEntity converter)
-            return Component.translatable("converter.create_refinery_n_reactors.status." + converter.status());
         if (be instanceof LiddedVesselBlockEntity vessel) {
             if (vessel.module()==net.createplant.chemistry.ReactorModule.NONE) return Component.translatable("lidded_vessel.create_refinery_n_reactors.lid." + (vessel.open() ? "open" : "closed"));
         }
         if (be instanceof ReactorMachineBlockEntity r) return Component.translatable("reactor.create_refinery_n_reactors.status."+r.status());
         if (be instanceof FractionatingColumnBlockEntity c) return Component.translatable("distillation.create_refinery_n_reactors.status."+c.status());
-        if (be instanceof FuelChannelBlockEntity lead && lead.core()!=null) return Component.translatable("reactor_core.create_refinery_n_reactors.status."+lead.core().status());
-        if (be instanceof RodCapBlockEntity cap && cap.column()!=null && cap.column().formedCore()!=null)
-            return Component.translatable("reactor_core.create_refinery_n_reactors.status."+cap.column().formedCore().status());
         if (be instanceof LiddedVesselBlockEntity vessel) return Component.translatable("lidded_vessel.create_refinery_n_reactors.lid." + (vessel.open() ? "open" : "closed"));
-        if (be instanceof CraneDriveBlockEntity crane) return Component.translatable("crane.create_refinery_n_reactors.status."+crane.status());
-        if (be instanceof FuelPoolBlockEntity pool) return Component.translatable("fuel_pool.create_refinery_n_reactors.status."+pool.status());
-        if (be instanceof FusionReactorControllerBlockEntity fusion)
-            return Component.translatable("fusion_reactor.create_refinery_n_reactors.status." + fusion.status());
-        if (be instanceof FusionControlConsoleBlockEntity console)
-            return console.linked() ? Component.translatable("fusion_reactor.create_refinery_n_reactors.status." + console.status())
-                : Component.translatable("fusion_console.create_refinery_n_reactors.link." + (console.assembled() ? console.linkStatus() : "incomplete"));
-        if (be instanceof ReactorControlConsoleBlockEntity console)
-            return console.linked() ? Component.translatable("reactor_core.create_refinery_n_reactors.status." + console.reactorStatus())
-                : Component.translatable("reactor_control_console.create_refinery_n_reactors.status." + (console.assembled() ? console.linkStatus() : "incomplete"));
+        for (var addon : ADDONS) {
+            var text = addon.statusOwned(original, be);
+            if (text != null) return text;
+        }
         return Component.literal("--");
     }
 
@@ -216,35 +213,9 @@ public final class MachineReadings {
             if (reading != null) return key.equals("boiler_heat") ? new Reading(reading.heatWatts() / 1000, 0)
                 : new Reading(reading.steamAmount(), reading.steamCapacity());
         }
-        if (original instanceof IndustrialDispatchBlockEntity dispatch) {
-            if (key.equals("dispatch_completed")) return new Reading(dispatch.completed(), 0);
-            if (key.equals("progress")) { var order = dispatch.order();return order == null ? null : new Reading(dispatch.progress(), order.value().getProcessingDuration()); }
-            if (key.equals("fluid_0")) return new Reading(dispatch.cargo().getFluidAmount(), dispatch.cargo().getCapacity());
-            if (key.equals("item_0")) return new Reading(dispatch.rewards().getStackInSlot(0).getCount(), 64);
-        }
-        FuelChannelBlockEntity sourceChannel = original instanceof FuelChannelBlockEntity channel ? channel
-            : original instanceof RodCapBlockEntity cap ? cap.column() : null;
-        if (sourceChannel != null && (key.equals("reactor_channel_flow") || key.equals("reactor_channel_outlet_temperature"))) {
-            FuelChannelBlockEntity channel = sourceChannel;
-            FuelChannelBlockEntity lead = reactorController(channel);
-            if (lead == null || lead.core() == null || lead.core().box() == null) return null;
-            BlockPos bottom = new BlockPos(channel.getBlockPos().getX(), lead.core().box().minY(), channel.getBlockPos().getZ());
-            if (!(channel.getLevel().getBlockEntity(bottom) instanceof FuelChannelBlockEntity bundle)) return null;
-            return key.equals("reactor_channel_flow") ? new Reading(bundle.flowRate(), 1000)
-                : new Reading(bundle.coolantKelvin() - 273.15, 1000);
-        }
-        if (original instanceof RodCapBlockEntity cap) {
-            if(key.equals("rod_target"))return new Reading(cap.target()*100,100);
-            if(key.equals("rod_depth")) {
-                var column=cap.column();
-                if(column==null)return null;
-                double total=0;int rods=0;
-                for(int slot=0;slot<FuelChannelBlockEntity.RODS;slot++)if(column.controlInstalled(slot)) {
-                    total+=column.controlDepth(slot)/column.layout().coreHeight();
-                    rods++;
-                }
-                return rods==0 ? null : new Reading(total/rods*100,100);
-            }
+        for (var addon : ADDONS) {
+            var reading = addon.read(original, key, face);
+            if (reading != PASS) return reading;
         }
         var be=owner(original);
         if (be==null || be.isRemoved() || be.getLevel()==null) return null;
@@ -303,66 +274,12 @@ public final class MachineReadings {
                 if (key.equals("fluid_" + i)) return new Reading(tower.tank(i).getFluidAmount(), tower.tank(i).getCapacity());
             }
         }
-        if (be instanceof FuelCycleMachineBlockEntity machine) {
-            if (key.equals("formed")) return new Reading(machine.formed() ? 1 : 0, 1);
-            if (key.equals("progress")) return new Reading(machine.progress(), 0);
-            if (key.equals("electric_power")) return new Reading(machine.watts() / 1000, 1500);
-            for (int i = 0; i < 6; i++) if (key.equals("fluid_" + i)) return new Reading(machine.tank(i).getFluidAmount(), machine.tank(i).getCapacity());
-            for (int i = 0; i < 3; i++) if (key.equals("item_" + i)) return new Reading(machine.inventory().getStackInSlot(i).getCount(), 64);
-        }
         if (be instanceof CondenserWaterboxBlockEntity condenser) {
             if (key.equals("cooling_power")) return new Reading(condenser.watts() / 1e6, 338);
             if (key.equals("formed")) return new Reading(condenser.formed() ? 1 : 0, 1);
             for (int i = 0; i < 2; i++) {
                 var tank = i == 0 ? condenser.cold() : condenser.hot();
                 if (key.equals("fluid_" + i)) return new Reading(tank.getFluidAmount(), tank.getCapacity());
-            }
-        }
-        if (be instanceof FusionReactorControllerBlockEntity fusion) {
-            return switch (key) {
-                case "formed" -> new Reading(fusion.formed() ? 1 : 0, 1);
-                case "fusion_power", "reactor_power" -> new Reading(fusion.fusionWatts() / 1e6, 500);
-                case "fusion_target" -> new Reading(fusion.targetPercent(), 100);
-                case "fusion_vacuum" -> new Reading(fusion.baseVacuumPascals(), 101_325);
-                case "fusion_plasma_temperature" -> new Reading(fusion.plasmaKelvin() / 1e6, 150);
-                case "fusion_coil_temperature" -> new Reading(fusion.coilKelvin(), 6.5);
-                case "fusion_magnetic_field" -> new Reading(fusion.magneticFieldTesla(), net.createplant.fusion.FusionPhysics.MAGNET_AXIS_TESLA);
-                case "fusion_magnet_charge" -> new Reading(fusion.magnetCharge() * 100, 100);
-                case "fusion_blanket_temperature" -> new Reading(fusion.blanketKelvin() - 273.15, 376.85);
-                case "fusion_coolant_flow" -> new Reading(fusion.coolantFlow(), net.createplant.fusion.FusionPhysics.RATED_COOLANT_MB_PER_TICK);
-                case "fusion_deuterium" -> new Reading(fusion.deuterium().getAmount(), FusionReactorControllerBlockEntity.FUEL_CAPACITY);
-                case "fusion_tritium" -> new Reading(fusion.tritium().getAmount(), FusionReactorControllerBlockEntity.FUEL_CAPACITY);
-                case "fusion_liquid_helium" -> new Reading(fusion.liquidHelium().getAmount(), FusionReactorControllerBlockEntity.LIQUID_HELIUM_CAPACITY);
-                case "fusion_blanket_life" -> new Reading(fusion.blanketRemaining(), 24_000);
-                case "fusion_divertor_life" -> new Reading(fusion.componentRemaining(1), 16_000);
-                case "fusion_electric_power" -> new Reading(fusion.electricalWatts() / 1e6, 80);
-                case "fusion_emergency" -> new Reading(fusion.emergency() ? 1 : 0, 1);
-                case "fusion_quench" -> new Reading(fusion.quench() ? 1 : 0, 1);
-                default -> null;
-            };
-        }
-        if (be instanceof FusionControlConsoleBlockEntity console) {
-            return switch (key) {
-                case "formed" -> new Reading(console.linked() ? 1 : 0, 1);
-                case "fusion_power", "reactor_power" -> console.linked() ? new Reading(console.power() / 1e6, 500) : null;
-                case "fusion_target" -> console.linked() ? new Reading(console.target(), 100) : null;
-                case "fusion_vacuum" -> console.linked() ? new Reading(console.vacuumPa(), 101_325) : null;
-                case "fusion_plasma_temperature" -> console.linked() ? new Reading(console.plasmaK() / 1e6, 150) : null;
-                case "fusion_coil_temperature" -> console.linked() ? new Reading(console.coilK(), 6.5) : null;
-                case "fusion_magnet_charge" -> console.linked() ? new Reading(console.charge() * 100, 100) : null;
-                case "fusion_emergency" -> console.linked() ? new Reading(console.emergency() ? 1 : 0, 1) : null;
-                default -> null;
-            };
-        }
-        if (be instanceof FuelPoolBlockEntity pool) {
-            switch (key) {
-                case "formed":return new Reading(pool.cellCount()>0 ? 1 : 0,1);
-                case "pool_cells":return new Reading(pool.cellCount(),net.createplant.nuclear.FuelPoolStructure.MAX*net.createplant.nuclear.FuelPoolStructure.MAX);
-                case "pool_fresh":return new Reading(pool.freshCount(),pool.cellCount()*FuelChannelBlockEntity.RODS);
-                case "pool_spent":return new Reading(pool.spentCount(),pool.cellCount()*FuelChannelBlockEntity.RODS);
-                case "pool_heat":return new Reading(pool.spentCount()*FuelPoolBlockEntity.HEAT_PER_ROD,0);
-                case "pool_temperature":return pool.waterAmount()>0 ? new Reading(pool.waterCelsius(),100) : null;
-                case "fluid_0":return new Reading(pool.waterAmount(),pool.cellCount()*FuelPoolBlockEntity.WATER_PER_CELL);
             }
         }
         if (be instanceof PipeGaugeBlockEntity gauge) return switch (key) {
@@ -372,90 +289,6 @@ public final class MachineReadings {
             case "flow_rate" -> gauge.measured() && gauge.kind()==PipeGaugeBlock.Kind.FLOW ? new Reading(gauge.reading(),0) : null;
             default -> null;
         };
-        if (be instanceof ReactorControlConsoleBlockEntity console) {
-            return switch (key) {
-                case "formed" -> new Reading(console.linked() ? 1 : 0, 1);
-                case "reactor_power" -> console.linked() ? new Reading(console.power() / 1e6, 0) : null;
-                case "reactor_reactivity" -> console.linked() ? new Reading(console.reactivity() / net.createplant.nuclear.ReactorPhysics.BETA, 0) : null;
-                case "reactor_void" -> console.linked() ? new Reading(console.voidFraction() * 100, 100) : null;
-                case "reactor_fuel_temperature" -> console.linked() ? new Reading(console.hottestKelvin() - 273.15, net.createplant.nuclear.ReactorPhysics.CHANNEL_RUPTURE_KELVIN - 273.15) : null;
-                case "reactor_coolant_temperature" -> console.linked() ? new Reading(console.coolantKelvin() - 273.15, 300) : null;
-                case "reactor_graphite_temperature" -> console.linked() ? new Reading(console.graphiteKelvin() - 273.15, 1000) : null;
-                case "reactor_channel_outlet_temperature" -> console.linked() ? new Reading(console.representativeOutletKelvin() - 273.15, 1000) : null;
-                case "reactor_rods" -> console.linked() ? new Reading(console.rodInsertion() * 100, 100) : null;
-                case "reactor_xenon" -> console.linked() ? new Reading(console.xenon()*100,100) : null;
-                case "reactor_surface_temperature" -> console.linked() ? new Reading(console.surfaceKelvin()-273.15,0) : null;
-                case "console_mode" -> new Reading(console.mode(),2);
-                case "console_bank_target" -> console.linked() ? new Reading(console.bankTarget(),100) : null;
-                case "console_control_target" -> console.linked() && console.controlTarget()>=0 ? new Reading(console.controlTarget(),100) : null;
-                case "console_alarms" -> new Reading(Integer.bitCount(console.alarms()),5);
-                case "console_trace_samples" -> new Reading(console.chartCount(),ReactorControlConsoleBlockEntity.SAMPLES);
-                case "console_total_flow" -> console.linked() ? new Reading(console.totalFlow(),0) : null;
-                case "rod_depth" -> console.selectedDepth() < 0 ? null : new Reading(console.selectedDepth(), 100);
-                case "rod_target" -> console.selectedCommand() < 0 ? null : new Reading(console.selectedCommand(), 100);
-                default -> null;
-            };
-        }
-        if (be instanceof ConverterTrunnionBearingBlockEntity converter) {
-            switch (key) {
-                case "formed": return new Reading(converter.formed() ? 1 : 0, 1);
-                case "structure": return new Reading(converter.formed() ? net.createplant.block.ConverterStructure.cells().size() : 0,
-                    net.createplant.block.ConverterStructure.cells().size());
-                case "progress": return new Reading(converter.progress(), 800);
-                case "converter_angle": return new Reading(converter.angle(), ConverterTrunnionBearingBlockEntity.MAX_ANGLE);
-                case "converter_input_gas": return new Reading(converter.gasInput().getFluidAmount(), ConverterTrunnionBearingBlockEntity.GAS_INPUT_CAPACITY);
-                case "converter_offgas": return new Reading(converter.gasOutput().getFluidAmount(), ConverterTrunnionBearingBlockEntity.GAS_OUTPUT_CAPACITY);
-                case "converter_items_in": {
-                    int count = 0;
-                    for (int slot = 0; slot < ConverterTrunnionBearingBlockEntity.INPUT_SLOTS; slot++) count += converter.inventory().getStackInSlot(slot).getCount();
-                    return new Reading(count, ConverterTrunnionBearingBlockEntity.INPUT_SLOTS * 64);
-                }
-                case "converter_items_out": {
-                    int count = 0;
-                    for (int slot = ConverterTrunnionBearingBlockEntity.INPUT_SLOTS;
-                         slot < ConverterTrunnionBearingBlockEntity.INPUT_SLOTS + ConverterTrunnionBearingBlockEntity.OUTPUT_SLOTS; slot++)
-                        count += converter.inventory().getStackInSlot(slot).getCount();
-                    return new Reading(count, ConverterTrunnionBearingBlockEntity.OUTPUT_SLOTS * 64);
-                }
-            }
-        }
-        if(be instanceof FuelChannelBlockEntity lead && lead.core()!=null && lead.core().formed()) {
-            var core=lead.core();
-            switch(key) {
-                case "formed":return new Reading(1,1);
-                case "reactor_power":return new Reading(core.power()/1e6,0);
-                case "reactor_reactivity":return new Reading(core.reactivity()/net.createplant.nuclear.ReactorPhysics.BETA,0);
-                case "reactor_void":return new Reading(core.averageVoid()*100,100);
-                case "reactor_fuel_temperature":return new Reading(core.hottestKelvin()-273.15,net.createplant.nuclear.ReactorPhysics.CHANNEL_RUPTURE_KELVIN-273.15);
-                case "reactor_surface_temperature":return new Reading(core.hottestSurfaceKelvin()-273.15,0);
-                case "reactor_coolant_temperature":return new Reading(core.averageCoolantKelvin()-273.15,300);
-                case "reactor_xenon":return new Reading(core.xenon()*100,0);
-                case "reactor_rods":return new Reading(core.rodInsertion()*100,100);
-                case "reactor_average_fuel_temperature":return new Reading(core.averageFuelKelvin()-273.15,net.createplant.nuclear.ReactorPhysics.CHANNEL_RUPTURE_KELVIN-273.15);
-                case "reactor_instability":return new Reading(core.instability()*100,100);
-                case "reactor_hazard":return new Reading(core.hazardNow()*100,100);
-                case "reactor_radiation_rate":return be.getLevel() instanceof net.minecraft.server.level.ServerLevel server ? new Reading(net.createplant.nuclear.RadiationField.get(server).measure(server, net.minecraft.world.phys.Vec3.atCenterOf(be.getBlockPos()), null).external()*3.6e6,0) : null;
-                case "reactor_fuel_channels":return new Reading(core.fuelChannels(),net.createplant.nuclear.ReactorCoreStructure.MAX_WIDTH
-                    *net.createplant.nuclear.ReactorCoreStructure.MAX_WIDTH*FuelChannelBlockEntity.RODS);
-                case "reactor_control_rods":return new Reading(core.installedControlRods(),net.createplant.nuclear.ReactorCoreStructure.MAX_WIDTH
-                    *net.createplant.nuclear.ReactorCoreStructure.MAX_WIDTH*FuelChannelBlockEntity.RODS);
-                case "reactor_scram":return new Reading(core.scram() ? 1 : 0,1);
-                case "reactor_graphite_temperature":return new Reading(core.graphiteKelvin()-273.15,1000);
-            }
-        }
-        if(be instanceof CraneDriveBlockEntity crane) {
-            if(key.equals("crane_depth"))return new Reading(crane.depth(),0);
-            if(key.startsWith("crane_")) {
-                int count=0;boolean supplies=key.equals("crane_supplies");
-                for(int slot=0;slot<CraneDriveBlockEntity.SLOTS;slot++) {
-                    var stack=crane.store().getStackInSlot(slot);
-                    if(stack.isEmpty())continue;
-                    boolean supply=stack.is(net.createplant.registry.CENuclear.FUEL_ROD.get()) || stack.is(net.createplant.registry.CENuclear.CONTROL_ROD.get());
-                    if(supply==supplies)count+=stack.getCount();
-                }
-                return new Reading(count,CraneDriveBlockEntity.SLOTS*64);
-            }
-        }
         if (be instanceof RadiatorBlockEntity radiator) {
             switch(key) {
                 case "structure":return new Reading(radiator.fanCount(),8);
@@ -485,32 +318,9 @@ public final class MachineReadings {
                 case "rotor_work":return new Reading(turbine.thermodynamics().totalWork(),0);
             }
         }
-        if (be instanceof GasCentrifugeBlockEntity c) {
-            switch (key) {
-                case "cascade_units": return new Reading(c.unitCount(), 16);
-                case "cascade_stages": return new Reading(c.stages(), 16);
-                case "cascade_required": return new Reading(c.required(), 16);
-                case "progress": return new Reading(c.progress(), c.cycleTicks());
-                case "stress": return new Reading(32 * Math.abs(c.getSpeed()), 0);
-                case "fluid_0": return new Reading(c.amount(0), c.unitCount() * 4000);
-                case "fluid_1": return new Reading(c.amount(1), c.unitCount() * 4000);
-                case "fluid_2": return new Reading(c.amount(2), c.unitCount() * 4000);
-            }
-        }
-        if (be instanceof CubicPressBlockEntity p) {
-            switch (key) {
-                case "progress": return new Reading(p.progress(), p.duration());
-                case "stress": return new Reading(256 * Math.abs(p.getSpeed()), 0);
-                case "superheated": return new Reading(p.superheated() ? 1 : 0, 1);
-            }
-        }
-        if (be instanceof LargeMechanicalPressBlockEntity p && key.equals("progress")) {
-            var pressing = p.pressing();
-            return new Reading(pressing.running ? Math.abs(pressing.runningTicks) : 0, com.simibubi.create.content.kinetics.press.PressingBehaviour.CYCLE);
-        }
-        if (be instanceof ContinuousFactoryBlockEntity p) {
-            if (key.equals("progress")) return new Reading(p.progress(), 1);
-            if (key.equals("formed")) return new Reading(p.formedLength() > 0 ? 1 : 0, 1);
+        for (var addon : ADDONS) {
+            var reading = addon.readOwned(original, be, key, face);
+            if (reading != PASS) return reading;
         }
         if (key.equals("speed")) return be instanceof KineticBlockEntity kinetic ? new Reading(Math.abs(kinetic instanceof ReactorMachineBlockEntity reactor ? reactor.rotationSpeed() : kinetic.getSpeed()),0) : null;
         if (be instanceof ReactorMachineBlockEntity r) {

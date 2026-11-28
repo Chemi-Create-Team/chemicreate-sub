@@ -29,7 +29,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 /** Opt-in integrated-server transfer and renderer check in a separate development world. */
-final class CraneClientCheck {
+public final class CraneClientCheck {
     private static final int REACTOR_BOTTOM_Y = 9;
     private static final int REACTOR_TOP_Y = REACTOR_BOTTOM_Y + ReactorPhysics.FUEL_ASSEMBLY_LENGTH;
     private static final int RAIL_Y = REACTOR_TOP_Y + CraneDriveBlockEntity.SERVICE_MAST_LENGTH;
@@ -46,7 +46,7 @@ final class CraneClientCheck {
 
     private static BlockPos at(int x, int y, int z) { return origin.offset(x, y, z); }
 
-    static void start(Minecraft mc) {
+    public static void start(Minecraft mc) {
         mc.options.pauseOnLostFocus = false;
         mc.setScreen(null);
         fov = mc.options.fov().get();
@@ -100,7 +100,7 @@ final class CraneClientCheck {
         ((CreativeMotorBlockEntity) level.getBlockEntity(at(0, RAIL_Y, 2))).generatedSpeed.setValue(128);
     }
 
-    static boolean tick(Minecraft mc) throws Exception {
+    public static boolean tick(Minecraft mc) throws Exception {
         if (++elapsed > 3000) throw new IllegalStateException("Crane client transfer timed out");
         if (pending != null) {
             if (!pending.isDone()) return false;
@@ -169,7 +169,7 @@ final class CraneClientCheck {
         return false;
     }
 
-    static void verifyPonder(Minecraft mc) {
+    public static void verifyPonder(Minecraft mc) {
         if (!(mc.screen instanceof net.createmod.ponder.foundation.ui.PonderUI ui)) throw new IllegalStateException("Crane Ponder is not open");
         var scene = ui.getActiveScene();
         BlockPos drive = scene.getId().getPath().equals("crane_refuelling") ? new BlockPos(1, 45, 2) : new BlockPos(1, 14, 1);

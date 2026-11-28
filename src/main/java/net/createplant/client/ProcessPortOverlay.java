@@ -11,7 +11,6 @@ import net.createplant.block.ProcessPorts.Kind;
 import net.createplant.block.entity.ElectrodeHeadBlockEntity;
 import net.createplant.block.entity.LiddedVesselBlockEntity;
 import net.createplant.block.entity.ReactionTowerBlockEntity;
-import net.createplant.block.entity.RodCapBlockEntity;
 import net.createplant.chemistry.ChemicalReadout;
 import net.createplant.event.ProcessPortInteraction;
 import net.createplant.registry.CEPressureInfrastructure;
@@ -38,6 +37,11 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 
 public final class ProcessPortOverlay {
+    private static final List<Class<?>> HATCH_WITHOUT_PROMPT = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /** A block entity whose hatch port the player does not operate, so the overlay shows no prompt for it. */
+    public static void hatchWithoutPrompt(Class<?> type) { HATCH_WITHOUT_PROMPT.add(type); }
+
     private static final Direction[] SIDES = Direction.values();
     private static final int PORT_RANGE = 12;
     private record Port(BlockPos pos, Direction face, Kind kind, ItemStack displayed) { }
@@ -159,7 +163,7 @@ public final class ProcessPortOverlay {
             if (kind == Kind.HATCH) {
                 if (be instanceof ElectrodeHeadBlockEntity head) return Component.translatable(key + (!head.raised() ? "electrodes_raised"
                     : ProcessPorts.shownItem(be, hit.getDirection()).isEmpty() ? "electrodes_insert" : "electrodes_take"));
-                if (be instanceof RodCapBlockEntity) return null;
+                if (HATCH_WITHOUT_PROMPT.stream().anyMatch(type -> type.isInstance(be))) return null;
                 if (be instanceof ReactionTowerBlockEntity part) {
                     var tower = part.owner();
                     if (tower == null) return null;

@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.createplant.guide.FusionGuide;
 import net.createplant.guide.GuideSelector;
 import net.createplant.guide.ReactorGuide;
 import net.createplant.guide.StructureGuide;
@@ -27,14 +26,15 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
  * Block entities near the player are scanned twice a second; frames only draw the cached plans.
  */
 public final class StructureGuideRenderer {
-    private static final List<StructureGuide> GUIDES = List.of(new ReactorGuide(),
-        new TankGuide(), new FusionGuide());
+    private static final List<StructureGuide> GUIDES = new java.util.concurrent.CopyOnWriteArrayList<>(List.of(new ReactorGuide(), new TankGuide()));
     private static final int CHUNK_RADIUS = 3;
     private static final double RANGE = 64;
     private static final float OPACITY = .4f;
     private static final Map<BlockPos, GuideSelector.Plan> PLANS = new HashMap<>();
 
     private StructureGuideRenderer() { }
+
+    public static void register(StructureGuide guide) { GUIDES.add(guide); }
 
     public static void tick(ClientTickEvent.Post event) {
         var mc = Minecraft.getInstance();

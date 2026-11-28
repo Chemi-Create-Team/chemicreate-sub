@@ -341,7 +341,17 @@ public final class GoggleSpec {
 
     // ---- electrolysis, turbines, fusion, the reactor console and the pipe gauge -----------------------------------------------------------
 
-    private static boolean firstIs(List<Component> lines, String keyPrefix) {
+    /** The status an addon's machine puts over its tooltip. */
+    public record Status(boolean running, Component text) { }
+
+    /** Returns null when the machine is not the addon's or its tooltip does not start with the status line. */
+    public interface StatusReader { Status read(net.minecraft.world.level.block.entity.BlockEntity owner, List<Component> lines); }
+
+    private static final List<StatusReader> STATUS_READERS = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    public static void registerStatus(StatusReader reader) { STATUS_READERS.add(reader); }
+
+    public static boolean firstIs(List<Component> lines, String keyPrefix) {
         return !lines.isEmpty() && lines.getFirst().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents text && text.getKey().startsWith(keyPrefix);
     }
 
@@ -349,19 +359,18 @@ public final class GoggleSpec {
     public static boolean status(net.minecraft.world.level.block.entity.BlockEntity owner, List<Component> lines, boolean shift) {
         boolean running;
         Component text;
-        if (owner instanceof net.createplant.block.entity.ElectrolysisControllerBlockEntity cell && firstIs(lines, "electrolysis.status.")) {
+        Status addon = null;
+        for (var reader : STATUS_READERS) if ((addon = reader.read(owner, lines)) != null) break;
+        if (addon != null) {
+            running = addon.running();
+            text = addon.text();
+        } else if (owner instanceof net.createplant.block.entity.ElectrolysisControllerBlockEntity cell && firstIs(lines, "electrolysis.status.")) {
             running = cell.running() > 0;
             text = Component.translatable("electrolysis.status." + cell.status());
         } else if (owner instanceof net.createplant.block.entity.SteamTurbineBlockEntity turbine && firstIs(lines, "turbine.create_refinery_n_reactors.state")) {
             var state = turbine.thermodynamics().status();
             running = state.equals("running");
             text = Component.translatable("turbine.create_refinery_n_reactors." + state);
-        } else if (owner instanceof net.createplant.block.entity.FusionReactorControllerBlockEntity fusion && firstIs(lines, "fusion_reactor.create_refinery_n_reactors.goggle.status")) {
-            running = fusion.status().equals("burning");
-            text = Component.translatable("fusion_reactor.create_refinery_n_reactors.status." + fusion.status());
-        } else if (owner instanceof net.createplant.block.entity.ReactorControlConsoleBlockEntity console && firstIs(lines, "reactor_control_console.create_refinery_n_reactors.status.")) {
-            running = console.linked() && java.util.Set.of("critical", "supercritical", "prompt_critical", "unstable").contains(console.reactorStatus());
-            text = console.linked() ? Component.translatable("reactor_core.create_refinery_n_reactors.status." + console.reactorStatus()) : lines.getFirst();
         } else if (owner instanceof net.createplant.block.entity.PipeGaugeBlockEntity && lines.size() > 1) {
             lines.removeFirst();
             indentRest(lines);

@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 /** Opt-in RTX render check for the complete compact tokamak and its operating preview state. */
-final class FusionClientCheck {
+public final class FusionClientCheck {
     private record View(double x, double y, double z, double lookX, double lookY, double lookZ, int fov, String name) { }
 
     private static final double VIEW_SCALE = FusionPhysics.WIDTH / 11d;
@@ -28,7 +28,7 @@ final class FusionClientCheck {
 
     private FusionClientCheck() { }
 
-    static void start(Minecraft mc) {
+    public static void start(Minecraft mc) {
         mc.options.pauseOnLostFocus = false;
         mc.setScreen(null);
         oldFov = mc.options.fov().get();
@@ -41,7 +41,7 @@ final class FusionClientCheck {
         ticks = 0;
     }
 
-    static boolean tick(Minecraft mc) throws Exception {
+    public static boolean tick(Minecraft mc) throws Exception {
         if (failure != null) throw new IllegalStateException(failure);
         if (mc.screen != null) mc.setScreen(null);
         if (mc.level.getBlockEntity(controller) instanceof FusionReactorControllerBlockEntity reactor)

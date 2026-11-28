@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
 /** Opt-in real-world check for glued converter assembly, tilt and disassembly in two orientations. */
-final class ConverterClientCheck {
+public final class ConverterClientCheck {
     private static final Direction[] FACINGS = { Direction.NORTH, Direction.EAST };
     private static final String[] NAMES = { "north", "east" };
     private static final float[][] CAMERAS = {
@@ -29,7 +29,7 @@ final class ConverterClientCheck {
 
     private ConverterClientCheck() { }
 
-    static void start(Minecraft mc) {
+    public static void start(Minecraft mc) {
         mc.options.pauseOnLostFocus = false;
         mc.setScreen(null);
         fov = mc.options.fov().get();
@@ -49,7 +49,7 @@ final class ConverterClientCheck {
         ticks = 0;
     }
 
-    static boolean tick(Minecraft mc) {
+    public static boolean tick(Minecraft mc) {
         if (failure != null) throw new IllegalStateException("Converter client check failed", failure);
         ticks++;
         if (mc.screen != null) mc.setScreen(null);

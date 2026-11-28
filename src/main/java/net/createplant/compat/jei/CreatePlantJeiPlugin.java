@@ -1,6 +1,4 @@
 package net.createplant.compat.jei;
-import net.createplant.registry.CELogisticsRecipeTypes;
-import net.createplant.registry.CEAtomicsRecipeTypes;
 
 import net.createplant.registry.CEIsotopeGases;
 import net.createplant.registry.CESharedChemicals;
@@ -27,10 +25,6 @@ import net.createplant.chemistry.DistillationProfile;
 import net.createplant.chemistry.ProcessModule;
 import net.createplant.chemistry.ProcessRecipe;
 import net.createplant.chemistry.ReactorModule;
-import net.createplant.factory.FactoryKind;
-import net.createplant.recipe.ContinuousFactoryRecipe;
-import net.createplant.recipe.ConverterRecipe;
-import net.createplant.recipe.LargePressingRecipe;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.recipe.SprayingRecipe;
 import net.createplant.registry.*;
@@ -54,26 +48,18 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public class CreatePlantJeiPlugin implements IModPlugin {
     private final SynthesisRecipeLinks synthesisLinks = new SynthesisRecipeLinks();
     /** A category, the Ponder storyboard that shows its machine, and the blocks that make the machine. */
-    private record Kind(RecipeType<PlantProcess> type, String storyboard, ItemLike icon, ItemLike... catalysts) {
-        Kind(String id, String storyboard, ItemLike icon, ItemLike... catalysts) { this(RecipeType.create(CreatePlant.MOD_ID, id, PlantProcess.class), storyboard, icon, catalysts); }
+    public record Kind(RecipeType<PlantProcess> type, String storyboard, ItemLike icon, ItemLike... catalysts) {
+        public Kind(String id, String storyboard, ItemLike icon, ItemLike... catalysts) { this(RecipeType.create(CreatePlant.MOD_ID, id, PlantProcess.class), storyboard, icon, catalysts); }
     }
     private static List<Kind> kinds;
 
     private static List<Kind> kinds() {
         if (kinds == null) kinds = List.of(
-            new Kind("irradiation_products", "nuclear/rbmk_core", CENuclear.FUEL_ROD.get(), CENuclear.FUEL_ROD.get()),
-            new Kind("fusion_service", "nuclear/fusion_tokamak", CEFusion.IRRADIATION_CARTRIDGE.get(), CEFusion.IRRADIATION_CARTRIDGE.get()),
             new Kind("forging_byproducts", "plant/steel_forging", CEItems.STEEL_SLAG.get(), CEItems.PIG_IRON.get()),
-            new Kind("cubic_pressing", "plant/cubic_press", CEHighStressMachines.PRESS.get(), CEHighStressMachines.PRESS.get(), AllBlocks.BLAZE_BURNER.get()),
-            new Kind("large_pressing", "plant/large_press", CELargePress.PRESS.get(), CELargePress.PRESS.get(), CELargePress.DEPOT.get()),
-            new Kind("rotary_kiln", "plant/rotary_kiln", CEContinuousFactory.KILN.get(), CEContinuousFactory.KILN.get(), AllBlocks.BLAZE_BURNER.get()),
-            new Kind("rolling_mill", "plant/rolling_mill", CEContinuousFactory.MILL.get(), CEContinuousFactory.MILL.get(), CEContinuousFactory.STAND.get()),
-            new Kind("coil_winder", "plant/coil_winder", CEContinuousFactory.WINDER.get(), CEContinuousFactory.WINDER.get(), CEContinuousFactory.BRAKE.get()),
             new Kind("stirred_reactor", "plant/reactor_plant_stirred", CEReactor.STIRRER.get(), CETransport.STIRRED_TANK.get(), CEReactor.STIRRER.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("tray_reactor", "plant/uranium_preparation", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("reaction_vessel", "plant/reaction_tower", CEReactor.TRAY.get(), CETransport.REACTION_TOWER.get(), CEReactor.TRAY.get()),
             new Kind("fractionating_column", "plant/fractionating_column", CEDistillation.COLUMN.get(), CEDistillation.COLUMN.get()),
-            new Kind("gas_centrifuge", "plant/gas_centrifuge", CEHighStressMachines.CENTRIFUGE.get(), CEHighStressMachines.CENTRIFUGE.get()),
             new Kind("cell_electrolysis", "plant/electrolysis_cell", CEElectrolysis.CELL.get(), CEElectrolysis.CONTROLLER.get(), CEElectrolysis.ELECTRODE_PLATE.get(), CEElectrolysis.CELL.get()),
             new Kind("solar_salt", "plant/open_tank", CEBlocks.TANK_CASING.get(), CEBlocks.TANK_CASING.get()),
             new Kind("steam_generation", "plant/tubular_boiler", CETransport.STAINLESS_BOILER.get(), CETransport.STAINLESS_BOILER.get(), CETransport.HORIZONTAL_FLUID_TANK.get(), AllBlocks.FLUID_TANK.get(), AllBlocks.BLAZE_BURNER.get()),
@@ -87,89 +73,43 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             new Kind("spraying", "plant/agricultural_sprayer_gantry", CEAgriculture.SPRAYER.get(), CEAgriculture.SPRAYER.get()),
             new Kind("fertilizer_filling", "plant/liquid_fertilizer", AllBlocks.SPOUT.get(), AllBlocks.SPOUT.get()),
             new Kind("clarifying", "plant/wet_processing", CEWetProcessing.CLARIFIER.get(), CEWetProcessing.CLARIFIER.get()),
-            new Kind("converter", "plant/converter", CEConverter.SHELL.get(), CEConverter.SHELL.get()),
-            new Kind("solvent_extraction", "plant/fuel_cycle", CEFuelCycle.EXTRACTION_COLUMN.get(), CEFuelCycle.EXTRACTION_COLUMN.get()),
-            new Kind("vitrification", "plant/fuel_cycle", CEFuelCycle.MELTER.get(), CEFuelCycle.MELTER.get()),
-            new Kind("industrial_delivery", "plant/industrial_dispatch", CEIndustrialExpansion.DISPATCH.get(), CEIndustrialExpansion.DISPATCH.get(), AllBlocks.ITEM_VAULT.get()),
             new Kind("helium_refrigeration", "plant/fusion_helium", CEIsotopeGases.COLD_BOX.get(), CEIsotopeGases.COLD_BOX.get(), CEIsotopeGases.REGENERATOR.get()),
             new Kind("ammonia_separator", "chemistry/ammonia_separator", CETransport.AMMONIA_SEPARATOR.get(), CETransport.AMMONIA_SEPARATOR.get(), CETransport.REACTION_TOWER.get()),
             new Kind("process_heating", "plant/ore_recovery", AllBlocks.BLAZE_BURNER.get(), CETransport.LIDDED_VESSEL.get(), AllBlocks.BASIN.get(), AllBlocks.BLAZE_BURNER.get()),
             new Kind("heat_exchange", "plant/heat_exchanger", CEHeating.TUBE_TANK.get(), CEHeating.TUBE_TANK.get(), CEHeating.JACKET.get()),
-            new Kind("arm_assembly", "plant/industrial_arm", net.createplant.registry.CEArm.ARM_ITEM.get(), net.createplant.registry.CEArm.ARM_ITEM.get(),
-                net.createplant.registry.CEArm.WELDING_TORCH.get(), AllBlocks.DEPOT.get()),
             new Kind("process_cooling", "plant/module_cooling", CEProcessBlocks.COOLER_RADIATOR.get(), CEProcessBlocks.COOLER_RADIATOR.get(), CEProcessBlocks.COOLING_FAN.get()));
         return kinds;
     }
 
-    private static RecipeType<PlantProcess> type(String id) {
-        return kinds().stream().filter(kind -> kind.type().getUid().getPath().equals(id)).findFirst().orElseThrow().type();
+    public static RecipeType<PlantProcess> type(String id) {
+        return RecipeType.create(CreatePlant.MOD_ID, id, PlantProcess.class);
     }
 
-    private static Component note(String key, Object... args) { return Component.translatable("jei." + CreatePlant.MOD_ID + ".note." + key, args); }
-    private static FluidStack f(Fluid fluid, int amount) { return new FluidStack(fluid, amount); }
+    public static Component note(String key, Object... args) { return Component.translatable("jei." + CreatePlant.MOD_ID + ".note." + key, args); }
+    public static FluidStack f(Fluid fluid, int amount) { return new FluidStack(fluid, amount); }
     private static FluidStack f(FluidForm form, int amount) { return form.stack(amount); }
 
-    @Override public void registerCategories(IRecipeCategoryRegistration registration) {
-        for (Kind kind : kinds()) registration.addRecipeCategories(new PlantProcessCategory(kind.type(), kind.icon(), kind.storyboard(), registration.getJeiHelpers().getGuiHelper()));
+    @Override public void registerCategories(IRecipeCategoryRegistration registration) { addCategories(registration, kinds()); }
+
+    @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) { addCatalysts(registration, kinds()); }
+
+    /** Addon plugins register their own categories the same way. */
+    public static void addCategories(IRecipeCategoryRegistration registration, List<Kind> kinds) {
+        for (Kind kind : kinds) registration.addRecipeCategories(new PlantProcessCategory(kind.type(), kind.icon(), kind.storyboard(), registration.getJeiHelpers().getGuiHelper()));
     }
 
-    @Override public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        for (Kind kind : kinds()) registration.addRecipeCatalysts(kind.type(), kind.catalysts());
+    public static void addCatalysts(IRecipeCatalystRegistration registration, List<Kind> kinds) {
+        for (Kind kind : kinds) registration.addRecipeCatalysts(kind.type(), kind.catalysts());
     }
 
     @Override public void registerAdvanced(IAdvancedRegistration registration) {
         registration.addRecipeManagerPlugin(synthesisLinks);
     }
 
-    private static ItemStack stack(String name) { return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(CreatePlant.location(name)).getDefaultInstance(); }
-    private static PlantProcess service(String input, String output, String key) { return new PlantProcess(List.of(List.of(stack(input))), List.of(), List.of(), List.of(stack(output)), List.of(), note(key)); }
-    /** The item put on the depot and every part the steps use up go in; the torch is kept; the note lists the steps in order. */
-    private static PlantProcess armAssembly(net.createplant.arm.ArmRecipe recipe) {
-        List<List<ItemStack>> in = new java.util.ArrayList<>();
-        in.add(List.of(new ItemStack(recipe.input())));
-        var steps = Component.empty();
-        for (int i = 0; i < recipe.steps().size(); i++) {
-            var step = recipe.steps().get(i);
-            step.consume().ifPresent(part -> in.add(List.of(new ItemStack(part.item(), part.count()))));
-            if (i > 0) steps.append(" > ");
-            steps.append(Component.translatable("jei." + CreatePlant.MOD_ID + ".arm_step." + step.pattern().id()));
-            if (step.helpers() > 0) steps.append(Component.translatable("jei." + CreatePlant.MOD_ID + ".arm_step.helped"));
-        }
-        List<ItemStack> kept = recipe.usesTorch() ? List.of(net.createplant.registry.CEArm.WELDING_TORCH.toStack()) : List.of();
-        return new PlantProcess(in, List.of(), kept, List.of(recipe.result().copy()), List.of(), note("arm_assembly", steps));
-    }
-
-    private static PlantProcess continuous(ContinuousFactoryRecipe recipe) {
-        List<List<ItemStack>> inputs = new ArrayList<>();
-        inputs.add(Arrays.stream(recipe.feed().ingredient().getItems()).map(stack -> {
-            var feed = stack.copyWithCount(recipe.feed().count());
-            if (recipe.minimumDamage() != 0) feed.setDamageValue(recipe.minimumDamage());
-            return feed;
-        }).toList());
-        recipe.auxiliary().ifPresent(aux -> inputs.add(Arrays.stream(aux.ingredient().getItems()).map(stack -> stack.copyWithCount(aux.count())).toList()));
-        var text = note(recipe.machine().id + (recipe.cold() ? "_cold" : recipe.minimumDamage() > 0 ? "_worn" : recipe.heat() == 2 ? "_strong" : "")).copy();
-        if (recipe.minStands() > 1 || recipe.maxStands() < 8)
-            text.append(" ").append(note("stands", recipe.minStands() > 1 ? recipe.minStands() : 2, recipe.maxStands() < 8 ? recipe.maxStands() : 5));
-        if (recipe.rpmTolerance() != .10f) text.append(" ").append(note("rpm_tolerance", Math.round(recipe.rpmTolerance() * 100)));
-        return new PlantProcess(inputs, List.of(), List.of(), List.of(recipe.result().copy()), List.of(), text);
-    }
-
+    public static ItemStack stack(String name) { return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(CreatePlant.location(name)).getDefaultInstance(); }
+    public static PlantProcess service(String input, String output, String key) { return new PlantProcess(List.of(List.of(stack(input))), List.of(), List.of(), List.of(stack(output)), List.of(), note(key)); }
     @Override public void registerRecipes(IRecipeRegistration registration) {
         var world = Minecraft.getInstance().level;
-        if (world != null) for (var kind : FactoryKind.values()) {
-            registration.addRecipes(type(kind.id), world.getRecipeManager()
-                .getAllRecipesFor(CEAtomicsRecipeTypes.CONTINUOUS_PROCESSING.<RecipeInput, ContinuousFactoryRecipe>getType()).stream()
-                .filter(holder -> holder.value().machine() == kind)
-                .sorted(java.util.Comparator.comparing((RecipeHolder<ContinuousFactoryRecipe> holder) -> holder.value().minimumDamage() > 0)
-                    .thenComparing(holder -> holder.id().getPath()))
-                .map(holder -> continuous(holder.value())).toList());
-        }
-        if (world != null) registration.addRecipes(type("large_pressing"), world.getRecipeManager()
-            .getAllRecipesFor(CEAtomicsRecipeTypes.LARGE_PRESSING.<SingleRecipeInput, LargePressingRecipe>getType()).stream().map(holder -> {
-                var recipe = holder.value();
-                return new PlantProcess(List.of(Arrays.asList(recipe.ingredient().getItems())), List.of(), List.of(),
-                    List.of(recipe.result().copy()), List.of(), note("large_pressing"));
-            }).toList());
         if (world != null) registration.addRecipes(type("spraying"), SprayingRecipe.available(world).stream().flatMap(holder -> {
             var recipe = holder.value();
             var fluids = Arrays.asList(recipe.liquid().getFluids());
@@ -187,23 +127,11 @@ public class CreatePlantJeiPlugin implements IModPlugin {
                     List.of(steam.getFirst()), List.of(), List.of(), List.of(recipe.hotGasResult()),
                     note("entrained_gasification", recipe.duration())).withFluidOptions(List.of(steam)));
             }).toList());
-        if (world != null) registration.addRecipes(type("arm_assembly"), net.createplant.arm.ArmRecipe.all(world).stream().map(holder -> armAssembly(holder.value())).toList());
         registration.addRecipes(type("clarifying"), ordinaryRoutesFirst(wetReactions(CERecipeTypes.CLARIFYING)));
-        registration.addRecipes(type("irradiation_products"), List.of(
-            new PlantProcess(List.of(List.of(stack("fuel_rod"), stack("compact_enriched_fuel_rod"), stack("mox_fuel_rod"))), List.of(), List.of(), List.of(stack("spent_fuel_rod")), List.of(), note("spent_fuel")),
-            service("control_rod", "spent_control_rod", "spent_control"),
-            service("lithium_target_rod", "irradiated_lithium_target_rod", "irradiated_target")));
-        registration.addRecipes(type("fusion_service"), List.of(service("irradiation_cartridge", "irradiated_cartridge", "irradiated_cartridge"), service("tungsten_divertor_cassette", "spent_divertor_cassette", "spent_divertor")));
         registration.addRecipes(type("forging_byproducts"), List.of(new PlantProcess(List.of(List.of(CEItems.PIG_IRON.toStack())), List.of(), List.of(), List.of(CEItems.STEEL_INGOT.toStack(), CEItems.STEEL_SLAG.toStack()), List.of(), note("forging_byproducts"))));
         if (Minecraft.getInstance().level != null) {
             registration.addRecipes(type("cell_electrolysis"), ElectrolysisProcess.all().stream().filter(ElectrolysisProcess::electrowinning).map(recipe -> new PlantProcess(List.of(), List.of(f(recipe.feed(), recipe.input())), List.of(), List.of(new ItemStack(recipe.metal(), recipe.metalAmount())), List.of(f(recipe.recovered(), recipe.recoveredAmount())), note("electrowinning", Math.round(recipe.cycleWork() / 1000)))).toList());
         }
-        if (Minecraft.getInstance().level != null) registration.addRecipes(type("cubic_pressing"), Minecraft.getInstance().level.getRecipeManager()
-            .getAllRecipesFor(CEAtomicsRecipeTypes.CUBIC_PRESSING.<net.createplant.recipe.CubicPressRecipe.Input, net.createplant.recipe.CubicPressRecipe>getType()).stream().map(holder -> {
-                var recipe = holder.value();
-                return new PlantProcess(recipe.getIngredients().stream().map(ingredient -> Arrays.asList(ingredient.getItems())).toList(), List.of(), List.of(),
-                    recipe.getRollableResultsAsItemStacks(), List.of(), note("cubic_pressing", recipe.getProcessingDuration(), Math.round(recipe.getRollableResults().size() > 1 ? recipe.getRollableResults().get(1).getChance() * 100 : 0)));
-            }).toList());
         registration.addRecipes(type("stirred_reactor"), reactions(ReactorModule.STIRRED));
         registration.addRecipes(type("tray_reactor"), reactions(ReactorModule.ABSORBER));
         var sprayer = CEPortableTools.CHEMICAL_SPRAYER.toStack();
@@ -213,28 +141,26 @@ public class CreatePlantJeiPlugin implements IModPlugin {
             net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         registration.addRecipes(type("fertilizer_filling"), List.of(new PlantProcess(
             List.of(List.of(sprayer)), List.of(fertilizer), List.of(), List.of(filled), List.of(), note("fertilizer_filling"))));
-        for (var module : List.of(ProcessModule.REACTION_VESSEL, ProcessModule.FRACTION_SEPARATOR, ProcessModule.GAS_CENTRIFUGE, ProcessModule.ABSORPTION_TRAYS)) {
+        for (var module : List.of(ProcessModule.REACTION_VESSEL, ProcessModule.FRACTION_SEPARATOR, ProcessModule.ABSORPTION_TRAYS)) {
             List<PlantProcess> list = new ArrayList<>();
             for (ProcessRecipe recipe : ProcessRecipe.all()) if (recipe.module() == module && !recipe.id().equals("wash_raw_process_gas")) {
                 boolean fractionation=module==ProcessModule.FRACTION_SEPARATOR;
                 var inputs=recipe.inputs();
                 Component conditions = fractionation ? note("fractionation",recipe.ticks(),DistillationProfile.requiredHeight(recipe.id()))
-                    : module == ProcessModule.GAS_CENTRIFUGE ? note("centrifuge_stages", recipe.ticks(), net.createplant.block.entity.GasCentrifugeBlockEntity.requiredStages(recipe.id())) : module == ProcessModule.ABSORPTION_TRAYS ? note("absorption_tower", recipe.ticks()) : note("reactor", recipe.ticks());
+                    : module == ProcessModule.ABSORPTION_TRAYS ? note("absorption_tower", recipe.ticks()) : note("reactor", recipe.ticks());
                 if(recipe.requiredHeat()!=com.simibubi.create.content.processing.recipe.HeatCondition.NONE) conditions=conditions.copy().append(" · ").append(Component.translatable("create."+recipe.requiredHeat().getTranslationKey()));
                 if(inputs.stream().anyMatch(input->PlantProcess.acceptedFluids(input).size()>1))conditions=note("cooled_feed").copy().append(" ").append(conditions);
                 var entry = new PlantProcess(List.of(), inputs, recipe.catalyst() == Items.AIR ? List.of() : List.of(new ItemStack(recipe.catalyst())),
                     List.of(), fractionation ? DistillationProfile.fraction(recipe.id()).outputs() : recipe.outputs(), conditions)
                     .withFluidOptions(inputs.stream().map(PlantProcess::acceptedFluids).toList());
-                if (module != ProcessModule.GAS_CENTRIFUGE) {
-                    int levels = fractionation ? DistillationProfile.requiredHeight(recipe.id()) : module == ProcessModule.ABSORPTION_TRAYS
-                        ? ReactorModule.TOWER.minSections : net.createplant.block.entity.ReactionTowerBlockEntity.MIN_LAYERS;
-                    entry = entry.withConditions(recipe.ticks(), recipe.requiredHeat(), levels);
-                }
+                int levels = fractionation ? DistillationProfile.requiredHeight(recipe.id()) : module == ProcessModule.ABSORPTION_TRAYS
+                    ? ReactorModule.TOWER.minSections : net.createplant.block.entity.ReactionTowerBlockEntity.MIN_LAYERS;
+                entry = entry.withConditions(recipe.ticks(), recipe.requiredHeat(), levels);
                 list.add(entry);
             }
             if (module == ProcessModule.FRACTION_SEPARATOR) for (var fraction : DistillationProfile.registered())
                 list.add(new PlantProcess(List.of(), List.of(fraction.input()), List.of(), List.of(), DistillationProfile.fraction(fraction.id()).outputs(), note("fractionation", fraction.ticks())));
-            registration.addRecipes(type(module == ProcessModule.REACTION_VESSEL ? "reaction_vessel" : module == ProcessModule.FRACTION_SEPARATOR ? "fractionating_column" : module == ProcessModule.ABSORPTION_TRAYS ? "absorption_tower" : "gas_centrifuge"), ordinaryRoutesFirst(list));
+            registration.addRecipes(type(module == ProcessModule.REACTION_VESSEL ? "reaction_vessel" : module == ProcessModule.FRACTION_SEPARATOR ? "fractionating_column" : "absorption_tower"), ordinaryRoutesFirst(list));
         }
         int ticks = 100;long energy = Math.round(ticks * ElectrolysisProcess.JOULES_PER_PLATE / 1000);
         int diaphragmTicks = 5000;long diaphragmEnergy = Math.round(diaphragmTicks * ElectrolysisProcess.JOULES_PER_PLATE / 1000);
@@ -264,10 +190,6 @@ public class CreatePlantJeiPlugin implements IModPlugin {
                     : note("compression", speed));
         }).toList());
         registration.addRecipes(type("haber_bosch"), PlantProcess.ammoniaSynthesis());
-        registration.addRecipes(type("converter"), ordinaryRoutesFirst(converterReactions()));
-        registration.addRecipes(type("solvent_extraction"), ordinaryRoutesFirst(fuelCycleReactions(CEAtomicsRecipeTypes.SOLVENT_EXTRACTION)));
-        registration.addRecipes(type("vitrification"), ordinaryRoutesFirst(fuelCycleReactions(CEAtomicsRecipeTypes.VITRIFICATION)));
-        registration.addRecipes(type("industrial_delivery"), deliveries());
         var liquefaction=new ArrayList<PlantProcess>();
         for(var gas:List.of(CEFluids.NITROGEN_GAS.get(),CEFluids.OXYGEN_GAS.get(),CEIsotopeGases.HELIUM_GAS.get())){
             var conversion=ThermalStreams.liquefaction(f(gas,1));int water=gas==CEIsotopeGases.HELIUM_GAS.get() ? 200 : 50;
@@ -357,7 +279,7 @@ public class CreatePlantJeiPlugin implements IModPlugin {
         return ordinaryRoutesFirst(list);
     }
 
-    private static List<PlantProcess> ordinaryRoutesFirst(List<PlantProcess> list) {
+    public static List<PlantProcess> ordinaryRoutesFirst(List<PlantProcess> list) {
         return list.stream().sorted(java.util.Comparator.comparingInt(CreatePlantJeiPlugin::routeCost)).toList();
     }
 
@@ -396,54 +318,6 @@ public class CreatePlantJeiPlugin implements IModPlugin {
                 recipe.getRollableResults().stream().map(ProcessingOutput::getStack).toList(), recipe.getFluidResults(), note(type.getId().getPath(), recipe.getProcessingDuration()))
                 .withFluidOptions(recipe.getFluidIngredients().stream().map(ingredient -> Arrays.asList(ingredient.getFluids())).toList());
         }).toList();
-    }
-
-    private static List<PlantProcess> fuelCycleReactions(com.simibubi.create.foundation.recipe.IRecipeTypeInfo type) {
-        var level = Minecraft.getInstance().level;
-        if (level == null) return List.of();
-        return level.getRecipeManager().getAllRecipesFor(type.<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.FuelCycleRecipe>getType()).stream().map(holder -> {
-            var recipe = holder.value();
-            return new PlantProcess(recipe.getIngredients().stream().map(ingredient -> Arrays.asList(ingredient.getItems())).toList(),
-                recipe.getFluidIngredients().stream().map(ingredient -> ingredient.getFluids()[0]).toList(), List.of(),
-                recipe.getRollableResults().stream().map(ProcessingOutput::getStack).toList(), recipe.getFluidResults(), note(type.getId().getPath(), recipe.getProcessingDuration())).withFluidOptions(recipe.getFluidIngredients().stream().map(ingredient->Arrays.asList(ingredient.getFluids())).toList());
-        }).toList();
-    }
-    private static List<PlantProcess> deliveries() {
-        var level = Minecraft.getInstance().level;if (level == null) return List.of();
-        return level.getRecipeManager().getAllRecipesFor(CELogisticsRecipeTypes.INDUSTRIAL_DELIVERY.<net.minecraft.world.item.crafting.RecipeInput, net.createplant.recipe.IndustrialDeliveryRecipe>getType()).stream().map(holder -> {
-            var recipe = holder.value();var inputs = new java.util.LinkedHashMap<String, List<ItemStack>>();
-            for (var ingredient : recipe.getIngredients()) {
-                var options = Arrays.asList(ingredient.getItems());
-                String key = options.stream().map(stack -> net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).toString()).sorted().collect(java.util.stream.Collectors.joining(","));
-                if (!inputs.containsKey(key)) inputs.put(key, options.stream().map(ItemStack::copy).toList());
-                else inputs.get(key).forEach(stack -> stack.grow(1));
-            }
-            return new PlantProcess(List.copyOf(inputs.values()), recipe.getFluidIngredients().stream().map(input -> input.getFluids()[0]).toList(), List.of(),
-                recipe.getRollableResults().stream().map(ProcessingOutput::getStack).toList(), List.of(), note("industrial_delivery", recipe.getProcessingDuration())).withFluidOptions(recipe.getFluidIngredients().stream().map(ingredient->Arrays.asList(ingredient.getFluids())).toList());
-        }).toList();
-    }
-
-    /** Converter recipes retain their large ingredient counts instead of expanding them into crafting-grid duplicates. */
-    private static List<PlantProcess> converterReactions() {
-        List<PlantProcess> list = new ArrayList<>();
-        var level = Minecraft.getInstance().level;
-        if (level == null) return list;
-        for (RecipeHolder<ConverterRecipe> holder : level.getRecipeManager().getAllRecipesFor(
-            CEAtomicsRecipeTypes.CONVERTER.<net.minecraft.world.item.crafting.RecipeInput, ConverterRecipe>getType())) {
-            ConverterRecipe recipe = holder.value();
-            if (recipe.legacy()) continue;
-            List<List<ItemStack>> items = recipe.itemIngredients().stream()
-                .map(ingredient -> Arrays.asList(ingredient.getItems())).toList();
-            List<List<FluidStack>> options = new ArrayList<>();
-            options.add(Arrays.asList(recipe.gasIngredient().getFluids()));
-            recipe.metalIngredient().ifPresent(ingredient -> options.add(Arrays.asList(ingredient.getFluids())));
-            List<FluidStack> fluids = options.stream().map(List::getFirst).toList();
-            List<FluidStack> fluidResults = java.util.stream.Stream.of(recipe.metalResult(), recipe.byproduct())
-                .filter(fluid -> !fluid.isEmpty()).toList();
-            list.add(new PlantProcess(items, fluids, List.of(), List.of(recipe.result()), fluidResults,
-                note("converter", recipe.duration())).withFluidOptions(options));
-        }
-        return list;
     }
 
     private static void verifyRecipeTrace(mezz.jei.api.runtime.IJeiRuntime runtime) {

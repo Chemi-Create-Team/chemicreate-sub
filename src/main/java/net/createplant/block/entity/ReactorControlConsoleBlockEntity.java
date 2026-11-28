@@ -328,7 +328,7 @@ public class ReactorControlConsoleBlockEntity extends SmartBlockEntity implement
             if (link.activeSource != CEDisplays.MACHINE.get() || link.activeTarget != CEAtomicsDisplays.REACTOR_CONSOLE.get()) continue;
             BlockPos source = link.getSourcePosition();
             if (!level.hasChunkAt(source)) continue;
-            FuelChannelBlockEntity lead = MachineReadings.reactorController(level.getBlockEntity(source));
+            FuelChannelBlockEntity lead = net.createplant.compat.display.AtomicsReadings.reactorController(level.getBlockEntity(source));
             if (lead != null && lead.core() != null && lead.core().formed()) controllers.add(lead.getBlockPos());
         }
         if (changed) setChanged();

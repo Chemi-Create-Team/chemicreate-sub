@@ -32,8 +32,8 @@ public class MachineDisplaySource extends PercentOrProgressBarDisplaySource {
         return context.sourceConfig().getInt("Mode")==2 && r!=null && r.maximum()>0;
     }
     @Override protected MutableComponent provideLine(DisplayLinkContext context,DisplayTargetStats stats) {
-        if (metric(context).equals("process_name") && MachineReadings.owner(context.getSourceBlockEntity()) instanceof net.createplant.block.entity.GasCentrifugeBlockEntity c) return c.processName().copy();
-        if (metric(context).equals("dispatch_order") && context.getSourceBlockEntity() instanceof net.createplant.block.entity.IndustrialDispatchBlockEntity dispatch) return dispatch.orderDescription().copy();
+        var addonLine = MachineReadings.line(metric(context), context.getSourceBlockEntity());
+        if (addonLine != null) return addonLine;
         if (metric(context).equals("exchange_mode")) return MachineReadings.exchangeMode(context.getSourceBlockEntity()).copy();
         if (metric(context).equals("status")) return MachineReadings.status(context.getSourceBlockEntity()).copy();
         if (metric(context).equals("production_bottleneck")) return MachineReadings.productionBottleneck(context.getSourceBlockEntity()).copy();

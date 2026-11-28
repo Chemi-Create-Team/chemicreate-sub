@@ -221,7 +221,7 @@ public class RbmkGameTests {
         BlockPos cap = source.above(ReactorPhysics.FUEL_ASSEMBLY_LENGTH);
         h.setBlock(cap, CENuclear.TOP_CAP.get());
         var link = displayLink(h, cap.above(), Direction.UP, h.absolutePos(new BlockPos(11, 6, 5)), "reactor_coolant_temperature");
-        h.assertTrue(link.getSourcePosition().equals(h.absolutePos(cap)) && MachineReadings.reactorController(h.getBlockEntity(cap)) != null,
+        h.assertTrue(link.getSourcePosition().equals(h.absolutePos(cap)) && net.createplant.compat.display.AtomicsReadings.reactorController(h.getBlockEntity(cap)) != null,
             "The display link has the centre cap as its formed source: " + link.getSourcePosition() + " vs " + h.absolutePos(cap));
         console.stationChanged();
         Set<Integer> displayed = new HashSet<>();

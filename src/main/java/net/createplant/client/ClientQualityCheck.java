@@ -24,10 +24,36 @@ public final class ClientQualityCheck {
     private static String[] TARGETS=System.getProperty("createplant.clientQualityTargets","reciprocating_compressor,fractionating_column,high_pressure_turbine_blade,reactor_separator_core,cooling_fan").split(",");
     private static final Set<String> scenes=new TreeSet<>();
     private ClientQualityCheck() { }
+
+    public interface Step { void run(Minecraft mc) throws Exception; }
+    public interface Tick { boolean run(Minecraft mc) throws Exception; }
+    public interface PonderCheck { void run(Minecraft mc,String scene) throws Exception; }
+    /** What follows a finished addon check: its own screenshot target, a stop, or the reciprocating compressor check when that is switched on. */
+    public enum Finish { SHOW, STOP, THEN_RECIPROCATING }
+    /** A dev check an addon owns: it starts under its system property and then runs in its own phase. */
+    public record AddonCheck(String property,int phase,Step start,Tick tick,Finish finish) { }
+
+    private static final List<AddonCheck> ADDON_CHECKS=new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final List<PonderCheck> ADDON_PONDER_CHECKS=new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    public static void register(AddonCheck check) { ADDON_CHECKS.add(check); }
+    /** Runs after each captured Ponder scene; it checks the system properties itself. */
+    public static void registerPonderCheck(PonderCheck check) { ADDON_PONDER_CHECKS.add(check); }
+
+    private static void finish(Minecraft mc,Finish finish) {
+        switch (finish) {
+            case SHOW -> show(mc);
+            case STOP -> mc.stop();
+            case THEN_RECIPROCATING -> {
+                if (Boolean.getBoolean("createplant.reciprocatingClientCheck")) { ReciprocatingClientCheck.start(mc);ticks=0;phase=14; }
+                else show(mc);
+            }
+        }
+    }
     public static void tick(ClientTickEvent.Post event) {
         Minecraft mc=Minecraft.getInstance();
-        if (phase==35) {
-            try { if (ContinuousFactoryClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
+        for (var check:ADDON_CHECKS) if (phase==check.phase()) {
+            try { if (check.tick().run(mc)) finish(mc,check.finish()); } catch (Exception exception) { fail(mc,exception); }
             return;
         }
         if (phase==96) {
@@ -53,10 +79,6 @@ public final class ClientQualityCheck {
             try { if (ForgingClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
             return;
         }
-        if (phase==90) {
-            try { if (RadiationClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
-            return;
-        }
         if (phase==8) {
             try { if (TankClientCheck.tick(mc)) mc.stop(); } catch (Exception exception) { fail(mc,exception); }
             return;
@@ -69,24 +91,8 @@ public final class ClientQualityCheck {
             try { if (HorizontalTankClientCheck.tick(mc)) mc.stop(); } catch (Exception exception) { fail(mc,exception); }
             return;
         }
-        if (phase==17) {
-            try { if (CraneClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
-            return;
-        }
-        if (phase==16) {
-            try { if (FuelPoolClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
-            return;
-        }
         if (phase==14) {
             try { if (ReciprocatingClientCheck.tick(mc)) mc.stop(); } catch (Exception exception) { fail(mc,exception); }
-            return;
-        }
-        if (phase==22) {
-            try { if (FusionClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
-            return;
-        }
-        if (phase==23) {
-            try { if (ConverterClientCheck.tick(mc)) mc.stop(); } catch (Exception exception) { fail(mc,exception); }
             return;
         }
         if (phase==24) {
@@ -114,10 +120,6 @@ public final class ClientQualityCheck {
             try { if (VesselContentsClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
             return;
         }
-        if (phase==25) {
-            try { if (WhiteThemeWorldClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
-            return;
-        }
         if (phase==26) {
             try { if (PowderItemsClientCheck.tick(mc)) show(mc); } catch (Exception exception) { fail(mc,exception); }
             return;
@@ -143,24 +145,13 @@ public final class ClientQualityCheck {
             try { if (LoadClientCheck.tick(mc)) mc.stop(); } catch (Exception exception) { fail(mc,exception); }
             return;
         }
-        if (phase==19) {
-            try {
-                if (ReactorConsoleClientCheck.tick(mc)) {
-                    if (Boolean.getBoolean("createplant.reciprocatingClientCheck")) { ReciprocatingClientCheck.start(mc);ticks=0;phase=14; }
-                    else show(mc);
-                }
-            } catch (Exception exception) { fail(mc,exception); }
-            return;
-        }
         if (phase==2 && mc.getOverlay()!=null) { ticks=0;return; }
         if (phase==2 && Boolean.getBoolean("createplant.separatorDrumClientCheck") && mc.screen instanceof PonderUI ui) ui.coolDownAfterSkip();
         if ((phase==2 || phase==3) && Boolean.getBoolean("createplant.wetProcessingClientCheck") && mc.screen instanceof PonderUI ui) ui.coolDownAfterSkip();
         if (phase==2 && Boolean.getBoolean("createplant.pulsationTubeClientCheck") && mc.screen instanceof PonderUI ui) ui.coolDownAfterSkip();
         if (phase==2 && ++ticks>Integer.getInteger("createplant.clientQualityCaptureDelay",35)) {
             verifyTargetState(mc);
-            if (Boolean.getBoolean("createplant.craneClientCheck") || Boolean.getBoolean("createplant.cranePonderCheck")) {
-                try { CraneClientCheck.verifyPonder(mc); } catch (Exception exception) { fail(mc,exception);return; }
-            }
+            try { for (var verify:ADDON_PONDER_CHECKS) verify.run(mc,TARGETS[target].split("@",2)[0]); } catch (Exception exception) { fail(mc,exception);return; }
             phase=3;
             if (!Boolean.getBoolean("createplant.clientQualitySkipScreenshots")) Screenshot.grab(mc.gameDirectory,"quality-"+LANGUAGES[language]+"-"+TARGETS[target]+".png",mc.getMainRenderTarget(),message->{ });
             if (++target<TARGETS.length) { show(mc);return; }
@@ -227,14 +218,6 @@ public final class ClientQualityCheck {
         }
 
         if (Boolean.getBoolean("createplant.vesselClientCheck")) VesselClientCheck.verify(mc);
-        if (!Boolean.getBoolean("createplant.clientQualityExpectConverterTilt")
-            || !TARGETS[target].split("@",2)[0].equals("converter_shell")) return;
-        // Seeking restores the independent section transform, but does not replay
-        // instantaneous block-entity mutations. The captured frame verifies the pose.
-        if (!(mc.screen instanceof PonderUI ui)
-            || !(ui.getActiveScene().getWorld().getBlockEntity(new net.minecraft.core.BlockPos(1,6,6))
-                instanceof net.createplant.block.entity.ConverterTrunnionBearingBlockEntity))
-            throw new IllegalStateException("The converter Ponder is missing its trunnion bearing");
     }
     private static void verify(Minecraft mc) {
             try {
@@ -270,7 +253,6 @@ public final class ClientQualityCheck {
                 if (Boolean.getBoolean("createplant.creativeTabsClientCheck")) { CreativeTabsClientCheck.start(mc);ticks=0;phase=96;return; }
                 if (Boolean.getBoolean("createplant.mineralClientCheck")) { MineralClientCheck.start(mc);ticks=0;phase=92;return; }
                 if (Boolean.getBoolean("createplant.forgingClientCheck")) { ForgingClientCheck.start(mc);ticks=0;phase=91;return; }
-                if (Boolean.getBoolean("createplant.radiationClientCheck")) { RadiationClientCheck.start(mc);ticks=0;phase=90;return; }
                 if (Boolean.getBoolean("createplant.thermalClientCheck")) {
                     ThermalClientCheck.verify(mc);
                     if (Boolean.getBoolean("createplant.fluidStatePreview")) { mc.setScreen(null);phase=95;return; }
@@ -281,22 +263,16 @@ public final class ClientQualityCheck {
                 if (Boolean.getBoolean("createplant.tankClientCheck")) { TankClientCheck.start(mc);ticks=0;phase=8;return; }
                 if (Boolean.getBoolean("createplant.finFanClientCheck")) { FinFanClientCheck.start(mc);ticks=0;phase=11;return; }
                 if (Boolean.getBoolean("createplant.horizontalTankClientCheck")) { HorizontalTankClientCheck.start(mc);ticks=0;phase=15;return; }
-                if (Boolean.getBoolean("createplant.craneClientCheck")) { CraneClientCheck.start(mc);ticks=0;phase=17;return; }
-                if (Boolean.getBoolean("createplant.fuelPoolClientCheck")) { FuelPoolClientCheck.start(mc);ticks=0;phase=16;return; }
                 if (Boolean.getBoolean("createplant.reciprocatingClientCheck") && !Boolean.getBoolean("createplant.reactorConsoleClientCheck")) { ReciprocatingClientCheck.start(mc);ticks=0;phase=14;return; }
                 if (Boolean.getBoolean("createplant.ironPipeClientCheck")) { StainlessPipeClientCheck.start(mc);ticks=0;phase=12;return; }
                 if (Boolean.getBoolean("createplant.pipeGaugeClientCheck")) { PipeGaugeClientCheck.start(mc);ticks=0;phase=18;return; }
-                if (Boolean.getBoolean("createplant.reactorConsoleClientCheck")) { ReactorConsoleClientCheck.start(mc);ticks=0;phase=19;return; }
                 if (Boolean.getBoolean("createplant.loadClientCheck")) { LoadClientCheck.start(mc);ticks=0;phase=20;return; }
-                if (Boolean.getBoolean("createplant.fusionClientCheck")) { FusionClientCheck.start(mc);ticks=0;phase=22;return; }
-                if (Boolean.getBoolean("createplant.converterClientCheck")) { ConverterClientCheck.start(mc);ticks=0;phase=23;return; }
                 if (Boolean.getBoolean("createplant.vesselWorldClientCheck")) { VesselWorldClientCheck.start(mc);ticks=0;phase=24;return; }
                 if (Boolean.getBoolean("createplant.gasBellClientCheck")) { GasBellClientCheck.start(mc);ticks=0;phase=30;return; }
                 if (Boolean.getBoolean("createplant.charredWoodClientCheck")) { CharredWoodClientCheck.start(mc);ticks=0;phase=31;return; }
                 if (Boolean.getBoolean("createplant.electrolysisClientCheck")) { ElectrolysisClientCheck.start(mc);ticks=0;phase=33;return; }
                 if (Boolean.getBoolean("createplant.vesselContentsClientCheck")) { VesselContentsClientCheck.start(mc);ticks=0;phase=28;return; }
-                if (Boolean.getBoolean("createplant.continuousFactoryClientCheck")) { ContinuousFactoryClientCheck.start(mc);ticks=0;phase=35;return; }
-                if (Boolean.getBoolean("createplant.whiteThemeWorldCheck")) { WhiteThemeWorldClientCheck.start(mc);ticks=0;phase=25;return; }
+                for (var check:ADDON_CHECKS) if (Boolean.getBoolean(check.property())) { check.start().run(mc);ticks=0;phase=check.phase();return; }
                 show(mc);
             } catch (Exception exception) { fail(mc,exception); }
     }

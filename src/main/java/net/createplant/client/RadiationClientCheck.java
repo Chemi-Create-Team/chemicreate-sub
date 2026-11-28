@@ -17,7 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** Opt-in world check of server-owned readings, hand models and the beta-window control. */
-final class RadiationClientCheck {
+public final class RadiationClientCheck {
     private static int ticks;
     private static double farRate;
     private static volatile Throwable failure;
@@ -25,7 +25,7 @@ final class RadiationClientCheck {
 
     private RadiationClientCheck() {}
 
-    static void start(Minecraft mc) {
+    public static void start(Minecraft mc) {
         ticks = 0;
         readings.clear();
         failure = null;
@@ -71,7 +71,7 @@ final class RadiationClientCheck {
                         });
     }
 
-    static boolean tick(Minecraft mc) throws Exception {
+    public static boolean tick(Minecraft mc) throws Exception {
         if (failure != null) throw new IllegalStateException("Radiation client fixture", failure);
         if (++ticks == 100) {
             farRate = mc.player.getData(CERadiation.EXPOSURE).getDouble("GammaSvS");

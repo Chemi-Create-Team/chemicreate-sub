@@ -58,30 +58,6 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         helper.forComponents(CreatePlant.location("transmission_tower"), CreatePlant.location("high_voltage_cable"))
             .addStoryBoard("plant/transmission_tower", TransmissionTowerPonderScenes::connection);
         helper.forComponents(CreatePlant.location("electric_pump")).addStoryBoard("plant/electric_pump", ElectricUtilityPonderScenes::pump);
-        helper.forComponents(CreatePlant.location("cubic_press")).addStoryBoard("plant/cubic_press", HighStressPonderScenes::press);
-        helper.forComponents(CreatePlant.location("large_mechanical_press"), CreatePlant.location("large_depot"), CreatePlant.location("large_iron_plate"))
-            .addStoryBoard("plant/large_press", LargePressPonderScenes::press);
-        helper.forComponents(CreatePlant.location("rotary_kiln"), CreatePlant.location("rotary_kiln_exhaust"), CreatePlant.location("continuous_factory_frame"), CreatePlant.location("continuous_factory_outlet"))
-            .addStoryBoard("plant/rotary_kiln", ContinuousFactoryPonderScenes::kiln);
-        helper.forComponents(CreatePlant.location("rolling_mill"), CreatePlant.location("rolling_stand"), CreatePlant.location("thick_steel_plate"),
-            CreatePlant.location("cast_stainless_steel_slab"))
-            .addStoryBoard("plant/rolling_mill", ContinuousFactoryPonderScenes::mill);
-        helper.forComponents(CreatePlant.location("torpedo_tank"), CreatePlant.location("silica_refractory_bricks"),
-            CreatePlant.location("cast_steel_slab"), CreatePlant.location("molten_pig_iron_bucket"))
-            .addStoryBoard("plant/torpedo_car", SteelworksPonderScenes::torpedo);
-        helper.forComponents(CreatePlant.location("stainless_steel_ingot"), CreatePlant.location("molten_stainless_steel_bucket"),
-            CreatePlant.location("ferrochrome"), CreatePlant.location("cast_stainless_steel_slab"),
-            CreatePlant.location("stainless_steel_sheet"), CreatePlant.location("stainless_steel_block"))
-            .addStoryBoard("plant/stainless_casting", SteelworksPonderScenes::stainless);
-        for (var product : ContinuousFactoryPonderScenes.ROLLED) helper.forComponents(CreatePlant.location(product.id()))
-            .addStoryBoard("plant/rolled_" + product.id(), (scene, util) -> ContinuousFactoryPonderScenes.rolled(scene, util, product));
-        // Every stainless item leads to the rolling step that finally makes the ingots.
-        helper.forComponents(CreatePlant.location("cast_stainless_steel_slab"), CreatePlant.location("molten_stainless_steel_bucket"),
-                CreatePlant.location("stainless_steel_sheet"), CreatePlant.location("stainless_steel_block"))
-            .addStoryBoard("plant/rolled_stainless_steel_ingot", (scene, util) -> ContinuousFactoryPonderScenes.rolled(scene, util,
-                ContinuousFactoryPonderScenes.ROLLED.getLast()));
-        helper.forComponents(CreatePlant.location("coil_winder"), CreatePlant.location("winder_brake"), CreatePlant.location("heavy_wire_rope"))
-            .addStoryBoard("plant/coil_winder", ContinuousFactoryPonderScenes::winder);
         for (var tutorial : PlantTutorialCatalog.all()) if (tutorial.family() != null) {
             helper.forComponents(tutorial.components().stream().map(name -> name.contains(":") ? ResourceLocation.parse(name) : CreatePlant.location(name)).toArray(ResourceLocation[]::new))
                 .addStoryBoard(tutorial.storyboard(), (scene, util) -> PlantPonderScenes.show(scene, util, tutorial));
@@ -100,15 +76,6 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             liquidContainers.add(CreatePlant.location(liquid.name() + "_bucket"));
         helper.forComponents(liquidContainers.toArray(ResourceLocation[]::new))
             .addStoryBoard("plant/world_liquids", WorldLiquidsPonderScenes::liquids);
-        helper.forComponents(CreatePlant.location("facility_constructor"))
-            .addStoryBoard("plant/facility_constructor", AssemblyPonderScenes::constructor);
-        helper.forComponents(CreatePlant.location("industrial_arm"), CreatePlant.location("welding_torch"), CreatePlant.location("welded_iron_beam"))
-            .addStoryBoard("plant/industrial_arm", ArmPonderScenes::arm);
-        helper.forComponents(CreatePlant.location("magnetic_core_memory"), CreatePlant.location("ferrite_core"), CreatePlant.location("enamelled_copper_wire"),
-                CreatePlant.location("incomplete_magnetic_core_memory"), CreatePlant.location("industrial_arm"))
-            .addStoryBoard("plant/industrial_arm", ArmPonderScenes::memory);
-        helper.forComponents(CreatePlant.location("relay_computer"), CreatePlant.location("relay_rack"), CreatePlant.location("large_relay"))
-            .addStoryBoard("plant/relay_computer", RelayPonderScenes::computer);
         helper.forComponents(CreatePlant.location("natural_draft_cooling_tower"), CreatePlant.location("cooling_tower_shell"),
             CreatePlant.location("cooling_tower_basin"), CreatePlant.location("cooling_tower_fill"), CreatePlant.location("cooling_tower_distributor"),
             CreatePlant.location("cooling_tower_hot_inlet"), CreatePlant.location("cooling_tower_cold_outlet"), CreatePlant.location("cooling_tower_makeup_inlet"))
@@ -119,20 +86,6 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
         helper.forComponents(CreatePlant.location("pid_controller"), CreatePlant.location("pid_instrument_rack"), CreatePlant.location("process_transmitter"),
             CreatePlant.location("control_valve_actuator"), CreatePlant.location("flow_regulator"))
             .addStoryBoard("plant/process_pid", PlantSystemsPonderScenes::pid);
-        helper.forComponents(CreatePlant.location("pulse_extraction_column"), CreatePlant.location("extraction_column_shell"), CreatePlant.location("extraction_pulse_plate"),
-            CreatePlant.location("extraction_column_outlet"), CreatePlant.location("vitrification_melter"), CreatePlant.location("vitrification_refractory_shell"),
-            CreatePlant.location("vitrification_electrode"), CreatePlant.location("empty_waste_canister"), CreatePlant.location("vitrified_waste_canister"),
-            CreatePlant.location("mox_fuel_rod"), CreatePlant.location("borosilicate_glass_frit"), CreatePlant.location("chopped_spent_fuel"),
-            CreatePlant.location("spent_cladding_hulls"), CreatePlant.location("plutonium_dioxide"), CreatePlant.location("depleted_uranium_dioxide"),
-            CreatePlant.location("mox_powder"), CreatePlant.location("green_mox_pellet"), CreatePlant.location("mox_pellet"))
-            .addStoryBoard("plant/fuel_cycle", PlantSystemsPonderScenes::fuelCycle);
-        helper.forComponents(CreatePlant.location("fusion_crane_drive"), CreatePlant.location("lithium_lead_blanket_cartridge"), CreatePlant.location("tungsten_divertor_cassette"),
-            CreatePlant.location("spent_blanket_cartridge"), CreatePlant.location("spent_divertor_cassette"),
-            CreatePlant.location("irradiation_cartridge"), CreatePlant.location("irradiated_cartridge"))
-            .addStoryBoard("plant/fusion_maintenance", PlantSystemsPonderScenes::maintenance);
-        helper.forComponents(CreatePlant.location("gas_centrifuge"),CreatePlant.location("lidded_vessel"),
-                CreatePlant.location("gas_receiver"))
-            .addStoryBoard("plant/gas_centrifuge",HighStressPonderScenes::centrifuge);
         for (var tutorial : PlantTutorialCatalog.all()) if (tutorial.family() == null) {
             helper.forComponents(tutorial.components().stream().map(name -> name.contains(":") ? ResourceLocation.parse(name) : CreatePlant.location(name)).toArray(ResourceLocation[]::new))
                 .addStoryBoard(tutorial.storyboard(), (scene, util) -> PlantPonderScenes.show(scene, util, tutorial));
@@ -189,73 +142,6 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
             .addStoryBoard("plant/reaction_tower", ReactionTowerPonderScenes::materials);
         helper.forComponents(CreatePlant.location("ammonia_separator"))
             .addStoryBoard("chemistry/ammonia_separator", AmmoniaSeparatorPonderScenes::separator);
-        helper.forComponents(
-                CreatePlant.location("reactor_graphite"),
-                CreatePlant.location("reactor_fuel_channel"),
-                CreatePlant.location("reactor_top_cap"),
-                CreatePlant.location("biological_shield"),
-                CreatePlant.location("reactor_feed_bundle"),
-                CreatePlant.location("biological_shield_coolant_outlet"),
-                CreatePlant.location("serpentinite"))
-            .addStoryBoard("nuclear/rbmk_core", RbmkPonderScenes::core);
-        helper.forComponents(CreatePlant.location("reactor_fuel_channel"), CreatePlant.location("reactor_top_cap"),
-                CreatePlant.location("reactor_feed_bundle"), CreatePlant.location("biological_shield"),
-                CreatePlant.location("biological_shield_drive"), CreatePlant.location("reactor_fuel_channel_tube"),
-                CreatePlant.location("compact_enriched_fuel_rod"),
-                CreatePlant.location("compact_uranium_dioxide"), CreatePlant.location("green_compact_uranium_pellet"), CreatePlant.location("compact_uranium_pellet"))
-            .addStoryBoard("nuclear/rbmk_compact_core", RbmkPonderScenes::compactCore);
-        helper.forComponents(
-                CreatePlant.location("fusion_reinforced_casing"),
-                CreatePlant.location("fusion_toroidal_field_coil"),
-                CreatePlant.location("fusion_central_solenoid"),
-                CreatePlant.location("fusion_vacuum_vessel"),
-                CreatePlant.location("fusion_breeding_blanket"),
-                CreatePlant.location("fusion_divertor"),
-                CreatePlant.location("fusion_reactor_controller"),
-                CreatePlant.location("fusion_vacuum_pump"),
-                CreatePlant.location("fusion_deuterium_port"),
-                CreatePlant.location("fusion_tritium_port"),
-                CreatePlant.location("fusion_ash_port"),
-                CreatePlant.location("fusion_helium_inlet"),
-                CreatePlant.location("fusion_helium_outlet"),
-                CreatePlant.location("fusion_coolant_inlet"),
-                CreatePlant.location("fusion_coolant_outlet"),
-                CreatePlant.location("fusion_viewport"))
-            .addStoryBoard("nuclear/fusion_tokamak", FusionPonderScenes::tokamak);
-        helper.forComponents(
-                CreatePlant.location("fusion_control_console"),
-                CreatePlant.location("fusion_console_panel"),
-                com.simibubi.create.AllBlocks.DISPLAY_LINK.getId())
-            .addStoryBoard("nuclear/fusion_console", FusionPonderScenes::console);
-        helper.forComponents(CreatePlant.location("cryogenic_cold_box_drive"), CreatePlant.location("cryogenic_regenerator"))
-            .addStoryBoard("plant/helium_cold_box", FusionPonderScenes::coldBox);
-        helper.forComponents(CreatePlant.location("fusion_motor_generator"))
-            .addStoryBoard("nuclear/fusion_motor_generator", FusionPonderScenes::motorGenerator);
-        helper.forComponents(
-                CreatePlant.location("reactor_top_cap"),
-                CreatePlant.location("control_rod"),
-                CreatePlant.location("control_rod_controller"),
-                CreatePlant.location("control_rod_link"))
-            .addStoryBoard("nuclear/rbmk_control_rods", RbmkPonderScenes::controlRods);
-        helper.forComponents(
-                CreatePlant.location("reactor_control_console"),
-                com.simibubi.create.AllBlocks.DISPLAY_LINK.getId(),
-                CreatePlant.location("control_rod_controller"))
-            .addStoryBoard("nuclear/rbmk_control_room", RbmkPonderScenes::controlRoom);
-        helper.forComponents(
-                CreatePlant.location("crane_drive"),
-                com.simibubi.create.AllBlocks.METAL_GIRDER.getId())
-            .addStoryBoard("crane/gantry_crane", CranePonderScenes::crane);
-        helper.forComponents(CreatePlant.location("crane_drive"), CreatePlant.location("fuel_pool"), CreatePlant.location("reactor_top_cap"))
-            .addStoryBoard("crane/crane_refuelling", CranePonderScenes::refuel);
-        helper.forComponents(CreatePlant.location("quarry_drive"))
-            .addStoryBoard("crane/quarry_frame", QuarryPonderScenes::quarryFrame);
-        helper.forComponents(CreatePlant.location("personal_dosimeter"), CreatePlant.location("survey_meter"), CreatePlant.location("fuel_pool"))
-            .addStoryBoard("nuclear/radiation_measurement", RadiationPonderScenes::measurement);
-        helper.forComponents(CreatePlant.location("personal_dosimeter"), CreatePlant.location("survey_meter"), CreatePlant.location("soap"), CreatePlant.location("gas_mask"))
-            .addStoryBoard("nuclear/radiation_decontamination", RadiationPonderScenes::decontamination);
-        helper.forComponents(CreatePlant.location("fuel_pool"))
-            .addStoryBoard("nuclear/fuel_pool", FuelPoolPonderScenes::pool);
         helper.forComponents(CreatePlant.location("pipe_thermometer"), CreatePlant.location("pipe_pressure_gauge"), CreatePlant.location("pipe_flow_meter"))
             .addStoryBoard("plant/pipe_gauges", PipeGaugePonderScenes::gauges);
         helper.forComponents(CreatePlant.location("flare_tip"),CreatePlant.location("pipe_pressure_gauge"),CreatePlant.location("stainless_steel_pipe"))
@@ -297,6 +183,5 @@ public class ElectrolysisPonderPlugin implements PonderPlugin {
 
         helper.forComponents(CreatePlant.location("lidded_vessel"), com.simibubi.create.AllBlocks.FLUID_TANK.getId(), CreatePlant.location("antifreeze_bucket"))
             .addStoryBoard("plant/chemical_mixtures", MixturePonderScenes::mixing);
-
     }
 }

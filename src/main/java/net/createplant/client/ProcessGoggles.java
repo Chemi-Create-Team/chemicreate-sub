@@ -42,6 +42,22 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public final class ProcessGoggles {
+    /** Lets a multiblock's filler block show the goggle tooltip of the block entity that owns it; null when the block is none of that addon's. */
+    public interface Redirect { net.minecraft.core.BlockPos target(net.minecraft.client.multiplayer.ClientLevel level, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state); }
+
+    private static final List<Redirect> REDIRECTS = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    public static void registerRedirect(Redirect redirect) { REDIRECTS.add(redirect); }
+
+    public static net.minecraft.core.BlockPos target(net.minecraft.client.multiplayer.ClientLevel level, net.minecraft.core.BlockPos pos) {
+        var state = level.getBlockState(pos);
+        for (var redirect : REDIRECTS) {
+            var target = redirect.target(level, pos, state);
+            if (target != null) return target;
+        }
+        return pos;
+    }
+
     private static final Set<String> BLOCKED = Set.of("heat", "preheat", "heat_required", "pressure", "catalyst", "mixed", "hatch", "structure",
         "no_feed", "temperature_delta", "feed", "input", "output", "products_full", "gas_output", "power", "no_power", "speed", "no_speed", "overstressed", "rpm",
         "blocked", "fouled", "redstone", "coolant", "no_coolant", "voltage", "incomplete", "unformed", "unloaded");

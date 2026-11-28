@@ -28,6 +28,17 @@ import net.minecraft.world.phys.Vec3;
 public final class PlantPonderScenes {
     private PlantPonderScenes() { }
 
+    /** What an addon adds to one catalogue tutorial; a fresh instance is made for every scene. */
+    public interface Extension {
+        default boolean ownsReveal() { return false; }
+        default void step(CreateSceneBuilder scene, SceneBuildingUtil util, PlantTutorialCatalog.Tutorial tutorial, PlantTutorialCatalog.Step step, BlockPos target, Selection factory) { }
+        default BlockState placed(BlockState state) { return state; }
+    }
+
+    private static final java.util.Map<String, java.util.function.Supplier<Extension>> EXTENSIONS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    public static void register(String tutorialId, java.util.function.Supplier<Extension> extension) { EXTENSIONS.put(tutorialId, extension); }
+
     public static void show(SceneBuilder builder, SceneBuildingUtil util, PlantTutorialCatalog.Tutorial tutorial) {
         if (tutorial.family() != null) {
             ManufacturingPonderScenes.show(builder, util, tutorial);
@@ -53,22 +64,19 @@ public final class PlantPonderScenes {
         }
         int height=tutorial.height()==null ? 7 : tutorial.height();
         var factory = util.select().fromTo(0, 1, 0, size-1, height-1, size-1);
-        boolean converter=tutorial.id().equals("converter");
-        Selection converterVessel=converter ? converterVessel(util) : null;
-        Selection converterGas=converter ? converterGas(util) : null;
-        ElementLink<WorldSectionElement> movingVessel=null;
+        var extension = EXTENSIONS.containsKey(tutorial.id()) ? EXTENSIONS.get(tutorial.id()).get() : null;
         if(tutorial.id().startsWith("turbine_")) {
             scene.world().setBlocks(factory, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), false);
             ElectrolysisPonderScenes.completeThermalTurbine(scene,util);
         }
-        if (tutorial.formed() != null) scene.world().modifyBlocks(factory, PlantPonderScenes::placed, false);
+        if (tutorial.formed() != null) scene.world().modifyBlocks(factory, state -> extension == null ? placed(state) : extension.placed(placed(state)), false);
         if (tutorial.id().startsWith("turbine_") || tutorial.steps().stream().noneMatch(step -> step.reveal() != null)) {
             PonderText.build(scene, util, 0, 1, 0, size-1, height-1, size-1, Direction.DOWN);
         }
         scene.idle(15);
         for (var step : tutorial.steps()) {
             BlockPos target = new BlockPos(step.target()[0], step.target()[1], step.target()[2]);
-            if (step.reveal() != null && !converter && !tutorial.id().startsWith("turbine_")) {
+            if (step.reveal() != null && (extension == null || !extension.ownsReveal()) && !tutorial.id().startsWith("turbine_")) {
                 int[] box = step.reveal();
                 PonderText.build(scene, util, box[0], box[1], box[2], box[3], box[4], box[5], Direction.DOWN);
                 scene.idle(15);
@@ -83,40 +91,7 @@ public final class PlantPonderScenes {
                     tag.putInt("TubeGauge", 42);
                 });
             }
-            if (converter) {
-                BlockPos owner = new BlockPos(1, 6, 6), origin = new BlockPos(5, 1, 6);
-                if (step.key().equals("step_1"))
-                    scene.world().showSection(factory.copy().substract(converterVessel).substract(converterGas), Direction.DOWN);
-                if (step.key().equals("step_2"))
-                    scene.world().showSection(converterVessel, Direction.DOWN);
-                if (step.key().equals("step_6"))
-                    scene.world().showSection(converterGas, Direction.DOWN);
-                if (step.key().equals(tutorial.formed()) || step.key().equals("step_2") || step.key().equals("step_3"))
-                    scene.world().modifyBlockEntity(owner, net.createplant.block.entity.ConverterTrunnionBearingBlockEntity.class,
-                        be -> be.ponderVisual(origin, Direction.NORTH, 0, false));
-                if (step.key().equals("step_4") || step.key().equals("step_7"))
-                    scene.world().modifyBlockEntity(owner, net.createplant.block.entity.ConverterTrunnionBearingBlockEntity.class,
-                        be -> be.ponderVisual(origin, Direction.NORTH, 0, true));
-                if (step.key().equals("step_5")) {
-                    scene.world().modifyBlockEntity(owner, net.createplant.block.entity.ConverterTrunnionBearingBlockEntity.class,
-                        be -> be.ponderVisual(origin, Direction.NORTH, 60, false));
-                    movingVessel=scene.world().makeSectionIndependent(converterVessel);
-                    scene.world().configureCenterOfRotation(movingVessel, Vec3.atCenterOf(new BlockPos(5, 6, 6)));
-                    scene.world().rotateSection(movingVessel, -60, 0, 0, 40);
-                    scene.world().rotateBearing(owner, -60, 40);
-                }
-                if (step.key().equals("step_6") && movingVessel != null) {
-                    scene.world().rotateSection(movingVessel, 60, 0, 0, 40);
-                    scene.world().rotateBearing(owner, 60, 40);
-                    scene.world().modifyBlockEntity(owner, net.createplant.block.entity.ConverterTrunnionBearingBlockEntity.class,
-                        be -> be.ponderVisual(origin, Direction.NORTH, 0, false));
-                }
-                if (step.key().equals("step_3")) {
-                    scene.overlay().showOutline(PonderPalette.OUTPUT, "converter_glue", converterVessel, 120);
-                    scene.overlay().showControls(util.vector().centerOf(target), net.createmod.catnip.math.Pointing.DOWN, 100)
-                        .rightClick().withItem(com.simibubi.create.AllItems.SUPER_GLUE.asStack());
-                }
-            }
+            if (extension != null) extension.step(scene, util, tutorial, step, target, factory);
             if(tutorial.id().startsWith("turbine_") && step.key().equals("step_2")){
                 scene.world().modifyBlockEntity(new BlockPos(17,5,10),net.createplant.block.entity.SteamTurbineBlockEntity.class,rotor->{rotor.thermodynamics().input().fill(net.createplant.thermal.FluidThermal.at(FluidForm.STEAM.stack(1000),750),net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);rotor.thermodynamics().step(true,64);});
                 scene.world().setKineticSpeed(util.select().fromTo(2,5,10,19,5,10),256);
@@ -196,28 +171,6 @@ public final class PlantPonderScenes {
         }
     }
 
-    private static Selection converterVessel(SceneBuildingUtil util) {
-        Selection selection=util.select().position(2, 6, 6).add(util.select().position(8, 6, 6));
-        for (int x=4;x<=6;x++) for (int z=5;z<=7;z++)
-            selection=selection.add(util.select().position(x, 3, z));
-        for (int y=4;y<=7;y++) {
-            for (int x=3;x<=7;x++) for (int z=4;z<=8;z++)
-                if (x==3 || x==7 || z==4 || z==8)
-                    selection=selection.add(util.select().position(x, y, z));
-            for (int x=4;x<=6;x++) for (int z=5;z<=7;z++)
-                if (x==4 || x==6 || z==5 || z==7)
-                    selection=selection.add(util.select().position(x, y, z));
-        }
-        return selection;
-    }
-
-    private static Selection converterGas(SceneBuildingUtil util) {
-        Selection selection=util.select().position(5, 10, 11);
-        for (int x=6;x<=13;x++) selection=selection.add(util.select().position(x, 10, 11));
-        for (int y=1;y<10;y++) selection=selection.add(util.select().position(13, y, 11));
-        return selection;
-    }
-
     /** The look a multiblock part has as placed, before the structure forms; the structure NBT keeps the formed look. */
     private static BlockState placed(BlockState state) {
         if (state.getBlock() instanceof net.createplant.block.GasTankContainerBlock) return state.setValue(net.createplant.block.GasTankContainerBlock.SIZE, 0);
@@ -232,8 +185,6 @@ public final class PlantPonderScenes {
         if (state.getBlock() instanceof net.createplant.block.ExchangerControllerBlock controller)
             return controller.kind.casing().defaultBlockState().setValue(ThermalCasingBlock.FACING, state.getValue(net.createplant.block.ThermalMachineBlock.FACING));
         if (state.getBlock() instanceof CoolerRadiatorBlock || state.getBlock() instanceof CoolingFanShroudBlock) return state.getBlock().defaultBlockState();
-        if (state.getBlock() instanceof net.createplant.block.ConverterShellBlock)
-            return state.setValue(net.createplant.block.ConverterShellBlock.PART, net.createplant.block.ConverterShellBlock.Part.LOOSE);
         return state;
     }
 }

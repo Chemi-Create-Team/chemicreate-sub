@@ -43,75 +43,60 @@ public class CECreativeModeTabs {
     );
 
     /** Material groups follow the equipment, after the liquid and gas buckets. */
-    private static final List<List<String>> MATERIAL_GROUPS = List.of(
-        List.of("uranium_ore", "deepslate_uranium_ore", "bauxite_ore", "deepslate_bauxite_ore", "pentlandite_ore", "deepslate_pentlandite_ore",
-            "ilmenite_ore", "deepslate_ilmenite_ore", "zircon_ore", "deepslate_zircon_ore", "chromite_ore", "deepslate_chromite_ore",
-            "molybdenite_ore", "deepslate_molybdenite_ore", "spodumene_ore", "deepslate_spodumene_ore", "galena_ore", "deepslate_galena_ore", "halite_ore", "deepslate_halite_ore", "serpentinite"),
-        List.of("uraninite", "bauxite", "pentlandite", "ilmenite", "zircon", "chromite", "molybdenite", "spodumene", "galena", "fluorite", "borax", "gypsum", "asbestos"),
-        List.of("salt", "sulfur_dust", "alumina", "titanium_dioxide", "zirconia", "zirconium_sulfate_hydrate", "zirconyl_sulfate", "titanyl_sulfate_hydrate", "aluminium_sulfate_hydrate", "iron_sulfate_hydrate", "copper_sulfate_crystals", "zinc_sulfate_hydrate", "tin_sulfate_crystals", "lead_chloride_crystals", "uranyl_nitrate_hydrate", "plutonium_nitrate_crystals", "sodium_aluminate_crystals", "caustic_soda_flakes", "ammonium_chloride_crystals", "nickel_oxide", "molybdenum_trioxide", "chromium_oxide",
-            "iron_oxide_red", "nickel_titanium_yellow", "molybdenum_blue", "triiron_tetroxide_pile", "ammonium_nitrate", "ammonium_sulfate",
-            "quicklime", "sodium_bicarbonate", "sodium_carbonate", "lithium_carbonate", "lead_sinter", "urea", "potash", "phosphate_fertilizer", "npk_fertilizer",
-            "pvc_resin", "cement_clinker", "ground_clinker", "cement_powder", "borosilicate_glass_frit", "water_treatment_flocculant",
-            "treatment_sludge", "charred_wood"),
-        List.of("carbon_powder", "unprocessed_steel", "pig_iron", "heated_unfinished_steel", "steel_slag", "steel_ingot", "steel_block", "ferrochrome", "aluminum_ingot", "lead_ingot", "nickel_ingot", "titanium_ingot", "zirconium_ingot", "chromium_ingot",
-            "molybdenum_ingot", "stainless_steel_ingot", "aluminum_sheet", "nickel_sheet", "titanium_sheet", "stainless_steel_sheet",
-            "large_iron_plate", "cast_steel_slab", "cast_stainless_steel_slab", "thick_steel_plate", "steel_h_beam", "steel_rail_stock", "copper_foil", "aluminum_foil", "electrical_steel_sheet", "stainless_clad_plate", "lead_sheet", "gold_foil", "steel_core_aluminum_cable",
-            "heavy_wire_rope", "deformed_workpiece", "loose_winding", "iron_pipe", "unfired_ceramic_pipe", "zircaloy_cladding_tube"),
-        List.of("polyethylene", "polypropylene", "synthetic_rubber", "industrial_resin", "plastic_sheet", "rubber_gasket",
-            "flame_retardant_pellet", "heat_resistant_gasket", "flexible_rubber_hose", "paraffin_wax", "phenolic_resin", "phenolic_board",
-            "phosphate_compound", "heat_resistant_coating", "fire_resistant_conductor", "fire_resistant_cable"),
+    private static final List<List<String>> MATERIAL_GROUPS = new java.util.concurrent.CopyOnWriteArrayList<>(List.of(
+        List.of("bauxite_ore", "deepslate_bauxite_ore", "pentlandite_ore", "deepslate_pentlandite_ore", "ilmenite_ore", "deepslate_ilmenite_ore",
+            "zircon_ore", "deepslate_zircon_ore", "chromite_ore", "deepslate_chromite_ore", "molybdenite_ore", "deepslate_molybdenite_ore",
+            "spodumene_ore", "deepslate_spodumene_ore", "galena_ore", "deepslate_galena_ore", "halite_ore", "deepslate_halite_ore"),
+        List.of("bauxite", "pentlandite", "ilmenite", "zircon", "chromite", "molybdenite", "spodumene", "galena", "fluorite", "borax", "gypsum",
+            "asbestos"),
+        List.of("salt", "sulfur_dust", "alumina", "titanium_dioxide", "zirconia", "zirconium_sulfate_hydrate", "zirconyl_sulfate",
+            "titanyl_sulfate_hydrate", "aluminium_sulfate_hydrate", "iron_sulfate_hydrate", "copper_sulfate_crystals", "zinc_sulfate_hydrate",
+            "tin_sulfate_crystals", "lead_chloride_crystals", "uranyl_nitrate_hydrate", "plutonium_nitrate_crystals", "sodium_aluminate_crystals",
+            "caustic_soda_flakes", "ammonium_chloride_crystals", "nickel_oxide", "molybdenum_trioxide", "chromium_oxide", "iron_oxide_red",
+            "nickel_titanium_yellow", "molybdenum_blue", "triiron_tetroxide_pile", "ammonium_nitrate", "ammonium_sulfate", "quicklime",
+            "sodium_bicarbonate", "sodium_carbonate", "lithium_carbonate", "lead_sinter", "urea", "potash", "phosphate_fertilizer", "npk_fertilizer",
+            "pvc_resin", "cement_clinker", "ground_clinker", "cement_powder", "water_treatment_flocculant", "treatment_sludge", "charred_wood"),
+        List.of("carbon_powder", "unprocessed_steel", "pig_iron", "heated_unfinished_steel", "steel_slag", "steel_ingot", "steel_block",
+            "ferrochrome", "aluminum_ingot", "lead_ingot", "nickel_ingot", "titanium_ingot", "zirconium_ingot", "chromium_ingot", "molybdenum_ingot",
+            "stainless_steel_ingot", "aluminum_sheet", "nickel_sheet", "titanium_sheet", "stainless_steel_sheet", "iron_pipe",
+            "unfired_ceramic_pipe", "zircaloy_cladding_tube"),
+        List.of("polyethylene", "polypropylene", "synthetic_rubber", "industrial_resin", "plastic_sheet", "rubber_gasket", "flame_retardant_pellet",
+            "heat_resistant_gasket", "flexible_rubber_hose", "paraffin_wax", "phenolic_resin", "phenolic_board", "phosphate_compound",
+            "heat_resistant_coating", "fire_resistant_conductor", "fire_resistant_cable"),
         List.of("iron_catalyst", "oxidation_catalyst", "cracking_catalyst", "polymerization_catalyst", "hydrotreating_catalyst",
-            "hydrocracking_catalyst", "shift_catalyst_core", "iron_ft_catalyst_core", "cobalt_ft_catalyst_core",
-            "zsm5_catalyst_core", "cumene_catalyst_core", "platinum_zeolite_core", "water_filter_medium"),
+            "hydrocracking_catalyst", "shift_catalyst_core", "iron_ft_catalyst_core", "cobalt_ft_catalyst_core", "zsm5_catalyst_core",
+            "cumene_catalyst_core", "platinum_zeolite_core", "water_filter_medium"),
         List.of("nickel_electrode_plate", "asbestos_wrapped_electrode", "high_pressure_turbine_blade", "low_pressure_turbine_blade", "tarbin_end",
             "low_pressure_turbine_end"),
-        List.of("yellowcake", "uranium_trioxide", "uranium_dioxide", "uranium_tetrafluoride", "enriched_uranium_dioxide", "green_uranium_pellet",
-            "uranium_pellet", "fuel_rod", "compact_uranium_dioxide", "green_compact_uranium_pellet", "compact_uranium_pellet",
-            "compact_enriched_fuel_rod", "control_rod", "plutonium_dioxide", "depleted_uranium_dioxide", "mox_powder", "green_mox_pellet",
-            "mox_pellet", "mox_fuel_rod", "lithium_target_rod", "irradiated_lithium_target_rod", "lithium_lead_blanket_cartridge",
-            "irradiation_cartridge", "tungsten_divertor_cassette"),
-        List.of("spent_fuel_rod", "spent_control_rod", "chopped_spent_fuel", "spent_cladding_hulls", "spent_blanket_cartridge",
-            "irradiated_cartridge", "spent_divertor_cassette", "empty_waste_canister", "vitrified_waste_canister"),
-        List.of("anfo", "blasting_charge"),
-        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "steam_gun", "steam_hammer", "pipe_configurator", "gas_mask", "gas_mask_filter", "inert_gas_cylinder", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers", "hazard_helmet", "hazard_chestplate", "hazard_leggings", "hazard_boots", "soap")
-    );
+        List.of("fire_extinguisher", "flamethrower", "chemical_sprayer", "steam_gun", "steam_hammer", "pipe_configurator", "gas_mask",
+            "gas_mask_filter", "inert_gas_cylinder", "protective_cap", "protective_coat", "protective_trousers", "protective_shoe_covers",
+            "hazard_helmet", "hazard_chestplate", "hazard_leggings", "hazard_boots", "soap")
+    ));
 
     /** Equipment and construction groups in display order. */
-    private static final List<List<String>> EQUIPMENT_GROUPS = List.of(
+    private static final List<List<String>> EQUIPMENT_GROUPS = new java.util.concurrent.CopyOnWriteArrayList<>(List.of(
         List.of("industrial_concrete", "industrial_concrete_slab", "industrial_concrete_stairs", "corrosion_resistant_floor",
-            "corrosion_resistant_floor_slab", "molded_polymer", "industrial_glass", "silica_refractory_bricks", "zirconia_refractory_bricks", "stainless_steel_block", "titanium_block",
-            "diorite_casing", "tank_casing"),
+            "corrosion_resistant_floor_slab", "molded_polymer", "industrial_glass", "stainless_steel_block", "titanium_block", "diorite_casing",
+            "tank_casing"),
         List.of("nickel_alloy_pipe", "zirconium_pipe", "stainless_steel_pipe", "ceramic_pipe"),
         List.of("nickel_alloy_pump", "zirconium_pump", "stainless_steel_pump"),
-        List.of("pressure_reducing_valve", "relief_scrubber", "gas_detector", "gas_recovery_duct", "flow_regulator",
-            "pipe_thermometer", "pipe_pressure_gauge", "pipe_flow_meter", "process_transmitter", "control_valve_actuator", "pid_controller",
-            "pid_instrument_rack"),
-        List.of("horizontal_fluid_tank", "torpedo_tank", "stainless_boiler", "pressure_tank", "stainless_steel_tank", "cryogenic_tank", "gas_receiver", "gas_tank_container", "high_pressure_separator",
-            "gas_holder", "lidded_vessel", "stirred_tank", "ammonia_separator"),
-        List.of("high_pressure_turbine_unit", "low_pressure_turbine_unit", "large_flywheel", "high_pressure_turbine_casing", "low_pressure_turbine_casing", "reciprocating_cylinder",
-            "reciprocating_compressor"),
-        List.of("electric_pump", "high_pressure_pump", "hose_connector", "agricultural_sprayer",
-            "tube_piped_tank", "jacketed_pipe",
+        List.of("pressure_reducing_valve", "relief_scrubber", "gas_detector", "gas_recovery_duct", "flow_regulator", "pipe_thermometer",
+            "pipe_pressure_gauge", "pipe_flow_meter", "process_transmitter", "control_valve_actuator", "pid_controller", "pid_instrument_rack"),
+        List.of("horizontal_fluid_tank", "stainless_boiler", "pressure_tank", "stainless_steel_tank", "cryogenic_tank", "gas_receiver",
+            "gas_tank_container", "high_pressure_separator", "gas_holder", "lidded_vessel", "stirred_tank", "ammonia_separator"),
+        List.of("high_pressure_turbine_unit", "low_pressure_turbine_unit", "large_flywheel", "high_pressure_turbine_casing",
+            "low_pressure_turbine_casing", "reciprocating_cylinder", "reciprocating_compressor"),
+        List.of("electric_pump", "high_pressure_pump", "hose_connector", "agricultural_sprayer", "tube_piped_tank", "jacketed_pipe",
             "cooler_radiator", "cooling_fan", "cooling_fan_shroud", "natural_draft_cooling_tower", "cooling_tower_shell", "cooling_tower_basin",
-            "cooling_tower_fill", "cooling_tower_distributor", "cooling_tower_hot_inlet", "cooling_tower_cold_outlet",
-            "cooling_tower_makeup_inlet", "condenser_waterbox", "condenser_shell", "condenser_tube_bundle", "condenser_cooling_inlet",
-            "condenser_cooling_outlet", "cryogenic_cold_box_drive", "cryogenic_regenerator"),
-        List.of("fractionating_column", "vessel_stirrer", "reactor_impeller", "gas_centrifuge", "cubic_press", "large_mechanical_press", "large_depot", "reactor_separator_core", "large_absorption_tower", "reaction_tower",
-            "electrolysis_cell", "electrolysis_electrode_head", "electrolysis_cell_controller", "electrolysis_furnace_shell", "electrolysis_furnace_anode",
-            "electrolysis_furnace_busbar", "converter_shell", "converter_trunnion_bearing", "fuel_cell", "lead_acid_battery_casing", "lead_acid_battery_terminal", "lithium_ion_battery_casing", "lithium_ion_battery_terminal", "flare_tip"),
-        List.of("reactor_graphite", "reactor_fuel_channel", "reactor_fuel_channel_tube", "reactor_top_cap", "reactor_feed_bundle",
-            "biological_shield", "biological_shield_drive", "biological_shield_coolant_outlet", "control_rod_link", "control_rod_controller",
-            "reactor_control_console", "reactor_console_display", "fuel_pool"),
-        List.of("pulse_extraction_column", "extraction_column_shell", "extraction_pulse_plate", "extraction_column_outlet", "vitrification_melter",
-            "vitrification_refractory_shell", "vitrification_electrode"),
-        List.of("fusion_reactor_controller", "fusion_reinforced_casing", "fusion_toroidal_field_coil", "fusion_central_solenoid",
-            "fusion_vacuum_vessel", "fusion_breeding_blanket", "fusion_divertor", "fusion_viewport", "fusion_motor_generator",
-            "fusion_vacuum_pump", "fusion_deuterium_port", "fusion_tritium_port", "fusion_ash_port", "fusion_helium_inlet",
-            "fusion_helium_outlet", "fusion_coolant_inlet", "fusion_coolant_outlet", "fusion_control_console", "fusion_console_panel"),
-        List.of("crane_drive", "fusion_crane_drive", "quarry_drive", "industrial_dispatch_board", "facility_constructor", "vault_hatch",
-            "industrial_arm", "welding_torch"),
-        List.of("rotary_kiln", "rotary_kiln_exhaust", "rolling_mill", "rolling_stand", "coil_winder", "winder_brake", "continuous_factory_frame", "continuous_factory_outlet")
-    );
+            "cooling_tower_fill", "cooling_tower_distributor", "cooling_tower_hot_inlet", "cooling_tower_cold_outlet", "cooling_tower_makeup_inlet",
+            "condenser_waterbox", "condenser_shell", "condenser_tube_bundle", "condenser_cooling_inlet", "condenser_cooling_outlet",
+            "cryogenic_cold_box_drive", "cryogenic_regenerator"),
+        List.of("fractionating_column", "vessel_stirrer", "reactor_impeller", "reactor_separator_core", "large_absorption_tower", "reaction_tower",
+            "electrolysis_cell", "electrolysis_electrode_head", "electrolysis_cell_controller", "electrolysis_furnace_shell",
+            "electrolysis_furnace_anode", "electrolysis_furnace_busbar", "fuel_cell", "lead_acid_battery_casing", "lead_acid_battery_terminal",
+            "lithium_ion_battery_casing", "lithium_ion_battery_terminal", "flare_tip"),
+        List.of("facility_constructor", "vault_hatch")
+    ));
 
     private static void display(CreativeModeTab.Output output) {
         display(output, false);
@@ -168,6 +153,39 @@ public class CECreativeModeTabs {
         if (MATERIAL_GROUPS.getLast().contains(path)) return "equipment";
         for (var group : MATERIAL_GROUPS) if (group.contains(path)) return "materials";
         return item instanceof BlockItem ? "equipment" : "materials";
+    }
+
+    private static final java.util.Map<String, Integer> ADDED_AFTER = new java.util.HashMap<>();
+
+    private static List<List<String>> groupWith(String anchor) {
+        return MATERIAL_GROUPS.stream().anyMatch(group -> group.contains(anchor)) ? MATERIAL_GROUPS : EQUIPMENT_GROUPS;
+    }
+
+    private static synchronized void insert(String anchor, int offset, String[] paths) {
+        var groups = groupWith(anchor);
+        for (int i = 0; i < groups.size(); i++) {
+            var group = new ArrayList<>(groups.get(i));
+            int at = group.indexOf(anchor);
+            if (at < 0) continue;
+            group.addAll(at + offset, List.of(paths));
+            groups.set(i, List.copyOf(group));
+            return;
+        }
+    }
+
+    /** Places an addon's items right after a core item of the tab. */
+    public static void insertAfter(String anchor, String... paths) { insert(anchor, 1, paths); }
+
+    /** Places an addon's items right before a core item of the tab. */
+    public static void insertBefore(String anchor, String... paths) { insert(anchor, 0, paths); }
+
+    /** Starts a new group of an addon's items after the group of a core item; groups added after one item keep their order. */
+    public static synchronized void addGroupAfter(String anchor, String... paths) {
+        var groups = groupWith(anchor);
+        for (int i = 0; i < groups.size(); i++) if (groups.get(i).contains(anchor)) {
+            groups.add(i + 1 + ADDED_AFTER.merge(anchor, 1, Integer::sum) - 1, List.of(paths));
+            return;
+        }
     }
 
     public static void register(IEventBus modEventBus) {

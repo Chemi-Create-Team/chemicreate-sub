@@ -16,7 +16,6 @@ import net.createplant.chemistry.DistillationProfile;
 import net.createplant.chemistry.ProcessModule;
 import net.createplant.chemistry.ProcessRecipe;
 import net.createplant.chemistry.ReactorModule;
-import net.createplant.recipe.ConverterRecipe;
 import net.createplant.recipe.PressureReactionRecipe;
 import net.createplant.registry.*;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,10 +33,15 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
     private static final ResourceLocation NETHERRACK_CRUSHING = ResourceLocation.fromNamespaceAndPath("create", "crushing/netherrack");
     private static final ResourceLocation EX_NIHILO_NETHERRACK_CRUSHING = ResourceLocation.fromNamespaceAndPath("create", "crushing/compat/exnihilosequentia/netherrack");
 
-    private ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids, List<ItemStack> products,
+    public ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids, List<ItemStack> products,
         List<FluidStack> fluidProducts, ItemStack catalyst, ReactorModule module, HeatCondition heat) {
         this(items, fluids, products, fluidProducts, catalyst, module, heat, List.of(), 1, ItemStack.EMPTY);
     }
+
+    private static final List<java.util.function.Function<net.minecraft.world.item.crafting.Recipe<?>, ManufacturingRecipe>> ADDON_RESOLVERS = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /** An addon's reader for recipe types it owns; it answers null for other recipes. */
+    public static void register(java.util.function.Function<net.minecraft.world.item.crafting.Recipe<?>, ManufacturingRecipe> resolver) { ADDON_RESOLVERS.add(resolver); }
 
     public static ManufacturingRecipe resolve(Level level, String name) {
         if (name == null) return null;
@@ -54,15 +58,9 @@ public record ManufacturingRecipe(List<ItemStack> items, List<FluidStack> fluids
         var holder = manager.byKey(id);
         if (holder.isEmpty() && id.equals(NETHERRACK_CRUSHING)) holder = manager.byKey(EX_NIHILO_NETHERRACK_CRUSHING);
         var recipe = holder.orElseThrow(() -> new IllegalArgumentException("Missing manufacturing recipe " + id)).value();
-        if (recipe instanceof ConverterRecipe converter) {
-            var feeds = new ArrayList<FluidStack>();
-            feeds.add(converter.gasIngredient().getFluids()[0]);
-            converter.metalIngredient().ifPresent(metal -> feeds.add(metal.getFluids()[0]));
-            var products = java.util.stream.Stream.of(converter.metalResult(), converter.byproduct())
-                .filter(fluid -> !fluid.isEmpty()).toList();
-            return new ManufacturingRecipe(converter.itemIngredients().stream().map(ingredient -> ingredient.getItems()[0].copy()).toList(),
-                feeds, List.of(converter.result()), products,
-                ItemStack.EMPTY, ReactorModule.NONE, HeatCondition.NONE);
+        for (var resolver : ADDON_RESOLVERS) {
+            var resolved = resolver.apply(recipe);
+            if (resolved != null) return resolved;
         }
         if (recipe instanceof SequencedAssemblyRecipe assembly) {
             return new ManufacturingRecipe(List.of(assembly.getIngredient().getItems()[0].copy()), List.of(),

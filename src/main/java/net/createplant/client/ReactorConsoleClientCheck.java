@@ -14,14 +14,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 /** Opt-in rendered check of the complete five-by-five reactor control-room wall. */
-final class ReactorConsoleClientCheck {
+public final class ReactorConsoleClientCheck {
     private static BlockPos master;
     private static int ticks, fov;
     private static volatile String failure;
 
     private ReactorConsoleClientCheck() { }
 
-    static void start(Minecraft mc) {
+    public static void start(Minecraft mc) {
         mc.options.pauseOnLostFocus = false;
         mc.setScreen(null);
         fov = mc.options.fov().get();
@@ -32,7 +32,7 @@ final class ReactorConsoleClientCheck {
         ticks = 0;
     }
 
-    static boolean tick(Minecraft mc) throws Exception {
+    public static boolean tick(Minecraft mc) throws Exception {
         if (failure != null) throw new IllegalStateException(failure);
         if (mc.screen != null && !(mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen)) mc.setScreen(null);
         if (mc.level.getBlockEntity(master) instanceof ReactorControlConsoleBlockEntity console) console.preview();

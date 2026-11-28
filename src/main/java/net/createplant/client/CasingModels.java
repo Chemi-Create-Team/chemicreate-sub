@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import net.createplant.CreatePlant;
 import net.createplant.registry.CEBlocks;
-import net.createplant.registry.CEFusion;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -20,31 +19,24 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.ModelEvent;
 
 public final class CasingModels {
-    private static final Map<List<CTSpriteShiftEntry>, List<Supplier<? extends Block>>> CASINGS = new java.util.LinkedHashMap<>();
+    private static final Map<List<CTSpriteShiftEntry>, List<Supplier<? extends Block>>> CASINGS = java.util.Collections.synchronizedMap(new java.util.LinkedHashMap<>());
 
     private CasingModels() { }
 
-    private static CTSpriteShiftEntry shift(String texture) {
+    public static CTSpriteShiftEntry shift(String texture) {
         return CTSpriteShifter.getCT(AllCTTypes.OMNIDIRECTIONAL, CreatePlant.location("block/" + texture), CreatePlant.location("block/" + texture + "_connected"));
     }
 
     /** Reactor plating comes in three randomly chosen shades, each with its own connected sheet. */
-    private static List<CTSpriteShiftEntry> plated(String texture) {
+    public static List<CTSpriteShiftEntry> plated(String texture) {
         return List.of(shift(texture), shift(texture + "_1"), shift(texture + "_2"));
     }
 
+    /** An addon's casing blocks that join like Create casings. */
+    public static void register(List<CTSpriteShiftEntry> shifts, List<Supplier<? extends Block>> blocks) { CASINGS.put(shifts, blocks); }
+
     public static void init() {
         CASINGS.put(List.of(shift("diorite_casing")), List.<Supplier<? extends Block>>of(CEBlocks.DIORITE_CASING));
-        // Ports and the controller show the reactor casing on their sides, so they join the same outer skin.
-        CASINGS.put(plated("fusion/reinforced_casing"), List.<Supplier<? extends Block>>of(CEFusion.REINFORCED_CASING, CEFusion.CONTROLLER,
-            CEFusion.DEUTERIUM_PORT, CEFusion.TRITIUM_PORT, CEFusion.ASH_PORT, CEFusion.HELIUM_INLET, CEFusion.HELIUM_OUTLET,
-            CEFusion.COOLANT_INLET, CEFusion.COOLANT_OUTLET));
-        CASINGS.put(plated("fusion/breeding_blanket"), List.<Supplier<? extends Block>>of(CEFusion.BREEDING_BLANKET));
-        CASINGS.put(plated("fusion/vacuum_vessel"), List.<Supplier<? extends Block>>of(CEFusion.VACUUM_VESSEL));
-        CASINGS.put(plated("fusion/divertor"), List.<Supplier<? extends Block>>of(CEFusion.DIVERTOR));
-        CASINGS.put(List.of(shift("fusion/viewport")), List.<Supplier<? extends Block>>of(CEFusion.VIEWPORT));
-        CASINGS.put(List.of(shift("fusion/toroidal_field_coil")), List.<Supplier<? extends Block>>of(CEFusion.TOROIDAL_FIELD_COIL));
-        CASINGS.put(List.of(shift("fusion/central_solenoid")), List.<Supplier<? extends Block>>of(CEFusion.CENTRAL_SOLENOID));
     }
 
     public static void setup() {

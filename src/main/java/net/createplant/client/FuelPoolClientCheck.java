@@ -14,7 +14,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
-final class FuelPoolClientCheck {
+public final class FuelPoolClientCheck {
     private static final float[][] VIEWS = {{-9, 25, -11, -39, 52}, {2.5f, 29, 3.5f, 0, 90}, {2.5f, 12, -4, 0, 25}};
     private static BlockPos origin;
     private static int ticks, view, fov;
@@ -22,7 +22,7 @@ final class FuelPoolClientCheck {
 
     private FuelPoolClientCheck() { }
 
-    static void start(Minecraft mc) {
+    public static void start(Minecraft mc) {
         mc.options.pauseOnLostFocus = false;
         mc.setScreen(null);
         fov = mc.options.fov().get();
@@ -53,7 +53,7 @@ final class FuelPoolClientCheck {
         ticks = 0;
     }
 
-    static boolean tick(Minecraft mc) {
+    public static boolean tick(Minecraft mc) {
         if (failure != null) throw new IllegalStateException(failure);
         if (mc.screen != null) mc.setScreen(null);
         ticks++;

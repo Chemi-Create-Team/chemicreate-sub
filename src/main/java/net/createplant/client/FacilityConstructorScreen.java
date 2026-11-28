@@ -45,6 +45,7 @@ public class FacilityConstructorScreen extends SchematicannonScreen {
         for (var kind : AssemblyPlan.Kind.values()) {
             kinds.add(addRenderableWidget(Button.builder(Component.translatable("facility.create_refinery_n_reactors." + kind.id), button -> select(kind.ordinal()))
                 .bounds(leftPos + 234, topPos + 22 + kind.ordinal() * 16, 140, 15).build()));
+            kinds.getLast().visible = AssemblyPlan.available(kind);
         }
         for (int i = 0; i < AssemblyPlan.sizes(AssemblyPlan.Kind.RBMK).size(); i++) {
             int index = i;

@@ -18,8 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 
 /** A controller owns one voice, including every rotor in one turbine housing. */
-record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<SteamTurbineBlockEntity> rotors) {
-    enum Kind {
+public record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<SteamTurbineBlockEntity> rotors) {
+    public enum Kind {
         REACTOR(CEMachineSounds.REACTOR_CIRCULATION, .26f), FUSION(CEMachineSounds.FUSION_DRIVE, .27f),
         TURBINE_HIGH(CEMachineSounds.TURBINE_HIGH, .28f), TURBINE_LOW(CEMachineSounds.TURBINE_LOW, .30f),
         COMPRESSOR(CEMachineSounds.COMPRESSOR, .24f), AGITATOR(CEMachineSounds.AGITATOR, .20f),
@@ -51,6 +51,28 @@ record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<Stea
         Kind(Supplier<SoundEvent> event, float volume, int range) { this.event = event;this.volume = volume;this.range = range; }
     }
 
+    private record Rule<T extends BlockEntity>(Class<T> type, java.util.function.Function<T, Kind> kind) {
+        Kind apply(BlockEntity be) { return kind.apply(type.cast(be)); }
+    }
+
+    private record Place<T extends BlockEntity>(Class<T> type, java.util.function.Function<T, Vec3> position) {
+        Vec3 apply(BlockEntity be) { return position.apply(type.cast(be)); }
+    }
+
+    private static final List<Rule<?>> RULES = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private static final List<Place<?>> PLACES = new java.util.concurrent.CopyOnWriteArrayList<>();
+
+    /** The voice an addon's machine plays; null while it is idle. */
+    public static <T extends BlockEntity> void register(Class<T> type, java.util.function.Function<T, Kind> kind) { RULES.add(new Rule<>(type, kind)); }
+
+    /** Where an addon's machine is heard from when that is not the middle of its block; null keeps the middle. */
+    public static <T extends BlockEntity> void registerPosition(Class<T> type, java.util.function.Function<T, Vec3> position) { PLACES.add(new Place<>(type, position)); }
+
+    private static Vec3 place(BlockEntity be) {
+        for (var place : PLACES) if (place.type().isInstance(be)) return place.apply(be);
+        return null;
+    }
+
     boolean pipe() { return kind == Kind.PRESSURISED_GAS || kind == Kind.HIGH_PRESSURE_GAS; }
 
     private static PipeGasFlow gasFlow(BlockEntity be) {
@@ -76,8 +98,8 @@ record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<Stea
         Kind kind = kind(be);
         if (kind == null) return null;
         Vec3 position = Vec3.atCenterOf(be.getBlockPos());
-        if (be instanceof FuelChannelBlockEntity channel && channel.core().box() != null)
-            position = Vec3.atCenterOf(channel.core().box().getCenter());
+        var placed = place(be);
+        if (placed != null) position = placed;
         else if (be instanceof LiddedVesselBlockEntity vessel)
             position = Vec3.atLowerCornerOf(be.getBlockPos()).add(vessel.getWidth() / 2d, vessel.getHeight() / 2d, vessel.getWidth() / 2d);
         else if (be instanceof WetProcessBlockEntity clarifier) position = position.add(0, (1 - clarifier.height()) * .5, 0);
@@ -129,17 +151,11 @@ record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<Stea
     }
 
     private static Kind kind(BlockEntity be) {
+        for (var rule : RULES) if (rule.type().isInstance(be)) return rule.apply(be);
         if (be instanceof WetProcessBlockEntity wet) return wet.formed() && wet.getSpeed() != 0 ? Kind.FLUID_PROCESS : null;
-        if (be instanceof GasCentrifugeBlockEntity centrifuge)
-            return centrifuge.spinningCascade() ? Kind.CENTRIFUGE : null;
-        if (be instanceof CubicPressBlockEntity press) return press.running() ? Kind.CUBIC_PRESS : null;
         if (be instanceof FlareTipBlockEntity flare) return flare.burning() ? Kind.FLARE : null;
         if (be instanceof HorizontalTankBlockEntity boiler) return boiler.status().equals("running") ? Kind.BOILER : null;
         if (be instanceof CryogenicColdBoxBlockEntity box) return box.formed() && box.watts() > 0 ? Kind.COLDBOX : null;
-        if (be instanceof FuelChannelBlockEntity channel)
-            return channel.core() != null && channel.core().formed() && channel.core().power() > 0 ? Kind.REACTOR : null;
-        if (be instanceof FusionReactorControllerBlockEntity fusion)
-            return fusion.formed() && (fusion.fusionWatts() > 0 || fusion.electricalWatts() > 0) ? Kind.FUSION : null;
         if (be instanceof LiddedVesselBlockEntity vessel && !vessel.isController()) return null;
         if (be instanceof ReactorMachineBlockEntity reactor) {
             if (!reactor.formed() || !reactor.running()) return null;
@@ -173,21 +189,11 @@ record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<Stea
             return tower.formed() && tower.watts() > 0 ? Kind.COOLING_TOWER : null;
         if (be instanceof CondenserWaterboxBlockEntity condenser)
             return condenser.formed() && condenser.watts() > 0 ? Kind.CONDENSER : null;
-        if (be instanceof FuelCycleMachineBlockEntity cycle)
-            return !cycle.formed() ? null : cycle.status().equals("vitrifying") ? Kind.WASTE_MELTER
-                : cycle.status().equals("extracting") ? Kind.SOLVENT_EXTRACTOR : null;
-        if (be instanceof ConverterTrunnionBearingBlockEntity converter)
-            return converter.formed() && (converter.status().equals("blowing") || converter.isRunning() && !converter.tilted()) ? Kind.CONVERTER : null;
         if (be instanceof FuelCellBlockEntity cell)
             return cell.watts() > 0 ? Kind.FUEL_CELL : null;
-        if (be instanceof CraneDriveBlockEntity crane)
-            return crane.structure() != null && crane.working() ? (crane.fusion() ? Kind.FUSION_CRANE : Kind.CRANE) : null;
-        if (be instanceof QuarryDriveBlockEntity quarry) return quarry.working() ? Kind.QUARRY : null;
         if (be instanceof GasifierBlockEntity gasifier)
             return gasifier.formed() && (gasifier.status().equals("running") || gasifier.status().equals("preheat")) ? Kind.GASIFIER : null;
-        if (be instanceof FusionMotorGeneratorBlockEntity motor) return motor.electricalWatts() > 0 ? Kind.MOTOR_GENERATOR : null;
         if (be instanceof LargeFlywheelBlockEntity flywheel) return flywheel.displayedRotorRpm() >= 1 ? Kind.FLYWHEEL : null;
-        if (be instanceof FusionVacuumPumpBlockEntity pump) return pump.getSpeed() != 0 ? Kind.VACUUM_PUMP : null;
         if (be instanceof ElectricPumpBlockEntity pump) return pump.getSpeed() != 0 ? Kind.ELECTRIC_PUMP : null;
         if (be instanceof PumpBlockEntity pump && be.getBlockState().getBlock() instanceof MaterialPumpBlock)
             return pump.getSpeed() != 0 ? Kind.MATERIAL_PUMP : null;
@@ -196,7 +202,6 @@ record MachineSoundSource(BlockEntity owner, Kind kind, Vec3 position, List<Stea
             return holder.formed() && Math.abs(holder.renderedLift(1) - holder.renderedLift(0)) > .001 ? Kind.GAS_HOLDER : null;
         if (be instanceof FacilityConstructorBlockEntity constructor)
             return constructor.state == SchematicannonBlockEntity.State.RUNNING ? Kind.CONSTRUCTOR : null;
-        if (be instanceof IndustrialDispatchBlockEntity dispatch) return dispatch.status().equals("running") ? Kind.DISPATCH : null;
         var flow = gasFlow(be);
         if (flow == null || flow.flowBand() == 0) return null;
         return flow.pressureBand() >= net.createplant.thermal.Grade.Pressure.HIGH.ordinal() ? Kind.HIGH_PRESSURE_GAS : Kind.PRESSURISED_GAS;
