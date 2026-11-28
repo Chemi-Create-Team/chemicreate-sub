@@ -4245,9 +4245,9 @@
     "zh_cn": "请使用专用搅拌槽来搅拌原料。"
   },
   "vessel_internals.install": {
-    "en_us": "Use Mechanical Crafters with one Stainless Tank, eight Steel Ingots and one Shaft. Build the tank 3×3 and mount the stirrer on its roof centre. Drive it with a cogwheel alongside it.",
-    "ja_jp": "メカニカルクラフターにステンレスタンク1個、鋼鉄インゴット8個、シャフト1本を入れます。 撹拌槽を3×3に組み、天面中央に撹拌機を置きます。横の歯車をかみ合わせて駆動します。",
-    "zh_cn": "用动力合成器将1个不锈钢罐、8个钢锭和1根传动杆合成为搅拌槽。 将搅拌槽搭成3×3，在顶部中央安装搅拌器，通过侧面啮合的齿轮驱动。"
+    "en_us": "Use a crafting table with one Stainless Tank, seven Steel Ingots and one Shaft. Build the tank 3×3 and mount the stirrer on its roof centre. Drive it with a cogwheel alongside it.",
+    "ja_jp": "作業台でステンレスタンク1個、鋼鉄インゴット7個、シャフト1本から作ります。 撹拌槽を3×3に組み、天面中央に撹拌機を置きます。横の歯車をかみ合わせて駆動します。",
+    "zh_cn": "用工作台将1个不锈钢罐、7个钢锭和1根传动杆合成为搅拌槽。 将搅拌槽搭成3×3，在顶部中央安装搅拌器，通过侧面啮合的齿轮驱动。"
   },
   "vessel_basin.impeller": {
     "en_us": "Mount the stirrer on a stirred tank at least two layers high. You can load it through the open top.",

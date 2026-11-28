@@ -386,9 +386,9 @@ def stirred_tank():
     write(A / 'models/item/stirred_tank.json', {'parent': f'{NS}:item/lidded_vessel', 'textures': {'side': STIRRED, 'particle': STIRRED}})
     write(D / 'loot_table/blocks/stirred_tank.json', {'type': 'minecraft:block', 'pools': [{'rolls': 1,
         'entries': [{'type': 'minecraft:item', 'name': f'{NS}:stirred_tank'}], 'conditions': [{'condition': 'minecraft:survives_explosion'}]}]})
-    write(D / 'recipe/stirred_tank.json', {'type': 'create:mechanical_crafting', 'pattern': [' S ', 'III', 'ITI', 'III'],
+    write(D / 'recipe/stirred_tank.json', {'type': 'minecraft:crafting_shaped', 'category': 'misc', 'pattern': ['ISI', 'ITI', 'III'],
         'key': {'I': {'tag': 'c:ingots/steel'}, 'S': {'item': 'create:shaft'}, 'T': {'item': f'{NS}:lidded_vessel'}},
-        'result': {'id': f'{NS}:stirred_tank', 'count': 1}, 'accept_mirrored': True})
+        'result': {'id': f'{NS}:stirred_tank', 'count': 1}})
     tag = ROOT / 'src/main/resources/data/minecraft/tags/block/mineable/pickaxe.json'
     raw = tag.read_bytes().decode('utf-8'); newline = '\r\n' if '\r\n' in raw else '\n'
     values = json.loads(raw)

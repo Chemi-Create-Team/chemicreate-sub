@@ -1,8 +1,8 @@
 {
-  "type": "create:mechanical_crafting",
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "pattern": [
-    " S ",
-    "III",
+    "ISI",
     "ITI",
     "III"
   ],
@@ -20,6 +20,5 @@
   "result": {
     "id": "create_refinery_n_reactors:stirred_tank",
     "count": 1
-  },
-  "accept_mirrored": true
+  }
 }
